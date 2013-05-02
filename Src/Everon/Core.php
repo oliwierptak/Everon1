@@ -123,3 +123,4 @@ class Core implements Interfaces\Core
         //$this->getLogger()->trace('shutting down');
     }
     
+}
