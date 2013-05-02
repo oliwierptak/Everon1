@@ -1,9 +1,4 @@
 <?php
-//looks like a workaround for a phpstorm bug which resets included path
-set_include_path(
-    get_include_path()
-);
-
 include_once('Src/Everon/Lib/Bootstrap.php');
 
 function runTest($filename)
