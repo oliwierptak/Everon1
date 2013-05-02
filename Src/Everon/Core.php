@@ -123,36 +123,3 @@ class Core implements Interfaces\Core
         //$this->getLogger()->trace('shutting down');
     }
     
-    /**
-     * Exit application.
-     * Don't throw Exceptions from here, otherwise __toString() will complain.
-     *
-     * @param     \mixed $error Exception or error string
-     * @return    \void
-     
-    public function emergencyShutdown(\Exception $error=null)
-    {
-        if (!Request::isCLI()) {
-            echo "<pre>\n\n";
-        }
-    
-        if (!Request::isCLI()) {
-            echo "</pre>";
-        }
-    
-        if ($error !== null) {
-            $errfile = __FILE__;
-            $errline = __LINE__;
-            $errcontext = array();
-    
-            //todo add some logging here
-            $error = $error->getMessage();
-            $errfile = $error->getFile();
-            $errline = $error->getLine();
-            $errcontext = $error->getTrace();
-    
-            ev_exceptionLogger(E_USER_ERROR, $error, $errfile , $errline , $errcontext);
-            echo $error;
-        }
-    }*/
-}
