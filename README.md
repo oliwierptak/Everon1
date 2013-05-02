@@ -60,8 +60,8 @@ Consider this routing example.
     get[location] = '[[:alnum:]|%]+'
     get[and] = '[a-z]+'
     get[else] = '[0-9]+'
-    post[username] = '[a-z]{4,}'
-    post[password] = '[[:alnum:]]{3,}'
+    post[username] = '[a-z]{3,16}'
+    post[password] = '[[:alnum:]]{4,22}'
     
 It could be translated into commands for Everon:
 * Take 'url' from application.ini and replace %application.url% with it.
@@ -69,9 +69,9 @@ It could be translated into commands for Everon:
 * Make sure 'location' parameter in URL consists alphanumerical and % symbol only.
 * Make sure that parameter 'and' in _GET consists lower cased letters only.
 * Make sure that parameter 'else' in _GET consists numbers only.
-* Maker sure that parameter 'username' in _POST consists only lower cased letters and is not less then 4 and longer 
+* Maker sure that parameter 'username' in _POST consists only lower cased letters and is not less then 3 and longer 
   then 16 characters.
-* Maker sure that parameter 'password' in _POST consists alphanumerical symbols and is not less then 3 and longer
+* Maker sure that parameter 'password' in _POST consists alphanumerical symbols and is not less then 4 and longer
   then 22 characters.
 
 Unless all those conditions are met, the request won't pass and error exception will be thrown.
