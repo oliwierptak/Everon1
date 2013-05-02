@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+  <log>
+    <type>file</type>
+    <name>../../../tmp/log/propel.log</name>
+    <ident>propel</ident>
+    <level>7</level> <!-- PEAR_LOG_DEBUG -->
+    <conf></conf>
+  </log>
+  <propel>
+    <datasources default="everon_book_catalog_example">
+      <datasource id="everon_book_catalog_example">
+        <adapter>mysql</adapter> <!-- sqlite, mysql, myssql, oracle, or pgsql -->
+        <connection>
+          <dsn>mysql:host=localhost;dbname=everon_book_catalog_example</dsn>
+          <user>root</user>
+          <password></password>
+          <classname>DebugPDO</classname>
+        </connection>
+      </datasource>
+      <datasource id="everon_book_catalog_example_pgsql">
+        <adapter>pgsql</adapter>
+        <connection>
+          <dsn>pgsql:host=localhost dbname=everon_book_catalog_example user=postgres password=easy;dbname=everon_book_catalog_example</dsn>
+        </connection>
+      </datasource>
+    </datasources>
+    <debugpdo>
+      <logging>
+        <details>
+          <method>
+            <enabled>true</enabled>
+          </method>
+          <time>
+            <enabled>true</enabled>
+          </time>
+          <mem>
+            <enabled>true</enabled>
+          </mem>
+        </details>
+      </logging>
+    </debugpdo>
+  </propel>
+</config>

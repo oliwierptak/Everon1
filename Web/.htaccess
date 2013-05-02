@@ -1,0 +1,15 @@
+#Options +FollowSymLinks +ExecCGI
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+  
+  #do we have cache?
+  #RewriteRule ^([^.]+)$ $1.html [QSA]
+  #RewriteCond %{REQUEST_FILENAME} !-f
+
+  Redirect 404 /favicon.ico
+
+  # redirect to _frontcontroller
+  RewriteRule ^(.*)$ index.php [QSA,L]
+</IfModule>
