@@ -69,9 +69,9 @@ It could be translated into commands for Everon:
 * Make sure 'location' parameter in URL consists alphanumerical and % symbol only.
 * Make sure that parameter 'and' in _GET consists lower cased letters only.
 * Make sure that parameter 'else' in _GET consists numbers only.
-* Make sure that parameter 'username' in _POST consists only lower cased letters and is not less then 3 neither longer 
+* Make sure that parameter 'username' in _POST consists only lower cased letters and is not less then 3 nor longer 
   then 16 characters.
-* Make sure that parameter 'password' in _POST consists alphanumerical symbols and is not less then 4 neither longer
+* Make sure that parameter 'password' in _POST consists alphanumerical symbols and is not less then 4 nor longer
   then 22 characters.
 
 Unless all those conditions are met, the request won't pass and error exception will be thrown.
