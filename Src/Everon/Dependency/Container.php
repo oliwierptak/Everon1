@@ -30,18 +30,18 @@ class Container implements Interfaces\DependencyContainer
     /**
      * @param $dependency_name
      * @param Interfaces\Factory $Factory
-     * @param $Receiver
+     * @param mixed $Receiver
      * @return null
      * @throws Exception\DependencyContainer
      */
     protected function dependencyToObject($dependency_name, Interfaces\Factory $Factory, $Receiver)
     {
-        $is_di = substr($dependency_name, 0, strlen('Everon\Dependency\Injection'))  == 'Everon\Dependency\Injection';
+        $is_di = substr($dependency_name, 0, strlen('Everon\Dependency\Injection'))  === 'Everon\Dependency\Injection';
         if ($is_di === false) {
             return null;
         }
 
-        if ($dependency_name == 'Everon\Dependency\Injection\Factory') {
+        if ($dependency_name === 'Everon\Dependency\Injection\Factory') {
             $Receiver->setFactory($Factory);
             return null;
         }
