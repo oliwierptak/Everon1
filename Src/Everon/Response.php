@@ -3,8 +3,6 @@ namespace Everon;
 
 class Response implements Interfaces\Response
 {
-    use Dependency\Injection\Factory;
-    
     protected $data = null;
     protected $HeaderCollection = null;
     protected $content_type = 'text/html';
@@ -12,7 +10,7 @@ class Response implements Interfaces\Response
     protected $status = 200;
 
     
-    public function __construct($data=null, Interfaces\Collection $Headers=null)
+    public function __construct($data=null, Interfaces\Collection $Headers)
     {
         $this->data = $data;
         $this->HeaderCollection = $Headers;
@@ -60,11 +58,7 @@ class Response implements Interfaces\Response
     
     protected function sendHeaders()
     {
-        if (is_null($this->HeaderCollection)) {
-            $this->HeaderCollection = $this->getFactory()->buildHttpHeaderCollection();
-        }
-        
-        if (!$this->HeaderCollection->has('content-type')) {
+        if ($this->HeaderCollection->has('content-type') === false) {
             switch ($this->getContentType()) {
                 case 'application/json':
                     $this->HeaderCollection->set('content-type', 'application/json');
