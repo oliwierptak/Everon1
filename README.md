@@ -13,6 +13,7 @@ Very alpha version
 * Advanced, easy to configure routing, with build-in validators  
 * Friendly urls with custom parameters and validation
 * No default parameters in method calls, everything is implicit
+* No static classes or methods
 * Clear, small and simple API
 
 ## Dependency Injection
