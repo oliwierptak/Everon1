@@ -33,7 +33,7 @@ class Logger implements Interfaces\Logger
      */
     protected function write($message, $level, $parameters)
     {
-        $message = empty($parameters) === false ?: vsprintf($message, $parameters);
+        $message = empty($parameters) === false ? vsprintf($message, $parameters) : $message;
         $StarDate = new \DateTime('@'.time());
         $filename = $this->getFilenameByLevel($level);
         $message = $StarDate->format($this->getLogDateFormat()).' - '.$message;
