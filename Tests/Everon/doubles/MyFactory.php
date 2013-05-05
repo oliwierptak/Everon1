@@ -6,9 +6,9 @@ namespace Everon\Test;
 class MyFactory extends \Everon\Factory
 {
 
-    public function buildController($class_name, \Everon\Interfaces\View $View, $ns='\Everon\Controller')
+    public function buildController($class_name, \Everon\Interfaces\View $View, \Everon\Interfaces\ModelManager $ModelManager, $ns='\Everon\Controller')
     {
-        return parent::buildController($class_name, $View, '\Everon\Test');
+        return parent::buildController($class_name, $View, $ModelManager, '\Everon\Test');
     }
 
     public function buildModel($class_name, $ns='\Everon\Model')

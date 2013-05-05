@@ -1,10 +1,13 @@
 <?php
 namespace Everon\Model\Manager;
 
-class Propel extends \Everon\Model\Manager implements \Everon\Interfaces\ModelManager
+use Everon\Interfaces;
+use Everon\Model;
+
+class Propel extends Model\Manager implements Interfaces\ModelManager
 {
 
-    public function init()
+    protected function init()
     {
         require_once ev_DIR_SRC.'Propel/runtime/lib/Propel.php';
 

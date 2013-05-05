@@ -8,6 +8,7 @@ class Response implements Interfaces\Response
     protected $content_type = 'text/html';
     protected $charset = 'utf-8';
     protected $status = 200;
+    protected $result = false;
 
     
     public function __construct($data, Interfaces\Collection $Headers)
@@ -54,6 +55,16 @@ class Response implements Interfaces\Response
     public function setStatus($status)
     {
         $this->status = (int) $status;
+    }
+    
+    public function getResult()
+    {
+        return $this->result;
+    }
+
+    public function setResult($result)
+    {
+        $this->result = (bool) $result;
     }
     
     protected function sendHeaders()

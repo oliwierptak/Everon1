@@ -4,6 +4,10 @@ namespace Everon\Interfaces;
 interface ModelManager
 {
 
-    function init();
+    /**
+     * @param $name
+     * @return mixed
+     */
+    function getModel($name);
 
 }

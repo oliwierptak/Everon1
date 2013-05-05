@@ -7,8 +7,8 @@ interface Logger
     function getLogDirectory();
     function setLogFiles(array $files);
     function getLogFiles();
-    function warn($message);
-    function error($message);
-    function debug($message);
-    function trace($message);
+    function warn($message, $parameters=[]);
+    function error($message, $parameters=[]);
+    function debug($message, $parameters=[]);
+    function trace($message, $parameters=[]);
 }

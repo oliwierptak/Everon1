@@ -16,6 +16,9 @@ trait ModelManager
         return $this->ModelManager;
     }
 
+    /**
+     * @param \Everon\Interfaces\ModelManager $Manager
+     */
     public function setModelManager(\Everon\Interfaces\ModelManager $Manager)
     {
         $this->ModelManager = $Manager;

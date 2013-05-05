@@ -1,65 +1,55 @@
 <?php
 namespace Everon\Interfaces;
 
+use Everon\Interfaces;
+
 interface Controller
 {
-    function getModel($name);
-    function getAllModels();
     function setOutput($Output);
     function getOutput();
     function getName();
     function setName($name);
 
     /**
-     * @return View
+     * @return Interfaces\View
      */
     function getView();
 
     /**
-     * @param View $View
+     * @param Interfaces\View $View
      */
-    function setView(View $View);
+    function setView(Interfaces\View $View);
 
     /**
-     * @return Request
+     * @return Interfaces\ModelManager
+     */
+    function getModelManager();
+
+    /**
+     * @param Interfaces\ModelManager $Manager
+     */
+    public function setModelManager(Interfaces\ModelManager $Manager);
+
+    /**
+     * @return Interfaces\Request
      */
     public function getRequest();
 
     /**
-     * @param Request $Request
+     * @param Interfaces\Request $Request
      * @return void
      */
-    function setRequest(Request $Request);
+    function setRequest(Interfaces\Request $Request);
 
     /**
-     * @return Router
+     * @return Interfaces\Router
      */
     function getRouter();
 
     /**
-     * @param Router $Router
+     * @param Interfaces\Router $Router
      * @return void
      */
-    function setRouter(Router $Router);
+    function setRouter(Interfaces\Router $Router);
 
-    /**
-     * @return Factory
-     */
-    function getFactory();
-
-    /**
-     * @param Factory $Factory
-     * @return void
-     */
-    function setFactory(Factory $Factory);
-
-    /**
-     * @return \Everon\Interfaces\Response
-     */
-    function getResponse();
-
-    /**
-     * @param \Everon\Interfaces\Response $Response
-     */
-    function setResponse(\Everon\Interfaces\Response $Response);    
 }

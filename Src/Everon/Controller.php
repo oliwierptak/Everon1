@@ -5,15 +5,13 @@ namespace Everon;
 abstract class Controller implements Interfaces\Controller
 {
     use Dependency\View;
+    use Dependency\ModelManager;
 
     use Dependency\Injection\ConfigManager;
-    use Dependency\Injection\Factory;
-    use Dependency\Injection\Response;
     use Dependency\Injection\Request;
     use Dependency\Injection\Router;
 
     use Helper\ToString;
-
 
     /**
      * Controller's name
@@ -22,20 +20,13 @@ abstract class Controller implements Interfaces\Controller
     protected $name = null;
 
     /**
-     * List of Models
-     * @var array
-     */
-    protected $models = null;
-
-    abstract function initModel();
-
-
-    /**
      * @param Interfaces\View $View
+     * @param Interfaces\ModelManager $ModelManager
      */
-    public function  __construct(Interfaces\View $View)
+    public function  __construct(Interfaces\View $View, Interfaces\ModelManager $ModelManager)
     {
         $this->View = $View;
+        $this->ModelManager = $ModelManager;
     }
 
     /**
@@ -82,23 +73,7 @@ abstract class Controller implements Interfaces\Controller
      */
     public function getModel($name)
     {
-        if (isset($this->models[$name]) === false) {
-            $this->models[$name] = $this->getFactory()->buildModel($name);
-        }
-
-        return $this->models[$name];
-    }
-
-    /**
-     * @return array|null
-     */
-    public function getAllModels()
-    {
-        if (is_null($this->models)) {
-            $this->initModel();
-        }
-        
-        return $this->models;
+        return $this->getModelManager()->getModel($name);
     }
 
 }

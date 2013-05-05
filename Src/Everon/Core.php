@@ -3,8 +3,61 @@ namespace Everon;
 
 class Core implements Interfaces\Core
 {
+    use Dependency\Injection\Factory;
     use Dependency\Injection\Logger;
+    use Dependency\Injection\Response;
+    use Dependency\Injection\Router;
+    use Dependency\Injection\ConfigManager;
+    use Dependency\Injection\ModelManager;
     
+    public function start()
+    {
+        try {
+            $class_name = $this->getRouter()->getCurrentRoute()->getController();
+            /**
+             * @var \Everon\Config $ApplicationConfig
+             */
+            $View = $this->getFactory()->buildView(
+                $class_name,
+                $this->getConfigManager()->getApplicationConfig()->go('template')->get('compilers')
+            );
+    
+            $Controller = $this->getFactory()->buildController($class_name, $View, $this->getModelManager());
+            
+            $result = $this->run($Controller);
+            $this->getResponse()->setData($Controller->getOutput());
+            $this->getResponse()->setResult($result);
+            
+            $this->result($Controller);
+        }
+        catch (Exception\InvalidRouterParameter $e)
+        {
+            //todo: raise event for from validation
+            throw $e;
+        }
+        catch (Exception\PageNotFound $e)
+        {
+            $this->getLogger()->error($e);
+            echo '<pre><h1>404 Page not found</h1>';
+            echo '<code>'.$e.'</code>';
+        }
+        catch (Exception\DomainException $e) {
+            $this->getLogger()->error($e);
+            echo '<pre><h1>Domain Exception</h1>';
+            echo '<code>'.$e.'</code>';
+        }
+        catch (Exception $e)
+        {
+            $this->getLogger()->error($e);
+            echo '<pre><h1>500 Everon Error</h1>';
+            echo $e."\n";
+            echo str_repeat('-', strlen($e))."\n";
+            if (method_exists($e, 'getTraceAsString')) {
+                echo $e->getTraceAsString();
+            }
+            echo '</pre>';
+        }        
+    }
 
     /**
      * @param Interfaces\Controller $Controller
@@ -30,10 +83,19 @@ class Core implements Interfaces\Core
         if ((bool) $this->runAfter($Controller) !== true) {
             return false;
         }
-
-        $Controller->getResponse()->setData($Controller->getOutput());
-
+        
         return $result;
+    }
+    
+    public function result(Interfaces\Controller $Controller)
+    {
+        if ($this->getResponse()->getResult() === false) {
+            $data = vsprintf('Invalid controller response for route: "%s"', [$Controller->getRouter()->getCurrentRoute()->getName()]);
+            $this->getResponse()->setData($data);
+        }
+
+        $this->getResponse()->send();
+        echo $this->getResponse()->toHtml();        
     }
 
     /**

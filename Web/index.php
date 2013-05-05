@@ -6,14 +6,14 @@
 
 namespace Everon
 {
+    error_reporting(E_ALL | E_STRICT);
+    ini_set('display_errors', true);
+    ini_set('xdebug.overload_var_dump', false);
+    ini_set('html_errors', false);
+
     echo ('Start: '.memory_get_peak_usage(TRUE))."<hr/>";
 
     try {
-        error_reporting(E_ALL | E_STRICT);
-        ini_set('display_errors', true);
-        ini_set('xdebug.overload_var_dump', false);
-        ini_set('html_errors', false);
-        
         require_once(dirname(__FILE__) . '/../Src/Everon/Lib/Bootstrap.php');
 
         $Container = new Dependency\Container();
@@ -54,72 +54,30 @@ namespace Everon
             return $Factory->buildCore();
         });
 
-        $Container->register('ModelManager', function() use ($Factory, $Container) {
-            /**
-             * @var \Everon\Config $Config
-             */
-            $Config = $Container->resolve('ConfigManager')->getApplicationConfig();
+        /**
+         * @var \Everon\Config $Config
+         */
+        $Config = $Container->resolve('ConfigManager')->getApplicationConfig();
+        $Container->register('ModelManager', function() use ($Factory, $Config) {
             return $Factory->buildModelManager($Config->go('model')->get('manager'));
         });
-        
-        /**
-         * @var \Everon\Interfaces\ModelManager $ModelManager
-         */
-        //$ModelManager = $DependencyContainer->resolve('ModelManager');
-        //$ModelManager->init();
-
-        $class_name = $Container->resolve('Router')->getCurrentRoute()->getController();
-        /**
-         * @var \Everon\Config $ApplicationConfig
-         */
-        $ApplicationConfig = $Container->resolve('ConfigManager')->getApplicationConfig();
-        $View = $Factory->buildView(
-            $class_name,
-            $ApplicationConfig->go('template')->get('compilers')
-        );
-        
-        $Controller = $Factory->buildController($class_name, $View);
 
         /**
          * @var Core $Application
          */
         $Application = $Container->resolve('Core');
-        $result = $Application->run($Controller);
-
-        if ($result === true) {
-            /**
-             * @var \Everon\Response $Response
-             */
-            $Response = $Controller->getResponse();
-            $Response->send();
-            echo $Response->toHtml();
-        }
-        else {
-            throw new \Everon\Exception\InvalidControllerResponse('Invalid controller response for route: "%s"', [
-                $Controller->getRouter()->getCurrentRoute()->getName()
-            ]);
-        }
-
         register_shutdown_function(array($Application, 'shutdown'));
-    }
-    catch (Exception\InvalidControllerResponse $e)
-    {
-        echo '<pre><h1>500 Error has occurred</h1>';
-        echo '<code>'.$e.'</code>';
-    }
-    catch (Exception\PageNotFound $e)
-    {
-        echo '<pre><h1>Page not found</h1>';
-        echo '<code>'.$e.'</code>';
+        
+        $Application->start();        
     }
     catch (\Exception $e)
     {
-        echo '<pre><h1>Everon Error</h1>';
+        echo '<pre><h1>500 Uncaught exception</h1>';
         echo $e."\n";
         echo str_repeat('-', strlen($e))."\n";
         if (method_exists($e, 'getTraceAsString')) {
             echo $e->getTraceAsString();
-        }
+        }        
         echo '</pre>';
     }
 

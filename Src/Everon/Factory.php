@@ -131,11 +131,12 @@ class Factory implements Interfaces\Factory
     /**
      * @param $class_name
      * @param Interfaces\View $View
+     * @param Interfaces\ModelManager $ModelManager
      * @param string $ns
-     * @return Controller|Interfaces\Controller
+     * @return Controller
      * @throws Exception\Factory
      */
-    public function buildController($class_name, Interfaces\View $View, $ns='Everon\Controller')
+    public function buildController($class_name, Interfaces\View $View, Interfaces\ModelManager $ModelManager, $ns='Everon\Controller')
     {
         try {
             $class_name = $this->getFullClassName($ns, $class_name);
@@ -143,7 +144,7 @@ class Factory implements Interfaces\Factory
             /**
              * @var \Everon\Controller $Controller
              */
-            $Controller = new $class_name($View);
+            $Controller = new $class_name($View, $ModelManager);
             $Controller = $this->getDependencyContainer()->inject($class_name, $this, $Controller);
             return $Controller;
         }
@@ -225,6 +226,10 @@ class Factory implements Interfaces\Factory
     public function buildResponse($data=null, Interfaces\Collection $Headers=null)
     {
         try {
+            if (is_null($Headers)) {
+                $Headers = $this->buildHttpHeaderCollection();
+            }
+
             $RouteItem = new Response($data, $Headers);
             $RouteItem = $this->getDependencyContainer()->inject('Everon\Response', $this, $RouteItem);
             return $RouteItem;

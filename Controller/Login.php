@@ -2,20 +2,13 @@
 namespace Everon\Controller;
 
 use Everon\Controller;
+use Everon\Dependency;
+use Everon\Exception;
 use Everon\Interfaces;
 
 class Login extends Controller implements Interfaces\Controller
 {
-
-    /**
-     * @var \Everon\Model\UserPeer
-     */
-    protected $UserModel = null;
-
-    public function initModel()
-    {
-        $this->UserModel = $this->getModel('UserPeer');
-    }
+    use Dependency\Injection\Logger;
 
     public function form()
     {
@@ -32,18 +25,26 @@ class Login extends Controller implements Interfaces\Controller
 
     public function submit()
     {
-        $username = $this->getRequest()->getPostParameter('username');  
+        $username = $this->getRequest()->getPostParameter('username');
         $password = $this->getRequest()->getPostParameter('password');
-        
-        $User = $this->getModel('User')->authenticate($username, $password);
-        if ($User === null) {
-            //throw new \Everon\Exception\Controller('absdf');
-            return false;
+
+        $this->getView()->set('User', function() use ($username, $password) {
+            $User = $this->getModel('User')->authenticate($username, $password);
+            if ($User === null) {
+                $this->onSubmitError($username);
+            }
             
-        }
-        $this->getView()->set('User', $User); 
+            return $User;
+        });
 
         return true;
+    }
+    
+    public function onSubmitError($username)
+    {
+        throw new Exception\DomainException(vsprintf(
+            'Failed login attempt for user: "%s"', [$username]
+        ));
     }
 
 

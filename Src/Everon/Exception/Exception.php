@@ -21,8 +21,7 @@ abstract class Exception extends \Exception
         if ($message instanceof \Exception) {
             $message = $message->getMessage();
         }
-
-        if ($Previous instanceof \Exception) {
+        else if ($Previous instanceof \Exception) { //else to avoid displaying duplicated error messages
             $message .= $this->formatExceptionParams(".\n%s", $Previous->getMessage());
         }
 

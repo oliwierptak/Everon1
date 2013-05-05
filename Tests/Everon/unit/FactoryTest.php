@@ -87,7 +87,8 @@ class FactoryTest extends \Everon\TestCase
         });
 
         $View = $this->getMock('\Everon\Interfaces\View');
-        $Controller = $Factory->buildController('MyController', $View, '\Everon\Test');
+        $ModelManager = $this->getMock('\Everon\Interfaces\ModelManager');
+        $Controller = $Factory->buildController('MyController', $View, $ModelManager, '\Everon\Test');
         $this->assertInstanceOf('\Everon\Interfaces\Controller', $Controller);
     }
 
@@ -301,7 +302,8 @@ class FactoryTest extends \Everon\TestCase
     public function testBuildControllerShouldThrowExceptionWhenWrongClass(Interfaces\Factory $FactoryMock)
     {
         $View = $this->getMock('Everon\Interfaces\View');
-        $FactoryMock->buildController('Test', $View);
+        $ModelManager = $this->getMock('Everon\Interfaces\ModelManager');
+        $FactoryMock->buildController('Test', $View, $ModelManager);
     }
     
     /**
@@ -458,6 +460,17 @@ class FactoryTest extends \Everon\TestCase
         $Matcher = $this->getMock('\Everon\Interfaces\ConfigExpressionMatcher');
         $Container->register('ConfigManager', function() use ($Factory, $Matcher, $directory, $cache_directory) {
             return $Factory->buildConfigManager($Matcher, $directory, $cache_directory);
+        });
+        
+        $Config = $Container->resolve('ConfigManager')->getApplicationConfig();
+        $Container->register('ModelManager', function() use ($Factory, $Config) {
+            return $Factory->buildModelManager($Config->go('model')->get('manager'));
+        });
+
+        $Request = $Container->resolve('Request');
+        $Config = $Container->resolve('ConfigManager')->getRouterConfig();
+        $Container->register('Router', function() use ($Factory, $Request, $Config) {
+            return $Factory->buildRouter($Request, $Config);
         });
 
         return [

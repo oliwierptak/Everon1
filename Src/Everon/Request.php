@@ -101,7 +101,7 @@ class Request implements Interfaces\Request, Interfaces\Arrayable
         $port = $this->getPortFromGlobals();
         $protocol = $this->getProtocolFromGlobals();
         
-        if ($protocol != '') {
+        if ($protocol !== '') {
             $protocol = strtolower(substr($protocol, 0, strpos($protocol, '/'))).'://';
         }
 

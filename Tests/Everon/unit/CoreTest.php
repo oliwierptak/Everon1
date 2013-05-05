@@ -155,12 +155,12 @@ class CoreTest extends \Everon\TestCase
     {
         $Logger = new \Everon\Logger($this->getLogDirectory());
 
-        $dc = new \Everon\Dependency\Container();
-        $dc->register('Logger', function() use ($Logger) {
+        $Container = new \Everon\Dependency\Container();
+        $Container->register('Logger', function() use ($Logger) {
             return $Logger;
         });        
         
-        $MyFactory = new MyFactory($dc);
+        $MyFactory = new MyFactory($Container);
 
         $server = $this->getServerDataForRequest([
             'REQUEST_METHOD' => 'GET',
@@ -168,28 +168,33 @@ class CoreTest extends \Everon\TestCase
             'QUERY_STRING' => '',
         ]);
         $Request = new \Everon\Request($server, [], [], []);
-        $dc->register('Request', function() use ($Request) {
+        $Container->register('Request', function() use ($Request) {
             return $Request;
         });
 
         $Matcher = $MyFactory->buildConfigExpressionMatcher();
         $ConfigManager = $MyFactory->buildConfigManager($Matcher, $this->getConfigDirectory(), $this->getTempDirectory().'configmanager'.ev_DS);
-        $dc->register('ConfigManager', function() use ($ConfigManager) {
+        $Container->register('ConfigManager', function() use ($ConfigManager) {
             return $ConfigManager;
         });
 
         $RouterConfig = $ConfigManager->getRouterConfig();
         $Router = $MyFactory->buildRouter($Request, $RouterConfig);
-        $dc->register('Router', function() use ($Router) {
+        $Container->register('Router', function() use ($Router) {
             return $Router;
         });
 
-        $dc->register('Response', function() {
-            return new \Everon\Response();
+        $Config = $Container->resolve('ConfigManager')->getApplicationConfig();
+        $Container->register('ModelManager', function() use ($MyFactory, $Config) {
+            return $MyFactory->buildModelManager($Config->go('model')->get('manager'));
+        });        
+
+        $Container->register('Response', function() use ($MyFactory) {
+            return $MyFactory->buildResponse();
         });        
 
         $View = $MyFactory->buildView('MyController', ['Curly']);
-        $Controller = $MyFactory->buildController('MyController', $View);
+        $Controller = $MyFactory->buildController('MyController', $View, $Container->resolve('ModelManager'));
 
         return [
             [$Controller, $MyFactory]

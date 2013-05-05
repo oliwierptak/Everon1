@@ -95,7 +95,7 @@ class Autoloader
                 self::addToMap($class_name, $class_file);
             }
             else {
-                throw new \InvalidArgumentException(vsprintf(
+                throw new \RuntimeException(vsprintf(
                     'File for class: "%s" could not be found', $class_name
                 ));
             }

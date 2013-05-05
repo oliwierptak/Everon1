@@ -101,7 +101,7 @@ class Container implements Interfaces\DependencyContainer
     {
         try {
             if (class_exists($class_name, true) === false) {
-                throw new Exception\Factory('Invalid dependency: "%s"', $class_name);
+                throw new Exception\Factory('Dependency file could not be found for: "%s"', $class_name);
             }
         }
         catch (\Exception $e) {

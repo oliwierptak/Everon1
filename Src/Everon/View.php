@@ -171,9 +171,12 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
             }
             $Template->setCompiledContent($compiled_content);
         }
+        catch (Exception $e) {
+            throw $e;
+        }        
         catch (\Exception $e) {
             throw new Exception\TemplateCompiler($e);
-        }        
+        }
     }
 
     /**

@@ -9,6 +9,7 @@ class Config extends EveronException{};
 class Core extends EveronException{};
 class Controller extends EveronException{};
 class DependencyContainer extends EveronException{};
+class DomainException extends EveronException{};
 class Helper extends EveronException{};
 class InvalidControllerMethod extends EveronException{};
 class InvalidControllerResponse extends EveronException{};

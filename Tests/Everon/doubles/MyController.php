@@ -3,15 +3,6 @@ namespace Everon\Test;
 
 class MyController extends \Everon\Controller
 {
-    protected $models = ['MyModel'];
-    
-    public function initModel()
-    {
-        $this->models = [
-            'test' => $this->getModel('MyModel')
-        ];
-    }
-
     public function testOne()
     {
         $this->setOutput('test one');
@@ -20,7 +11,6 @@ class MyController extends \Everon\Controller
 
     public function beforeTestOne()
     {
-        $this->getResponse()->setData('before test one');
         //$this->setOutput('before test one');
         return true;
     }

@@ -49,10 +49,12 @@ interface Factory
     /**
      * @param $class_name
      * @param Interfaces\View $View
+     * @param Interfaces\ModelManager $ModelManager
      * @param string $ns
-     * @return Interfaces\Controller
+     * @return Controller
+     * @throws Exception\Factory
      */
-    function buildController($class_name, Interfaces\View $View, $ns='\Everon\Controller');
+    function buildController($class_name, Interfaces\View $View, Interfaces\ModelManager $ModelManager, $ns='\Everon\Controller');
 
     function buildModel($class_name);
 

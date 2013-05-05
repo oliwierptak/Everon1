@@ -4,9 +4,12 @@ namespace Everon\Model\Manager;
 use Doctrine\ORM\Tools\Setup;
 use Doctrine\ORM\EntityManager;
 
-class Doctrine extends \Everon\Model\Manager
+use Everon\Interfaces;
+use Everon\Model;
+
+class Doctrine extends Model\Manager implements Interfaces\ModelManager
 {
-    public function init()
+    protected function init()
     {
         require_once ev_DIR_SRC.\ev_fixPath("Doctrine\\vendor\\autoload.php");
 
