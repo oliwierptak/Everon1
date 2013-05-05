@@ -28,10 +28,12 @@ class Logger implements Interfaces\Logger
     /**
      * @param $message
      * @param $level
+     * @param $parameters
      * @return \DateTime
      */
-    protected function write($message, $level)
+    protected function write($message, $level, $parameters)
     {
+        $message = empty($parameters) === false ?: vsprintf($message, $parameters);
         $StarDate = new \DateTime('@'.time());
         $filename = $this->getFilenameByLevel($level);
         $message = $StarDate->format($this->getLogDateFormat()).' - '.$message;
@@ -65,24 +67,24 @@ class Logger implements Interfaces\Logger
         return $this->log_files;
     }
 
-    public function warn($message)
+    public function warn($message, $parameters=[])
     {
-        return $this->write($message, 'warning');
+        return $this->write($message, 'warning', $parameters);
     }
     
-    public function trace($message)
+    public function trace($message, $parameters=[])
     {
-        return $this->write($message, 'trace');
+        return $this->write($message, 'trace', $parameters);
     }
     
-    public function error($message)
+    public function error($message, $parameters=[])
     {
-        return $this->write($message, 'error');
+        return $this->write($message, 'error', $parameters);
     }
     
-    public function debug($message)
+    public function debug($message, $parameters=[])
     {
-        return $this->write($message, 'debug');
+        return $this->write($message, 'debug', $parameters);
     }
     
 }
