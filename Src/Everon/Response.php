@@ -10,7 +10,7 @@ class Response implements Interfaces\Response
     protected $status = 200;
 
     
-    public function __construct($data=null, Interfaces\Collection $Headers)
+    public function __construct($data, Interfaces\Collection $Headers)
     {
         $this->data = $data;
         $this->HeaderCollection = $Headers;
