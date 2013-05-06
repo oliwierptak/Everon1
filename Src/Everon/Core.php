@@ -28,7 +28,7 @@ class Core implements Interfaces\Core
             $this->getResponse()->setData($Controller->getOutput());
             $this->getResponse()->setResult($result);
             
-            $this->result($Controller);
+            $this->result($Controller->getRouter()->getCurrentRoute()->getName());
         }
         catch (Exception\InvalidRouterParameter $e)
         {
@@ -71,7 +71,7 @@ class Core implements Interfaces\Core
             return false;
         }
 
-        if (!method_exists($Controller, $action)) {
+        if (method_exists($Controller, $action) === false && method_exists($Controller->getView(), $action) === false ) {
             throw new Exception\InvalidControllerMethod(
                 'Controller: "%s" has no action: "%s" defined',
                 [$Controller->getName(), $action]
@@ -87,10 +87,10 @@ class Core implements Interfaces\Core
         return $result;
     }
     
-    public function result(Interfaces\Controller $Controller)
+    public function result($route_name)
     {
         if ($this->getResponse()->getResult() === false) {
-            $data = vsprintf('Invalid controller response for route: "%s"', [$Controller->getRouter()->getCurrentRoute()->getName()]);
+            $data = vsprintf('Invalid response for route: "%s"', [$route_name]);
             $this->getResponse()->setData($data);
         }
 
@@ -128,14 +128,16 @@ class Core implements Interfaces\Core
         $result = true;
         if (method_exists($Controller, $action)) {
             $result = $Controller->{$action}();
+            $result = $result === null ? true : $result; //default is true, no need to write everywhere return true
         }
-
+        
         $action = $result ? $action : $action.'OnError';
         if (method_exists($Controller->getView(), $action)) {
             $view_result = $this->executeViewAction($Controller->getView(), $action, $result);
-            $result = ($view_result !== false);
+            $view_result = $view_result === null ? true : $view_result; //default is true, no need to write everywhere return true
+            $result = $result && $view_result;
         }
-
+        
         /*$models = $Controller->getAllModels();
         if (is_array($models)) {
             $this->executeModelAction($models, $action);
@@ -151,8 +153,9 @@ class Core implements Interfaces\Core
     protected function executeViewAction(Interfaces\View $View, $action, $result)
     {
         if (method_exists($View, $action)) {
-            $View->setActionTemplate($action);
-            return $View->{$action}($result);
+            $result = $View->{$action}($result);
+            $View->setTemplateFromAction($action, $View->getData());
+            return $result;
         }
         
         return $result;

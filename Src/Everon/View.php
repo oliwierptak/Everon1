@@ -140,6 +140,7 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
 
     /**
      * @param Interfaces\TemplateContainer $Template
+     * @throws Exception|\Exception
      * @throws Exception\TemplateCompiler
      */
     protected function compileTemplate(Interfaces\TemplateContainer $Template)
@@ -225,11 +226,14 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
 
     /**
      * @param $action
+     * @param array $data
      */
-    public function setActionTemplate($action)
+    public function setTemplateFromAction($action, array $data)
     {
-        $Output = $this->getTemplate($action, []);
-        $this->action_template = $Output;
+        $filename = $this->getTemplateFilename($action);
+        if ($this->Output === null && is_file($filename)) { //only overwrite Output if not set before and template file exists
+            $this->Output = $this->getTemplate($action, $data);
+        }
     }
     
     public function getActionTemplate()

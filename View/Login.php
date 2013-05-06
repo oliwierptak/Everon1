@@ -13,13 +13,6 @@ class Login extends View
         ]);
         
         $this->set('Form', $FormElement);
-
-/*        //select template to display
-        $Output = $this->getTemplate('Form', [
-            'Form' => $FormElement,
-        ]);
-        */
-        $this->setOutput($this->getActionTemplate());
     }
 
     public function submit()

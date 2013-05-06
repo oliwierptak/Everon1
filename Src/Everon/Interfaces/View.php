@@ -15,6 +15,5 @@ interface View
     function setCompilers(array $compilers);
     function setData(array $data);
     function getData();
-    function setActionTemplate($template);
-    function getActionTemplate();    
+    function setTemplateFromAction($template, array $data);
 }
