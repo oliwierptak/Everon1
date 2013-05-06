@@ -123,42 +123,68 @@ class Core implements Interfaces\Core
      * @param $action
      * @return bool
      */
-    protected function executeControllerAction(Interfaces\Controller $Controller, $action)
+    protected function  executeControllerAction(Interfaces\Controller $Controller, $action)
     {
         $result = true;
-        if (method_exists($Controller, $action)) {
+        $controller_has_action = method_exists($Controller, $action);
+        
+        if ($controller_has_action) {
             $result = $Controller->{$action}();
             $result = $result === null ? true : $result; //default is true, no need to write everywhere return true
+            
+            if ($result) {
+                $result_view = $this->executeViewAction($Controller->getView(), $action);
+                if ($result_view !== null) {
+                    $result = $result && $result_view;
+                }
+            }
+        }
+        else {
+            $result_view = $this->executeViewAction($Controller->getView(), $action);
+            if ($result_view !== null) {
+                $result = $result && $result_view;
+            }
         }
         
-        $action = $result ? $action : $action.'OnError';
-        if (method_exists($Controller->getView(), $action)) {
-            $view_result = $this->executeViewAction($Controller->getView(), $action, $result);
-            $view_result = $view_result === null ? true : $view_result; //default is true, no need to write everywhere return true
-            $result = $result && $view_result;
+        if ($result === false) {
+            $result_on_error = $this->executeControllerActionOnError($Controller, $action);
+            if ($result_on_error !== null) {
+                $result = $result_on_error;
+            }            
         }
-        
-        /*$models = $Controller->getAllModels();
-        if (is_array($models)) {
-            $this->executeModelAction($models, $action);
-        }*/
+
         return $result;
+    }
+
+    /**
+     * @param Interfaces\Controller $Controller
+     * @param $action
+     * @return bool
+     */
+    protected function executeControllerActionOnError(Interfaces\Controller $Controller, $action)
+    {
+        $action_on_error = $action.'OnError';
+        if (method_exists($Controller, $action_on_error)) {
+            $Controller->{$action_on_error}();
+        }
+
+        return $this->executeViewAction($Controller->getView(), $action_on_error);
     }
 
     /**
      * @param Interfaces\View $View
      * @param $action
-     * @param $result
+     * @return bool
      */
-    protected function executeViewAction(Interfaces\View $View, $action, $result)
+    protected function executeViewAction(Interfaces\View $View, $action)
     {
         if (method_exists($View, $action)) {
-            $result = $View->{$action}($result);
+            $result = $View->{$action}();
             $View->setTemplateFromAction($action, $View->getData());
             return $result;
         }
         
-        return $result;
+        return null;
     }
 
     /**

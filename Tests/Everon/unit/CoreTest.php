@@ -33,6 +33,7 @@ class CoreTest extends \Everon\TestCase
     /**
      * @dataProvider dataProvider
      * @expectedException \Everon\Exception\InvalidControllerMethod
+     * @expectedExceptionMessage Controller: "MyController" has no action: "WrongActionName" defined
      */
     public function testRunShouldThrowExceptionWhenInvalidControllerMethod(\Everon\Interfaces\Controller $Controller, \Everon\Interfaces\Factory $Factory)
     {
@@ -55,6 +56,10 @@ class CoreTest extends \Everon\TestCase
             ->method('getRouter')
             ->will($this->returnValue($RouterMock));
 
+        $ViewMock = $this->getMock('Everon\Interfaces\View');
+        $ControllerMock->expects($this->any())
+            ->method('getView')
+            ->will($this->returnValue($ViewMock));
 
         $Core = $Factory->buildCore();
         $result = $Core->run($ControllerMock);
@@ -66,8 +71,19 @@ class CoreTest extends \Everon\TestCase
      */
     public function testBeforeRun(\Everon\Interfaces\Controller $Controller, \Everon\Interfaces\Factory $Factory)
     {
-        $View = $this->getMock('\Everon\Interfaces\View');
+        $ViewMock = $this->getMock('Everon\Test\MyView', ['testOne', 'beforeTestOne', 'afterTestOne'], [], '', false);
+        $ViewMock->expects($this->never())
+            ->method('testOne')
+            ->will($this->returnValue(true));
 
+        $ViewMock->expects($this->never())
+            ->method('beforeTestOne')
+            ->will($this->returnValue(true));
+
+        $ViewMock->expects($this->never())
+            ->method('afterTestOne')
+            ->will($this->returnValue(true));
+        
         $RouteItemMock = $this->getMock('Everon\Interfaces\RouteItem');
         $RouteItemMock->expects($this->atLeastOnce())
             ->method('getAction')
@@ -89,7 +105,7 @@ class CoreTest extends \Everon\TestCase
 
         $ControllerMock->expects($this->once())
             ->method('getView')
-            ->will($this->returnValue($View));
+            ->will($this->returnValue($ViewMock));
 
         $ControllerMock->expects($this->once())
             ->method('beforeTestOne')
@@ -109,8 +125,19 @@ class CoreTest extends \Everon\TestCase
      */
     public function testAfterRun(\Everon\Interfaces\Controller $Controller, \Everon\Interfaces\Factory $Factory)
     {
-        $View = $this->getMock('\Everon\Interfaces\View');
-
+        $ViewMock = $this->getMock('Everon\Test\MyView', ['testOne', 'beforeTestOne', 'afterTestOne'], [], '', false);
+        $ViewMock->expects($this->once())
+            ->method('testOne')
+            ->will($this->returnValue(true));
+        
+        $ViewMock->expects($this->once())
+            ->method('beforeTestOne')
+            ->will($this->returnValue(true));
+        
+        $ViewMock->expects($this->never())
+            ->method('afterTestOne')
+            ->will($this->returnValue(true));
+        
         $RouteItemMock = $this->getMock('Everon\Interfaces\RouteItem');
         $RouteItemMock->expects($this->atLeastOnce())
             ->method('getAction')
@@ -132,7 +159,7 @@ class CoreTest extends \Everon\TestCase
 
         $ControllerMock->expects($this->any())
             ->method('getView')
-            ->will($this->returnValue($View));
+            ->will($this->returnValue($ViewMock));
 
         $ControllerMock->expects($this->once())
             ->method('beforeTestOne')

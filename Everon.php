@@ -1,6 +1,10 @@
 <?php
 include_once('Src/Everon/Lib/Bootstrap.php');
 
+
+
+
+
 function runTest($filename)
 {
     if (is_file($filename) || is_dir($filename)) {
