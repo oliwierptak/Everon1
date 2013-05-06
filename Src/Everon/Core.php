@@ -30,13 +30,11 @@ class Core implements Interfaces\Core
             
             $this->result($Controller->getRouter()->getCurrentRoute()->getName());
         }
-        catch (Exception\InvalidRouterParameter $e)
-        {
+        catch (Exception\InvalidRouterParameter $e) {
             //todo: raise event for from validation
             throw $e;
         }
-        catch (Exception\PageNotFound $e)
-        {
+        catch (Exception\PageNotFound $e) {
             $this->getLogger()->error($e);
             echo '<pre><h1>404 Page not found</h1>';
             echo '<code>'.$e.'</code>';
@@ -46,8 +44,7 @@ class Core implements Interfaces\Core
             echo '<pre><h1>Domain Exception</h1>';
             echo '<code>'.$e.'</code>';
         }
-        catch (Exception $e)
-        {
+        catch (Exception $e) {
             $this->getLogger()->error($e);
             echo '<pre><h1>500 Everon Error</h1>';
             echo $e."\n";
