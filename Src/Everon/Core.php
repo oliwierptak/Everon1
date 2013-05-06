@@ -123,7 +123,7 @@ class Core implements Interfaces\Core
      * @param $action
      * @return bool
      */
-    protected function  executeControllerAction(Interfaces\Controller $Controller, $action)
+    protected function executeControllerAction(Interfaces\Controller $Controller, $action)
     {
         $result = true;
         $controller_has_action = method_exists($Controller, $action);
