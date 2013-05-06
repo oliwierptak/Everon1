@@ -1,16 +1,6 @@
 <?php
 include_once('Src/Everon/Lib/Bootstrap.php');
 
-/*$Everon = new Everon\Core\Console();
-$Everon = new Everon\Core\Mvc();
-$Everon = new Everon\Core\MVVM();
-$Everon = new Everon\Core\MVP();
-$Everon = new \Everon\Core\Console();
-$Controller = new \Everon\Controller\Console($arg); //todo: remove View as dependency of controller
-$Everon>run($Controller);
-*/
-
-
 function runTest($filename)
 {
     if (is_file($filename) || is_dir($filename)) {
