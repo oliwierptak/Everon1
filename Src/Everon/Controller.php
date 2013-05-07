@@ -76,4 +76,15 @@ abstract class Controller implements Interfaces\Controller
         return $this->getModelManager()->getModel($name);
     }
 
+    public function result(Interfaces\Response $Response)
+    {
+        if ($Response->getResult() === false) {
+            $data = vsprintf('Invalid response for route: "%s"', [$this->getRouter()->getCurrentRoute()->getName()]);
+            $Response->setData($data);
+        }
+
+        $Response->send();
+        echo $Response->toHtml();
+    }
+
 }

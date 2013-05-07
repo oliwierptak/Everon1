@@ -27,8 +27,8 @@ class Core implements Interfaces\Core
             $result = $this->run($Controller);
             $this->getResponse()->setData($Controller->getOutput());
             $this->getResponse()->setResult($result);
-            
-            $this->result($Controller->getRouter()->getCurrentRoute()->getName());
+
+            $Controller->result($this->getResponse());
         }
         catch (Exception\InvalidRouterParameter $e) {
             //todo: raise event for from validation
@@ -84,17 +84,6 @@ class Core implements Interfaces\Core
         return $result;
     }
     
-    public function result($route_name)
-    {
-        if ($this->getResponse()->getResult() === false) {
-            $data = vsprintf('Invalid response for route: "%s"', [$route_name]);
-            $this->getResponse()->setData($data);
-        }
-
-        $this->getResponse()->send();
-        echo $this->getResponse()->toHtml();        
-    }
-
     /**
      * @param Interfaces\Controller $Controller
      * @return bool

@@ -52,4 +52,16 @@ interface Controller
      */
     function setRouter(Interfaces\Router $Router);
 
+    /**
+     * @param $name
+     * @return mixed
+     */
+    function getModel($name);
+
+    /**
+     * @param Interfaces\Response $Response
+     * @return mixed
+     */
+    function result(Interfaces\Response $Response);
+
 }

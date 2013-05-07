@@ -62,6 +62,21 @@ class ControllerTest extends \Everon\TestCase
         $this->assertEquals('test', (string) $Controller);
     }
     
+    /**
+     * @runInSeparateProcess
+     * @backupStaticAttributes disabled
+     * @dataProvider dataProvider
+     */
+    public function AAtestResultShouldDisplayOutput(\Everon\Interfaces\Controller $Controller)
+    {
+        $headers = xdebug_get_headers();
+        $Response = new \Everon\Response(['test'], new \Everon\Http\HeaderCollection());
+        $Controller->result($Response);
+        $FactoryMock = $this->getMock('Everon\Interfaces\Factory');
+        $Controller->setFactory($FactoryMock);
+        //$this->assertEquals('test', (string) $Controller);
+    }
+    
     public function dataProvider()
     {
         $Logger = new \Everon\Logger($this->getLogDirectory());
