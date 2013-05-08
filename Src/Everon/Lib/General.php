@@ -1,5 +1,10 @@
 <?php
 
+function mpr()
+{
+    $args = func_get_args();
+    _mpr($args);
+}
 /**
  * General purpose debug dumper
  *
@@ -7,7 +12,7 @@
  * @param bool $die
  * @param int $traceIndex
  */
-function mpr($val, $die=false, $traceIndex=0) {
+function _mpr($val, $die=false, $traceIndex=0) {
     $is_pre = true;
     if (php_sapi_name() == 'cli') {
         $is_pre = false;
