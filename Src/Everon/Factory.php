@@ -58,7 +58,7 @@ class Factory implements Interfaces\Factory
             return $Core;
         }
         catch (\Exception $e) {
-            throw new Exception\Factory('Core initialization error', $e);
+            throw new Exception\Factory('Core initialization error', null, $e);
         }
     }
 
@@ -108,7 +108,7 @@ class Factory implements Interfaces\Factory
             return $Manager;
         }
         catch (\Exception $e) {
-            throw new Exception\Factory('ConfigManager initialization error', $e);
+            throw new Exception\Factory('ConfigManager initialization error', null, $e);
         }
     }
 
@@ -124,7 +124,7 @@ class Factory implements Interfaces\Factory
             return $ExpressionMatcher;
         }
         catch (\Exception $e) {
-            throw new Exception\Factory('ConfigExpressionMatcher initialization error', $e);
+            throw new Exception\Factory('ConfigExpressionMatcher initialization error', null, $e);
         }
     }
 
@@ -235,7 +235,7 @@ class Factory implements Interfaces\Factory
             return $RouteItem;
         }
         catch (\Exception $e) {
-            throw new Exception\Factory('Response initialization error', $e);
+            throw new Exception\Factory('Response initialization error', null, $e);
         }
     }
 
@@ -253,7 +253,7 @@ class Factory implements Interfaces\Factory
             return $RouteItem;
         }
         catch (\Exception $e) {
-            throw new Exception\Factory('Router initialization error', $e);
+            throw new Exception\Factory('Router initialization error', null, $e);
         }
     }
 
@@ -270,7 +270,7 @@ class Factory implements Interfaces\Factory
             return $RouteItem;
         }
         catch (\Exception $e) {
-            throw new Exception\Factory('RouteItem initialization error', $e);
+            throw new Exception\Factory('RouteItem initialization error', null, $e);
         }
     }
 
@@ -289,7 +289,7 @@ class Factory implements Interfaces\Factory
             return $Template;
         }
         catch (\Exception $e) {
-            throw new Exception\Factory('Template initialization error', $e);
+            throw new Exception\Factory('Template initialization error', null, $e);
         }
     }
 
@@ -307,7 +307,7 @@ class Factory implements Interfaces\Factory
             return $TemplateContainer;
         }
         catch (\Exception $e) {
-            throw new Exception\Factory('TemplateContainer initialization error', $e);
+            throw new Exception\Factory('TemplateContainer initialization error', null, $e);
         }
     }
 
@@ -347,7 +347,7 @@ class Factory implements Interfaces\Factory
             return $Logger;
         }
         catch (\Exception $e) {
-            throw new Exception\Factory('Logger initialization error', $e);
+            throw new Exception\Factory('Logger initialization error', null, $e);
         }
     }
 
@@ -364,7 +364,7 @@ class Factory implements Interfaces\Factory
             return $Logger;
         }
         catch (\Exception $e) {
-            throw new Exception\Factory('HttpHeaderCollection initialization error', $e);
+            throw new Exception\Factory('HttpHeaderCollection initialization error', null, $e);
         }
     }
 
@@ -384,7 +384,7 @@ class Factory implements Interfaces\Factory
             return $Request;
         }
         catch (\Exception $e) {
-            throw new Exception\Factory('Request initialization error', $e);
+            throw new Exception\Factory('Request initialization error', null, $e);
         }
     }
 
