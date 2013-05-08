@@ -9,4 +9,5 @@ interface DependencyContainer
     function inject($class_name, \Everon\Interfaces\Factory $Factory, $Receiver);
     function getServices();
     function getDefinitions();
+    function isRegistered($name);    
 }

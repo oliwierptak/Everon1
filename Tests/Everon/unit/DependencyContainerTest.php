@@ -51,6 +51,19 @@ class DependencyContainerTest extends \Everon\TestCase
         
         $this->assertCount(1, $Container->getServices());
     }
+
+    /**
+     * @dataProvider dataProvider
+     */
+    public function testIsRegistered(\Everon\Interfaces\DependencyContainer $Container)
+    {
+        $Container->register('test', function() {
+            return new \stdClass();
+        });
+
+        $this->assertTrue($Container->isRegistered('test'));
+        $this->assertFalse($Container->isRegistered('foo'));
+    }    
     
     public function dataProvider()
     {

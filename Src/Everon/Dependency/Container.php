@@ -154,6 +154,15 @@ class Container implements Interfaces\DependencyContainer
     }
 
     /**
+     * @param $name
+     * @return bool
+     */
+    public function isRegistered($name)
+    {
+        return (isset($this->definitions[$name]) || isset($this->services[$name]));
+    }
+
+    /**
      * @return array
      */
     public function getServices()
@@ -168,5 +177,5 @@ class Container implements Interfaces\DependencyContainer
     {
         return $this->definitions;
     }
-
+    
 }
