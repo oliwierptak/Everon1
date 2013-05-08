@@ -31,22 +31,25 @@ namespace Everon
             return $Factory->buildResponse();
         });
 
-        $Container->register('ConfigManager', function() use ($Factory, $Container) {
+        $Container->register('ConfigExpressionMatcher', function() use ($Factory) {
+            return $Factory->buildConfigExpressionMatcher();
+        });
+
+        $Matcher = $Container->resolve('ConfigExpressionMatcher');
+        $Container->register('ConfigManager', function() use ($Factory, $Matcher) {
             return $Factory->buildConfigManager(
-                $Container->resolve('ConfigExpressionMatcher'),  
+                $Matcher,
                 ev_DIR_CONFIG, 
                 ev_DIR_CACHE_CONFIG
             );
         });
 
-        $Container->register('ConfigExpressionMatcher', function() use ($Factory, $Container) {
-            return $Factory->buildConfigExpressionMatcher();
-        });
-
-        $Container->register('Router', function() use ($Factory, $Container) {
+        $Request = $Container->resolve('Request');
+        $RouteConfig = $Container->resolve('ConfigManager')->getRouterConfig();
+        $Container->register('Router', function() use ($Factory, $Request, $RouteConfig) {
             return $Factory->buildRouter(
-                $Container->resolve('Request'), 
-                $Container->resolve('ConfigManager')->getRouterConfig()
+                $Request,
+                $RouteConfig
             );
         });
 
