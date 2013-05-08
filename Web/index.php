@@ -61,8 +61,9 @@ namespace Everon
          * @var \Everon\Config $Config
          */
         $Config = $Container->resolve('ConfigManager')->getApplicationConfig();
-        $Container->register('ModelManager', function() use ($Factory, $Config) {
-            return $Factory->buildModelManager($Config->go('model')->get('manager'));
+        $manager = $Config->go('model')->get('manager');
+        $Container->register('ModelManager', function() use ($Factory, $manager) {
+            return $Factory->buildModelManager($manager);
         });
 
         /**
