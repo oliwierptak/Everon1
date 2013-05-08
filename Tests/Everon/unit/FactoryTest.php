@@ -443,9 +443,9 @@ class FactoryTest extends \Everon\TestCase
         $Container->register('Logger', function() use ($Logger) {
             return $Logger;
         });
-        $Container->register('Response', function() use ($Factory) {
+/*        $Container->register('Response', function() use ($Factory) {
             return $Factory->buildResponse();
-        });
+        });*/
         $server = $this->getServerDataForRequest([
             'REQUEST_METHOD' => 'GET',
             'REQUEST_URI' => '/',
@@ -473,6 +473,10 @@ class FactoryTest extends \Everon\TestCase
             return $Factory->buildRouter($Request, $Config);
         });
 
+        $Container->register('Response', function() use ($Factory) {
+            return $Factory->buildResponse();
+        });
+        
         return [
             [$Factory, $Container]
         ];
