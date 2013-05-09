@@ -37,20 +37,13 @@ namespace Everon
 
         $Matcher = $Container->resolve('ConfigExpressionMatcher');
         $Container->register('ConfigManager', function() use ($Factory, $Matcher) {
-            return $Factory->buildConfigManager(
-                $Matcher,
-                ev_DIR_CONFIG, 
-                ev_DIR_CACHE_CONFIG
-            );
+            return $Factory->buildConfigManager($Matcher, ev_DIR_CONFIG, ev_DIR_CACHE_CONFIG);
         });
 
         $Request = $Container->resolve('Request');
         $RouteConfig = $Container->resolve('ConfigManager')->getRouterConfig();
         $Container->register('Router', function() use ($Factory, $Request, $RouteConfig) {
-            return $Factory->buildRouter(
-                $Request,
-                $RouteConfig
-            );
+            return $Factory->buildRouter($Request, $RouteConfig);
         });
 
         $Container->register('Core', function() use ($Factory) {
