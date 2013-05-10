@@ -145,8 +145,8 @@ class ClassLoader implements Interfaces\ClassLoader
      */
     protected function isNamespace($namespace, $match)
     {
-        $a = substr(strtolower($namespace), 0, strlen($match)) ;
-        return strcasecmp($a, $match) == 0;
+        $namespace = substr($namespace, 0, strlen($match));
+        return strcasecmp($namespace, $match) == 0;
     }
 
 }
