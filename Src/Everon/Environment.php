@@ -155,7 +155,7 @@ class Environment implements Interfaces\Environment
     
     public function setEveronInterface($everon_interfaces)
     {
-        $this->resources['everon_interface'] = $$everon_interfaces;
+        $this->resources['everon_interface'] = $everon_interfaces;
     }
 
     public function getTmp()

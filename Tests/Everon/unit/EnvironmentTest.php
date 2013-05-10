@@ -6,7 +6,7 @@ class EnvironmentTest extends \Everon\TestCase
    
     public function testConstructor()
     {
-        $Environment = new \Everon\Environment(PROJECT_ROOT);
+        $Environment = new \Everon\Environment('testing');
         $this->assertInstanceOf('\Everon\Interfaces\Environment', $Environment);
     }
 
@@ -33,6 +33,56 @@ class EnvironmentTest extends \Everon\TestCase
         $this->assertEquals(PROJECT_ROOT.'Tmp'.DIRECTORY_SEPARATOR.'logs'.DIRECTORY_SEPARATOR, $Environment->getLog());
         $this->assertEquals(PROJECT_ROOT.'Tmp'.DIRECTORY_SEPARATOR.'cache'.DIRECTORY_SEPARATOR, $Environment->getCache());
         $this->assertEquals(PROJECT_ROOT.'Tmp'.DIRECTORY_SEPARATOR.'cache'.DIRECTORY_SEPARATOR.'config'.DIRECTORY_SEPARATOR, $Environment->getCacheConfig());
+    }
+    
+    public function testSetters()
+    {
+        $Environment = new \Everon\Environment('testing');
+        
+        $Environment->setRoot('test');
+        $this->assertEquals('test', $Environment->getRoot());
+        
+        $Environment->setConfig('test');
+        $this->assertEquals('test', $Environment->getConfig());
+        
+        $Environment->setModel('test');
+        $this->assertEquals('test', $Environment->getModel());
+        
+        $Environment->setView('test');
+        $this->assertEquals('test', $Environment->getView());
+        
+        $Environment->setViewTemplate('test');
+        $this->assertEquals('test', $Environment->getViewTemplate());
+        
+        $Environment->setController('test');
+        $this->assertEquals('test', $Environment->getController());
+
+        $Environment->setTest('test');
+        $this->assertEquals('test', $Environment->getTest());
+
+        $Environment->setSource('test');
+        $this->assertEquals('test', $Environment->getSource());
+        
+        $Environment->setEveron('test');
+        $this->assertEquals('test', $Environment->getEveron());
+        
+        $Environment->setEveronInterface('test');
+        $this->assertEquals('test', $Environment->getEveronInterface());
+        
+        $Environment->setEveronLib('test');
+        $this->assertEquals('test', $Environment->getEveronLib());
+
+        $Environment->setTmp('test');
+        $this->assertEquals('test', $Environment->getTmp());
+        
+        $Environment->setLog('test');
+        $this->assertEquals('test', $Environment->getLog());
+        
+        $Environment->setCache('test');
+        $this->assertEquals('test', $Environment->getCache());
+        
+        $Environment->setCacheConfig('test');
+        $this->assertEquals('test', $Environment->getCacheConfig());
     }
 
 }
