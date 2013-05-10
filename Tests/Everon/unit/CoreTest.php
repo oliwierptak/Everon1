@@ -3,16 +3,7 @@ namespace Everon\Test;
 
 class CoreTest extends \Everon\TestCase
 {
-    
-    protected function setUp()
-    {
-        parent::setUp();
-        
-        if (!is_dir($this->getLogDirectory())) {
-            @mkdir($this->getLogDirectory(), 0775, true);
-        }
-    }
-    
+   
     public function testConstructor()
     {
         $Core = new \Everon\Core();
@@ -71,7 +62,15 @@ class CoreTest extends \Everon\TestCase
      */
     public function testBeforeRun(\Everon\Interfaces\Controller $Controller, \Everon\Interfaces\Factory $Factory)
     {
-        $ViewMock = $this->getMock('Everon\Test\MyView', ['testOne', 'beforeTestOne', 'afterTestOne'], [], '', false);
+        $ViewMock = $this->getMockBuilder('Everon\Test\MyView')
+            ->setMethods([
+                'testOne',
+                'beforeTestOne',
+                'afterTestOne',
+            ])
+            ->disableOriginalConstructor()
+            ->getMock();
+        
         $ViewMock->expects($this->never())
             ->method('testOne')
             ->will($this->returnValue(true));
@@ -125,19 +124,27 @@ class CoreTest extends \Everon\TestCase
      */
     public function testAfterRun(\Everon\Interfaces\Controller $Controller, \Everon\Interfaces\Factory $Factory)
     {
-        $ViewMock = $this->getMock('Everon\Test\MyView', ['testOne', 'beforeTestOne', 'afterTestOne'], [], '', false);
+        $ViewMock = $this->getMockBuilder('Everon\Test\MyView')
+            ->setMethods([
+            'testOne',
+            'beforeTestOne',
+            'afterTestOne',
+            ])
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $ViewMock->expects($this->once())
             ->method('testOne')
             ->will($this->returnValue(true));
-        
+
         $ViewMock->expects($this->once())
             ->method('beforeTestOne')
             ->will($this->returnValue(true));
-        
-        $ViewMock->expects($this->never())
+
+        $ViewMock->expects($this->once())
             ->method('afterTestOne')
-            ->will($this->returnValue(true));
-        
+            ->will($this->returnValue(false));
+
         $RouteItemMock = $this->getMock('Everon\Interfaces\RouteItem');
         $RouteItemMock->expects($this->atLeastOnce())
             ->method('getAction')
@@ -148,16 +155,22 @@ class CoreTest extends \Everon\TestCase
             ->method('getCurrentRoute')
             ->will($this->returnValue($RouteItemMock));
 
-        $ControllerMock = $this->getMock('Everon\Test\MyController', [], [], '', false);
-        $ControllerMock->expects($this->any())
-            ->method('getName')
-            ->will($this->returnValue('MyController'));
+        $ControllerMock = $this->getMockBuilder('Everon\Test\MyController')
+            ->setMethods([
+                'getRouter',
+                'getView',
+                'beforeTestOne',
+                'testOne',  
+                'afterTestOne'
+            ])
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $ControllerMock->expects($this->atLeastOnce())
             ->method('getRouter')
             ->will($this->returnValue($RouterMock));
 
-        $ControllerMock->expects($this->any())
+        $ControllerMock->expects($this->atLeastOnce())
             ->method('getView')
             ->will($this->returnValue($ViewMock));
 
@@ -168,10 +181,10 @@ class CoreTest extends \Everon\TestCase
         $ControllerMock->expects($this->once())
             ->method('testOne')
             ->will($this->returnValue(true));
-
+        
         $ControllerMock->expects($this->once())
             ->method('afterTestOne')
-            ->will($this->returnValue(false));
+            ->will($this->returnValue(true));
 
         $Core = $Factory->buildCore();
         $result = $Core->run($ControllerMock);

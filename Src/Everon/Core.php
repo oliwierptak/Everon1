@@ -117,7 +117,7 @@ class Core implements Interfaces\Core
         if ($controller_has_action) {
             $result = $Controller->{$action}();
             $result = $result === null ? true : $result; //default is true, no need to write everywhere return true
-            
+
             if ($result) {
                 $result_view = $this->executeViewAction($Controller->getView(), $action);
                 if ($result_view !== null) {
@@ -153,20 +153,21 @@ class Core implements Interfaces\Core
         if (method_exists($Controller, $action_on_error)) {
             $Controller->{$action_on_error}();
         }
-
+        
         return $this->executeViewAction($Controller->getView(), $action_on_error);
     }
 
     /**
      * @param Interfaces\View $View
      * @param $action
-     * @return bool
+     * @return bool|null Returns null if action was not found
      */
     protected function executeViewAction(Interfaces\View $View, $action)
     {
         if (method_exists($View, $action)) {
             $result = $View->{$action}();
             $View->setTemplateFromAction($action, $View->getData());
+            $result = $result === null ? true : $result;
             return $result;
         }
         
