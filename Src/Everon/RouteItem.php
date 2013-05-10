@@ -94,17 +94,6 @@ class RouteItem implements Interfaces\RouteItem, Interfaces\Arrayable
     }
 
     /**
-     * @param array $data
-     */
-    public function validateData(array $data)
-    {
-        $this->assertIsStringAndNonEmpty($data['route_name'], 'Invalid route name: "%s"', 'RouteItemValidator');
-        $this->assertIsStringAndNonEmpty($data['url'], 'Invalid url: "%s"', 'RouteItemValidator');
-        $this->assertIsStringAndNonEmpty($data['controller'], 'Invalid controller: "%s"', 'RouteItemValidator');
-        $this->assertIsStringAndNonEmpty($data['action'], 'Invalid action: "%s"', 'RouteItemValidator');
-    }
-
-    /**
      * Takes login/submit/session/{sid}/redirect/{location}?and=something
      * and returns @^login/submit/session/([a-z0-9]+)/redirect/([a-zA-Z0-9|%]+)$@
      * according to router.ini
@@ -145,7 +134,6 @@ class RouteItem implements Interfaces\RouteItem, Interfaces\Arrayable
     /**
      * @param $request_url
      * @return bool
-     * @throws Exception\RouteItem
      */
     public function matchesByUrl($request_url)
     {
@@ -220,7 +208,6 @@ class RouteItem implements Interfaces\RouteItem, Interfaces\Arrayable
     /**
      * @param array $get_data
      * @return array
-     * @throws Exception\RouteItem
      */
     protected function validateGet(array $get_data)
     {
@@ -267,6 +254,17 @@ class RouteItem implements Interfaces\RouteItem, Interfaces\Arrayable
             throw new Exception\RouteItem($e);
         }
     }
+
+    /**
+     * @param array $data
+     */
+    public function validateData(array $data)
+    {
+        $this->assertIsStringAndNonEmpty($data['route_name'], 'Invalid route name: "%s"', 'RouteItemValidator');
+        $this->assertIsStringAndNonEmpty($data['url'], 'Invalid url: "%s"', 'RouteItemValidator');
+        $this->assertIsStringAndNonEmpty($data['controller'], 'Invalid controller: "%s"', 'RouteItemValidator');
+        $this->assertIsStringAndNonEmpty($data['action'], 'Invalid action: "%s"', 'RouteItemValidator');
+    }    
 
     public function getName()
     {
