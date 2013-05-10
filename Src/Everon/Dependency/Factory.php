@@ -6,7 +6,7 @@ trait Factory
 {
 
     /**
-     * @var \Everon\Factory
+     * @var \Everon\Interfaces\Factory
      */
     protected $Factory = null;
 
