@@ -260,10 +260,10 @@ class RouteItem implements Interfaces\RouteItem, Interfaces\Arrayable
      */
     public function validateData(array $data)
     {
-        $this->assertIsStringAndNonEmpty($data['route_name'], 'Invalid route name: "%s"', 'RouteItemValidator');
-        $this->assertIsStringAndNonEmpty($data['url'], 'Invalid url: "%s"', 'RouteItemValidator');
-        $this->assertIsStringAndNonEmpty($data['controller'], 'Invalid controller: "%s"', 'RouteItemValidator');
-        $this->assertIsStringAndNonEmpty($data['action'], 'Invalid action: "%s"', 'RouteItemValidator');
+        $this->assertIsStringAndNonEmpty($data['route_name'], 'Invalid route name: "%s"', 'RouteItem');
+        $this->assertIsStringAndNonEmpty($data['url'], 'Invalid url: "%s"', 'RouteItem');
+        $this->assertIsStringAndNonEmpty($data['controller'], 'Invalid controller: "%s"', 'RouteItem');
+        $this->assertIsStringAndNonEmpty($data['action'], 'Invalid action: "%s"', 'RouteItem');
     }    
 
     public function getName()
