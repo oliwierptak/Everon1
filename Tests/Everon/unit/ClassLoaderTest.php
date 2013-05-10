@@ -19,18 +19,18 @@ class ClassLoaderTest extends \Everon\TestCase
     /**
      * @dataProvider dataProvider
      */    
-    public function testLoadShouldIncludeFile(\Everon\Interfaces\CLassLoader $Loader)
+    public function testLoadShouldIncludeFile(\Everon\Interfaces\ClassLoader $Loader)
     {
         $Loader->add('Everon', ev_DIR_SRC);
         $Loader->load('Everon\Core');
     }
-    
+
     /**
      * @dataProvider dataProvider
      * @expectedException \RuntimeException
      * @expectedExceptionMessagbe File for class: "test" could not be found
-     */    
-    public function testLoadShouldThrowExceptionWhenFileWasNotFound(\Everon\Interfaces\CLassLoader $Loader)
+     */
+    public function testLoadShouldThrowExceptionWhenFileWasNotFound(\Everon\Interfaces\ClassLoader $Loader)
     {
         $Loader->load('test_wrong_class');
     }
@@ -38,7 +38,7 @@ class ClassLoaderTest extends \Everon\TestCase
     /**
      * @dataProvider dataProvider
      */
-    public function testIncludeFile(\Everon\Interfaces\CLassLoader $Loader)
+    public function testIncludeFile(\Everon\Interfaces\ClassLoader $Loader)
     {
         $Loader->add('Everon', ev_DIR_SRC);
         $Loader->add('Everon\View', ev_DIR_VIEW);

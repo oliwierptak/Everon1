@@ -1,7 +1,7 @@
 <?php
 namespace Everon\Interfaces;
 
-interface CLassLoader
+interface ClassLoader
 {
     function register();
     function unRegister();
