@@ -99,7 +99,7 @@ class ControllerTest extends \Everon\TestCase
         });
 
         $Matcher = $MyFactory->buildConfigExpressionMatcher();
-        $ConfigManager = $MyFactory->buildConfigManager($Matcher, $this->getConfigDirectory(), $this->getTempDirectory().'configmanager'.ev_DS);
+        $ConfigManager = $MyFactory->buildConfigManager($Matcher, $this->getConfigDirectory(), $this->getTempDirectory().'configmanager'.DIRECTORY_SEPARATOR);
         $Container->register('ConfigManager', function() use ($ConfigManager) {
             return $ConfigManager;
         });

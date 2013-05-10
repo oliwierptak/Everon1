@@ -15,6 +15,7 @@ Very alpha version
 * No default parameters in method calls, everything is implicit
 * No static classes or methods
 * Clear, small and simple API
+* Convention over configuration
 
 ## Dependency Injection
 Consider this model, as you can see it does not inherit from anything, and there is no constructor.

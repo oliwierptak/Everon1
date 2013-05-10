@@ -18,9 +18,14 @@ namespace Everon
 
         $Container = new Dependency\Container();
         $Factory = new Factory($Container);
+        $Environment = $Factory->buildEnvironment(PROJECT_ROOT);
 
-        $Container->register('Logger', function() use ($Factory) {
-            return $Factory->buildLogger(ev_DIR_LOG);
+        $Container->register('Environment', function() use ($Environment) {
+            return $Environment;
+        });
+
+        $Container->register('Logger', function() use ($Factory, $Environment) {
+            return $Factory->buildLogger($Environment->getLog());
         });
 
         $Container->register('Request', function() use ($Factory) {
@@ -36,8 +41,8 @@ namespace Everon
         });
 
         $Matcher = $Container->resolve('ConfigExpressionMatcher');
-        $Container->register('ConfigManager', function() use ($Factory, $Matcher) {
-            return $Factory->buildConfigManager($Matcher, ev_DIR_CONFIG, ev_DIR_CACHE_CONFIG);
+        $Container->register('ConfigManager', function() use ($Factory, $Matcher, $Environment) {
+            return $Factory->buildConfigManager($Matcher, $Environment->getConfig(), $Environment->getCacheConfig());
         });
 
         $Request = $Container->resolve('Request');

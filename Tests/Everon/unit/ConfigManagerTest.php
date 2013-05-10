@@ -13,7 +13,7 @@ class ConfigManagerTest extends \Everon\TestCase
     public function testConstructor()
     {
         $Matcher = new \Everon\Config\ExpressionMatcher();
-        $Manager = new \Everon\Config\Manager($Matcher, $this->getConfigDirectory(), $this->getTempDirectory().'configmanager'.ev_DS);
+        $Manager = new \Everon\Config\Manager($Matcher, $this->getConfigDirectory(), $this->getTempDirectory().'configmanager'.DIRECTORY_SEPARATOR);
         $this->assertInstanceOf('\Everon\Interfaces\ConfigManager', $Manager);
     }
 

@@ -16,9 +16,9 @@ class MyFactory extends \Everon\Factory
         return parent::buildModel($class_name, '\Everon\Test');
     }
 
-    public function buildView($class_name, array $compilers_to_init)
+    public function buildView($class_name, array $compilers_to_init, $view_directory)
     {
-        return parent::buildView('MyView', $compilers_to_init, '\Everon\Test');
+        return parent::buildView('MyView', $compilers_to_init, $view_directory, '\Everon\Test');
     }
 
 }

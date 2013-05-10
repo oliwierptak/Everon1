@@ -156,11 +156,12 @@ class Factory implements Interfaces\Factory
     /**
      * @param $class_name
      * @param array $compilers_to_init
+     * @param $view_directory
      * @param string $ns
      * @return Interfaces\View
      * @throws Exception\Factory
      */
-    public function buildView($class_name, array $compilers_to_init, $ns='Everon\View')
+    public function buildView($class_name, array $compilers_to_init, $view_directory, $ns='Everon\View')
     {
         try {
             $class_name = $this->getFullClassName($ns, $class_name);
@@ -170,7 +171,7 @@ class Factory implements Interfaces\Factory
                 $compilers[] = $this->buildTemplateCompiler($compilers_to_init[$a]);
             }
 
-            $View = new $class_name($compilers);
+            $View = new $class_name($compilers, $view_directory);
             $View = $this->getDependencyContainer()->inject($class_name, $this, $View);
             return $View;
         }
@@ -385,6 +386,23 @@ class Factory implements Interfaces\Factory
         }
         catch (\Exception $e) {
             throw new Exception\Factory('Request initialization error', null, $e);
+        }
+    }
+
+    /**
+     * @param $root
+     * @return Interfaces\Environment
+     * @throws Exception\Factory
+     */
+    public function buildEnvironment($root)
+    {
+        try {
+            $Environment = new Environment($root);
+            $Environment = $this->getDependencyContainer()->inject('Everon\Environment', $this, $Environment);
+            return $Environment;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('Environment initialization error', null, $e);
         }
     }
 

@@ -7,6 +7,13 @@ class ClassMap implements Interfaces\ClassMap
 {
     protected $class_map = [];
 
+    protected $class_map_filename = null;
+
+
+    public function __construct($filename)
+    {
+        $this->class_map_filename = $filename;
+    }
 
     public function addToMap($class, $file)
     {
@@ -25,9 +32,9 @@ class ClassMap implements Interfaces\ClassMap
         return null;
     }
 
-    protected function getCacheFilename($tmp=ev_DIR_CACHE, $os=ev_OS)
+    protected function getCacheFilename()
     {
-        return $tmp.'everon_classmap_'.$os.'.php';
+        return $this->class_map_filename;
     }
 
     public function loadMap()

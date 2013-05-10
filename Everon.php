@@ -1,9 +1,10 @@
 <?php
 include_once('Src/Everon/Lib/Bootstrap.php');
 
+$nesting = implode('..', array_fill(0, 1, DIRECTORY_SEPARATOR));
+$root = realpath(dirname(__FILE__).$nesting).DIRECTORY_SEPARATOR;
 
-
-
+$Environment = new \Everon\Environment($root);
 
 function runTest($filename)
 {
@@ -37,9 +38,9 @@ if ($argc > 1) {
             break;
 
         case 'propel-gen':
-            chdir(ev_DIR_CONFIG.ev_DS.'propel'.ev_DS);
+            chdir($Environment->getConfig().'propel'.DIRECTORY_SEPARATOR);
             $propel_gen = ev_OS_UNIX ? 'propel-gen' : 'propel-gen.bat';
-            $task = ev_DIR_SRC.implode(ev_DS, ['Propel', 'generator','bin', $propel_gen]).' '.implode(' ', $params);
+            $task = $Environment->getSource().implode(DIRECTORY_SEPARATOR, ['Propel', 'generator','bin', $propel_gen]).' '.implode(' ', $params);
             runTask($task);
             break;
 

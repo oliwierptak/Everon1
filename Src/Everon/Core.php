@@ -4,24 +4,27 @@ namespace Everon;
 class Core implements Interfaces\Core
 {
     use Dependency\Injection\Factory;
+    use Dependency\Injection\Environment;
     use Dependency\Injection\Logger;
     use Dependency\Injection\Response;
     use Dependency\Injection\Router;
     use Dependency\Injection\ConfigManager;
     use Dependency\Injection\ModelManager;
-    
+
     public function start()
     {
         try {
             $class_name = $this->getRouter()->getCurrentRoute()->getController();
+
             /**
              * @var \Everon\Config $ApplicationConfig
              */
             $View = $this->getFactory()->buildView(
                 $class_name,
-                $this->getConfigManager()->getApplicationConfig()->go('template')->get('compilers')
+                $this->getConfigManager()->getApplicationConfig()->go('template')->get('compilers'),
+                $this->getEnvironment()->getViewTemplate()
             );
-    
+
             $Controller = $this->getFactory()->buildController($class_name, $View, $this->getModelManager());
             
             $result = $this->run($Controller);

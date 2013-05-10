@@ -18,7 +18,7 @@ class Propel extends Model\Manager implements Interfaces\ModelManager
                 ev_DIR_MODEL.'map'.PATH_SEPARATOR
         );
 
-        \Propel::init(ev_DIR_TMP.'propel'.ev_DS.'everon_book_catalog_example-conf.php');
+        \Propel::init(ev_DIR_TMP.'propel'.DIRECTORY_SEPARATOR.'everon_book_catalog_example-conf.php');
     }
 
 }

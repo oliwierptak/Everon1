@@ -103,9 +103,10 @@ interface Factory
     /**
      * @param $class_name
      * @param array $compilers_to_init
+     * @param $view_directory
      * @return Interfaces\View
      */
-    function buildView($class_name, array $compilers_to_init);
+    function buildView($class_name, array $compilers_to_init, $view_directory);
 
     /**
      * @param $directory

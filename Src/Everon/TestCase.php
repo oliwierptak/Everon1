@@ -1,14 +1,21 @@
 <?php
 namespace Everon;
 
+use Everon\Environment;
+
 abstract class TestCase extends \PHPUnit_Framework_TestCase
 {
     
     protected $suite_name = 'Everon'; //todo: this should come from PHPUnit enviroment
 
+    protected $Environment = null;
+
+
     public function __construct($name = NULL, array $data = array(), $dataName = '')
     {
         parent::__construct($name, $data, $dataName);
+
+        $this->Environment = new Environment(PROJECT_ROOT);
 
         $dir = $this->getDoublesDirectory();
         $includes = [
@@ -56,47 +63,47 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
 
     public function getTempDirectory()
     {
-        return ev_DIR_TESTS.$this->suite_name.ev_DS.'tmp'.ev_DS;
+        return $this->Environment->getTest().$this->suite_name.DIRECTORY_SEPARATOR.'tmp'.DIRECTORY_SEPARATOR;
     }
 
     public function getFixtureDirectory()
     {
-        return ev_DIR_TESTS.$this->suite_name.ev_DS.'fixtures'.ev_DS;
+        return $this->Environment->getTest().$this->suite_name.DIRECTORY_SEPARATOR.'fixtures'.DIRECTORY_SEPARATOR;
     }
 
     public function getStubDirectory()
     {
-        return ev_DIR_TESTS.$this->suite_name.ev_DS.'stubs'.ev_DS;
+        return $this->Environment->getTest().$this->suite_name.DIRECTORY_SEPARATOR.'stubs'.DIRECTORY_SEPARATOR;
     }
 
     public function getMockDirectory()
     {
-        return ev_DIR_TESTS.$this->suite_name.ev_DS.'mocks'.ev_DS;
+        return $this->Environment->getTest().$this->suite_name.DIRECTORY_SEPARATOR.'mocks'.DIRECTORY_SEPARATOR;
     }
 
     public function getDoublesDirectory()
     {
-        return ev_DIR_TESTS.$this->suite_name.ev_DS.'doubles'.ev_DS;
+        return $this->Environment->getTest().$this->suite_name.DIRECTORY_SEPARATOR.'doubles'.DIRECTORY_SEPARATOR;
     }
 
     public function getLogDirectory()
     {
-        return $this->getTempDirectory().'logs'.ev_DS;
+        return $this->getTempDirectory().'logs'.DIRECTORY_SEPARATOR;
     }
 
     public function getConfigDirectory()
     {
-        return $this->getFixtureDirectory().'config'.ev_DS;
+        return $this->getFixtureDirectory().'config'.DIRECTORY_SEPARATOR;
     }
     
     public function getTemplateDirectory()
     {
-        return $this->getFixtureDirectory().'templates'.ev_DS;
+        return $this->getFixtureDirectory().'templates'.DIRECTORY_SEPARATOR;
     }
 
     protected function getConfigManagerTempDirectory()
     {
-        return $this->getTempDirectory().'configmanager'.ev_DS;
+        return $this->getTempDirectory().'configmanager'.DIRECTORY_SEPARATOR;
     }
     
     public function getProtectedProperty($class_name, $name)

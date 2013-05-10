@@ -10,6 +10,7 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
 
     protected $name = null;
     protected $template_directory = null;
+    protected $view_template_directory = null;
 
     /**
      * @var Interfaces\TemplateContainer
@@ -21,15 +22,15 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
      */
     protected $compilers = [];
     
-    protected $action_template = null;
-
 
     /**
      * @param array $compilers
+     * @param $view_template_directory
      */
-    public function __construct(array $compilers)
+    public function __construct(array $compilers, $view_template_directory)
     {
-        $this->setCompilers($compilers);
+        $this->compilers = $compilers;
+        $this->view_template_directory = $view_template_directory;
     }
 
     /**
@@ -63,9 +64,10 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
         if (is_null($this->template_directory)) {
             $tokens = explode('\\', $this->getName());
             $name = array_pop($tokens);
-            $this->setTemplateDirectory(ev_DIR_VIEW_TEMPLATES.$name.ev_DS);
+            $this->setTemplateDirectory($this->view_template_directory.$name.DIRECTORY_SEPARATOR);
         }
-        
+
+
         return $this->template_directory;
     }
 
@@ -236,9 +238,4 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
         }
     }
     
-    public function getActionTemplate()
-    {
-        return $this->action_template;
-    }
-
 }
