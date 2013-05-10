@@ -195,16 +195,13 @@ EOF;
 
     public function dataProvider()
     {
-        $Logger = new \Everon\Logger($this->getLogDirectory());
+        /**
+         * @var \Everon\Interfaces\DependencyContainer $Container
+         * @var \Everon\Interfaces\Factory $Factory
+         */
+        list($Container, $Factory) = $this->getContainerAndFactory();
 
-        $dc = new \Everon\Dependency\Container();
-        $dc->register('Logger', function() use ($Logger) {
-            return $Logger;
-        });
-
-        $MyFactory = new MyFactory($dc);
-
-        $View = $MyFactory->buildView('MyView', ['Curly'], 'Everon\Test');
+        $View = $Factory->buildView('MyView', ['Curly'], '', 'Everon\Test');
         $View->setTemplateDirectory($this->getTemplateDirectory());
 
         return [

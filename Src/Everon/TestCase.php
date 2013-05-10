@@ -1,8 +1,6 @@
 <?php
 namespace Everon;
 
-use Everon\Environment;
-
 abstract class TestCase extends \PHPUnit_Framework_TestCase
 {
     
@@ -19,7 +17,6 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
 
         $dir = $this->getDoublesDirectory();
         $includes = [
-            'MyFactory.php',
             'MyController.php',
             'MyModelManager.php',
             'MyModel.php',
@@ -123,5 +120,72 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         
         return $Method;
     }
+    
+    public function getContainerAndFactory()
+    {
+        $Container = new Dependency\Container();
+        $Factory = new Factory($Container);
+        $Environment = $Factory->buildEnvironment(PROJECT_ROOT);
+        
+        $Environment->setLog($this->getLogDirectory());
+        $Environment->setConfig($this->getConfigDirectory());
+        $Environment->setCacheConfig($this->getTempDirectory().'configmanager'.DIRECTORY_SEPARATOR);
+
+        $Container->register('Environment', function() use ($Environment) {
+            return $Environment;
+        });
+
+        $log_directory = $Environment->getLog();
+        $Container->register('Logger', function() use ($Factory, $log_directory) {
+            return $Factory->buildLogger($log_directory);
+        });
+
+        $server_data = $this->getServerDataForRequest([
+            'REQUEST_METHOD' => 'GET',
+            'REQUEST_URI' => '/',
+            'QUERY_STRING' => '',
+        ]);
+        $Container->register('Request', function() use ($Factory, $server_data) {
+            return $Factory->buildRequest($server_data, $_GET, $_POST, $_FILES);
+        });
+
+        $Container->register('Response', function() use ($Factory) {
+            return $Factory->buildResponse();
+        });
+
+        $Container->register('ConfigExpressionMatcher', function() use ($Factory) {
+            return $Factory->buildConfigExpressionMatcher();
+        });
+
+        $Matcher = $Container->resolve('ConfigExpressionMatcher');
+        $config_directory = $Environment->getConfig();
+        $config_cache_directory = $Environment->getCacheConfig();
+        $Container->register('ConfigManager', function() use ($Factory, $Matcher, $config_directory, $config_cache_directory) {
+            return $Factory->buildConfigManager($Matcher, $config_directory, $config_cache_directory);
+        });
+
+        $Request = $Container->resolve('Request');
+        $RouteConfig = $Container->resolve('ConfigManager')->getRouterConfig();
+        $Container->register('Router', function() use ($Factory, $Request, $RouteConfig) {
+            return $Factory->buildRouter($Request, $RouteConfig);
+        });
+
+        $Container->register('Core', function() use ($Factory) {
+            return $Factory->buildCore();
+        });
+
+        /**
+         * @var \Everon\Config $Config
+         */
+        $Config = $Container->resolve('ConfigManager')->getApplicationConfig();
+        $manager = $Config->go('model')->get('manager', 'Everon');
+        $Container->register('ModelManager', function() use ($Factory, $manager) {
+            return $Factory->buildModelManager($manager);
+        });
+        
+        
+        return [$Container, $Factory];
+    }
+
     
 }

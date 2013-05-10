@@ -103,10 +103,11 @@ interface Factory
     /**
      * @param $class_name
      * @param array $compilers_to_init
-     * @param $view_directory
+     * @param $view_template_directory
+     * @param string $ns
      * @return Interfaces\View
      */
-    function buildView($class_name, array $compilers_to_init, $view_directory);
+    function buildView($class_name, array $compilers_to_init, $view_template_directory, $ns='Everon\View');
 
     /**
      * @param $directory

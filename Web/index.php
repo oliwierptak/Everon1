@@ -24,8 +24,9 @@ namespace Everon
             return $Environment;
         });
 
-        $Container->register('Logger', function() use ($Factory, $Environment) {
-            return $Factory->buildLogger($Environment->getLog());
+        $log_directory = $Environment->getLog();
+        $Container->register('Logger', function() use ($Factory, $log_directory) {
+            return $Factory->buildLogger($log_directory);
         });
 
         $Container->register('Request', function() use ($Factory) {
@@ -41,8 +42,10 @@ namespace Everon
         });
 
         $Matcher = $Container->resolve('ConfigExpressionMatcher');
-        $Container->register('ConfigManager', function() use ($Factory, $Matcher, $Environment) {
-            return $Factory->buildConfigManager($Matcher, $Environment->getConfig(), $Environment->getCacheConfig());
+        $config_directory = $Environment->getConfig();
+        $config_cache_directory = $Environment->getCacheConfig();        
+        $Container->register('ConfigManager', function() use ($Factory, $Matcher, $config_directory, $config_cache_directory) {
+            return $Factory->buildConfigManager($Matcher, $config_directory, $config_cache_directory);
         });
 
         $Request = $Container->resolve('Request');

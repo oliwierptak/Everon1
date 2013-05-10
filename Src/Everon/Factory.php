@@ -156,12 +156,12 @@ class Factory implements Interfaces\Factory
     /**
      * @param $class_name
      * @param array $compilers_to_init
-     * @param $view_directory
+     * @param $view_template_directory
      * @param string $ns
      * @return Interfaces\View
      * @throws Exception\Factory
      */
-    public function buildView($class_name, array $compilers_to_init, $view_directory, $ns='Everon\View')
+    public function buildView($class_name, array $compilers_to_init, $view_template_directory, $ns='Everon\View')
     {
         try {
             $class_name = $this->getFullClassName($ns, $class_name);
@@ -171,7 +171,7 @@ class Factory implements Interfaces\Factory
                 $compilers[] = $this->buildTemplateCompiler($compilers_to_init[$a]);
             }
 
-            $View = new $class_name($compilers, $view_directory);
+            $View = new $class_name($compilers, $view_template_directory);
             $View = $this->getDependencyContainer()->inject($class_name, $this, $View);
             return $View;
         }

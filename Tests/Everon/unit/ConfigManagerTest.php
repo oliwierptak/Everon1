@@ -13,7 +13,11 @@ class ConfigManagerTest extends \Everon\TestCase
     public function testConstructor()
     {
         $Matcher = new \Everon\Config\ExpressionMatcher();
-        $Manager = new \Everon\Config\Manager($Matcher, $this->getConfigDirectory(), $this->getTempDirectory().'configmanager'.DIRECTORY_SEPARATOR);
+        $Manager = new \Everon\Config\Manager(
+            $Matcher, 
+            $this->getConfigDirectory(), 
+            $this->getTempDirectory().'configmanager'.DIRECTORY_SEPARATOR
+        );
         $this->assertInstanceOf('\Everon\Interfaces\ConfigManager', $Manager);
     }
 
@@ -22,14 +26,12 @@ class ConfigManagerTest extends \Everon\TestCase
      */
     public function testRegister(\Everon\Interfaces\ConfigManager $ConfigManager, \Everon\Interfaces\Config $Expected)
     {
-        $ConfigManager->register($Expected);
-
         $ConfigTwo = new \Everon\Config('test', 'test.ini', ['test_two'=>true]);
         $ConfigTwo->setName('test_two');
         $ConfigTwo->setFilename('test_two.ini');
         $ConfigManager->register($ConfigTwo);
 
-        $this->assertCount(2, $ConfigManager->getConfigs());
+        $this->assertCount(4, $ConfigManager->getConfigs());
     }
 
     /**
@@ -37,10 +39,9 @@ class ConfigManagerTest extends \Everon\TestCase
      */
     public function testUnRegister(\Everon\Interfaces\ConfigManager $ConfigManager, \Everon\Interfaces\Config $Expected)
     {
-        $ConfigManager->register($Expected);
         $ConfigManager->unRegister($Expected->getName());
 
-        $this->assertCount(0, $ConfigManager->getConfigs());
+        $this->assertCount(2, $ConfigManager->getConfigs());
     }
 
     /**
@@ -175,13 +176,11 @@ class ConfigManagerTest extends \Everon\TestCase
     
     public function dataProvider()
     {
-        $dc = new \Everon\Dependency\Container();
-        $Factory = new \Everon\Factory($dc);
-        $Matcher = $Factory->buildConfigExpressionMatcher();
-        $ConfigManager = $Factory->buildConfigManager($Matcher, $this->getConfigDirectory(), $this->getConfigManagerTempDirectory());
-        $dc->register('ConfigManager', function() use ($ConfigManager) {
-            return $ConfigManager;
-        });
+        /**
+         * @var \Everon\Interfaces\DependencyContainer $Container
+         * @var \Everon\Interfaces\Factory $Factory
+         */
+        list($Container, $Factory) = $this->getContainerAndFactory();
 
         $Expected = new \Everon\Config(
             'test',
@@ -190,7 +189,7 @@ class ConfigManagerTest extends \Everon\TestCase
         );
 
         return [
-            [$ConfigManager, $Expected]
+            [$Container->resolve('ConfigManager'), $Expected]
         ];
     }
 

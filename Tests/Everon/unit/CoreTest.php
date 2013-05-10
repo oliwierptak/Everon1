@@ -193,51 +193,24 @@ class CoreTest extends \Everon\TestCase
 
     public function dataProvider()
     {
-        $Logger = new \Everon\Logger($this->getLogDirectory());
-
-        $Container = new \Everon\Dependency\Container();
-        $Container->register('Logger', function() use ($Logger) {
-            return $Logger;
-        });        
+        /**
+         * @var \Everon\Interfaces\DependencyContainer $Container
+         * @var \Everon\Interfaces\Factory $Factory
+         */        
+        list($Container, $Factory) = $this->getContainerAndFactory();
         
-        $MyFactory = new MyFactory($Container);
+        $View = $this->getMockBuilder('Everon\Interfaces\View')
+            ->disableOriginalConstructor()
+            ->getMock();
 
-        $server = $this->getServerDataForRequest([
-            'REQUEST_METHOD' => 'GET',
-            'REQUEST_URI' => '/',
-            'QUERY_STRING' => '',
-        ]);
-        $Request = new \Everon\Request($server, [], [], []);
-        $Container->register('Request', function() use ($Request) {
-            return $Request;
-        });
+        $ModelManager = $this->getMockBuilder('Everon\Interfaces\ModelManager')
+            ->disableOriginalConstructor()
+            ->getMock();
 
-        $Matcher = $MyFactory->buildConfigExpressionMatcher();
-        $ConfigManager = $MyFactory->buildConfigManager($Matcher, $this->getConfigDirectory(), $this->getTempDirectory().'configmanager'.DIRECTORY_SEPARATOR);
-        $Container->register('ConfigManager', function() use ($ConfigManager) {
-            return $ConfigManager;
-        });
-
-        $RouterConfig = $ConfigManager->getRouterConfig();
-        $Router = $MyFactory->buildRouter($Request, $RouterConfig);
-        $Container->register('Router', function() use ($Router) {
-            return $Router;
-        });
-
-        $Config = $Container->resolve('ConfigManager')->getApplicationConfig();
-        $Container->register('ModelManager', function() use ($MyFactory, $Config) {
-            return $MyFactory->buildModelManager($Config->go('model')->get('manager'));
-        });        
-
-        $Container->register('Response', function() use ($MyFactory) {
-            return $MyFactory->buildResponse();
-        });        
-
-        $View = $MyFactory->buildView('MyController', ['Curly']);
-        $Controller = $MyFactory->buildController('MyController', $View, $Container->resolve('ModelManager'));
+        $Controller = $Factory->buildController('MyController', $View, $ModelManager, 'Everon\Test');
 
         return [
-            [$Controller, $MyFactory]
+            [$Controller, $Factory]
         ];
     }
 

@@ -14,7 +14,7 @@ class FactoryTest extends \Everon\TestCase
      */
     public function testConstructor(Interfaces\Factory $Factory, Interfaces\DependencyContainer $DependencyContainer)
     {
-        $FactoryInstance = new MyFactory($DependencyContainer);
+        $FactoryInstance = new \Everon\Factory($DependencyContainer);
         $this->assertInstanceOf('\Everon\Interfaces\Factory', $FactoryInstance);
     }
 
@@ -99,7 +99,7 @@ class FactoryTest extends \Everon\TestCase
      */
     public function testBuildView(Interfaces\Factory $Factory, Interfaces\DependencyContainer $DependencyContainer)
     {
-        $View = $Factory->buildView('MyView', ['Curly'], '\Everon\Test');
+        $View = $Factory->buildView('MyView', ['Curly'], '', '\Everon\Test');
         $this->assertInstanceOf('\Everon\Interfaces\View', $View);
     }
 
@@ -183,7 +183,7 @@ class FactoryTest extends \Everon\TestCase
      */
     public function testBuildTemplate(Interfaces\Factory $Factory, Interfaces\DependencyContainer $DependencyContainer)
     {
-        $View = $Factory->buildView('MyView', ['Curly'], '\Everon\Test');
+        $View = $Factory->buildView('MyView', ['Curly'], '', '\Everon\Test');
         $Template = $Factory->buildTemplate($View, '', []);
         $this->assertInstanceOf('\Everon\Interfaces\TemplateContainer', $Template);
     }
@@ -309,13 +309,13 @@ class FactoryTest extends \Everon\TestCase
     /**
      * @dataProvider dataProvider
      * @expectedException \Everon\Exception\Factory
-     * @expectedExceptionMessage View: "Everon\View\Test" initialization error.
-     * TemplateCompiler: "\Everon\View\Template\Compiler\NonExisting" initialization error.
+     * @expectedExceptionMessage View: "\Everon\Test\Wrong" initialization error.
+     * TemplateCompiler: "Everon\View\Template\Compiler\NonExisting" initialization error.
      * File for class: "Everon\View\Template\Compiler\NonExisting" could not be found
      */
     public function testBuildViewShouldThrowExceptionWhenWrongClass(Interfaces\Factory $Factory, Interfaces\DependencyContainer $DependencyContainer)
     {
-        $Factory->buildView('Test', ['NonExisting']);
+        $Factory->buildView('Wrong', ['NonExisting'], '', '\Everon\Test');
     }
     
     /**
@@ -436,46 +436,11 @@ class FactoryTest extends \Everon\TestCase
 
     public function dataProvider()
     {
-        $Container = new \Everon\Dependency\Container();
-        $Factory = new \Everon\Factory($Container);
-        $Logger = $Factory->buildLogger($this->getLogDirectory());
-        
-        $Container->register('Logger', function() use ($Logger) {
-            return $Logger;
-        });
-/*        $Container->register('Response', function() use ($Factory) {
-            return $Factory->buildResponse();
-        });*/
-        $server = $this->getServerDataForRequest([
-            'REQUEST_METHOD' => 'GET',
-            'REQUEST_URI' => '/',
-            'QUERY_STRING' => '',
-        ]);
-        $Container->register('Request', function() use ($Factory, $server) {
-            return $Factory->buildRequest($server, [], [], []);
-        });
-        
-        $directory = $this->getConfigDirectory();
-        $cache_directory = $this->getTempDirectory().'configmanager'.DIRECTORY_SEPARATOR;
-        $Matcher = $this->getMock('\Everon\Interfaces\ConfigExpressionMatcher');
-        $Container->register('ConfigManager', function() use ($Factory, $Matcher, $directory, $cache_directory) {
-            return $Factory->buildConfigManager($Matcher, $directory, $cache_directory);
-        });
-        
-        $Config = $Container->resolve('ConfigManager')->getApplicationConfig();
-        $Container->register('ModelManager', function() use ($Factory, $Config) {
-            return $Factory->buildModelManager($Config->go('model')->get('manager'));
-        });
-
-        $Request = $Container->resolve('Request');
-        $Config = $Container->resolve('ConfigManager')->getRouterConfig();
-        $Container->register('Router', function() use ($Factory, $Request, $Config) {
-            return $Factory->buildRouter($Request, $Config);
-        });
-
-        $Container->register('Response', function() use ($Factory) {
-            return $Factory->buildResponse();
-        });
+        /**
+         * @var \Everon\Interfaces\DependencyContainer $Container
+         * @var \Everon\Interfaces\Factory $Factory
+         */
+        list($Container, $Factory) = $this->getContainerAndFactory();
         
         return [
             [$Factory, $Container]
