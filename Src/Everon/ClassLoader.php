@@ -109,13 +109,23 @@ class ClassLoader implements Interfaces\ClassLoader
         
         return false;
     }
-    
+
+    /**
+     * @param $class
+     * @param $path
+     * @return string
+     */
     protected function classToFileName($class, $path)
     {
         return $path.str_replace("\\", DIRECTORY_SEPARATOR, $class).'.php';
     }
-    
-    protected function includeWhenExists($class, $namespace, $path)
+
+    /**
+     * @param $class
+     * @param $path
+     * @return bool|string
+     */
+    protected function includeWhenExists($class, $path)
     {
         $filename = $this->classToFileName($class, $path);
         $exists = file_exists($filename);
@@ -128,37 +138,15 @@ class ClassLoader implements Interfaces\ClassLoader
         return false;
     }
 
-    public function isNamespace($namespace, $match)
+    /**
+     * @param $namespace
+     * @param $match
+     * @return bool
+     */
+    protected function isNamespace($namespace, $match)
     {
         $a = substr(strtolower($namespace), 0, strlen($match)) ;
         return strcasecmp($a, $match) == 0;
     }
-
-    public function stripNamespace($namespace, $where)
-    {
-        return preg_replace('@^([\\\]?)'.$namespace.'([\\\]?)@i', '', $where);
-    }
-    
-    public function hasNamespace($namespace)
-    {
-        $namespace = ltrim($namespace, '\\');
-        return strpos($namespace, '\\') !== false;
-    }
-
-
-
-
-
-
-    public function getFilenameByClassName($class, $directory=ev_DIR_SRC)
-    {
-        $filename = $directory.$class.'.php';
-        return $this->fixPath($filename);
-    }
-
-    public function fixPath($path)
-    {
-        return str_replace(array('/', '\\'), \ev_DS, $path);
-    }    
 
 }
