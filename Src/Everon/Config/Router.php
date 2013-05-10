@@ -19,7 +19,7 @@ class Router extends \Everon\Config implements Interfaces\RouterConfig
     protected $routes = null;
 
     /**
-     * @var RouteItem
+     * @var Interfaces\RouteItem
      */
     protected $DefaultRoute = null;
 
@@ -52,7 +52,7 @@ class Router extends \Everon\Config implements Interfaces\RouterConfig
     }
 
     /**
-     * @return RouteItem|null
+     * @return Interfaces\RouteItem|null
      */
     public function getDefaultRoute()
     {
@@ -77,7 +77,7 @@ class Router extends \Everon\Config implements Interfaces\RouterConfig
 
     /**
      * @param string $routeName
-     * @return RouteItem
+     * @return Interfaces\RouteItem
      */
     public function getRouteByName($routeName)
     {
