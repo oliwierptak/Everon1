@@ -3,7 +3,9 @@
 function mpr()
 {
     $args = func_get_args();
-    _mpr($args);
+    foreach ($args as $a) {
+        _mpr($a);
+    }
 }
 /**
  * General purpose debug dumper

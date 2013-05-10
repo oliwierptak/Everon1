@@ -10,6 +10,6 @@ trait IsNamespace
      */
     public function isNamespace($namespace, $match='everon')
     {
-        return substr(strtolower($namespace),0,6) == $match;
+        return substr(strtolower($namespace),0, strlen($match)) == $match;
     }
 }
