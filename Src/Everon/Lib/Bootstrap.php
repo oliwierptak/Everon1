@@ -21,8 +21,6 @@ namespace Everon
     }
 
     $ClassLoader = new ClassLoader(false);
-    $ClassLoader->unRegister();
-
     $ClassLoader->add('Everon', ev_DIR_SRC);
     $ClassLoader->add('Everon\Model', ev_DIR_MODEL);
     $ClassLoader->add('Everon\View', ev_DIR_VIEW);
