@@ -95,14 +95,14 @@ class ClassLoader implements Interfaces\ClassLoader
         $namespace = ltrim($namespace, '\\');
         $path = rtrim($path, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
 
-        $filename = $this->includeWhenExists($class_name, $namespace, $path);
+        $filename = $this->includeWhenExists($class_name, $path);
         if ($filename !== false) {
             return [$class_name, $filename];
         }
         
         $class = substr($class_name, strlen($namespace), strlen($class_name));
         $class = ltrim($class, '\\');
-        $filename = $this->includeWhenExists($class, $namespace, $path);
+        $filename = $this->includeWhenExists($class, $path);
         if ($filename !== false) {
             return [$class_name, $filename];
         }
@@ -117,7 +117,7 @@ class ClassLoader implements Interfaces\ClassLoader
      */
     protected function classToFileName($class, $path)
     {
-        return $path.str_replace("\\", DIRECTORY_SEPARATOR, $class).'.php';
+        return $path.str_replace('\\', DIRECTORY_SEPARATOR, $class).'.php';
     }
 
     /**

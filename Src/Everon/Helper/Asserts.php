@@ -37,12 +37,12 @@ trait Asserts
         }
         catch (\Exception $e) {
             try {
-                $class = "Everon\Exception\\${exception_class}";
+                $class = "Everon\\Exception\\${exception_class}";
                 if (class_exists($class, true) === false) {
                     $exception_class = 'Everon\Exception\Asserts';
                 }
                 else {
-                    $exception_class = "Everon\Exception\\${exception_class}";
+                    $exception_class = "Everon\\Exception\\${exception_class}";
                 }
             }
             catch (\Exception $e) {

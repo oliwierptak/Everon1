@@ -20,7 +20,7 @@ namespace Everon
         $ClassMap = new ClassMap();
     }
 
-    $ClassLoader = new ClassLoader($ClassMap);
+    $ClassLoader = new ClassLoader(false);
     $ClassLoader->unRegister();
 
     $ClassLoader->add('Everon', ev_DIR_SRC);
