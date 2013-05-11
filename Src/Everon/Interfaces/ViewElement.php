@@ -1,7 +1,7 @@
 <?php
 namespace Everon\Interfaces;
 
-interface Component
+interface ViewElement
 {
     function toArray();
 }

@@ -61,7 +61,7 @@ class ConfigManagerTest extends \Everon\TestCase
     public function testLoadAndRegisterConfigs(\Everon\Interfaces\ConfigManager $ConfigManager, \Everon\Interfaces\Config $Expected)
     {
         $Config = $ConfigManager->getRouterConfig();
-        $this->assertInstanceOf('\Everon\Interfaces\RouterConfig', $Config);
+        $this->assertInstanceOf('\Everon\Interfaces\ConfigRouter', $Config);
 
         $Config = $ConfigManager->getApplicationConfig();
         $this->assertInstanceOf('\Everon\Interfaces\Config', $Config);

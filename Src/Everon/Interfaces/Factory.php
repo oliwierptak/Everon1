@@ -68,16 +68,23 @@ interface Factory
 
     /**
      * @param array $data
-     * @return Interfaces\RouteItem
+     * @return Interfaces\ConfigItemRouter
      */
-    function buildRouteItem(array $data);
+    function buildConfigItemRouter(array $data);
+
+    /**
+     * @param array $data
+     * @return Interfaces\ViewItem
+     * @throws Exception\Factory
+     */
+    function buildViewItem(array $data);
 
     /**
      * @param Request $Request
-     * @param RouterConfig $Config
+     * @param ConfigRouter $Config
      * @return Interfaces\Router
      */
-    function buildRouter(Request $Request, RouterConfig $Config);
+    function buildRouter(Request $Request, ConfigRouter $Config);
 
     /**
      * @param View $View

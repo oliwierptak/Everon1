@@ -2,7 +2,7 @@
 namespace Everon\View;
 
 
-abstract class Element extends \Everon\Helper\Popo implements \Everon\Interfaces\Component
+abstract class Element extends \Everon\Helper\Popo implements \Everon\Interfaces\ViewElement
 {
     /**
      * @param array $defaults

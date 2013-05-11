@@ -1,7 +1,11 @@
 <?php
-namespace Everon;
+namespace Everon\Config\Item;
 
-class RouteItem implements Interfaces\RouteItem, Interfaces\Arrayable
+use Everon\Exception;
+use Everon\Interfaces;
+use Everon\Helper;
+
+class Router implements Interfaces\ConfigItemRouter, Interfaces\Arrayable
 {
     use Helper\Asserts;
     use Helper\Asserts\IsStringAndNonEmpty;
@@ -164,7 +168,7 @@ class RouteItem implements Interfaces\RouteItem, Interfaces\Arrayable
      * @param $request_url
      * @param $get_data
      * @return array|null
-     * @throws Exception\RouteItem
+     * @throws Exception\ConfigItemRouter
      */
     public function validateQueryAndGet($request_url, array $get_data)
     {
@@ -174,7 +178,7 @@ class RouteItem implements Interfaces\RouteItem, Interfaces\Arrayable
             return array_merge($parsed_query, $parsed_get);
         }
         catch (\Exception $e) {
-            throw new Exception\RouteItem($e);
+            throw new Exception\ConfigItemRouter($e);
         }
     }
 
@@ -229,7 +233,7 @@ class RouteItem implements Interfaces\RouteItem, Interfaces\Arrayable
     /**
      * @param array $post_data
      * @return array
-     * @throws Exception\RouteItem
+     * @throws Exception\ConfigItemRouter
      */
     public function validatePost(array $post_data)
     {
@@ -251,7 +255,7 @@ class RouteItem implements Interfaces\RouteItem, Interfaces\Arrayable
             return $post_data;
         }
         catch (\Exception $e) {
-            throw new Exception\RouteItem($e);
+            throw new Exception\ConfigItemRouter($e);
         }
     }
 
@@ -260,10 +264,10 @@ class RouteItem implements Interfaces\RouteItem, Interfaces\Arrayable
      */
     public function validateData(array $data)
     {
-        $this->assertIsStringAndNonEmpty($data['route_name'], 'Invalid route name: "%s"', 'RouteItem');
-        $this->assertIsStringAndNonEmpty($data['url'], 'Invalid url: "%s"', 'RouteItem');
-        $this->assertIsStringAndNonEmpty($data['controller'], 'Invalid controller: "%s"', 'RouteItem');
-        $this->assertIsStringAndNonEmpty($data['action'], 'Invalid action: "%s"', 'RouteItem');
+        $this->assertIsStringAndNonEmpty($data['route_name'], 'Invalid route name: "%s"', 'ConfigItemRouter');
+        $this->assertIsStringAndNonEmpty($data['url'], 'Invalid url: "%s"', 'ConfigItemRouter');
+        $this->assertIsStringAndNonEmpty($data['controller'], 'Invalid controller: "%s"', 'ConfigItemRouter');
+        $this->assertIsStringAndNonEmpty($data['action'], 'Invalid action: "%s"', 'ConfigItemRouter');
     }    
 
     public function getName()

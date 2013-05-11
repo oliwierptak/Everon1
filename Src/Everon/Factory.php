@@ -242,11 +242,11 @@ class Factory implements Interfaces\Factory
 
     /**
      * @param Interfaces\Request $Request
-     * @param Interfaces\RouterConfig $Config
+     * @param Interfaces\ConfigRouter $Config
      * @return Interfaces\Router
      * @throws Exception\Factory
      */
-    public function buildRouter(Interfaces\Request $Request, Interfaces\RouterConfig $Config)
+    public function buildRouter(Interfaces\Request $Request, Interfaces\ConfigRouter $Config)
     {
         try {
             $RouteItem = new Router($Request, $Config);
@@ -260,18 +260,35 @@ class Factory implements Interfaces\Factory
 
     /**
      * @param array $data
-     * @return Interfaces\RouteItem
+     * @return Interfaces\ConfigItemRouter
      * @throws Exception\Factory
      */
-    public function buildRouteItem(array $data)
+    public function buildConfigItemRouter(array $data)
     {
         try {
-            $RouteItem = new RouteItem($data);
-            $RouteItem = $this->getDependencyContainer()->inject('Everon\RouteItem', $this, $RouteItem);
+            $RouteItem = new Config\Item\Router($data);
+            $RouteItem = $this->getDependencyContainer()->inject('Everon\Config\Item\Router', $this, $RouteItem);
             return $RouteItem;
         }
         catch (\Exception $e) {
-            throw new Exception\Factory('RouteItem initialization error', null, $e);
+            throw new Exception\Factory('ConfigItemRouter initialization error', null, $e);
+        }
+    }
+    
+    /**
+     * @param array $data
+     * @return Interfaces\ViewItem
+     * @throws Exception\Factory
+     */
+    public function buildViewItem(array $data)
+    {
+        try {
+            $PageItem = new ViewItem($data);
+            $PageItem = $this->getDependencyContainer()->inject('Everon\ViewItem', $this, $PageItem);
+            return $PageItem;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('ViewItem initialization error', null, $e);
         }
     }
 
@@ -409,9 +426,9 @@ class Factory implements Interfaces\Factory
 /* 
     public function buildViewComponent($data)
     {
-        $Component = new View\Template\Component\Everon($data);
+        $ViewElement = new View\Template\ViewElement\Everon($data);
 
-        return $Component;
+        return $ViewElement;
     }*/
 
 }

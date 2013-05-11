@@ -5,7 +5,7 @@ use Everon\Dependency;
 use Everon\Helper;
 use Everon\Interfaces;
 
-class Router extends \Everon\Config implements Interfaces\RouterConfig
+class Router extends \Everon\Config implements Interfaces\ConfigRouter
 {
     use Dependency\Injection\Factory;
     use Dependency\Injection\ConfigManager;
@@ -19,7 +19,7 @@ class Router extends \Everon\Config implements Interfaces\RouterConfig
     protected $routes = null;
 
     /**
-     * @var Interfaces\RouteItem
+     * @var Interfaces\ConfigItemRouter
      */
     protected $DefaultRoute = null;
 
@@ -29,7 +29,7 @@ class Router extends \Everon\Config implements Interfaces\RouterConfig
         $default_or_first_item = null;
         foreach ($this->getData() as $route_name => $config_data) {
             $config_data['route_name'] = $route_name;
-            $RouteItem = $this->getFactory()->buildRouteItem($config_data);
+            $RouteItem = $this->getFactory()->buildConfigItemRouter($config_data);
             $this->routes[$route_name] = $RouteItem;
 
             $default_or_first_item = (is_null($default_or_first_item)) ? $RouteItem : $default_or_first_item;
@@ -44,15 +44,15 @@ class Router extends \Everon\Config implements Interfaces\RouterConfig
     }
 
     /**
-     * @param \Everon\Interfaces\RouteItem $RouteItem
+     * @param \Everon\Interfaces\ConfigItemRouter $RouteItem
      */
-    public function setDefaultRoute(Interfaces\RouteItem $RouteItem)
+    public function setDefaultRoute(Interfaces\ConfigItemRouter $RouteItem)
     {
         $this->DefaultRoute = $RouteItem;
     }
 
     /**
-     * @return Interfaces\RouteItem|null
+     * @return Interfaces\ConfigItemRouter|null
      */
     public function getDefaultRoute()
     {
@@ -76,17 +76,17 @@ class Router extends \Everon\Config implements Interfaces\RouterConfig
     }
 
     /**
-     * @param string $routeName
-     * @return Interfaces\RouteItem
+     * @param string $route_name
+     * @return Interfaces\ConfigItemRouter
      */
-    public function getRouteByName($routeName)
+    public function getRouteByName($route_name)
     {
         if (is_null($this->routes)) {
             $this->initRoutes();
         }
 
-        $this->assertIsArrayKey($routeName, $this->routes, 'Invalid route name: "%s"');
-        return $this->routes[$routeName];
+        $this->assertIsArrayKey($route_name, $this->routes, 'Invalid route name: "%s"');
+        return $this->routes[$route_name];
     }
 
 }

@@ -6,28 +6,28 @@ interface Router
 {
     /**
      * @param \Everon\Interfaces\Request $Request
-     * @return \Everon\Interfaces\RouteItem
+     * @return \Everon\Interfaces\ConfigItemRouter
      * @throws \Everon\Exception\PageNotFound
      */
     function getRouteItemByRequest(Request $Request);
 
     /**
-     * @param \Everon\Interfaces\RouteItem $RouteItem
+     * @param \Everon\Interfaces\ConfigItemRouter $RouteItem
      * @param \Everon\Interfaces\Request $Request
      * @return void
      */
-    function setRequestPostDataAndValidateRoute(RouteItem $RouteItem, Request $Request);
+    function setRequestPostDataAndValidateRoute(ConfigItemRouter $RouteItem, Request $Request);
 
     /**
      * @param $route_name
-     * @return \Everon\Interfaces\RouteItem
+     * @return \Everon\Interfaces\ConfigItemRouter
      * @throws \Everon\Exception\Router
      */
     function getRouteByName($route_name);
 
     /**
      * @param $url
-     * @return \Everon\Interfaces\RouteItem|null
+     * @return \Everon\Interfaces\ConfigItemRouter|null
      */
     function getRouteItemByUrl($url);
 
@@ -62,13 +62,13 @@ interface Router
     function getRequest();
 
     /**
-     * @param \Everon\Interfaces\RouteItem $RouteItem
+     * @param \Everon\Interfaces\ConfigItemRouter $RouteItem
      * @return void
      */
-    function setCurrentRoute(RouteItem $RouteItem);
+    function setCurrentRoute(ConfigItemRouter $RouteItem);
 
     /**
-     * @return \Everon\Interfaces\RouteItem
+     * @return \Everon\Interfaces\ConfigItemRouter
      */
     function getCurrentRoute();
 

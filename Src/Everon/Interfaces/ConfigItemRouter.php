@@ -2,7 +2,7 @@
 namespace Everon\Interfaces;
 
 
-interface RouteItem
+interface ConfigItemRouter
 {
     function getName();
     function setName($route_name);

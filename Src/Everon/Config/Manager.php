@@ -201,7 +201,7 @@ class Manager implements Interfaces\ConfigManager
     }
 
     /**
-     * @return \Everon\Interfaces\RouterConfig
+     * @return \Everon\Interfaces\ConfigRouter
      */
     public function getRouterConfig()
     {

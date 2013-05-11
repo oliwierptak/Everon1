@@ -28,7 +28,7 @@ class CoreTest extends \Everon\TestCase
      */
     public function testRunShouldThrowExceptionWhenInvalidControllerMethod(\Everon\Interfaces\Controller $Controller, \Everon\Interfaces\Factory $Factory)
     {
-        $RouteItemMock = $this->getMock('Everon\Interfaces\RouteItem');
+        $RouteItemMock = $this->getMock('Everon\Interfaces\ConfigItemRouter');
         $RouteItemMock->expects($this->atLeastOnce())
             ->method('getAction')
             ->will($this->returnValue('WrongActionName'));
@@ -83,7 +83,7 @@ class CoreTest extends \Everon\TestCase
             ->method('afterTestOne')
             ->will($this->returnValue(true));
         
-        $RouteItemMock = $this->getMock('Everon\Interfaces\RouteItem');
+        $RouteItemMock = $this->getMock('Everon\Interfaces\ConfigItemRouter');
         $RouteItemMock->expects($this->atLeastOnce())
             ->method('getAction')
             ->will($this->returnValue('testOne'));
@@ -145,7 +145,7 @@ class CoreTest extends \Everon\TestCase
             ->method('afterTestOne')
             ->will($this->returnValue(false));
 
-        $RouteItemMock = $this->getMock('Everon\Interfaces\RouteItem');
+        $RouteItemMock = $this->getMock('Everon\Interfaces\ConfigItemRouter');
         $RouteItemMock->expects($this->atLeastOnce())
             ->method('getAction')
             ->will($this->returnValue('testOne'));

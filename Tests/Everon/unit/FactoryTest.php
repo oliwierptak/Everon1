@@ -163,7 +163,7 @@ class FactoryTest extends \Everon\TestCase
      */
     public function testBuildRouteItem(Interfaces\Factory $Factory, Interfaces\DependencyContainer $DependencyContainer)
     {
-        $RouteItem = $Factory->buildRouteItem([
+        $RouteItem = $Factory->buildConfigItemRouter([
             'route_name' => 'test',
             'url' => '/test.htm',
             'controller' => 'MyController',
@@ -173,7 +173,7 @@ class FactoryTest extends \Everon\TestCase
             'default' => false,
         ]);
 
-        $this->assertInstanceOf('\Everon\Interfaces\RouteItem', $RouteItem);
+        $this->assertInstanceOf('\Everon\Interfaces\ConfigItemRouter', $RouteItem);
     }
 
     /**
@@ -348,18 +348,18 @@ class FactoryTest extends \Everon\TestCase
     public function testBuildRouterShouldThrowExceptionWhenWrongClass(Interfaces\Factory $FactoryMock)
     {
         $Request = $this->getMock('\Everon\Interfaces\Request');
-        $Config = $this->getMock('\Everon\Interfaces\RouterConfig');
+        $Config = $this->getMock('\Everon\Interfaces\ConfigRouter');
         $FactoryMock->buildRouter($Request, $Config);
     }
     
     /**
      * @dataProvider dataProviderForExceptions
      * @expectedException \Everon\Exception\Factory
-     * @expectedExceptionMessage RouteItem initialization error
+     * @expectedExceptionMessage ConfigItemRouter initialization error
      */
     public function testBuildRouteItemThrowExceptionWhenWrongClass(Interfaces\Factory $FactoryMock)
     {
-        $FactoryMock->buildRouteItem([]);
+        $FactoryMock->buildConfigItemRouter([]);
     }
     
     /**
