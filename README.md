@@ -20,27 +20,31 @@ Very alpha version
 ## Dependency Injection
 Consider this model, as you can see it does not inherit from anything, and there is no constructor.
 
-    <?php
-    class MyModel
+```php
+<?php
+class MyModel
+{
+    public function helloWorld()
     {
-        public function helloWorld()
-        {
 
-        }    
-    }
+    }    
+}
+```
     
 Let's say you need a logger for that particular model. All you must write is one line. Everon does the rest.
 
-    <?php
-    class MyModel
+```php
+<?php
+class MyModel
+{
+    use Dependency\Injection\Logger;
+        
+    public function helloWorld()
     {
-        use Dependency\Injection\Logger;
-            
-        public function helloWorld()
-        {
-            $this->getLogger()->log('information');
-        }
+        $this->getLogger()->log('information');
     }
+}
+```
 
 One line, on demand, lazy loaded dependency injection.
 If you need specific constructor injection you can extend default Factory class. 
@@ -78,5 +82,3 @@ It could be translated into commands for Everon:
 
 Unless all those conditions are met, the request won't pass and error exception will be thrown.
 Of course you can write your own regular expressions. See router.ini for more examples.
-
-
