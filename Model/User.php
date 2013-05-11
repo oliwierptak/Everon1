@@ -7,8 +7,14 @@ use Everon\Interfaces;
 
 class User
 {
-    //use Dependency\Injection\Request;
-    
+    use Dependency\Injection\Logger;
+
+    /**
+     * Example
+     * 
+     * @param $username
+     * @return \Everon\Helper\Popo
+     */
     public function getUser($username)
     {
         $data = [
@@ -20,6 +26,13 @@ class User
         return new \Everon\Helper\Popo($data);
     }
 
+    /**
+     * Example
+     * 
+     * @param $username
+     * @param $password
+     * @return \Everon\Helper\Popo|null
+     */
     public function authenticate($username, $password)
     {
         $User = $this->getUser($username);
@@ -27,30 +40,8 @@ class User
             return $User;
         }
 
+        $this->getLogger()->warn('Failed login attempt for: "%s"', [$username]);
         return null;
     }
-    
-/*    public function actionSubmit(Interfaces\View $View)
-    {
-        $username = $this->getRequest()->getPostParameter('username');
-        $password = $this->getRequest()->getPostParameter('password');
-        
-        $View->set('User', function() use ($username, $password) {
-            $User = $this->authenticate($username, $password);
-            if ($User === null) {
-                $this->onInvalidLogin($username);
-            }
-
-            return $User;
-        });        
-    }
-
-    public function onInvalidLogin($username)
-    {
-        //do something with the model ...
-
-        throw new Exception\DomainException(vsprintf(
-            'Failed login attempt for user: "%s"', [$username]
-        ));
-    }    */
+ 
 }
