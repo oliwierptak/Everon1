@@ -166,8 +166,9 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
 
         $Request = $Container->resolve('Request');
         $RouteConfig = $Container->resolve('ConfigManager')->getRouterConfig();
-        $Container->register('Router', function() use ($Factory, $Request, $RouteConfig) {
-            return $Factory->buildRouter($Request, $RouteConfig);
+        $RouterValidator = $Factory->buildRouterValidator();
+        $Container->register('Router', function() use ($Factory, $Request, $RouteConfig, $RouterValidator) {
+            return $Factory->buildRouter($Request, $RouteConfig, $RouterValidator);
         });
 
         $Container->register('Core', function() use ($Factory) {
