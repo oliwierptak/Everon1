@@ -16,6 +16,9 @@ trait Router
         return $this->Router;
     }
 
+    /**
+     * @param \Everon\Interfaces\Router $Router
+     */
     public function setRouter(\Everon\Interfaces\Router $Router)
     {
         $this->Router = $Router;
