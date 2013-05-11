@@ -243,18 +243,35 @@ class Factory implements Interfaces\Factory
     /**
      * @param Interfaces\Request $Request
      * @param Interfaces\ConfigRouter $Config
-     * @return Interfaces\Router
+     * @param Interfaces\RouterValidator $Validator
+     * @return mixed
      * @throws Exception\Factory
      */
-    public function buildRouter(Interfaces\Request $Request, Interfaces\ConfigRouter $Config)
+    public function buildRouter(Interfaces\Request $Request, Interfaces\ConfigRouter $Config, Interfaces\RouterValidator $Validator)
     {
         try {
-            $RouteItem = new Router($Request, $Config);
+            $RouteItem = new Router($Request, $Config, $Validator);
             $RouteItem = $this->getDependencyContainer()->inject('Everon\Router', $this, $RouteItem);
             return $RouteItem;
         }
         catch (\Exception $e) {
             throw new Exception\Factory('Router initialization error', null, $e);
+        }
+    }
+
+    /**
+     * @return Interfaces\RouterValidator
+     * @throws Exception\Factory
+     */
+    public function buildRouterValidator()
+    {
+        try {
+            $RouteItem = new RouterValidator();
+            $RouteItem = $this->getDependencyContainer()->inject('Everon\RouterValidator', $this, $RouteItem);
+            return $RouteItem;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('RouterValidator initialization error', null, $e);
         }
     }
 

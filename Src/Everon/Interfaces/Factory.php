@@ -82,9 +82,16 @@ interface Factory
     /**
      * @param Request $Request
      * @param ConfigRouter $Config
-     * @return Interfaces\Router
+     * @param RouterValidator $Validator
+     * @return mixed
      */
-    function buildRouter(Request $Request, ConfigRouter $Config);
+    function buildRouter(Request $Request, ConfigRouter $Config, Interfaces\RouterValidator $Validator);
+
+    /**
+     * @return Interfaces\RouterValidator
+     * @throws Exception\Factory
+     */
+    function buildRouterValidator();    
 
     /**
      * @param View $View

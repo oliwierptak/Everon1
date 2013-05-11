@@ -5,7 +5,7 @@ use Everon\Exception;
 use Everon\Interfaces;
 use Everon\Helper;
 
-class Router implements Interfaces\ConfigItemRouter, Interfaces\Arrayable
+class Router implements Interfaces\ConfigItemRouter
 {
     use Helper\Asserts;
     use Helper\Asserts\IsStringAndNonEmpty;
@@ -66,21 +66,6 @@ class Router implements Interfaces\ConfigItemRouter, Interfaces\Arrayable
     }
 
     /**
-     * Removes everything after ? (eg. ?param1=1&param2=2)
-     *
-     * @param $str
-     * @param string $marker
-     * @return mixed
-     */
-    protected function getCleanUrl($str, $marker='?')
-    {
-        $query_tokens = explode($marker, $str);
-        $str = current($query_tokens);
-
-        return $str;
-    }
-
-    /**
      * @param $keys
      * @param $data
      * @param $keep
@@ -106,7 +91,7 @@ class Router implements Interfaces\ConfigItemRouter, Interfaces\Arrayable
      * @param array $data
      * @return string
      */
-    protected function replaceCurlyParametersWithRegex($pattern, array $data)
+    public function replaceCurlyParametersWithRegex($pattern, array $data)
     {
         foreach ($data as $name => $regex) {
             $pattern = str_replace('{'.$name.'}', '('.$regex.')', $pattern);
@@ -116,10 +101,25 @@ class Router implements Interfaces\ConfigItemRouter, Interfaces\Arrayable
     }
 
     /**
+     * Removes everything after ? (eg. ?param1=1&param2=2)
+     *
+     * @param $str
+     * @param string $marker
+     * @return mixed
+     */
+    public function getCleanUrl($str, $marker='?')
+    {
+        $query_tokens = explode($marker, $str);
+        $str = current($query_tokens);
+
+        return $str;
+    }
+
+    /**
      * @param $get_data
      * @return mixed
      */
-    protected function filterQueryKeys($get_data)
+    public function filterQueryKeys($get_data)
     {
         $keys_to_keep = array_keys($get_data);
         return $this->filterKeys($keys_to_keep, $this->getGetRegex(), true);
@@ -129,7 +129,7 @@ class Router implements Interfaces\ConfigItemRouter, Interfaces\Arrayable
      * @param $get_data
      * @return mixed
      */
-    protected function filterGetKeys($get_data)
+    public function filterGetKeys($get_data)
     {
         $keys_to_remove = array_keys($get_data);
         return $this->filterKeys($keys_to_remove, $this->getGetRegex(), false);
@@ -156,106 +156,6 @@ class Router implements Interfaces\ConfigItemRouter, Interfaces\Arrayable
         }
         catch (\Exception $e) {
             return false;
-        }
-    }
-
-    /**
-     * Matches urls like /news/show/12 with /news/show/{id} and returns ['id' => 12]
-     * Also checks if $_GET values are set according to the regex in router.ini
-     *
-     * Returns merged data from parsed query string and _GET
-     *
-     * @param $request_url
-     * @param $get_data
-     * @return array|null
-     * @throws Exception\ConfigItemRouter
-     */
-    public function validateQueryAndGet($request_url, array $get_data)
-    {
-        try {
-            $parsed_query = $this->validateQuery($request_url, $get_data);
-            $parsed_get = $this->validateGet($get_data);
-            return array_merge($parsed_query, $parsed_get);
-        }
-        catch (\Exception $e) {
-            throw new Exception\ConfigItemRouter($e);
-        }
-    }
-
-    /**
-     * @param $request_url
-     * @param array $get_data
-     * @return array
-     */
-    protected function validateQuery($request_url, array $get_data)
-    {
-        $request_url = $this->getCleanUrl($request_url);
-        $regex_url = $this->getCleanUrl($this->getUrl());
-
-        $parsed_query = [];
-        $validators_for_query = $this->filterQueryKeys($get_data);
-        if (is_array($validators_for_query)) {
-            $url_pattern = $this->replaceCurlyParametersWithRegex($regex_url, $validators_for_query);
-            $url_pattern = $this->regexCompleteAndValidate($this->getName(), $url_pattern);
-
-            if (preg_match($url_pattern, $request_url, $params_tokens)) {
-                array_shift($params_tokens); //remove url
-                if (count($validators_for_query) == count($params_tokens)) {
-                    $parsed_query = array_combine(array_keys($validators_for_query), array_values($params_tokens));
-                }
-            }
-        }
-
-        return $parsed_query;
-    }
-
-    /**
-     * @param array $get_data
-     * @return array
-     */
-    protected function validateGet(array $get_data)
-    {
-        $parsed_get = [];
-        $validators_for_get = $this->filterGetKeys($get_data);
-        if (is_array($validators_for_get)) {
-            foreach ($validators_for_get as $regex_name => $regex) {
-                $subject = $get_data[$regex_name];
-                $pattern = $this->regexCompleteAndValidate($this->getName(), $regex);
-                if (preg_match($pattern, $subject) === 1) {
-                    $parsed_get[$regex_name] = $get_data[$regex_name];
-                }
-            }
-        }
-
-        return $parsed_get;
-    }    
-
-    /**
-     * @param array $post_data
-     * @return array
-     * @throws Exception\ConfigItemRouter
-     */
-    public function validatePost(array $post_data)
-    {
-        try {
-            foreach ($post_data as $param_name => $pvalue) {
-                foreach ($this->regex_post as $regex_name => $regex) {
-                    if (strcasecmp($param_name, $regex_name) !== 0) {
-                        continue;
-                    }
-
-                    $subject = $post_data[$param_name];
-                    $pattern = $this->regexCompleteAndValidate($this->getName(), $regex);
-                    if (preg_match($pattern, $subject, $params_tokens) === 0) {
-                        unset($post_data[$param_name]);  //remove invalid post
-                    }
-                }
-            }
-
-            return $post_data;
-        }
-        catch (\Exception $e) {
-            throw new Exception\ConfigItemRouter($e);
         }
     }
 

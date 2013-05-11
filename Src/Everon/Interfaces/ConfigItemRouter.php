@@ -20,9 +20,10 @@ interface ConfigItemRouter
     function getPostRegex();
     function setPostRegex($regex);
 
-    function validateQueryAndGet($url, array $get_data);
-    function validatePost(array $post_data);
-
+    function replaceCurlyParametersWithRegex($pattern, array $data);
+    function getCleanUrl($str, $marker='?');
+    function filterQueryKeys($get_data);
+    function filterGetKeys($get_data);
     function matchesByUrl($request_url);
     
     function toArray();

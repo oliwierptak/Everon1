@@ -12,13 +12,6 @@ interface Router
     function getRouteItemByRequest(Request $Request);
 
     /**
-     * @param \Everon\Interfaces\ConfigItemRouter $RouteItem
-     * @param \Everon\Interfaces\Request $Request
-     * @return void
-     */
-    function setRequestPostDataAndValidateRoute(ConfigItemRouter $RouteItem, Request $Request);
-
-    /**
      * @param $route_name
      * @return \Everon\Interfaces\ConfigItemRouter
      * @throws \Everon\Exception\Router
@@ -31,14 +24,6 @@ interface Router
      */
     function getRouteItemByUrl($url);
 
-    /**
-     * @param $route_name
-     * @param array $route_params
-     * @param array $request_params
-     * @return void
-     */
-    function validateRoute($route_name, array $route_params, array $request_params);
-        
     /**
      * @param \Everon\Interfaces\Config $Config
      * @return void
