@@ -9,7 +9,7 @@ class RouterTest extends \Everon\TestCase
      */
     public function testConstructor(\Everon\Interfaces\Factory $Factory, \Everon\Interfaces\Request $Request, \Everon\Config\Router $Config, $expected)
     {
-        $Router = new \Everon\Router($Request, $Config);
+        $Router = new \Everon\Router($Request, $Config, $Factory->buildRouterValidator());
         $this->assertInstanceOf('\Everon\Interfaces\Router', $Router);
     }
 
@@ -20,7 +20,7 @@ class RouterTest extends \Everon\TestCase
     public function testPageNotFound(\Everon\Interfaces\Factory $Factory, \Everon\Interfaces\Request $Request, \Everon\Config\Router $Config, $expected)
     {
         $Request->setUrl('/wrong/page/htm');
-        $Router = $Factory->buildRouter($Request, $Config);
+        $Router = $Factory->buildRouter($Request, $Config, $Factory->buildRouterValidator());
 
         $Item = $Router->getCurrentRoute();
     }
@@ -31,7 +31,7 @@ class RouterTest extends \Everon\TestCase
      */
     public function testGetRouteItemByRequest(\Everon\Interfaces\Factory $Factory, \Everon\Interfaces\Request $Request, \Everon\Config\Router $Config, $expected)
     {
-        $Router = $Factory->buildRouter($Request, $Config);
+        $Router = $Factory->buildRouter($Request, $Config, $Factory->buildRouterValidator());
         $Item = $Router->getRouteItemByRequest($Request);
         
         $this->assertInstanceOf('Everon\Interfaces\ConfigItemRouter', $Item);
@@ -44,7 +44,7 @@ class RouterTest extends \Everon\TestCase
      */
     public function testGetRouteItemByRequestShouldReturnDefault(\Everon\Interfaces\Factory $Factory, \Everon\Interfaces\Request $Request, \Everon\Config\Router $Config, $expected)
     {
-        $Router = $Factory->buildRouter($Request, $Config);
+        $Router = $Factory->buildRouter($Request, $Config, $Factory->buildRouterValidator());
         $Item = $Router->getRouteItemByRequest($Request);
 
         $this->assertInstanceOf('Everon\Interfaces\ConfigItemRouter', $Item);
@@ -55,16 +55,13 @@ class RouterTest extends \Everon\TestCase
     
     public function dataProvider()
     {
-        $Container = new \Everon\Dependency\Container();
-        $Factory = new \Everon\Factory($Container);
+        /**
+         * @var \Everon\Interfaces\DependencyContainer $Container
+         * @var \Everon\Interfaces\Factory $Factory
+         */
+        list($Container, $Factory) = $this->getContainerAndFactory();
 
-        $Matcher = $Factory->buildConfigExpressionMatcher();
-        $ConfigManager = $Factory->buildConfigManager($Matcher, $this->getConfigDirectory(), $this->getConfigManagerTempDirectory());
-        $Container->register('ConfigManager', function() use ($ConfigManager) {
-            return $ConfigManager;
-        });
-
-        $RouterConfig = $ConfigManager->getRouterConfig();
+        $RouterConfig = $Container->resolve('ConfigManager')->getRouterConfig();
         
         return [
             [$Factory,

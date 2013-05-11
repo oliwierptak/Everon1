@@ -83,7 +83,7 @@ interface Factory
      * @param Request $Request
      * @param ConfigRouter $Config
      * @param RouterValidator $Validator
-     * @return mixed
+     * @return Interfaces\Router
      */
     function buildRouter(Request $Request, ConfigRouter $Config, Interfaces\RouterValidator $Validator);
 

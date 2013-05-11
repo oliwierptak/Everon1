@@ -41,7 +41,7 @@ class Router implements Interfaces\Router, Interfaces\Arrayable
 
     /**
      * @param Interfaces\Request $Request
-     * @return Interfaces\ConfigItemRouter|null
+     * @return Interfaces\ConfigItemRouter
      * @throws Exception\PageNotFound
      * @throws Exception\Router
      */

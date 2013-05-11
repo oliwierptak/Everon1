@@ -152,7 +152,7 @@ class FactoryTest extends \Everon\TestCase
         });
         $RouterConfig = $this->getMock('\Everon\Config\Router', [], [], '', false);
 
-        $Router = $Factory->buildRouter($RequestMock, $RouterConfig);
+        $Router = $Factory->buildRouter($RequestMock, $RouterConfig, $Factory->buildRouterValidator());
         $this->assertInstanceOf('\Everon\Interfaces\Router', $Router);
     }
 
@@ -349,7 +349,8 @@ class FactoryTest extends \Everon\TestCase
     {
         $Request = $this->getMock('\Everon\Interfaces\Request');
         $Config = $this->getMock('\Everon\Interfaces\ConfigRouter');
-        $FactoryMock->buildRouter($Request, $Config);
+        $Validator = $this->getMock('\Everon\Interfaces\RouterValidator');
+        $FactoryMock->buildRouter($Request, $Config, $Validator);
     }
     
     /**
