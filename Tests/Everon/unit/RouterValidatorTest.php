@@ -94,13 +94,13 @@ class RouterValidatorTest extends \Everon\TestCase
             ],
             []
         );
-        
-        $Router = $Container->resolve('Router');
-        $Router->setRequest($Request);
-        
+
+        $Config = $Container->resolve('ConfigManager')->getRouterConfig();
+        $RouteItem = $Config->getRouteByName('test_complex');
         $Validator = new \Everon\RouterValidator();
+        
         return [
-            [$Validator, $Router->getCurrentRoute(), $Request]
+            [$Validator, $RouteItem, $Request]
         ];
     }
 
