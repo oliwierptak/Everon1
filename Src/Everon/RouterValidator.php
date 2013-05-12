@@ -46,13 +46,6 @@ class RouterValidator implements Interfaces\RouterValidator
                 vsprintf('Invalid required parameter: "%s" for route: "%s"', [$name, $route_name]),
                 'InvalidRouterParameter'
             );
-
-            if (trim($expression) != '') {
-                $pattern = $pattern = '@^'.$expression.'$@'; //expression should be validated by ConfigItemRouter, no point doing it again
-                if (preg_match($pattern, $parsed_request_params[$name]) !== 1) {
-                    throw new Exception\InvalidRouterParameter('Required parameter: "%s" not set', $name);
-                }
-            }
         }
     }
 
