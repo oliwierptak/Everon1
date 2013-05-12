@@ -128,7 +128,7 @@ class Container implements Interfaces\DependencyContainer
     public function register($name, \Closure $ServiceClosure)
     {
         $this->definitions[$name] = $ServiceClosure;
-        unset($this->services);
+        unset($this->services[$name]);
     }
 
     /**
