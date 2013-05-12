@@ -1,10 +1,8 @@
 <?php
+namespace Everon;
+
 include_once('Src/Everon/Lib/Bootstrap.php');
-
-$nesting = implode('..', array_fill(0, 1, DIRECTORY_SEPARATOR));
-$root = realpath(dirname(__FILE__).$nesting).DIRECTORY_SEPARATOR;
-
-$Environment = new \Everon\Environment($root);
+$Environment = new \Everon\Environment(PROJECT_ROOT);
 
 function runTest($filename)
 {
