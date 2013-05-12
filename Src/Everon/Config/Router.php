@@ -8,7 +8,6 @@ use Everon\Interfaces;
 class Router extends \Everon\Config implements Interfaces\ConfigRouter
 {
     use Dependency\Injection\Factory;
-    use Dependency\Injection\ConfigManager;
     
     use Helper\Asserts;
     use Helper\Asserts\IsArrayKey;
