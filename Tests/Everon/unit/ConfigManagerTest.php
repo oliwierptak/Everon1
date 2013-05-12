@@ -26,12 +26,12 @@ class ConfigManagerTest extends \Everon\TestCase
      */
     public function testRegister(\Everon\Interfaces\ConfigManager $ConfigManager, \Everon\Interfaces\Config $Expected)
     {
-        $ConfigTwo = new \Everon\Config('test', 'test.ini', ['test_two'=>true]);
-        $ConfigTwo->setName('test_two');
-        $ConfigTwo->setFilename('test_two.ini');
-        $ConfigManager->register($ConfigTwo);
-
-        $this->assertCount(4, $ConfigManager->getConfigs());
+        $this->assertCount(3, $ConfigManager->getConfigs());
+        $ConfigManager->unRegister($Expected->getName());
+        $this->assertCount(2, $ConfigManager->getConfigs());
+        
+        $ConfigManager->register($Expected);
+        $this->assertCount(3, $ConfigManager->getConfigs());
     }
 
     /**
@@ -39,6 +39,7 @@ class ConfigManagerTest extends \Everon\TestCase
      */
     public function testUnRegister(\Everon\Interfaces\ConfigManager $ConfigManager, \Everon\Interfaces\Config $Expected)
     {
+        $this->assertCount(3, $ConfigManager->getConfigs());
         $ConfigManager->unRegister($Expected->getName());
 
         $this->assertCount(2, $ConfigManager->getConfigs());
@@ -187,9 +188,11 @@ class ConfigManagerTest extends \Everon\TestCase
             $this->getConfigDirectory().'test.ini',
             ['test'=>1]
         );
+        
+        $ConfigManager = $Container->resolve('ConfigManager');
 
         return [
-            [$Container->resolve('ConfigManager'), $Expected]
+            [$ConfigManager, $Expected]
         ];
     }
 

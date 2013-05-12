@@ -66,6 +66,8 @@ class Manager implements Interfaces\ConfigManager
 
     protected function loadAndRegisterConfigs()
     {
+        $this->setupCachingAndDefaultConfig();
+        
         $Compiler = $this->ExpressionMatcher->getCompiler($this);
 
         /**
@@ -95,11 +97,11 @@ class Manager implements Interfaces\ConfigManager
                     return $content;
                 };
             }
-
-            $Config = $this->getFactory()->buildConfig($name, $config_filename, $ini_config_data);
-            $this->register($Config);
-
-            $this->saveConfigToCache($Config);
+            
+            if ($this->isRegistered($name) === false) {
+                $Config = $this->getFactory()->buildConfig($name, $config_filename, $ini_config_data);
+                $this->register($Config);
+            }
         }
     }
 
@@ -143,9 +145,8 @@ class Manager implements Interfaces\ConfigManager
     {
         if (isset($this->configs[$this->default_config_name]) === false) {
             $Config = $this->getDefaultConfig();
-            $this->register($Config);
             $this->use_cache = (bool) $Config->go('cache')->get('config_manager');
-            $this->saveConfigToCache($Config);
+            $this->register($Config);
         }
         else {
             $Config = $this->configs[$this->default_config_name];
@@ -164,8 +165,9 @@ class Manager implements Interfaces\ConfigManager
                 throw new Exception\Config('Config with name: "%s" already registered', $Config->getName());
             }
         }
-
+        
         $this->configs[$Config->getName()] = $Config;
+        $this->saveConfigToCache($Config);
     }
 
     /**
@@ -173,8 +175,17 @@ class Manager implements Interfaces\ConfigManager
      */
     public function unRegister($name)
     {
-        $this->configs[$name] = null;
+        @$this->configs[$name] = null;
         unset($this->configs[$name]);
+    }
+
+    /**
+     * @param $name
+     * @return bool
+     */
+    public function isRegistered($name)
+    {
+        return array_key_exists($name, $this->configs);
     }
 
     /**
@@ -184,7 +195,6 @@ class Manager implements Interfaces\ConfigManager
     public function getConfigByName($name)
     {
         if (is_null($this->configs)) {
-            $this->setupCachingAndDefaultConfig();
             $this->loadAndRegisterConfigs();
         }
 
@@ -213,6 +223,10 @@ class Manager implements Interfaces\ConfigManager
      */
     public function getConfigs()
     {
+        if (is_null($this->configs)) {
+            $this->loadAndRegisterConfigs();
+        }
+        
         return $this->configs;
     }
 

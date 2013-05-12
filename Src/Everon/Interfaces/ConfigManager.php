@@ -7,6 +7,7 @@ interface ConfigManager
 {
     function register(Config $Config);
     function unRegister($name);
+    function isRegistered($name);
     
     /**
      * @param $name
