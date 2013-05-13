@@ -68,18 +68,18 @@ Consider this routing example.
     post[password] = '[[:alnum:]]{4,22}'
     
 It could be translated into commands for Everon:
-* Take 'url' from application.ini and replace %application.url% with it.
-* Make sure 'sid' parameter in URL consists lower cased letters and numbers only.
-* Make sure 'location' parameter in URL consists alphanumerical and % symbol only.
-* Make sure that parameter 'and' in _GET consists lower cased letters only.
-* Make sure that parameter 'else' in _GET consists numbers only.
-* Make sure that parameter 'username' in _POST consists only lower cased letters and is not less then 3 nor longer 
+* Take `url` from application.ini and replace `%application.url%` with it.
+* Make sure `sid` parameter in URL consists lower cased letters and numbers only.
+* Make sure `location` parameter in URL consists alphanumerical and % symbol only.
+* Make sure that parameter `and` in _GET consists lower cased letters only.
+* Make sure that parameter `else` in _GET consists numbers only.
+* Make sure that parameter `username` in _POST consists only lower cased letters and is not less then 3 nor longer 
   then 16 characters.
-* Make sure that parameter 'password' in _POST consists only alphanumerical symbols and is not less then 4 nor longer
+* Make sure that parameter `password` in _POST consists only alphanumerical symbols and is not less then 4 nor longer
   then 22 characters.
 
 Unless all those conditions are met, the request won't pass and error exception will be thrown.
-Of course you can write your own regular expressions. See router.ini for more examples.
+Of course you can write your own regular expressions. See `router.ini` for more examples.
 
 ## Config inheritance
 Not only one config can use values from another file (by using `$config_name.value_name%` notation), 
@@ -108,5 +108,5 @@ The order of the items below is irrelevant.
 $title = $Config->go('Account')->get('Charset');
 ```
 
-$title value will be set to `UTF-8`, even so it is not defined in the `[Account]` section.
+`$title` value will be set to `UTF-8`, even so it is not defined in the `[Account]` section.
 It has been inherited from the `[Default]` section. 
