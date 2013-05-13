@@ -47,6 +47,7 @@ class MyModel
 One line, on demand, lazy loaded dependency injection.
 If you need specific constructor injection you can extend default Factory class. 
  
+
 ## Factory
 One Factory class to take care of creation of all objects.   
 You have full control how classes are instantiated and what dependencies they require,
