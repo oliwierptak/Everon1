@@ -83,3 +83,32 @@ It could be translated into commands for Everon:
 Unless all those conditions are met, the request won't pass and error exception will be thrown.
 Of course you can write your own regular expressions. See router.ini for more examples.
 
+## Config inheritance
+As you saw above, one config file can use value from another config file, by using special $config_name.value_name% notation.
+But that's not all. Config sections can be inherited. Consider this ini example:
+
+    [Default]
+    Title = 'Welcome to Everon'
+    Lang = 'en-US'
+    StaticUrl = '%application.url%static/default/'
+    Charset = 'UTF-8'
+    Keywords = 'Everon'
+    Description = 'Everon: PHP 5.4+ framework'
+    
+    [Account < ThemeBlue]
+    Title = 'Your Account'
+    Description = 'Account'
+    
+    [ThemeBlue]
+    StaticUrl = '%application.url%static/blue/'
+    
+The first item is special, its name does not matter, however all of its values will be used as defaults.
+The order of the items below is irrelevant.
+
+```php
+<?php
+$title = $Config->go('Account')->get('Charset');
+```
+
+$title's value will be set to 'UTF-8', even so it is not defined in the [Account] section.
+It has been inherited from the [Default] section. 
