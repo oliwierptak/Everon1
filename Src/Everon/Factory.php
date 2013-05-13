@@ -302,18 +302,18 @@ class Factory implements Interfaces\Factory
     
     /**
      * @param array $data
-     * @return Interfaces\ViewItem
+     * @return Interfaces\ConfigItemView
      * @throws Exception\Factory
      */
-    public function buildViewItem(array $data)
+    public function buildConfigItemView(array $data)
     {
         try {
-            $PageItem = new ViewItem($data);
-            $PageItem = $this->getDependencyContainer()->inject('Everon\ViewItem', $this, $PageItem);
+            $PageItem = new Config\Item\View($data);
+            $PageItem = $this->getDependencyContainer()->inject('Everon\Config\Item\View', $this, $PageItem);
             return $PageItem;
         }
         catch (\Exception $e) {
-            throw new Exception\Factory('ViewItem initialization error', null, $e);
+            throw new Exception\Factory('ConfigItemView initialization error', null, $e);
         }
     }
 

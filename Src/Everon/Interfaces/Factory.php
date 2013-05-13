@@ -82,10 +82,10 @@ interface Factory
 
     /**
      * @param array $data
-     * @return Interfaces\ViewItem
+     * @return Interfaces\ConfigItemView
      * @throws Exception\Factory
      */
-    function buildViewItem(array $data);
+    function buildConfigItemView(array $data);
 
     /**
      * @param Request $Request
