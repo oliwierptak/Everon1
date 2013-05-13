@@ -84,8 +84,9 @@ Unless all those conditions are met, the request won't pass and error exception 
 Of course you can write your own regular expressions. See router.ini for more examples.
 
 ## Config inheritance
-As you saw above, one config file can use value from another config file, by using special $config_name.value_name% notation.
-But that's not all. Config sections can be inherited. Consider this ini example:
+Not only one config can use values from another file (by using $config_name.value_name% notation), 
+the config sections can be inherited.
+Consider this ini example:
 
     [Default]
     Title = 'Welcome to Everon'
