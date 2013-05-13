@@ -51,9 +51,9 @@ Instead, Everon applications use [root composition pattern](http://blog.ploeh.dk
 whole object graphs in once place. See [index.php](https://github.com/oliwierptak/Everon/blob/master/Web/index.php)
 for implementation details.
 
-### What's the best way to inject dependencies?
+#### What's the best way to inject dependencies?
 Use constructor for dependencies that are part of what the class is doing, and use setters/getters for infrastructure
-type dependencies. A Logger could be example of infrastructure type dependency.
+type dependencies. In general, a Logger could be good example of infrastructure type dependency.
 
 
 ## Factory
