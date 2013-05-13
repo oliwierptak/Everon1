@@ -9,13 +9,24 @@
  */
 namespace Everon\Interfaces;
 
+use Everon\Interfaces;
+use Everon\Exception;
+
 interface Core
 {
 
-/*    function getConfigManager();
+    /**
+     * @param callable $ControllerIgniter
+     * @param Interfaces\Response $Response
+     * @throws Exception\InvalidRouterParameter|\Exception
+     */    
+    function start(\Closure $ControllerIgniter, Interfaces\Response $Response);
 
-    function setConfigManager(ConfigManager $ConfigManager);*/
-
+    /**
+     * @param Interfaces\Controller $Controller
+     * @return bool
+     * @throws Exception\InvalidControllerMethod
+     */    
     function run(Controller $Controller);
 
 }

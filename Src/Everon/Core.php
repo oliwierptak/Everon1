@@ -13,6 +13,11 @@ class Core implements Interfaces\Core
 {  
     use Dependency\Injection\Logger;
 
+    /**
+     * @param callable $ControllerIgniter
+     * @param Interfaces\Response $Response
+     * @throws Exception\InvalidRouterParameter|\Exception
+     */
     public function start(\Closure $ControllerIgniter, Interfaces\Response $Response)
     {
         try {
@@ -46,8 +51,8 @@ class Core implements Interfaces\Core
                 echo $e->getTraceAsString();
             }
             echo '</pre>';
-        }        
-    }
+        } 
+}
 
     /**
      * @param Interfaces\Controller $Controller
