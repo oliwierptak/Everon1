@@ -69,7 +69,7 @@ namespace Everon
         });
 
         /**
-         * @var Core $Application
+         * @var Interfaces\Core $Application
          */
         $Application = $Container->resolve('Core');
         register_shutdown_function(array($Application, 'shutdown'));
