@@ -27,7 +27,7 @@ class Config implements Interfaces\Config, Interfaces\Arrayable
      */
     protected $go_path = [];
     
-    protected $data_processed = null;
+    protected $data_processed = false;
 
 
     /**
@@ -54,16 +54,18 @@ class Config implements Interfaces\Config, Interfaces\Arrayable
         if ($this->data instanceof \Closure) {
             $this->data = $this->data->__invoke();
         }
-        
-        if ($this->data_processed === null) {
-            $this->processData();
-        }
 
+        $this->processData();
         return $this->data;
     }
     
     protected function processData()
     {
+        if ($this->data_processed === true) {
+            return;
+        }
+
+        $this->data_processed = true;
         $HasInheritance = function($value) {
             return strpos($value, '<') !== false;
         };
@@ -80,31 +82,33 @@ class Config implements Interfaces\Config, Interfaces\Arrayable
         }
 
         $inheritance_list = [];
+        $data_processed = [];
         foreach ($this->data as $name => $data) {
             if ($HasInheritance($name) === true) {
                 list($for, $from) = explode('<', $name);
                 $for = trim($for);
                 $from = trim($from);
                 $inheritance_list[$for] = $from;
-                $this->data_processed[$for] = $data;
+                $data_processed[$for] = $data;
             }
             else {
-                $this->data_processed[$name] = $data;
+                $data_processed[$name] = $data;
             }
         }
 
         if (empty($inheritance_list) === false) {
             foreach ($inheritance_list as $for => $from) {
-                $this->data_processed[$for] = $this->arrayMergeDefault($this->data_processed[$from], $this->data_processed[$for]);
+                $data_processed[$for] = $this->arrayMergeDefault($data_processed[$from], $data_processed[$for]);
             }
 
-            $default = reset($this->data_processed);
-            foreach ($this->data_processed as $name => $data) {
-                $this->data_processed[$name] = $this->arrayMergeDefault($default, $this->data_processed[$name]);
+            //make sure everything has default
+            $default = reset($data_processed);
+            foreach ($data_processed as $name => $data) {
+                $data_processed[$name] = $this->arrayMergeDefault($default, $data_processed[$name]);
             }
         }
         
-        $this->data = $this->data_processed;
+        $this->data = $data_processed;
     }
 
     public function getName()

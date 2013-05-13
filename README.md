@@ -82,3 +82,13 @@ It could be translated into commands for Everon:
 
 Unless all those conditions are met, the request won't pass and error exception will be thrown.
 Of course you can write your own regular expressions. See router.ini for more examples.
+
+
+## TODO
+* Data persistence via Doctrine/Propel
+* Caching
+* Translations
+* Plugins
+* Console
+* Users/Roles
+* Cookies
