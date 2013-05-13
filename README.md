@@ -96,25 +96,23 @@ the config sections can be inherited.
 Consider this ini example:
 
     [Default]
-    Title = 'Welcome to Everon'
-    Lang = 'en-US'
-    StaticUrl = '%application.url%static/default/'
-    Charset = 'UTF-8'
-    Keywords = 'Everon'
-    Description = 'Everon: PHP 5.4+ framework'
+    title = 'Welcome to Everon'
+    lang = 'en-US'
+    static_url = '%application.url%static/default/'
+    charset = 'UTF-8'
     
-    [Account < ThemeBlue]
-    Title = 'Your Account'
-    Description = 'Account'
+    [Account < DefaultBlue]
+    title = 'Your Account'
+    description = 'Account'
     
-    [ThemeBlue]
-    StaticUrl = '%application.url%static/blue/'
+    [DefaultBlue]
+    static_url = '%application.url%static/blue/'
     
 The first item is special, its name does not matter, however all of its values will be used as defaults.
 The order of the items below is irrelevant.
 
 ```php
-$title = $Config->go('Account')->get('Charset');
+$title = $Config->go('Account')->get('charset');
 ```
 
 `$title` value will be set to `UTF-8`, even so it is not defined in the `[Account]`.
