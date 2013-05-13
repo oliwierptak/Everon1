@@ -152,10 +152,6 @@ class Router implements Interfaces\Router, Interfaces\Arrayable
      */
     public function toArray()
     {
-/*        if (is_null($this->CurrentRoute)) {
-            $this->initRoutes();
-        }*/
-
         return $this->getCurrentRoute()->toArray();
     }
 
