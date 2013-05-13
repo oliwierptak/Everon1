@@ -21,7 +21,6 @@ Very alpha version
 Consider this model, as you can see it does not inherit from anything, and there is no constructor.
 
 ```php
-<?php
 class MyModel
 {
     public function helloWorld()
@@ -34,7 +33,6 @@ class MyModel
 Let's say you need a logger for that particular model. All you must write is one line. Everon does the rest.
 
 ```php
-<?php
 class MyModel
 {
     use Dependency\Injection\Logger;
@@ -84,7 +82,7 @@ Unless all those conditions are met, the request won't pass and error exception 
 Of course you can write your own regular expressions. See router.ini for more examples.
 
 ## Config inheritance
-Not only one config can use values from another file (by using $config_name.value_name% notation), 
+Not only one config can use values from another file (by using `$config_name.value_name%` notation), 
 the config sections can be inherited. 
 Consider this ini example:
 
@@ -107,9 +105,8 @@ The first item is special, its name does not matter, however all of its values w
 The order of the items below is irrelevant.
 
 ```php
-<?php
 $title = $Config->go('Account')->get('Charset');
 ```
 
-$title's value will be set to 'UTF-8', even so it is not defined in the [Account] section.
-It has been inherited from the [Default] section. 
+$title value will be set to `UTF-8`, even so it is not defined in the `[Account]` section.
+It has been inherited from the `[Default]` section. 
