@@ -133,7 +133,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
     {
         $Container = new Dependency\Container();
         $Factory = new Factory($Container);
-        $Environment = $Factory->buildEnvironment(PROJECT_ROOT);
+        $Environment = $this->Environment;
         
         $Environment->setLog($this->getLogDirectory());
         $Environment->setConfig($this->getConfigDirectory());
