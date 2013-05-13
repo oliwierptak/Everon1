@@ -39,7 +39,7 @@ class MyModel
         
     public function helloWorld()
     {
-        $this->getLogger()->log('information');
+        $this->getLogger()->log('Hello Log');
     }
 }
 ```
