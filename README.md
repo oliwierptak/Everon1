@@ -88,7 +88,7 @@ It could be translated into commands for Everon:
   then 22 characters.
 
 Unless all those conditions are met, the request won't pass and error exception will be thrown.
-Of course you can write your own regular expressions. See `router.ini` for more examples.
+Of course you can write your own regular expressions. See [router.ini](https://github.com/oliwierptak/Everon/blob/master/Config/router.ini) for more examples.
 
 ## Config inheritance
 Not only one config can use values from another file (by using `$config_name.value_name%` notation), 
@@ -117,3 +117,4 @@ $title = $Config->go('Account')->get('charset');
 
 `$title` value will be set to `UTF-8`, even so it is not defined in the `[Account]`.
 It has been inherited from the `[Default]` section instead. 
+See [view.ini](https://github.com/oliwierptak/Everon/blob/master/Config/view.ini) for more examples.
