@@ -139,10 +139,6 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         $Environment->setConfig($this->getConfigDirectory());
         $Environment->setCacheConfig($this->getTempDirectory().'configmanager'.DIRECTORY_SEPARATOR);
 
-        $Container->register('Environment', function() use ($Environment) {
-            return $Environment;
-        });
-
         $log_directory = $Environment->getLog();
         $Container->register('Logger', function() use ($Factory, $log_directory) {
             return $Factory->buildLogger($log_directory);
@@ -161,37 +157,25 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
             return $Factory->buildResponse();
         });
 
-        $Container->register('ConfigExpressionMatcher', function() use ($Factory) {
-            return $Factory->buildConfigExpressionMatcher();
-        });
-
-        $Matcher = $Container->resolve('ConfigExpressionMatcher');
         $config_directory = $Environment->getConfig();
         $config_cache_directory = $Environment->getCacheConfig();
-        $Container->register('ConfigManager', function() use ($Factory, $Matcher, $config_directory, $config_cache_directory) {
+        $Container->register('ConfigManager', function() use ($Factory, $config_directory, $config_cache_directory) {
+            $Matcher = $Factory->buildConfigExpressionMatcher();
             return $Factory->buildConfigManager($Matcher, $config_directory, $config_cache_directory);
         });
 
         $Request = $Container->resolve('Request');
         $RouteConfig = $Container->resolve('ConfigManager')->getRouterConfig();
-        $RouterValidator = $Factory->buildRouterValidator();
-        $Container->register('Router', function() use ($Factory, $Request, $RouteConfig, $RouterValidator) {
+        $Container->register('Router', function() use ($Factory, $Request, $RouteConfig) {
+            $RouterValidator = $Factory->buildRouterValidator();
             return $Factory->buildRouter($Request, $RouteConfig, $RouterValidator);
         });
 
-        $Container->register('Core', function() use ($Factory) {
-            return $Factory->buildCore();
-        });
-
-        /**
-         * @var \Everon\Config $Config
-         */
-        $Config = $Container->resolve('ConfigManager')->getApplicationConfig();
-        $manager = $Config->go('model')->get('manager', 'Everon');
+        $manager = $Container->resolve('ConfigManager')->getApplicationConfig()->go('model')->get('manager', 'Everon');
         $Container->register('ModelManager', function() use ($Factory, $manager) {
             return $Factory->buildModelManager($manager);
         });
-        
+
         
         return [$Container, $Factory];
     }
