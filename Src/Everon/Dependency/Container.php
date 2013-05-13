@@ -63,7 +63,7 @@ class Container implements Interfaces\DependencyContainer
             }
         }
 
-        $method = 'set'.$container_name; //eg.setLogger
+        $method = 'set'.$container_name; //eg. setConfigManager
         if (method_exists($Receiver, $method) === false) {
             throw new Exception\DependencyContainer(
                 'Required dependency setter: "%s" is missing in: "%s"',
