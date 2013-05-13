@@ -108,5 +108,5 @@ The order of the items below is irrelevant.
 $title = $Config->go('Account')->get('Charset');
 ```
 
-`$title` value will be set to `UTF-8`, even so it is not defined in the `[Account]` section.
-It has been inherited from the `[Default]` section. 
+`$title` value will be set to `UTF-8`, even so it is not defined in the `[Account]`.
+It has been inherited from the `[Default]` section instead. 
