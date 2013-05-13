@@ -85,7 +85,7 @@ Of course you can write your own regular expressions. See router.ini for more ex
 
 ## Config inheritance
 Not only one config can use values from another file (by using $config_name.value_name% notation), 
-the config sections can be inherited.
+the config sections can be inherited. 
 Consider this ini example:
 
     [Default]
