@@ -63,11 +63,7 @@ namespace Everon
             return $Factory->buildCore();
         });
 
-        /**
-         * @var \Everon\Config $Config
-         */
-        $Config = $Container->resolve('ConfigManager')->getApplicationConfig();
-        $manager = $Config->go('model')->get('manager', 'Everon');
+        $manager = $Container->resolve('ConfigManager')->getApplicationConfig()->go('model')->get('manager', 'Everon');
         $Container->register('ModelManager', function() use ($Factory, $manager) {
             return $Factory->buildModelManager($manager);
         });
@@ -77,8 +73,23 @@ namespace Everon
          */
         $Application = $Container->resolve('Core');
         register_shutdown_function(array($Application, 'shutdown'));
+
+        $Router = $Container->resolve('Router');
+        $ModelManager = $Container->resolve('ModelManager');
+        $compilers = $Container->resolve('ConfigManager')->getApplicationConfig()->go('template')->get('compilers');
+        $directory_view_template = $Environment->getViewTemplate();
+        $Igniter = function() use ($Factory, $Router, $ModelManager, $directory_view_template, $compilers) {
+            $class_name = $Router->getCurrentRoute()->getController();
+            $View = $Factory->buildView(
+                $class_name,
+                $compilers,
+                $directory_view_template
+            );
+
+            return $Factory->buildController($class_name, $View, $ModelManager);
+        };
         
-        $Application->start();        
+        $Application->start($Igniter, $Container->resolve('Response'));
     }
     catch (\Exception $e)
     {

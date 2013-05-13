@@ -67,9 +67,10 @@ interface Controller
     function getModel($name);
 
     /**
+     * @param $result
      * @param Interfaces\Response $Response
-     * @return mixed
+     * @return Interfaces\Response
      */
-    function result(Interfaces\Response $Response);
+    function result($result, Interfaces\Response $Response);
 
 }
