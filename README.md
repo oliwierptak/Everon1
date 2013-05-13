@@ -101,11 +101,11 @@ Consider this ini example:
     static_url = '%application.url%static/default/'
     charset = 'UTF-8'
     
-    [Account < DefaultBlue]
+    [Account < ThemeBlue]
     title = 'Your Account'
     description = 'Account'
     
-    [DefaultBlue]
+    [ThemeBlue]
     static_url = '%application.url%static/blue/'
     
 The first item is special, its name does not matter, however all of its values will be used as defaults.
