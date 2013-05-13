@@ -27,8 +27,8 @@ trait ToArray
     public function toArray()
     {
         $data = $this->data;
-        if ($data instanceof \Closure) {
-            $data = $data->__invoke();
+        if (method_exists($this, 'getData')) { //in case of closures or what not
+            $data = $this->getData();
         }
         
         foreach ($data as $key => $value ) {
