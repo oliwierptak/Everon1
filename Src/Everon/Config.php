@@ -15,6 +15,7 @@ use Everon\Exception;
 
 class Config implements Interfaces\Config, Interfaces\Arrayable
 {
+    use Helper\ArrayMergeDefault;
     use Helper\ToArray;
     
     protected $name = null;
@@ -25,6 +26,8 @@ class Config implements Interfaces\Config, Interfaces\Arrayable
      * @var array
      */
     protected $go_path = [];
+    
+    protected $data_processed = null;
 
 
     /**
@@ -51,8 +54,57 @@ class Config implements Interfaces\Config, Interfaces\Arrayable
         if ($this->data instanceof \Closure) {
             $this->data = $this->data->__invoke();
         }
+        
+        if ($this->data_processed === null) {
+            $this->processData();
+        }
 
         return $this->data;
+    }
+    
+    protected function processData()
+    {
+        $HasInheritance = function($value) {
+            return strpos($value, '<') !== false;
+        };
+
+        $use_inheritance = false;
+        foreach ($this->data as $name => $data) {
+            if ($HasInheritance($name) === true) {
+                $use_inheritance = true;
+            }
+        }
+        
+        if ($use_inheritance === false) {
+            return;
+        }
+
+        $inheritance_list = [];
+        foreach ($this->data as $name => $data) {
+            if ($HasInheritance($name) === true) {
+                list($for, $from) = explode('<', $name);
+                $for = trim($for);
+                $from = trim($from);
+                $inheritance_list[$for] = $from;
+                $this->data_processed[$for] = $data;
+            }
+            else {
+                $this->data_processed[$name] = $data;
+            }
+        }
+
+        if (empty($inheritance_list) === false) {
+            foreach ($inheritance_list as $for => $from) {
+                $this->data_processed[$for] = $this->arrayMergeDefault($this->data_processed[$from], $this->data_processed[$for]);
+            }
+
+            $default = reset($this->data_processed);
+            foreach ($this->data_processed as $name => $data) {
+                $this->data_processed[$name] = $this->arrayMergeDefault($default, $this->data_processed[$name]);
+            }
+        }
+        
+        $this->data = $this->data_processed;
     }
 
     public function getName()

@@ -20,6 +20,7 @@ class Manager implements Interfaces\ConfigManager
     
     use Helper\Asserts;
     use Helper\Asserts\IsArrayKey;
+    use Helper\ArrayMergeDefault;
 
 
     /**
@@ -118,26 +119,11 @@ class Manager implements Interfaces\ConfigManager
      */
     protected function getDefaultConfig()
     {
-        $mergeDefaults = function($default, $data) use (&$mergeDefaults) {
-            foreach ($default as $name => $value) {
-                if (is_array($value)) {
-                    $data[$name] = $mergeDefaults($default[$name], $data[$name]);
-                }
-                else {
-                    if (isset($data[$name]) === false) {
-                        $data[$name] = $default[$name];
-                    }
-                }
-            }
-
-            return $data;
-        };
-
         $data = $this->default_config_data;
 
         $ini = @parse_ini_file($this->config_directory.$this->default_config_filename, true);
         if (is_array($ini)) {
-            $data = $mergeDefaults($data, $ini);
+            $data = $this->arrayMergeDefault($data, $ini);
         }
 
         $Config = $this->getFactory()->buildConfig(
