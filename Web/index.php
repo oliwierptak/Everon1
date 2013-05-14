@@ -73,8 +73,6 @@ namespace Everon
         };
         
         $Application->start($Igniter, $Container->resolve('Response'));
-        
-        mpr($Container->resolve('ConfigManager')->getConfigByName('view')->getPages());
     }
     catch (\Exception $e)
     {
