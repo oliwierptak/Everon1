@@ -17,7 +17,7 @@ class ClassMapTest extends \Everon\TestCase
     
     public function setUp()
     {
-        @unlink($this->getTempDirectory().'class_map_test.php');        
+        @unlink($this->getTempDirectory().'class_map_test.php');
     }
 
     public function testConstructor()
