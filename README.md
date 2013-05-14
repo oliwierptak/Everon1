@@ -112,9 +112,12 @@ The first item is special, its name does not matter, however all of its values w
 The order of the items below is irrelevant.
 
 ```php
-$title = $Config->go('Account')->get('charset');
+$static_url = $Config->go('Account')->get('static_url');    # /static/blue
+$charset = $Config->go('Account')->get('charset');          # UTF-8
 ```
 
-`$title` value will be set to `UTF-8`, even so it is not defined in the `[Account]`.
-It has been inherited from the `[Default]` section instead. 
+`$static_url` is not present in `[Account]`, but because it inherits from `[ThemeBlue]` its value 
+for`static_url` property will be set to `/static/blue` as defined in the parent block.
+The rest of the missing properties, like `$charset`, will be inherited from `[Default]` section.
+
 See [view.ini](https://github.com/oliwierptak/Everon/blob/master/Config/view.ini) for more examples.
