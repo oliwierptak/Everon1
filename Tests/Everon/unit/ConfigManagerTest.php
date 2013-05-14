@@ -34,12 +34,12 @@ class ConfigManagerTest extends \Everon\TestCase
      */
     public function testRegister(\Everon\Interfaces\ConfigManager $ConfigManager, \Everon\Interfaces\Config $Expected)
     {
-        $this->assertCount(3, $ConfigManager->getConfigs());
+        $count = count($ConfigManager->getConfigs());
         $ConfigManager->unRegister($Expected->getName());
-        $this->assertCount(2, $ConfigManager->getConfigs());
+        $this->assertCount($count - 1, $ConfigManager->getConfigs());
         
         $ConfigManager->register($Expected);
-        $this->assertCount(3, $ConfigManager->getConfigs());
+        $this->assertCount($count, $ConfigManager->getConfigs());
     }
 
     /**
@@ -47,10 +47,10 @@ class ConfigManagerTest extends \Everon\TestCase
      */
     public function testUnRegister(\Everon\Interfaces\ConfigManager $ConfigManager, \Everon\Interfaces\Config $Expected)
     {
-        $this->assertCount(3, $ConfigManager->getConfigs());
+        $count = count($ConfigManager->getConfigs());
         $ConfigManager->unRegister($Expected->getName());
 
-        $this->assertCount(2, $ConfigManager->getConfigs());
+        $this->assertCount($count - 1, $ConfigManager->getConfigs());
     }
 
     /**
