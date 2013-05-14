@@ -46,7 +46,7 @@ class MyModel
 If you need specific constructor injection you can extend default Factory class.
  
 One line, on demand, lazy loaded dependency injection. No annotations, yaml or xml files to configure.
-In fact, there isn't any configuration file needed, at all. 
+In fact, there isn't any configuration file needed at all. 
 Instead, Everon applications use [root composition pattern](http://blog.ploeh.dk/2011/07/28/CompositionRoot/) to create
 whole object graphs in one place. See [index.php](https://github.com/oliwierptak/Everon/blob/master/Web/index.php)
 for implementation details.
