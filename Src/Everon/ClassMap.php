@@ -18,11 +18,18 @@ class ClassMap implements Interfaces\ClassMap
     protected $class_map_filename = null;
 
 
+    /**
+     * @param $filename
+     */
     public function __construct($filename)
     {
         $this->class_map_filename = $filename;
     }
 
+    /**
+     * @param $class
+     * @param $file
+     */
     public function addToMap($class, $file)
     {
         if (isset($this->class_map[$class]) === false) {
@@ -31,6 +38,10 @@ class ClassMap implements Interfaces\ClassMap
         }
     }
 
+    /**
+     * @param $class
+     * @return null
+     */
     public function getFilenameFromMap($class)
     {
         if (isset($this->class_map[$class])) {
@@ -40,6 +51,9 @@ class ClassMap implements Interfaces\ClassMap
         return null;
     }
 
+    /**
+     * @return null
+     */
     protected function getCacheFilename()
     {
         return $this->class_map_filename;
@@ -53,7 +67,7 @@ class ClassMap implements Interfaces\ClassMap
         }
     }
 
-    public function saveMap()
+    protected function saveMap()
     {
         $data = var_export($this->class_map, 1);
         $filename = $this->getCacheFilename();
