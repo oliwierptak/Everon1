@@ -117,7 +117,7 @@ $charset = $Config->go('Account')->get('charset');          # UTF-8
 ```
 
 `$static_url` is not present in `[Account]`, but because it inherits from `[ThemeBlue]` its value 
-for`static_url` property will be set to `/static/blue` as defined in the parent block.
+for `static_url` property will be set to '/static/blue' as defined in the parent block.
 The rest of the missing properties, like `$charset`, will be inherited from `[Default]` section.
 
 See [view.ini](https://github.com/oliwierptak/Everon/blob/master/Config/view.ini) for more examples.
