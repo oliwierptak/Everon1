@@ -241,7 +241,7 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
     public function setTemplateFromAction($action, array $data)
     {
         $filename = $this->getTemplateFilename($action);
-        if ($this->Output === null && is_file($filename)) { //only overwrite Output if not set before and template file exists
+        if ($this->Output === null && is_file($filename)) {
             $this->Output = $this->getTemplate($action, $data);
         }
     }
