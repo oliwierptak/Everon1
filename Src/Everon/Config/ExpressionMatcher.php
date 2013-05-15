@@ -58,7 +58,6 @@ class ExpressionMatcher implements Interfaces\ConfigExpressionMatcher
         }
 
         return $this->buildCompiler($expressions);
-        
     }
 
     /**

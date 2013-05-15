@@ -166,7 +166,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         $Container->register('ConfigManager', function() use ($Factory, $config_directory, $config_cache_directory) {
             $Matcher = $Factory->buildConfigExpressionMatcher();
             $Loader = $Factory->buildConfigLoader($config_directory, $config_cache_directory);
-            return $Factory->buildConfigManager($Matcher, $Loader);            
+            return $Factory->buildConfigManager($Loader, $Matcher);
         });
 
         $Request = $Container->resolve('Request');

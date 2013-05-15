@@ -74,7 +74,7 @@ class FactoryTest extends \Everon\TestCase
     {
         $Matcher = $this->getMock('\Everon\Interfaces\ConfigExpressionMatcher');
         $Loader = $this->getMock('\Everon\Interfaces\ConfigLoader');
-        $ConfigManager = $Factory->buildConfigManager($Matcher, $Loader);
+        $ConfigManager = $Factory->buildConfigManager($Loader, $Matcher);
         $this->assertInstanceOf('\Everon\Interfaces\ConfigManager', $ConfigManager);
     }
 
@@ -300,7 +300,7 @@ class FactoryTest extends \Everon\TestCase
     {
         $Matcher = $this->getMock('\Everon\Interfaces\ConfigExpressionMatcher');
         $Loader = $this->getMock('\Everon\Interfaces\ConfigLoader');
-        $FactoryMock->buildConfigManager($Matcher, $Loader);
+        $FactoryMock->buildConfigManager($Loader, $Matcher);
     }
     
     /**

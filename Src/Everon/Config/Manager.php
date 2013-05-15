@@ -50,28 +50,23 @@ class Manager implements Interfaces\ConfigManager
         'template' => [
             'compilers' => ['Curly']
         ]
-    ];    
-
-    /**
-     * @var Interfaces\ConfigExpressionMatcher
-     */
-    protected $ExpressionMatcher = null;
+    ];
 
 
     /**
-     * @param Interfaces\ConfigExpressionMatcher $Matcher
      * @param Interfaces\ConfigLoader $Loader
+     * @param Interfaces\ConfigExpressionMatcher $Matcher
      */
-    public function __construct(Interfaces\ConfigExpressionMatcher $Matcher, Interfaces\ConfigLoader $Loader)
+    public function __construct(Interfaces\ConfigLoader $Loader, Interfaces\ConfigExpressionMatcher $Matcher)
     {
-        $this->ExpressionMatcher = $Matcher;
         $this->ConfigLoader = $Loader;
+        $this->ExpressionMatcher = $Matcher;
     }
 
     protected function loadAndRegisterConfigs()
     {
         $this->setupCachingAndDefaultConfig();
-        
+
         $Compiler = $this->ExpressionMatcher->getCompiler($this);
         $config_data = $this->getConfigLoader()->getData($Compiler, $this->use_cache, $this->default_config_filename);
         

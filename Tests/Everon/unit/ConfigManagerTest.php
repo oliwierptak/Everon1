@@ -15,7 +15,7 @@ class ConfigManagerTest extends \Everon\TestCase
     {
         $Matcher = $this->getMock('Everon\Interfaces\ConfigExpressionMatcher');
         $Loader = $this->getMock('Everon\Interfaces\ConfigLoader');
-        $Manager = new \Everon\Config\Manager($Matcher, $Loader);
+        $Manager = new \Everon\Config\Manager($Loader, $Matcher);
         $this->assertInstanceOf('\Everon\Interfaces\ConfigManager', $Manager);
     }
 

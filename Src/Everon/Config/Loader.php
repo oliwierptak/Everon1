@@ -18,8 +18,8 @@ class Loader implements Interfaces\ConfigLoader
 {
     protected $config_directory = null;
     protected $cache_directory = null;
-    
 
+    
     /**
      * @param $config_directory
      * @param $cache_directory
@@ -50,35 +50,35 @@ class Loader implements Interfaces\ConfigLoader
     }
 
     /**
-     * @param callable $Compiler
+     * @param \Closure $Compiler
      * @param $use_cache
      * @param $default_config_filename
      * @return array
      */
     public function getData(\Closure $Compiler, $use_cache, $default_config_filename)
     {
-        $list = [];
         /**
-         * @var \SplFileInfo $file
+         * @var \SplFileInfo $ConfigFile
+         * @var \Closure $Compiler
          */
+        $list = [];
         $IniFiles = new \GlobIterator($this->config_directory.'*.ini');
-        foreach ($IniFiles as $config_filename => $file) {
-            if (strcasecmp($file->getFilename(), $default_config_filename) === 0) {
+        foreach ($IniFiles as $config_filename => $ConfigFile) {
+            if (strcasecmp($ConfigFile->getFilename(), $default_config_filename) === 0) {
                 continue; //don't load default config again
             }
 
-            $filename = $this->cache_directory.$file->getFilename().'.php';
-            if ($use_cache && is_file($filename)) {
-                $name = basename(basename($config_filename, '.php'), '.ini');
+            $name = $ConfigFile->getBasename('.ini');
+            $CacheFile = new \SplFileInfo($ConfigFile->getPathname().'.php');
+            if ($use_cache && is_file($CacheFile->getPathname())) {
+                $filename = $CacheFile->getPathname();
                 $ini_config_data = function() use ($filename, $Compiler) {
                     $cache = null;
                     include($filename);
-                    $Compiler($cache);
                     return $cache;
                 };
             }
             else {
-                $name = basename($config_filename, '.ini');
                 $ini_config_data = function() use ($config_filename, $Compiler) {
                     $content = parse_ini_file($config_filename, true);
                     $Compiler($content);

@@ -41,12 +41,12 @@ interface Factory
     public function buildConfig($name, $filename, $data);
 
     /**
-     * @param Interfaces\ConfigExpressionMatcher $Matcher
      * @param Interfaces\ConfigLoader $Loader
+     * @param Interfaces\ConfigExpressionMatcher $Matcher
      * @return Config\Manager|mixed
      * @throws Exception\Factory
      */
-    public function buildConfigManager(Interfaces\ConfigExpressionMatcher $Matcher, Interfaces\ConfigLoader $Loader);
+    public function buildConfigManager(Interfaces\ConfigLoader $Loader, Interfaces\ConfigExpressionMatcher $Matcher);
 
     /**
      * @return Interfaces\ConfigExpressionMatcher
