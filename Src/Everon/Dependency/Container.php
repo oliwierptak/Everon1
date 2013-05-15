@@ -37,23 +37,12 @@ class Container implements Interfaces\DependencyContainer
 
     /**
      * @param $dependency_name
-     * @param Interfaces\Factory $Factory
      * @param mixed $Receiver
      * @return null
      * @throws Exception\DependencyContainer
      */
-    protected function dependencyToObject($dependency_name, Interfaces\Factory $Factory, $Receiver)
+    protected function dependencyToObject($dependency_name, $Receiver)
     {
-        $is_di = substr($dependency_name, 0, strlen('Everon\Dependency\Injection'))  === 'Everon\Dependency\Injection';
-        if ($is_di === false) {
-            return null;
-        }
-
-        if ($dependency_name === 'Everon\Dependency\Injection\Factory') {
-            $Receiver->setFactory($Factory);
-            return null;
-        }
-
         if (array_key_exists($dependency_name, $this->container_dependencies)) {
             $container_name = $this->container_dependencies[$dependency_name];
         }
@@ -115,15 +104,26 @@ class Container implements Interfaces\DependencyContainer
         catch (\Exception $e) {
             throw new Exception\Factory('Error injecting dependency: "%s"', $class_name);
         }
-     
+
         if (array_key_exists($class_name, $this->class_dependencies) === false) {
-            $this->class_dependencies[$class_name] = $this->getClassDependencies($class_name);
+            $OnlyInjections = function($name) {
+                return substr($name, 0, strlen('Everon\Dependency\Injection'))  === 'Everon\Dependency\Injection';
+            };
+            
+            $this->class_dependencies[$class_name] = array_filter(
+                $this->getClassDependencies($class_name), 
+                $OnlyInjections
+            );            
         }
 
         $dependencies = $this->class_dependencies[$class_name];
-        for ($a=0; $a<count($dependencies); ++$a) {
-            $name = $dependencies[$a];
-            $this->dependencyToObject($name, $Factory, $Receiver);
+        foreach ($dependencies as $index => $name) {
+            if ($name === 'Everon\Dependency\Injection\Factory') {
+                $Receiver->setFactory($Factory);
+            }
+            else {
+                $this->dependencyToObject($name, $Receiver);
+            }
         }
 
         return $Receiver;
