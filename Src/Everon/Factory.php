@@ -141,7 +141,7 @@ class Factory implements Interfaces\Factory
      * @return Config\Loader
      * @throws Exception\Factory
      */
-    public function buildConfigIniLoader($config_directory, $cache_directory)
+    public function buildConfigLoader($config_directory, $cache_directory)
     {
         try {
             $ExpressionMatcher = new Config\Loader($config_directory, $cache_directory);

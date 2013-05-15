@@ -36,7 +36,7 @@ namespace Everon
         $config_cache_directory = $Environment->getCacheConfig();        
         $Container->register('ConfigManager', function() use ($Factory, $config_directory, $config_cache_directory) {
             $Matcher = $Factory->buildConfigExpressionMatcher();
-            $Loader = $Factory->buildConfigIniLoader($config_directory, $config_cache_directory);
+            $Loader = $Factory->buildConfigLoader($config_directory, $config_cache_directory);
             return $Factory->buildConfigManager($Matcher, $Loader);
         });
 

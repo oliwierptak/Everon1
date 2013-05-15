@@ -60,7 +60,7 @@ interface Factory
      * @return Config\Loader
      * @throws Exception\Factory
      */
-    function buildConfigIniLoader($config_directory, $cache_directory);    
+    function buildConfigLoader($config_directory, $cache_directory);    
 
     /**
      * @param $class_name

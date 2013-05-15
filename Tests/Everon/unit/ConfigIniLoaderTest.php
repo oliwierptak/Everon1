@@ -78,7 +78,7 @@ class ConfigIniLoaderTest extends \Everon\TestCase
          */
         list($Container, $Factory) = $this->getContainerAndFactory();
         
-        $ConfigLoader = $Factory->buildConfigIniLoader($this->getConfigDirectory(), $this->getConfigCacheDirectory());
+        $ConfigLoader = $Factory->buildConfigLoader($this->getConfigDirectory(), $this->getConfigCacheDirectory());
 
         return [
             [$ConfigLoader]
