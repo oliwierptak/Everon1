@@ -70,7 +70,7 @@ class Loader implements Interfaces\ConfigLoader
 
             $name = $ConfigFile->getBasename('.ini');
             $CacheFile = new \SplFileInfo($ConfigFile->getPathname().'.php');
-            if ($use_cache && is_file($CacheFile->getPathname())) {
+            if ($use_cache && $CacheFile->isFile()) {
                 $filename = $CacheFile->getPathname();
                 $ini_config_data = function() use ($filename, $Compiler) {
                     $cache = null;
@@ -101,7 +101,7 @@ class Loader implements Interfaces\ConfigLoader
     {
         try {
             $cache_filename = $this->cache_directory.pathinfo($Config->getFilename(), PATHINFO_BASENAME).'.php';
-
+            
             if (!is_dir($this->cache_directory)) {
                 mkdir($this->cache_directory, 0775, true);
             }
