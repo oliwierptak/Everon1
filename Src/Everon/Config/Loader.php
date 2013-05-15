@@ -48,8 +48,14 @@ class Loader implements Interfaces\ConfigLoader
     {
         return @parse_ini_file($filename, true);
     }
-    
-    public function getList(\Closure $Compiler, $use_cache, $default_config_filename)
+
+    /**
+     * @param callable $Compiler
+     * @param $use_cache
+     * @param $default_config_filename
+     * @return array
+     */
+    public function getData(\Closure $Compiler, $use_cache, $default_config_filename)
     {
         $list = [];
         /**

@@ -73,9 +73,9 @@ class Manager implements Interfaces\ConfigManager
         $this->setupCachingAndDefaultConfig();
         
         $Compiler = $this->ExpressionMatcher->getCompiler($this);
-        $list = $this->getConfigLoader()->getList($Compiler, $this->use_cache, $this->default_config_filename);
+        $config_data = $this->getConfigLoader()->getData($Compiler, $this->use_cache, $this->default_config_filename);
         
-        foreach ($list as $name => $item) {
+        foreach ($config_data as $name => $item) {
             list($config_filename, $ini_config_data) = $item;
             if ($this->isRegistered($name) === false) {
                 $Config = $this->getFactory()->buildConfig($name, $config_filename, $ini_config_data);

@@ -32,7 +32,7 @@ class ConfigIniLoaderTest extends \Everon\TestCase
     public function testGetList(Interfaces\ConfigLoader $ConfigLoader)
     {
         $Compiler = function(){};
-        $list = $ConfigLoader->getList($Compiler, false, 'application.ini');
+        $list = $ConfigLoader->getData($Compiler, false, 'application.ini');
         $this->assertInternalType('array', $list);
     }
 
