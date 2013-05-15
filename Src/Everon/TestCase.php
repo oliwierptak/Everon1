@@ -39,8 +39,9 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         }
     }
 
-    protected function removeDirectoryRecursive($dir)
+    private function removeDirectoryRecursive($dir)
     {
+        return;
         if (is_dir($dir)) {
             $It = new \RecursiveIteratorIterator(
                 new \RecursiveDirectoryIterator($dir, \FilesystemIterator::SKIP_DOTS),
@@ -109,9 +110,9 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         return $this->getFixtureDirectory().'templates'.DIRECTORY_SEPARATOR;
     }
 
-    protected function getConfigManagerTempDirectory()
+    protected function getConfigCacheDirectory()
     {
-        return $this->getTempDirectory().'configmanager'.DIRECTORY_SEPARATOR;
+        return $this->getTempDirectory().'config'.DIRECTORY_SEPARATOR;
     }
     
     public function getProtectedProperty($class_name, $name)
@@ -164,7 +165,8 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         $config_cache_directory = $Environment->getCacheConfig();
         $Container->register('ConfigManager', function() use ($Factory, $config_directory, $config_cache_directory) {
             $Matcher = $Factory->buildConfigExpressionMatcher();
-            return $Factory->buildConfigManager($Matcher, $config_directory, $config_cache_directory);
+            $Loader = $Factory->buildConfigIniLoader($config_directory, $config_cache_directory);
+            return $Factory->buildConfigManager($Matcher, $Loader);            
         });
 
         $Request = $Container->resolve('Request');

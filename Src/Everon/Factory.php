@@ -103,15 +103,14 @@ class Factory implements Interfaces\Factory
 
     /**
      * @param Interfaces\ConfigExpressionMatcher $Matcher
-     * @param $directory
-     * @param $cache_directory
+     * @param Interfaces\ConfigLoader $Loader
      * @return Config\Manager|mixed
      * @throws Exception\Factory
      */
-    public function buildConfigManager(Interfaces\ConfigExpressionMatcher $Matcher, $directory, $cache_directory)
+    public function buildConfigManager(Interfaces\ConfigExpressionMatcher $Matcher, Interfaces\ConfigLoader $Loader)
     {
         try {
-            $Manager = new Config\Manager($Matcher, $directory, $cache_directory);
+            $Manager = new Config\Manager($Matcher, $Loader);
             $this->getDependencyContainer()->inject('Everon\Config\Manager', $this, $Manager);
             return $Manager;
         }
@@ -133,6 +132,24 @@ class Factory implements Interfaces\Factory
         }
         catch (\Exception $e) {
             throw new Exception\Factory('ConfigExpressionMatcher initialization error', null, $e);
+        }
+    }
+
+    /**
+     * @param $config_directory
+     * @param $cache_directory
+     * @return Config\Loader
+     * @throws Exception\Factory
+     */
+    public function buildConfigIniLoader($config_directory, $cache_directory)
+    {
+        try {
+            $ExpressionMatcher = new Config\Loader($config_directory, $cache_directory);
+            $this->getDependencyContainer()->inject('Everon\Config\Loader', $this, $ExpressionMatcher);
+            return $ExpressionMatcher;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('ConfigLoader initialization error', null, $e);
         }
     }
 

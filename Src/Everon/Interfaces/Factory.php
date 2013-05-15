@@ -42,17 +42,25 @@ interface Factory
 
     /**
      * @param Interfaces\ConfigExpressionMatcher $Matcher
-     * @param $directory
-     * @param $cache_directory
-     * @return mixed
+     * @param Interfaces\ConfigLoader $Loader
+     * @return Config\Manager|mixed
+     * @throws Exception\Factory
      */
-    function buildConfigManager(Interfaces\ConfigExpressionMatcher $Matcher, $directory, $cache_directory);
+    public function buildConfigManager(Interfaces\ConfigExpressionMatcher $Matcher, Interfaces\ConfigLoader $Loader);
 
     /**
      * @return Interfaces\ConfigExpressionMatcher
      * @throws Exception\Factory
      */
     function buildConfigExpressionMatcher();
+
+    /**
+     * @param $config_directory
+     * @param $cache_directory
+     * @return Config\Loader
+     * @throws Exception\Factory
+     */
+    function buildConfigIniLoader($config_directory, $cache_directory);    
 
     /**
      * @param $class_name

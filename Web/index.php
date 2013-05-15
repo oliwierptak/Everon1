@@ -36,7 +36,8 @@ namespace Everon
         $config_cache_directory = $Environment->getCacheConfig();        
         $Container->register('ConfigManager', function() use ($Factory, $config_directory, $config_cache_directory) {
             $Matcher = $Factory->buildConfigExpressionMatcher();
-            return $Factory->buildConfigManager($Matcher, $config_directory, $config_cache_directory);
+            $Loader = $Factory->buildConfigIniLoader($config_directory, $config_cache_directory);
+            return $Factory->buildConfigManager($Matcher, $Loader);
         });
 
         $Request = $Container->resolve('Request');
@@ -59,8 +60,11 @@ namespace Everon
 
         $Router = $Container->resolve('Router');
         $ModelManager = $Container->resolve('ModelManager');
-        $compilers = $Container->resolve('ConfigManager')->getApplicationConfig()->go('template')->get('compilers');
+        
+        //todo replace those with ViewManager
         $directory_view_template = $Environment->getViewTemplate();
+        $compilers = $Container->resolve('ConfigManager')->getApplicationConfig()->go('template')->get('compilers');
+
         $Igniter = function() use ($Factory, $Router, $ModelManager, $directory_view_template, $compilers) {
             $class_name = $Router->getCurrentRoute()->getController();
             $View = $Factory->buildView(

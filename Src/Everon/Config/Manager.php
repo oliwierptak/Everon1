@@ -17,6 +17,7 @@ use Everon\Interfaces;
 class Manager implements Interfaces\ConfigManager
 {
     use Dependency\Injection\Factory;
+    use Dependency\ConfigLoader;
     
     use Helper\Asserts;
     use Helper\Asserts\IsArrayKey;
@@ -32,10 +33,6 @@ class Manager implements Interfaces\ConfigManager
      * @var boolean
      */
     protected $use_cache = null;
-
-    protected $config_directory = null;
-
-    protected $cache_directory = null;
 
     protected $default_config_filename = 'application.ini';
     
@@ -63,14 +60,12 @@ class Manager implements Interfaces\ConfigManager
 
     /**
      * @param Interfaces\ConfigExpressionMatcher $Matcher
-     * @param $directory
-     * @param $cache_directory
+     * @param Interfaces\ConfigLoader $Loader
      */
-    public function __construct(Interfaces\ConfigExpressionMatcher $Matcher, $directory, $cache_directory)
+    public function __construct(Interfaces\ConfigExpressionMatcher $Matcher, Interfaces\ConfigLoader $Loader)
     {
         $this->ExpressionMatcher = $Matcher;
-        $this->config_directory = $directory;
-        $this->cache_directory = $cache_directory;
+        $this->ConfigLoader = $Loader;
     }
 
     protected function loadAndRegisterConfigs()
@@ -78,35 +73,10 @@ class Manager implements Interfaces\ConfigManager
         $this->setupCachingAndDefaultConfig();
         
         $Compiler = $this->ExpressionMatcher->getCompiler($this);
-
-        /**
-         * @var \SplFileInfo $file
-         */
-        $IniFiles = new \GlobIterator($this->config_directory.'*.ini');
-        foreach ($IniFiles as $config_filename => $file) {
-            if (strcasecmp($file->getFilename(), $this->default_config_filename) === 0) {
-                continue; //don't load default config again
-            }
-
-            $filename = $this->cache_directory.$file->getFilename().'.php';
-            if ($this->use_cache && is_file($filename)) {
-                $name = basename(basename($config_filename, '.php'), '.ini');
-                $ini_config_data = function() use ($filename, $Compiler) {
-                    $cache = null;
-                    include($filename);
-                    $Compiler($cache);
-                    return $cache;
-                };
-            }
-            else {
-                $name = basename($config_filename, '.ini');
-                $ini_config_data = function() use ($config_filename, $Compiler) {
-                    $content = parse_ini_file($config_filename, true);
-                    $Compiler($content);
-                    return $content;
-                };
-            }
-            
+        $list = $this->getConfigLoader()->getList($Compiler, $this->use_cache, $this->default_config_filename);
+        
+        foreach ($list as $name => $item) {
+            list($config_filename, $ini_config_data) = $item;
             if ($this->isRegistered($name) === false) {
                 $Config = $this->getFactory()->buildConfig($name, $config_filename, $ini_config_data);
                 $this->register($Config);
@@ -120,15 +90,16 @@ class Manager implements Interfaces\ConfigManager
     protected function getDefaultConfig()
     {
         $data = $this->default_config_data;
-
-        $ini = @parse_ini_file($this->config_directory.$this->default_config_filename, true);
+        $directory = $this->getConfigLoader()->getConfigDirectory();
+        
+        $ini = $this->getConfigLoader()->read($directory.$this->default_config_filename);
         if (is_array($ini)) {
             $data = $this->arrayMergeDefault($data, $ini);
         }
 
         $Config = $this->getFactory()->buildConfig(
             $this->default_config_name,
-            $this->config_directory.$this->default_config_filename,
+            $directory.$this->default_config_filename,
             $data
         );
 
@@ -137,6 +108,9 @@ class Manager implements Interfaces\ConfigManager
     
     protected function setupCachingAndDefaultConfig()
     {
+        /**
+         * @var Interfaces\Config $Config
+         */
         if (isset($this->configs[$this->default_config_name]) === false) {
             $Config = $this->getDefaultConfig();
             $this->use_cache = (bool) $Config->go('cache')->get('config_manager');
@@ -161,7 +135,10 @@ class Manager implements Interfaces\ConfigManager
         }
         
         $this->configs[$Config->getName()] = $Config;
-        $this->saveConfigToCache($Config);
+        
+        if ($this->use_cache) {
+            $this->getConfigLoader()->saveConfigToCache($Config);
+        }        
     }
 
     /**
@@ -234,31 +211,6 @@ class Manager implements Interfaces\ConfigManager
         $this->use_cache = false;
     }
 
-    /**
-     * @param Interfaces\Config $Config
-     * @throws Exception\Config
-     */
-    protected function saveConfigToCache(Interfaces\Config $Config)
-    {
-        if ($this->use_cache === false) {
-            return;
-        }
-        
-        try {
-            $cache_filename = $this->cache_directory.pathinfo($Config->getFilename(), PATHINFO_BASENAME).'.php';
-            
-            if (!is_dir($this->cache_directory)) {
-                mkdir($this->cache_directory, 0775, true);
-            }
 
-            $data = var_export($Config->toArray(), true);
-            $h = fopen($cache_filename, 'w+');
-            fwrite($h, "<?php \$cache = $data; ");
-            fclose($h);
-        }
-        catch (\Exception $e) {
-            throw new Exception\Config('Unable to save config cache file: "%s"', $Config->getFilename(), $e);
-        }
-    }
 
 }
