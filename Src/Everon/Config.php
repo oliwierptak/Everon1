@@ -15,8 +15,13 @@ use Everon\Exception;
 
 class Config implements Interfaces\Config, Interfaces\Arrayable
 {
+    use Dependency\Injection\Factory;
+    
+    use Helper\Asserts;
+    use Helper\Asserts\IsArrayKey;    
     use Helper\ArrayMergeDefault;
     use Helper\ToArray;
+
     
     protected $name = null;
 
@@ -29,6 +34,16 @@ class Config implements Interfaces\Config, Interfaces\Arrayable
     
     protected $data_processed = false;
 
+    /**
+     * @var mixed
+     */
+    protected $DefaultItem = null;
+
+    /**
+     * @var array
+     */
+    protected $items = null;
+    
 
     /**
      * @param $name
@@ -46,19 +61,6 @@ class Config implements Interfaces\Config, Interfaces\Arrayable
         $this->data = $data;
     }
 
-    /**
-     * @return array
-     */
-    protected function getData()
-    {
-        if ($this->data instanceof \Closure) {
-            $this->data = $this->data->__invoke();
-        }
-
-        $this->processData();
-        return $this->data;
-    }
-    
     protected function processData()
     {
         if ($this->data_processed === true) {
@@ -111,6 +113,30 @@ class Config implements Interfaces\Config, Interfaces\Arrayable
         $this->data = $data_processed;
     }
 
+    protected function initItems()
+    {
+        $default_or_first_item = null;
+        foreach ($this->getData() as $item_name => $config_data) {
+            $config_data['____name'] = $item_name;
+            $RouteItem = $this->buildItem($config_data);
+            $this->items[$item_name] = $RouteItem;
+
+            $default_or_first_item = (is_null($default_or_first_item)) ? $RouteItem : $default_or_first_item;
+            if ($RouteItem->isDefault()) {
+                $this->setDefaultItem($RouteItem);
+            }
+        }
+
+        if (is_null($this->getDefaultItem())) {
+            $this->setDefaultItem($default_or_first_item);
+        }
+    }
+
+    protected function buildItem(array $config_data)
+    {
+        return $this->getFactory()->buildConfigItem($config_data);
+    }
+
     public function getName()
     {
         return $this->name;
@@ -135,6 +161,65 @@ class Config implements Interfaces\Config, Interfaces\Arrayable
     public function setFilename($filename)
     {
         $this->filename = $filename;
+    }
+
+    /**
+     * @param mixed $Default
+     */
+    public function setDefaultItem($Default)
+    {
+        $this->DefaultItem = $Default;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDefaultItem()
+    {
+        if (is_null($this->DefaultItem)) {
+            $this->initItems();
+        }
+        
+        return $this->DefaultItem;
+    }
+    
+    /**
+     * @return array
+     */
+    public function getData()
+    {
+        if ($this->data instanceof \Closure) {
+            $this->data = $this->data->__invoke();
+        }
+
+        $this->processData();
+        return $this->data;
+    }
+
+    /**
+     * @return array|null
+     */
+    public function getItems()
+    {
+        if (is_null($this->items)) {
+            $this->initItems();
+        }
+
+        return $this->items;
+    }
+
+    /**
+     * @param string $name
+     * @return mixed
+     */
+    public function getItemByName($name)
+    {
+        if (is_null($this->items)) {
+            $this->initItems();
+        }
+
+        $this->assertIsArrayKey($name, $this->items, 'Invalid config item name: "%s"');
+        return $this->items[$name];
     }
 
     /**

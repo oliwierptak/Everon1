@@ -24,6 +24,7 @@ interface ConfigManager
     function getConfigByName($name);
     function getApplicationConfig();
     function getRouterConfig();
+    function getViewConfig();
     function getConfigs();
     function enableCache();
     function disableCache();

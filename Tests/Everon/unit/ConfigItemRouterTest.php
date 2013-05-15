@@ -15,7 +15,7 @@ class ConfigItemRouterTest extends \Everon\TestCase
     public function testConstructor()
     {
         $data = [
-            'route_name' => 'test',
+            '____name' => 'test',
             'url' => '/',
             'controller' => 'Test',
             'action' => 'testMe',
@@ -30,7 +30,7 @@ class ConfigItemRouterTest extends \Everon\TestCase
         $this->assertEquals($data['controller'], $Item->getController());
         $this->assertEquals($data['action'], $Item->getAction());
         $this->assertEquals($data['url'], $Item->getUrl());
-        $this->assertEquals($data['route_name'], $Item->getName());
+        $this->assertEquals($data['____name'], $Item->getName());
     }
 
 }

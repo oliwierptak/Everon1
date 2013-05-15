@@ -9,10 +9,6 @@
  */
 namespace Everon;
 
-/**
- * @property \Everon\Interfaces\ConfigRouter $Config
- * @method \Everon\Interfaces\ConfigRouter getConfig()
- */
 class Router implements Interfaces\Router, Interfaces\Arrayable
 {
     use Dependency\Request;
@@ -31,9 +27,10 @@ class Router implements Interfaces\Router, Interfaces\Arrayable
 
     /**
      * @param Interfaces\Request $Request
-     * @param Interfaces\ConfigRouter $Config
+     * @param Interfaces\Config $Config
+     * @param Interfaces\RouterValidator $Validator
      */
-    public function __construct(Interfaces\Request $Request, Interfaces\ConfigRouter $Config, Interfaces\RouterValidator $Validator)
+    public function __construct(Interfaces\Request $Request, Interfaces\Config $Config, Interfaces\RouterValidator $Validator)
     {
         $this->Request = $Request;
         $this->Config = $Config;
@@ -59,7 +56,7 @@ class Router implements Interfaces\Router, Interfaces\Arrayable
         $url_tokens = $Request->getUrlAsTokens();
 
         if (count($url_tokens) == 0) {//empty url @todo: refactor into method, remove this comment
-            $RouteItem = $this->getConfig()->getDefaultRoute();
+            $RouteItem = $this->getConfig()->getDefaultItem();
             $RouteItem = ($RouteItem) ?: $this->getRouteItemByUrl($Request->getUrl());
             
             if (is_null($RouteItem)) {
@@ -77,7 +74,7 @@ class Router implements Interfaces\Router, Interfaces\Arrayable
             return $RouteItem;
         }
 
-        foreach ($this->getConfig()->getRoutes() as $RouteItem) {
+        foreach ($this->getConfig()->getItems() as $RouteItem) {
             /**
              * @var Interfaces\ConfigItemRouter $RouteItem
              */
@@ -103,7 +100,7 @@ class Router implements Interfaces\Router, Interfaces\Arrayable
         /**
          * @var $RouteItem Interfaces\ConfigItemRouter
          */
-        foreach ($this->getConfig()->getRoutes() as $RouteItem) {
+        foreach ($this->getConfig()->getItems() as $RouteItem) {
             if (strcasecmp($RouteItem->getUrl(), $url) === 0) {
                 return $RouteItem;
             }
@@ -120,7 +117,7 @@ class Router implements Interfaces\Router, Interfaces\Arrayable
     public function getRouteByName($route_name)
     {
         try {
-            return $this->getConfig()->getRouteByName($route_name);
+            return $this->getConfig()->getItemByName($route_name);
         }
         catch (\Exception $e) {
             throw new Exception\Router($e);

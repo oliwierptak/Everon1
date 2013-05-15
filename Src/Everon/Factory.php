@@ -267,12 +267,12 @@ class Factory implements Interfaces\Factory
 
     /**
      * @param Interfaces\Request $Request
-     * @param Interfaces\ConfigRouter $Config
+     * @param Interfaces\Config $Config
      * @param Interfaces\RouterValidator $Validator
      * @return Interfaces\Router
      * @throws Exception\Factory
      */
-    public function buildRouter(Interfaces\Request $Request, Interfaces\ConfigRouter $Config, Interfaces\RouterValidator $Validator)
+    public function buildRouter(Interfaces\Request $Request, Interfaces\Config $Config, Interfaces\RouterValidator $Validator)
     {
         try {
             $RouteItem = new Router($Request, $Config, $Validator);

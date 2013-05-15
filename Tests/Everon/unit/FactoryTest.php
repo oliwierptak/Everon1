@@ -173,7 +173,7 @@ class FactoryTest extends \Everon\TestCase
     public function testBuildRouteItem(Interfaces\Factory $Factory, Interfaces\DependencyContainer $DependencyContainer)
     {
         $RouteItem = $Factory->buildConfigItemRouter([
-            'route_name' => 'test',
+            '____name' => 'test',
             'url' => '/test.htm',
             'controller' => 'MyController',
             'action' => 'testOne',
@@ -358,7 +358,7 @@ class FactoryTest extends \Everon\TestCase
     public function testBuildRouterShouldThrowExceptionWhenWrongClass(Interfaces\Factory $FactoryMock)
     {
         $Request = $this->getMock('\Everon\Interfaces\Request');
-        $Config = $this->getMock('\Everon\Interfaces\ConfigRouter');
+        $Config = $this->getMock('\Everon\Interfaces\Config');
         $Validator = $this->getMock('\Everon\Interfaces\RouterValidator');
         $FactoryMock->buildRouter($Request, $Config, $Validator);
     }

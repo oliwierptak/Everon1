@@ -65,7 +65,7 @@ class RouterValidatorTest extends \Everon\TestCase
      */
     public function testValidatePostShouldThrowExceptionWhenError(Interfaces\RouterValidator $Validator, Interfaces\ConfigItemRouter $RouteItem, Interfaces\Request $Request)
     {
-        $RouteItemMock = $this->getMock('Everon\Interfaces\ConfigItemRouter');
+        $RouteItemMock = $this->getMock('Everon\Config\Item\Router', [], [], '', false);
         $RouteItemMock->expects($this->once())
             ->method('filterQueryKeys')
             ->will($this->returnValue([]));
@@ -104,7 +104,7 @@ class RouterValidatorTest extends \Everon\TestCase
         );
 
         $Config = $Container->resolve('ConfigManager')->getRouterConfig();
-        $RouteItem = $Config->getRouteByName('test_complex');
+        $RouteItem = $Config->getItemByName('test_complex');
         $Validator = new \Everon\RouterValidator();
         
         return [

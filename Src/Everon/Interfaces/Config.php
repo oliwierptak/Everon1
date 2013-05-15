@@ -9,6 +9,7 @@
  */
 namespace Everon\Interfaces;
 
+use Everon\Interfaces;
 
 interface Config
 {
@@ -16,11 +17,48 @@ interface Config
     function setName($name);
     function getFilename();
     function setFilename($filename);
+    
+    /**
+     * @param mixed $Default
+     */
+    function setDefaultItem($Default);
+
+    /**
+     * @return mixed
+     */
+    function getDefaultItem();
+
+    /**
+     * @return array
+     */
+    function getData();
+
+    /**
+     * @return \array
+     */
+    function getItems();
+
+    /**
+     * @param string $name
+     * @return \Everon\Config\Item\Router
+     */
+    function getItemByName($name);
+
+    /**
+     * @param $name
+     * @param null $default
+     * @return mixed
+     */
     function get($name, $default=null);
+    
     /**
      * @param $where
      * @return \Everon\Interfaces\Config
      */    
     function go($where);
+
+    /**
+     * @return array
+     */
     function toArray();
 }

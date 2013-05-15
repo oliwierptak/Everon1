@@ -13,14 +13,12 @@ use Everon\Exception;
 use Everon\Interfaces;
 use Everon\Helper;
 
-class View implements Interfaces\ConfigItemView, Interfaces\Arrayable
+class View extends \Everon\Config\Item implements Interfaces\ConfigItem, Interfaces\Arrayable
 {
     use Helper\Asserts;
     use Helper\Asserts\IsStringAndNonEmpty;
     use Helper\Regex;
     use Helper\ToArray;
-
-    protected $view_name = null;
 
     protected $title = null;
     
@@ -39,12 +37,6 @@ class View implements Interfaces\ConfigItemView, Interfaces\Arrayable
     protected $routes = [];
     
 
-    /**
-     * @var boolean
-     */
-    protected $is_default = null;
-
-
     public function __construct(array $data)
     {
         $this->init($data);
@@ -60,15 +52,14 @@ class View implements Interfaces\ConfigItemView, Interfaces\Arrayable
             'keywords' => '',
             'description' => '',
             'body' => '',
-            'routes' => [],
-            'view_name' => null,
+            'items' => [],
             'default' => false,
         ];
 
         $this->data = array_merge($empty_defaults, $data);
         $this->validateData($this->data);
 
-        $this->setName($this->data['view_name']);
+        $this->setName($this->data['____name']);
         $this->setIsDefault($this->data['default']);
     }
 
@@ -77,36 +68,7 @@ class View implements Interfaces\ConfigItemView, Interfaces\Arrayable
      */
     public function validateData(array $data)
     {
-        $this->assertIsStringAndNonEmpty($data['view_name'], 'Invalid view name: "%s"', 'ConfigItemView');
+        $this->assertIsStringAndNonEmpty($data['____name'], 'Invalid view name: "%s"', 'ConfigItemView');
     }
 
-    public function getName()
-    {
-        return $this->view_name;
-    }
-
-    /**
-     * @param $name
-     */
-    public function setName($name)
-    {
-        $this->view_name = $name;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isDefault()
-    {
-        return $this->is_default;
-    }
-
-    /**
-     * @param boolean $is_default
-     */
-    public function setIsDefault($is_default)
-    {
-        $this->is_default = (bool) $is_default;
-    }
-    
 }

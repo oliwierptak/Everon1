@@ -13,25 +13,18 @@ use Everon\Exception;
 use Everon\Interfaces;
 use Everon\Helper;
 
-class Router implements Interfaces\ConfigItemRouter
+class Router extends \Everon\Config\Item implements Interfaces\ConfigItemRouter
 {
     use Helper\Asserts;
     use Helper\Asserts\IsStringAndNonEmpty;
     use Helper\Regex;
     use Helper\ToArray;
 
-    protected $route_name = null;
-
     protected $url = null;
 
     protected $controller = null;
 
     protected $action = null;
-
-    /**
-     * @var boolean
-     */
-    protected $is_default = null;
 
     /**
      * @var array
@@ -52,7 +45,6 @@ class Router implements Interfaces\ConfigItemRouter
     protected function init(array $data)
     {
         $empty_defaults = [
-            'route_name' => null,
             'url' => null,
             'controller' => null,
             'action' => null,
@@ -64,7 +56,7 @@ class Router implements Interfaces\ConfigItemRouter
         $this->data = array_merge($empty_defaults, $data);
         $this->validateData($this->data);
 
-        $this->setName($this->data['route_name']);
+        $this->setName($this->data['____name']);
         $this->setUrl($this->data['url']);
         $this->setController($this->data['controller']);
         $this->setAction($this->data['action']);
@@ -172,24 +164,11 @@ class Router implements Interfaces\ConfigItemRouter
      */
     public function validateData(array $data)
     {
-        $this->assertIsStringAndNonEmpty($data['route_name'], 'Invalid route name: "%s"', 'ConfigItemRouter');
+        $this->assertIsStringAndNonEmpty($data['____name'], 'Invalid route name: "%s"', 'ConfigItemRouter');
         $this->assertIsStringAndNonEmpty($data['url'], 'Invalid url: "%s"', 'ConfigItemRouter');
         $this->assertIsStringAndNonEmpty($data['controller'], 'Invalid controller: "%s"', 'ConfigItemRouter');
         $this->assertIsStringAndNonEmpty($data['action'], 'Invalid action: "%s"', 'ConfigItemRouter');
     }    
-
-    public function getName()
-    {
-        return $this->route_name;
-    }
-
-    /**
-     * @param $route_name
-     */
-    public function setName($route_name)
-    {
-        $this->route_name = $route_name;
-    }
 
     public function getUrl()
     {
@@ -254,22 +233,6 @@ class Router implements Interfaces\ConfigItemRouter
     public function setPostRegex($regex)
     {
         $this->regex_post = $regex;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isDefault()
-    {
-        return $this->is_default;
-    }
-
-    /**
-     * @param boolean $is_default
-     */
-    public function setIsDefault($is_default)
-    {
-        $this->is_default = (bool) $is_default;
     }
     
 }

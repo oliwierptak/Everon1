@@ -169,7 +169,7 @@ class Manager implements Interfaces\ConfigManager
     }
 
     /**
-     * @return \Everon\Interfaces\Config
+     * @return \Everon\Interfaces\ConfigItem
      */
     public function getApplicationConfig()
     {
@@ -177,11 +177,19 @@ class Manager implements Interfaces\ConfigManager
     }
 
     /**
-     * @return \Everon\Interfaces\ConfigRouter
+     * @return \Everon\Interfaces\ConfigItem
      */
     public function getRouterConfig()
     {
         return $this->getConfigByName('router');
+    }
+    
+    /**
+     * @return \Everon\Interfaces\ConfigItem
+     */
+    public function getViewConfig()
+    {
+        return $this->getConfigByName('view');
     }
 
     /**
