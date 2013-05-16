@@ -29,7 +29,7 @@ class ConfigIniLoaderTest extends \Everon\TestCase
     /**
      * @dataProvider dataProvider
      */
-    public function testGetList(Interfaces\ConfigLoader $ConfigLoader)
+    public function testGetData(Interfaces\ConfigLoader $ConfigLoader)
     {
         $Compiler = function(){};
         $list = $ConfigLoader->getData($Compiler, false, 'application.ini');
