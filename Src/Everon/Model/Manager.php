@@ -20,10 +20,15 @@ abstract class Manager implements Interfaces\ModelManager
      * List of Models
      * @var array
      */
-    protected $models = null;    
-
+    protected $models = null;
+    
     abstract protected function init();
     
+    
+    public function __construct()
+    {
+        $this->init();
+    }
 
     /**
      * @param $name
@@ -31,10 +36,6 @@ abstract class Manager implements Interfaces\ModelManager
      */
     public function getModel($name)
     {
-        if ($this->models === null) {
-            $this->init();
-        }
-        
         if (isset($this->models[$name]) === false) {
             $this->models[$name] = $this->getFactory()->buildModel($name);
         }
