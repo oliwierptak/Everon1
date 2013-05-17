@@ -13,15 +13,21 @@ class ControllerTest extends \Everon\TestCase
 {
     public function testConstructor()
     {
-        $View = $this->getMockBuilder('Everon\Interfaces\View')
+        $View = $this->getMock('Everon\Interfaces\View');
+        
+        $ViewManager = $this->getMockBuilder('Everon\Interfaces\ViewManager')
             ->disableOriginalConstructor()
             ->getMock();
+
+        $ViewManager->expects($this->any())
+            ->method('getView')
+            ->will($this->returnValue($View));
 
         $ModelManager = $this->getMockBuilder('Everon\Interfaces\ModelManager')
             ->disableOriginalConstructor()
             ->getMock();
         
-        $Controller = new \Everon\Test\MyController($View, $ModelManager);
+        $Controller = new \Everon\Test\MyController($ViewManager, $ModelManager);
         $this->assertInstanceOf('Everon\Interfaces\Controller', $Controller);
     }
 
@@ -75,11 +81,12 @@ class ControllerTest extends \Everon\TestCase
     public function testShouldReturnOutputWhenCastedToString(\Everon\Interfaces\Controller $Controller)
     {
         $ViewMock = $Controller->getView();
+        
         $ViewMock->expects($this->once())
             ->method('getOutput')
             ->will($this->returnValue('test'));
         
-        $Controller->setOutput('test');
+        $Controller->getView()->setOutput('test');
         $this->assertEquals('test', (string) $Controller);
     }
     
@@ -95,11 +102,19 @@ class ControllerTest extends \Everon\TestCase
             ->disableOriginalConstructor()
             ->getMock();
         
+        $ViewManager = $this->getMockBuilder('Everon\Interfaces\ViewManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+        
+        $ViewManager->expects($this->any())
+            ->method('getView')
+            ->will($this->returnValue($View));
+        
         $ModelManager = $this->getMockBuilder('Everon\Interfaces\ModelManager')
             ->disableOriginalConstructor()
             ->getMock();
         
-        $Controller = $Factory->buildController('MyController', $View, $ModelManager, 'Everon\Test');
+        $Controller = $Factory->buildController('MyController', $ViewManager, $ModelManager, 'Everon\Test');
         
         return [
             [$Controller]

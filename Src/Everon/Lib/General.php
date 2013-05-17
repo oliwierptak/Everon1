@@ -8,6 +8,8 @@
  * file that was distributed with this source code.
  */
 
+require_once('/var/www/Kint/kint.class.php');
+    
 function mpr()
 {
     $args = func_get_args();

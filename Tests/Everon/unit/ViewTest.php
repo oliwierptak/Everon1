@@ -12,6 +12,12 @@ namespace Everon\Test;
 class ViewTest extends \Everon\TestCase
 {
 
+    public function testConstructor()
+    {
+        $View = new \Everon\Test\MyView($this->Environment->getViewTemplate(), function(){});
+        $this->assertInstanceOf('\Everon\View', $View);
+    }
+
     public function setupTemplateFile($filename, $content)
     {
         file_put_contents($filename, $content);
@@ -20,22 +26,8 @@ class ViewTest extends \Everon\TestCase
     /**
      * @dataProvider dataProvider
      */
-    public function testConstructor(\Everon\Interfaces\View $View)
+    public function testSetGet(\Everon\Interfaces\View $View)
     {
-        $this->assertInstanceOf('\Everon\View', $View);
-    }
-
-    /**
-     * @dataProvider dataProvider
-     */
-    public function testSettersAndGetters(\Everon\Interfaces\View $View)
-    {
-        $View->setCompilers([]);
-        $this->assertInternalType('array', $View->getCompilers());
-
-        $View->setData([]);
-        $this->assertInternalType('array', $View->getData());
-
         $View->set('test', 'me');
         $this->assertEquals('me', $View->get('test'));
     }
@@ -188,32 +180,26 @@ EOF;
         $this->assertEquals('', $Output);
     }
 
-    /**
-     * @dataProvider dataProvider
-     * @expectedException \Everon\Exception\TemplateCompiler
-     */
-    public function testCompileOutputShouldThrowException(\Everon\Interfaces\View $View)
-    {
-        $PropertyOutput = $this->getProtectedProperty('\Everon\View', 'compilers');
-        $PropertyOutput->setValue($View, null);
-        
-        $Output = $View->getOutput();
-        $this->assertEquals('', $Output);
-    }
-
     public function dataProvider()
     {
         /**
          * @var \Everon\Interfaces\DependencyContainer $Container
          * @var \Everon\Interfaces\Factory $Factory
+         * @var \Closure $Compiler
          */
         list($Container, $Factory) = $this->getContainerAndFactory();
 
-        $View = $Factory->buildView('MyView', ['Curly'], '', 'Everon\Test');
-        $View->setTemplateDirectory($this->getTemplateDirectory());
-
+        $ViewManager = $Factory->buildViewManager('Everon', ['Curly'], $this->Environment->getViewTemplate());
+        $Method = $this->getProtectedMethod('Everon\View\Manager\Everon', 'compileTemplate');
+        
+        $Compiler = function(\Everon\Interfaces\TemplateContainer $Template) use ($ViewManager, $Method) {
+            return $Method->invoke($ViewManager, $Template);
+        };
+        
+        $View = $Factory->buildView('MyView', $this->Environment->getViewTemplate(), $Compiler, 'Everon\Test');
+        
         return [
-            [$View],
+            [$View]
         ];
     }
 

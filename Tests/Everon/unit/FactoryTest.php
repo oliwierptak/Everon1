@@ -95,9 +95,9 @@ class FactoryTest extends \Everon\TestCase
             return $RouterMock;
         });
 
-        $View = $this->getMock('\Everon\Interfaces\View');
+        $ViewManager = $this->getMock('\Everon\Interfaces\ViewManager');
         $ModelManager = $this->getMock('\Everon\Interfaces\ModelManager');
-        $Controller = $Factory->buildController('MyController', $View, $ModelManager, '\Everon\Test');
+        $Controller = $Factory->buildController('MyController', $ViewManager, $ModelManager, '\Everon\Test');
         $this->assertInstanceOf('\Everon\Interfaces\Controller', $Controller);
     }
 
@@ -108,7 +108,7 @@ class FactoryTest extends \Everon\TestCase
      */
     public function testBuildView(Interfaces\Factory $Factory, Interfaces\DependencyContainer $DependencyContainer)
     {
-        $View = $Factory->buildView('MyView', ['Curly'], '', '\Everon\Test');
+        $View = $Factory->buildView('MyView', $this->Environment->getViewTemplate(), function(){}, '\Everon\Test');
         $this->assertInstanceOf('\Everon\Interfaces\View', $View);
     }
 
@@ -192,7 +192,7 @@ class FactoryTest extends \Everon\TestCase
      */
     public function testBuildTemplate(Interfaces\Factory $Factory, Interfaces\DependencyContainer $DependencyContainer)
     {
-        $View = $Factory->buildView('MyView', ['Curly'], '', '\Everon\Test');
+        $View = $Factory->buildView('MyView', $this->Environment->getViewTemplate(), function(){}, '\Everon\Test');
         $Template = $Factory->buildTemplate($View, '', []);
         $this->assertInstanceOf('\Everon\Interfaces\TemplateContainer', $Template);
     }
@@ -311,9 +311,9 @@ class FactoryTest extends \Everon\TestCase
      */
     public function testBuildControllerShouldThrowExceptionWhenWrongClass(Interfaces\Factory $FactoryMock)
     {
-        $View = $this->getMock('Everon\Interfaces\View');
+        $ViewManager = $this->getMock('Everon\Interfaces\ViewManager');
         $ModelManager = $this->getMock('Everon\Interfaces\ModelManager');
-        $FactoryMock->buildController('Test', $View, $ModelManager);
+        $FactoryMock->buildController('Test', $ViewManager, $ModelManager);
     }
     
     /**
@@ -325,7 +325,7 @@ class FactoryTest extends \Everon\TestCase
      */
     public function testBuildViewShouldThrowExceptionWhenWrongClass(Interfaces\Factory $Factory, Interfaces\DependencyContainer $DependencyContainer)
     {
-        $Factory->buildView('Wrong', ['NonExisting'], '', '\Everon\Test');
+        $Factory->buildView('Wrong', $this->Environment->getViewTemplate(), function(){}, '\Everon\Test');
     }
     
     /**

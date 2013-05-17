@@ -61,7 +61,6 @@ namespace Everon
         $Router = $Container->resolve('Router');
         $ModelManager = $Container->resolve('ModelManager');
         
-        //todo replace those with ViewManager
         $directory_view_template = $Environment->getViewTemplate();
         $compilers = $Container->resolve('ConfigManager')->getApplicationConfig()->go('view')->get('compilers');
         $view_manager = $Container->resolve('ConfigManager')->getApplicationConfig()->go('view')->get('manager', 'Everon');

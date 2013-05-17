@@ -206,16 +206,22 @@ class CoreTest extends \Everon\TestCase
          * @var \Everon\Interfaces\Factory $Factory
          */        
         list($Container, $Factory) = $this->getContainerAndFactory();
-        
-        $View = $this->getMockBuilder('Everon\Interfaces\View')
+
+        $View = $this->getMock('Everon\Interfaces\View');
+
+        $ViewManager = $this->getMockBuilder('Everon\Interfaces\ViewManager')
             ->disableOriginalConstructor()
             ->getMock();
 
+        $ViewManager->expects($this->any())
+            ->method('getView')
+            ->will($this->returnValue($View));
+        
         $ModelManager = $this->getMockBuilder('Everon\Interfaces\ModelManager')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $Controller = $Factory->buildController('MyController', $View, $ModelManager, 'Everon\Test');
+        $Controller = $Factory->buildController('MyController', $ViewManager, $ModelManager, 'Everon\Test');
 
         return [
             [$Controller, $Factory]
