@@ -13,20 +13,24 @@ use Everon\Interfaces;
 
 interface Controller
 {
-    function setOutput($Output);
-    function getOutput();
     function getName();
     function setName($name);
 
     /**
+     * @param $name
      * @return Interfaces\View
      */
-    function getView();
+    public function getView($name=null);
 
     /**
-     * @param Interfaces\View $View
+     * @return Interfaces\ViewManager $Manager
      */
-    function setView(Interfaces\View $View);
+    function getViewManager();
+
+    /**
+     * @param Interfaces\ViewManager $Manager
+     */
+    function setViewManager(Interfaces\ViewManager $Manager);
 
     /**
      * @return Interfaces\ModelManager
@@ -64,7 +68,7 @@ interface Controller
      * @param $name
      * @return mixed
      */
-    function getModel($name);
+    function getModel($name=null);
 
     /**
      * @param $result

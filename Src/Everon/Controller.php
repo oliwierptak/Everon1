@@ -12,8 +12,8 @@ namespace Everon;
 
 abstract class Controller implements Interfaces\Controller
 {
-    use Dependency\View;
     use Dependency\ModelManager;
+    use Dependency\ViewManager;
 
     use Dependency\Injection\ConfigManager;
     use Dependency\Injection\Request;
@@ -28,12 +28,12 @@ abstract class Controller implements Interfaces\Controller
     protected $name = null;
 
     /**
-     * @param Interfaces\View $View
+     * @param Interfaces\ViewManager $ViewManager
      * @param Interfaces\ModelManager $ModelManager
      */
-    public function  __construct(Interfaces\View $View, Interfaces\ModelManager $ModelManager)
+    public function  __construct(Interfaces\ViewManager $ViewManager, Interfaces\ModelManager $ModelManager)
     {
-        $this->View = $View;
+        $this->ViewManager = $ViewManager;
         $this->ModelManager = $ModelManager;
     }
 
@@ -54,34 +54,33 @@ abstract class Controller implements Interfaces\Controller
         return $this->name;
     }
 
-    /**
-     * @return Interfaces\TemplateContainer
-     */
-    public function getOutput()
-    {
-        return $this->getView()->getOutput();
-    }
-
-    /**
-     * @param mixed $Output
-     */
-    public function setOutput($Output)
-    {
-        $this->getView()->setOutput($Output);
-    }
-
     public function getToString()
     {
-        return (string) $this->getOutput();
+        return (string) $this->getView()->getOutput();
     }
 
     /**
      * @param $name
      * @return mixed
      */
-    public function getModel($name)
+    public function getModel($name=null)
     {
+        $name = $name === null ? $this->getName() : $name;
         return $this->getModelManager()->getModel($name);
+    }
+    
+    /**
+     * @param $name
+     * @return Interfaces\View
+     */
+    public function getView($name=null)
+    {
+        if ($name === null) {
+            $tokens = explode('\\', $this->getName());
+            $name = array_pop($tokens);
+        }
+        
+        return $this->getViewManager()->getView($name);
     }
 
     /**
@@ -98,7 +97,7 @@ abstract class Controller implements Interfaces\Controller
             $Response->setData($data);
         }
         else {
-            $Response->setData($this->getOutput());
+            $Response->setData($this->getView()->getOutput());
         }
 
         $Response->send();

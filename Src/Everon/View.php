@@ -18,27 +18,25 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
 
     protected $name = null;
     protected $template_directory = null;
-    protected $view_template_directory = null;
 
     /**
      * @var Interfaces\TemplateContainer
      */
     protected $Output = null;
-
-    /**
-     * @var array
-     */
-    protected $compilers = [];
+    
+    protected $TemplateCompiler = null;
     
 
     /**
-     * @param array $compilers
-     * @param $view_template_directory
+     * @param $template_directory
+     * @param callable $TemplateCompiler
      */
-    public function __construct(array $compilers, $view_template_directory)
+    public function __construct($template_directory, \Closure $TemplateCompiler)
     {
-        $this->compilers = $compilers;
-        $this->view_template_directory = $view_template_directory;
+        $this->name = get_class($this);
+
+        $this->template_directory = $template_directory;
+        $this->TemplateCompiler = $TemplateCompiler;
     }
 
     /**
@@ -51,10 +49,6 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
 
     public function getName()
     {
-        if (is_null($this->name)) {
-            $this->setName(get_class($this));
-        }
-        
         return $this->name;
     }
 
@@ -69,13 +63,6 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
 
     public function getTemplateDirectory()
     {
-        if (is_null($this->template_directory)) {
-            $tokens = explode('\\', $this->getName());
-            $name = array_pop($tokens);
-            $this->setTemplateDirectory($this->view_template_directory.$name.DIRECTORY_SEPARATOR);
-        }
-
-
         return $this->template_directory;
     }
 
@@ -96,7 +83,7 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
             $this->setOutput('');
         }
         
-        if (!$this->Output->getCompiledContent()) {
+        if ($this->Output->getCompiledContent() === null) {
             $this->compileOutput();
         }
 
@@ -130,64 +117,10 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
         }
     }
 
-    /**
-     * @param array $compilers
-     */
-    public function setCompilers(array $compilers)
-    {
-        $this->compilers = $compilers;
-    }
-
-    public function getCompilers()
-    {
-        return $this->compilers;
-    }
-
     protected function compileOutput()
     {
-        $this->compileTemplate($this->Output);
-    }
-
-    /**
-     * @param Interfaces\TemplateContainer $Template
-     * @throws Exception|\Exception
-     * @throws Exception\TemplateCompiler
-     */
-    protected function compileTemplate(Interfaces\TemplateContainer $Template)
-    {
-        try {
-            $compiled_content = null;
-            $includes = $Template->getAllIncludes();
-            /**
-             * @var Interfaces\TemplateCompiler $Compiler
-             * @var Interfaces\TemplateContainer $Include
-             * @var Interfaces\TemplateContainer $TemplateInclude
-             */
-            foreach ($this->compilers as $Compiler) {
-                foreach ($includes as $name => $Include) {
-                    $template_includes = $Include->getAllIncludes();
-                    foreach ($template_includes as $include_name => $TemplateInclude) {
-                        $this->compileTemplate($TemplateInclude);
-                        $Include->set($include_name, $TemplateInclude->getCompiledContent());
-                    }
-    
-                    $Include->setCompiledContent(
-                        $Compiler->compile($Include->getTemplateContent(), $Include->getData())
-                    );
-                    $Template->set($name, $Include->getCompiledContent());
-                }
-
-                $compiled_content = $compiled_content ?: $Template->getTemplateContent();
-                $compiled_content = $Compiler->compile($compiled_content, $Template->getData());
-            }
-            $Template->setCompiledContent($compiled_content);
-        }
-        catch (Exception $e) {
-            throw $e;
-        }        
-        catch (\Exception $e) {
-            throw new Exception\TemplateCompiler($e);
-        }
+        $Compile = $this->TemplateCompiler;
+        $Compile($this->Output);
     }
 
     /**

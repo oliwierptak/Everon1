@@ -63,17 +63,18 @@ namespace Everon
         
         //todo replace those with ViewManager
         $directory_view_template = $Environment->getViewTemplate();
-        $compilers = $Container->resolve('ConfigManager')->getApplicationConfig()->go('template')->get('compilers');
+        $compilers = $Container->resolve('ConfigManager')->getApplicationConfig()->go('view')->get('compilers');
+        $view_manager = $Container->resolve('ConfigManager')->getApplicationConfig()->go('view')->get('manager', 'Everon');
 
-        $Igniter = function() use ($Factory, $Router, $ModelManager, $directory_view_template, $compilers) {
+        $Igniter = function() use ($Factory, $Router, $ModelManager, $directory_view_template, $compilers, $view_manager) {
             $class_name = $Router->getCurrentRoute()->getController();
-            $View = $Factory->buildView(
-                $class_name,
+            $ViewManager = $Factory->buildViewManager(
+                $view_manager,
                 $compilers,
                 $directory_view_template
             );
 
-            return $Factory->buildController($class_name, $View, $ModelManager);
+            return $Factory->buildController($class_name, $ViewManager, $ModelManager);
         };
         
         $Application->start($Igniter, $Container->resolve('Response'));

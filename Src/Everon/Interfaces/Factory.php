@@ -64,13 +64,13 @@ interface Factory
 
     /**
      * @param $class_name
-     * @param Interfaces\View $View
+     * @param Interfaces\ViewManager $ViewManager
      * @param Interfaces\ModelManager $ModelManager
      * @param string $ns
-     * @return Controller
+     * @return Interfaces\Controller
      * @throws Exception\Factory
      */
-    function buildController($class_name, Interfaces\View $View, Interfaces\ModelManager $ModelManager, $ns='\Everon\Controller');
+    function buildController($class_name, Interfaces\ViewManager $ViewManager, Interfaces\ModelManager $ModelManager, $ns='\Everon\Controller');
 
     function buildModel($class_name);
 
@@ -132,12 +132,24 @@ interface Factory
 
     /**
      * @param $class_name
-     * @param array $compilers_to_init
-     * @param $view_template_directory
+     * @param $template_directory
+     * @param callable $Compiler
      * @param string $ns
      * @return Interfaces\View
+     * @throws Exception\Factory
      */
-    function buildView($class_name, array $compilers_to_init, $view_template_directory, $ns='Everon\View');
+    function buildView($class_name, $template_directory, \Closure $Compiler, $ns='Everon\View');
+
+
+    /**
+     * @param $class_name
+     * @param $compilers_to_init
+     * @param $view_template_directory
+     * @param string $ns
+     * @return Interfaces\ViewManager
+     * @throws Exception\Factory
+     */
+    function buildViewManager($class_name, $compilers_to_init, $view_template_directory, $ns='Everon\View\Manager');    
 
     /**
      * @param $directory

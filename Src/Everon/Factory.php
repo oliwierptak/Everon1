@@ -155,13 +155,13 @@ class Factory implements Interfaces\Factory
 
     /**
      * @param $class_name
-     * @param Interfaces\View $View
+     * @param Interfaces\ViewManager $ViewManager
      * @param Interfaces\ModelManager $ModelManager
      * @param string $ns
-     * @return Controller
+     * @return Interfaces\Controller
      * @throws Exception\Factory
      */
-    public function buildController($class_name, Interfaces\View $View, Interfaces\ModelManager $ModelManager, $ns='Everon\Controller')
+    public function buildController($class_name, Interfaces\ViewManager $ViewManager, Interfaces\ModelManager $ModelManager, $ns='Everon\Controller')
     {
         try {
             $class_name = $this->getFullClassName($ns, $class_name);
@@ -169,7 +169,7 @@ class Factory implements Interfaces\Factory
             /**
              * @var \Everon\Controller $Controller
              */
-            $Controller = new $class_name($View, $ModelManager);
+            $Controller = new $class_name($ViewManager, $ModelManager);
             $Controller = $this->getDependencyContainer()->inject($class_name, $this, $Controller);
             return $Controller;
         }
@@ -180,13 +180,35 @@ class Factory implements Interfaces\Factory
 
     /**
      * @param $class_name
-     * @param array $compilers_to_init
-     * @param $view_template_directory
+     * @param $template_directory
+     * @param callable $Compiler
      * @param string $ns
      * @return Interfaces\View
      * @throws Exception\Factory
      */
-    public function buildView($class_name, array $compilers_to_init, $view_template_directory, $ns='Everon\View')
+    public function buildView($class_name, $template_directory, \Closure $Compiler, $ns='Everon\View')
+    {
+        try {
+            $class_name = $this->getFullClassName($ns, $class_name);
+
+            $View = new $class_name($template_directory, $Compiler);
+            $View = $this->getDependencyContainer()->inject($class_name, $this, $View);
+            return $View;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('View: "%s" initialization error', $class_name, $e);
+        }
+    }
+
+    /**
+     * @param $class_name
+     * @param $compilers_to_init
+     * @param $view_template_directory
+     * @param string $ns
+     * @return Interfaces\ViewManager
+     * @throws Exception\Factory
+     */
+    public function buildViewManager($class_name, $compilers_to_init, $view_template_directory, $ns='Everon\View\Manager')
     {
         try {
             $class_name = $this->getFullClassName($ns, $class_name);
@@ -195,13 +217,13 @@ class Factory implements Interfaces\Factory
             for ($a=0; $a<count($compilers_to_init); ++$a) {
                 $compilers[] = $this->buildTemplateCompiler($compilers_to_init[$a]);
             }
-
-            $View = new $class_name($compilers, $view_template_directory);
-            $View = $this->getDependencyContainer()->inject($class_name, $this, $View);
-            return $View;
+            
+            $Manager = new $class_name($compilers, $view_template_directory);
+            $Manager = $this->getDependencyContainer()->inject($class_name, $this, $Manager);
+            return $Manager;
         }
         catch (\Exception $e) {
-            throw new Exception\Factory('View: "%s" initialization error', $class_name, $e);
+            throw new Exception\Factory('ViewManager: "%s" initialization error', $class_name, $e);
         }
     }
 
@@ -319,7 +341,7 @@ class Factory implements Interfaces\Factory
     
     /**
      * @param array $data
-     * @return Interfaces\ConfigItemView
+     * @return Interfaces\ConfigItem
      * @throws Exception\Factory
      */
     public function buildConfigItemView(array $data)
