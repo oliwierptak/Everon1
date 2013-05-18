@@ -16,7 +16,7 @@ trait StripNamespace
      * @param string $strip
      * @return string
      */
-    public function stripNamespace($namespace, $strip)
+    public function stringStripNamespace($namespace, $strip)
     {
         return preg_replace('/^([\\\]?)'.$strip.'([\\\]?)/i', '', $namespace);
     }
