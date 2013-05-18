@@ -14,16 +14,25 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
     use Dependency\Injection\Factory;
 
     use Helper\ToArray;
+    use Helper\String\LastTokenToName;
 
 
     protected $name = null;
     protected $template_directory = null;
 
     /**
+     * @var array
+     */
+    protected $templates = [];
+
+    /**
      * @var Interfaces\TemplateContainer
      */
     protected $Output = null;
-    
+
+    /**
+     * @var \Closure
+     */
     protected $TemplateCompiler = null;
     
 
@@ -33,8 +42,8 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
      */
     public function __construct($template_directory, \Closure $TemplateCompiler)
     {
-        $this->name = get_class($this);
-
+        $this->name = $this->stringLastTokenToName(get_class($this));
+        
         $this->template_directory = $template_directory;
         $this->TemplateCompiler = $TemplateCompiler;
     }
@@ -130,7 +139,12 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
      */
     public function getTemplate($name, $data)
     {
-        return $this->getFactory()->buildTemplate($this, $name, $data);
+        if (isset($this->templates[$name]) === false) {
+            $Template = $this->getFactory()->buildTemplate($this, $name, $data);
+            $this->templates[$name] = $Template;
+        }
+
+        return $this->templates[$name];
     }
 
     /**
@@ -154,9 +168,10 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
     /**
      * @param array $data
      */
-    public function setData(array $data)
+    public function setDataAndRecompile(array $data)
     {
         $this->data = $data;
+        $this->compileOutput();
     }
 
     /**

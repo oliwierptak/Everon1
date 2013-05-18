@@ -15,7 +15,7 @@ trait CamelToUnderscore
      * @param $string
      * @return string
      */
-    public function camelToUnderscore($string)
+    public function stringCamelToUnderscore($string)
     {
         $camelized_string_tokens = preg_split('/(?<=[^A-Z])(?=[A-Z])/', $string);
         if (count($camelized_string_tokens) > 1) {

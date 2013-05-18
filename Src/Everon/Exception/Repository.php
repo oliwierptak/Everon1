@@ -34,3 +34,4 @@ class ConfigItemView extends EveronException{};
 class Template extends EveronException{};
 class TemplateCompiler extends EveronException{};
 class View extends EveronException{};
+class ViewManager extends EveronException{};

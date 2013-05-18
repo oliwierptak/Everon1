@@ -20,12 +20,14 @@ abstract class Controller implements Interfaces\Controller
     use Dependency\Injection\Router;
 
     use Helper\ToString;
+    use Helper\String\LastTokenToName;
 
     /**
      * Controller's name
      * @var string
      */
     protected $name = null;
+    
 
     /**
      * @param Interfaces\ViewManager $ViewManager
@@ -48,7 +50,7 @@ abstract class Controller implements Interfaces\Controller
     public function getName()
     {
         if (is_null($this->name)) {
-            $this->setName(get_class($this));
+            $this->name = get_class($this);
         }
         
         return $this->name;
@@ -76,8 +78,7 @@ abstract class Controller implements Interfaces\Controller
     public function getView($name=null)
     {
         if ($name === null) {
-            $tokens = explode('\\', $this->getName());
-            $name = array_pop($tokens);
+            $name = $this->stringLastTokenToName(get_class($this));
         }
         
         return $this->getViewManager()->getView($name);

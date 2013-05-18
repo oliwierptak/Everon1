@@ -11,11 +11,13 @@ namespace Everon\View;
 
 use Everon\Dependency;
 use Everon\Exception;
+use Everon\Helper;
 use Everon\Interfaces;
 
 abstract class Manager implements Interfaces\ViewManager
 {
     use Dependency\Injection\Factory;
+    use Helper\String\LastTokenToName;
 
     /**
      * @var array
@@ -48,20 +50,25 @@ abstract class Manager implements Interfaces\ViewManager
     {
         return $this->compilers;
     }
-    
+
     /**
      * @param $name
      * @return mixed
+     * @throws Exception\ViewManager
      */
     public function getView($name)
     {
         if (isset($this->views[$name]) === false) {
-            $tokens = explode('\\', $name);
-            $name = array_pop($tokens);
             $view_template_directory = $this->view_template_directory.$name.DIRECTORY_SEPARATOR;
-            $this->views[$name] = $this->getFactory()->buildView($name, $view_template_directory, function(Interfaces\TemplateContainer $Template) {
+            if  ((new \SplFileInfo($view_template_directory))->isDir() === false) {
+                throw new Exception\ViewManager('View template directory: "%s" does not exist', $view_template_directory);
+            }
+
+            $TemplateCompiler = function(Interfaces\TemplateContainer $Template) {
                 $this->compileTemplate($Template);
-            });
+            };
+            
+            $this->views[$name] = $this->getFactory()->buildView($name, $view_template_directory, $TemplateCompiler);
         }
 
         return $this->views[$name];

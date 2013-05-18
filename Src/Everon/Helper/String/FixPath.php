@@ -15,7 +15,7 @@ trait FixPath
      * @param $path
      * @return string
      */
-    public function fixPath($path)
+    public function stringFixPath($path)
     {
         return str_replace(array('/', '\\'), DIRECTORY_SEPARATOR, $path);
     }

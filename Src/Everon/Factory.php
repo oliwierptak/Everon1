@@ -80,7 +80,7 @@ class Factory implements Interfaces\Factory
     public function buildConfig($name, $filename, $data)
     {
         try {
-            $class_name = ucfirst($this->underscoreToCamel($name));
+            $class_name = ucfirst($this->stringUnderscoreToCamel($name));
             $class_name = $this->getFullClassName('Everon\Config', $class_name);
 
             try {
