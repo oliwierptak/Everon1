@@ -9,18 +9,50 @@
  */
 namespace Everon\Config;
 
+use Everon\Helper;
 use Everon\Interfaces;
 
-class Item implements Interfaces\ConfigItem
+class Item implements Interfaces\ConfigItem, Interfaces\Arrayable
 {
+    use Helper\Asserts;
+    use Helper\Asserts\IsStringAndNonEmpty;
+    use Helper\ToArray;
     
     protected $name = null;
     
     /**
      * @var boolean
      */
-    protected $is_default = null;
+    protected $is_default = false;
     
+
+    public function __construct(array $data, array $defaults=[])
+    {
+        $empty_defaults = [
+            'default' => false,
+        ];
+
+        $empty_defaults = array_merge($empty_defaults, $defaults);
+
+        $this->data = array_merge($empty_defaults, $data);        
+        $this->init();
+    }
+    
+    protected function init()
+    {
+        $this->validateData($this->data);
+        $this->setName($this->data['____name']);
+        $this->setIsDefault($this->data['default']);        
+    }
+    
+    /**
+     * @param array $data
+     */
+    public function validateData(array $data)
+    {
+        $this->assertIsStringAndNonEmpty($data['____name'], 'Invalid view name: "%s"', 'ConfigItemView');
+    }
+   
     
     public function getName()
     {

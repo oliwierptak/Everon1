@@ -324,6 +324,23 @@ class Factory implements Interfaces\Factory
 
     /**
      * @param array $data
+     * @return Interfaces\ConfigItem
+     * @throws Exception\Factory
+     */
+    public function buildConfigItem(array $data)
+    {
+        try {
+            $ConfigItem = new Config\Item($data);
+            $ConfigItem = $this->getDependencyContainer()->inject('Everon\Config\Item', $this, $ConfigItem);
+            return $ConfigItem;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('ConfigItemRouter initialization error', null, $e);
+        }
+    }
+    
+    /**
+     * @param array $data
      * @return Interfaces\ConfigItemRouter
      * @throws Exception\Factory
      */

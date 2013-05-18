@@ -18,7 +18,6 @@ class Router extends \Everon\Config\Item implements Interfaces\ConfigItemRouter
     use Helper\Asserts;
     use Helper\Asserts\IsStringAndNonEmpty;
     use Helper\Regex;
-    use Helper\ToArray;
 
     protected $url = null;
 
@@ -35,34 +34,27 @@ class Router extends \Everon\Config\Item implements Interfaces\ConfigItemRouter
      * @var array
      */
     protected $regex_post = [];
-
-
+    
+    
     public function __construct(array $data)
     {
-        $this->init($data);
-    }
-
-    protected function init(array $data)
-    {
-        $empty_defaults = [
+        parent::__construct($data, [
             'url' => null,
             'controller' => null,
             'action' => null,
             'get' => [],
-            'post' => [],
-            'default' => false,
-        ];
+            'post' => []
+        ]);
+    }
 
-        $this->data = array_merge($empty_defaults, $data);
-        $this->validateData($this->data);
-
-        $this->setName($this->data['____name']);
+    protected function init()
+    {
+        parent::init();
         $this->setUrl($this->data['url']);
         $this->setController($this->data['controller']);
         $this->setAction($this->data['action']);
         $this->setGetRegex($this->data['get']);
         $this->setPostRegex($this->data['post']);
-        $this->setIsDefault($this->data['default']);
     }
 
     /**
@@ -161,13 +153,14 @@ class Router extends \Everon\Config\Item implements Interfaces\ConfigItemRouter
 
     /**
      * @param array $data
+     * @throws Exception\ConfigItem
      */
     public function validateData(array $data)
     {
-        $this->assertIsStringAndNonEmpty($data['____name'], 'Invalid route name: "%s"', 'ConfigItemRouter');
-        $this->assertIsStringAndNonEmpty($data['url'], 'Invalid url: "%s"', 'ConfigItemRouter');
-        $this->assertIsStringAndNonEmpty($data['controller'], 'Invalid controller: "%s"', 'ConfigItemRouter');
-        $this->assertIsStringAndNonEmpty($data['action'], 'Invalid action: "%s"', 'ConfigItemRouter');
+        parent::validateData($data);
+        $this->assertIsStringAndNonEmpty($data['url'], 'Invalid url: "%s"', 'ConfigItem');
+        $this->assertIsStringAndNonEmpty($data['controller'], 'Invalid controller: "%s"', 'ConfigItem');
+        $this->assertIsStringAndNonEmpty($data['action'], 'Invalid action: "%s"', 'ConfigItem');
     }    
 
     public function getUrl()

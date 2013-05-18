@@ -13,12 +13,11 @@ use Everon\Exception;
 use Everon\Interfaces;
 use Everon\Helper;
 
-class View extends \Everon\Config\Item implements Interfaces\ConfigItem, Interfaces\Arrayable
+class View extends \Everon\Config\Item implements Interfaces\ConfigItem
 {
     use Helper\Asserts;
     use Helper\Asserts\IsStringAndNonEmpty;
     use Helper\Regex;
-    use Helper\ToArray;
 
     protected $title = null;
     
@@ -39,12 +38,7 @@ class View extends \Everon\Config\Item implements Interfaces\ConfigItem, Interfa
 
     public function __construct(array $data)
     {
-        $this->init($data);
-    }
-
-    protected function init(array $data)
-    {
-        $empty_defaults = [
+        parent::__construct($data, [
             'title' => '',
             'lang' => 'en-GB',
             'static_url' => 'static/',
@@ -53,22 +47,22 @@ class View extends \Everon\Config\Item implements Interfaces\ConfigItem, Interfa
             'description' => '',
             'body' => '',
             'items' => [],
-            'default' => false,
-        ];
-
-        $this->data = array_merge($empty_defaults, $data);
-        $this->validateData($this->data);
-
-        $this->setName($this->data['____name']);
-        $this->setIsDefault($this->data['default']);
+        ]);
+    }
+    
+    protected function init()
+    {
+        parent::init();
     }
 
     /**
      * @param array $data
+     * @throws Exception\ConfigItem
      */
     public function validateData(array $data)
     {
-        $this->assertIsStringAndNonEmpty($data['____name'], 'Invalid view name: "%s"', 'ConfigItemView');
+        parent::validateData($data);
+        $this->assertIsStringAndNonEmpty($data['title'], 'Invalid title: "%s"', 'ConfigItem');
     }
 
 }

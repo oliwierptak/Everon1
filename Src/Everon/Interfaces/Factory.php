@@ -84,6 +84,13 @@ interface Factory
 
     /**
      * @param array $data
+     * @return Interfaces\ConfigItem
+     * @throws Exception\Factory
+     */
+    function buildConfigItem(array $data);
+
+    /**
+     * @param array $data
      * @return Interfaces\ConfigItemRouter
      */
     function buildConfigItemRouter(array $data);
