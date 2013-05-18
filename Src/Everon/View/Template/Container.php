@@ -9,6 +9,7 @@
  */
 namespace Everon\View\Template;
 
+use Everon\Exception;
 use Everon\Helper;
 use Everon\Interfaces;
 
@@ -48,6 +49,10 @@ class Container implements Interfaces\TemplateContainer, Interfaces\Arrayable
      */
     public function set($name, $value)
     {
+        if ($this->compiled_content !== null && isset($this->data[$name])) {
+            throw new Exception\Template('Setting existing property: "%s"');
+        }
+        
         $this->data[$name] = $value;
         return $this;
     }

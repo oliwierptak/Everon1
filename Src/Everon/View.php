@@ -115,14 +115,14 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
         if (is_null($this->Output)) {
             throw new Exception\Template('Invalid Output type');
         }
-
-        foreach ($this->getData() as $name => $value) {
-            $this->Output->set($name, $value);
-        }
     }
 
     protected function compileOutput()
     {
+        foreach ($this->getData() as $name => $value) {
+            $this->Output->set($name, $value);
+        }
+        
         $Compile = $this->TemplateCompiler;
         $Compile($this->Output);
     }

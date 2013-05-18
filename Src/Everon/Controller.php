@@ -35,6 +35,7 @@ abstract class Controller implements Interfaces\Controller
      */
     public function  __construct(Interfaces\ViewManager $ViewManager, Interfaces\ModelManager $ModelManager)
     {
+        $this->name = $this->stringLastTokenToName(get_class($this));
         $this->ViewManager = $ViewManager;
         $this->ModelManager = $ModelManager;
     }
@@ -49,10 +50,6 @@ abstract class Controller implements Interfaces\Controller
 
     public function getName()
     {
-        if (is_null($this->name)) {
-            $this->name = get_class($this);
-        }
-        
         return $this->name;
     }
 
@@ -67,7 +64,7 @@ abstract class Controller implements Interfaces\Controller
      */
     public function getModel($name=null)
     {
-        $name = $name === null ? $this->getName() : $name;
+        $name = $name ?: $this->getName();
         return $this->getModelManager()->getModel($name);
     }
     
@@ -77,10 +74,7 @@ abstract class Controller implements Interfaces\Controller
      */
     public function getView($name=null)
     {
-        if ($name === null) {
-            $name = $this->stringLastTokenToName(get_class($this));
-        }
-        
+        $name = $name ?: $this->getName();
         return $this->getViewManager()->getView($name);
     }
 

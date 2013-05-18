@@ -20,7 +20,6 @@ interface View
     function set($name, $data);
     function get($name);
 
-    function setDataAndRecompile(array $data);
     function getData();
     function setTemplateFromAction($template, array $data);
 }
