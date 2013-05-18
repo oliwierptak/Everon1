@@ -22,7 +22,7 @@ trait Asserts
             return $message;
         }
 
-        if (!is_array($parameters)) {
+        if (is_array($parameters) === false) {
             $parameters = array($parameters);
         }
 
