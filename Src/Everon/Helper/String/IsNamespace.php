@@ -16,8 +16,8 @@ trait IsNamespace
      * @param string $match
      * @return bool
      */
-    public function isNamespace($namespace, $match='everon')
+    public function isNamespace($namespace, $match)
     {
-        return substr(strtolower($namespace),0, strlen($match)) == $match;
+        return strcasecmp(substr($namespace,0, strlen($match)), $match) == 0;
     }
 }
