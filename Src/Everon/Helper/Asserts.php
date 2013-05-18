@@ -50,7 +50,7 @@ trait Asserts
                     $exception_class = 'Everon\Exception\Asserts';
                 }
                 else {
-                    $exception_class = "Everon\\Exception\\${exception_class}";
+                    $exception_class = $class;
                 }
             }
             catch (\Exception $e) {
