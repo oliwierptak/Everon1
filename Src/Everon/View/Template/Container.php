@@ -30,11 +30,6 @@ class Container implements Interfaces\TemplateContainer, Interfaces\Arrayable
      */
     protected $template_content = null;
 
-    /**
-     * @var array
-     */
-    protected $includes = [];
-
 
     /**
      * @param string|\Closure $content
@@ -42,8 +37,8 @@ class Container implements Interfaces\TemplateContainer, Interfaces\Arrayable
      */
     public function __construct($content, array $data)
     {
-        $this->setData($data);
-        $this->setTemplateContent($content);
+        $this->data = $data;
+        $this->template_content = $content;
     }
 
     /**
@@ -80,14 +75,6 @@ class Container implements Interfaces\TemplateContainer, Interfaces\Arrayable
     }
 
     /**
-     * @param array $data
-     */
-    public function setData(array $data)
-    {
-        $this->data = $data;
-    }
-
-    /**
      * @return string
      */
     public function getCompiledContent()
@@ -121,37 +108,6 @@ class Container implements Interfaces\TemplateContainer, Interfaces\Arrayable
     public function setTemplateContent($content)
     {
         $this->template_content = $content;
-    }
-
-    /**
-     * @param $name
-     * @param Interfaces\TemplateContainer $Include
-     * @return Interfaces\TemplateContainer
-     */
-    public function setInclude($name, Interfaces\TemplateContainer $Include)
-    {
-        $this->includes[$name] = $Include;
-        return $this;
-    }
-
-    /**
-     * @param $name
-     * @return Interfaces\TemplateContainer
-     */
-    public function getInclude($name)
-    {
-        $this->assertIsArrayKey($name, $this->includes, 'Invalid included template name: %s', 'Template');
-        return $this->includes[$name];
-    }
-
-    public function setAllIncludes(array $includes)
-    {
-        $this->includes = $includes;
-    }
-
-    public function getAllIncludes()
-    {
-        return $this->includes;
     }
 
     /**

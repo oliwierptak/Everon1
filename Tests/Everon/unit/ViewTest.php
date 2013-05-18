@@ -128,8 +128,8 @@ EOF;
             'text' => 'I was included',
         ]);
 
-        $Include->setInclude('IncludeMeNow', $Include2);
-        $Template->setInclude('Test', $Include);
+        $Include->set('IncludeMeNow', $Include2);
+        $Template->set('Test', $Include);
 
         $View->setOutput($Template);
         $Output = $View->getOutput();

@@ -21,11 +21,6 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
     protected $template_directory = null;
 
     /**
-     * @var array
-     */
-    protected $templates = [];
-
-    /**
      * @var Interfaces\TemplateContainer
      */
     protected $Output = null;
@@ -63,11 +58,11 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
 
     /**
      * @param $filename
-     * @return string
+     * @return \SplFileInfo
      */
     public function getTemplateFilename($filename)
     {
-        return $this->getTemplateDirectory().$filename.'.htm';
+        return new \SplFileInfo($this->getTemplateDirectory().$filename.'.htm');
     }
 
     public function getTemplateDirectory()
@@ -139,14 +134,9 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
      */
     public function getTemplate($name, $data)
     {
-        if (isset($this->templates[$name]) === false) {
-            $Template = $this->getFactory()->buildTemplate($this, $name, $data);
-            $this->templates[$name] = $Template;
-        }
-
-        return $this->templates[$name];
+        return $this->getFactory()->buildTemplate($this, $name, $data);
     }
-
+    
     /**
      * @param $name
      * @param mixed $data
@@ -188,8 +178,8 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
      */
     public function setTemplateFromAction($action, array $data)
     {
-        $filename = $this->getTemplateFilename($action);
-        if ($this->Output === null && is_file($filename)) {
+        $Filename = $this->getTemplateFilename($action);
+        if ($this->Output === null && $Filename->isFile()) {
             $this->Output = $this->getTemplate($action, $data);
         }
     }

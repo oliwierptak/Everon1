@@ -20,10 +20,4 @@ interface TemplateContainer
     function setTemplateContent($content);
     function toArray();
     function getData();
-    /**
-     * @param array $data
-     */
-    public function setData(array $data);    
-    function setAllIncludes(array $includes);
-    function getAllIncludes();
 }

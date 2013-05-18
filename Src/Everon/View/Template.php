@@ -27,7 +27,7 @@ class Template extends Template\Container implements Interfaces\TemplateContaine
      */
     public function __construct($filename, array $data)
     {
-        $this->setTemplateFile($filename);
+        $this->template_file = $filename;
 
         $LoadOnDemand = function() {
             $this->loadTemplate();

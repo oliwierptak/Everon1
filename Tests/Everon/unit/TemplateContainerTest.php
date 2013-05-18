@@ -38,15 +38,6 @@ class TemplateContainerTest extends \Everon\TestCase
     /**
      * @dataProvider dataProvider
      */
-    public function testSetAndGetData(\Everon\View\Template\Container $Container, $output)
-    {
-        $Container->setData(['test', 'This is a test']);
-        $this->assertEquals(['test', 'This is a test'], $Container->getData());
-    }
-
-    /**
-     * @dataProvider dataProvider
-     */
     public function testGetDefaultValue(\Everon\View\Template\Container $Container, $output)
     {
         $this->assertEquals('nono', $Container->get('NOT_ExiST', 'nono'));
@@ -72,24 +63,11 @@ class TemplateContainerTest extends \Everon\TestCase
     /**
      * @dataProvider dataProvider
      */
-    public function testSetAndGetInclude(\Everon\View\Template\Container $Template, $output)
+    public function testSetAndGetTemplate(\Everon\View\Template\Container $Template, $output)
     {
         $Include = new \Everon\View\Template\Container('', []);
-        $Template->setInclude('test', $Include);
-        $this->assertEquals($Include, $Template->getInclude('test'));
-    }
-
-    /**
-     * @dataProvider dataProvider
-     */
-    public function testSetAndGetAllIncludes(\Everon\View\Template\Container $Template, $output)
-    {
-        $Include = new \Everon\View\Template\Container('', []);
-        $Template->setAllIncludes([
-            'test' => $Include
-        ]);
-        $this->assertEquals($Include, $Template->getInclude('test'));
-        $this->assertCount(1, $Template->getAllIncludes());
+        $Template->set('test', $Include);
+        $this->assertEquals($Include, $Template->get('test'));
     }
 
     public function dataProvider()

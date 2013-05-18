@@ -25,16 +25,23 @@ class Everon extends View\Manager implements Interfaces\ViewManager
     {
         try {
             $compiled_content = null;
-            $includes = $Template->getAllIncludes();
+            
             /**
              * @var Interfaces\TemplateCompiler $Compiler
              * @var Interfaces\TemplateContainer $Include
              * @var Interfaces\TemplateContainer $TemplateInclude
              */
             foreach ($this->compilers as $Compiler) {
-                foreach ($includes as $name => $Include) {
-                    $template_includes = $Include->getAllIncludes();
-                    foreach ($template_includes as $include_name => $TemplateInclude) {
+                foreach ($Template->getData() as $name => $Include) {
+                    if (($Include instanceof Interfaces\TemplateContainer) === false) {
+                        continue;
+                    }
+                    
+                    foreach ($Include->getData() as $include_name => $TemplateInclude) {
+                        if (($TemplateInclude instanceof Interfaces\TemplateContainer) === false) {
+                            continue;
+                        }
+                        
                         $this->compileTemplate($TemplateInclude);
                         $Include->set($include_name, $TemplateInclude->getCompiledContent());
                     }
