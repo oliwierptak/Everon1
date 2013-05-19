@@ -31,6 +31,10 @@ namespace Everon
 
         $BootstrapEnvironment = new \Everon\Environment(PROJECT_ROOT);
 
+        if (is_dir($BootstrapEnvironment->getCache()) === false) {
+            mkdir($BootstrapEnvironment->getCache(), 0775, true);
+        }
+
         require_once($BootstrapEnvironment->getEveronInterface().'ClassLoader.php');
         require_once($BootstrapEnvironment->getEveron().'ClassLoader.php');
 

@@ -16,6 +16,11 @@ class Request implements Interfaces\Request, Interfaces\Arrayable
     use Helper\ToArray;
 
     /**
+     * @var array
+     */
+    protected $data = [];    
+
+    /**
      * @var Interfaces\Collection $_SERVER
      */
     protected $ServerCollection = null;
@@ -180,7 +185,7 @@ class Request implements Interfaces\Request, Interfaces\Arrayable
      */
     protected function sanitizeInput($input)
     {
-        if (is_array($input) || $input instanceof \ArrayAccess) {
+        if ($this->isIterable($input)) {
             array_walk_recursive($input, [$this,'sanitizeInputToken']);
             return $input;
         }
@@ -458,5 +463,5 @@ class Request implements Interfaces\Request, Interfaces\Arrayable
     {
         $this->port = $port;
     }
-    
+
 }

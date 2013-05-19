@@ -22,6 +22,10 @@ class Config implements Interfaces\Config, Interfaces\Arrayable
     use Helper\ArrayMergeDefault;
     use Helper\ToArray;
 
+    /**
+     * @var array
+     */
+    protected $data = [];
     
     protected $name = null;
 
@@ -132,9 +136,21 @@ class Config implements Interfaces\Config, Interfaces\Arrayable
         }
     }
 
+    /**
+     * @param array $config_data
+     * @return Interfaces\ConfigItem
+     */
     protected function buildItem(array $config_data)
     {
         return $this->getFactory()->buildConfigItem($config_data);
+    }
+
+    /**
+     * @return array
+     */
+    protected function getToArray()
+    {
+        return $this->getData();
     }
 
     public function getName()

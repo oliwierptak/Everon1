@@ -12,13 +12,8 @@ namespace Everon\Helper;
 
 trait ToArray
 {
-
-    /**
-     * @var array
-     */
-    protected $data = [];
-
-
+    use \Everon\Helper\IsIterable;
+    
     /**
      * array|stdClass $this->data is declared in class which uses this trait
      *
@@ -26,9 +21,16 @@ trait ToArray
      */
     public function toArray()
     {
-        $data = $this->data;
-        if (method_exists($this, 'getData')) { //in case of closures or what not
-            $data = $this->getData();
+        $data = (property_exists($this, 'data')) ? $this->data : [];
+        
+        if ($this->isIterable($data) === false) {
+            if (method_exists($this, 'getToArray')) {
+                $data = $this->getToArray();
+            }
+        }
+
+        if ($this->isIterable($data) === false) {
+            $data = [];
         }
         
         foreach ($data as $key => $value ) {

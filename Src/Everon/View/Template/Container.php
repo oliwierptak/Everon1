@@ -22,6 +22,11 @@ class Container implements Interfaces\TemplateContainer, Interfaces\Arrayable
     use Helper\ToArray;
 
     /**
+     * @var array
+     */
+    protected $data = [];
+
+    /**
      * @var array|null
      */
     protected $compiled_content = null;

@@ -23,7 +23,7 @@ interface ConfigLoader
      * @param $default_config_filename
      * @return array
      */
-    function getData(\Closure $Compiler, $use_cache, $default_config_filename);
+    function load(\Closure $Compiler, $use_cache, $default_config_filename);
 
     /**
      * @param $filename

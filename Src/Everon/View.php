@@ -16,7 +16,7 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
     use Helper\ToArray;
     use Helper\String\LastTokenToName;
 
-
+    protected $data = [];
     protected $name = null;
     protected $template_directory = null;
 
@@ -29,7 +29,7 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
      * @var \Closure
      */
     protected $TemplateCompiler = null;
-    
+
 
     /**
      * @param $template_directory

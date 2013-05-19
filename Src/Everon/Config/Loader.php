@@ -55,7 +55,7 @@ class Loader implements Interfaces\ConfigLoader
      * @param $default_config_filename
      * @return array
      */
-    public function getData(\Closure $Compiler, $use_cache, $default_config_filename)
+    public function load(\Closure $Compiler, $use_cache, $default_config_filename)
     {
         /**
          * @var \SplFileInfo $ConfigFile
@@ -85,14 +85,13 @@ class Loader implements Interfaces\ConfigLoader
                     return $content;
                 };
             }
-            
+
             $list[$name] = [$config_filename, $ini_config_data];
-        }        
+        }
         
         return $list;
     }
     
-
     /**
      * @param Interfaces\Config $Config
      * @throws Exception\Config
@@ -101,11 +100,6 @@ class Loader implements Interfaces\ConfigLoader
     {
         try {
             $cache_filename = $this->cache_directory.pathinfo($Config->getFilename(), PATHINFO_BASENAME).'.php';
-            
-            if (!is_dir($this->cache_directory)) {
-                mkdir($this->cache_directory, 0775, true);
-            }
-
             $data = var_export($Config->toArray(), true);
             $h = fopen($cache_filename, 'w+');
             fwrite($h, "<?php \$cache = $data; ");

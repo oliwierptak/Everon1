@@ -17,6 +17,11 @@ class Item implements Interfaces\ConfigItem, Interfaces\Arrayable
     use Helper\Asserts;
     use Helper\Asserts\IsStringAndNonEmpty;
     use Helper\ToArray;
+
+    /**
+     * @var array
+     */
+    protected $data = [];
     
     protected $name = null;
     

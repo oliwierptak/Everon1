@@ -20,8 +20,12 @@ use Everon\Helper;
  */
 class Popo implements Interfaces\Arrayable
 {
-
     use Helper\ToArray;
+
+    /**
+     * @var array
+     */
+    protected $data = [];
 
 
     /**
@@ -71,5 +75,13 @@ class Popo implements Interfaces\Arrayable
 
         return true;
     }
+
+    /**
+     * @return array
+     */
+    public function getData()
+    {
+        return $this->data;
+    }    
     
 }

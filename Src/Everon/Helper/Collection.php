@@ -19,6 +19,11 @@ class Collection implements
     Interfaces\Arrayable
 {
     use Helper\ToArray;
+
+    /**
+     * @var array
+     */
+    protected $data = [];
     
     protected $position = 0;
     
