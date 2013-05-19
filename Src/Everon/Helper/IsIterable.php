@@ -19,7 +19,11 @@ trait IsIterable
      */
     public function isIterable($input)
     {
-        if (is_array($input) || $input instanceof \ArrayAccess) {
+        if (is_array($input)) {
+            return true;
+        }
+        
+        if ($input instanceof \ArrayAccess || $input instanceof \Iterator) {
             return true;
         }
         
