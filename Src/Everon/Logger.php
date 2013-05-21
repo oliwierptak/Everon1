@@ -27,10 +27,18 @@ class Logger implements Interfaces\Logger
     {
         $this->setLogDirectory($directory);
     }
-    
+
+    /**
+     * @param $level
+     * @return \SplFileInfo
+     */
     protected function getFilenameByLevel($level)
     {
-        return $this->getLogDirectory().$this->log_files[$level];
+        if (array_key_exists($level, $this->log_files) === false) {
+            return new \SplFileInfo($this->getLogDirectory().$level.'.log'); //eg. logs/login.log 
+        }
+        
+        return new \SplFileInfo($this->getLogDirectory().$this->log_files[$level]);
     }
 
     /**
@@ -38,14 +46,20 @@ class Logger implements Interfaces\Logger
      * @param $level
      * @param $parameters
      * @return \DateTime
+     * @throws Exception\Logger
      */
     protected function write($message, $level, $parameters)
     {
         $message = empty($parameters) === false ? vsprintf($message, $parameters) : $message;
         $StarDate = new \DateTime('@'.time());
-        $filename = $this->getFilenameByLevel($level);
+        $Filename = $this->getFilenameByLevel($level);
+        
+        if ($Filename->isWritable() === false) {
+            throw new Exception\Logger('Unable to write to target log file: "%s"', [$Filename->getBasename()]);
+        }
+        
         $message = $StarDate->format($this->getLogDateFormat()).' - '.$message;
-        error_log($message."\n", 3, $filename);
+        error_log($message."\n", 3, $Filename);
         
         return $StarDate;
     }
@@ -93,6 +107,20 @@ class Logger implements Interfaces\Logger
     public function debug($message, $parameters=[])
     {
         return $this->write($message, 'debug', $parameters);
+    }
+
+    /**
+     * eg. $this->getLogger()->auth(...)  will log to logs/auth.log
+     * eg. $this->getLogger()->test_me(...)  will log to logs/test_me.log
+     * 
+     * @param $name
+     * @param $arguments
+     * @return \DateTime
+     */
+    public function __call($name, array $arguments=[])
+    {
+        @list($message, $parameters) = $arguments;
+        return $this->write($message, $name, $parameters);
     }
     
 }

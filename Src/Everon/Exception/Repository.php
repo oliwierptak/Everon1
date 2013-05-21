@@ -22,6 +22,7 @@ class Helper extends EveronException{};
 class InvalidControllerMethod extends EveronException{};
 class InvalidControllerResponse extends EveronException{};
 class InvalidRouterParameter extends EveronException{};
+class Logger extends EveronException{};
 class Factory extends EveronException{};
 class Model extends EveronException{};
 class PageNotFound extends EveronException{};

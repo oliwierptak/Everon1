@@ -37,10 +37,10 @@ class User
     {
         $User = $this->getUser($username);
         if ($User->getPassword() === $password) {
+            $this->getLogger()->auth('Authentication successful for user: "%s"', [$username]);
             return $User;
         }
 
-        $this->getLogger()->warn('Failed login attempt for: "%s"', [$username]);
         return null;
     }
  

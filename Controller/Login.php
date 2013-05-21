@@ -16,6 +16,7 @@ class Login extends Controller implements Interfaces\Controller
 
         $User = $this->getModel('User')->authenticate($username, $password);
         if ($User === null) {
+            $this->getLogger()->auth('Login failed for: "%s"', [$username]);
             return false;
         }
 
