@@ -9,11 +9,13 @@
  */
 namespace Everon\View\Template\Compiler;
 
+use Everon\Helper;
 use Everon\Interfaces;
 
 class Curly implements Interfaces\TemplateCompiler
 {
-
+    use Helper\IsIterable;
+    
     /**
      * @param $name
      * @param array $data
@@ -43,8 +45,8 @@ class Curly implements Interfaces\TemplateCompiler
     {
         foreach ($data as $name => $value) {
             $value = ($value instanceof \Closure) ? $value() : $value;
-            if (($value instanceof Interfaces\Arrayable) || is_array($value)) { //todo: replace with is_iterrable() or something
-                $value = is_array($value) ? $value : $value->toArray();
+            $value = (is_object($value) && method_exists($value, 'toArray')) ? $value->toArray() : $value;
+            if ($this->isIterable($value)) {
                 $tokens = $this->getTokens($name, $value);
                 $template_content = str_replace(array_keys($tokens), array_values($tokens), $template_content);
             }

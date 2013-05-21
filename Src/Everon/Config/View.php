@@ -13,8 +13,8 @@ use Everon\Interfaces;
 
 class View extends \Everon\Config implements Interfaces\Config
 {
-    protected function buildItem(array $config_data)
+    protected function buildItem($name, array $config_data)
     {
-        return $this->getFactory()->buildConfigItemView($config_data);
+        return $this->getFactory()->buildConfigItemView($name, $config_data);
     }
 }

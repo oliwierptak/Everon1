@@ -19,10 +19,7 @@ abstract class Manager implements Interfaces\ViewManager
     use Dependency\Injection\Factory;
     use Helper\String\LastTokenToName;
 
-    /**
-     * @var array
-     */
-    protected $views = null;
+    protected $views = [];
 
     protected $compilers = [];
 
@@ -38,14 +35,6 @@ abstract class Manager implements Interfaces\ViewManager
         $this->view_template_directory = $view_template_directory;
     }
 
-    /**
-     * @param array $compilers
-     */
-    public function setCompilers(array $compilers)
-    {
-        $this->compilers = $compilers;
-    }
-
     public function getCompilers()
     {
         return $this->compilers;
@@ -59,16 +48,16 @@ abstract class Manager implements Interfaces\ViewManager
     public function getView($name)
     {
         if (isset($this->views[$name]) === false) {
-            $view_template_directory = $this->view_template_directory.$name.DIRECTORY_SEPARATOR;
-            if  ((new \SplFileInfo($view_template_directory))->isDir() === false) {
-                throw new Exception\ViewManager('View template directory: "%s" does not exist', $view_template_directory);
+            $template_directory = $this->view_template_directory.$name.DIRECTORY_SEPARATOR;
+            if  ((new \SplFileInfo($template_directory))->isDir() === false) {
+                throw new Exception\ViewManager('View template directory: "%s" does not exist', $template_directory);
             }
 
             $TemplateCompiler = function(Interfaces\TemplateContainer $Template) {
                 $this->compileTemplate($Template);
             };
             
-            $this->views[$name] = $this->getFactory()->buildView($name, $view_template_directory, $TemplateCompiler);
+            $this->views[$name] = $this->getFactory()->buildView($name, $template_directory, $TemplateCompiler);
         }
 
         return $this->views[$name];

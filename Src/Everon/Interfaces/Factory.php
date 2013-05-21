@@ -83,24 +83,28 @@ interface Factory
     function buildModelManager($class_name, $ns='Everon\Model\Manager');
 
     /**
+     * @param $name
      * @param array $data
      * @return Interfaces\ConfigItem
      * @throws Exception\Factory
      */
-    function buildConfigItem(array $data);
+    function buildConfigItem($name, array $data);
 
     /**
+     * @param $name
      * @param array $data
      * @return Interfaces\ConfigItemRouter
-     */
-    function buildConfigItemRouter(array $data);
-
-    /**
-     * @param array $data
-     * @return Interfaces\ConfigItemView
      * @throws Exception\Factory
      */
-    function buildConfigItemView(array $data);
+    function buildConfigItemRouter($name, array $data);
+
+    /**
+     * @param array $name
+     * @param array $data
+     * @return Interfaces\ConfigItem
+     * @throws Exception\Factory
+     */
+    function buildConfigItemView($name, array $data);
 
     /**
      * @param Interfaces\Request $Request

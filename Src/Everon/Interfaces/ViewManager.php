@@ -11,13 +11,14 @@ namespace Everon\Interfaces;
 
 interface ViewManager
 {
-
     /**
      * @param $name
      * @return mixed
      */
     function getView($name);
-    function getCompilers();
-    function setCompilers(array $compilers);    
 
+    /**
+     * @return array
+     */
+    function getCompilers();
 }

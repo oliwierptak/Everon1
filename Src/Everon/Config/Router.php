@@ -13,9 +13,9 @@ use Everon\Interfaces;
 
 class Router extends \Everon\Config implements Interfaces\Config
 {
-    protected function buildItem(array $config_data)
+    protected function buildItem($name, array $config_data)
     {
-        return $this->getFactory()->buildConfigItemRouter($config_data);
+        return $this->getFactory()->buildConfigItemRouter($name, $config_data);
     }
 
 }

@@ -80,6 +80,7 @@ class Config implements Interfaces\Config, Interfaces\Arrayable
         foreach ($this->data as $name => $data) {
             if ($HasInheritance($name) === true) {
                 $use_inheritance = true;
+                break;
             }
         }
         
@@ -121,8 +122,7 @@ class Config implements Interfaces\Config, Interfaces\Arrayable
     {
         $default_or_first_item = null;
         foreach ($this->getData() as $item_name => $config_data) {
-            $config_data['____name'] = $item_name;
-            $RouteItem = $this->buildItem($config_data);
+            $RouteItem = $this->buildItem($item_name, $config_data);
             $this->items[$item_name] = $RouteItem;
 
             $default_or_first_item = (is_null($default_or_first_item)) ? $RouteItem : $default_or_first_item;
@@ -137,12 +137,13 @@ class Config implements Interfaces\Config, Interfaces\Arrayable
     }
 
     /**
+     * @param $name
      * @param array $config_data
      * @return Interfaces\ConfigItem
      */
-    protected function buildItem(array $config_data)
+    protected function buildItem($name, array $config_data)
     {
-        return $this->getFactory()->buildConfigItem($config_data);
+        return $this->getFactory()->buildConfigItem($name, $config_data);
     }
 
     /**

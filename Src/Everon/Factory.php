@@ -323,13 +323,15 @@ class Factory implements Interfaces\Factory
     }
 
     /**
+     * @param $name
      * @param array $data
      * @return Interfaces\ConfigItem
      * @throws Exception\Factory
      */
-    public function buildConfigItem(array $data)
+    public function buildConfigItem($name, array $data)
     {
         try {
+            $data['____name'] = $name;
             $ConfigItem = new Config\Item($data);
             $ConfigItem = $this->getDependencyContainer()->inject('Everon\Config\Item', $this, $ConfigItem);
             return $ConfigItem;
@@ -338,15 +340,17 @@ class Factory implements Interfaces\Factory
             throw new Exception\Factory('ConfigItemRouter initialization error', null, $e);
         }
     }
-    
+
     /**
+     * @param $name
      * @param array $data
      * @return Interfaces\ConfigItemRouter
      * @throws Exception\Factory
      */
-    public function buildConfigItemRouter(array $data)
+    public function buildConfigItemRouter($name, array $data)
     {
         try {
+            $data['____name'] = $name;
             $RouteItem = new Config\Item\Router($data);
             $RouteItem = $this->getDependencyContainer()->inject('Everon\Config\Item\Router', $this, $RouteItem);
             return $RouteItem;
@@ -355,15 +359,17 @@ class Factory implements Interfaces\Factory
             throw new Exception\Factory('ConfigItemRouter initialization error', null, $e);
         }
     }
-    
+
     /**
+     * @param array $name
      * @param array $data
      * @return Interfaces\ConfigItem
      * @throws Exception\Factory
      */
-    public function buildConfigItemView(array $data)
+    public function buildConfigItemView($name, array $data)
     {
         try {
+            $data['____name'] = $name;
             $PageItem = new Config\Item\View($data);
             $PageItem = $this->getDependencyContainer()->inject('Everon\Config\Item\View', $this, $PageItem);
             return $PageItem;
