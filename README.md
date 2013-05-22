@@ -16,6 +16,7 @@ Very alpha version
 * No static classes or methods
 * Clear, small and simple API
 * Convention over configuration
+* Clean code
 
 ## Dependency Injection
 Consider this model, as you can see it does not inherit from anything, and there is no constructor.
