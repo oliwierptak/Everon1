@@ -8,7 +8,10 @@
  * file that was distributed with this source code.
  */
 
-require_once('/var/www/Kint/kint.class.php');
+//todo remove me
+if ((new \SplFileInfo('/var/www/Kint/kint.class.php'))->isFile()) {
+    require_once('/var/www/Kint/kint.class.php');
+}
     
 function mpr()
 {
