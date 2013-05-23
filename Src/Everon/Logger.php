@@ -50,16 +50,16 @@ class Logger implements Interfaces\Logger
      */
     protected function write($message, $level, $parameters)
     {
-        $message = empty($parameters) === false ? vsprintf($message, $parameters) : $message;
-        $StarDate = new \DateTime('@'.time());
         $Filename = $this->getFilenameByLevel($level);
-        
         if ($Filename->isWritable() === false) {
             throw new Exception\Logger('Unable to write to target log file: "%s"', [$Filename->getBasename()]);
         }
-        
+
+        $message = empty($parameters) === false ? vsprintf($message, $parameters) : $message;
+        $StarDate = new \DateTime('@'.time());
         $message = $StarDate->format($this->getLogDateFormat()).' - '.$message;
-        error_log($message."\n", 3, $Filename);
+        
+        error_log($message."\n", 3, $Filename->getPathname());
         
         return $StarDate;
     }
