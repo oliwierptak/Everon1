@@ -12,4 +12,16 @@ namespace Everon\Interfaces;
 interface ViewElement
 {
     function toArray();
+    
+    /**
+     * @param $name
+     * @param mixed $data
+     */
+    function set($name, $data);
+
+    /**
+     * @param $name
+     * @return mixed|null
+     */
+    function get($name);    
 }

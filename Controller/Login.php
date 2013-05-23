@@ -8,6 +8,11 @@ use Everon\Interfaces;
 class Login extends Controller implements Interfaces\Controller
 {
     use Dependency\Injection\Logger;
+    
+    public function form()
+    {
+        $this->getView()->set('redirect_url', urlencode('login'));
+    }
 
     public function submit()
     {
@@ -20,6 +25,7 @@ class Login extends Controller implements Interfaces\Controller
             return false;
         }
 
+        $this->getView()->set('redirect_url', 'account/summary');
         $this->getView()->set('User', $User);
     }
 

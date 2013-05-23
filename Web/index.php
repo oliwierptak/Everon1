@@ -23,6 +23,10 @@ namespace Everon
         $Container->register('Logger', function() use ($Factory, $log_directory) {
             return $Factory->buildLogger($log_directory);
         });
+        
+        $Container->register('CurlyCompiler', function() use ($Factory) {
+            return $Factory->buildTemplateCompiler('Curly');
+        });
 
         $Container->register('Request', function() use ($Factory) {
             return $Factory->buildRequest($_SERVER, $_GET, $_POST, $_FILES);

@@ -1,4 +1,4 @@
-<etpl block="Header">
+<evt block="Header">
     <!DOCTYPE html>
     
     <html lang="{Page.Lang}">
@@ -10,11 +10,19 @@
         <meta name="description" content="{Page.Description}" />    
     </head>
     <body>
-</etpl>
+</evt>
 
-<etpl block="Body">{Page.Body}</etpl>
+<ul loop="{Page.AdminMenuItems}" acl="admin,poweruser">
+    <li><a href="{Link}">{Title}</a></li>
+</ul>
         
-<etpl block="Footer">
+<div show="empty(Page.AdminMenuItems)">
+    Log in to see administration menu.
+</div>
+
+<evt block="Body">{Page.Body}</evt>
+        
+<evt block="Footer">
     </body>
     </html>
-</etpl>
+</evt>

@@ -23,4 +23,26 @@ abstract class Element extends \Everon\Helper\Popo implements \Everon\Interfaces
 
         parent::__construct($data);
     }
+
+    /**
+     * @param $name
+     * @param $data
+     */
+    public function set($name, $data)
+    {
+        $this->data[$name] = $data;
+    }
+
+    /**
+     * @param $name
+     * @return null
+     */
+    public function get($name)
+    {
+        if (isset($this->data[$name]) === false) {
+            return null;
+        }
+        
+        return $this->data[$name];
+    }
 }

@@ -17,7 +17,7 @@ interface View
     function setTemplateDirectory($directory);
     function getTemplateFilename($filename);
     function getTemplate($name, $data);
-    function set($name, $data);
+    function set($name, $value);
     function get($name);
 
     function getData();

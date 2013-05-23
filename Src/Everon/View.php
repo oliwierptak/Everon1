@@ -12,6 +12,7 @@ namespace Everon;
 abstract class View implements Interfaces\View, Interfaces\Arrayable
 {
     use Dependency\Injection\Factory;
+    use Dependency\Injection\CurlyCompiler;
 
     use Helper\ToArray;
     use Helper\String\LastTokenToName;
@@ -139,11 +140,18 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
     
     /**
      * @param $name
-     * @param mixed $data
+     * @param mixed $value
      */
-    public function set($name, $data)
+    public function set($name, $value)
     {
-        $this->data[$name] = $data;
+        if (isset($this->data[$name]) === false && $value instanceof Interfaces\ViewElement) {
+            foreach ($value->getData() as $key => $item_value) {
+                $parsed_value = $this->getCurlyCompiler()->compile($item_value, $this->getData());
+                $value->set($key, $parsed_value);
+            }
+        }
+
+        $this->data[$name] = $value;
     }
 
     /**
