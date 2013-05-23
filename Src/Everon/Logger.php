@@ -51,8 +51,10 @@ class Logger implements Interfaces\Logger
     protected function write($message, $level, $parameters)
     {
         $Filename = $this->getFilenameByLevel($level);
-        if ($Filename->isWritable() === false) {
-            throw new Exception\Logger('Unable to write to target log file: "%s"', [$Filename->getBasename()]);
+        $Dir = new \SplFileInfo($Filename->getPath());
+        
+        if ($Dir->isWritable() === false) {
+            throw new Exception\Logger('Unable to write to log file: "%s"', [$Filename->getPathname()]);
         }
 
         $message = empty($parameters) === false ? vsprintf($message, $parameters) : $message;
