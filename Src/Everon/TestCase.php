@@ -41,6 +41,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
 
     private function removeDirectoryRecursive($dir)
     {
+        die('nononono');
         return;
         if (is_dir($dir)) {
             $It = new \RecursiveIteratorIterator(
@@ -148,6 +149,10 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         $Container->register('Logger', function() use ($Factory, $log_directory) {
             return $Factory->buildLogger($log_directory);
         });
+
+        $Container->register('CurlyCompiler', function() use ($Factory) {
+            return $Factory->buildTemplateCompiler('Curly');
+        });       
 
         $server_data = $this->getServerDataForRequest([
             'REQUEST_METHOD' => 'GET',
