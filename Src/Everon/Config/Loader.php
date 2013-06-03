@@ -62,14 +62,14 @@ class Loader implements Interfaces\ConfigLoader
          * @var \Closure $Compiler
          */
         $list = [];
-        $IniFiles = new \GlobIterator($this->config_directory.'*.ini');
+        $IniFiles = new \GlobIterator($this->getConfigDirectory().'*.ini');
         foreach ($IniFiles as $config_filename => $ConfigFile) {
             if (strcasecmp($ConfigFile->getFilename(), $default_config_filename) === 0) {
                 continue; //don't load default config again
             }
 
             $name = $ConfigFile->getBasename('.ini');
-            $CacheFile = new \SplFileInfo($ConfigFile->getPathname().'.php');
+            $CacheFile = new \SplFileInfo($this->getCacheDirectory().$ConfigFile->getBasename().'.php');
             if ($use_cache && $CacheFile->isFile()) {
                 $filename = $CacheFile->getPathname();
                 $ini_config_data = function() use ($filename, $Compiler) {
