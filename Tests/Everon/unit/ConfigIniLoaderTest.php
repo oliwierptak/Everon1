@@ -120,7 +120,6 @@ class ConfigIniLoaderTest extends \Everon\TestCase
         $ConfigLoader->saveConfigToCache($ConfigMock);
     }
 
-    
     public function dataProvider()
     {
         /**
