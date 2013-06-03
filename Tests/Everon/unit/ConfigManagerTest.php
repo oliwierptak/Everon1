@@ -80,6 +80,9 @@ class ConfigManagerTest extends \Everon\TestCase
         
         $Config = $ConfigManager->getRouterConfig();
         $this->assertInstanceOf('Everon\Config\Router', $Config);
+
+        $Config = $ConfigManager->getViewConfig();
+        $this->assertInstanceOf('Everon\Config\View', $Config);
         
         $Config = $ConfigManager->getConfigByName('test');
         $this->assertInstanceOf('Everon\Config', $Config);
@@ -92,10 +95,69 @@ class ConfigManagerTest extends \Everon\TestCase
      */
     public function testGetConfigByNameShouldThrowExceptionWhenConfigFileNotFound(\Everon\Interfaces\ConfigManager $ConfigManager, \Everon\Interfaces\Config $Expected)
     {
-        $ConfigManager->enableCache();
         $Config = $ConfigManager->getConfigByName('wrong');
     }
-    
+
+    /**
+     * @dataProvider dataProvider
+     */
+    public function testRegisterWithCache(\Everon\Interfaces\ConfigManager $ConfigManager, \Everon\Interfaces\Config $Expected)
+    {
+        $ConfigManager->disableCache();
+        $ConfigManager->enableCache();
+        $ConfigManager->unRegister($Expected->getName());
+        $ConfigManager->register($Expected);
+        $Config = $ConfigManager->getConfigByName($Expected->getName());
+        $this->assertInstanceOf('Everon\Interfaces\Config', $Config);
+    }
+
+    /**
+     * @dataProvider dataProvider
+     */
+    public function testLoadAndRegisterConfigsWithCache(\Everon\Interfaces\ConfigManager $ConfigManager, \Everon\Interfaces\Config $Expected)
+    {
+        $ConfigManager->enableCache();
+
+        $Property = $this->getProtectedProperty('Everon\Config\Manager', 'configs');
+        $Property->setValue($ConfigManager, null);
+        $Config = $ConfigManager->getApplicationConfig();
+
+        $this->assertInstanceOf('Everon\Interfaces\Config', $Config);
+    }
+
+    /**
+     * @dataProvider dataProvider
+     */
+    public function testGetConfigsWithCache(\Everon\Interfaces\ConfigManager $ConfigManager, \Everon\Interfaces\Config $Expected)
+    {
+        $ConfigManager->enableCache();
+
+        $Property = $this->getProtectedProperty('Everon\Config\Manager', 'configs');
+        $Property->setValue($ConfigManager, null);
+
+        $configs = $ConfigManager->getConfigs();
+        $this->assertNotEmpty($configs);
+    }
+
+    /**
+     * @dataProvider dataProvider
+     */
+    public function testSetupCachingAndDefaultConfig(\Everon\Interfaces\ConfigManager $ConfigManager, \Everon\Interfaces\Config $Expected)
+    {
+        $PropertyDefaultConfigName = $this->getProtectedProperty('Everon\Config\Manager', 'default_config_name');
+        $PropertyDefaultConfigName->setValue($ConfigManager, $Expected->getName());
+
+        $PropertyConfigs = $this->getProtectedProperty('Everon\Config\Manager', 'configs');
+
+        $configs = [$Expected->getName() => $Expected];
+        $PropertyConfigs->setValue($ConfigManager, $configs);
+
+        $Method = $this->getProtectedMethod('Everon\Config\Manager', 'setupCachingAndDefaultConfig');
+        $Method->invoke($ConfigManager);
+
+        $this->assertInstanceOf('Everon\Config', $ConfigManager->getApplicationConfig());
+    }
+
     public function dataProvider()
     {
         /**

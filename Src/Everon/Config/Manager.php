@@ -173,7 +173,7 @@ class Manager implements Interfaces\ConfigManager
      */
     public function getApplicationConfig()
     {
-        return $this->getConfigByName('application');
+        return $this->getConfigByName($this->default_config_name);
     }
 
     /**
@@ -213,7 +213,5 @@ class Manager implements Interfaces\ConfigManager
     {
         $this->use_cache = false;
     }
-
-
 
 }
