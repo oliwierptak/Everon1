@@ -28,13 +28,11 @@ class ExpressionMatcher implements Interfaces\ConfigExpressionMatcher
     protected function buildCompiler(array $expressions)
     {
         $Compiler = function(array &$data) use ($expressions) {
-            if (empty($expressions)) {
-                return;
+            if (empty($expressions) === false && empty($data) === false) {
+                array_walk_recursive($data, function(&$item) use ($expressions) {
+                    $item = str_replace(array_keys($expressions), array_values($expressions), $item);
+                });
             }
-
-            array_walk_recursive($data, function(&$item) use ($expressions) {
-                $item = str_replace(array_keys($expressions), array_values($expressions), $item);
-            });
         };
         
         return $Compiler;
