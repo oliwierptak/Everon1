@@ -142,8 +142,8 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         
         $Environment->setLog($this->getLogDirectory());
         $Environment->setConfig($this->getConfigDirectory());
-        $Environment->setCacheConfig($this->getTempDirectory().'configmanager'.DIRECTORY_SEPARATOR);
-        $Environment->setViewTemplate($this->getFixtureDirectory().'templates'.DIRECTORY_SEPARATOR);
+        $Environment->setCacheConfig($this->getConfigCacheDirectory());
+        $Environment->setViewTemplate($this->getTemplateDirectory());
 
         $log_directory = $Environment->getLog();
         $Container->register('Logger', function() use ($Factory, $log_directory) {
