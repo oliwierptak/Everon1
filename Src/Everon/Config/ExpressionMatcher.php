@@ -16,6 +16,11 @@ use Everon\Interfaces;
 
 class ExpressionMatcher implements Interfaces\ConfigExpressionMatcher
 {
+    /**
+     * @var \Closure
+     */
+    protected $Compiler = null;
+    
     protected $expressions = [
         '%application.url%'
     ];
@@ -45,17 +50,21 @@ class ExpressionMatcher implements Interfaces\ConfigExpressionMatcher
      */
     public function getCompiler(Interfaces\ConfigManager $Manager)
     {
-        $expressions = [];
-        foreach ($this->expressions as $item) {
-            $tokens = explode('.', trim($item, '%'));
-            $config_name = $tokens[0];
-            $config_key = $tokens[1];
+        if ($this->Compiler === null) {
+            $expressions = [];
+            foreach ($this->expressions as $item) {
+                $tokens = explode('.', trim($item, '%'));
+                $config_name = $tokens[0];
+                $config_key = $tokens[1];
 
-            $Config = $Manager->getConfigByName($config_name);
-            $expressions[$item] = $Config->get($config_key); //todo: make deep
+                $Config = $Manager->getConfigByName($config_name);
+                $expressions[$item] = $Config->get($config_key); //todo: make deep
+            }
+
+            $this->Compiler = $this->buildCompiler($expressions);
         }
-
-        return $this->buildCompiler($expressions);
+        
+        return $this->Compiler;
     }
 
     /**
@@ -64,6 +73,7 @@ class ExpressionMatcher implements Interfaces\ConfigExpressionMatcher
     public function setExpressions(array $expressions)
     {
         $this->expressions = $expressions;
+        $this->Compiler = null;
     }
 
     /**
