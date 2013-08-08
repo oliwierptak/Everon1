@@ -121,7 +121,7 @@ class Logger implements Interfaces\Logger
      */
     public function __call($name, array $arguments=[])
     {
-        $name = preg_replace('/[^a-z0-9_]/i', '', $name);
+        $name = escapeshellarg(preg_replace('/[^a-z0-9_]/i', '', $name));
         @list($message, $parameters) = $arguments;
         return $this->write($message, $name, $parameters);
     }
