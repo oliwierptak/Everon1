@@ -21,5 +21,5 @@ interface View
     function get($name);
 
     function getData();
-    function setTemplateFromAction($template, array $data);
+    function setOutputFromAction($template, array $data);
 }

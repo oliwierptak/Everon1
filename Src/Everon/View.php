@@ -156,10 +156,15 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
 
     /**
      * @param $name
-     * @return mixed
+     * @param mixed|null $default
+     * @return null
      */
-    public function get($name)
+    public function get($name, $default=null)
     {
+        if (isset($this->data[$name]) === false) {
+            return $default;
+        }
+
         return $this->data[$name];
     }
 
@@ -184,7 +189,7 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
      * @param $action
      * @param array $data
      */
-    public function setTemplateFromAction($action, array $data)
+    public function setOutputFromAction($action, array $data)
     {
         $Filename = $this->getTemplateFilename($action);
         if ($this->Output === null && $Filename->isFile()) {
