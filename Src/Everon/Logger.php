@@ -42,6 +42,8 @@ class Logger implements Interfaces\Logger
     }
 
     /**
+     * Don't generate errors and only write to log file when possible
+     * 
      * @param $message
      * @param $level
      * @param $parameters
@@ -52,16 +54,17 @@ class Logger implements Interfaces\Logger
     {
         $Filename = $this->getFilenameByLevel($level);
         $Dir = new \SplFileInfo($Filename->getPath());
-        
-        if ($Dir->isWritable() === false) {
-            throw new Exception\Logger('Unable to write to log file: "%s"', [$Filename->getPathname()]);
-        }
-
-        $message = empty($parameters) === false ? vsprintf($message, $parameters) : $message;
         $StarDate = new \DateTime('@'.time());
-        $message = $StarDate->format($this->getLogDateFormat()).' - '.$message;
         
-        error_log($message."\n", 3, $Filename->getPathname());
+        if ($Dir->isWritable()) {
+            if ($Filename->isFile() && $Filename->isWritable() === false) {
+                return $StarDate;
+            }
+
+            $message = empty($parameters) === false ? vsprintf($message, $parameters) : $message;
+            $message = $StarDate->format($this->getLogDateFormat()).' - '.$message;
+            error_log($message."\n", 3, $Filename->getPathname());
+        }
         
         return $StarDate;
     }
