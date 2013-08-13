@@ -19,6 +19,16 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
      */
     protected $Environment = null;
 
+    /**
+     * @var \Everon\Interfaces\DependencyContainer
+     */
+    protected $DependencyContainer = null;
+
+    /**
+     * @var \Everon\Interfaces\Factory
+     */
+    protected $Factory = null;
+
 
     public function __construct($name = NULL, array $data = array(), $dataName = '')
     {
@@ -136,8 +146,16 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
     
     public function getContainerAndFactory()
     {
-        $Container = new Dependency\Container();
-        $Factory = new Factory($Container);
+        if ($this->DependencyContainer === null) {
+            $this->DependencyContainer = new Dependency\Container();
+        }
+        
+        if ($this->Factory === null) {
+            $this->Factory = new Factory($this->DependencyContainer);
+        }
+
+        $Container = $this->DependencyContainer;
+        $Factory = $this->Factory;
         $Environment = $this->Environment;
         
         $Environment->setLog($this->getLogDirectory());
@@ -163,8 +181,9 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
             return $Factory->buildRequest($server_data, $_GET, $_POST, $_FILES);
         });
 
-        $Container->register('Response', function() use ($Factory) {
-            return $Factory->buildResponse();
+        $Headers = $Factory->buildHttpHeaderCollection();
+        $Container->register('Response', function() use ($Factory, $Headers) {
+            return $Factory->buildResponse($Headers);
         });
 
         $config_directory = $Environment->getConfig();
