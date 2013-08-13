@@ -177,12 +177,11 @@ interface Factory
     function buildHttpHeaderCollection(array $headers=[]);
 
     /**
-     * @param null $data
      * @param Interfaces\Collection $Headers
      * @return Interfaces\Response
      * @throws Exception\Factory
      */
-    function buildResponse($data=null, Interfaces\Collection $Headers=null);
+    function buildResponse(Interfaces\Collection $Headers);
 
     /**
      * @param array $server

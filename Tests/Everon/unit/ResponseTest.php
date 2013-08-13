@@ -12,12 +12,10 @@ namespace Everon\Test;
 class ResponseTest extends \Everon\TestCase
 {
 
-    /**
-     * @dataProvider dataProvider
-     */
-    public function testConstructor(\Everon\Interfaces\Factory $Factory)
+    public function testConstructor()
     {
-        $Response = $Factory->buildResponse(['test'=>'yes']);
+        $HeadersMock = $this->getMock('Everon\Http\HeaderCollection');
+        $Response = new \Everon\Response($HeadersMock);
         $this->assertInstanceOf('\Everon\Interfaces\Response', $Response);
     }
 

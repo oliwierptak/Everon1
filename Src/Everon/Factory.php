@@ -266,21 +266,16 @@ class Factory implements Interfaces\Factory
     }
 
     /**
-     * @param null $data
      * @param Interfaces\Collection $Headers
      * @return Interfaces\Response
      * @throws Exception\Factory
      */
-    public function buildResponse($data=null, Interfaces\Collection $Headers=null)
+    public function buildResponse(Interfaces\Collection $Headers)
     {
         try {
-            if (is_null($Headers)) {
-                $Headers = $this->buildHttpHeaderCollection();
-            }
-
-            $RouteItem = new Response($data, $Headers);
-            $RouteItem = $this->getDependencyContainer()->inject('Everon\Response', $this, $RouteItem);
-            return $RouteItem;
+            $Response = new Response($Headers);
+            $Response = $this->getDependencyContainer()->inject('Everon\Response', $this, $Response);
+            return $Response;
         }
         catch (\Exception $e) {
             throw new Exception\Factory('Response initialization error', null, $e);

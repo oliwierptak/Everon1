@@ -19,9 +19,8 @@ class Response implements Interfaces\Response
     protected $result = false;
 
     
-    public function __construct($data, Interfaces\Collection $Headers)
+    public function __construct(Interfaces\Collection $Headers)
     {
-        $this->data = $data;
         $this->HeaderCollection = $Headers;
     }
     
