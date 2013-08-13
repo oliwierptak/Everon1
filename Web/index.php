@@ -10,7 +10,7 @@ namespace Everon
     ini_set('xdebug.overload_var_dump', false);
     ini_set('html_errors', false);
 
-    echo ('Start: '.memory_get_peak_usage(TRUE))."<hr/>";
+    echo ('Start: '.memory_get_usage(TRUE)/1024)." kb<hr/>";
 
     try {
         require_once(dirname(__FILE__) . '/../Src/Everon/Lib/Bootstrap.php');
@@ -94,7 +94,7 @@ namespace Everon
         echo '</pre>';
     }
 
-    echo '<hr><pre>Executed in ', round(microtime(true) - $_SERVER['REQUEST_TIME_FLOAT'], 3), 's</pre>'.(memory_get_usage(TRUE))." / ".(memory_get_peak_usage(TRUE));
+    echo '<hr><pre>Executed in ', round(microtime(true) - $_SERVER['REQUEST_TIME_FLOAT'], 3), 's</pre>'.(memory_get_usage(TRUE)/1024)." / ".(memory_get_peak_usage(TRUE)/1024).' kb';
 }
 
 
