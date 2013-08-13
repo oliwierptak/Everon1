@@ -144,9 +144,9 @@ class Factory implements Interfaces\Factory
     public function buildConfigLoader($config_directory, $cache_directory)
     {
         try {
-            $ExpressionMatcher = new Config\Loader($config_directory, $cache_directory);
-            $this->getDependencyContainer()->inject('Everon\Config\Loader', $this, $ExpressionMatcher);
-            return $ExpressionMatcher;
+            $ConfigLoader = new Config\Loader($config_directory, $cache_directory);
+            $this->getDependencyContainer()->inject('Everon\Config\Loader', $this, $ConfigLoader);
+            return $ConfigLoader;
         }
         catch (\Exception $e) {
             throw new Exception\Factory('ConfigLoader initialization error', null, $e);
