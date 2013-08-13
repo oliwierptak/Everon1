@@ -8,7 +8,7 @@ class Login extends View
     public function form()
     {
         $FormElement = new \Everon\View\Element\Form([
-            'action' => 'login/submit/session/adf24ds34/redirect/{redirect_url}?and=something&else=2457'
+            'action' => $this->get('login_url')
         ]);
         
         $this->set('Form', $FormElement);

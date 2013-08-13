@@ -144,13 +144,6 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
      */
     public function set($name, $value)
     {
-        if (isset($this->data[$name]) === false && $value instanceof Interfaces\ViewElement) {
-            foreach ($value->getData() as $key => $item_value) {
-                $parsed_value = $this->getCurlyCompiler()->compile($item_value, $this->getData());
-                $value->set($key, $parsed_value);
-            }
-        }
-
         $this->data[$name] = $value;
     }
 

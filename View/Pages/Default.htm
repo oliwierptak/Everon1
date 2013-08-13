@@ -1,28 +1,31 @@
-<evt block="Header">
-    <!DOCTYPE html>
-    
-    <html lang="{Page.Lang}">
-    <head>
-        <title>{Page.Title}</title>
-        <link rel="stylesheet" type="text/css" href="{Page.StaticUrl}/common.css" media="all" />
-        <meta charset="{Page.Charset}" />
-        <meta name="keywords" content="{Page.Keywords}" />
-        <meta name="description" content="{Page.Description}" />    
-    </head>
-    <body>
-</evt>
+<evBlock name="Header">
+<!DOCTYPE html>
 
-<ul loop="{Page.AdminMenuItems}" acl="admin,poweruser">
-    <li><a href="{Link}">{Title}</a></li>
-</ul>
-        
-<div show="empty(Page.AdminMenuItems)">
+<html lang="{Page.Lang}">
+<head>
+    <title>{Page.Title}</title>
+    <link rel="stylesheet" type="text/css" href="{Page.StaticUrl}/common.css" media="all" />
+    <meta charset="{Page.Charset}" />
+    <meta name="keywords" content="{Page.Keywords}" />
+    <meta name="description" content="{Page.Description}" />    
+</head>
+<body>
+</evBlock>
+
+<div evLoop="{Page.AdminMenuItems = Section > MenuItems}" evAcl="admin,poweruser" evBlock="Menu">
+    <h3 class="row_{:odd}">{:index+1} {Section}</h3>
+    <ul evLoop="{MenuItems = Item}">
+        <li><a href="{Item.Link}">{Item.Title}</a></li>
+    </ul>
+</div>
+    
+<div evAcl="!admin,!poweruser" evBlock="unregisteredMessage">
     Log in to see administration menu.
 </div>
 
-<evt block="Body">{Page.Body}</evt>
+<evBlock name="Main">{Page.Body}</evBlock>
         
-<evt block="Footer">
-    </body>
-    </html>
-</evt>
+<evBlock name="Footer">
+</body>
+</html>
+</evBlock>

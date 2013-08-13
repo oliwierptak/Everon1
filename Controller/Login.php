@@ -11,7 +11,8 @@ class Login extends Controller implements Interfaces\Controller
     
     public function form()
     {
-        $this->getView()->set('redirect_url', urlencode('login'));
+        $redirect_url = urlencode('/login/resetpassword');
+        $this->getView()->set('login_url', "login/submit/session/adf24ds34/redirect/${redirect_url}?and=something&else=2457");
     }
 
     public function submit()
