@@ -32,8 +32,9 @@ namespace Everon
             return $Factory->buildRequest($_SERVER, $_GET, $_POST, $_FILES);
         });
 
-        $Container->register('Response', function() use ($Factory) {
-            return $Factory->buildResponse();
+        $Headers = $Factory->buildHttpHeaderCollection();
+        $Container->register('Response', function() use ($Factory, $Headers) {
+            return $Factory->buildResponse($Headers);
         });
 
         $config_directory = $Environment->getConfig();
