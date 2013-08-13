@@ -55,9 +55,8 @@ class Item implements Interfaces\ConfigItem, Interfaces\Arrayable
      */
     public function validateData(array $data)
     {
-        $this->assertIsStringAndNonEmpty($data['____name'], 'Invalid view name: "%s"', 'ConfigItemView');
+        $this->assertIsStringAndNonEmpty($data['____name'], 'Invalid item name: "%s"', 'ConfigItem');
     }
-   
     
     public function getName()
     {
