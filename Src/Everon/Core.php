@@ -29,7 +29,7 @@ class Core implements Interfaces\Core
             $Controller->result($result, $Response);
         }
         catch (Exception\InvalidRouterParameter $e) {
-            //todo: raise event for from validation
+            //todo: raise event for form validation
             throw $e;
         }
         catch (Exception\PageNotFound $e) {
@@ -114,7 +114,7 @@ class Core implements Interfaces\Core
         
         if ($controller_has_action) {
             $result = $Controller->{$action}();
-            $result = $result === null ? true : $result; //default is true, no need to write everywhere return true
+            $result = $result === null ? true : $result; //default is true, no need to write everywhere in Controllers return true
 
             if ($result) {
                 $result_view = $this->executeViewAction($Controller->getView(), $action);
@@ -164,7 +164,7 @@ class Core implements Interfaces\Core
     {
         if (method_exists($View, $action)) {
             $result = $View->{$action}();
-            $View->setTemplateFromAction($action, $View->getData());
+            $View->setOutputFromAction($action, $View->getData());
             $result = $result === null ? true : $result;
             return $result;
         }
