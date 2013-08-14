@@ -43,31 +43,6 @@ class ClassLoaderTest extends \Everon\TestCase
         $Loader->load('test_wrong_class');
     }
 
-    /**
-     * @dataProvider dataProvider
-     */
-    public function testIncludeFile(\Everon\Interfaces\ClassLoader $Loader, \Everon\Interfaces\Environment $Environment)
-    {
-        $Loader->add('Everon', $Environment->getSource());
-        $Loader->add('Everon\View', $Environment->getView());
-        
-        $method = $this->getProtectedMethod('Everon\ClassLoader', 'includeFile');
-        $result = $method->invoke($Loader, 'Everon\Core', 'Everon', $Environment->getSource());
-        $this->assertTrue($result !== false);
-
-        $result = $method->invoke($Loader, 'Everon\Model\User', 'Everon\Model', $Environment->getModel());
-        $this->assertTrue($result !== false);
-
-        $result = $method->invoke($Loader, 'Everon\View\Login', 'Everon\View', $Environment->getView());
-        $this->assertTrue($result !== false);
-
-        $result = $method->invoke($Loader, 'Everon\Controller\Login', 'Everon\Controller', $Environment->getController());
-        $this->assertTrue($result !== false);
-
-        $result = $method->invoke($Loader, 'Everon\WrongClass', 'Everon\Wrong', $Environment->getRoot());
-        $this->assertFalse($result);
-    }
-
     public function dataProvider()
     {
         $Loader = new \Everon\ClassLoader(null);

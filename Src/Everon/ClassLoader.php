@@ -21,7 +21,7 @@ class ClassLoader implements Interfaces\ClassLoader
      * @var Interfaces\ClassMap|null
      */
     protected $ClassMap = null;
-
+    
 
     /**
      * @param Interfaces\ClassMap|null $ClassMap
@@ -69,12 +69,16 @@ class ClassLoader implements Interfaces\ClassLoader
         }
         
         $include = false;
+        $filename = '';
         foreach ($this->resources as $namespace => $path) {
-            if ($this->isNamespace($class_name, $namespace) === false) {
-                continue;
+            $filename = $path.str_replace('\\', DIRECTORY_SEPARATOR, $class_name).'.php';
+            $include = $this->includeWhenExists($filename);
+            if ($include !== false) {
+                break;
             }
 
-            $include = $this->includeFile($class_name, $namespace, $path);
+            $filename = $path.trim(str_replace($namespace, '', $class_name), '\\').'.php';
+            $include = $this->includeWhenExists($filename);
             if ($include !== false) {
                 break;
             }
@@ -87,74 +91,24 @@ class ClassLoader implements Interfaces\ClassLoader
         }
         
         if ($this->class_map_enabled) {
-            $this->ClassMap->addToMap($include[0], $include[1]);
+            $this->ClassMap->addToMap($class_name, $filename);
         }        
     }
 
     /**
-     * @param $class_name
-     * @param $namespace
-     * @param $path
-     * @return array|bool
+     * @param $filename
+     * @return bool
      */
-    protected function includeFile($class_name, $namespace, $path)
+    protected function includeWhenExists($filename)
     {
-        $namespace = rtrim($namespace, '\\');
-        $namespace = ltrim($namespace, '\\');
-        $path = rtrim($path, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
-
-        $filename = $this->includeWhenExists($class_name, $path);
-        if ($filename !== false) {
-            return [$class_name, $filename];
-        }
-        
-        $class = substr($class_name, strlen($namespace), strlen($class_name));
-        $class = ltrim($class, '\\');
-        $filename = $this->includeWhenExists($class, $path);
-        if ($filename !== false) {
-            return [$class_name, $filename];
-        }
-        
-        return false;
-    }
-
-    /**
-     * @param $class
-     * @param $path
-     * @return string
-     */
-    protected function classToFileName($class, $path)
-    {
-        return $path.str_replace('\\', DIRECTORY_SEPARATOR, $class).'.php';
-    }
-
-    /**
-     * @param $class
-     * @param $path
-     * @return bool|string
-     */
-    protected function includeWhenExists($class, $path)
-    {
-        $filename = $this->classToFileName($class, $path);
         $exists = file_exists($filename);
 
         if ($exists) {
             include_once($filename);
-            return $filename;
+            return true;
         }
-        
-        return false;
-    }
 
-    /**
-     * @param $namespace
-     * @param $match
-     * @return bool
-     */
-    protected function isNamespace($namespace, $match)
-    {
-        $namespace = substr($namespace, 0, strlen($match));
-        return strcasecmp($namespace, $match) == 0;
+        return false;
     }
 
 }
