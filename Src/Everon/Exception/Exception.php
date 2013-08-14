@@ -45,10 +45,10 @@ abstract class Exception extends \Exception
         $message = "";
         $exception_message = $e->getMessage();
         $class = get_class($e);
-        if (strlen($class) != 0) {
+        if ($class != '') {
             $message = $message.'{'.$class.'}';
         }
-        if (strlen($message) != 0 && strlen($exception_message) != 0) {
+        if ($message != '' && $exception_message != '') {
             $message = $message . " ";
         }
         $message = $message . $e->getMessage();
