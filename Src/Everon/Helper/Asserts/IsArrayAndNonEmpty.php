@@ -22,7 +22,7 @@ trait IsArrayAndNotEmpty
      */
     public function assertIsArrayAndNotEmpty($value, $message='%s must not be an empty Array', $exception='Asserts')
     {
-        if (!is_array($value) || (is_array($value) && count($value) <= 0)) {
+        if (isset($value) === false || is_array($value) === false || (is_array($value) && count($value) <= 0)) {
             $this->throwException($exception, $message, $value);
         }
     }

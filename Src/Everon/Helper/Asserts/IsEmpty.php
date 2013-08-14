@@ -22,7 +22,7 @@ trait IsEmpty
      */
     public function assertIsEmpty($value, $message='%s must not be empty', $exception='Asserts')
     {
-        if (empty($value)) {
+        if (isset($value) === false || empty($value)) {
             $this->throwException($exception, $message, $value);
         }
     }

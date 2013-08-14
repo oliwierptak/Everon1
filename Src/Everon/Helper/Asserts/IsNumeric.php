@@ -9,7 +9,7 @@
  */
 namespace Everon\Helper\Asserts;
 
-trait IsNumericAndNonEmpty
+trait IsNumeric
 {
     /**
      * Verifies that the specified condition is numeric and non empty.
@@ -20,9 +20,9 @@ trait IsNumericAndNonEmpty
      * @param string $exception
      * @throws \Everon\Exception\Asserts
      */
-    public function assertIsNumericAndNonEmpty($value, $message='%s must be a number and not empty', $exception='Asserts')
+    public function assertIsNumeric($value, $message='%s must be a number and not empty', $exception='Asserts')
     {
-        if (!is_numeric($value) || strlen(strval($value)) < 1) {
+        if (is_numeric($value) === false) {
             $this->throwException($exception, $message, $value);
         }
     }

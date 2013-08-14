@@ -23,7 +23,7 @@ trait IsInArray
      */
     public function assertIsInArray($needle, $haystack, $message='%s must be in Array', $exception='Asserts')
     {
-        if (!is_array($haystack) || !in_array($needle, $haystack)) {
+        if (isset($haystack) === false || is_array($haystack) === false || in_array($needle, $haystack) === false) {
             $this->throwException($exception, $message, $needle);
         }
     }

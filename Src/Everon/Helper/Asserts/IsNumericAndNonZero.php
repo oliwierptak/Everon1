@@ -22,7 +22,7 @@ trait IsNumericAndNonZero
      */
     public function assertIsNumericAndNonZero($value, $message='%s must be a number and not 0', $exception='Asserts')
     {
-        if (!is_numeric($value) || intval($value) <= 0) {
+        if (is_numeric($value) === false || floatval($value) <= 0) {
             $this->throwException($exception, $message, $value);
         }
     }

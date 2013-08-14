@@ -24,7 +24,7 @@ trait IsInstance
     public function assertIsInstance($class, $instance, $message='%s and %s are not the same instance', $exception='Asserts')
     {
         $is_instance = (get_class($class) === $instance);
-        if (!$is_instance) {
+        if ($is_instance === false) {
             $this->throwException($exception, $message, array(get_class($class), $instance));
         }
     }

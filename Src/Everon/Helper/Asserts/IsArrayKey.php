@@ -23,7 +23,9 @@ trait IsArrayKey
      */
     public function assertIsArrayKey($key, $array_to_check, $message='%s does not exist in array as a key', $exception='Asserts')
     {
-        if(!is_array($array_to_check) || (is_array($array_to_check) && !array_key_exists($key, $array_to_check))) {
+        if (isset($array_to_check) === false || 
+            is_array($array_to_check) === false || 
+            (is_array($array_to_check) && array_key_exists($key, $array_to_check) === false)) {
             $this->throwException($exception, $message, $key);
         }
     }

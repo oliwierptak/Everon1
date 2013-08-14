@@ -22,7 +22,7 @@ trait IsTrue
      */
     public function assertIsTrue($value, $message='%s must be True', $exception='Asserts')
     {
-        if (!is_bool($value) || $value !== true) {
+        if (is_bool($value) === false || $value !== true) {
             $this->throwException($exception, $message, $value);
         }
     }

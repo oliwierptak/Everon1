@@ -23,7 +23,7 @@ trait IsStringAndNonEmpty
      */
     public function assertIsStringAndNonEmpty($value, $message='%s must be a string and not empty', $exception='Asserts')
     {
-        if (!is_string($value) || strlen($value) < 1) {
+        if (is_string($value) === false || strlen($value) < 1) {
             $this->throwException($exception, $message, $value);
         }
     }

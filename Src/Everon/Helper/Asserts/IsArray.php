@@ -22,7 +22,7 @@ trait IsArray
      */
     public function assertIsArray($value, $message='%s must be an Array', $exception='Asserts')
     {
-        if (!is_array($value)) {
+        if (isset($value) === false || is_array($value) === false) {
             $this->throwException($exception, $message, $value);
         }
     }
