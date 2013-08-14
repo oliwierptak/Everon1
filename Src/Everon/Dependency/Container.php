@@ -33,7 +33,7 @@ class Container implements Interfaces\DependencyContainer
      */
     protected function dependencyToObject($dependency_name, $Receiver)
     {
-        if (array_key_exists($dependency_name, $this->container_dependencies)) {
+        if (isset($this->container_dependencies[$dependency_name])) {
             $container_name = $this->container_dependencies[$dependency_name];
         }
         else {
@@ -95,7 +95,7 @@ class Container implements Interfaces\DependencyContainer
             throw new Exception\Factory('Error injecting dependency: "%s"', $class_name);
         }
 
-        if (array_key_exists($class_name, $this->class_dependencies) === false) {
+        if (isset($this->class_dependencies[$class_name]) === false) {
             $OnlyInjections = function($name) {
                 return substr($name, 0, strlen('Everon\Dependency\Injection'))  === 'Everon\Dependency\Injection';
             };
