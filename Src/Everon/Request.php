@@ -248,7 +248,7 @@ class Request implements Interfaces\Request, Interfaces\Arrayable
         $method = strtolower($data['method']);
         $valid = ['post', 'get']; //todo: put into method or property
 
-        if (!in_array($method, $valid)) {
+        if (in_array($method, $valid) === false) {
             throw new Exception\Request('Unrecognized post method: "%s"', $method);
         }
     }
