@@ -59,7 +59,7 @@ class Popo implements Interfaces\Arrayable
         array_shift($camelized);
         $property = strtolower(implode('_', $camelized));
 
-        if (!array_key_exists($property, $this->data)) {
+        if (array_key_exists($property, $this->data) === false) {
             if ($getter) {
                 throw new Exception\Popo('Unknown property: "%s" in "%s"', array($property, get_class($this)));
             }
