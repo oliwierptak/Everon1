@@ -149,9 +149,11 @@ class Container implements Interfaces\DependencyContainer
             return $this->services[$name];
         }
 
-        $callback = $this->definitions[$name];
-        if (is_callable($callback)) {
-            $this->services[$name] = $callback();
+        if (is_callable($this->definitions[$name])) {
+            $this->services[$name] = $this->definitions[$name]();
+        }
+        else {
+            $this->services = $this->definitions[$name];
         }
 
         return $this->services[$name];
