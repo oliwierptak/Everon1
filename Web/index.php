@@ -17,10 +17,13 @@ namespace Everon
 
         $Container = new Dependency\Container();
         $Factory = new Factory($Container);
-        $Environment = $Factory->buildEnvironment(PROJECT_ROOT);
 
-        $log_directory = $Environment->getLog();
-        $Container->register('Logger', function() use ($Factory, $log_directory) {
+        $Container->register('Environment', function() use ($Factory) {
+            return $Factory->buildEnvironment(PROJECT_ROOT);
+        });
+        
+        $Container->register('Logger', function() use ($Factory) {
+            $log_directory = $Factory->getDependencyContainer()->resolve('Environment')->getLog();
             return $Factory->buildLogger($log_directory);
         });
         
@@ -32,29 +35,34 @@ namespace Everon
             return $Factory->buildRequest($_SERVER, $_GET, $_POST, $_FILES);
         });
 
-        $Headers = $Factory->buildHttpHeaderCollection();
-        $Container->register('Response', function() use ($Factory, $Headers) {
+        $Container->register('Response', function() use ($Factory) {
+            $Headers = $Factory->buildHttpHeaderCollection();
             return $Factory->buildResponse($Headers);
         });
 
-        $config_directory = $Environment->getConfig();
-        $config_cache_directory = $Environment->getCacheConfig();        
-        $Container->register('ConfigManager', function() use ($Factory, $config_directory, $config_cache_directory) {
+        $Container->register('ConfigManager', function() use ($Factory) {
+            /**
+             * @var \Everon\Interfaces\Environment $Environment
+             */
+            $Environment = $Factory->getDependencyContainer()->resolve('Environment');
+            $config_cache_directory = $Environment->getCacheConfig();
             $Matcher = $Factory->buildConfigExpressionMatcher();
-            $Loader = $Factory->buildConfigLoader($config_directory, $config_cache_directory);
+            $Loader = $Factory->buildConfigLoader($Environment->getConfig(), $config_cache_directory);
             return $Factory->buildConfigManager($Loader, $Matcher);
         });
 
-        $Request = $Container->resolve('Request');
-        $RouteConfig = $Container->resolve('ConfigManager')->getRouterConfig();
-        $Container->register('Router', function() use ($Factory, $Request, $RouteConfig) {
+        $Container->register('Router', function() use ($Factory) {
+            $Request = $Factory->getDependencyContainer()->resolve('Request');
+            $RouteConfig = $Factory->getDependencyContainer()->resolve('ConfigManager')->getRouterConfig();            
             $RouterValidator = $Factory->buildRouterValidator();
             return $Factory->buildRouter($Request, $RouteConfig, $RouterValidator);
         });
 
-        $manager = $Container->resolve('ConfigManager')->getApplicationConfig()->go('model')->get('manager', 'Everon');
-        $Container->register('ModelManager', function() use ($Factory, $manager) {
-            return $Factory->buildModelManager($manager);
+        $Container->register('ModelManager', function() use ($Factory) {
+            $Config = $Factory->getDependencyContainer()->resolve('ConfigManager')->getApplicationConfig();
+            return $Factory->buildModelManager(
+                $Config->go('model')->get('manager', 'Everon')
+            );
         });
 
         /**
@@ -62,23 +70,19 @@ namespace Everon
          */
         $Application = $Factory->buildCore();
         register_shutdown_function(array($Application, 'shutdown'));
-
-        $Router = $Container->resolve('Router');
-        $ModelManager = $Container->resolve('ModelManager');
         
-        $directory_view_template = $Environment->getViewTemplate();
-        $compilers = $Container->resolve('ConfigManager')->getApplicationConfig()->go('view')->get('compilers');
-        $view_manager = $Container->resolve('ConfigManager')->getApplicationConfig()->go('view')->get('manager', 'Everon');
-
-        $Igniter = function() use ($Factory, $Router, $ModelManager, $directory_view_template, $compilers, $view_manager) {
-            $class_name = $Router->getCurrentRoute()->getController();
+        $Igniter = function() use ($Factory) {
+            $Container = $Factory->getDependencyContainer();
+            $ApplicationConfig = $Container->resolve('ConfigManager')->getApplicationConfig();
+            $class_name = $Container->resolve('Router')->getCurrentRoute()->getController();
+            
             $ViewManager = $Factory->buildViewManager(
-                $view_manager,
-                $compilers,
-                $directory_view_template
+                $ApplicationConfig->go('view')->get('manager', 'Everon'),
+                $ApplicationConfig->go('view')->get('compilers', []),
+                $Container->resolve('Environment')->getViewTemplate()
             );
 
-            return $Factory->buildController($class_name, $ViewManager, $ModelManager);
+            return $Factory->buildController($class_name, $ViewManager, $Container->resolve('ModelManager'));
         };
         
         $Application->start($Igniter, $Container->resolve('Response'));
