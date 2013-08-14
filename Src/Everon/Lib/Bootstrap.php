@@ -29,42 +29,39 @@ namespace Everon
         require_once(implode(DIRECTORY_SEPARATOR, [PROJECT_ROOT, 'Src', 'Everon', 'Interfaces']).DIRECTORY_SEPARATOR.'Environment.php');
         require_once(implode(DIRECTORY_SEPARATOR, [PROJECT_ROOT, 'Src', 'Everon']).DIRECTORY_SEPARATOR.'Environment.php');
 
-        $BootstrapEnvironment = new \Everon\Environment(PROJECT_ROOT);
+        $Environment = new \Everon\Environment(PROJECT_ROOT);
 
-        if (is_dir($BootstrapEnvironment->getCache()) === false) {
-            mkdir($BootstrapEnvironment->getCache(), 0775, true);
-        }
-
-        require_once($BootstrapEnvironment->getEveronInterface().'ClassLoader.php');
-        require_once($BootstrapEnvironment->getEveron().'ClassLoader.php');
-
-        $cache = false;
-        $ini = @parse_ini_file($BootstrapEnvironment->getConfig().'application.ini', true);
+        require_once($Environment->getEveronInterface().'ClassLoader.php');
+        require_once($Environment->getEveron().'ClassLoader.php');
+        
+        $use_cache = false;
+        $ini = @parse_ini_file($Environment->getConfig().'application.ini', true);
         if (is_array($ini) && array_key_exists('cache', $ini) && array_key_exists('autoloader', $ini['cache'])) {
-            $cache = (bool) $ini['cache']['autoloader'];
+            $use_cache = (bool) $ini['cache']['autoloader'];
         }
 
         $ClassMap = null;
-        if ($cache) {
-            require_once($BootstrapEnvironment->getEveronInterface().'ClassMap.php');
-            require_once($BootstrapEnvironment->getEveron().'ClassMap.php');
-            $classmap_filename = $BootstrapEnvironment->getCache().'everon_classmap_'.ev_OS.'.php';
+        if ($use_cache) {
+            require_once($Environment->getEveron().'ClassLoaderCache.php');
+            require_once($Environment->getEveronInterface().'ClassMap.php');
+            require_once($Environment->getEveron().'ClassMap.php');
+            
+            $classmap_filename = $Environment->getCache().'everon_classmap_'.ev_OS.'.php';
             $ClassMap = new ClassMap($classmap_filename);
+            $ClassLoader = new ClassLoaderCache($ClassMap);
         }
-
-        $ClassLoader = new ClassLoader($ClassMap);
-        $ClassLoader->add('Everon', $BootstrapEnvironment->getSource());
-        $ClassLoader->add('Everon\Model', $BootstrapEnvironment->getModel());
-        $ClassLoader->add('Everon\View', $BootstrapEnvironment->getView());
-        $ClassLoader->add('Everon\Controller', $BootstrapEnvironment->getController());
+        else {
+            $ClassLoader = new ClassLoader();    
+        }
+        
+        $ClassLoader->add('Everon', $Environment->getSource());
+        $ClassLoader->add('Everon\Model', $Environment->getModel());
+        $ClassLoader->add('Everon\View', $Environment->getView());
+        $ClassLoader->add('Everon\Controller', $Environment->getController());
         $ClassLoader->register();
 
-        require_once($BootstrapEnvironment->getEveron().'Exception/Exception.php');
-        require_once($BootstrapEnvironment->getEveron().'Exception/Repository.php');
-
-        if (is_file($BootstrapEnvironment->getSource().'Exception.php')) {
-            require_once($BootstrapEnvironment->getSource().'Exception.php');
-        }
+        require_once($Environment->getEveron().'Exception/Exception.php');
+        require_once($Environment->getEveron().'Exception/Repository.php');
 
         //set_error_handler('\ev_exceptionLogger');
     }

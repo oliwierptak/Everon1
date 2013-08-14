@@ -13,28 +13,8 @@ use Everon\Interfaces;
 
 class ClassLoader implements Interfaces\ClassLoader
 {
-    protected $class_map_enabled = false;
-    
     protected $resources = [];
 
-    /**
-     * @var Interfaces\ClassMap|null
-     */
-    protected $ClassMap = null;
-    
-
-    /**
-     * @param Interfaces\ClassMap|null $ClassMap
-     */
-    public function __construct($ClassMap)
-    {
-        if ($ClassMap instanceof \Everon\Interfaces\ClassMap) {
-            $this->class_map_enabled = true;
-            $this->ClassMap = $ClassMap;
-            $this->ClassMap->loadMap(); 
-        }
-    }
-   
     public function register()
     {
         spl_autoload_register([$this, 'load']);
@@ -56,43 +36,34 @@ class ClassLoader implements Interfaces\ClassLoader
 
     /**
      * @param $class_name
+     * @return string
      * @throws \RuntimeException
      */
     public function load($class_name)
     {
-        if ($this->class_map_enabled) {
-            $filename = $this->ClassMap->getFilenameFromMap($class_name);
-            if ($filename !== null) {
-                include_once($filename);
-                return;
-            }
-        }
-        
-        $include = false;
+        $included = false;
         $filename = '';
         foreach ($this->resources as $namespace => $path) {
             $filename = $path.str_replace('\\', DIRECTORY_SEPARATOR, $class_name).'.php';
-            $include = $this->includeWhenExists($filename);
-            if ($include !== false) {
+            $included = $this->includeWhenExists($filename);
+            if ($included) {
                 break;
             }
 
             $filename = $path.trim(str_replace($namespace, '', $class_name), '\\').'.php';
-            $include = $this->includeWhenExists($filename);
-            if ($include !== false) {
+            $included = $this->includeWhenExists($filename);
+            if ($included) {
                 break;
             }
         }
 
-        if ($include === false) {
+        if ($included === false) {
             throw new \RuntimeException(vsprintf(
                 'File for class: "%s" could not be found', $class_name
             ));
         }
         
-        if ($this->class_map_enabled) {
-            $this->ClassMap->addToMap($class_name, $filename);
-        }        
+        return $filename;
     }
 
     /**
