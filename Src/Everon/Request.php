@@ -240,7 +240,7 @@ class Request implements Interfaces\Request, Interfaces\Arrayable
         ];
 
         foreach ($required as $name) {
-            if (!array_key_exists($name, $data)) {
+            if (array_key_exists($name, $data) === false) {
                 throw new Exception\Request('Missing required parameter: "%s"', $name);
             }
         }
