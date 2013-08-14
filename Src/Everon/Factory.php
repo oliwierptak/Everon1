@@ -44,6 +44,18 @@ class Factory implements Interfaces\Factory
     }
 
     /**
+     * @param $class_name
+     * @param $Receiver
+     */
+    protected function injectDependencies($class_name, $Receiver)
+    {
+        $this->getDependencyContainer()->inject($class_name, $Receiver);
+        if ($this->getDependencyContainer()->wantsFactory($class_name)) {
+            $Receiver->setFactory($this);
+        }
+    }
+
+    /**
      * @param $namespace
      * @param $class_name
      * @return string
@@ -62,7 +74,7 @@ class Factory implements Interfaces\Factory
     {
         try {
             $Core = new Core();
-            $this->getDependencyContainer()->inject('Everon\Core', $this, $Core);
+            $this->injectDependencies('Everon\Core', $Core);
             return $Core;
         }
         catch (\Exception $e) {
@@ -93,7 +105,7 @@ class Factory implements Interfaces\Factory
             }
             
             $Config = new $class_name($name, $filename, $data);
-            $this->getDependencyContainer()->inject($class_name, $this, $Config);
+            $this->injectDependencies($class_name, $Config);
             return $Config;
         }
         catch (\Exception $e) {
@@ -111,7 +123,7 @@ class Factory implements Interfaces\Factory
     {
         try {
             $Manager = new Config\Manager($Loader, $Matcher);
-            $this->getDependencyContainer()->inject('Everon\Config\Manager', $this, $Manager);
+            $this->injectDependencies('Everon\Config\Manager', $Manager);
             return $Manager;
         }
         catch (\Exception $e) {
@@ -127,7 +139,7 @@ class Factory implements Interfaces\Factory
     {
         try {
             $ExpressionMatcher = new Config\ExpressionMatcher();
-            $this->getDependencyContainer()->inject('Everon\Config\ExpressionMatcher', $this, $ExpressionMatcher);
+            $this->injectDependencies('Everon\Config\ExpressionMatcher', $ExpressionMatcher);
             return $ExpressionMatcher;
         }
         catch (\Exception $e) {
@@ -145,7 +157,7 @@ class Factory implements Interfaces\Factory
     {
         try {
             $ConfigLoader = new Config\Loader($config_directory, $cache_directory);
-            $this->getDependencyContainer()->inject('Everon\Config\Loader', $this, $ConfigLoader);
+            $this->injectDependencies('Everon\Config\Loader', $ConfigLoader);
             return $ConfigLoader;
         }
         catch (\Exception $e) {
@@ -170,7 +182,7 @@ class Factory implements Interfaces\Factory
              * @var \Everon\Controller $Controller
              */
             $Controller = new $class_name($ViewManager, $ModelManager);
-            $Controller = $this->getDependencyContainer()->inject($class_name, $this, $Controller);
+            $this->injectDependencies($class_name, $Controller);
             return $Controller;
         }
         catch (\Exception $e) {
@@ -192,7 +204,7 @@ class Factory implements Interfaces\Factory
             $class_name = $this->getFullClassName($ns, $class_name);
 
             $View = new $class_name($template_directory, $Compiler);
-            $View = $this->getDependencyContainer()->inject($class_name, $this, $View);
+            $this->injectDependencies($class_name, $View);
             return $View;
         }
         catch (\Exception $e) {
@@ -219,7 +231,7 @@ class Factory implements Interfaces\Factory
             }
             
             $Manager = new $class_name($compilers, $view_template_directory);
-            $Manager = $this->getDependencyContainer()->inject($class_name, $this, $Manager);
+            $this->injectDependencies($class_name, $Manager);
             return $Manager;
         }
         catch (\Exception $e) {
@@ -238,7 +250,7 @@ class Factory implements Interfaces\Factory
         try {
             $class_name = $this->getFullClassName($ns, $class_name);
             $Model = new $class_name();
-            $Model = $this->getDependencyContainer()->inject($class_name, $this, $Model);
+            $this->injectDependencies($class_name, $Model);
             return $Model;
         }
         catch (\Exception $e) {
@@ -257,7 +269,7 @@ class Factory implements Interfaces\Factory
         try {
             $class_name = $this->getFullClassName($ns, $class_name);
             $ModelManager = new $class_name();
-            $ModelManager = $this->getDependencyContainer()->inject($class_name, $this, $ModelManager);
+            $this->injectDependencies($class_name, $ModelManager);
             return $ModelManager;
         }
         catch (\Exception $e) {
@@ -274,7 +286,7 @@ class Factory implements Interfaces\Factory
     {
         try {
             $Response = new Response($Headers);
-            $Response = $this->getDependencyContainer()->inject('Everon\Response', $this, $Response);
+            $this->injectDependencies('Everon\Response', $Response);
             return $Response;
         }
         catch (\Exception $e) {
@@ -293,7 +305,7 @@ class Factory implements Interfaces\Factory
     {
         try {
             $RouteItem = new Router($Request, $Config, $Validator);
-            $RouteItem = $this->getDependencyContainer()->inject('Everon\Router', $this, $RouteItem);
+            $this->injectDependencies('Everon\Router', $RouteItem);
             return $RouteItem;
         }
         catch (\Exception $e) {
@@ -309,7 +321,7 @@ class Factory implements Interfaces\Factory
     {
         try {
             $RouteItem = new RouterValidator();
-            $RouteItem = $this->getDependencyContainer()->inject('Everon\RouterValidator', $this, $RouteItem);
+            $this->injectDependencies('Everon\RouterValidator', $RouteItem);
             return $RouteItem;
         }
         catch (\Exception $e) {
@@ -328,7 +340,7 @@ class Factory implements Interfaces\Factory
         try {
             $data['____name'] = $name;
             $ConfigItem = new Config\Item($data);
-            $ConfigItem = $this->getDependencyContainer()->inject('Everon\Config\Item', $this, $ConfigItem);
+            $this->injectDependencies('Everon\Config\Item', $ConfigItem);
             return $ConfigItem;
         }
         catch (\Exception $e) {
@@ -347,7 +359,7 @@ class Factory implements Interfaces\Factory
         try {
             $data['____name'] = $name;
             $RouteItem = new Config\Item\Router($data);
-            $RouteItem = $this->getDependencyContainer()->inject('Everon\Config\Item\Router', $this, $RouteItem);
+            $this->injectDependencies('Everon\Config\Item\Router', $RouteItem);
             return $RouteItem;
         }
         catch (\Exception $e) {
@@ -366,7 +378,7 @@ class Factory implements Interfaces\Factory
         try {
             $data['____name'] = $name;
             $PageItem = new Config\Item\View($data);
-            $PageItem = $this->getDependencyContainer()->inject('Everon\Config\Item\View', $this, $PageItem);
+            $this->injectDependencies('Everon\Config\Item\View', $PageItem);
             return $PageItem;
         }
         catch (\Exception $e) {
@@ -385,7 +397,7 @@ class Factory implements Interfaces\Factory
     {
         try {
             $Template = new View\Template($View->getTemplateFilename($filename), $template_data);
-            $Template = $this->getDependencyContainer()->inject('Everon\View\Template', $this, $Template);
+            $this->injectDependencies('Everon\View\Template', $Template);
             return $Template;
         }
         catch (\Exception $e) {
@@ -403,7 +415,7 @@ class Factory implements Interfaces\Factory
     {
         try {
             $TemplateContainer = new View\Template\Container($template_string, $template_data);
-            $TemplateContainer = $this->getDependencyContainer()->inject('Everon\View\Template\Container', $this, $TemplateContainer);
+            $this->injectDependencies('Everon\View\Template\Container', $TemplateContainer);
             return $TemplateContainer;
         }
         catch (\Exception $e) {
@@ -426,7 +438,7 @@ class Factory implements Interfaces\Factory
              * @var Interfaces\TemplateCompiler $Compiler
              */
             $Compiler = new $class_name($this);
-            $Compiler = $this->getDependencyContainer()->inject($class_name, $this, $Compiler);
+            $this->injectDependencies($class_name, $Compiler);
             return $Compiler;
         }
         catch (\Exception $e) {
@@ -443,7 +455,7 @@ class Factory implements Interfaces\Factory
     {
         try {
             $Logger = new Logger($directory);
-            $Logger = $this->getDependencyContainer()->inject('Everon\Logger', $this, $Logger);
+            $this->injectDependencies('Everon\Logger', $Logger);
             return $Logger;
         }
         catch (\Exception $e) {
@@ -460,7 +472,7 @@ class Factory implements Interfaces\Factory
     {
         try {
             $Logger = new Http\HeaderCollection($headers);
-            $Logger = $this->getDependencyContainer()->inject('Everon\Http\HeaderCollection', $this, $Logger);
+            $this->injectDependencies('Everon\Http\HeaderCollection', $Logger);
             return $Logger;
         }
         catch (\Exception $e) {
@@ -480,7 +492,7 @@ class Factory implements Interfaces\Factory
     {
         try {
             $Request = new Request($server, $get, $post, $files);
-            $Request = $this->getDependencyContainer()->inject('Everon\Request', $this, $Request);
+            $this->injectDependencies('Everon\Request', $Request);
             return $Request;
         }
         catch (\Exception $e) {
@@ -497,7 +509,7 @@ class Factory implements Interfaces\Factory
     {
         try {
             $Environment = new Environment($root);
-            $Environment = $this->getDependencyContainer()->inject('Everon\Environment', $this, $Environment);
+            $this->injectDependencies('Everon\Environment', $Environment);
             return $Environment;
         }
         catch (\Exception $e) {

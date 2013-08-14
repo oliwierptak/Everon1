@@ -14,25 +14,15 @@ use Everon\Interfaces;
 
 class Container implements Interfaces\DependencyContainer
 {
-    /**
-     * @var array
-     */
     protected $definitions = [];
 
-    /**
-     * @var array
-     */
     protected $services = [];
 
-    /**
-     * @var array
-     */
     protected $container_dependencies = [];
 
-    /**
-     * @var array
-     */
     protected $class_dependencies = [];
+    
+    protected $wants_factory = [];
 
 
     /**
@@ -89,12 +79,11 @@ class Container implements Interfaces\DependencyContainer
 
     /**
      * @param $class_name
-     * @param Interfaces\Factory $Factory
      * @param $Receiver
      * @return mixed
      * @throws Exception\Factory
      */
-    public function inject($class_name, Interfaces\Factory $Factory, $Receiver)
+    public function inject($class_name, $Receiver)
     {
         try {
             if (class_exists($class_name, true) === false) {
@@ -119,7 +108,7 @@ class Container implements Interfaces\DependencyContainer
         $dependencies = $this->class_dependencies[$class_name];
         foreach ($dependencies as $index => $name) {
             if ($name === 'Everon\Dependency\Injection\Factory') {
-                $Receiver->setFactory($Factory);
+                $this->wants_factory[$class_name] = true;
             }
             else {
                 $this->dependencyToObject($name, $Receiver);
@@ -127,6 +116,11 @@ class Container implements Interfaces\DependencyContainer
         }
 
         return $Receiver;
+    }
+    
+    public function wantsFactory($class_name)
+    {
+        return isset($this->wants_factory[$class_name]) && $this->wants_factory[$class_name]; 
     }
 
     /**

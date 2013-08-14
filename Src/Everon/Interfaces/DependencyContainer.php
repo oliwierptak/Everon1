@@ -12,9 +12,10 @@ namespace Everon\Interfaces;
 
 interface DependencyContainer
 {
+    function wantsFactory($class_name);
     function register($name, \Closure $ServiceClosure);
     function resolve($name);
-    function inject($class_name, \Everon\Interfaces\Factory $Factory, $Receiver);
+    function inject($class_name, $Receiver);
     function getServices();
     function getDefinitions();
     function isRegistered($name);    

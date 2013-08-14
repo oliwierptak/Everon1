@@ -268,7 +268,7 @@ class FactoryTest extends \Everon\TestCase
     public function testDependencyToObjectShouldThrowExceptionWhenWrongDependency(Interfaces\Factory $Factory, Interfaces\DependencyContainer $DependencyContainer)
     {
         $Wrong = new \stdClass();
-        $Wrong = $Factory->getDependencyContainer()->inject('Wrong', $Factory, $Wrong);
+        $Wrong = $Factory->getDependencyContainer()->inject('Wrong', $Wrong);
     }
 
     /**
