@@ -59,22 +59,23 @@ class Container implements Interfaces\DependencyContainer
     }
 
     /**
-     * stealz at op dot pl
-     * http://php.net/manual/en/function.class-uses.php
-     *
      * @param $class
      * @param bool $autoload
      * @return array
      */
-    protected function getClassDependencies($class, $autoload = true) {
-        $traits = [];
-        do {
-            $traits = array_merge(class_uses($class, $autoload), $traits);
-        } while($class = get_parent_class($class));
-        foreach ($traits as $trait => $same) {
-            $traits = array_merge(class_uses($trait, $autoload), $traits);
+    protected function getClassDependencies($class, $autoload = true) 
+    {
+        $traits = class_uses($class, $autoload);
+        $parents = class_parents($class, $autoload);
+        
+        foreach ($parents as $parent) {
+            $traits = array_merge(
+                class_uses($parent, $autoload), 
+                $traits
+            );
         }
-        return array_unique(array_keys($traits));
+
+        return $traits;
     }
 
     /**
@@ -102,11 +103,11 @@ class Container implements Interfaces\DependencyContainer
             $this->class_dependencies[$class_name] = array_filter(
                 $this->getClassDependencies($class_name), 
                 $OnlyInjections
-            );            
+            );
         }
 
         $dependencies = $this->class_dependencies[$class_name];
-        foreach ($dependencies as $index => $name) {
+        foreach ($dependencies as $name) {
             if ($name === 'Everon\Dependency\Injection\Factory') {
                 $this->wants_factory[$class_name] = true;
             }
