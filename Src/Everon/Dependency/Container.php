@@ -97,7 +97,7 @@ class Container implements Interfaces\DependencyContainer
 
         if (isset($this->class_dependencies[$class_name]) === false) {
             $OnlyInjections = function($name) {
-                return substr($name, 0, strlen('Everon\Dependency\Injection'))  === 'Everon\Dependency\Injection';
+                return strpos($name, 'Everon\Dependency\Injection') === 0;
             };
             
             $this->class_dependencies[$class_name] = array_filter(
