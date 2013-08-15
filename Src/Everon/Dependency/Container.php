@@ -55,7 +55,7 @@ class Container implements Interfaces\DependencyContainer
 
     protected function getContainerNameFromDependency($dependency_name)
     {
-        return substr($dependency_name, strlen('Everon\Dependency\Injection')+1);
+        return str_replace('Everon\Dependency\Injection\\', '', $dependency_name);
     }
 
     /**
