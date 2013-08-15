@@ -48,11 +48,11 @@ class Popo implements Interfaces\Arrayable
             throw new Exception\Popo('Empty data in: "%s"', get_class($this));
         }
 
-        $getter = strtolower(substr($name, 0, 3)) == 'get';
-        $setter = strtolower(substr($name, 0, 3)) == 'set';
+        $getter = strpos($name, 'get') === 0;
+        $setter = strpos($name, 'set') === 0;
 
-        if (!$setter && !$getter) {
-            throw new Exception\Popo('Unknown method: "%s" in "%s"', array($name, get_class($this)));
+        if ($setter === false && $getter === false) {
+            throw new Exception\Popo('Unknown method: "%s" in "%s"', [$name, get_class($this)]);
         }
 
         $camelized = preg_split('/(?<=\\w)(?=[A-Z])/', $name);
