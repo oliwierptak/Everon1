@@ -41,4 +41,8 @@ interface Environment
     function setCacheConfig($cache_config);
     function getLog();
     function setLog($log);
+    function getWebCache();
+    function setWebCache($view_template_cache);
+    function getWeb();
+    function setWeb($web);
 }

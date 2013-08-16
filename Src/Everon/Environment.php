@@ -31,6 +31,7 @@ class Environment implements Interfaces\Environment
             'source' => $this->getRoot().'Src'.DIRECTORY_SEPARATOR,
             'tests' => $this->getRoot().'Tests'.DIRECTORY_SEPARATOR,
             'tmp' => $this->getRoot().'Tmp'.DIRECTORY_SEPARATOR,
+            'web' => $this->getRoot().'Web'.DIRECTORY_SEPARATOR,
         ];
 
         $this->resources += [
@@ -39,6 +40,13 @@ class Environment implements Interfaces\Environment
 
         $this->resources += [
             'view_template' => $this->getView().'Templates'.DIRECTORY_SEPARATOR,
+        ];
+
+        $this->resources += [
+            'web_cache' => $this->getWeb().'cache'.DIRECTORY_SEPARATOR,
+            'web_css' => $this->getWeb().'css'.DIRECTORY_SEPARATOR,
+            'web_images' => $this->getWeb().'images'.DIRECTORY_SEPARATOR,
+            'web_javascript' => $this->getWeb().'javascript'.DIRECTORY_SEPARATOR,
         ];
 
         $this->resources += [
@@ -204,5 +212,25 @@ class Environment implements Interfaces\Environment
     public function setLog($log)
     {
         $this->resources['log'] = $log;
+    }
+
+    public function getWeb()
+    {
+        return $this->resources['web'];
+    }
+
+    public function setWeb($web)
+    {
+        $this->resources['web'] = $web;
+    }
+
+    public function getWebCache()
+    {
+        return $this->resources['web_cache'];
+    }
+
+    public function setWebCache($web_cache)
+    {
+        $this->resources['web_cache'] = $web_cache;
     }
 }
