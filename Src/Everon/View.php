@@ -12,7 +12,6 @@ namespace Everon;
 abstract class View implements Interfaces\View, Interfaces\Arrayable
 {
     use Dependency\Injection\Factory;
-    use Dependency\Injection\CurlyCompiler;
 
     use Helper\ToArray;
     use Helper\String\LastTokenToName;
@@ -26,22 +25,15 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
      */
     protected $Output = null;
 
-    /**
-     * @var \Closure
-     */
-    protected $TemplateCompiler = null;
-
 
     /**
      * @param $template_directory
      * @param callable $TemplateCompiler
      */
-    public function __construct($template_directory, \Closure $TemplateCompiler)
+    public function __construct($template_directory)
     {
         $this->name = $this->stringLastTokenToName(get_class($this));
-        
         $this->template_directory = $template_directory;
-        $this->TemplateCompiler = $TemplateCompiler;
     }
 
     /**
@@ -87,10 +79,6 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
         if (is_null($this->Output)) {
             $this->setOutput('');
         }
-        
-        if ($this->Output->getCompiledContent() === null) {
-            $this->compileOutput();
-        }
 
         return $this->Output;
     }
@@ -118,16 +106,6 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
         }
     }
 
-    protected function compileOutput()
-    {
-        foreach ($this->getData() as $name => $value) {
-            $this->Output->set($name, $value);
-        }
-        
-        $Compile = $this->TemplateCompiler;
-        $Compile($this->Output);
-    }
-
     /**
      * @param $name
      * @param $data
@@ -135,9 +113,10 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
      */
     public function getTemplate($name, $data)
     {
-        return $this->getFactory()->buildTemplate($this, $name, $data);
+        $filename = $this->getTemplateFilename($name);
+        return $this->getFactory()->buildTemplate($filename, $data);
     }
-    
+
     /**
      * @param $name
      * @param mixed $value
@@ -164,10 +143,9 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
     /**
      * @param array $data
      */
-    public function setDataAndRecompile(array $data)
+    public function setData(array $data)
     {
         $this->data = $data;
-        $this->compileOutput();
     }
 
     /**
@@ -189,5 +167,5 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
             $this->Output = $this->getTemplate($action, $data);
         }
     }
-    
+
 }

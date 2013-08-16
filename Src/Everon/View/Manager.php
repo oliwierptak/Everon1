@@ -25,14 +25,17 @@ abstract class Manager implements Interfaces\ViewManager
 
     protected $view_template_directory = null;
 
+    protected $view_cache_directory = null;
+
 
     abstract protected function compileTemplate(Interfaces\TemplateContainer $Template);
 
 
-    public function __construct(array $compilers, $view_template_directory)
+    public function __construct(array $compilers, $template_directory, $cache_directory)
     {
         $this->compilers = $compilers;
-        $this->view_template_directory = $view_template_directory;
+        $this->view_template_directory = $template_directory;
+        $this->view_cache_directory = $cache_directory;
     }
 
     public function getCompilers()
@@ -53,11 +56,7 @@ abstract class Manager implements Interfaces\ViewManager
                 throw new Exception\ViewManager('View template directory: "%s" does not exist', $template_directory);
             }
 
-            $TemplateCompiler = function(Interfaces\TemplateContainer $Template) {
-                $this->compileTemplate($Template);
-            };
-            
-            $this->views[$name] = $this->getFactory()->buildView($name, $template_directory, $TemplateCompiler);
+            $this->views[$name] = $this->getFactory()->buildView($name, $template_directory);
         }
 
         return $this->views[$name];
