@@ -221,7 +221,7 @@ class CoreTest extends \Everon\TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $Controller = $Factory->buildController('MyController', $ViewManager, $ModelManager, 'Everon\Test');
+        $Controller = $Factory->buildController('MyController', 'Everon\Test');
 
         return [
             [$Controller, $Factory]

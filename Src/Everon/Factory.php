@@ -74,7 +74,7 @@ class Factory implements Interfaces\Factory
     {
         try {
             $Core = new Core\Console();
-            $this->injectDependencies('Everon\Core', $Core);
+            $this->injectDependencies('Everon\Core\Console', $Core);
             return $Core;
         }
         catch (\Exception $e) {

@@ -130,8 +130,8 @@ class Config implements Interfaces\Config, Interfaces\Arrayable
                 $this->setDefaultItem($RouteItem);
             }
         }
-
-        if (is_null($this->getDefaultItem())) {
+        
+        if (is_null($this->DefaultItem)) {
             $this->setDefaultItem($default_or_first_item);
         }
     }

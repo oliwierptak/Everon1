@@ -18,7 +18,25 @@ class Console extends \Everon\Core implements Interfaces\Core
     
     public function runMe()
     {
-        mpr($this->getRequest());
+        /**
+         * @var \Everon\Interfaces\MvcController|\Everon\Interfaces\Controller $Controller
+         * @var \Everon\Interfaces\ConfigItemRouter $CurrentRoute
+         */
+        $CurrentRoute = $this->getRouter()->getCurrentRoute();
+        $controller_name = $CurrentRoute->getController();
+        $action = $CurrentRoute->getAction();
+
+        $Controller = $this->getFactory()->buildController($controller_name);
+        $this->getLogger()->actions('Executing: %s', $action);
+
+        $Controller->execute($action);
+        
+        $this->writeln($action);
+    }
+    
+    protected function writeln($line)
+    {
+        echo "${line}\n";
     }
     
 }

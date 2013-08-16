@@ -12,9 +12,9 @@ ini_set('html_errors', false);
 echo ('Start: '.memory_get_usage(TRUE)/1024)." kb<hr/>";
 
 try {
-    $lib_dir = implode(DIRECTORY_SEPARATOR, [dirname(__FILE__), '..', 'Src', 'Everon', 'Lib']).DIRECTORY_SEPARATOR;
-    require_once($lib_dir.'Bootstrap.php');
-    require_once($lib_dir.'Dependencies.php');
+    $directory = implode(DIRECTORY_SEPARATOR, [dirname(__FILE__), '..', 'Src', 'Everon', 'Lib']).DIRECTORY_SEPARATOR;
+    require_once($directory.'Bootstrap.php');
+    require_once($directory.'Dependencies.php');
     /**
      * @var Interfaces\DependencyContainer $Container
      * @var Interfaces\Factory $Factory

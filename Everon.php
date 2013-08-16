@@ -19,9 +19,23 @@ try {
     require_once($lib_dir.'Bootstrap.php');
     require_once($lib_dir.'Dependencies.php');
 
+    $Container->register('Router', function() use ($Factory) {
+        $Request = $Factory->getDependencyContainer()->resolve('Request');
+        $RouteConfig = $Factory->getDependencyContainer()->resolve('ConfigManager')->getConfigByName('console');
+
+        $RouterValidator = $Factory->buildRouterValidator();
+        return $Factory->buildRouter($Request, $RouteConfig, $RouterValidator);
+    });    
+
     $Container->register('Request', function() use ($Factory) {
-        mpr($_SERVER);
-        die('fix me');
+        $args = $_SERVER['argv'];
+        array_shift($args);
+        $uri = array_shift($args);
+
+        $_SERVER['REQUEST_METHOD'] = 'GET';
+        $_SERVER['REQUEST_URI'] = $uri;
+        $_SERVER['SERVER_NAME'] = '';
+        $_SERVER['QUERY_STRING'] = '';
         return $Factory->buildRequest($_SERVER, $_GET, $_POST, $_FILES);
     });    
     
