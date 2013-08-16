@@ -1,18 +1,16 @@
 <?php
 namespace Everon\Controller;
 
-use Everon\Controller;
+use Everon\Core\Mvc;
 use Everon\Dependency;
 use Everon\Interfaces;
 
-class Login extends Controller implements Interfaces\Controller
+class Login extends Mvc\Controller implements Interfaces\Controller
 {
-    use Dependency\Injection\Logger;
-    
     public function form()
     {
         $redirect_url = urlencode('/login/resetpassword');
-        $this->getView()->set('login_url', "login/submit/session/adf24ds34/redirect/${redirect_url}?and=something&else=2457");
+        $this->getViewManager()->getView('Login')->set('login_url', "login/submit/session/adf24ds34/redirect/${redirect_url}?and=something&else=2457");
     }
 
     public function submit()
@@ -20,7 +18,7 @@ class Login extends Controller implements Interfaces\Controller
         $username = $this->getRequest()->getPostParameter('username');
         $password = $this->getRequest()->getPostParameter('password');
 
-        $User = $this->getModel('User')->authenticate($username, $password);
+        $User = $this->getModelManager()->getModel('User')->authenticate($username, $password);
         if ($User === null) {
             $this->getLogger()->auth('Login failed for: "%s"', [$username]);
             return false;

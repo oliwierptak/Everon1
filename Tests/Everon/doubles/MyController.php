@@ -9,7 +9,7 @@
  */
 namespace Everon\Test;
 
-class MyController extends \Everon\Controller
+class MyController extends \Everon\Core\Mvc\Controller
 {
     public function beforeTestOne()
     {

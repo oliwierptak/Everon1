@@ -138,19 +138,14 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         
         return $Method;
     }
-    
+
+    /**
+     * @return Interfaces\Factory
+     */
     public function getFactory()
     {
-        if ($this->Factory !== null) {
-            return $this->Factory;
-        }
-
-        if ($this->Factory === null) {
-            $this->Factory = new Factory(new Dependency\Container());
-        }
-
-        $Container = $this->Factory->getDependencyContainer();
-        $Factory = $this->Factory;
+        $Factory = new Factory(new Dependency\Container());
+        $Container = $Factory->getDependencyContainer();
         $Environment = $this->Environment;
         
         $Environment->setLog($this->getLogDirectory());
@@ -158,69 +153,21 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         $Environment->setCacheConfig($this->getConfigCacheDirectory());
         $Environment->setViewTemplate($this->getTemplateDirectory());
 
-        $server_data = $this->getServerDataForRequest([
-            'REQUEST_METHOD' => 'GET',
-            'REQUEST_URI' => '/',
-            'QUERY_STRING' => '',
-        ]);
-
-
         $Container->register('Environment', function() use ($Environment) {
             return $Environment;
         });
 
-        $log_directory = $Environment->getLog();
-        $Container->register('Logger', function() use ($Factory, $log_directory) {
-            return $Factory->buildLogger($log_directory);
-        });
-
-        $Container->register('Request', function() use ($Factory, $server_data) {
+        $Container->register('Request', function() use ($Factory) {
+            $server_data = $this->getServerDataForRequest([
+                'REQUEST_METHOD' => 'GET',
+                'REQUEST_URI' => '/',
+                'QUERY_STRING' => '',
+            ]);
+            
             return $Factory->buildRequest($server_data, $_GET, $_POST, $_FILES);
-        });
+        });        
 
-        $Container->register('Response', function() use ($Factory) {
-            $Headers = $Factory->buildHttpHeaderCollection();
-            return $Factory->buildResponse($Headers);
-        });
-
-        $Container->register('ConfigManager', function() use ($Factory) {
-            /**
-             * @var \Everon\Interfaces\Environment $Environment
-             */
-            $Environment = $Factory->getDependencyContainer()->resolve('Environment');
-            $config_cache_directory = $Environment->getCacheConfig();
-            $Matcher = $Factory->buildConfigExpressionMatcher();
-            $Loader = $Factory->buildConfigLoader($Environment->getConfig(), $config_cache_directory);
-            return $Factory->buildConfigManager($Loader, $Matcher);
-        });
-
-        $Container->register('Router', function() use ($Factory) {
-            $Request = $Factory->getDependencyContainer()->resolve('Request');
-            $RouteConfig = $Factory->getDependencyContainer()->resolve('ConfigManager')->getRouterConfig();
-            $RouterValidator = $Factory->buildRouterValidator();
-
-            if ($RouteConfig == null) {
-                mpr($RouteConfig);
-            }
-            return $Factory->buildRouter($Request, $RouteConfig, $RouterValidator);
-        });
-
-        $Container->register('ModelManager', function() use ($Factory) {
-            $Config = $Factory->getDependencyContainer()->resolve('ConfigManager')->getApplicationConfig();
-            return $Factory->buildModelManager(
-                $Config->go('model')->get('manager', 'Everon')
-            );
-        });
-
-        $Container->register('ViewManager', function() use ($Factory) {
-            $ApplicationConfig = $Factory->getDependencyContainer()->resolve('ConfigManager')->getApplicationConfig();
-
-            return $Factory->buildViewManager(
-                $ApplicationConfig->go('view')->get('compilers', []),
-                $Factory->getDependencyContainer()->resolve('Environment')->getViewTemplate(),
-                $Factory->getDependencyContainer()->resolve('Environment')->getWebCache()
-            );
-        });
+        require($Environment->getEveronLib().'Dependencies.php');
         
         return $Factory;
     }

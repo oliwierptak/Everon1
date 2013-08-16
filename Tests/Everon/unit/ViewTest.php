@@ -191,7 +191,7 @@ EOF;
             return $Method->invoke($ViewManager, $Template);
         };
         
-        $View = $Factory->buildView('MyView', $this->Environment->getViewTemplate(), $Compiler, 'Everon\Test');
+        $View = $Factory->buildView('MyView', $this->Environment->getViewTemplate(), 'Everon\Test');
         
         return [
             [$View]

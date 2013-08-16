@@ -33,9 +33,9 @@ class FactoryTest extends \Everon\TestCase
     /**
      * @dataProvider dataProvider
      */
-    public function testBuildCore(Interfaces\Factory $Factory)
+    public function testBuildMvcCore(Interfaces\Factory $Factory)
     {
-        $Core = $Factory->buildCore();
+        $Core = $Factory->buildMvcCore();
         $this->assertInstanceOf('\Everon\Interfaces\Core', $Core);
     }
 
@@ -231,9 +231,9 @@ class FactoryTest extends \Everon\TestCase
      * @expectedException \Everon\Exception\Factory
      * @expectedExceptionMessage Core initialization error
      */
-    public function testBuildCoreShouldThrowExceptionWhenWrongClass(Interfaces\Factory $FactoryMock)
+    public function testBuildCoreConsoleShouldThrowExceptionWhenWrongClass(Interfaces\Factory $FactoryMock)
     {
-        $FactoryMock->buildCore();
+        $FactoryMock->buildCoreConsole();
     }
     
     /**

@@ -7,40 +7,16 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon;
+namespace Everon\Core\Mvc;
 
+use Everon\Interfaces;
+use Everon\Dependency;
+use Everon\Helper;
 
-abstract class Controller implements Interfaces\Controller
+abstract class Controller extends \Everon\Controller implements Interfaces\Controller
 {
-    use Dependency\Injection\Logger;
-    use Dependency\Injection\Request;
-    use Dependency\Injection\Router;
-
-    use Helper\ToString;
-    use Helper\String\LastTokenToName;
-
-    /**
-     * Controller's name
-     * @var string
-     */
-    protected $name = null;
-
-    /**
-     * @param $name
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-    }
-
-    public function getName()
-    {
-        if ($this->name === null) {
-            $this->name = $this->stringLastTokenToName(get_class($this));
-        }
-
-        return $this->name;
-    }
+    use Dependency\Injection\ViewManager;
+    use Dependency\Injection\ModelManager;
 
     /**
      * @param $result
@@ -58,12 +34,25 @@ abstract class Controller implements Interfaces\Controller
         else {
             $Response->setData($this->getView()->getOutput());
         }
-    }
-    
-    public function response()
-    {
+
         $Response->send();
-        echo $Response->toText();
+        echo $Response->toHtml();
+    }
+
+    /**
+     * @return Interfaces\View
+     */
+    public function getView()
+    {
+        return $this->getViewManager()->getView($this->getName());
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getModel()
+    {
+        return $this->getModelManager()->getModel($this->getName());
     }
 
     /**

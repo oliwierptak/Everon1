@@ -14,6 +14,7 @@ interface DependencyContainer
 {
     function wantsFactory($class_name);
     function register($name, \Closure $ServiceClosure);
+    function propose($name, \Closure $ServiceClosure);
     function resolve($name);
     function inject($class_name, $Receiver);
     function getServices();

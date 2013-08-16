@@ -175,7 +175,7 @@ class ConfigManagerTest extends \Everon\TestCase
         );
         
         $ConfigManager = $Factory->getDependencyContainer()->resolve('ConfigManager');
-
+        
         return [
             [$ConfigManager, $Expected]
         ];

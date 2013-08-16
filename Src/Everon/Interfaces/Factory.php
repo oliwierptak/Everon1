@@ -23,13 +23,19 @@ interface Factory
     /**
      * @param Interfaces\DependencyContainer $Container
      */
-    function setDependencyContainer(Interfaces\DependencyContainer $Container);    
-        
-        
+    function setDependencyContainer(Interfaces\DependencyContainer $Container);
+
     /**
      * @return Interfaces\Core
+     * @throws Exception\Factory
      */
-    function buildCore();
+    function buildCoreConsole();
+
+    /**
+     * @return Interfaces\Core
+     * @throws Exception\Factory
+     */
+    function buildCoreMvc();    
 
     /**
      * @param $name
@@ -60,17 +66,15 @@ interface Factory
      * @return Config\Loader
      * @throws Exception\Factory
      */
-    function buildConfigLoader($config_directory, $cache_directory);    
+    function buildConfigLoader($config_directory, $cache_directory);
 
     /**
      * @param $class_name
-     * @param Interfaces\ViewManager $ViewManager
-     * @param Interfaces\ModelManager $ModelManager
      * @param string $ns
      * @return Interfaces\Controller
      * @throws Exception\Factory
      */
-    function buildController($class_name, Interfaces\ViewManager $ViewManager, Interfaces\ModelManager $ModelManager, $ns='\Everon\Controller');
+    function buildController($class_name, $ns='Everon\Controller');
 
     function buildModel($class_name);
 
@@ -118,15 +122,15 @@ interface Factory
      * @return Interfaces\RouterValidator
      * @throws Exception\Factory
      */
-    function buildRouterValidator();    
+    function buildRouterValidator();
 
     /**
-     * @param View $View
      * @param $filename
      * @param array $template_data
      * @return Interfaces\TemplateContainer
+     * @throws Exception\Factory
      */
-    function buildTemplate(View $View, $filename, array $template_data);
+    function buildTemplate($filename, array $template_data);
 
     /**
      * @param $template_string
@@ -144,23 +148,20 @@ interface Factory
     /**
      * @param $class_name
      * @param $template_directory
-     * @param callable $Compiler
      * @param string $ns
      * @return Interfaces\View
      * @throws Exception\Factory
      */
-    function buildView($class_name, $template_directory, \Closure $Compiler, $ns='Everon\View');
-
+    function buildView($class_name, $template_directory, $ns='Everon\View');
 
     /**
-     * @param $class_name
      * @param $compilers_to_init
      * @param $view_template_directory
-     * @param string $ns
+     * @param $view_cache_directory
      * @return Interfaces\ViewManager
      * @throws Exception\Factory
      */
-    function buildViewManager($class_name, $compilers_to_init, $view_template_directory, $ns='Everon\View\Manager');    
+    public function buildViewManager($compilers_to_init, $view_template_directory, $view_cache_directory);
 
     /**
      * @param $directory
@@ -192,6 +193,13 @@ interface Factory
      * @throws Exception\Factory
      */
     function buildRequest(array $server, array $get, array $post, array $files);
+
+    /**
+     * @param $root
+     * @return Interfaces\Environment
+     * @throws Exception\Factory
+     */
+    function buildEnvironment($root);    
     
     
 }

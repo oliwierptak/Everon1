@@ -133,6 +133,21 @@ class Container implements Interfaces\DependencyContainer
         $this->definitions[$name] = $ServiceClosure;
         unset($this->services[$name]);
     }
+    
+    /**
+     * Register only if not already registered
+     * 
+     * @param $name
+     * @param \Closure $ServiceClosure
+     */
+    public function propose($name, \Closure $ServiceClosure)
+    {
+        if ($this->isRegistered($name)) {
+            return;
+        }
+        
+        $this->register($name, $ServiceClosure);
+    }
 
     /**
      * @param $name
@@ -148,14 +163,11 @@ class Container implements Interfaces\DependencyContainer
         if (isset($this->services[$name])) {
             return $this->services[$name];
         }
-
+        
         if (is_callable($this->definitions[$name])) {
             $this->services[$name] = $this->definitions[$name]();
         }
-        else {
-            $this->services = $this->definitions[$name];
-        }
-
+        
         return $this->services[$name];
     }
 

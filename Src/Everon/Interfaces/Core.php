@@ -20,13 +20,16 @@ interface Core
      * @param Interfaces\Response $Response
      * @throws Exception\InvalidRouterParameter|\Exception
      */    
-    function start(\Closure $ControllerIgniter, Interfaces\Response $Response);
+    //function start(\Closure $ControllerIgniter, Interfaces\Response $Response);
 
     /**
      * @param Interfaces\Controller $Controller
-     * @return bool
+     * @param $action
+     * @return bool|mixed
      * @throws Exception\InvalidControllerMethod
-     */    
-    function run(Controller $Controller);
+     */
+    //function run(Interfaces\Controller $Controller, $action);
+    
+    function run();
 
 }
