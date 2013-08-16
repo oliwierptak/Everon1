@@ -7,6 +7,11 @@
     stopOnSkipped="true"
     debug="true"
     >
+	<testsuites>
+		<testsuite name="unit">
+			<directory>unit</directory>
+		</testsuite>
+	</testsuites>
     <logging>
         <log type="coverage-html"
              target="coverage"

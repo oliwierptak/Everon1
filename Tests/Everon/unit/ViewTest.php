@@ -182,14 +182,9 @@ EOF;
 
     public function dataProvider()
     {
-        /**
-         * @var \Everon\Interfaces\DependencyContainer $Container
-         * @var \Everon\Interfaces\Factory $Factory
-         * @var \Closure $Compiler
-         */
-        list($Container, $Factory) = $this->getContainerAndFactory();
+        $Factory = $this->getFactory();
 
-        $ViewManager = $Factory->buildViewManager('Everon', ['Curly'], $this->Environment->getViewTemplate());
+        $ViewManager = $Factory->buildViewManager(['Curly'], $this->Environment->getViewTemplate(), $this->Environment->getWebCache());
         $Method = $this->getProtectedMethod('Everon\View\Manager\Everon', 'compileTemplate');
         
         $Compiler = function(\Everon\Interfaces\TemplateContainer $Template) use ($ViewManager, $Method) {

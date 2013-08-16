@@ -20,11 +20,6 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
     protected $Environment = null;
 
     /**
-     * @var \Everon\Interfaces\DependencyContainer
-     */
-    protected $DependencyContainer = null;
-
-    /**
      * @var \Everon\Interfaces\Factory
      */
     protected $Factory = null;
@@ -144,17 +139,17 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         return $Method;
     }
     
-    public function getContainerAndFactory()
+    public function getFactory()
     {
-        if ($this->DependencyContainer === null) {
-            $this->DependencyContainer = new Dependency\Container();
-        }
-        
-        if ($this->Factory === null) {
-            $this->Factory = new Factory($this->DependencyContainer);
+        if ($this->Factory !== null) {
+            return $this->Factory;
         }
 
-        $Container = $this->DependencyContainer;
+        if ($this->Factory === null) {
+            $this->Factory = new Factory(new Dependency\Container());
+        }
+
+        $Container = $this->Factory->getDependencyContainer();
         $Factory = $this->Factory;
         $Environment = $this->Environment;
         
@@ -163,51 +158,71 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         $Environment->setCacheConfig($this->getConfigCacheDirectory());
         $Environment->setViewTemplate($this->getTemplateDirectory());
 
-        $log_directory = $Environment->getLog();
-        $Container->register('Logger', function() use ($Factory, $log_directory) {
-            return $Factory->buildLogger($log_directory);
-        });
-
-        $Container->register('CurlyCompiler', function() use ($Factory) {
-            return $Factory->buildTemplateCompiler('Curly');
-        });       
-
         $server_data = $this->getServerDataForRequest([
             'REQUEST_METHOD' => 'GET',
             'REQUEST_URI' => '/',
             'QUERY_STRING' => '',
         ]);
+
+
+        $Container->register('Environment', function() use ($Environment) {
+            return $Environment;
+        });
+
+        $log_directory = $Environment->getLog();
+        $Container->register('Logger', function() use ($Factory, $log_directory) {
+            return $Factory->buildLogger($log_directory);
+        });
+
         $Container->register('Request', function() use ($Factory, $server_data) {
             return $Factory->buildRequest($server_data, $_GET, $_POST, $_FILES);
         });
 
-        $Headers = $Factory->buildHttpHeaderCollection();
-        $Container->register('Response', function() use ($Factory, $Headers) {
+        $Container->register('Response', function() use ($Factory) {
+            $Headers = $Factory->buildHttpHeaderCollection();
             return $Factory->buildResponse($Headers);
         });
 
-        $config_directory = $Environment->getConfig();
-        $config_cache_directory = $Environment->getCacheConfig();
-        $Container->register('ConfigManager', function() use ($Factory, $config_directory, $config_cache_directory) {
+        $Container->register('ConfigManager', function() use ($Factory) {
+            /**
+             * @var \Everon\Interfaces\Environment $Environment
+             */
+            $Environment = $Factory->getDependencyContainer()->resolve('Environment');
+            $config_cache_directory = $Environment->getCacheConfig();
             $Matcher = $Factory->buildConfigExpressionMatcher();
-            $Loader = $Factory->buildConfigLoader($config_directory, $config_cache_directory);
+            $Loader = $Factory->buildConfigLoader($Environment->getConfig(), $config_cache_directory);
             return $Factory->buildConfigManager($Loader, $Matcher);
         });
 
-        $Request = $Container->resolve('Request');
-        $RouteConfig = $Container->resolve('ConfigManager')->getRouterConfig();
-        $Container->register('Router', function() use ($Factory, $Request, $RouteConfig) {
+        $Container->register('Router', function() use ($Factory) {
+            $Request = $Factory->getDependencyContainer()->resolve('Request');
+            $RouteConfig = $Factory->getDependencyContainer()->resolve('ConfigManager')->getRouterConfig();
             $RouterValidator = $Factory->buildRouterValidator();
+
+            if ($RouteConfig == null) {
+                mpr($RouteConfig);
+            }
             return $Factory->buildRouter($Request, $RouteConfig, $RouterValidator);
         });
 
-        $manager = $Container->resolve('ConfigManager')->getApplicationConfig()->go('model')->get('manager', 'Everon');
-        $Container->register('ModelManager', function() use ($Factory, $manager) {
-            return $Factory->buildModelManager($manager);
+        $Container->register('ModelManager', function() use ($Factory) {
+            $Config = $Factory->getDependencyContainer()->resolve('ConfigManager')->getApplicationConfig();
+            return $Factory->buildModelManager(
+                $Config->go('model')->get('manager', 'Everon')
+            );
         });
 
+        $Container->register('ViewManager', function() use ($Factory) {
+            $ApplicationConfig = $Factory->getDependencyContainer()->resolve('ConfigManager')->getApplicationConfig();
+
+            return $Factory->buildViewManager(
+                $ApplicationConfig->go('view')->get('compilers', []),
+                $Factory->getDependencyContainer()->resolve('Environment')->getViewTemplate(),
+                $Factory->getDependencyContainer()->resolve('Environment')->getWebCache()
+            );
+        });
         
-        return [$Container, $Factory];
+        return $Factory;
     }
 
     

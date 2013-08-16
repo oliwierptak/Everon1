@@ -49,7 +49,7 @@ class ControllerTest extends \Everon\TestCase
             ->with('wrong_model_name')
             ->will($this->throwException($ex));
         
-        $Controller->getModel('wrong_model_name');
+        $Controller->getModelManager()->getModel('wrong_model_name');
     }
 
     /**
@@ -63,7 +63,7 @@ class ControllerTest extends \Everon\TestCase
             ->with('MyModel')
             ->will($this->returnValue(new \stdClass()));
 
-        $Model = $Controller->getModel('MyModel');
+        $Model = $Controller->getModelManager()->getModel('MyModel');
         $this->assertNotNull($Model);
     }
   
@@ -87,16 +87,15 @@ class ControllerTest extends \Everon\TestCase
             ->will($this->returnValue('test'));
         
         $Controller->getView()->setOutput('test');
-        $this->assertEquals('test', (string) $Controller);
+        $this->assertEquals('test', (string) $Controller->getView()->getOutput());
     }
     
     public function dataProvider()
     {
         /**
-         * @var \Everon\Interfaces\DependencyContainer $Container
          * @var \Everon\Interfaces\Factory $Factory
-         */        
-        list($Container, $Factory) = $this->getContainerAndFactory();
+         */
+        $Factory = $this->getFactory();
         
         $View = $this->getMockBuilder('Everon\Interfaces\View')
             ->disableOriginalConstructor()
@@ -114,8 +113,10 @@ class ControllerTest extends \Everon\TestCase
             ->disableOriginalConstructor()
             ->getMock();
         
-        $Controller = $Factory->buildController('MyController', $ViewManager, $ModelManager, 'Everon\Test');
-        
+        $Controller = $Factory->buildController('MyController', 'Everon\Test');
+        $Controller->setModelManager($ModelManager);
+        $Controller->setViewManager($ViewManager);
+
         return [
             [$Controller]
         ];

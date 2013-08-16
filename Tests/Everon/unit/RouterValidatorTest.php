@@ -80,11 +80,7 @@ class RouterValidatorTest extends \Everon\TestCase
     
     public function dataProvider()
     {
-        /**
-         * @var \Everon\Interfaces\DependencyContainer $Container
-         * @var \Everon\Interfaces\Factory $Factory
-         */
-        list($Container, $Factory) = $this->getContainerAndFactory();
+        $Factory = $this->getFactory();
 
         $server_data = $this->getServerDataForRequest([
             'REQUEST_METHOD' => 'GET',
@@ -103,7 +99,7 @@ class RouterValidatorTest extends \Everon\TestCase
             []
         );
 
-        $Config = $Container->resolve('ConfigManager')->getRouterConfig();
+        $Config = $Factory->getDependencyContainer()->resolve('ConfigManager')->getRouterConfig();
         $RouteItem = $Config->getItemByName('test_complex');
         $Validator = new \Everon\RouterValidator();
         

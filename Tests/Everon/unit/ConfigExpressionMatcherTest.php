@@ -58,10 +58,9 @@ class ConfigExpressionMatcherTest extends \Everon\TestCase
     public function dataProvider()
     {
         /**
-         * @var \Everon\Interfaces\DependencyContainer $Container
          * @var \Everon\Interfaces\Factory $Factory
          */
-        list($Container, $Factory) = $this->getContainerAndFactory();
+        $Factory = $this->getFactory();
         
         $Matcher = $Factory->buildConfigExpressionMatcher();
 

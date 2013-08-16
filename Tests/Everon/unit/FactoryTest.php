@@ -15,62 +15,43 @@ use Everon\Exception;
 class FactoryTest extends \Everon\TestCase
 {
 
-    /**
-     * @param Interfaces\Factory $Factory
-     * @param Interfaces\DependencyContainer $DependencyContainer
-     * @dataProvider dataProvider
-     */
-    public function testConstructor(Interfaces\Factory $Factory, Interfaces\DependencyContainer $DependencyContainer)
+    public function testConstructor()
     {
-        $FactoryInstance = new \Everon\Factory($DependencyContainer);
+        $FactoryInstance = new \Everon\Factory(new \Everon\Dependency\Container());
         $this->assertInstanceOf('\Everon\Interfaces\Factory', $FactoryInstance);
     }
 
     /**
-     * @param Interfaces\Factory $Factory
-     * @param Interfaces\DependencyContainer $DependencyContainer
      * @dataProvider dataProvider
-     * @ expectedException Exception\Factory
      */
-    public function testValidateIfClassExistsShouldThrowExceptionWhenWrongClass(Interfaces\Factory $Factory, Interfaces\DependencyContainer $DependencyContainer)
+    public function testBuildConfigShouldSilentlyFallBackToDefaultConfigWhenClassNotFound(Interfaces\Factory $Factory)
     {
-        $filename = 'wrong';
-        $Factory->buildConfig('test', 'wrong_filename', []);
+        $Config = $Factory->buildConfig('test', 'wrong_filename', []);
+        $this->assertInstanceOf('\Everon\Interfaces\Config', $Config);
     }
 
     /**
-     * @param Interfaces\Factory $Factory
-     * @param Interfaces\DependencyContainer $DependencyContainer
      * @dataProvider dataProvider
      */
-    public function testBuildCore(Interfaces\Factory $Factory, Interfaces\DependencyContainer $DependencyContainer)
+    public function testBuildCore(Interfaces\Factory $Factory)
     {
-        $ConfigManager = $this->getMock('\Everon\Interfaces\ConfigManager');
-        $DependencyContainer->register('ConfigManager', function() use ($ConfigManager) {
-            return $ConfigManager;
-        });
-
         $Core = $Factory->buildCore();
         $this->assertInstanceOf('\Everon\Interfaces\Core', $Core);
     }
 
     /**
-     * @param Interfaces\Factory $Factory
-     * @param Interfaces\DependencyContainer $DependencyContainer
      * @dataProvider dataProvider
      */
-    public function testBuildConfig(Interfaces\Factory $Factory, Interfaces\DependencyContainer $DependencyContainer)
+    public function testBuildConfig(Interfaces\Factory $Factory)
     {
         $Config = $Factory->buildConfig('application', 'application.ini', ['test'=>true]);
         $this->assertInstanceOf('\Everon\Interfaces\Config', $Config);
     }
 
     /**
-     * @param Interfaces\Factory $Factory
-     * @param Interfaces\DependencyContainer $DependencyContainer
      * @dataProvider dataProvider
      */
-    public function testBuildConfigManager(Interfaces\Factory $Factory, Interfaces\DependencyContainer $DependencyContainer)
+    public function testBuildConfigManager(Interfaces\Factory $Factory)
     {
         $Matcher = $this->getMock('\Everon\Interfaces\ConfigExpressionMatcher');
         $Loader = $this->getMock('\Everon\Interfaces\ConfigLoader');
@@ -79,52 +60,46 @@ class FactoryTest extends \Everon\TestCase
     }
 
     /**
-     * @param Interfaces\Factory $Factory
-     * @param Interfaces\DependencyContainer $DependencyContainer
      * @dataProvider dataProvider
      */
-    public function testBuildController(Interfaces\Factory $Factory, Interfaces\DependencyContainer $DependencyContainer)
+    public function testBuildController(Interfaces\Factory $Factory)
     {
         $RequestMock = $this->getMock('\Everon\Interfaces\Request');
-        $DependencyContainer->register('Request', function() use ($RequestMock) {
+        $Factory->getDependencyContainer()->register('Request', function() use ($RequestMock) {
             return $RequestMock;
         });
 
         $RouterMock = $this->getMock('\Everon\Interfaces\Router');
-        $DependencyContainer->register('Router', function() use ($RouterMock) {
+        $Factory->getDependencyContainer()->register('Router', function() use ($RouterMock) {
             return $RouterMock;
         });
 
         $ViewManager = $this->getMock('\Everon\Interfaces\ViewManager');
         $ModelManager = $this->getMock('\Everon\Interfaces\ModelManager');
-        $Controller = $Factory->buildController('MyController', $ViewManager, $ModelManager, '\Everon\Test');
+        $Controller = $Factory->buildController('MyController', 'Everon\Test');
         $this->assertInstanceOf('\Everon\Interfaces\Controller', $Controller);
     }
 
     /**
-     * @param Interfaces\Factory $Factory
-     * @param Interfaces\DependencyContainer $DependencyContainer
      * @dataProvider dataProvider
      */
-    public function testBuildView(Interfaces\Factory $Factory, Interfaces\DependencyContainer $DependencyContainer)
+    public function testBuildView(Interfaces\Factory $Factory)
     {
-        $View = $Factory->buildView('MyView', $this->Environment->getViewTemplate(), function(){}, '\Everon\Test');
+        $View = $Factory->buildView('MyView', $this->Environment->getViewTemplate(), '\Everon\Test');
         $this->assertInstanceOf('\Everon\Interfaces\View', $View);
     }
 
     /**
-     * @param Interfaces\Factory $Factory
-     * @param Interfaces\DependencyContainer $DependencyContainer
      * @dataProvider dataProvider
      */
-    public function testBuildModel(Interfaces\Factory $Factory, Interfaces\DependencyContainer $DependencyContainer)
+    public function testBuildModel(Interfaces\Factory $Factory)
     {
         $ConfigManager = $this->getMock('\Everon\Interfaces\ConfigManager');
-        $DependencyContainer->register('ConfigManager', function() use ($ConfigManager) {
+        $Factory->getDependencyContainer()->register('ConfigManager', function() use ($ConfigManager) {
             return $ConfigManager;
         });
         $RequestMock = $this->getMock('\Everon\Interfaces\Request');
-        $DependencyContainer->register('Request', function() use ($RequestMock) {
+        $Factory->getDependencyContainer()->register('Request', function() use ($RequestMock) {
             return $RequestMock;
         });
         
@@ -133,14 +108,12 @@ class FactoryTest extends \Everon\TestCase
     }
 
     /**
-     * @param Interfaces\Factory $Factory
-     * @param Interfaces\DependencyContainer $DependencyContainer
      * @dataProvider dataProvider
      */
-    public function testBuildModelManager(Interfaces\Factory $Factory, Interfaces\DependencyContainer $DependencyContainer)
+    public function testBuildModelManager(Interfaces\Factory $Factory)
     {
         $ConfigManager = $this->getMock('\Everon\Interfaces\ConfigManager');
-        $DependencyContainer->register('ConfigManager', function() use ($ConfigManager) {
+        $Factory->getDependencyContainer()->register('ConfigManager', function() use ($ConfigManager) {
             return $ConfigManager;
         });
         
@@ -149,14 +122,12 @@ class FactoryTest extends \Everon\TestCase
     }
 
     /**
-     * @param Interfaces\Factory $Factory
-     * @param Interfaces\DependencyContainer $DependencyContainer
      * @dataProvider dataProvider
      */
-    public function testBuildRouter(Interfaces\Factory $Factory, Interfaces\DependencyContainer $DependencyContainer)
+    public function testBuildRouter(Interfaces\Factory $Factory)
     {
         $RequestMock = $this->getMock('\Everon\Interfaces\Request');
-        $DependencyContainer->register('Request', function() use ($RequestMock) {
+        $Factory->getDependencyContainer()->register('Request', function() use ($RequestMock) {
             return $RequestMock;
         });
         $RouterConfig = $this->getMock('\Everon\Config\Router', [], [], '', false);
@@ -166,11 +137,9 @@ class FactoryTest extends \Everon\TestCase
     }
 
     /**
-     * @param Interfaces\Factory $Factory
-     * @param Interfaces\DependencyContainer $DependencyContainer
      * @dataProvider dataProvider
      */
-    public function testBuildRouteItem(Interfaces\Factory $Factory, Interfaces\DependencyContainer $DependencyContainer)
+    public function testBuildRouteItem(Interfaces\Factory $Factory)
     {
         $RouteItem = $Factory->buildConfigItemRouter('test', [
             'url' => '/test.htm',
@@ -185,45 +154,37 @@ class FactoryTest extends \Everon\TestCase
     }
 
     /**
-     * @param Interfaces\Factory $Factory
-     * @param Interfaces\DependencyContainer $DependencyContainer
      * @dataProvider dataProvider
      */
-    public function testBuildTemplate(Interfaces\Factory $Factory, Interfaces\DependencyContainer $DependencyContainer)
+    public function testBuildTemplate(Interfaces\Factory $Factory)
     {
-        $View = $Factory->buildView('MyView', $this->Environment->getViewTemplate(), function(){}, '\Everon\Test');
-        $Template = $Factory->buildTemplate($View, '', []);
+        $View = $Factory->buildView('MyView', $this->Environment->getViewTemplate(), '\Everon\Test');
+        $Template = $Factory->buildTemplate('', []);
         $this->assertInstanceOf('\Everon\Interfaces\TemplateContainer', $Template);
     }
 
     /**
-     * @param Interfaces\Factory $Factory
-     * @param Interfaces\DependencyContainer $DependencyContainer
      * @dataProvider dataProvider
      */
-    public function testBuildTemplateContainer(Interfaces\Factory $Factory, Interfaces\DependencyContainer $DependencyContainer)
+    public function testBuildTemplateContainer(Interfaces\Factory $Factory)
     {
         $TemplateContainer = $Factory->buildTemplateContainer('', []);
         $this->assertInstanceOf('\Everon\Interfaces\TemplateContainer', $TemplateContainer);
     }
 
     /**
-     * @param Interfaces\Factory $Factory
-     * @param Interfaces\DependencyContainer $DependencyContainer
      * @dataProvider dataProvider
      */
-    public function testBuildLogger(Interfaces\Factory $Factory, Interfaces\DependencyContainer $DependencyContainer)
+    public function testBuildLogger(Interfaces\Factory $Factory)
     {
         $Logger = $Factory->buildLogger($this->getLogDirectory());
         $this->assertInstanceOf('\Everon\Interfaces\Logger', $Logger);
     }
     
     /**
-     * @param Interfaces\Factory $Factory
-     * @param Interfaces\DependencyContainer $DependencyContainer
      * @dataProvider dataProvider
      */
-    public function testBuildResponse(Interfaces\Factory $Factory, Interfaces\DependencyContainer $DependencyContainer)
+    public function testBuildResponse(Interfaces\Factory $Factory)
     {
         $HeadersMock = $this->getMock('Everon\Http\HeaderCollection');
         $Response = $Factory->buildResponse($HeadersMock);
@@ -231,22 +192,18 @@ class FactoryTest extends \Everon\TestCase
     }
     
     /**
-     * @param Interfaces\Factory $Factory
-     * @param Interfaces\DependencyContainer $DependencyContainer
      * @dataProvider dataProvider
      */
-    public function testBuildHttpHeaderCollection(Interfaces\Factory $Factory, Interfaces\DependencyContainer $DependencyContainer)
+    public function testBuildHttpHeaderCollection(Interfaces\Factory $Factory)
     {
         $HeaderCollection = $Factory->buildHttpHeaderCollection();
         $this->assertInstanceOf('\Everon\Interfaces\Collection', $HeaderCollection);
     }
     
     /**
-     * @param Interfaces\Factory $Factory
-     * @param Interfaces\DependencyContainer $DependencyContainer
      * @dataProvider dataProvider
      */
-    public function testBuildRequest(Interfaces\Factory $Factory, Interfaces\DependencyContainer $DependencyContainer)
+    public function testBuildRequest(Interfaces\Factory $Factory)
     {
         $server = $this->getServerDataForRequest([
             'REQUEST_METHOD' => 'GET',
@@ -259,13 +216,11 @@ class FactoryTest extends \Everon\TestCase
     }
 
     /**
-     * @param Interfaces\Factory $Factory
-     * @param Interfaces\DependencyContainer $DependencyContainer
      * @dataProvider dataProvider
      * @expectedException \Everon\Exception\Factory
      * @expectedExceptionMessage Error injecting dependency: "Wrong"
      */    
-    public function testDependencyToObjectShouldThrowExceptionWhenWrongDependency(Interfaces\Factory $Factory, Interfaces\DependencyContainer $DependencyContainer)
+    public function testDependencyToObjectShouldThrowExceptionWhenWrongDependency(Interfaces\Factory $Factory)
     {
         $Wrong = new \stdClass();
         $Wrong = $Factory->getDependencyContainer()->inject('Wrong', $Wrong);
@@ -313,7 +268,7 @@ class FactoryTest extends \Everon\TestCase
     {
         $ViewManager = $this->getMock('Everon\Interfaces\ViewManager');
         $ModelManager = $this->getMock('Everon\Interfaces\ModelManager');
-        $FactoryMock->buildController('Test', $ViewManager, $ModelManager);
+        $FactoryMock->buildController('Test');
     }
     
     /**
@@ -323,9 +278,9 @@ class FactoryTest extends \Everon\TestCase
      * TemplateCompiler: "Everon\View\Template\Compiler\NonExisting" initialization error.
      * File for class: "Everon\View\Template\Compiler\NonExisting" could not be found
      */
-    public function testBuildViewShouldThrowExceptionWhenWrongClass(Interfaces\Factory $Factory, Interfaces\DependencyContainer $DependencyContainer)
+    public function testBuildViewShouldThrowExceptionWhenWrongClass(Interfaces\Factory $Factory)
     {
-        $Factory->buildView('Wrong', $this->Environment->getViewTemplate(), function(){}, '\Everon\Test');
+        $Factory->buildView('Wrong', $this->Environment->getViewTemplate(), '\Everon\Test');
     }
     
     /**
@@ -334,7 +289,7 @@ class FactoryTest extends \Everon\TestCase
      * @expectedExceptionMessage Model: "Everon\Model\wrong class" initialization error.
      * File for class: "Everon\Model\wrong class" could not be found
      */
-    public function testBuildModelShouldThrowExceptionWhenWrongClass(Interfaces\Factory $Factory, Interfaces\DependencyContainer $DependencyContainer)
+    public function testBuildModelShouldThrowExceptionWhenWrongClass(Interfaces\Factory $Factory)
     {
         $Factory->buildModel('wrong class');
     }
@@ -345,7 +300,7 @@ class FactoryTest extends \Everon\TestCase
      * @expectedExceptionMessage ModelManager: "Everon\Model\Manager\Test" initialization error.
      * File for class: "Everon\Model\Manager\Test" could not be found
      */
-    public function testBuildModelManagerShouldThrowExceptionWhenWrongClass(Interfaces\Factory $Factory, Interfaces\DependencyContainer $DependencyContainer)
+    public function testBuildModelManagerShouldThrowExceptionWhenWrongClass(Interfaces\Factory $Factory)
     {
         $Factory->buildModelManager('Test');
     }
@@ -381,7 +336,7 @@ class FactoryTest extends \Everon\TestCase
     public function testBuildTemplateThrowExceptionWhenWrongClass(Interfaces\Factory $FactoryMock)
     {
         $View = $this->getMock('\Everon\Interfaces\View');
-        $FactoryMock->buildTemplate($View, '', []);
+        $FactoryMock->buildTemplate('', []);
     }
     
     /**
@@ -400,7 +355,7 @@ class FactoryTest extends \Everon\TestCase
      * @expectedExceptionMessage TemplateCompiler: "Everon\View\Template\Compiler\Test" initialization error.
      * File for class: "Everon\View\Template\Compiler\Test" could not be found
      */
-    public function testBuildTemplateCompilerThrowExceptionWhenWrongClass(Interfaces\Factory $Factory, Interfaces\DependencyContainer $DependencyContainer)
+    public function testBuildTemplateCompilerThrowExceptionWhenWrongClass(Interfaces\Factory $Factory)
     {
         $Factory->buildTemplateCompiler('Test');
     }
@@ -448,14 +403,8 @@ class FactoryTest extends \Everon\TestCase
 
     public function dataProvider()
     {
-        /**
-         * @var \Everon\Interfaces\DependencyContainer $Container
-         * @var \Everon\Interfaces\Factory $Factory
-         */
-        list($Container, $Factory) = $this->getContainerAndFactory();
-        
         return [
-            [$Factory, $Container]
+            [$this->getFactory()]
         ];
     }
     
