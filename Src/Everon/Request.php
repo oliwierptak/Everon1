@@ -208,10 +208,9 @@ class Request implements Interfaces\Request, Interfaces\Arrayable
     {
         $data = $this->getDataFromGlobals();
         $this->validate($data);
-
         $data = $this->sanitizeInput($data);
-        $this->data = $data;
         
+        $this->data = $data;
         $this->method = $data['method'];
         $this->url = $data['url'];
         $this->query_string = $data['query_string'];
