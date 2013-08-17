@@ -12,12 +12,15 @@ namespace Everon;
 abstract class Core implements Interfaces\Core
 {
     use Dependency\Injection\Logger;
-    use Dependency\Injection\Router;
     use Dependency\Injection\Factory;
     use Dependency\Injection\Response;
-    
-    protected abstract function runMe();
-    
+    use Dependency\Injection\Router;
+
+    /**
+     * @return void
+     */
+    abstract protected function response();
+
 
     /**
      * @return Interfaces\Controller|null
@@ -27,7 +30,19 @@ abstract class Core implements Interfaces\Core
     {
         try {
             register_shutdown_function(array($this, 'shutdown'));
-            $this->runMe();
+
+            /**
+             * @var \Everon\Interfaces\MvcController|\Everon\Interfaces\Controller $Controller
+             * @var \Everon\Interfaces\ConfigItemRouter $CurrentRoute
+             */
+            $CurrentRoute = $this->getRouter()->getCurrentRoute();
+            $controller_name = $CurrentRoute->getController();
+            $action = $CurrentRoute->getAction();
+
+            $Controller = $this->getFactory()->buildController($controller_name);
+            $Controller->execute($action);
+            
+            $this->response();
         }
         catch (Exception\InvalidRouterParameter $e) {
             //todo: raise event for form validation
@@ -48,7 +63,7 @@ abstract class Core implements Interfaces\Core
 
         return null;
     }
-    
+
     public function shutdown()
     {
         //$this->getLogger()->trace('shutting down');

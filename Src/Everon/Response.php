@@ -85,6 +85,10 @@ class Response implements Interfaces\Response
                 case 'text/html':
                     $this->HeaderCollection->set('content-type', 'text/html; charset="'.$this->getCharset().'"');
                     break;
+                
+                case 'text/plain':
+                    $this->HeaderCollection->set('content-type', 'text/plain; charset="'.$this->getCharset().'"');
+                    break;
             }
         }
 
@@ -111,6 +115,12 @@ class Response implements Interfaces\Response
     {
         $this->setContentType('application/json');
         return json_encode([$root=>$this->data]);
+    }
+    
+    public function toText()
+    {
+        $this->setContentType('text/plain');
+        return (string) $this->data;
     }
     
     public function send()

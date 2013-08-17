@@ -9,7 +9,7 @@
  */
 namespace Everon\Interfaces;
 
-use Everon\Interfaces;
+use Everon\Exception;
 
 interface Controller
 {
@@ -22,16 +22,10 @@ interface Controller
     function setName($name);
 
     /**
-     * @param $result
-     * @param Interfaces\Response $Response
-     * @return Interfaces\Response
-     */
-    function result($result, Interfaces\Response $Response);
-
-    /**
      * @param $action
-     * @return mixed
-     * @throws \Everon\Exception\InvalidControllerMethod
+     * @return mixed|void
+     * @throws Exception\InvalidControllerMethod
+     * @throws Exception\InvalidControllerResponse
      */
     function execute($action);
 }

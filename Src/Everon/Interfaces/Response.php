@@ -13,6 +13,7 @@ interface Response
 {
     function toHtml();
     function toJson();
+    function toText();
     function send();
     function setData($data);
     function getData();

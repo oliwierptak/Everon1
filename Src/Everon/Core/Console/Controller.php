@@ -14,5 +14,11 @@ use Everon\Exception;
 
 abstract class Controller extends \Everon\Controller implements Interfaces\Controller
 {
-
+    /**
+     * @return void
+     */
+    protected function prepareResponse()
+    {
+        $this->getResponse()->setData(['console'=>'yes']);
+    }
 }

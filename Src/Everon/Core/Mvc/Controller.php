@@ -18,27 +18,7 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
     use Dependency\Injection\ViewManager;
     use Dependency\Injection\ModelManager;
 
-    /**
-     * @param $result
-     * @param Interfaces\Response $Response
-     * @return Interfaces\Response
-     */
-    public function result($result, Interfaces\Response $Response)
-    {
-        $Response->setResult($result);
-        
-        if ($result === false) {
-            $data = vsprintf('Invalid response for route: "%s"', [$this->getRouter()->getCurrentRoute()->getName()]);
-            $Response->setData($data);
-        }
-        else {
-            $Response->setData($this->getView()->getOutput());
-        }
-
-        $Response->send();
-        echo $Response->toHtml();
-    }
-
+    
     /**
      * @return Interfaces\View
      */
@@ -53,6 +33,24 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
     public function getModel()
     {
         return $this->getModelManager()->getModel($this->getName());
+    }
+
+    protected function prepareResponse()
+    {
+        $this->getResponse()->setData($this->getView()->getOutput());
+    }
+
+    /**
+     * @param $action
+     * @return mixed
+     * @throws Exception\InvalidControllerMethod
+     */
+    public function execute($action)
+    {
+        $this->getView()->setOutputFromAction($action, $this->getView()->getData());
+        $result = parent::execute($action);
+        
+        return $result;
     }
 
 }

@@ -13,9 +13,10 @@ namespace Everon;
 abstract class Controller implements Interfaces\Controller
 {
     use Dependency\Injection\Logger;
+    use Dependency\Injection\Response;
     use Dependency\Injection\Request;
-    use Dependency\Injection\Router;
 
+    use Helper\IsCallable;
     use Helper\ToString;
     use Helper\String\LastTokenToName;
 
@@ -26,7 +27,14 @@ abstract class Controller implements Interfaces\Controller
     protected $name = null;
 
     /**
+     * @return void
+     */
+    protected abstract function prepareResponse();
+
+
+    /**
      * @param $name
+     * @return void
      */
     public function setName($name)
     {
@@ -43,44 +51,33 @@ abstract class Controller implements Interfaces\Controller
     }
 
     /**
-     * @param $result
-     * @param Interfaces\Response $Response
-     * @return Interfaces\Response
-     */
-    public function result($result, Interfaces\Response $Response)
-    {
-        $Response->setResult($result);
-        
-        if ($result === false) {
-            $data = vsprintf('Invalid response for route: "%s"', [$this->getRouter()->getCurrentRoute()->getName()]);
-            $Response->setData($data);
-        }
-        else {
-            $Response->setData($this->getView()->getOutput());
-        }
-    }
-    
-    public function response()
-    {
-        $Response->send();
-        echo $Response->toText();
-    }
-
-    /**
      * @param $action
-     * @return mixed
+     * @return mixed|void
      * @throws Exception\InvalidControllerMethod
+     * @throws Exception\InvalidControllerResponse
      */
     public function execute($action)
     {
-        if (method_exists($this, $action) === false) {
+        if ($this->isCallable($this, $action) === false) {
             throw new Exception\InvalidControllerMethod(
-                'Controller: "%s" has no action: "%s" defined',
-                [$this->getName(), $action]
+                'Controller: "%s" has no action: "%s" defined', [$this->getName(), $action]
             );
         }
+        
+        $this->getLogger()->actions('%s : %s', [$this->getName(), $action]);
 
-        return $this->{$action}();
+        $result = $this->{$action}();
+        $Response = $this->getResponse();
+        $Response->setResult($result);
+
+        if ($result === false) {
+            throw new Exception\InvalidControllerResponse(
+                'Invalid controller response for action: "%s:%s"', [$this->getName(),$action]
+            );
+        }
+        else {
+            $this->prepareResponse();
+        }
     }
 
 }
