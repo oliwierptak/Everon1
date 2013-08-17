@@ -55,21 +55,4 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
         return $this->getModelManager()->getModel($this->getName());
     }
 
-    /**
-     * @param $action
-     * @return mixed
-     * @throws Exception\InvalidControllerMethod
-     */
-    public function execute($action)
-    {
-        if (method_exists($this, $action) === false) {
-            throw new Exception\InvalidControllerMethod(
-                'Controller: "%s" has no action: "%s" defined',
-                [$this->getName(), $action]
-            );
-        }
-
-        return $this->{$action}();
-    }
-
 }
