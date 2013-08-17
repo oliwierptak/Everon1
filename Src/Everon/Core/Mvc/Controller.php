@@ -11,9 +11,9 @@ namespace Everon\Core\Mvc;
 
 use Everon\Interfaces;
 use Everon\Dependency;
-use Everon\Helper;
+use Everon\Exception;
 
-abstract class Controller extends \Everon\Controller implements Interfaces\Controller
+abstract class Controller extends \Everon\Controller implements Interfaces\Controller, Interfaces\MvcController
 {
     use Dependency\Injection\ViewManager;
     use Dependency\Injection\ModelManager;
