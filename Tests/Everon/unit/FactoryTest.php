@@ -35,7 +35,7 @@ class FactoryTest extends \Everon\TestCase
      */
     public function testBuildMvcCore(Interfaces\Factory $Factory)
     {
-        $Core = $Factory->buildCoreMvc();
+        $Core = $Factory->buildMvc();
         $this->assertInstanceOf('\Everon\Interfaces\Core', $Core);
     }
 
@@ -233,7 +233,7 @@ class FactoryTest extends \Everon\TestCase
      */
     public function testBuildCoreConsoleShouldThrowExceptionWhenWrongClass(Interfaces\Factory $FactoryMock)
     {
-        $FactoryMock->buildCoreConsole();
+        $FactoryMock->buildConsole();
     }
     
     /**

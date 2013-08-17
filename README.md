@@ -124,4 +124,4 @@ The rest of the missing properties, like `$charset`, will be inherited from `[De
 See [view.ini](https://github.com/oliwierptak/Everon/blob/master/Config/view.ini) for more examples.
 
 ## Tests
-    php Everon.php Tests/Everon/unit/
+    cd Tests/Everon/; phpunit

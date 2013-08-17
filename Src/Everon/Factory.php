@@ -70,7 +70,7 @@ class Factory implements Interfaces\Factory
      * @return Interfaces\Core
      * @throws Exception\Factory
      */
-    public function buildCoreConsole()
+    public function buildConsole()
     {
         try {
             $Core = new Core\Console();
@@ -86,7 +86,7 @@ class Factory implements Interfaces\Factory
      * @return Interfaces\Core
      * @throws Exception\Factory
      */
-    public function buildCoreMvc()
+    public function buildMvc()
     {
         try {
             $Core = new Core\Mvc();

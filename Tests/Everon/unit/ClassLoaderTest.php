@@ -13,7 +13,7 @@ class ClassLoaderTest extends \Everon\TestCase
 {
     public function setUp()
     {
-        $Loader = new \Everon\ClassLoader(null);
+        $Loader = new \Everon\ClassLoader();
         $Loader->unRegister();
     }
     

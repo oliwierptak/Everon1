@@ -16,21 +16,15 @@ try {
     require_once($directory.'Bootstrap.php');
     require_once($directory.'Dependencies.php');
     /**
-     * @var Interfaces\DependencyContainer $Container
      * @var Interfaces\Factory $Factory
-     * @var Interfaces\Core $Application
      */    
-    $Application = $Factory->buildCoreMvc();
+    $Application = $Factory->buildMvc();
     $Application->run();
 }
 catch (\Exception $e)
 {
     echo '<pre><h1>500 Uncaught exception</h1>';
     echo $e."\n";
-    echo str_repeat('-', strlen($e))."\n";
-    if (method_exists($e, 'getTraceAsString')) {
-        echo $e->getTraceAsString();
-    }        
     echo '</pre>';
 }
 

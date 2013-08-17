@@ -35,25 +35,17 @@ abstract class Core implements Interfaces\Core
         }
         catch (Exception\PageNotFound $e) {
             $this->getLogger()->error($e);
-            echo '<pre><h1>404 Page not found</h1>';
-            echo '<code>'.$e.'</code>';
+            echo "Unknown command: ".$e->getMessage()."\n";
         }
         catch (Exception\DomainException $e) {
             $this->getLogger()->error($e);
-            echo '<pre><h1>Domain Exception</h1>';
-            echo '<code>'.$e.'</code>';
+            echo "Domain error: ".$e->getMessage()."\n";
         }
         catch (Exception $e) {
             $this->getLogger()->error($e);
-            echo '<pre><h1>500 Everon Error</h1>';
-            echo $e."\n";
-            echo str_repeat('-', strlen($e))."\n";
-            if (method_exists($e, 'getTraceAsString')) {
-                echo $e->getTraceAsString();
-            }
-            echo '</pre>';
+            echo "Error: ".$e->getMessage()."\n";
         }
-        
+
         return null;
     }
     

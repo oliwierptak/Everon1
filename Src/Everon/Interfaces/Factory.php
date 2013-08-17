@@ -29,13 +29,13 @@ interface Factory
      * @return Interfaces\Core
      * @throws Exception\Factory
      */
-    function buildCoreConsole();
+    function buildConsole();
 
     /**
      * @return Interfaces\Core
      * @throws Exception\Factory
      */
-    function buildCoreMvc();    
+    function buildMvc();    
 
     /**
      * @param $name

@@ -7,8 +7,8 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Everon;
+
 try {
     /**
      * @var Interfaces\DependencyContainer $Container
@@ -18,12 +18,12 @@ try {
     $lib_dir = implode(DIRECTORY_SEPARATOR, [dirname(__FILE__), 'Src', 'Everon', 'Lib']).DIRECTORY_SEPARATOR;
     require_once($lib_dir.'Bootstrap.php');
     require_once($lib_dir.'Dependencies.php');
-
+    
     $Container->register('Router', function() use ($Factory) {
         $Request = $Factory->getDependencyContainer()->resolve('Request');
         $RouteConfig = $Factory->getDependencyContainer()->resolve('ConfigManager')->getConfigByName('console');
-
         $RouterValidator = $Factory->buildRouterValidator();
+        
         return $Factory->buildRouter($Request, $RouteConfig, $RouterValidator);
     });    
 
@@ -39,16 +39,10 @@ try {
         return $Factory->buildRequest($_SERVER, $_GET, $_POST, $_FILES);
     });    
     
-    $Console = $Factory->buildCoreConsole();
+    $Console = $Factory->buildConsole();
     $Console->run();
 }
 catch (\Exception $e)
 {
-    echo 'Uncaught exception</h1>';
-    echo $e."\n";
-    echo str_repeat('-', strlen($e))."\n";
-    if (method_exists($e, 'getTraceAsString')) {
-        echo $e->getTraceAsString();
-    }
+    echo "\n$e\n";
 }
-
