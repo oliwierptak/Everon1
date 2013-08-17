@@ -14,12 +14,16 @@ use Everon\Exception;
 
 abstract class Controller extends \Everon\Controller implements Interfaces\Controller
 {
+    protected $lines = [];
+    
     /**
      * @return void
      */
     protected function prepareResponse()
     {
-        $this->getResponse()->setData(['console'=>'yes']);
+        $this->getResponse()->setData(
+            implode('\n', $this->lines)
+        );
     }
     
     /**
@@ -27,10 +31,7 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
      */
     public function response()
     {
-        $data = explode("\n", $this->getResponse()->toText());
-        foreach ($data as $line) {
-            $this->writeln($line);
-        }
+        $this->writeln($this->getResponse()->toText());
     }
 
     protected function writeln($line)

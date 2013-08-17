@@ -9,7 +9,7 @@ class Help extends Console\Controller implements Interfaces\Controller
 {
     public function show()
     {
-        die('show');
+        $this->lines[] = "aaa";
     }
 
 }
