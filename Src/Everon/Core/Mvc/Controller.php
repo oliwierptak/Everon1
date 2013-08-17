@@ -53,4 +53,13 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
         return $result;
     }
 
+    /**
+     * @return void
+     */
+    public function response()
+    {
+        $this->getResponse()->send();
+        echo $this->getResponse()->toHtml();
+    }    
+
 }

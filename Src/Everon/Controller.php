@@ -30,6 +30,8 @@ abstract class Controller implements Interfaces\Controller
      * @return void
      */
     protected abstract function prepareResponse();
+    
+    public abstract function response();
 
 
     /**
@@ -67,8 +69,9 @@ abstract class Controller implements Interfaces\Controller
         $this->getLogger()->actions('%s : %s', [$this->getName(), $action]);
 
         $result = $this->{$action}();
-        $Response = $this->getResponse();
-        $Response->setResult($result);
+        $result = ($result !== false) ? true : $result;
+
+        $this->getResponse()->setResult($result);
 
         if ($result === false) {
             throw new Exception\InvalidControllerResponse(

@@ -28,4 +28,6 @@ interface Controller
      * @throws Exception\InvalidControllerResponse
      */
     function execute($action);
+
+    function response();
 }

@@ -14,22 +14,5 @@ use Everon\Interfaces;
 
 class Console extends \Everon\Core implements Interfaces\Core
 {
-    use Dependency\Injection\Request;
-
-    /**
-     * @return void
-     */
-    protected function response()
-    {
-        $data = explode("\n", $this->getResponse()->toText());
-        foreach ($data as $line) {
-            $this->writeln($line);
-        }
-    }
-    
-    protected function writeln($line)
-    {
-        echo "${line}\n";
-    }
     
 }

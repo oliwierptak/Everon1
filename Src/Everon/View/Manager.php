@@ -60,6 +60,15 @@ abstract class Manager implements Interfaces\ViewManager
         }
 
         return $this->views[$name];
-    }    
+    }
+
+    /**
+     * @param $name
+     * @param Interfaces\View $View
+     */
+    public function setView($name, Interfaces\View $View)
+    {
+        $this->views[$name] = $View;
+    }
 
 }

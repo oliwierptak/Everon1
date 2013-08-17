@@ -13,14 +13,7 @@ abstract class Core implements Interfaces\Core
 {
     use Dependency\Injection\Logger;
     use Dependency\Injection\Factory;
-    use Dependency\Injection\Response;
     use Dependency\Injection\Router;
-
-    /**
-     * @return void
-     */
-    abstract protected function response();
-
 
     /**
      * @return Interfaces\Controller|null
@@ -38,11 +31,11 @@ abstract class Core implements Interfaces\Core
             $CurrentRoute = $this->getRouter()->getCurrentRoute();
             $controller_name = $CurrentRoute->getController();
             $action = $CurrentRoute->getAction();
-
+            
+            $this->getLogger()->debug('controller: %s', $controller_name);
             $Controller = $this->getFactory()->buildController($controller_name);
             $Controller->execute($action);
-            
-            $this->response();
+            $Controller->response();
         }
         catch (Exception\InvalidRouterParameter $e) {
             //todo: raise event for form validation
@@ -60,8 +53,6 @@ abstract class Core implements Interfaces\Core
             $this->getLogger()->error($e);
             echo "Error: ".$e->getMessage()."\n";
         }
-
-        return null;
     }
 
     public function shutdown()

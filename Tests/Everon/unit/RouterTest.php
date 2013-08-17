@@ -82,7 +82,7 @@ class RouterTest extends \Everon\TestCase
                     []
                 ), 
                 $RouterConfig, 
-                ['controller'=>'MyController', 'action'=>'testOne']],
+                ['controller'=>'\Everon\Test\MyController', 'action'=>'testOne']],
             [$Factory,
                 $Factory->buildRequest($this->getServerDataForRequest([
                     'REQUEST_METHOD' => 'POST',
@@ -94,7 +94,7 @@ class RouterTest extends \Everon\TestCase
                     []
                 ), 
                 $RouterConfig, 
-                ['controller'=>'MyController', 'action'=>'testTwo']],
+                ['controller'=>'\Everon\Test\MyController', 'action'=>'testTwo']],
             [$Factory,
                 $Factory->buildRequest($this->getServerDataForRequest([
                     'REQUEST_METHOD' => 'POST',
@@ -106,7 +106,7 @@ class RouterTest extends \Everon\TestCase
                     []
                 ), 
                 $RouterConfig, 
-                ['controller'=>'MyController', 'action'=>'testComplex']],
+                ['controller'=>'\Everon\Test\MyController', 'action'=>'testComplex']],
         ];
     }
 

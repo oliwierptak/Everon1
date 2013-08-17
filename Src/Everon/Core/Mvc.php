@@ -14,12 +14,5 @@ use Everon\Exception;
 
 class Mvc extends \Everon\Core implements Interfaces\Core
 {
-    /**
-     * @return void
-     */
-    protected function response()
-    {
-        $this->getResponse()->send();
-        echo $this->getResponse()->toHtml();
-    }
+
 }

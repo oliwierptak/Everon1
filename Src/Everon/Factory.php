@@ -62,6 +62,10 @@ class Factory implements Interfaces\Factory
      */
     protected function getFullClassName($namespace, $class_name)
     {
+        if ($class_name[0] === '\\') {
+            return $class_name; //absolute name
+        }
+        
         $class = $namespace.'\\'.$class_name;
         return $class;
     }

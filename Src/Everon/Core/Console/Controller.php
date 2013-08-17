@@ -21,4 +21,21 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
     {
         $this->getResponse()->setData(['console'=>'yes']);
     }
+    
+    /**
+     * @return void
+     */
+    public function response()
+    {
+        $data = explode("\n", $this->getResponse()->toText());
+        foreach ($data as $line) {
+            $this->writeln($line);
+        }
+    }
+
+    protected function writeln($line)
+    {
+        echo "${line}\n";
+    }
+    
 }

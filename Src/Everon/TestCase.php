@@ -34,8 +34,8 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         $dir = $this->getDoublesDirectory();
         $includes = [
             'MyController.php',
-            'MyModelManager.php',
             'MyModel.php',
+            'MyModelManager.php',
             'MyView.php'
         ];
         
@@ -165,7 +165,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
             ]);
             
             return $Factory->buildRequest($server_data, $_GET, $_POST, $_FILES);
-        });        
+        });
 
         require($Environment->getEveronLib().'Dependencies.php');
         

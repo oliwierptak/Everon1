@@ -9,21 +9,10 @@
  */
 namespace Everon\Test;
 
-class MyController extends \Everon\Core\Mvc\Controller
+class MyController extends \Everon\Core\Mvc\Controller implements \Everon\Interfaces\Controller, \Everon\Interfaces\MvcController
 {
-    public function beforeTestOne()
-    {
-        $this->getView()->setOutput('before test one');
-    }
-
     public function testOne()
     {
         $this->getView()->setOutput('test one');
     }
-
-    public function afterTestOne()
-    {
-        $this->getView()->setOutput('after test one');
-    }
-
 }

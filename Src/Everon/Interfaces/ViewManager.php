@@ -18,6 +18,12 @@ interface ViewManager
     function getView($name);
 
     /**
+     * @param $name
+     * @param \Everon\Interfaces\View $View
+     */
+    public function setView($name, \Everon\Interfaces\View $View);
+
+    /**
      * @return array
      */
     function getCompilers();

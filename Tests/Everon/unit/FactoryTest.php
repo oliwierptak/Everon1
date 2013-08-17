@@ -117,7 +117,7 @@ class FactoryTest extends \Everon\TestCase
             return $ConfigManager;
         });
         
-        $Model = $Factory->buildModelManager('MyModelManager', '\Everon\Test');
+        $Model = $Factory->buildModelManager('MyModelManager', 'Everon\Test');
         $this->assertInstanceOf('\Everon\Interfaces\ModelManager', $Model);
     }
 
