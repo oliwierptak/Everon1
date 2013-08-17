@@ -10,23 +10,21 @@
 namespace Everon\Helper;
 
 
-trait IsIterable
+trait IsCallable
 {
     /**
-     * @param $input
+     * @param mixed $Object
+     * @param $method
      * @return bool
      */
-    public function isIterable($input)
+    public function isCallable($Object, $method)
     {
-        if (isset($input) && is_array($input)) {//isset is much faster
-            return true;
+        //method exists is faster, use it first
+        if (method_exists($Object, $method) === false || is_callable([$Object, $method]) === false) {
+            return false;
         }
         
-        if ($input instanceof \ArrayAccess || $input instanceof \Iterator) {
-            return true;
-        }
-        
-        return false;
+        return true;
     }
 
 }
