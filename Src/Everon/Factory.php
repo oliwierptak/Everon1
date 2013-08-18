@@ -512,6 +512,26 @@ class Factory implements Interfaces\Factory
             throw new Exception\Factory('Request initialization error', null, $e);
         }
     }
+    
+    /**
+     * @param array $server
+     * @param array $get
+     * @param array $post
+     * @param array $files
+     * @return Interfaces\Request
+     * @throws Exception\Factory
+     */
+    public function buildConsoleRequest(array $server, array $get, array $post, array $files)
+    {
+        try {
+            $Request = new Core\Console\Request($server, $get, $post, $files);
+            $this->injectDependencies('Everon\Core\Console\Request', $Request);
+            return $Request;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('Request initialization error', null, $e);
+        }
+    }
 
     /**
      * @param $root

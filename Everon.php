@@ -28,15 +28,7 @@ try {
     });    
 
     $Container->register('Request', function() use ($Factory) {
-        $args = $_SERVER['argv'];
-        array_shift($args);
-        $uri = array_shift($args);
-
-        $_SERVER['REQUEST_METHOD'] = 'GET';
-        $_SERVER['REQUEST_URI'] = $uri;
-        $_SERVER['SERVER_NAME'] = '';
-        $_SERVER['QUERY_STRING'] = '';
-        return $Factory->buildRequest($_SERVER, $_GET, $_POST, $_FILES);
+        return $Factory->buildConsoleRequest($_SERVER, $_GET, $_POST, $_FILES);
     });    
     
     $Console = $Factory->buildConsole();

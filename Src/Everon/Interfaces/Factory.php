@@ -195,6 +195,16 @@ interface Factory
     function buildRequest(array $server, array $get, array $post, array $files);
 
     /**
+     * @param array $server
+     * @param array $get
+     * @param array $post
+     * @param array $files
+     * @return Interfaces\Request
+     * @throws Exception\Factory
+     */
+    public function buildConsoleRequest(array $server, array $get, array $post, array $files);    
+
+    /**
      * @param $root
      * @return Interfaces\Environment
      * @throws Exception\Factory

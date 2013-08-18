@@ -68,8 +68,14 @@ class Router implements Interfaces\Router, Interfaces\Arrayable
             }
 
             list($get, $post) = $this->getRouterValidator()->validate($RouteItem, $Request);
-            $Request->setQueryCollection($get);
-            $Request->setPostCollection($post);
+            
+            $Request->setQueryCollection(
+                array_merge($Request->getQueryCollection(), $get)
+            );
+
+            $Request->setPostCollection(
+                array_merge($Request->getPostCollection(), $post)
+            );
             
             return $RouteItem;
         }
@@ -81,8 +87,13 @@ class Router implements Interfaces\Router, Interfaces\Arrayable
             $request_url = $Request->getUrl();
             if ($RouteItem->matchesByUrl($request_url)) {
                 list($get, $post) = $this->getRouterValidator()->validate($RouteItem, $Request);
-                $Request->setQueryCollection($get);
-                $Request->setPostCollection($post);
+                $Request->setQueryCollection(
+                    array_merge($Request->getQueryCollection(), $get)
+                );
+
+                $Request->setPostCollection(
+                    array_merge($Request->getPostCollection(), $post)
+                );
                 
                 return $RouteItem;
             }
