@@ -9,7 +9,6 @@
  */
 namespace Everon;
 
-//todo: rethink collections, hide them from the interface
 
 class Request implements Interfaces\Request, Interfaces\Arrayable
 {
@@ -84,10 +83,10 @@ class Request implements Interfaces\Request, Interfaces\Arrayable
      */
     public function __construct(array $server, array $get, array $post, array $files)
     {
-        $this->ServerCollection = new Helper\Collection($server);
-        $this->PostCollection = new Helper\Collection($post);
-        $this->QueryCollection = new Helper\Collection($get);
-        $this->FileCollection = new Helper\Collection($files);
+        $this->ServerCollection = new Helper\Collection($this->sanitizeInput($server));
+        $this->PostCollection = new Helper\Collection($this->sanitizeInput($post));
+        $this->QueryCollection = new Helper\Collection($this->sanitizeInput($get));
+        $this->FileCollection = new Helper\Collection($this->sanitizeInput($files));
         
         $this->initRequest();
     }
@@ -208,7 +207,6 @@ class Request implements Interfaces\Request, Interfaces\Arrayable
     {
         $data = $this->getDataFromGlobals();
         $this->validate($data);
-        $data = $this->sanitizeInput($data);
         
         $this->data = $data;
         $this->method = $data['method'];
@@ -218,8 +216,6 @@ class Request implements Interfaces\Request, Interfaces\Arrayable
         $this->port = (integer) $data['port'];
         $this->secure = (boolean) $data['secure'];
         $this->location = $data['location'];
-
-        $this->FileCollection = $this->sanitizeInput($this->FileCollection);
     }
 
     /**
@@ -280,6 +276,7 @@ class Request implements Interfaces\Request, Interfaces\Arrayable
      */
     public function setPostParameter($name, $value)
     {
+        $value = $this->sanitizeInput($value);
         $this->PostCollection->set($name, $value);
     }
 
@@ -303,6 +300,7 @@ class Request implements Interfaces\Request, Interfaces\Arrayable
      */
     public function setQueryParameter($name, $value)
     {
+        $value = $this->sanitizeInput($value);
         $this->QueryCollection->set($name, $value);
     }
 
@@ -374,8 +372,7 @@ class Request implements Interfaces\Request, Interfaces\Arrayable
      */
     public function setQueryCollection(array $data)
     {
-        $this->QueryCollection = new Helper\Collection($data);
-        $this->initRequest();
+        $this->QueryCollection = new Helper\Collection($this->sanitizeInput($data));
     }
 
     /**
@@ -391,8 +388,7 @@ class Request implements Interfaces\Request, Interfaces\Arrayable
      */
     public function setPostCollection(array $data)
     {
-        $this->PostCollection  = new Helper\Collection($data);
-        $this->initRequest();
+        $this->PostCollection  = new Helper\Collection($this->sanitizeInput($data));
     }
 
     /**
@@ -408,7 +404,7 @@ class Request implements Interfaces\Request, Interfaces\Arrayable
      */
     public function setServerCollection(array $data)
     {
-        $this->ServerCollection = new Helper\Collection($data);
+        $this->ServerCollection = new Helper\Collection($this->sanitizeInput($data));
         $this->initRequest();
     }
 
@@ -425,8 +421,7 @@ class Request implements Interfaces\Request, Interfaces\Arrayable
      */
     public function setFileCollection(array $files)
     {
-        $this->FileCollection = new Helper\Collection($files);
-        $this->initRequest();
+        $this->FileCollection = new Helper\Collection($this->sanitizeInput($files));
     }
 
     /**
