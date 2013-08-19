@@ -331,14 +331,16 @@ class Request implements Interfaces\Request, Interfaces\Arrayable
     }
 
     /**
-     * @return array
+     * @return bool
      */
-    public function getUrlAsTokens()
+    public function hasGetParameters()
     {
         $query_tokens = explode('?', $this->url);
         $url = current($query_tokens);
         
-        return array_filter(explode('/', $url));
+        $url_params = array_filter(explode('/', $url));
+        
+        return (empty($url_params) === false || $this->query_string !== '');
     }
 
     /**

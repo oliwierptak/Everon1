@@ -37,5 +37,5 @@ interface Request
     function getServerCollection();
     function setQueryCollection(array $data);
     function getQueryCollection();
-    function getUrlAsTokens();
+    function hasGetParameters();
 }

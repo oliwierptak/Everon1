@@ -53,15 +53,10 @@ class Router implements Interfaces\Router, Interfaces\Arrayable
     public function getRouteItemByRequest(Interfaces\Request $Request)
     {
         $RouteItem = null;
-        $url_tokens = $Request->getUrlAsTokens();
 
-        if (count($url_tokens) == 0) {//empty url @todo: refactor into method, remove this comment
+        if ($Request->hasGetParameters() === false) {
             $RouteItem = $this->getConfig()->getDefaultItem();
             $RouteItem = ($RouteItem) ?: $this->getRouteItemByUrl($Request->getUrl());
-            
-            if (is_null($RouteItem)) {
-                $RouteItem = $this->getRouteItemByUrl($Request->getUrl());
-            }
 
             if (is_null($RouteItem)) {
                 throw new Exception\Router('Default route does not exist');
