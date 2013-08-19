@@ -12,12 +12,28 @@ ini_set('html_errors', false);
 echo ('Start: '.memory_get_usage(TRUE)/1024)." kb<hr/>";
 
 try {
+    /**
+     * @var Interfaces\DependencyContainer $Container
+     * @var Interfaces\Factory $Factory
+     * @var Interfaces\Core $Mvc
+     */    
     $directory = implode(DIRECTORY_SEPARATOR, [dirname(__FILE__), '..', 'Src', 'Everon', 'Lib']).DIRECTORY_SEPARATOR;
     require_once($directory.'Bootstrap.php');
     require_once($directory.'Dependencies.php');
-    /**
-     * @var Interfaces\Factory $Factory
-     */    
+
+    //replace default Router
+    $Container->register('Router', function() use ($Factory) {
+        $Request = $Factory->getDependencyContainer()->resolve('Request');
+        $RouteConfig = $Factory->getDependencyContainer()->resolve('ConfigManager')->getRouterConfig();
+        $RouterValidator = $Factory->buildRouterValidator();
+        return $Factory->buildRouter($Request, $RouteConfig, $RouterValidator);
+    });
+
+    //replace default Request
+    $Container->register('Request', function() use ($Factory) {
+        return $Factory->buildRequest($_SERVER, $_GET, $_POST, $_FILES);
+    });    
+    
     $Application = $Factory->buildMvc();
     $Application->run();
 }

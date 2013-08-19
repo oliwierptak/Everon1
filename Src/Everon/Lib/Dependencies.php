@@ -30,10 +30,6 @@ $Container->propose('Logger', function() use ($Factory) {
     return $Factory->buildLogger($log_directory);
 });
 
-$Container->propose('Request', function() use ($Factory) {
-    return $Factory->buildRequest($_SERVER, $_GET, $_POST, $_FILES);
-});
-
 $Container->propose('Response', function() use ($Factory) {
     $Headers = $Factory->buildHttpHeaderCollection();
     return $Factory->buildResponse($Headers);
@@ -50,9 +46,13 @@ $Container->propose('ConfigManager', function() use ($Factory) {
     return $Factory->buildConfigManager($Loader, $Matcher);
 });
 
+$Container->propose('Request', function() use ($Factory) {
+    return $Factory->buildConsoleRequest($_SERVER, $_GET, $_POST, $_FILES);
+});
+
 $Container->propose('Router', function() use ($Factory) {
     $Request = $Factory->getDependencyContainer()->resolve('Request');
-    $RouteConfig = $Factory->getDependencyContainer()->resolve('ConfigManager')->getRouterConfig();
+    $RouteConfig = $Factory->getDependencyContainer()->resolve('ConfigManager')->getConfigByName('console');
     $RouterValidator = $Factory->buildRouterValidator();
     return $Factory->buildRouter($Request, $RouteConfig, $RouterValidator);
 });

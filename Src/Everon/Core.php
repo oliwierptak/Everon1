@@ -31,13 +31,12 @@ abstract class Core implements Interfaces\Core
             $controller_name = $CurrentRoute->getController();
             $action = $CurrentRoute->getAction();
             
-            $this->getLogger()->debug('controller: %s', $controller_name);
             $Controller = $this->getFactory()->buildController($controller_name);
             $Controller->execute($action);
         }
         catch (Exception\InvalidRouterParameter $e) {
             //todo: raise event for form validation
-            echo $e;
+            echo $e->getMessage()."\n";
         }
         catch (Exception\PageNotFound $e) {
             $this->getLogger()->error($e);
