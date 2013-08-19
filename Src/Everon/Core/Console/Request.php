@@ -23,7 +23,7 @@ class Request extends \Everon\Request
     /**
      * @return array
      */
-    public function overwriteEnvironment()
+    protected function overwriteEnvironment()
     {
         $args = $this->ServerCollection['argv'];
         array_shift($args);
