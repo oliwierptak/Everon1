@@ -27,26 +27,23 @@ class Request extends \Everon\Request
     {
         $args = $this->ServerCollection['argv'];
         array_shift($args);
-        $uri =  implode('&', $args);
-        array_shift($args);
-
-        $method = 'GET';
+        $uri = array_shift($args);
         $query_string = implode('&', $args);
+        $method = 'GET';
         
         $this->ServerCollection['REQUEST_METHOD'] = $method;
-        $this->ServerCollection['REQUEST_URI'] = '/?'.$uri;
+        $this->ServerCollection['REQUEST_URI'] = '/'.$uri.'?'.$query_string;
         $this->ServerCollection['QUERY_STRING'] = $query_string;
         $this->ServerCollection['SERVER_NAME'] = $this->ServerCollection['SCRIPT_FILENAME'];
-
 
         //[QUERY_STRING] => help&me=12&bla=ola
         //[REQUEST_URI] => /?help&me=12&bla=ola
         parse_str($query_string, $get);
 
-        $current_get = $this->getQueryCollection();
+        $current_get = $this->getGetCollection();
         
         //set get
-        $this->setQueryCollection(array_merge(
+        $this->setGetCollection(array_merge(
             $current_get, $get
         ));
     }

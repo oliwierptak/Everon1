@@ -31,7 +31,7 @@ abstract class Controller implements Interfaces\Controller
      */
     protected abstract function prepareResponse();
     
-    public abstract function response();
+    protected abstract function response();
 
 
     /**
@@ -54,7 +54,7 @@ abstract class Controller implements Interfaces\Controller
 
     /**
      * @param $action
-     * @return mixed|void
+     * @return void
      * @throws Exception\InvalidControllerMethod
      * @throws Exception\InvalidControllerResponse
      */
@@ -70,7 +70,6 @@ abstract class Controller implements Interfaces\Controller
 
         $result = $this->{$action}();
         $result = ($result !== false) ? true : $result;
-
         $this->getResponse()->setResult($result);
 
         if ($result === false) {
@@ -80,6 +79,7 @@ abstract class Controller implements Interfaces\Controller
         }
         else {
             $this->prepareResponse();
+            $this->response();
         }
     }
 

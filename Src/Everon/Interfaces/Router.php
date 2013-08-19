@@ -17,7 +17,7 @@ interface Router
      * @return \Everon\Interfaces\ConfigItemRouter
      * @throws \Everon\Exception\PageNotFound
      */
-    function getRouteItemByRequest(Request $Request);
+    function getRouteByRequest(Request $Request);
 
     /**
      * @param $route_name
@@ -30,7 +30,7 @@ interface Router
      * @param $url
      * @return \Everon\Interfaces\ConfigItemRouter|null
      */
-    function getRouteItemByUrl($url);
+    function getRouteByUrl($url);
 
     /**
      * @param \Everon\Interfaces\Config $Config

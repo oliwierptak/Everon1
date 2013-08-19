@@ -26,10 +26,7 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
         );
     }
     
-    /**
-     * @return void
-     */
-    public function response()
+    protected function response()
     {
         $this->writeln($this->getResponse()->toText());
     }

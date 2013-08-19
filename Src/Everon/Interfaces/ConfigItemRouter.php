@@ -21,6 +21,8 @@ interface ConfigItemRouter
 
     function getGetRegex();
     function setGetRegex($regex);
+    function getQueryRegex();
+    function setQueryRegex($regex);
     function getPostRegex();
     function setPostRegex($regex);
 

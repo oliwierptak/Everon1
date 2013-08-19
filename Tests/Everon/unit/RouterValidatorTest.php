@@ -46,14 +46,21 @@ class RouterValidatorTest extends \Everon\TestCase
     
     /**
      * @dataProvider dataProvider
-     * @expectedException \Everon\Exception\Router
+     * @expectedException \Everon\Exception\RouterValidator
      */
-    public function testValidateQueryAndGetShouldThrowExceptionWhenError(Interfaces\RouterValidator $Validator, Interfaces\ConfigItemRouter $RouteItem, Interfaces\Request $Request)
+    public function testValidateQueryShouldThrowExceptionWhenError(Interfaces\RouterValidator $Validator, Interfaces\ConfigItemRouter $RouteItem, Interfaces\Request $Request)
     {
-        $RouteItemMock = $this->getMock('Everon\Interfaces\ConfigItemRouter');
+        $RouteItemMock = $this->getMockBuilder('Everon\Config\Item\Router')
+            ->disableOriginalConstructor()
+            ->getMock();
+        
+        $RouteItemMock->expects($this->any())
+            ->method('getName')
+            ->will($this->returnValue('anitem'));
+        
         $RouteItemMock->expects($this->once())
-            ->method('filterQueryKeys')
-            ->will($this->throwException(new \Exception('filterQueryKeys')));
+            ->method('getCleanUrl')
+            ->will($this->throwException(new \Exception('exception')));
         
         $result = $Validator->validate($RouteItemMock, $Request);
         $this->assertInternalType('array', $result);
@@ -61,7 +68,7 @@ class RouterValidatorTest extends \Everon\TestCase
     
     /**
      * @dataProvider dataProvider
-     * @expectedException \Everon\Exception\Router
+     * @expectedException \Everon\Exception\RouterValidator
      */
     public function testValidatePostShouldThrowExceptionWhenError(Interfaces\RouterValidator $Validator, Interfaces\ConfigItemRouter $RouteItem, Interfaces\Request $Request)
     {

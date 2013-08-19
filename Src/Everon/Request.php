@@ -32,6 +32,10 @@ class Request implements Interfaces\Request, Interfaces\Arrayable
     /**
      * @var Interfaces\Collection $_GET
      */
+    protected $GetCollection  = null;
+    /**
+     * @var Interfaces\Collection $_GET
+     */
     protected $QueryCollection  = null;
 
     /**
@@ -84,8 +88,9 @@ class Request implements Interfaces\Request, Interfaces\Arrayable
     public function __construct(array $server, array $get, array $post, array $files)
     {
         $this->ServerCollection = new Helper\Collection($this->sanitizeInput($server));
+        $this->GetCollection = new Helper\Collection($this->sanitizeInput($get));
+        $this->QueryCollection = new Helper\Collection([]);
         $this->PostCollection = new Helper\Collection($this->sanitizeInput($post));
-        $this->QueryCollection = new Helper\Collection($this->sanitizeInput($get));
         $this->FileCollection = new Helper\Collection($this->sanitizeInput($files));
         
         $this->initRequest();
@@ -216,6 +221,11 @@ class Request implements Interfaces\Request, Interfaces\Arrayable
         $this->port = (integer) $data['port'];
         $this->secure = (boolean) $data['secure'];
         $this->location = $data['location'];
+        
+        if (trim($data['query_string']) !== '') {
+            parse_str($data['query_string'], $query);
+            $this->setQueryCollection($this->sanitizeInput($query));
+        }
     }
 
     /**
@@ -244,7 +254,7 @@ class Request implements Interfaces\Request, Interfaces\Arrayable
         $valid = ['post', 'get']; //todo: put into method or property
 
         if (in_array($method, $valid) === false) {
-            throw new Exception\Request('Unrecognized post method: "%s"', $method);
+            throw new Exception\Request('Unrecognized http method: "%s"', $method);
         }
     }
 
@@ -280,6 +290,30 @@ class Request implements Interfaces\Request, Interfaces\Arrayable
         $this->PostCollection->set($name, $value);
     }
 
+    /**
+     * @param $name
+     * @param mixed $default
+     * @return mixed
+     */
+    public function getGetParameter($name, $default=null)
+    {
+        if ($this->GetCollection->has($name)) {
+            return $this->GetCollection->get($name);
+        }
+
+        return $default;
+    }
+
+    /**
+     * @param $name
+     * @param $value
+     */
+    public function setGetParameter($name, $value)
+    {
+        $value = $this->sanitizeInput($value);
+        $this->GetCollection->set($name, $value);
+    }
+    
     /**
      * @param $name
      * @param mixed $default
@@ -331,16 +365,13 @@ class Request implements Interfaces\Request, Interfaces\Arrayable
     }
 
     /**
-     * @return bool
+     * @return array
      */
-    public function hasGetParameters()
+    public function AAAgetQueryTokens()
     {
         $query_tokens = explode('?', $this->url);
         $url = current($query_tokens);
-        
-        $url_params = array_filter(explode('/', $url));
-        
-        return (empty($url_params) === false || $this->query_string !== '');
+        return array_filter(explode('/', $url));
     }
 
     /**
@@ -369,6 +400,22 @@ class Request implements Interfaces\Request, Interfaces\Arrayable
         return $this->location;
     }
 
+    /**
+     * @param array $data
+     */
+    public function setGetCollection(array $data)
+    {
+        $this->GetCollection = new Helper\Collection($this->sanitizeInput($data));
+    }
+
+    /**
+     * @return array
+     */
+    public function getGetCollection()
+    {
+        return $this->GetCollection->toArray();
+    }
+    
     /**
      * @param array $data
      */

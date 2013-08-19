@@ -35,7 +35,7 @@ class RequestTest extends \Everon\TestCase
         ],[],[]);
         
         $this->assertInstanceOf('\Everon\Interfaces\Request', $Request);
-        $this->assertInternalType('array', $Request->getQueryCollection());
+        $this->assertInternalType('array', $Request->getGetCollection());
         $this->assertInternalType('array', $Request->getPostCollection());
         $this->assertInternalType('array', $Request->getFileCollection());        
     }
@@ -69,7 +69,7 @@ class RequestTest extends \Everon\TestCase
         $this->assertFalse($Request->isSecure());
         
         $Request->setPostCollection($Request->getPostCollection());
-        $Request->setQueryCollection($Request->getQueryCollection());
+        $Request->setGetCollection($Request->getGetCollection());
         $Request->setFileCollection($Request->getFileCollection());
     }
     
@@ -114,7 +114,7 @@ class RequestTest extends \Everon\TestCase
     /**
      * @dataProvider dataProvider
      * @expectedException \Everon\Exception\Request
-     * @expectedExceptionMessage Unrecognized post method: "wrong"
+     * @expectedExceptionMessage Unrecognized http method: "wrong"
      */
     public function testValidateShouldThrowExceptionWhenWrongMethod(\Everon\Interfaces\Request $Request, array $expected)
     {
@@ -144,7 +144,7 @@ class RequestTest extends \Everon\TestCase
         
         if (self::$pass === 2) {
             $this->assertEquals($expected['url'], $Request->getUrl());
-            $this->assertEquals($expected['get'], $Request->getQueryCollection());
+            $this->assertEquals($expected['get'], $Request->getGetCollection());
             $this->assertEquals($expected['get']['param1'], $Request->getQueryParameter('param1'));
             $this->assertEquals($expected['get']['param2'], $Request->getQueryParameter('param2'));
         }

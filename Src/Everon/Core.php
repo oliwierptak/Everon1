@@ -17,7 +17,6 @@ abstract class Core implements Interfaces\Core
 
     /**
      * @return Interfaces\Controller|null
-     * @throws Exception\InvalidRouterParameter|\Exception
      */
     public function run()
     {
@@ -35,11 +34,10 @@ abstract class Core implements Interfaces\Core
             $this->getLogger()->debug('controller: %s', $controller_name);
             $Controller = $this->getFactory()->buildController($controller_name);
             $Controller->execute($action);
-            $Controller->response();
         }
         catch (Exception\InvalidRouterParameter $e) {
             //todo: raise event for form validation
-            throw $e;
+            echo $e;
         }
         catch (Exception\PageNotFound $e) {
             $this->getLogger()->error($e);

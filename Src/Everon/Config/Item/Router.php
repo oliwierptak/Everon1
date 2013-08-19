@@ -26,14 +26,10 @@ class Router extends \Everon\Config\Item implements Interfaces\ConfigItemRouter
 
     protected $action = null;
 
-    /**
-     * @var array
-     */
     protected $regex_get = [];
+    
+    protected $regex_query = [];
 
-    /**
-     * @var array
-     */
     protected $regex_post = [];
     
     
@@ -44,6 +40,7 @@ class Router extends \Everon\Config\Item implements Interfaces\ConfigItemRouter
             'controller' => null,
             'action' => null,
             'get' => [],
+            'query' => [],
             'post' => []
         ]);
     }
@@ -55,6 +52,7 @@ class Router extends \Everon\Config\Item implements Interfaces\ConfigItemRouter
         $this->setController($this->data['controller']);
         $this->setAction($this->data['action']);
         $this->setGetRegex($this->data['get']);
+        $this->setQueryRegex($this->data['query']);
         $this->setPostRegex($this->data['post']);
     }
 
@@ -103,9 +101,7 @@ class Router extends \Everon\Config\Item implements Interfaces\ConfigItemRouter
     public function getCleanUrl($str, $marker='?')
     {
         $query_tokens = explode($marker, $str);
-        $str = current($query_tokens);
-
-        return $str;
+        return current($query_tokens);
     }
 
     /**
@@ -115,7 +111,7 @@ class Router extends \Everon\Config\Item implements Interfaces\ConfigItemRouter
     public function filterQueryKeys($get_data)
     {
         $keys_to_keep = array_keys($get_data);
-        return $this->arrayFilterKeys($keys_to_keep, $this->getGetRegex(), true);
+        return $this->arrayFilterKeys($keys_to_keep, $this->getQueryRegex(), true);
     }
 
     /**
@@ -135,7 +131,7 @@ class Router extends \Everon\Config\Item implements Interfaces\ConfigItemRouter
     public function matchesByUrl($request_url)
     {
         try {
-            $data = $this->getGetRegex();
+            $data = $this->getQueryRegex();
             $pattern = $this->getCleanUrl($this->getUrl());
             
             if (is_array($data)) {
@@ -203,6 +199,9 @@ class Router extends \Everon\Config\Item implements Interfaces\ConfigItemRouter
         $this->action = $action;
     }
 
+    /**
+     * @return array
+     */    
     public function getGetRegex()
     {
         return $this->regex_get;
@@ -210,12 +209,31 @@ class Router extends \Everon\Config\Item implements Interfaces\ConfigItemRouter
 
     /**
      * @param $regex
-     */
+     */   
     public function setGetRegex($regex)
     {
         $this->regex_get = $regex;
     }
 
+    /**
+     * @return array
+     */
+    public function getQueryRegex()
+    {
+        return $this->regex_query;
+    }
+
+    /**
+     * @param $regex
+     */
+    public function setQueryRegex($regex)
+    {
+        $this->regex_query = $regex;
+    }
+
+    /**
+     * @return array
+     */
     public function getPostRegex()
     {
         return $this->regex_post;

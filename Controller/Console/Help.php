@@ -9,7 +9,7 @@ class Help extends Console\Controller implements Interfaces\Controller
 {
     public function show()
     {
-        $this->lines[] = "aaa";
+        $this->lines[] = "id: ".$this->getRequest()->getGetParameter('id', 0);
+        $this->lines[] = "text: ".$this->getRequest()->getGetParameter('text', '');
     }
-
 }

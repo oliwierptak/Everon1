@@ -40,7 +40,7 @@ class RouterTest extends \Everon\TestCase
     public function testGetRouteItemByRequest(\Everon\Interfaces\Factory $Factory, \Everon\Interfaces\Request $Request, \Everon\Config\Router $Config, $expected)
     {
         $Router = $Factory->buildRouter($Request, $Config, $Factory->buildRouterValidator());
-        $Item = $Router->getRouteItemByRequest($Request);
+        $Item = $Router->getRouteByRequest($Request);
         
         $this->assertInstanceOf('Everon\Interfaces\ConfigItemRouter', $Item);
         $this->assertEquals($Item->getController(), $expected['controller']);
@@ -53,7 +53,7 @@ class RouterTest extends \Everon\TestCase
     public function testGetRouteItemByRequestShouldReturnDefault(\Everon\Interfaces\Factory $Factory, \Everon\Interfaces\Request $Request, \Everon\Config\Router $Config, $expected)
     {
         $Router = $Factory->buildRouter($Request, $Config, $Factory->buildRouterValidator());
-        $Item = $Router->getRouteItemByRequest($Request);
+        $Item = $Router->getRouteByRequest($Request);
 
         $this->assertInstanceOf('Everon\Interfaces\ConfigItemRouter', $Item);
         $this->assertEquals($Item->getController(), $expected['controller']);

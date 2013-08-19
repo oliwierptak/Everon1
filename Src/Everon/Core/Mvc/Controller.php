@@ -35,31 +35,26 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
         return $this->getModelManager()->getModel($this->getName());
     }
 
-    protected function prepareResponse()
-    {
-        $this->getResponse()->setData($this->getView()->getOutput());
-    }
-
     /**
      * @param $action
-     * @return mixed
+     * @return void
      * @throws Exception\InvalidControllerMethod
      */
     public function execute($action)
     {
         $this->getView()->setOutputFromAction($action, $this->getView()->getData());
-        $result = parent::execute($action);
-        
-        return $result;
+        parent::execute($action);
     }
 
-    /**
-     * @return void
-     */
-    public function response()
+    protected function prepareResponse()
+    {
+        $this->getResponse()->setData($this->getView()->getOutput());
+    }
+
+    protected function response()
     {
         $this->getResponse()->send();
         echo $this->getResponse()->toHtml();
-    }    
+    }
 
 }

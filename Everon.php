@@ -25,12 +25,12 @@ try {
         $RouterValidator = $Factory->buildRouterValidator();
         
         return $Factory->buildRouter($Request, $RouteConfig, $RouterValidator);
-    });    
+    });
 
     $Container->register('Request', function() use ($Factory) {
         return $Factory->buildConsoleRequest($_SERVER, $_GET, $_POST, $_FILES);
-    });    
-    
+    });
+
     $Console = $Factory->buildConsole();
     $Console->run();
 }

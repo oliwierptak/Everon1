@@ -23,11 +23,9 @@ interface Controller
 
     /**
      * @param $action
-     * @return mixed|void
+     * @return void
      * @throws Exception\InvalidControllerMethod
      * @throws Exception\InvalidControllerResponse
      */
     function execute($action);
-
-    function response();
 }

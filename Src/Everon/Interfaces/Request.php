@@ -18,6 +18,8 @@ interface Request
     function getUrl();
     function setLocation($location);
     function getLocation();
+    function getGetParameter($name, $default=null);
+    function setGetParameter($name, $value);
     function getQueryParameter($name, $default=null);
     function setQueryParameter($name, $value);
     function getPostParameter($name, $default=null);
@@ -31,11 +33,13 @@ interface Request
     function getPort();
     function setProtocol($protocol);
     function getProtocol();
-    function setPostCollection(array $data);
-    function getPostCollection();
     function setServerCollection(array $data);
     function getServerCollection();
+    function setGetCollection(array $data);
+    function getGetCollection();
     function setQueryCollection(array $data);
     function getQueryCollection();
-    function hasGetParameters();
+    function setPostCollection(array $data);
+    function getPostCollection();
+    
 }

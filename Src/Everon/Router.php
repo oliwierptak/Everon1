@@ -30,7 +30,7 @@ class Router implements Interfaces\Router, Interfaces\Arrayable
      * @param Interfaces\Config $Config
      * @param Interfaces\RouterValidator $Validator
      */
-    public function __construct(Interfaces\Request $Request, Interfaces\Config $Config, Interfaces\RouterValidator $Validator)
+    public function __construct(Interfaces\Request $Request, Interfaces\Config $Config, Interfaces\RouterValidator $Validator) //todo: remove Request as dependency
     {
         $this->Request = $Request;
         $this->Config = $Config;
@@ -40,7 +40,7 @@ class Router implements Interfaces\Router, Interfaces\Arrayable
     protected function initRoutes()
     {
         $this->setCurrentRoute(
-            $this->getRouteItemByRequest($this->getRequest())
+            $this->getRouteByRequest($this->getRequest())
         );
     }
 
@@ -50,58 +50,57 @@ class Router implements Interfaces\Router, Interfaces\Arrayable
      * @throws Exception\PageNotFound
      * @throws Exception\Router
      */
-    public function getRouteItemByRequest(Interfaces\Request $Request)
+    public function getRouteByRequest(Interfaces\Request $Request)
     {
-        $RouteItem = null;
-
-        if ($Request->hasGetParameters() === false) {
-            $RouteItem = $this->getConfig()->getDefaultItem();
-            $RouteItem = ($RouteItem) ?: $this->getRouteItemByUrl($Request->getUrl());
-
-            if (is_null($RouteItem)) {
-                throw new Exception\Router('Default route does not exist');
-            }
-
-            list($get, $post) = $this->getRouterValidator()->validate($RouteItem, $Request);
-            
-            $Request->setQueryCollection(
-                array_merge($Request->getQueryCollection(), $get)
-            );
-
-            $Request->setPostCollection(
-                array_merge($Request->getPostCollection(), $post)
-            );
-            
-            return $RouteItem;
-        }
+        $DefaultItem = null;
+        $Item = null;
 
         foreach ($this->getConfig()->getItems() as $RouteItem) {
             /**
              * @var Interfaces\ConfigItemRouter $RouteItem
              */
-            $request_url = $Request->getUrl();
-            if ($RouteItem->matchesByUrl($request_url)) {
-                list($get, $post) = $this->getRouterValidator()->validate($RouteItem, $Request);
-                $Request->setQueryCollection(
-                    array_merge($Request->getQueryCollection(), $get)
-                );
-
-                $Request->setPostCollection(
-                    array_merge($Request->getPostCollection(), $post)
-                );
-                
-                return $RouteItem;
+            if ($RouteItem->matchesByUrl($Request->getUrl())) {
+                $Item = $RouteItem;
+                break;
             }
         }
 
+        if ($Item !== null) {
+            list($query, $get, $post) = $this->getRouterValidator()->validate($Item, $Request);
+
+            $Request->setQueryCollection(
+                array_merge($Request->getQueryCollection(), $query)
+            );
+
+            $Request->setGetCollection(
+                array_merge($Request->getGetCollection(), $get)
+            );
+
+            $Request->setPostCollection(
+                array_merge($Request->getPostCollection(), $post)
+            );
+
+            return $Item;
+        }
+
+        //check for default route
+        if ($Request->getUrl() === '/') {
+            $DefaultItem = $this->getConfig()->getDefaultItem();
+            if ($DefaultItem === null) {
+                throw new Exception\Router('Default route does not exist');
+            }
+            
+            return $DefaultItem;
+        }        
+
         throw new Exception\PageNotFound($Request->getLocation());
     }
-
+    
     /**
      * @param $url
      * @return Interfaces\ConfigItemRouter|null
      */
-    public function getRouteItemByUrl($url)
+    public function getRouteByUrl($url)
     {
         /**
          * @var $RouteItem Interfaces\ConfigItemRouter
