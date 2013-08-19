@@ -507,4 +507,12 @@ class Request implements Interfaces\Request, Interfaces\Arrayable
         $this->port = $port;
     }
 
+    /**
+     * @return bool
+     */
+    public function isEmptyUrl()
+    {
+        return $this->url === '/' || $this->url === '';
+    }
+
 }

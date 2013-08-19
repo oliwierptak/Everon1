@@ -41,5 +41,5 @@ interface Request
     function getQueryCollection();
     function setPostCollection(array $data);
     function getPostCollection();
-    
+    function isEmptyUrl();   
 }
