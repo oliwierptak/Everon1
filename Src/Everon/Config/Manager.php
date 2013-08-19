@@ -74,6 +74,7 @@ class Manager implements Interfaces\ConfigManager
             list($config_filename, $ini_config_data) = $item;
             if ($this->isRegistered($name) === false) {
                 $Config = $this->getFactory()->buildConfig($name, $config_filename, $ini_config_data);
+                $Config->setCompiler($Compiler);
                 $this->register($Config);
             }
         }

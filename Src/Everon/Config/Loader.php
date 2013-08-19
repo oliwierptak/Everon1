@@ -72,7 +72,7 @@ class Loader implements Interfaces\ConfigLoader
             $CacheFile = new \SplFileInfo($this->getCacheDirectory().$ConfigFile->getBasename().'.php');
             if ($use_cache && $CacheFile->isFile()) {
                 $filename = $CacheFile->getPathname();
-                $ini_config_data = function() use ($filename, $Compiler) {
+                $ini_config_data = function() use ($filename) {
                     $cache = null;
                     include($filename);
                     return $cache;

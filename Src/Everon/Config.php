@@ -47,6 +47,11 @@ class Config implements Interfaces\Config, Interfaces\Arrayable
      * @var array
      */
     protected $items = null;
+
+    /**
+     * @var \Closure
+     */
+    protected $Compiler = null;
     
 
     /**
@@ -158,13 +163,29 @@ class Config implements Interfaces\Config, Interfaces\Arrayable
     {
         return $this->name;
     }
-
+    
     /**
      * @param $name
      */
     public function setName($name)
     {
         $this->name = $name;
+    }
+
+    /**
+     * @return callable|null  Wrapped Interfaces\ConfigExpressionMatcher
+     */
+    public function getCompiler()
+    {
+        return $this->Compiler;
+    }
+
+    /**
+     * @param \Closure $Compiler Wrapped Interfaces\ConfigExpressionMatcher
+     */
+    public function setCompiler(\Closure $Compiler)
+    {
+        $this->Compiler = $Compiler;
     }
 
     public function getFilename()

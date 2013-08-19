@@ -22,7 +22,7 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
     protected function prepareResponse()
     {
         $this->getResponse()->setData(
-            implode('\n', $this->lines)
+            implode("\n", $this->lines)
         );
     }
     
@@ -33,7 +33,7 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
 
     protected function writeln($line)
     {
-        echo "${line}\n";
+        echo $line."\n";
     }
     
 }
