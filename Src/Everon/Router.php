@@ -84,7 +84,7 @@ class Router implements Interfaces\Router, Interfaces\Arrayable
         }
 
         //check for default route
-        if ($Request->getUrl() === '/') {
+        if ($Request->isEmptyUrl()) {
             $DefaultItem = $this->getConfig()->getDefaultItem();
             if ($DefaultItem === null) {
                 throw new Exception\Router('Default route does not exist');
