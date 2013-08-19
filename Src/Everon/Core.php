@@ -14,6 +14,7 @@ abstract class Core implements Interfaces\Core
     use Dependency\Injection\Logger;
     use Dependency\Injection\Factory;
     use Dependency\Injection\Router;
+    use Dependency\Injection\Request;
 
     /**
      * @return Interfaces\Controller|null
@@ -27,7 +28,7 @@ abstract class Core implements Interfaces\Core
              * @var \Everon\Interfaces\MvcController|\Everon\Interfaces\Controller $Controller
              * @var \Everon\Interfaces\ConfigItemRouter $CurrentRoute
              */
-            $CurrentRoute = $this->getRouter()->getCurrentRoute();
+            $CurrentRoute = $this->getRouter()->getRouteByRequest($this->getRequest());
             $controller_name = $CurrentRoute->getController();
             $action = $CurrentRoute->getAction();
             

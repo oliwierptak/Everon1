@@ -12,7 +12,7 @@ namespace Everon;
 abstract class TestCase extends \PHPUnit_Framework_TestCase
 {
     
-    protected $suite_name = 'Everon'; //todo: this should come from PHPUnit enviroment
+    protected $suite_name = 'Everon';
 
     /**
      * @var Interfaces\Environment

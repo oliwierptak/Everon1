@@ -9,7 +9,7 @@
  */
 namespace Everon\Test;
 
-//todo: use chain of command to store log in different places: disk, memory, emial, etc
+//todo: use chain of command to store log in different places: disk, memory, email, etc
 class LoggerTest extends \Everon\TestCase
 {
 

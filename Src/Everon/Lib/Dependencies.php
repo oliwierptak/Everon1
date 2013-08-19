@@ -51,10 +51,9 @@ $Container->propose('Request', function() use ($Factory) {
 });
 
 $Container->propose('Router', function() use ($Factory) {
-    $Request = $Factory->getDependencyContainer()->resolve('Request');
     $RouteConfig = $Factory->getDependencyContainer()->resolve('ConfigManager')->getConfigByName('console');
     $RouterValidator = $Factory->buildRouterValidator();
-    return $Factory->buildRouter($Request, $RouteConfig, $RouterValidator);
+    return $Factory->buildRouter($RouteConfig, $RouterValidator);
 });
 
 $Container->propose('ModelManager', function() use ($Factory) {

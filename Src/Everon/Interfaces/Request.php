@@ -9,7 +9,6 @@
  */
 namespace Everon\Interfaces;
 
-//todo: remove setters, make immutable
 interface Request
 {
     function setMethod($method);

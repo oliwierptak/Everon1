@@ -42,27 +42,4 @@ interface Router
      * @return \Everon\Interfaces\Config
      */
     function getConfig();
-
-    /**
-     * @param \Everon\Interfaces\Request $Request
-     * @return void
-     */
-    function setRequest(Request $Request);
-
-    /**
-     * @return \Everon\Interfaces\Request
-     */
-    function getRequest();
-
-    /**
-     * @param \Everon\Interfaces\ConfigItemRouter $RouteItem
-     * @return void
-     */
-    function setCurrentRoute(ConfigItemRouter $RouteItem);
-
-    /**
-     * @return \Everon\Interfaces\ConfigItemRouter
-     */
-    function getCurrentRoute();
-
 }

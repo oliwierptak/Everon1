@@ -111,12 +111,11 @@ interface Factory
     function buildConfigItemView($name, array $data);
 
     /**
-     * @param Interfaces\Request $Request
      * @param Interfaces\Config $Config
      * @param Interfaces\RouterValidator $Validator
      * @return Interfaces\Router
      */
-    function buildRouter(Interfaces\Request $Request, Interfaces\Config $Config, Interfaces\RouterValidator $Validator);
+    function buildRouter(Interfaces\Config $Config, Interfaces\RouterValidator $Validator);
 
     /**
      * @return Interfaces\RouterValidator

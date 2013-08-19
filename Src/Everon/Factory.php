@@ -309,16 +309,15 @@ class Factory implements Interfaces\Factory
     }
 
     /**
-     * @param Interfaces\Request $Request
      * @param Interfaces\Config $Config
      * @param Interfaces\RouterValidator $Validator
      * @return Interfaces\Router
      * @throws Exception\Factory
      */
-    public function buildRouter(Interfaces\Request $Request, Interfaces\Config $Config, Interfaces\RouterValidator $Validator)
+    public function buildRouter(Interfaces\Config $Config, Interfaces\RouterValidator $Validator)
     {
         try {
-            $RouteItem = new Router($Request, $Config, $Validator);
+            $RouteItem = new Router($Config, $Validator);
             $this->injectDependencies('Everon\Router', $RouteItem);
             return $RouteItem;
         }

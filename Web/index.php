@@ -23,10 +23,9 @@ try {
 
     //replace default Router
     $Container->register('Router', function() use ($Factory) {
-        $Request = $Factory->getDependencyContainer()->resolve('Request');
         $RouteConfig = $Factory->getDependencyContainer()->resolve('ConfigManager')->getRouterConfig();
         $RouterValidator = $Factory->buildRouterValidator();
-        return $Factory->buildRouter($Request, $RouteConfig, $RouterValidator);
+        return $Factory->buildRouter($RouteConfig, $RouterValidator);
     });
 
     //replace default Request

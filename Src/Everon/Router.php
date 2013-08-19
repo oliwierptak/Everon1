@@ -9,9 +9,8 @@
  */
 namespace Everon;
 
-class Router implements Interfaces\Router, Interfaces\Arrayable
+class Router implements Interfaces\Router
 {
-    use Dependency\Request;
     use Dependency\Config;
     use Dependency\RouterValidator;
 
@@ -26,22 +25,13 @@ class Router implements Interfaces\Router, Interfaces\Arrayable
 
 
     /**
-     * @param Interfaces\Request $Request
      * @param Interfaces\Config $Config
      * @param Interfaces\RouterValidator $Validator
      */
-    public function __construct(Interfaces\Request $Request, Interfaces\Config $Config, Interfaces\RouterValidator $Validator) //todo: remove Request as dependency
+    public function __construct(Interfaces\Config $Config, Interfaces\RouterValidator $Validator)
     {
-        $this->Request = $Request;
         $this->Config = $Config;
         $this->RouterValidator = $Validator;
-    }
-
-    protected function initRoutes()
-    {
-        $this->setCurrentRoute(
-            $this->getRouteByRequest($this->getRequest())
-        );
     }
 
     /**
@@ -65,6 +55,16 @@ class Router implements Interfaces\Router, Interfaces\Arrayable
             }
         }
 
+        //check for default route
+        if ($Request->isEmptyUrl() && $Item === null) {
+            $DefaultItem = $this->getConfig()->getDefaultItem();
+            if ($DefaultItem === null) {
+                throw new Exception\PageNotFound('Default route does not exist');
+            }
+            
+            $Item = $DefaultItem;
+        }
+
         if ($Item !== null) {
             list($query, $get, $post) = $this->getRouterValidator()->validate($Item, $Request);
 
@@ -82,16 +82,6 @@ class Router implements Interfaces\Router, Interfaces\Arrayable
 
             return $Item;
         }
-
-        //check for default route
-        if ($Request->isEmptyUrl()) {
-            $DefaultItem = $this->getConfig()->getDefaultItem();
-            if ($DefaultItem === null) {
-                throw new Exception\Router('Default route does not exist');
-            }
-            
-            return $DefaultItem;
-        }        
 
         throw new Exception\PageNotFound($Request->getLocation());
     }
@@ -127,34 +117,6 @@ class Router implements Interfaces\Router, Interfaces\Arrayable
         catch (\Exception $e) {
             throw new Exception\Router($e);
         }
-    }
-
-    /**
-     * @param Interfaces\ConfigItemRouter $RouteItem
-     */
-    public function setCurrentRoute(Interfaces\ConfigItemRouter $RouteItem)
-    {
-        $this->CurrentRoute = $RouteItem;
-    }
-
-    /**
-     * @return Interfaces\ConfigItemRouter|null
-     */
-    public function getCurrentRoute()
-    {
-        if (is_null($this->CurrentRoute)) {
-            $this->initRoutes();
-        }
-
-        return $this->CurrentRoute;
-    }
-
-    /**
-     * @return array
-     */
-    public function toArray()
-    {
-        return $this->getCurrentRoute()->toArray();
     }
 
 }
