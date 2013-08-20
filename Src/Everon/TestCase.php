@@ -153,6 +153,8 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         $Environment->setCacheConfig($this->getConfigCacheDirectory());
         $Environment->setViewTemplate($this->getTemplateDirectory());
 
+        require($Environment->getEveronLib().'Dependencies.php');
+
         $Container->register('Environment', function() use ($Environment) {
             return $Environment;
         });
@@ -167,8 +169,12 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
             return $Factory->buildRequest($server_data, $_GET, $_POST, $_FILES);
         });
 
-        require($Environment->getEveronLib().'Dependencies.php');
-        
+        $Container->register('Router', function() use ($Factory) {
+            $RouteConfig = $Factory->getDependencyContainer()->resolve('ConfigManager')->getRouterConfig();
+            $RouterValidator = $Factory->buildRouterValidator();
+            return $Factory->buildRouter($RouteConfig, $RouterValidator);
+        });
+
         return $Factory;
     }
 

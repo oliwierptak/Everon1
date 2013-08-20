@@ -11,7 +11,7 @@ namespace Everon\Test;
 
 use Everon\Interfaces;
 
-class CoreTest extends \Everon\TestCase
+class CoreMvcTest extends \Everon\TestCase
 {
     
     public function testConstructor()

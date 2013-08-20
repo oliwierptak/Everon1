@@ -221,7 +221,7 @@ class RequestTest extends \Everon\TestCase
             //expected
             ['location' => 'http://everon.nova/login',
                 'method' => 'POST',
-                'url' => '/login',
+                'url' => 'login',
                 'query_string' => '',
                 'location_address' => 'http://127.0.0.1/login',
                 'port' => 80,
@@ -242,7 +242,7 @@ class RequestTest extends \Everon\TestCase
             //expected
             ['location' => 'http://everon.nova/search?param1=val1&param2=val2',
                 'method' => 'GET',
-                'url' => '/search?param1=val1&param2=val2',
+                'url' => 'search?param1=val1&param2=val2',
                 'query_string' => 'param1=val1&param2=val2',                
                 'location_address' => 'http://127.0.0.1/search?param1=val1&param2=val2',
                 'port' => 80,
