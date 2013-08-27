@@ -9,10 +9,9 @@
  */
 namespace Everon\Helper;
 
-
 trait ToArray
 {
-    use \Everon\Helper\IsIterable;
+    use IsIterable;
     
     /**
      * array|stdClass $this->data is declared in class which uses this trait
