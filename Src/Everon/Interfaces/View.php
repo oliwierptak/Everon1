@@ -19,7 +19,7 @@ interface View
     function getTemplate($name, $data);
     function set($name, $value);
     function get($name);
-
     function getData();
+    function setData(array $data);    
     function setOutputFromAction($template, array $data);
 }

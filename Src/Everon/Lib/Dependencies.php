@@ -67,7 +67,7 @@ $Container->propose('ViewManager', function() use ($Factory) {
     $ApplicationConfig = $Factory->getDependencyContainer()->resolve('ConfigManager')->getApplicationConfig();
 
     return $Factory->buildViewManager(
-        $ApplicationConfig->go('view')->get('compilers', []),
+        $ApplicationConfig->go('view')->get('compilers', ['curly' => 'curly.htm']),
         $Factory->getDependencyContainer()->resolve('Environment')->getViewTemplate(),
         $Factory->getDependencyContainer()->resolve('Environment')->getWebCache()
     );

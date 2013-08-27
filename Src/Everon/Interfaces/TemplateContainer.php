@@ -20,4 +20,5 @@ interface TemplateContainer
     function setTemplateContent($content);
     function toArray();
     function getData();
+    function setData(array $data);    
 }

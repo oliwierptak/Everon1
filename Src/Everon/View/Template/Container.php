@@ -17,7 +17,6 @@ use Everon\Interfaces;
 class Container implements Interfaces\TemplateContainer, Interfaces\Arrayable
 {
     use Helper\Asserts;
-    use Helper\Asserts\IsArrayKey;
     use Helper\ToString;
     use Helper\ToArray;
 
@@ -46,16 +45,22 @@ class Container implements Interfaces\TemplateContainer, Interfaces\Arrayable
         $this->data = $data;
         $this->template_content = $content;
     }
+    
+    protected function resetCompiledContent()
+    {
+        $this->setCompiledContent(null);
+    }
 
     /**
      * @param $name
      * @param $value
      * @return Interfaces\TemplateCompiler
+     * @throws Exception\Template
      */
     public function set($name, $value)
     {
-        if ($this->compiled_content !== null && isset($this->data[$name])) {
-            throw new Exception\Template('Setting existing property: "%s"');
+        if ($this->data[$name] !== $value) {
+            $this->resetCompiledContent();
         }
         
         $this->data[$name] = $value;
@@ -82,6 +87,15 @@ class Container implements Interfaces\TemplateContainer, Interfaces\Arrayable
     public function getData()
     {
         return $this->data;
+    }
+
+    /**
+     * @param array $data
+     */
+    public function setData(array $data)
+    {
+        $this->data = $data;
+        $this->resetCompiledContent();
     }
 
     /**

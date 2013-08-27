@@ -42,13 +42,25 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
      */
     public function execute($action)
     {
-        $this->getView()->setOutputFromAction($action, $this->getView()->getData());
+        $this->setOutputFromAction($action);
         parent::execute($action);
+    }
+
+    /**
+     * @param $action
+     * @param array $data
+     */
+    public function setOutputFromAction($action)
+    {
+        $Filename = $this->getViewManager()->getTemplateFilename($action);
+        if ($Filename->isFile()) {
+            $Output = $this->getViewManager()->getTemplate($Filename, $data);
+        }
     }
 
     protected function prepareResponse()
     {
-        $this->getResponse()->setData($this->getView()->getOutput());
+        $this->getResponse()->setData((string) $this->getView());
     }
 
     protected function response()

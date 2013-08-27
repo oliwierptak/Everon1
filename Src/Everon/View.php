@@ -12,9 +12,10 @@ namespace Everon;
 abstract class View implements Interfaces\View, Interfaces\Arrayable
 {
     use Dependency\Injection\Factory;
-
-    use Helper\ToArray;
+    
     use Helper\String\LastTokenToName;
+    use Helper\ToString;
+    use Helper\ToArray;
 
     protected $data = [];
     protected $name = null;
@@ -23,12 +24,11 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
     /**
      * @var Interfaces\TemplateContainer
      */
-    protected $Output = null;
+    protected $Container = null;
 
 
     /**
      * @param $template_directory
-     * @param callable $TemplateCompiler
      */
     public function __construct($template_directory)
     {
@@ -76,11 +76,11 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
      */
     public function getOutput()
     {
-        if (is_null($this->Output)) {
+        if (is_null($this->Container)) {
             $this->setOutput('');
         }
 
-        return $this->Output;
+        return $this->Container;
     }
 
     /**
@@ -89,20 +89,18 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
      */
     public function setOutput($Output)
     {
-        $this->Output = null;
-
         if ($Output instanceof Interfaces\TemplateContainer) {
-            $this->Output = $Output;
+            $this->Container = $Output;
         }
         else if (is_string($Output)) {
-            $this->Output = $this->getFactory()->buildTemplateContainer($Output, []);
+            $this->Container = $this->getFactory()->buildTemplateContainer($Output, []);
         }
         else if (is_array($Output)) {
-            $this->Output = $this->getFactory()->buildTemplateContainer('', $Output);
+            $this->Container = $this->getFactory()->buildTemplateContainer('', $Output);
         }
 
-        if (is_null($this->Output)) {
-            throw new Exception\Template('Invalid Output type');
+        if (is_null($this->Container)) {
+            throw new Exception\Template('Invalid Container type');
         }
     }
 
@@ -123,7 +121,7 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
      */
     public function set($name, $value)
     {
-        $this->data[$name] = $value;
+        $this->getOutput()->set($name, $value);
     }
 
     /**
@@ -133,11 +131,7 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
      */
     public function get($name, $default=null)
     {
-        if (isset($this->data[$name]) === false) {
-            return $default;
-        }
-
-        return $this->data[$name];
+        return $this->getOutput()->get($name);
     }
 
     /**
@@ -145,7 +139,7 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
      */
     public function setData(array $data)
     {
-        $this->data = $data;
+        $this->getOutput()->setData($data);
     }
 
     /**
@@ -153,7 +147,7 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
      */
     public function getData()
     {
-        return $this->data;
+        return $this->getOutput()->getData();
     }
 
     /**
@@ -163,9 +157,22 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
     public function setOutputFromAction($action, array $data)
     {
         $Filename = $this->getTemplateFilename($action);
-        if ($this->Output === null && $Filename->isFile()) {
-            $this->Output = $this->getTemplate($action, $data);
+        if ($Filename->isFile()) {
+            $this->Container = $this->getTemplate($action, $data);
         }
+    }
+
+    /**
+     * @return array
+     */
+    public function getToArray()
+    {
+        return $this->getOutput()->toArray();
+    }
+
+    public function getToString()
+    {
+        return (string) $this->getOutput();
     }
 
 }

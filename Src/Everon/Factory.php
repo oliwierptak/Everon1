@@ -233,19 +233,19 @@ class Factory implements Interfaces\Factory
      * @param $compilers_to_init
      * @param $view_template_directory
      * @param $view_cache_directory
-     * @return Interfaces\ViewManager|View\Manager\Everon
+     * @return Interfaces\ViewManager
      * @throws Exception\Factory
      */
     public function buildViewManager($compilers_to_init, $view_template_directory, $view_cache_directory)
     {
         try {
             $compilers = [];
-            for ($a=0; $a<count($compilers_to_init); ++$a) {
-                $compilers[] = $this->buildTemplateCompiler($compilers_to_init[$a]);
+            foreach ($compilers_to_init as $name => $extension) {
+                $compilers[] = $this->buildTemplateCompiler($this->stringUnderscoreToCamel($name));
             }
             
-            $Manager = new View\Manager\Everon($compilers, $view_template_directory, $view_cache_directory);
-            $this->injectDependencies('Everon\View\Manager\Everon', $Manager);
+            $Manager = new View\Manager($compilers, $view_template_directory, $view_cache_directory);
+            $this->injectDependencies('Everon\View\Manager', $Manager);
             return $Manager;
         }
         catch (\Exception $e) {

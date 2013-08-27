@@ -162,7 +162,7 @@ EOF;
     /**
      * @dataProvider dataProvider
      * @expectedException \Everon\Exception\Template
-     * @expectedExceptionMessage Invalid Output type
+     * @expectedExceptionMessage Invalid Container type
      */
     public function testSetOutputShouldThrowExceptionWhenWrongInputIsSet(\Everon\Interfaces\View $View)
     {
@@ -175,7 +175,7 @@ EOF;
      */
     public function testGetOutputShouldSetOutputToEmptyStringWhenNull(\Everon\Interfaces\View $View)
     {
-        $PropertyOutput = $this->getProtectedProperty('\Everon\View', 'Output');
+        $PropertyOutput = $this->getProtectedProperty('\Everon\View', 'Container');
         $PropertyOutput->setValue($View, null);
         
         $Output = $View->getOutput();
