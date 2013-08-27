@@ -25,7 +25,6 @@ class ClassLoaderCache extends ClassLoader implements Interfaces\ClassLoader
     public function __construct(Interfaces\ClassMap $ClassMap)
     {
         $this->ClassMap = $ClassMap;
-        $this->ClassMap->loadMap(); 
     }
 
     /**

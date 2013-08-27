@@ -13,8 +13,14 @@ use Everon\Interfaces;
 
 class ClassMap implements Interfaces\ClassMap
 {
-    protected $class_map = [];
+    /**
+     * @var array
+     */
+    protected $class_map = null;
 
+    /**
+     * @var \SplFileInfo
+     */
     protected $class_map_filename = null;
 
 
@@ -23,7 +29,7 @@ class ClassMap implements Interfaces\ClassMap
      */
     public function __construct($filename)
     {
-        $this->class_map_filename = $filename;
+        $this->class_map_filename = new \SplFileInfo($filename);
     }
 
     /**
@@ -32,6 +38,7 @@ class ClassMap implements Interfaces\ClassMap
      */
     public function addToMap($class, $file)
     {
+        $this->loadMap();
         if (isset($this->class_map[$class]) === false) {
             $this->class_map[$class] = $file;
             $this->saveMap();
@@ -44,6 +51,7 @@ class ClassMap implements Interfaces\ClassMap
      */
     public function getFilenameFromMap($class)
     {
+        $this->loadMap();
         if (isset($this->class_map[$class])) {
             return $this->class_map[$class];
         }
@@ -52,7 +60,7 @@ class ClassMap implements Interfaces\ClassMap
     }
 
     /**
-     * @return null
+     * @return \SplFileInfo
      */
     protected function getCacheFilename()
     {
@@ -61,19 +69,31 @@ class ClassMap implements Interfaces\ClassMap
 
     public function loadMap()
     {
-        $filename = $this->getCacheFilename();
-        if (is_file($filename)) {
-            $this->class_map = include($filename);
+        if ($this->class_map !== null) {
+            return;
+        }
+        
+        $Filename = $this->getCacheFilename();
+        if ($Filename->isFile()) {
+            $this->class_map = include($Filename);
         }
     }
 
     protected function saveMap()
     {
-        $data = var_export($this->class_map, 1);
-        $filename = $this->getCacheFilename();
-        $h = fopen($filename, 'w+');
-        fwrite($h, "<?php return $data; ");
-        fclose($h);
+        try {
+            $this->loadMap();
+            $data = var_export($this->class_map, 1);
+            $Filename = $this->getCacheFilename();
+            if ($Filename->isWritable()) {
+                $h = fopen($Filename, 'w+');
+                fwrite($h, "<?php return $data; ");
+                fclose($h);                
+            }
+        }
+        catch (\Exception $e) {
+            return null;
+        }
     }
 
 }
