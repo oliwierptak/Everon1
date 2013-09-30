@@ -65,17 +65,18 @@ all you have to do is to extend default Factory class.
 
 ## Routing
 Consider this routing example.
-
+  
     [login_submit]
-    url = '%application.url%login/submit/session/{sid}/redirect/{location}?and=something&else={else}'
+    url = login/submit/session/{sid}/redirect/{location}
     controller = Login
     action = submit
-    get[sid] = '[a-z0-9]+'
-    get[location] = '[[:alnum:]|%]+'
-    get[and] = '[a-z]+'
+    query[sid] = '[a-z0-9]+'
+    query[location] = '[[:alnum:]|%]+'
+    get[token] = '[a-z]+'
     get[else] = '[0-9]+'
-    post[username] = '[a-z]{3,16}'
-    post[password] = '[[:alnum:]]{4,22}'
+    post[username] = '[a-z]{4,16}'
+    post[password] = '[[:alnum:]]{3,22}'
+    post[token] = '[0-9]+'    
     
 It could be translated into commands for Everon:
 * Take `url` from application.ini and replace `%application.url%` with it.
