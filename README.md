@@ -64,7 +64,7 @@ all you have to do is to extend default Factory class.
 
 
 ## Routing
-Consider this routing example.
+Consider this routing example for this url: '/login/submit/session/adf24ds34/redirect/%2Flogin%2Fresetpassword?token=abcd&pif=2457'
   
     [login_submit]
     url = login/submit/session/{sid}/redirect/{location}
@@ -73,7 +73,7 @@ Consider this routing example.
     query[sid] = '[a-z0-9]+'
     query[location] = '[[:alnum:]|%]+'
     get[token] = '[a-z]+'
-    get[else] = '[0-9]+'
+    get[pif] = '[0-9]+'
     post[username] = '[a-z]{4,16}'
     post[password] = '[[:alnum:]]{3,22}'
     post[token] = '[0-9]+'    
@@ -82,8 +82,8 @@ It could be translated into commands for Everon:
 * Take `url` from application.ini and replace `%application.url%` with it.
 * Make sure `sid` parameter in URL consists lower cased letters and numbers only.
 * Make sure `location` parameter in URL consists alphanumerical and % symbol only.
-* Make sure that parameter `and` in _GET consists lower cased letters only.
-* Make sure that parameter `else` in _GET consists numbers only.
+* Make sure that parameter `token` in _GET consists lower cased letters only.
+* Make sure that parameter `pif` in _GET consists numbers only.
 * Make sure that parameter `username` in _POST consists only lower cased letters and is not less then 3 nor longer 
   then 16 characters.
 * Make sure that parameter `password` in _POST consists only alphanumerical symbols and is not less then 4 nor longer
