@@ -76,7 +76,11 @@ class Router implements Interfaces\Router
 
         return $Item;
     }
-    
+
+    /**
+     * @param Interfaces\ConfigItemRouter $RouteItem
+     * @param Interfaces\Request $Request
+     */
     public function validateAndUpdateRequest(Interfaces\ConfigItemRouter $RouteItem, Interfaces\Request $Request)
     {
         list($query, $get, $post) = $this->getRouterValidator()->validate($RouteItem, $Request);
