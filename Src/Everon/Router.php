@@ -53,11 +53,14 @@ class Router implements Interfaces\Router
                 $Item = $RouteItem;
                 break;
             }
+            
+            //remember the first item as default
+            $DefaultItem = ($Item === null && $DefaultItem === null) ? $RouteItem : $DefaultItem;
         }
 
         //check for default route
         if ($Request->isEmptyUrl() && $Item === null) {
-            $DefaultItem = $this->getConfig()->getDefaultItem();
+            $DefaultItem = $this->getConfig()->getDefaultItem() ?: $DefaultItem;
             if ($DefaultItem === null) {
                 throw new Exception\PageNotFound('Default route does not exist');
             }
@@ -65,25 +68,30 @@ class Router implements Interfaces\Router
             $Item = $DefaultItem;
         }
 
-        if ($Item !== null) {
-            list($query, $get, $post) = $this->getRouterValidator()->validate($Item, $Request);
-
-            $Request->setQueryCollection(
-                array_merge($Request->getQueryCollection(), $query)
-            );
-
-            $Request->setGetCollection(
-                array_merge($Request->getGetCollection(), $get)
-            );
-
-            $Request->setPostCollection(
-                array_merge($Request->getPostCollection(), $post)
-            );
-
-            return $Item;
+        if ($Item === null) {
+            throw new Exception\PageNotFound($Request->getLocation());
         }
+        
+        $this->validateAndUpdateRequest($Item, $Request);
 
-        throw new Exception\PageNotFound($Request->getLocation());
+        return $Item;
+    }
+    
+    public function validateAndUpdateRequest(Interfaces\ConfigItemRouter $RouteItem, Interfaces\Request $Request)
+    {
+        list($query, $get, $post) = $this->getRouterValidator()->validate($RouteItem, $Request);
+
+        $Request->setQueryCollection(
+            array_merge($Request->getQueryCollection(), $query)
+        );
+
+        $Request->setGetCollection(
+            array_merge($Request->getGetCollection(), $get)
+        );
+
+        $Request->setPostCollection(
+            array_merge($Request->getPostCollection(), $post)
+        );
     }
     
     /**
