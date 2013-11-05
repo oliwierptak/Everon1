@@ -20,9 +20,12 @@ class Manager implements Interfaces\ViewManager
     use Dependency\Injection\ConfigManager;
     
     use Helper\String\LastTokenToName;
-    
 
-    protected $views = [];
+
+    /**
+     * @var Helper\Collection
+     */
+    protected $ViewCollection = [];
 
     protected $view_directory = null;
     
@@ -36,6 +39,7 @@ class Manager implements Interfaces\ViewManager
     public function __construct(array $compilers, $view_directory)
     {
         $this->compilers = $compilers;
+        $this->ViewCollection = new Helper\Collection([]);
         $this->view_directory = $view_directory;
     }
 
@@ -102,7 +106,7 @@ class Manager implements Interfaces\ViewManager
      */
     public function getView($name)
     {
-        if (isset($this->views[$name]) === false) {
+        if ($this->ViewCollection->has($name) === false) {
             $template_directory = $this->view_directory.$name.DIRECTORY_SEPARATOR.'templates'.DIRECTORY_SEPARATOR;
             if  ((new \SplFileInfo($template_directory))->isDir() === false) {
                 throw new Exception\ViewManager('View template directory: "%s" does not exist', $template_directory);
@@ -110,11 +114,11 @@ class Manager implements Interfaces\ViewManager
 
             $default_extension = $this->getConfigManager()->getApplicationConfig()->go('view')->get('default_extension');
             $ViewVariables = $this->getConfigManager()->getViewConfig()->get($name);
-            
-            $this->views[$name] = $this->getFactory()->buildView($name, $template_directory, $default_extension, $ViewVariables);
+            $View = $this->getFactory()->buildView($name, $template_directory, $default_extension, $ViewVariables);
+            $this->ViewCollection->set($name, $View);
         }
 
-        return $this->views[$name];
+        return $this->ViewCollection->get($name);
     }
 
     /**
@@ -123,7 +127,7 @@ class Manager implements Interfaces\ViewManager
      */
     public function setView($name, Interfaces\View $View)
     {
-        $this->views[$name] = $View;
+        $this->ViewCollection->set($name, $View);
     }
 
     /**
