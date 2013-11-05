@@ -94,8 +94,6 @@ Of course you can write your own regular expressions. See [router.ini](https://g
 ## Sharable config variables
 In Everon configuration files share their variables with other configuration files, 
 by using `%config_name.value_name%` notation.
-That's something very helpful, in case you have to deploy and configure many environments, 
-eg. testing vs staging vs production.
 For example '%application.env.url%s' variable is used again in the view configuration file.
 
 
