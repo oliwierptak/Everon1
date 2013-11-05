@@ -37,21 +37,21 @@ abstract class Exception extends \Exception
     }
 
     /**
-     * @param \Exception $e
+     * @param \Exception $Exception
      * @return string
      */
-    public static function getErrorMessageFromException(\Exception $e)
+    public static function getErrorMessageFromException(\Exception $Exception)
     {
         $message = "";
-        $exception_message = $e->getMessage();
-        $class = get_class($e);
+        $exception_message = $Exception->getMessage();
+        $class = get_class($Exception);
         if ($class != '') {
             $message = $message.'{'.$class.'}';
         }
         if ($message != '' && $exception_message != '') {
-            $message = $message . " ";
+            $message = $message.' ';
         }
-        $message = $message . $e->getMessage();
+        $message = $message.$exception_message;
 
         return $message;
     }
@@ -59,7 +59,7 @@ abstract class Exception extends \Exception
     /**
      * @return string
      */
-    public function getToString()
+    protected function getToString()
     {
         return self::getErrorMessageFromException($this);
     }

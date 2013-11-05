@@ -12,23 +12,19 @@ namespace Everon\Helper;
 
 trait ToString
 {
-
-    protected $to_string = '';
-
     public function __toString()
     {
         try
         {
-            if ($this->to_string === '' && method_exists($this, 'getToString')) {
-                $this->to_string = $this->getToString();
+            if (method_exists($this, 'getToString')) {
+                return $this->getToString();
             }
-
-            return $this->to_string;
+            
+            return '';
         }
         catch (\Exception $e)
         {
             return $e->getMessage();
         }
     }
-
 }

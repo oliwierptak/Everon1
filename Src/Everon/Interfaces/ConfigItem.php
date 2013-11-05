@@ -16,4 +16,5 @@ interface ConfigItem
     function setName($name);
     function isDefault();
     function setIsDefault($is_default);
+    function toArray();
 }

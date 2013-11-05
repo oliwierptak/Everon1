@@ -38,7 +38,7 @@ class ViewTest extends \Everon\TestCase
     public function testSetOutputShouldCopyAssignedDataFromViewToOutputTemplate(\Everon\Interfaces\View $View)
     {
         $this->markTestSkipped();
-        $Form = new \Everon\View\Element\Form([
+        $Form = new \Everon\View\Html\Form([
             'action' => '/login/submit'
         ]);
 
@@ -84,7 +84,7 @@ EOF;
     public function testOutputTemplate(\Everon\Interfaces\View $View)
     {
         $this->markTestSkipped();
-        $Form = new \Everon\View\Element\Form([
+        $Form = new \Everon\View\Html\Form([
             'action' => '/login/submit'
         ]);
 

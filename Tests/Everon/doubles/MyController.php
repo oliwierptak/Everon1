@@ -9,7 +9,7 @@
  */
 namespace Everon\Test;
 
-class MyController extends \Everon\Core\Mvc\Controller implements \Everon\Interfaces\Controller, \Everon\Interfaces\MvcController
+class MyController extends \Everon\Mvc\Controller implements \Everon\Interfaces\Controller, \Everon\Interfaces\MvcController
 {
     public function testOne()
     {

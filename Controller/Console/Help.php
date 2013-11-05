@@ -1,11 +1,10 @@
 <?php
-namespace Everon\Controller\Console;
+namespace Everon\Console\Controller;
 
-use Everon\Core\Console;
-use Everon\Dependency;
+use Everon\Console\Controller;
 use Everon\Interfaces;
 
-class Help extends Console\Controller implements Interfaces\Controller
+class Help extends Controller implements Interfaces\Controller
 {
     public function show()
     {

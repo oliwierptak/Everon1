@@ -1,16 +1,22 @@
 <?php
-namespace Everon\Controller;
 
-use Everon\Core\Mvc;
+namespace Everon\Mvc\Controller;
+
+use Everon\Mvc\Controller;
 use Everon\Dependency;
 use Everon\Interfaces;
 
-class Login extends Mvc\Controller implements Interfaces\Controller
+class Login extends Controller implements Interfaces\Controller
 {
     public function form()
     {
-        $redirect_url = urlencode('/login/resetpassword');
-        $this->getViewManager()->getView('Login')->set('login_url', "login/submit/session/adf24ds34/redirect/${redirect_url}?and=something&else=2457");
+        $redirect_url = urlencode('/login/reset password');
+        $this->getViewManager()->getView('Login')->set('login_url', "login/submit/session/adf24ds34/redirect/{urlencode:${redirect_url}}?and=something&else=2457");
+    }
+    
+    public function account()
+    {
+        
     }
 
     public function submit()
@@ -26,6 +32,10 @@ class Login extends Mvc\Controller implements Interfaces\Controller
 
         $this->getView()->set('redirect_url', 'account/summary');
         $this->getView()->set('User', $User);
+        $this->getView()->set('Account', $this->getViewManager()->getView('Account'));
+       
+
+        // return $this->getViewManager()->getView('Account')->execute(['loginForm' => $this]);
     }
 
 }

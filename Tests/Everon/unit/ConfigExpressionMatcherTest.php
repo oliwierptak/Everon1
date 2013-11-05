@@ -37,7 +37,7 @@ class ConfigExpressionMatcherTest extends \Everon\TestCase
 
         $Compiler = $Matcher->getCompiler($Manager);
 
-        $data = ['this_is_my_url' => '%application.url%'];
+        $data = ['this_is_my_url' => '%application.env.url%'];
         $Compiler($data);
         $this->assertEquals($data, ['this_is_my_url' => '/testme']);
 

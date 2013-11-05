@@ -7,7 +7,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon\Core\Console;
+namespace Everon\Console;
 
 use Everon\Interfaces;
 use Everon\Helper;
@@ -41,8 +41,8 @@ class Request extends \Everon\Request
         $this->ServerCollection['QUERY_STRING'] = $query_string;
         $this->ServerCollection['SERVER_NAME'] = $this->ServerCollection['SCRIPT_FILENAME'];
 
-        //[QUERY_STRING] => help&me=12&bla=ola
-        //[REQUEST_URI] => /?help&me=12&bla=ola
+        //[QUERY_STRING] => help&id=12&foo=bar
+        //[REQUEST_URI] => /?help&id=12&foo=bar
         parse_str($query_string, $get);
 
         $current_get = $this->getGetCollection();

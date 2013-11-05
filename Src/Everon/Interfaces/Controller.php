@@ -10,6 +10,7 @@
 namespace Everon\Interfaces;
 
 use Everon\Exception;
+use Everon\Interfaces;
 
 interface Controller
 {
@@ -28,4 +29,14 @@ interface Controller
      * @throws Exception\InvalidControllerResponse
      */
     function execute($action);
+
+    /**
+     * @return Interfaces\Response
+     */
+    function getResponse();
+
+    /**
+     * @param Interfaces\Response $Response
+     */
+    function setResponse(Interfaces\Response $Response);
 }

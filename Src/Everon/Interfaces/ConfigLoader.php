@@ -18,12 +18,10 @@ interface ConfigLoader
     function getCacheDirectory();
     
     /**
-     * @param \Closure $Compiler
      * @param $use_cache
-     * @param $default_config_filename
      * @return array
      */
-    function load(\Closure $Compiler, $use_cache, $default_config_filename);
+    function load($use_cache);
 
     /**
      * @param $filename
@@ -36,4 +34,7 @@ interface ConfigLoader
      * @throws Exception\Config
      */
     function saveConfigToCache(Interfaces\Config $Config);
+
+    function enableCache();
+    function disableCache();
 }

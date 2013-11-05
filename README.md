@@ -79,7 +79,6 @@ Consider this routing example for this url: '/login/submit/session/adf24ds34/red
     post[token] = '[0-9]+'    
     
 It could be translated into commands for Everon:
-* Take `url` from application.ini and replace `%application.url%` with it.
 * Make sure `sid` parameter in URL consists lower cased letters and numbers only.
 * Make sure `location` parameter in URL consists alphanumerical and % symbol only.
 * Make sure that parameter `token` in _GET consists lower cased letters only.
@@ -92,23 +91,30 @@ It could be translated into commands for Everon:
 Unless all those conditions are met, the request won't pass and error exception will be thrown.
 Of course you can write your own regular expressions. See [router.ini](https://github.com/oliwierptak/Everon/blob/master/Config/router.ini) for more examples.
 
-## Config inheritance
-Not only one config can use values from another file (by using `$config_name.value_name%` notation), 
-the config sections can be inherited. 
-Consider this ini example:
+## Sharable config variables
+In Everon configuration files share their variables with other configuration files, 
+by using `%config_name.value_name%` notation.
+That's something very helpful, in case you have to deploy and configure many environments, 
+eg. testing vs staging vs production.
+For example '%application.env.url%s' variable is used again in the view configuration file.
 
-    [Default]
+
+## Config inheritance
+Not only one config can use values from another file, the config sections can be inherited. 
+Consider this example:
+
+    [Index]
     title = 'Welcome to Everon'
     lang = 'en-US'
-    static_url = '%application.url%static/default/'
+    static_url = '%application.env.url%static/default/'
     charset = 'UTF-8'
+
+    [ThemeBlue]
+    static_url = '%application.env.url%static/blue/'
     
     [Account < ThemeBlue]
     title = 'Your Account'
     description = 'Account'
-    
-    [ThemeBlue]
-    static_url = '%application.url%static/blue/'
     
 The first item is special, its name does not matter, however all of its values will be used as defaults.
 The order of the items below is irrelevant.
@@ -123,6 +129,7 @@ for `static_url` property will be set to '/static/blue' as defined in the parent
 The rest of the missing properties, like `$charset`, will be inherited from `[Default]` section.
 
 See [view.ini](https://github.com/oliwierptak/Everon/blob/master/Config/view.ini) for more examples.
+
 
 ## Tests
     cd Tests/Everon/; phpunit

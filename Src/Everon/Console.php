@@ -7,12 +7,15 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon\Core;
+namespace Everon;
 
+use Everon\Dependency;
 use Everon\Interfaces;
-use Everon\Exception;
 
-class Mvc extends \Everon\Core implements Interfaces\Core
+class Console extends Core implements Interfaces\Core
 {
-
+    protected function createController($name)
+    {
+        return $this->getFactory()->buildController($name, 'Everon\Console\Controller');
+    }
 }

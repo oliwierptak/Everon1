@@ -22,7 +22,7 @@ class ExpressionMatcher implements Interfaces\ConfigExpressionMatcher
     protected $Compiler = null;
     
     protected $expressions = [
-        '%application.url%'
+        '%application.env.url%'
     ];
     
 
@@ -43,28 +43,28 @@ class ExpressionMatcher implements Interfaces\ConfigExpressionMatcher
         return $Compiler;
     }
 
-
     /**
-     * @param Interfaces\ConfigManager $Manager
-     * @return \Closure
+     * @param array $configs_data
+     * @return callable
      */
-    public function getCompiler(Interfaces\ConfigManager $Manager)
+    public function getCompiler(array $configs_data)
     {
-        if ($this->Compiler === null) {
-            $expressions = [];
-            foreach ($this->expressions as $item) {
-                $tokens = explode('.', trim($item, '%'));
-                $config_name = $tokens[0];
-                $config_key = $tokens[1];
-
-                $Config = $Manager->getConfigByName($config_name);
-                $expressions[$item] = $Config->get($config_key); //todo: make deep
-            }
-
-            $this->Compiler = $this->buildCompiler($expressions);
+        $expressions = [];
+        foreach ($this->expressions as $item) {
+            $tokens = explode('.', trim($item, '%'));   //eg. %application.env.url%
+            list($config_name, $config_section, $config_section_variable) = $tokens;
+            /**
+             * @var Interfaces\ConfigLoaderItem $ConfigLoaderItem
+             */
+            $ConfigLoaderItem = $configs_data[$config_name];
+            $data = $ConfigLoaderItem->getData();
+            
+            $expressions[$item] = $data[$config_section][$config_section_variable];
         }
-        
-        return $this->Compiler;
+
+        //todo: remove it from here, put into manager
+        $expressions['%root%'] = getcwd().DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR;
+        return $this->buildCompiler($expressions);
     }
 
     /**

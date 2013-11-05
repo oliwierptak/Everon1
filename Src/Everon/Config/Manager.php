@@ -29,29 +29,19 @@ class Manager implements Interfaces\ConfigManager
      */
     protected $configs = null;
 
-    /**
-     * @var boolean
-     */
-    protected $use_cache = null;
-
-    protected $default_config_filename = 'application.ini';
+    protected $default_cache_config_filename = 'cache.ini';
     
-    protected $default_config_name = 'application';
+    protected $default_config_name = 'cache';
 
     /**
      * @var array
      */
-    protected $default_config_data = [
-        'url' => '/',
+    protected $default_cache_config_data = [
         'cache' => [
             'config_manager' => false,
             'autoloader' => false,
-        ],
-        'template' => [
-            'compilers' => ['Curly']
         ]
     ];
-
 
     /**
      * @param Interfaces\ConfigLoader $Loader
@@ -65,76 +55,44 @@ class Manager implements Interfaces\ConfigManager
 
     protected function loadAndRegisterConfigs()
     {
-        $this->setupCachingAndDefaultConfig();
+        $default_config_data = $this->getCacheConfigData();
+        $configs_data = $this->getConfigLoader()->load((bool) $default_config_data['enabled']['config_manager']);
+        $Compiler = $this->ExpressionMatcher->getCompiler($configs_data);
 
-        $Compiler = $this->ExpressionMatcher->getCompiler($this);
-        $configs_data = $this->getConfigLoader()->load($Compiler, $this->use_cache, $this->default_config_filename);
-        
-        foreach ($configs_data as $name => $item) {
-            list($config_filename, $ini_config_data) = $item;
+        foreach ($configs_data as $name => $ConfigLoaderItem) {
             if ($this->isRegistered($name) === false) {
-                $Config = $this->getFactory()->buildConfig($name, $config_filename, $ini_config_data);
-                $Config->setCompiler($Compiler);
+                $Config = $this->getFactory()->buildConfig($name, $ConfigLoaderItem);
                 $this->register($Config);
+                $Config->setCompiler($Compiler);
             }
         }
     }
 
-    /**
-     * @return Interfaces\Config
-     */
-    protected function getDefaultConfig()
+    protected function getCacheConfigData()
     {
-        $data = $this->default_config_data;
+        $data = $this->default_cache_config_data;
         $directory = $this->getConfigLoader()->getConfigDirectory();
-        
-        $ini = $this->getConfigLoader()->read($directory.$this->default_config_filename);
+
+        $ini = $this->getConfigLoader()->read($directory.$this->default_cache_config_filename);
         if (is_array($ini)) {
             $data = $this->arrayMergeDefault($data, $ini);
         }
-
-        $Config = $this->getFactory()->buildConfig(
-            $this->default_config_name,
-            $directory.$this->default_config_filename,
-            $data
-        );
-
-        return $Config;
+        
+        return $data;
     }
-    
-    protected function setupCachingAndDefaultConfig()
-    {
-        /**
-         * @var Interfaces\Config $Config
-         */
-        if (isset($this->configs[$this->default_config_name]) === false) {
-            $Config = $this->getDefaultConfig();
-            $this->use_cache = (bool) $Config->go('cache')->get('config_manager');
-            $this->register($Config);
-        }
-        else {
-            $Config = $this->configs[$this->default_config_name];
-            $this->use_cache = (bool) $Config->go('cache')->get('config_manager');
-        }
-    }
-
+   
     /**
      * @param Interfaces\Config $Config
      * @throws Exception\Config
      */
     public function register(Interfaces\Config $Config)
     {
-        if (is_array($this->configs)) {
-            if (array_key_exists($Config->getName(), $this->configs)) {
-                throw new Exception\Config('Config with name: "%s" already registered', $Config->getName());
-            }
+        if (isset($this->configs[$Config->getName()])) {
+            throw new Exception\Config('Config with name: "%s" already registered', $Config->getName());
         }
         
         $this->configs[$Config->getName()] = $Config;
-        
-        if ($this->use_cache) {
-            $this->getConfigLoader()->saveConfigToCache($Config);
-        }        
+        $this->getConfigLoader()->saveConfigToCache($Config);
     }
 
     /**
@@ -152,7 +110,7 @@ class Manager implements Interfaces\ConfigManager
      */
     public function isRegistered($name)
     {
-        return array_key_exists($name, $this->configs);
+        return isset($this->configs[$name]);
     }
 
     /**
@@ -170,15 +128,15 @@ class Manager implements Interfaces\ConfigManager
     }
 
     /**
-     * @return \Everon\Interfaces\ConfigItem
+     * @return \Everon\Interfaces\Config
      */
     public function getApplicationConfig()
     {
-        return $this->getConfigByName($this->default_config_name);
+        return $this->getConfigByName('application');
     }
 
     /**
-     * @return \Everon\Interfaces\ConfigItem
+     * @return \Everon\Interfaces\Config
      */
     public function getRouterConfig()
     {
@@ -186,7 +144,7 @@ class Manager implements Interfaces\ConfigManager
     }
     
     /**
-     * @return \Everon\Interfaces\ConfigItem
+     * @return \Everon\Interfaces\Config
      */
     public function getViewConfig()
     {
@@ -203,16 +161,6 @@ class Manager implements Interfaces\ConfigManager
         }
         
         return $this->configs;
-    }
-
-    public function enableCache()
-    {
-        $this->use_cache = true;
-    }
-
-    public function disableCache()
-    {
-        $this->use_cache = false;
     }
 
 }

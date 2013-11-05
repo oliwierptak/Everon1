@@ -9,6 +9,7 @@
  */
 namespace Everon;
 
+use Everon\Exception\ConfigItem;
 use Everon\Helper;
 use Everon\Interfaces;
 
@@ -77,8 +78,8 @@ class Factory implements Interfaces\Factory
     public function buildConsole()
     {
         try {
-            $Core = new Core\Console();
-            $this->injectDependencies('Everon\Core\Console', $Core);
+            $Core = new Console();
+            $this->injectDependencies('Everon\Core', $Core);
             return $Core;
         }
         catch (\Exception $e) {
@@ -93,8 +94,8 @@ class Factory implements Interfaces\Factory
     public function buildMvc()
     {
         try {
-            $Core = new Core\Mvc();
-            $this->injectDependencies('Everon\Core\Mvc', $Core);
+            $Core = new Mvc();
+            $this->injectDependencies('Everon\Core', $Core);
             return $Core;
         }
         catch (\Exception $e) {
@@ -104,12 +105,11 @@ class Factory implements Interfaces\Factory
 
     /**
      * @param $name
-     * @param $filename
-     * @param $data
+     * @param Interfaces\ConfigLoaderItem $ConfigLoaderItem
      * @return Interfaces\Config
      * @throws Exception\Factory
      */
-    public function buildConfig($name, $filename, $data)
+    public function buildConfig($name, Interfaces\ConfigLoaderItem $ConfigLoaderItem)
     {
         try {
             $class_name = ucfirst($this->stringUnderscoreToCamel($name));
@@ -123,8 +123,8 @@ class Factory implements Interfaces\Factory
             catch (\Exception $e) {
                 $class_name = 'Everon\Config';
             }
-            
-            $Config = new $class_name($name, $filename, $data);
+
+            $Config = new $class_name($name, $ConfigLoaderItem);
             $this->injectDependencies($class_name, $Config);
             return $Config;
         }
@@ -186,6 +186,24 @@ class Factory implements Interfaces\Factory
     }
 
     /**
+     * @param $filename
+     * @param array $data
+     * @return Config\Loader\Item
+     * @throws Exception\Factory
+     */
+    public function buildConfigLoaderItem($filename, array $data)
+    {
+        try {
+            $ConfigLoaderItem = new Config\Loader\Item($filename, $data);
+            $this->injectDependencies('Everon\Config\Loader\Item', $ConfigLoaderItem);
+            return $ConfigLoaderItem;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('ConfigLoaderItem initialization error', null, $e);
+        }
+    }
+
+    /**
      * @param $class_name
      * @param string $ns
      * @return Interfaces\Controller
@@ -208,19 +226,22 @@ class Factory implements Interfaces\Factory
         }
     }
 
+
     /**
      * @param $class_name
-     * @param $template_directory
+     * @param k
+     * @param string $default_extension
+     * @param array $variables
      * @param string $ns
      * @return Interfaces\View
      * @throws Exception\Factory
      */
-    public function buildView($class_name, $template_directory, $ns='Everon\View')
+    public function buildView($class_name, $template_directory, $default_extension, array $variables, $ns='Everon\View')
     {
         try {
             $class_name = $this->getFullClassName($ns, $class_name);
 
-            $View = new $class_name($template_directory);
+            $View = new $class_name($template_directory, $default_extension, $variables);
             $this->injectDependencies($class_name, $View);
             return $View;
         }
@@ -230,13 +251,12 @@ class Factory implements Interfaces\Factory
     }
 
     /**
-     * @param $compilers_to_init
-     * @param $view_template_directory
-     * @param $view_cache_directory
+     * @param array $compilers_to_init
+     * @param $view_directory
      * @return Interfaces\ViewManager
      * @throws Exception\Factory
      */
-    public function buildViewManager($compilers_to_init, $view_template_directory, $view_cache_directory)
+    public function buildViewManager(array $compilers_to_init, $view_directory)
     {
         try {
             $compilers = [];
@@ -244,7 +264,7 @@ class Factory implements Interfaces\Factory
                 $compilers[] = $this->buildTemplateCompiler($this->stringUnderscoreToCamel($name));
             }
             
-            $Manager = new View\Manager($compilers, $view_template_directory, $view_cache_directory);
+            $Manager = new View\Manager($compilers, $view_directory);
             $this->injectDependencies('Everon\View\Manager', $Manager);
             return $Manager;
         }
@@ -351,7 +371,7 @@ class Factory implements Interfaces\Factory
     public function buildConfigItem($name, array $data)
     {
         try {
-            $data['____name'] = $name;
+            $data[Config\Item::PROPERTY_NAME] = $name;
             $ConfigItem = new Config\Item($data);
             $this->injectDependencies('Everon\Config\Item', $ConfigItem);
             return $ConfigItem;
@@ -370,7 +390,7 @@ class Factory implements Interfaces\Factory
     public function buildConfigItemRouter($name, array $data)
     {
         try {
-            $data['____name'] = $name;
+            $data[Config\Item::PROPERTY_NAME] = $name;
             $RouteItem = new Config\Item\Router($data);
             $this->injectDependencies('Everon\Config\Item\Router', $RouteItem);
             return $RouteItem;
@@ -380,24 +400,6 @@ class Factory implements Interfaces\Factory
         }
     }
 
-    /**
-     * @param array $name
-     * @param array $data
-     * @return Interfaces\ConfigItem
-     * @throws Exception\Factory
-     */
-    public function buildConfigItemView($name, array $data)
-    {
-        try {
-            $data['____name'] = $name;
-            $PageItem = new Config\Item\View($data);
-            $this->injectDependencies('Everon\Config\Item\View', $PageItem);
-            return $PageItem;
-        }
-        catch (\Exception $e) {
-            throw new Exception\Factory('ConfigItemView initialization error', null, $e);
-        }
-    }
 
     /**
      * @param $filename
@@ -460,13 +462,14 @@ class Factory implements Interfaces\Factory
 
     /**
      * @param $directory
-     * @return Interfaces\Logger
+     * @param boolean $enabled
+     * @return Interfaces\Logger|Logger
      * @throws Exception\Factory
      */
-    public function buildLogger($directory)
+    public function buildLogger($directory, $enabled)
     {
         try {
-            $Logger = new Logger($directory);
+            $Logger = new Logger($directory, $enabled);
             $this->injectDependencies('Everon\Logger', $Logger);
             return $Logger;
         }
@@ -523,8 +526,8 @@ class Factory implements Interfaces\Factory
     public function buildConsoleRequest(array $server, array $get, array $post, array $files)
     {
         try {
-            $Request = new Core\Console\Request($server, $get, $post, $files);
-            $this->injectDependencies('Everon\Core\Console\Request', $Request);
+            $Request = new Console\Request($server, $get, $post, $files);
+            $this->injectDependencies('Everon\Console\Request', $Request);
             return $Request;
         }
         catch (\Exception $e) {

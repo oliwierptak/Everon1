@@ -20,9 +20,6 @@ class Container implements Interfaces\TemplateContainer, Interfaces\Arrayable
     use Helper\ToString;
     use Helper\ToArray;
 
-    /**
-     * @var array
-     */
     protected $data = [];
 
     /**
@@ -59,7 +56,7 @@ class Container implements Interfaces\TemplateContainer, Interfaces\Arrayable
      */
     public function set($name, $value)
     {
-        if ($this->data[$name] !== $value) {
+        if (isset($this->data[$name]) && $this->data[$name] !== $value) {
             $this->resetCompiledContent();
         }
         
@@ -137,7 +134,7 @@ class Container implements Interfaces\TemplateContainer, Interfaces\Arrayable
     /**
      * @return string
      */
-    public function getToString()
+    protected function getToString()
     {
         if ($content = $this->getCompiledContent()) {
             return $content;

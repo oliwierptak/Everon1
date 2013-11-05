@@ -29,10 +29,10 @@ trait ToArray
         }
 
         if ($this->isIterable($data) === false) {
-            $data = [];
+            return [];
         }
         
-        foreach ($data as $key => $value ) {
+        foreach ($data as $key => $value) {
             if (is_object($value) && method_exists($value, 'toArray')) {
                 $data[$key] = $value->toArray();
             }

@@ -21,13 +21,11 @@ if (isset($Factory) === false) {
     $Factory = new Factory($Container);
 }
 
-$Container->propose('Environment', function() use ($Factory) {
-    return $Factory->buildEnvironment(PROJECT_ROOT);
-});
-
 $Container->propose('Logger', function() use ($Factory) {
+    $Config = $Factory->getDependencyContainer()->resolve('ConfigManager')->getApplicationConfig();
     $log_directory = $Factory->getDependencyContainer()->resolve('Environment')->getLog();
-    return $Factory->buildLogger($log_directory);
+    $enabled = (bool) $Config->go('logger')->get('enabled');
+    return $Factory->buildLogger($log_directory, $enabled);
 });
 
 $Container->propose('Response', function() use ($Factory) {
@@ -65,12 +63,10 @@ $Container->propose('ModelManager', function() use ($Factory) {
 
 $Container->propose('ViewManager', function() use ($Factory) {
     $ApplicationConfig = $Factory->getDependencyContainer()->resolve('ConfigManager')->getApplicationConfig();
+    $ViewConfig = $Factory->getDependencyContainer()->resolve('ConfigManager')->getViewConfig();
 
     return $Factory->buildViewManager(
-        $ApplicationConfig->go('view')->get('compilers', ['curly' => 'curly.htm']),
-        $Factory->getDependencyContainer()->resolve('Environment')->getViewTemplate(),
-        $Factory->getDependencyContainer()->resolve('Environment')->getWebCache()
+        $ApplicationConfig->go('view')->get('compilers'),
+        $Factory->getDependencyContainer()->resolve('Environment')->getView()
     );
 });
-
-return $Container;

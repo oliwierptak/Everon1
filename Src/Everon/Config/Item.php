@@ -14,6 +14,8 @@ use Everon\Interfaces;
 
 class Item implements Interfaces\ConfigItem, Interfaces\Arrayable
 {
+    const PROPERTY_NAME = '____name'; 
+    
     use Helper\Asserts;
     use Helper\Asserts\IsStringAndNonEmpty;
     use Helper\ToArray;
@@ -34,20 +36,21 @@ class Item implements Interfaces\ConfigItem, Interfaces\Arrayable
     public function __construct(array $data, array $defaults=[])
     {
         $empty_defaults = [
-            'default' => false,
+            '_default' => false,
         ];
 
         $empty_defaults = array_merge($empty_defaults, $defaults);
 
-        $this->data = array_merge($empty_defaults, $data);        
+        $this->data = array_merge($empty_defaults, $data);
         $this->init();
     }
     
     protected function init()
     {
         $this->validateData($this->data);
-        $this->setName($this->data['____name']);
-        $this->setIsDefault($this->data['default']);        
+        $this->setName($this->data[self::PROPERTY_NAME]);
+        $this->setIsDefault($this->data['_default']);
+        unset($this->data['_default']);
     }
     
     /**
@@ -55,7 +58,7 @@ class Item implements Interfaces\ConfigItem, Interfaces\Arrayable
      */
     public function validateData(array $data)
     {
-        $this->assertIsStringAndNonEmpty($data['____name'], 'Invalid item name: "%s"', 'ConfigItem');
+        $this->assertIsStringAndNonEmpty($data[self::PROPERTY_NAME], 'Invalid item name: "%s"', 'ConfigItem');
     }
     
     public function getName()

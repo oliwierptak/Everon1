@@ -7,7 +7,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon\Core\Console;
+namespace Everon\Console;
 
 use Everon\Interfaces;
 use Everon\Exception;
@@ -16,10 +16,8 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
 {
     protected $lines = [];
     
-    /**
-     * @return void
-     */
-    protected function prepareResponse()
+
+    protected function prepareResponse($action)
     {
         $this->getResponse()->setData(
             implode("\n", $this->lines)

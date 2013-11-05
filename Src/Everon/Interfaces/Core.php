@@ -14,22 +14,7 @@ use Everon\Exception;
 
 interface Core
 {
-
-    /**
-     * @param callable $ControllerIgniter
-     * @param Interfaces\Response $Response
-     * @throws Exception\InvalidRouterParameter|\Exception
-     */    
-    //function start(\Closure $ControllerIgniter, Interfaces\Response $Response);
-
-    /**
-     * @param Interfaces\Controller $Controller
-     * @param $action
-     * @return bool|mixed
-     * @throws Exception\InvalidControllerMethod
-     */
-    //function run(Interfaces\Controller $Controller, $action);
-    
+    function getRequestGuid();
     function run();
-
+    function shutdown();
 }

@@ -29,7 +29,7 @@ abstract class Controller implements Interfaces\Controller
     /**
      * @return void
      */
-    protected abstract function prepareResponse();
+    protected abstract function prepareResponse($action);
     
     protected abstract function response();
 
@@ -66,8 +66,6 @@ abstract class Controller implements Interfaces\Controller
             );
         }
         
-        $this->getLogger()->actions('%s : %s', [$this->getName(), $action]);
-
         $result = $this->{$action}();
         $result = ($result !== false) ? true : $result;
         $this->getResponse()->setResult($result);
@@ -77,10 +75,12 @@ abstract class Controller implements Interfaces\Controller
                 'Invalid controller response for action: "%s:%s"', [$this->getName(),$action]
             );
         }
-        else {
-            $this->prepareResponse();
-            $this->response();
-        }
+        
+        $this->prepareResponse($action);
+
+        $this->getLogger()->response('[%s] %s : %s', [$this->getResponse()->getStatus(), $this->getName(), $action]);
+        
+        $this->response();
     }
 
 }

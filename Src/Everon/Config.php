@@ -35,7 +35,7 @@ class Config implements Interfaces\Config, Interfaces\Arrayable
      * @var array
      */
     protected $go_path = [];
-    
+
     protected $data_processed = false;
 
     /**
@@ -53,17 +53,18 @@ class Config implements Interfaces\Config, Interfaces\Arrayable
      */
     protected $Compiler = null;
     
+    protected $inheritance_symbol = '<';
+    
 
+    //todo: interface should only expose items, they can be recompiled internaly, dont expose $data
     /**
      * @param $name
-     * @param $filename
-     * @param \Closure|\Array $data
+     * @param Interfaces\ConfigLoaderItem $ConfigLoaderItem
      */
-    public function __construct($name, $filename, $data)
+    public function __construct($name, Interfaces\ConfigLoaderItem $ConfigLoaderItem)
     {
-        if (is_array($data) === false && is_callable($data) === false) {
-            throw new Exception\Config('Invalid data type for: "%s@%s"', [$name, $filename]);
-        }
+        $filename = $ConfigLoaderItem->getFilename();
+        $data = $ConfigLoaderItem->getData();
         
         $this->name = $name;
         $this->filename = $filename;
@@ -78,7 +79,7 @@ class Config implements Interfaces\Config, Interfaces\Arrayable
 
         $this->data_processed = true;
         $HasInheritance = function($value) {
-            return strpos($value, '<') !== false;
+            return strpos($value, $this->inheritance_symbol) !== false;
         };
 
         $use_inheritance = false;
@@ -97,7 +98,7 @@ class Config implements Interfaces\Config, Interfaces\Arrayable
         $data_processed = [];
         foreach ($this->data as $name => $data) {
             if ($HasInheritance($name) === true) {
-                list($for, $from) = explode('<', $name);
+                list($for, $from) = explode($this->inheritance_symbol, $name);
                 $for = trim($for);
                 $from = trim($from);
                 $inheritance_list[$for] = $from;
@@ -124,28 +125,23 @@ class Config implements Interfaces\Config, Interfaces\Arrayable
     }
 
     protected function initItems()
-    {
-        $default_or_first_item = null;
+    {       
+        $DefaultOrFirstItem = null;
         foreach ($this->getData() as $item_name => $config_data) {
-            $RouteItem = $this->buildItem($item_name, $config_data);
+            $RouteItem = $this->buildItem($item_name, $config_data); 
             $this->items[$item_name] = $RouteItem;
 
-            $default_or_first_item = (is_null($default_or_first_item)) ? $RouteItem : $default_or_first_item;
+            $DefaultOrFirstItem = (is_null($DefaultOrFirstItem)) ? $RouteItem : $DefaultOrFirstItem;
             if ($RouteItem->isDefault()) {
                 $this->setDefaultItem($RouteItem);
             }
         }
         
         if (is_null($this->DefaultItem)) {
-            $this->setDefaultItem($default_or_first_item);
+            $this->setDefaultItem($DefaultOrFirstItem);
         }
     }
 
-    /**
-     * @param $name
-     * @param array $config_data
-     * @return Interfaces\ConfigItem
-     */
     protected function buildItem($name, array $config_data)
     {
         return $this->getFactory()->buildConfigItem($name, $config_data);
@@ -226,10 +222,6 @@ class Config implements Interfaces\Config, Interfaces\Arrayable
      */
     public function getData()
     {
-        if ($this->data instanceof \Closure) {
-            $this->data = $this->data->__invoke();
-        }
-
         $this->processData();
         return $this->data;
     }
@@ -248,16 +240,30 @@ class Config implements Interfaces\Config, Interfaces\Arrayable
 
     /**
      * @param string $name
-     * @return mixed
+     * @return Interfaces\ConfigItem
      */
     public function getItemByName($name)
+    {
+        $name = (string) $name;
+        if (is_null($this->items)) {
+            $this->initItems();
+        }
+        
+        $this->assertIsArrayKey($name, $this->items, 'Invalid config item name: "%s"');
+        return $this->items[$name];
+    }
+
+    /**
+     * @param $name
+     * @return bool
+     */
+    public function itemExists($name)
     {
         if (is_null($this->items)) {
             $this->initItems();
         }
-
-        $this->assertIsArrayKey($name, $this->items, 'Invalid config item name: "%s"');
-        return $this->items[$name];
+        
+        return isset($this->items[$name]);
     }
 
     /**
@@ -267,21 +273,17 @@ class Config implements Interfaces\Config, Interfaces\Arrayable
      */
     public function get($name, $default=null)
     {
-        $data = $this->getData();
+        $section = array_shift($this->go_path);
         
-        if (empty($this->go_path) === false) {
-            foreach ($this->go_path as $index) {
-                if (isset($data[$index]) === false) {
-                    $this->go_path = [];
-                    return $default;
-                }
-                else {
-                    $data = $data[$index];
-                }
-            }
+        if ($section === null) {
+            $Item = $this->getItemByName($name);
+            return $Item->toArray();
         }
         
+        $Item = $this->getItemByName($section);
+        $data = $Item->toArray();
         $this->go_path = [];
+        
         return isset($data[$name]) ? $data[$name] : $default;
     }
 

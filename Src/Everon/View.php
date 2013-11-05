@@ -13,11 +13,10 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
 {
     use Dependency\Injection\Factory;
     
+    use Helper\String\EndsWith;
     use Helper\String\LastTokenToName;
     use Helper\ToString;
-    use Helper\ToArray;
 
-    protected $data = [];
     protected $name = null;
     protected $template_directory = null;
 
@@ -25,15 +24,20 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
      * @var Interfaces\TemplateContainer
      */
     protected $Container = null;
+    
+    protected $default_extension = null;
+    
+    protected $variables = [];
+    
+    protected $ViewTemplate = null;
 
-
-    /**
-     * @param $template_directory
-     */
-    public function __construct($template_directory)
+    
+    public function __construct($template_directory, $default_extension, array $variables)
     {
         $this->name = $this->stringLastTokenToName(get_class($this));
         $this->template_directory = $template_directory;
+        $this->default_extension = $default_extension;
+        $this->variables = $variables;
     }
 
     /**
@@ -50,12 +54,16 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
     }
 
     /**
-     * @param $filename
+     * @param $name
      * @return \SplFileInfo
      */
-    public function getTemplateFilename($filename)
+    public function getTemplateFilename($name)
     {
-        return new \SplFileInfo($this->getTemplateDirectory().$filename.'.htm');
+        if ($this->stringEndsWith($name, $this->default_extension) === false) {
+            $name .= $this->default_extension;
+        } 
+        
+        return new \SplFileInfo($this->getTemplateDirectory().$name);
     }
 
     public function getTemplateDirectory()
@@ -74,31 +82,28 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
     /**
      * @return Interfaces\TemplateContainer
      */
-    public function getOutput()
+    public function getContainer()
     {
         if (is_null($this->Container)) {
-            $this->setOutput('');
+            $this->setContainer('');
         }
 
         return $this->Container;
     }
 
     /**
-     * @param mixed $Output
+     * @param mixed $Container Instance of Interfaces\TemplateContainer, string or array
      * @throws Exception\Template
      */
-    public function setOutput($Output)
+    public function setContainer($Container)
     {
-        if ($Output instanceof Interfaces\TemplateContainer) {
-            $this->Container = $Output;
+        if ($Container instanceof Interfaces\TemplateContainer) {
+            $this->Container = $Container;
         }
-        else if (is_string($Output)) {
-            $this->Container = $this->getFactory()->buildTemplateContainer($Output, []);
+        else if (is_string($Container)) {
+            $this->Container = $this->getFactory()->buildTemplateContainer($Container, $this->variables);
         }
-        else if (is_array($Output)) {
-            $this->Container = $this->getFactory()->buildTemplateContainer('', $Output);
-        }
-
+     
         if (is_null($this->Container)) {
             throw new Exception\Template('Invalid Container type');
         }
@@ -111,8 +116,13 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
      */
     public function getTemplate($name, $data)
     {
-        $filename = $this->getTemplateFilename($name);
-        return $this->getFactory()->buildTemplate($filename, $data);
+        $Filename = $this->getTemplateFilename($name);
+
+        if ($Filename->isFile() === false) {
+            return null;
+        }
+        
+        return $this->getFactory()->buildTemplate($Filename, $data);
     }
 
     /**
@@ -121,7 +131,7 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
      */
     public function set($name, $value)
     {
-        $this->getOutput()->set($name, $value);
+        $this->getContainer()->set($name, $value);
     }
 
     /**
@@ -131,7 +141,7 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
      */
     public function get($name, $default=null)
     {
-        return $this->getOutput()->get($name);
+        return $this->getContainer()->get($name);
     }
 
     /**
@@ -139,7 +149,7 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
      */
     public function setData(array $data)
     {
-        $this->getOutput()->setData($data);
+        $this->getContainer()->setData($data);
     }
 
     /**
@@ -147,32 +157,42 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
      */
     public function getData()
     {
-        return $this->getOutput()->getData();
+        return $this->getContainer()->getData();
     }
-
-    /**
-     * @param $action
-     * @param array $data
-     */
-    public function setOutputFromAction($action, array $data)
+    
+    public function toArray()
     {
-        $Filename = $this->getTemplateFilename($action);
-        if ($Filename->isFile()) {
-            $this->Container = $this->getTemplate($action, $data);
-        }
+        return $this->getContainer()->toArray();
     }
 
     /**
      * @return array
      */
-    public function getToArray()
+    protected function getToArray()
     {
-        return $this->getOutput()->toArray();
+        return $this->getContainer()->toArray();
     }
 
-    public function getToString()
+    protected function getToString()
     {
-        return (string) $this->getOutput();
+        return (string) $this->getContainer();
+    }
+
+    /**
+     * @return Interfaces\TemplateContainer
+     */
+    public function getViewTemplate()
+    {
+        if ($this->ViewTemplate === null) {
+            $this->ViewTemplate = $this->getTemplate('index', $this->variables);
+        }
+        
+        return $this->ViewTemplate;
+    }
+    
+    public function url($url)
+    {
+        return $url;
     }
 
 }

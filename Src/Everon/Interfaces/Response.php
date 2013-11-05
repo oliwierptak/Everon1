@@ -19,5 +19,6 @@ interface Response
     function getData();
     function setResult($result);
     function getResult();
-
+    function setStatus($status);
+    function getStatus();
 }

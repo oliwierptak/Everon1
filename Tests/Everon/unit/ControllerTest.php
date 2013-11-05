@@ -87,8 +87,7 @@ class ControllerTest extends \Everon\TestCase
             ->will($this->returnValue('test'));
         
         $ViewMock->expects($this->once())
-            ->method('setOutput')
-            ->will($this->returnValue('test'));
+            ->method('setOutput');
         
         $Controller->getView()->setOutput('test');
         $this->assertEquals('test', (string) $Controller->getView()->getOutput());

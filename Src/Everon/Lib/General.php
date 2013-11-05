@@ -27,7 +27,8 @@ function mpr()
  * @param bool $die
  * @param int $traceIndex
  */
-function _mpr($val, $die=false) {
+function _mpr($val, $die=false) 
+{
     $is_pre = true;
     if (php_sapi_name() == 'cli') {
         $is_pre = false;
@@ -54,4 +55,28 @@ function _mpr($val, $die=false) {
     if ($die) {
         die();
     }
+}
+
+function setup($root, $log_filename)
+{
+    $log_directory = implode(DIRECTORY_SEPARATOR, [$root, 'Tmp', 'logs']).DIRECTORY_SEPARATOR;
+    $filename = implode(DIRECTORY_SEPARATOR, [$root, 'Config']).DIRECTORY_SEPARATOR.'application.ini';
+
+    $filename = @parse_ini_file($filename, true);
+    if (isset($filename['logger']) && isset($filename['logger']['directory'])) {
+        $path = [dirname(__FILE__), '..', '..', '..'];
+        $tokens = explode('/', $filename['logger']['directory']);
+        $path = array_merge($path, $tokens);
+        $log_directory = implode(DIRECTORY_SEPARATOR, $path).DIRECTORY_SEPARATOR;
+    }
+
+    $log_filename = $log_directory.$log_filename;
+    set_exception_handler(function ($Exception) use ($log_filename) {
+        $timestamp = date('Y-m-d@H:i:sP', time());
+        error_log((string) $timestamp." ".$Exception."\n", 3, $log_filename);
+    });
+    
+    require_once(implode(DIRECTORY_SEPARATOR, [$root, 'Src', 'Everon', 'Interfaces']).DIRECTORY_SEPARATOR.'Environment.php');
+    require_once(implode(DIRECTORY_SEPARATOR, [$root, 'Src', 'Everon']).DIRECTORY_SEPARATOR.'Environment.php');
+    require_once(implode(DIRECTORY_SEPARATOR, [$root, 'Src', 'Everon']).DIRECTORY_SEPARATOR.'Bootstrap.php');    
 }

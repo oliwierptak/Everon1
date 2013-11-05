@@ -7,7 +7,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon\Core\Mvc;
+namespace Everon\Mvc;
 
 use Everon\Interfaces;
 use Everon\Dependency;
@@ -35,32 +35,23 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
         return $this->getModelManager()->getModel($this->getName());
     }
 
-    /**
-     * @param $action
-     * @return void
-     * @throws Exception\InvalidControllerMethod
-     */
-    public function execute($action)
+    protected function prepareResponse($action)
     {
-        $this->setOutputFromAction($action);
-        parent::execute($action);
-    }
+        $CurrentView = $this->getView();
 
-    /**
-     * @param $action
-     * @param array $data
-     */
-    public function setOutputFromAction($action)
-    {
-        $Filename = $this->getViewManager()->getTemplateFilename($action);
-        if ($Filename->isFile()) {
-            $Output = $this->getViewManager()->getTemplate($Filename, $data);
+        if ($this->isCallable($CurrentView, $action)) {
+            $CurrentView->{$action}();
         }
-    }
 
-    protected function prepareResponse()
-    {
-        $this->getResponse()->setData((string) $this->getView());
+        $data = $CurrentView->getData();
+        $CurrentTemplate = $CurrentView->getTemplate($action, $data);
+
+        $DefaultView = $this->getViewManager()->getDefaultView();
+        $ViewTemplate = $CurrentView->getViewTemplate() ?: $DefaultView->getViewTemplate();
+        
+        $ViewTemplate->set('Main', $CurrentTemplate);
+
+        $this->getResponse()->setData($ViewTemplate);
     }
 
     protected function response()

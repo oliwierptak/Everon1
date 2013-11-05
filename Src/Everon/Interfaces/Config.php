@@ -46,6 +46,12 @@ interface Config
 
     /**
      * @param $name
+     * @return bool
+     */
+    function itemExists($name);    
+
+    /**
+     * @param $name
      * @param null $default
      * @return mixed
      */

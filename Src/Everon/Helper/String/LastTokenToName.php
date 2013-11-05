@@ -13,6 +13,7 @@ trait LastTokenToName
 {
     /**
      * @param $name
+     * @param string $split
      * @return string
      */
     public function stringLastTokenToName($name, $split='\\')

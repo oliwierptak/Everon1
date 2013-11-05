@@ -9,19 +9,15 @@
  */
 namespace Everon;
 
-try {
-    /**
-     * @var Interfaces\Factory $Factory
-     * @var Interfaces\Core $Console
-     */
-    $lib_dir = implode(DIRECTORY_SEPARATOR, [dirname(__FILE__), 'Src', 'Everon', 'Lib']).DIRECTORY_SEPARATOR;
-    require_once($lib_dir.'Bootstrap.php');
-    require_once($lib_dir.'Dependencies.php');
-    
-    $Console = $Factory->buildConsole();
-    $Console->run();
-}
-catch (\Exception $e)
-{
-    echo "Uncaught exception: $e\n";
-}
+/**
+ * @var Interfaces\Factory $Factory
+ * @var Interfaces\Core $Console
+ */
+$BootstrapFile = new \SplFileInfo(
+    implode(DIRECTORY_SEPARATOR,
+        [dirname(__FILE__), 'Config', 'Bootstrap', 'console.php'])
+);
+require_once($BootstrapFile);
+
+$Console = $Factory->buildConsole();
+$Console->run();

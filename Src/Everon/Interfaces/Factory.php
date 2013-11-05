@@ -35,16 +35,15 @@ interface Factory
      * @return Interfaces\Core
      * @throws Exception\Factory
      */
-    function buildMvc();    
+    function buildMvc();
 
     /**
      * @param $name
-     * @param $filename
-     * @param $data
+     * @param Interfaces\ConfigLoaderItem $ConfigLoaderItem
      * @return Interfaces\Config
      * @throws Exception\Factory
      */
-    public function buildConfig($name, $filename, $data);
+    function buildConfig($name, Interfaces\ConfigLoaderItem $ConfigLoaderItem);
 
     /**
      * @param Interfaces\ConfigLoader $Loader
@@ -67,6 +66,14 @@ interface Factory
      * @throws Exception\Factory
      */
     function buildConfigLoader($config_directory, $cache_directory);
+
+    /**
+     * @param $filename
+     * @param array $data
+     * @return Config\Loader\Item
+     * @throws Exception\Factory
+     */
+    function buildConfigLoaderItem($filename, array $data);
 
     /**
      * @param $class_name
@@ -101,14 +108,6 @@ interface Factory
      * @throws Exception\Factory
      */
     function buildConfigItemRouter($name, array $data);
-
-    /**
-     * @param array $name
-     * @param array $data
-     * @return Interfaces\ConfigItem
-     * @throws Exception\Factory
-     */
-    function buildConfigItemView($name, array $data);
 
     /**
      * @param Interfaces\Config $Config
@@ -147,27 +146,29 @@ interface Factory
     /**
      * @param $class_name
      * @param $template_directory
+     * @param string $default_extension
+     * @param array $variables
      * @param string $ns
      * @return Interfaces\View
      * @throws Exception\Factory
      */
-    function buildView($class_name, $template_directory, $ns='Everon\View');
+    function buildView($class_name, $template_directory, $default_extension, array $variables, $ns='Everon\View');
 
     /**
-     * @param $compilers_to_init
-     * @param $view_template_directory
-     * @param $view_cache_directory
+     * @param array $compilers_to_init
+     * @param $view_directory
      * @return Interfaces\ViewManager
      * @throws Exception\Factory
      */
-    public function buildViewManager($compilers_to_init, $view_template_directory, $view_cache_directory);
+    function buildViewManager(array $compilers_to_init, $view_directory);
 
     /**
      * @param $directory
+     * @param boolean $enabled
      * @return Interfaces\Logger
      * @throws Exception\Factory
      */
-    function buildLogger($directory);
+    function buildLogger($directory, $enabled);
 
     /**
      * @param array $headers

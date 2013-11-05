@@ -11,8 +11,8 @@ namespace Everon\Interfaces;
 
 interface View
 {
-    function getOutput();
-    function setOutput($Output);
+    function getContainer();
+    function setContainer($Container);
     function getTemplateDirectory();
     function setTemplateDirectory($directory);
     function getTemplateFilename($filename);
@@ -20,6 +20,7 @@ interface View
     function set($name, $value);
     function get($name);
     function getData();
-    function setData(array $data);    
-    function setOutputFromAction($template, array $data);
+    function setData(array $data);
+    function getViewTemplate();
+    function url($url);
 }

@@ -16,9 +16,15 @@ use Everon\Interfaces;
 
 class Loader implements Interfaces\ConfigLoader
 {
+    use Dependency\Injection\Factory;
+    
     protected $config_directory = null;
     protected $cache_directory = null;
 
+    /**
+     * @var boolean
+     */
+    protected $use_cache = null;
     
     /**
      * @param $config_directory
@@ -49,14 +55,25 @@ class Loader implements Interfaces\ConfigLoader
         return @parse_ini_file($filename, true);
     }
 
+    protected function setupCaching($use_cache)
+    {
+        $Config = new \SplFileInfo($this->getCacheDirectory().'.cache');
+        $this->use_cache = $Config->isFile() || $use_cache;
+        if ($this->use_cache &&  $Config->isFile() === false) {
+            $h = fopen($Config->getPathname(), 'w');
+            //fwrite($h, $this->get) todo: make getRequestGuid a dependency, and echo its value here
+            fclose($h);
+        }
+    }
+
     /**
-     * @param \Closure $Compiler
      * @param $use_cache
-     * @param $default_config_filename
      * @return array
      */
-    public function load(\Closure $Compiler, $use_cache, $default_config_filename)
+    public function load($use_cache)
     {
+        $this->setupCaching($use_cache);
+        
         /**
          * @var \SplFileInfo $ConfigFile
          * @var \Closure $Compiler
@@ -64,29 +81,21 @@ class Loader implements Interfaces\ConfigLoader
         $list = [];
         $IniFiles = new \GlobIterator($this->getConfigDirectory().'*.ini');
         foreach ($IniFiles as $config_filename => $ConfigFile) {
-            if (strcasecmp($ConfigFile->getFilename(), $default_config_filename) === 0) {
-                continue; //don't load default config again
-            }
-
             $name = $ConfigFile->getBasename('.ini');
             $CacheFile = new \SplFileInfo($this->getCacheDirectory().$ConfigFile->getBasename().'.php');
-            if ($use_cache && $CacheFile->isFile()) {
+            $config_cached = $this->use_cache && $CacheFile->isFile();
+            if ($config_cached) {
                 $filename = $CacheFile->getPathname();
-                $ini_config_data = function() use ($filename) {
-                    $cache = null;
-                    include($filename);
-                    return $cache;
-                };
+                $cache = null;
+                include($filename);
+                $ini_config_data = $cache;
             }
             else {
-                $ini_config_data = function() use ($config_filename, $Compiler) {
-                    $content = parse_ini_file($config_filename, true);
-                    $Compiler($content);
-                    return $content;
-                };
+                $config_filename = $ConfigFile->getPathname();
+                $ini_config_data =  parse_ini_file($config_filename, true);
             }
 
-            $list[$name] = [$config_filename, $ini_config_data];
+            $list[$name] = $this->getFactory()->buildConfigLoaderItem($config_filename, $ini_config_data);
         }
         
         return $list;
@@ -99,6 +108,9 @@ class Loader implements Interfaces\ConfigLoader
     public function saveConfigToCache(Interfaces\Config $Config)
     {
         try {
+            if ($this->use_cache === false) {
+                return;
+            }
             $cache_filename = $this->cache_directory.pathinfo($Config->getFilename(), PATHINFO_BASENAME).'.php';
             $data = var_export($Config->toArray(), true);
             $h = fopen($cache_filename, 'w+');
@@ -108,6 +120,16 @@ class Loader implements Interfaces\ConfigLoader
         catch (\Exception $e) {
             throw new Exception\Config('Unable to save config cache file: "%s"', $Config->getFilename(), $e);
         }
+    }
+
+    public function enableCache()
+    {
+        $this->use_cache = true;
+    }
+
+    public function disableCache()
+    {
+        $this->use_cache = false;
     }
 
 }

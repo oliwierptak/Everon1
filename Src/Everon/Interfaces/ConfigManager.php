@@ -26,6 +26,4 @@ interface ConfigManager
     function getRouterConfig();
     function getViewConfig();
     function getConfigs();
-    function enableCache();
-    function disableCache();
 }

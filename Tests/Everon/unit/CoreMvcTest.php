@@ -16,7 +16,7 @@ class CoreMvcTest extends \Everon\TestCase
     
     public function testConstructor()
     {
-        $Core = new \Everon\Core\Mvc();
+        $Core = new \Everon\Mvc();
         $this->assertInstanceOf('\Everon\Interfaces\Core', $Core);
     }
 
@@ -89,7 +89,7 @@ class CoreMvcTest extends \Everon\TestCase
             ->will($this->returnValue($ViewManagerMock));
 
         /**
-         * @var \Everon\Core\Mvc $Mvc
+         * @var \Everon\Mvc $Mvc
          */
         $Mvc = $Factory->buildMvc();
         $Mvc->setFactory($FactoryMock);

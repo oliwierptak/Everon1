@@ -9,14 +9,22 @@
  */
 namespace Everon\Interfaces;
 
+/**
+ * Interface Logger
+ * 
+ * @method null critical
+ * @method null notFound
+ * 
+ * @package Everon\Interfaces
+ */
 interface Logger
 {
     function setLogDirectory($directory);
     function getLogDirectory();
     function setLogFiles(array $files);
     function getLogFiles();
-    function warn($message, $parameters=[]);
-    function error($message, $parameters=[]);
-    function debug($message, $parameters=[]);
-    function trace($message, $parameters=[]);
+    function warn($message, array $parameters=[]);
+    function error($message, array $parameters=[]);
+    function debug($message, array $parameters=[]);
+    function trace($message, array $parameters=[]);
 }

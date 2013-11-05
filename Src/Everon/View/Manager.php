@@ -17,22 +17,26 @@ use Everon\Interfaces;
 class Manager implements Interfaces\ViewManager
 {
     use Dependency\Injection\Factory;
+    use Dependency\Injection\ConfigManager;
+    
     use Helper\String\LastTokenToName;
+    
 
     protected $views = [];
 
+    protected $view_directory = null;
+    
     protected $compilers = [];
 
-    protected $view_template_directory = null;
 
-    protected $view_cache_directory = null;
-
-
-    public function __construct(array $compilers, $template_directory, $cache_directory)
+    /**
+     * @param array $compilers
+     * @param $view_directory
+     */
+    public function __construct(array $compilers, $view_directory)
     {
         $this->compilers = $compilers;
-        $this->view_template_directory = $template_directory;
-        $this->view_cache_directory = $cache_directory;
+        $this->view_directory = $view_directory;
     }
 
     /**
@@ -68,12 +72,14 @@ class Manager implements Interfaces\ViewManager
                     $Include->setCompiledContent(
                         $Compiler->compile($Include->getTemplateContent(), $Include->getData())
                     );
+                    
                     $Template->set($name, $Include->getCompiledContent());
                 }
 
                 $compiled_content = $compiled_content ?: $Template->getTemplateContent();
-                $compiled_content = $Compiler->compile($compiled_content, $Template->getData());
+                //$compiled_content = $Compiler->compile($compiled_content, $Template->getData());
             }
+            
             $Template->setCompiledContent($compiled_content);
         }
         catch (Exception $e) {
@@ -97,12 +103,15 @@ class Manager implements Interfaces\ViewManager
     public function getView($name)
     {
         if (isset($this->views[$name]) === false) {
-            $template_directory = $this->view_template_directory.$name.DIRECTORY_SEPARATOR;
+            $template_directory = $this->view_directory.$name.DIRECTORY_SEPARATOR.'templates'.DIRECTORY_SEPARATOR;
             if  ((new \SplFileInfo($template_directory))->isDir() === false) {
                 throw new Exception\ViewManager('View template directory: "%s" does not exist', $template_directory);
             }
 
-            $this->views[$name] = $this->getFactory()->buildView($name, $template_directory);
+            $default_extension = $this->getConfigManager()->getApplicationConfig()->go('view')->get('default_extension');
+            $ViewVariables = $this->getConfigManager()->getViewConfig()->get($name);
+            
+            $this->views[$name] = $this->getFactory()->buildView($name, $template_directory, $default_extension, $ViewVariables);
         }
 
         return $this->views[$name];
@@ -118,14 +127,11 @@ class Manager implements Interfaces\ViewManager
     }
 
     /**
-     * @param $name
-     * @param $data
-     * @return Interfaces\TemplateContainer
+     * @return Interfaces\View
      */
-    public function getTemplate($name, $data)
+    public function getDefaultView()
     {
-        $filename = $this->getTemplateFilename($name);
-        return $this->getFactory()->buildTemplate($filename, $data);
-    }    
+        return $this->getView('Index');
+    }
 
 }

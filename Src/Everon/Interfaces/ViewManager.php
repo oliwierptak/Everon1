@@ -9,6 +9,8 @@
  */
 namespace Everon\Interfaces;
 
+use Everon\Interfaces;
+
 interface ViewManager
 {
     /**
@@ -19,12 +21,17 @@ interface ViewManager
 
     /**
      * @param $name
-     * @param \Everon\Interfaces\View $View
+     * @param Interfaces\View $View
      */
-    public function setView($name, \Everon\Interfaces\View $View);
+    public function setView($name, Interfaces\View $View);
 
     /**
      * @return array
      */
     function getCompilers();
+
+    /**
+     * @return Interfaces\View
+     */
+    function getDefaultView();
 }

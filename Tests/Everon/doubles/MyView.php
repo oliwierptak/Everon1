@@ -13,6 +13,6 @@ class MyView extends \Everon\View
 {
     public function testOne()
     {
-        $this->setOutput('view action test one');
+        $this->setContainer('view action test one');
     }
 }

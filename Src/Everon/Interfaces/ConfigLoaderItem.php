@@ -7,12 +7,13 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon\Core;
+namespace Everon\Interfaces;
 
-use Everon\Dependency;
+use Everon\Exception;
 use Everon\Interfaces;
 
-class Console extends \Everon\Core implements Interfaces\Core
+interface ConfigLoaderItem
 {
-    
+    function getFilename();
+    function getData();
 }
