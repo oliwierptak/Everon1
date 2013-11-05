@@ -59,7 +59,7 @@ class ClassLoader implements Interfaces\ClassLoader
 
         if ($included === false) {
             throw new \RuntimeException(vsprintf(
-                'File: "%s" for class: "%s" could not be found', [$class_name, $filename]
+                'Class: "%s" for file: "%s" could not be found', [$class_name, $filename]
             ));
         }
         
