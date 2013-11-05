@@ -64,7 +64,7 @@ all you have to do is to extend default Factory class.
 
 
 ## Routing
-Consider this routing example for this url: '/login/submit/session/adf24ds34/redirect/%2Flogin%2Fresetpassword?token=abcd&pif=2457'
+Consider this routing example for this url: `/login/submit/session/adf24ds34/redirect/%2Flogin%2Fresetpassword?token=abcd&pif=2457`
   
     [login_submit]
     url = login/submit/session/{sid}/redirect/{location}
@@ -131,5 +131,3 @@ The rest of the missing properties, like `$charset`, will be inherited from `[De
 See [view.ini](https://github.com/oliwierptak/Everon/blob/master/Config/view.ini) for more examples.
 
 
-## Tests
-    cd Tests/Everon/; phpunit
