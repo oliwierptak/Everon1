@@ -365,16 +365,6 @@ class Request implements Interfaces\Request, Interfaces\Arrayable
     }
 
     /**
-     * @return array
-     */
-    public function AAAgetQueryTokens()
-    {
-        $query_tokens = explode('?', $this->url);
-        $url = current($query_tokens);
-        return array_filter(explode('/', $url));
-    }
-
-    /**
      * @param $query_string
      */
     public function setQueryString($query_string)
