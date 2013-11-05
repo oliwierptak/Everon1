@@ -16,7 +16,6 @@ use Everon\Interfaces;
 
 class Container implements Interfaces\TemplateContainer, Interfaces\Arrayable
 {
-    use Helper\Asserts;
     use Helper\ToString;
     use Helper\ToArray;
 

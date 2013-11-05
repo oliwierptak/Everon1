@@ -17,7 +17,6 @@ class Config implements Interfaces\Config, Interfaces\Arrayable
 {
     use Dependency\Injection\Factory;
     
-    use Helper\Asserts;
     use Helper\Asserts\IsArrayKey;    
     use Helper\ArrayMergeDefault;
     use Helper\ToArray;

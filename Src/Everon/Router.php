@@ -14,7 +14,6 @@ class Router implements Interfaces\Router
     use Dependency\Config;
     use Dependency\RouterValidator;
 
-    use Helper\Asserts;
     use Helper\Asserts\IsArrayKey;
     use Helper\Regex;
 

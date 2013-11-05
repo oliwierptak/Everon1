@@ -9,7 +9,9 @@
  */
 namespace Everon\Interfaces;
 
-
+/**
+ * @method string getName
+ */
 interface ConfigItemRouter
 {
     function getUrl();

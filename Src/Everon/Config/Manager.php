@@ -19,7 +19,6 @@ class Manager implements Interfaces\ConfigManager
     use Dependency\Injection\Factory;
     use Dependency\ConfigLoader;
     
-    use Helper\Asserts;
     use Helper\Asserts\IsArrayKey;
     use Helper\ArrayMergeDefault;
 

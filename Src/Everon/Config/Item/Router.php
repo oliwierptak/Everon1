@@ -15,7 +15,6 @@ use Everon\Helper;
 
 class Router extends \Everon\Config\Item implements Interfaces\ConfigItemRouter
 {
-    use Helper\Asserts;
     use Helper\Asserts\IsStringAndNonEmpty;
     use Helper\ArrayFilterKeys;
     use Helper\Regex;
