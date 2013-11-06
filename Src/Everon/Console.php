@@ -18,4 +18,11 @@ class Console extends Core implements Interfaces\Core
     {
         return $this->getFactory()->buildController($name, 'Everon\Console\Controller');
     }
+
+    public function handleExceptions(\Exception $Exception)
+    {
+        $this->restorePreviousExceptionHandler();
+        $this->getLogger()->console($Exception);
+        echo $Exception;
+    }    
 }

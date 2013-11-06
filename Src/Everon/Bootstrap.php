@@ -94,4 +94,21 @@ class Bootstrap
         
         return [$Container, $Factory];
     }
+
+    public static function setup($guid_value, $root, $log_filename)
+    {
+        $log_directory = implode(DIRECTORY_SEPARATOR, [$root, 'Tmp', 'logs']);
+        $log_filename = $log_directory.DIRECTORY_SEPARATOR.$log_filename;
+
+        set_exception_handler(function ($Exception) use ($log_filename, $guid_value) {
+            $timestamp = date('c', time());
+            $id = substr($guid_value, 0, 6);
+            $message = "$timestamp ${id} \n$Exception \n\n";
+            error_log($message, 3, $log_filename);
+            header("HTTP/1.1 500 Internal Server Error. Request ID: $guid_value");
+        });
+
+        require_once(implode(DIRECTORY_SEPARATOR, [$root, 'Src', 'Everon', 'Interfaces', 'Environment.php']));
+        require_once(implode(DIRECTORY_SEPARATOR, [$root, 'Src', 'Everon', 'Environment.php']));
+    }
 }

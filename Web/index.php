@@ -7,11 +7,15 @@ namespace Everon;
 error_reporting(E_ALL);
 echo ('Start: '.memory_get_usage(TRUE)/1024)." kb<hr/>";
 
-$BootstrapFile = new \SplFileInfo(
-    implode(DIRECTORY_SEPARATOR,
+/**
+ * @var Guid $Guid
+ * @var Interfaces\Factory $Factory
+ * @var Interfaces\Core $Application
+ */
+require_once( 
+    (new \SplFileInfo(implode(DIRECTORY_SEPARATOR,
         [dirname(__FILE__), '..', 'Config', 'Bootstrap', 'mvc.php'])
-);
-require_once($BootstrapFile);
+)));
 
 $Application = $Factory->buildMvc();
 $Application->run($Guid);

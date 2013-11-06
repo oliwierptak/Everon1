@@ -25,7 +25,7 @@ class Logger implements Interfaces\Logger
     
     protected $log_directory = null;
     
-    protected static $log_guid = null;
+    protected $log_guid = null;
     
     protected $enabled = false;
     
@@ -38,7 +38,7 @@ class Logger implements Interfaces\Logger
     
     public function setGuid($guid)
     {
-        self::$log_guid = $guid;
+        $this->log_guid = $guid;
     }
 
     /**
@@ -69,10 +69,11 @@ class Logger implements Interfaces\Logger
             return null;
         }
         
-        if (self::$log_guid === null) {
-            throw new Exception\Logger('Guid not set');
+        if ($this->log_guid === null) {
+            $this->log_guid = "MISSING_REQUEST_ID";
         }
-        
+
+        $ExceptionToTrace = $message;
         if ($message instanceof \Exception) {
             $message = $message->getMessage();
         }
@@ -88,7 +89,7 @@ class Logger implements Interfaces\Logger
             
             $this->logRotate($Filename);
             
-            $request_id = substr(self::$log_guid, 0, 6);
+            $request_id = substr($this->log_guid, 0, 6);
             $trace_id =  substr(md5(uniqid()), 0, 6);
             $id = "$request_id/$trace_id";
             
@@ -97,8 +98,8 @@ class Logger implements Interfaces\Logger
             $message = $this->oneLiner($message);
             error_log($message."\n", 3, $Filename->getPathname());
 
-            if ($message instanceof \Exception) {
-                $this->logTrace($message, $StarDate, $id);
+            if ($ExceptionToTrace instanceof \Exception) {
+                $this->logTrace($ExceptionToTrace, $StarDate, $id);
             }
         }
         
@@ -113,7 +114,7 @@ class Logger implements Interfaces\Logger
             $Filename = $this->getFilenameByLevel('trace');
             $this->logRotate($Filename);
             error_log($trace."\n", 3, $Filename->getPathname());
-        }        
+        }
     }
     
     protected function logRotate(\SplFileInfo $Filename)

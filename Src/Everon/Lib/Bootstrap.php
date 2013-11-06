@@ -11,11 +11,11 @@ namespace Everon;
 
 $nesting = implode('..', array_fill(0, 4, DIRECTORY_SEPARATOR));
 $root =  realpath(dirname(__FILE__).$nesting).DIRECTORY_SEPARATOR;
-require_once(implode(DIRECTORY_SEPARATOR, [$root, 'Src', 'Everon', 'Lib', 'General.php']));
+require_once(implode(DIRECTORY_SEPARATOR, [$root, 'Src', 'Everon', 'Bootstrap.php']));
 require_once(implode(DIRECTORY_SEPARATOR, [$root, 'Src', 'Everon', 'Guid.php']));
 
 $Guid = new Guid();
-setup($Guid->getValue(), $root, '500.log');
+Bootstrap::setup($Guid->getValue(), $root, '500.log');
 
 $Environment = new Environment($root);
 $Bootstrap = new Bootstrap($Environment);
@@ -24,4 +24,3 @@ list($Container, $Factory) = $Bootstrap->run();
 $Container->propose('Environment', function() use ($Environment) {
     return $Environment;
 });
-

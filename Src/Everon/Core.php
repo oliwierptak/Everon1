@@ -26,6 +26,7 @@ abstract class Core implements Interfaces\Core
      */
     protected $Guid = null;
     
+    protected $previous_exception_handler = null;
     
     protected abstract function createController($name);
     
@@ -35,16 +36,13 @@ abstract class Core implements Interfaces\Core
         if ($this->Guid !== null) {
             return;
         }
-
-        register_shutdown_function(array($this, 'shutdown'));
+        
+        register_shutdown_function([$this, 'shutdown']);
         
         $this->Guid = $Guid;
-
-        $this->getLogger()->setGuid($this->Guid->getValue()); //todo: should this pass session/request object of some kind?
-
-/*        set_exception_handler(function ($Exception) {
-            $this->getLogger()->critical($Exception);
-        });*/
+        $this->getLogger()->setGuid($this->Guid->getValue());
+        
+        $this->previous_exception_handler = set_exception_handler([$this, 'handleExceptions']);
     }
     
     /**
@@ -55,7 +53,6 @@ abstract class Core implements Interfaces\Core
     {
         try {
             $this->runOnce($Guid);
-
             /**
              * @var \Everon\Interfaces\MvcController|\Everon\Interfaces\Controller $Controller
              * @var \Everon\Interfaces\ConfigItemRouter $CurrentRoute
@@ -93,6 +90,19 @@ abstract class Core implements Interfaces\Core
             "s $m / $mp";
 
         $this->getLogger()->monitor($s);
+    }
+    
+    protected function restorePreviousExceptionHandler()
+    {
+        if ($this->previous_exception_handler !== null) {
+            restore_exception_handler($this->previous_exception_handler);
+        }
+    }
+    
+    public function handleExceptions(\Exception $Exception)
+    {
+        $this->restorePreviousExceptionHandler();
+        $this->getLogger()->critical($Exception);
     }
     
     public function getGuid()
