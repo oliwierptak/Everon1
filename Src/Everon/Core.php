@@ -19,38 +19,42 @@ abstract class Core implements Interfaces\Core
     /**
      * @var Interfaces\Controller
      */
-    protected $Controller = null; 
-    
-    protected $request_guid = null;
+    protected $Controller = null;
+
+    /**
+     * @var Guid
+     */
+    protected $Guid = null;
     
     
     protected abstract function createController($name);
     
     
-    protected function runOnce()
+    protected function runOnce(Guid $Guid)
     {
-        if ($this->request_guid !== null) {
+        if ($this->Guid !== null) {
             return;
         }
 
         register_shutdown_function(array($this, 'shutdown'));
         
-        $this->request_guid = md5(uniqid());
+        $this->Guid = $Guid;
 
-        $this->getLogger()->setGuid($this->request_guid); //todo: should this pass session/request object of some kind?
+        $this->getLogger()->setGuid($this->Guid->getValue()); //todo: should this pass session/request object of some kind?
 
-        set_exception_handler(function ($Exception) {
+/*        set_exception_handler(function ($Exception) {
             $this->getLogger()->critical($Exception);
-        });
+        });*/
     }
     
     /**
+     * @param Guid $Guid
      * @return void
      */
-    public function run()
+    public function run(Guid $Guid)
     {
         try {
-            $this->runOnce();
+            $this->runOnce($Guid);
 
             /**
              * @var \Everon\Interfaces\MvcController|\Everon\Interfaces\Controller $Controller
@@ -91,9 +95,9 @@ abstract class Core implements Interfaces\Core
         $this->getLogger()->monitor($s);
     }
     
-    public function getRequestGuid()
+    public function getGuid()
     {
-        return $this->request_guid;
+        return $this->Guid;
     }
     
 }

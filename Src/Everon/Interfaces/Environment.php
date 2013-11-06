@@ -33,6 +33,8 @@ interface Environment
     function setEveronLib($everon_lib);
     function getEveronInterface();
     function setEveronInterface($everon_interfaces);
+    function getEveronHelper();
+    function setEveronHelper($everon_helper);    
     function getTmp();
     function setTmp($tmp);
     function getCache();

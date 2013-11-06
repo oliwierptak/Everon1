@@ -87,7 +87,7 @@ class Bootstrap
     {
         $this->registerClassLoader();
         
-        require_once($this->getEnvironment()->getEveron().'Exception.php');
+        require_once($this->getEnvironment()->getEveronHelper().'ToString.php');
         require_once($this->getEnvironment()->getEveron().'Exception/Repository.php');
 
         require_once($this->getEnvironment()->getEveronLib().'Dependencies.php');

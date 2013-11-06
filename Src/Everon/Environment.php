@@ -52,6 +52,7 @@ class Environment implements Interfaces\Environment
         $this->resources += [
             'everon_lib' => $this->getEveron().'Lib'.DIRECTORY_SEPARATOR,
             'everon_interface' => $this->getEveron().'Interfaces'.DIRECTORY_SEPARATOR,
+            'everon_helper' => $this->getEveron().'Helper'.DIRECTORY_SEPARATOR,
         ];
 
         $this->resources += [
@@ -172,6 +173,16 @@ class Environment implements Interfaces\Environment
     public function setEveronInterface($everon_interfaces)
     {
         $this->resources['everon_interface'] = $everon_interfaces;
+    }
+    
+    public function getEveronHelper()
+    {
+        return $this->resources['everon_helper'];
+    }
+    
+    public function setEveronHelper($everon_helper)
+    {
+        $this->resources['everon_helper'] = $everon_helper;
     }
 
     public function getTmp()

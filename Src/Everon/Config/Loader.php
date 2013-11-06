@@ -61,7 +61,7 @@ class Loader implements Interfaces\ConfigLoader
         $this->use_cache = $Config->isFile() || $use_cache;
         if ($this->use_cache &&  $Config->isFile() === false) {
             $h = fopen($Config->getPathname(), 'w');
-            //fwrite($h, $this->get) todo: make getRequestGuid a dependency, and echo its value here
+            //fwrite($h, $this->get) todo: make getGuid a dependency, and echo its value here
             fclose($h);
         }
     }

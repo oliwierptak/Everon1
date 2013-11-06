@@ -89,7 +89,7 @@ class Logger implements Interfaces\Logger
             $this->logRotate($Filename);
             
             $request_id = substr(self::$log_guid, 0, 6);
-            $trace_id =  substr(md5(uniqid()), 0, 6);;
+            $trace_id =  substr(md5(uniqid()), 0, 6);
             $id = "$request_id/$trace_id";
             
             $message = empty($parameters) === false ? vsprintf($message, $parameters) : $message;
@@ -144,7 +144,7 @@ class Logger implements Interfaces\Logger
     
     public function getLogDateFormat()
     {
-        return 'Y-m-d@H:i:sP';
+        return 'c';
     }
     
     public function getLogDateTimeZone()

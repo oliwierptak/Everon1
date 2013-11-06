@@ -57,7 +57,7 @@ function _mpr($val, $die=false)
     }
 }
 
-function setup($root, $log_filename)
+function setup($guid_value, $root, $log_filename)
 {
     $log_directory = implode(DIRECTORY_SEPARATOR, [$root, 'Tmp', 'logs']).DIRECTORY_SEPARATOR;
     $filename = implode(DIRECTORY_SEPARATOR, [$root, 'Config']).DIRECTORY_SEPARATOR.'application.ini';
@@ -71,9 +71,10 @@ function setup($root, $log_filename)
     }
 
     $log_filename = $log_directory.$log_filename;
-    set_exception_handler(function ($Exception) use ($log_filename) {
-        $timestamp = date('Y-m-d@H:i:sP', time());
+    set_exception_handler(function ($Exception) use ($log_filename, $guid_value) {
+        $timestamp = date('c', time());
         error_log((string) $timestamp." ".$Exception."\n", 3, $log_filename);
+        header("HTTP/1.1 500 Internal Server Error. Request ID: $guid_value");
     });
     
     require_once(implode(DIRECTORY_SEPARATOR, [$root, 'Src', 'Everon', 'Interfaces']).DIRECTORY_SEPARATOR.'Environment.php');

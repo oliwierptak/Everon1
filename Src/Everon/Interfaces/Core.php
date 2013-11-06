@@ -11,10 +11,11 @@ namespace Everon\Interfaces;
 
 use Everon\Interfaces;
 use Everon\Exception;
+use Everon\Guid;
 
 interface Core
 {
-    function getRequestGuid();
-    function run();
+    function getGuid();
+    function run(Guid $Guid);
     function shutdown();
 }

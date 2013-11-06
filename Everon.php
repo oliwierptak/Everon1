@@ -20,4 +20,4 @@ $BootstrapFile = new \SplFileInfo(
 require_once($BootstrapFile);
 
 $Console = $Factory->buildConsole();
-$Console->run();
+$Console->run($Guid);

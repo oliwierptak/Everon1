@@ -37,4 +37,4 @@ $Container->register('Request', function() use ($Factory) {
 });
 
 $Application = $Factory->buildMvc();
-$Application->run();
+$Application->run($Guid);
