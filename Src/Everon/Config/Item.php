@@ -14,8 +14,9 @@ use Everon\Interfaces;
 
 class Item implements Interfaces\ConfigItem, Interfaces\Arrayable
 {
-    const PROPERTY_NAME = '____name'; 
-    
+    const PROPERTY_NAME = '____name';
+
+    use Helper\Asserts;
     use Helper\Asserts\IsStringAndNonEmpty;
     use Helper\ToArray;
 

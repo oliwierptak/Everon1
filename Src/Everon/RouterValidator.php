@@ -11,6 +11,7 @@ namespace Everon;
 
 class RouterValidator implements Interfaces\RouterValidator
 {
+    use Helper\Asserts;
     use Helper\Asserts\IsArrayKey;    
     use Helper\Regex;
 

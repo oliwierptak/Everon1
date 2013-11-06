@@ -16,7 +16,7 @@ echo ('Start: '.memory_get_usage(TRUE)/1024)." kb<hr/>";
  * @var Interfaces\DependencyContainer $Container
  * @var Interfaces\Factory $Factory
  * @var Interfaces\Core $Mvc
- */    
+ */
 
 $BootstrapFile = new \SplFileInfo(
     implode(DIRECTORY_SEPARATOR,
@@ -24,17 +24,6 @@ $BootstrapFile = new \SplFileInfo(
 );
 require_once($BootstrapFile);
 
-//replace default Router
-$Container->register('Router', function() use ($Factory) {
-    $RouteConfig = $Factory->getDependencyContainer()->resolve('ConfigManager')->getRouterConfig();
-    $RouterValidator = $Factory->buildRouterValidator();
-    return $Factory->buildRouter($RouteConfig, $RouterValidator);
-});
-
-//replace default Request
-$Container->register('Request', function() use ($Factory) {
-    return $Factory->buildRequest($_SERVER, $_GET, $_POST, $_FILES);
-});
-
 $Application = $Factory->buildMvc();
+
 $Application->run($Guid);
