@@ -14,6 +14,7 @@ Very alpha version
 * Friendly urls with custom parameters and validation
 * No default parameters in method calls, everything is implicit
 * No static classes or methods
+* ReflectionAPI only used in tests
 * Clear, small and simple API
 * Convention over configuration
 * Clean code
