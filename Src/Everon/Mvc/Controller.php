@@ -48,10 +48,11 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
 
         $DefaultView = $this->getViewManager()->getDefaultView();
         $ViewTemplate = $CurrentView->getViewTemplate() ?: $DefaultView->getViewTemplate();
-        
-        $ViewTemplate->set('Main', $CurrentTemplate);
 
-        $this->getResponse()->setData($ViewTemplate);
+        $ViewTemplate->set('View.Main', $CurrentTemplate);
+
+        $this->getViewManager()->compileTemplate($ViewTemplate);
+        $this->getResponse()->setData("$ViewTemplate");
     }
 
     protected function response()

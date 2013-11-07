@@ -9,10 +9,18 @@
  */
 namespace Everon\Interfaces;
 
+use Everon\Exception;
 use Everon\Interfaces;
 
 interface ViewManager
 {
+    /**
+     * @param Interfaces\TemplateContainer $Template
+     * @throws Exception|\Exception
+     * @throws Exception\TemplateCompiler
+     */
+    function compileTemplate(Interfaces\TemplateContainer $Template);
+        
     /**
      * @param $name
      * @return mixed

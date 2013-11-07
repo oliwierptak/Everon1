@@ -502,7 +502,8 @@ class Request implements Interfaces\Request, Interfaces\Arrayable
      */
     public function isEmptyUrl()
     {
-        return $this->url === '/' || $this->url === '';
+        $url_path = parse_url($this->url, PHP_URL_PATH);
+        return $url_path === '/';
     }
 
 }

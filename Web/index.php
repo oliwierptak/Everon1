@@ -4,6 +4,7 @@
  */
 namespace Everon;
 
+require_once('/var/www/Kint/Kint.class.php');
 error_reporting(E_ALL);
 echo ('Start: '.memory_get_usage(TRUE)/1024)." kb<hr/>";
 

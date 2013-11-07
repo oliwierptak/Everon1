@@ -48,7 +48,7 @@ class Manager implements Interfaces\ViewManager
      * @throws Exception|\Exception
      * @throws Exception\TemplateCompiler
      */
-    protected function compileTemplate(Interfaces\TemplateContainer $Template)
+    public function compileTemplate(Interfaces\TemplateContainer $Template)
     {
         try {
             $compiled_content = null;
@@ -81,7 +81,7 @@ class Manager implements Interfaces\ViewManager
                 }
 
                 $compiled_content = $compiled_content ?: $Template->getTemplateContent();
-                //$compiled_content = $Compiler->compile($compiled_content, $Template->getData());
+                $compiled_content = $Compiler->compile($compiled_content, $Template->getData());
             }
             
             $Template->setCompiledContent($compiled_content);

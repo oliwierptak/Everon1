@@ -101,7 +101,7 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
             $this->Container = $Container;
         }
         else if (is_string($Container)) {
-            $this->Container = $this->getFactory()->buildTemplateContainer($Container, $this->variables);
+            $this->Container = $this->getFactory()->buildTemplateContainer($Container, $this->getViewVariables());
         }
      
         if (is_null($this->Container)) {
@@ -184,10 +184,20 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
     public function getViewTemplate()
     {
         if ($this->ViewTemplate === null) {
-            $this->ViewTemplate = $this->getTemplate('index', $this->variables);
+            $this->ViewTemplate = $this->getTemplate('index', $this->getViewVariables());
         }
         
         return $this->ViewTemplate;
+    }
+    
+    public function getViewVariables()
+    {
+        $data = [];
+        foreach ($this->variables as $key => $value) {
+            $data["View.$key"] = $value;
+        }
+        
+        return $data;
     }
     
     public function url($url)
