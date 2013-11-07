@@ -53,6 +53,10 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
      */
     protected function compileView($action, Interfaces\View $DefaultView)
     {
+        /**
+         * @var Interfaces\TemplateContainer $ActionTemplate
+         * @var Interfaces\TemplateContainer $ViewTemplate
+         */
         $ActionTemplate = $this->getView()->getTemplate($action, $this->getView()->getData());
         $ViewTemplate = $this->getView()->getViewTemplate() ?: $DefaultView->getViewTemplate();
         

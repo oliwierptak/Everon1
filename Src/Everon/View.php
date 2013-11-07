@@ -194,7 +194,7 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
     {
         $data = [];
         foreach ($this->variables as $key => $value) {
-            $data["View.$key"] = $value;
+            $data["View.$key"] = $value; //todo: introduce some kind of scopes
         }
         
         return $data;
