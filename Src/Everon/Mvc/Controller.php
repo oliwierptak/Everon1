@@ -18,7 +18,6 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
     use Dependency\Injection\ViewManager;
     use Dependency\Injection\ModelManager;
 
-    
     /**
      * @return Interfaces\View
      */
@@ -38,21 +37,29 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
     protected function prepareResponse($action)
     {
         $CurrentView = $this->getView();
-
         if ($this->isCallable($CurrentView, $action)) {
             $CurrentView->{$action}();
         }
 
-        $data = $CurrentView->getData();
-        $CurrentTemplate = $CurrentView->getTemplate($action, $data);
-
         $DefaultView = $this->getViewManager()->getDefaultView();
-        $ViewTemplate = $CurrentView->getViewTemplate() ?: $DefaultView->getViewTemplate();
+        $CompiledView = $this->compileView($action, $DefaultView);
+        $this->getResponse()->setData((string) $CompiledView);
+    }
 
-        $ViewTemplate->set('View.Main', $CurrentTemplate);
-
+    /**
+     * @param $action
+     * @param Interfaces\View $DefaultView
+     * @return Interfaces\View
+     */
+    protected function compileView($action, Interfaces\View $DefaultView)
+    {
+        $ActionTemplate = $this->getView()->getTemplate($action, $this->getView()->getData());
+        $ViewTemplate = $this->getView()->getViewTemplate() ?: $DefaultView->getViewTemplate();
+        
+        $ViewTemplate->set('View.Main', $ActionTemplate);
         $this->getViewManager()->compileTemplate($ViewTemplate);
-        $this->getResponse()->setData("$ViewTemplate");
+        
+        return $ViewTemplate;
     }
 
     protected function response()
