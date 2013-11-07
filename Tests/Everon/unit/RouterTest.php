@@ -23,7 +23,7 @@ class RouterTest extends \Everon\TestCase
 
     /**
      * @dataProvider dataProvider
-     * @expectedException \Everon\Exception\PageNotFound
+     * @expectedException \Everon\Exception\InvalidRoute
      */
     public function testPageNotFound(\Everon\Interfaces\Factory $Factory, \Everon\Interfaces\Request $Request, \Everon\Config\Router $Config, $expected)
     {

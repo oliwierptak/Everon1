@@ -112,9 +112,10 @@ interface Factory
     /**
      * @param Interfaces\Config $Config
      * @param Interfaces\RouterValidator $Validator
+     * @param string $ns
      * @return Interfaces\Router
      */
-    function buildRouter(Interfaces\Config $Config, Interfaces\RouterValidator $Validator);
+    function buildRouter(Interfaces\Config $Config, Interfaces\RouterValidator $Validator, $ns='Everon');
 
     /**
      * @return Interfaces\RouterValidator

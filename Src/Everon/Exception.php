@@ -23,7 +23,7 @@ abstract class Exception extends \Exception
      * @param null|array $params
      * @param null|\Exception $Previous
      */
-    public function __construct($message, $params=null, $Previous=null)
+    public function __construct($message, $params=null, $Previous=null, $Callback=null)
     {
         $message = $this->formatExceptionParams($message, $params);
         if ($message instanceof \Exception) {
@@ -33,6 +33,10 @@ abstract class Exception extends \Exception
             $message .= $this->formatExceptionParams(".\n%s", $Previous->getMessage());
         }
 
+        if ($Callback instanceof \Closure) {
+            $Callback();
+        }
+        
         parent::__construct($message, 0, $Previous);
     }
     

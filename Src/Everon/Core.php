@@ -70,27 +70,17 @@ abstract class Core implements Interfaces\Core
             $this->getLogger()->warn($e);
             echo $e->getMessage()."\n";
         }
-        catch (Exception\PageNotFound $e) {
-            $this->getLogger()->notFound($e);
-            echo "Unknown command: ".$e->getMessage()."\n";
-        }
-        catch (Exception $e) {
-            $this->getLogger()->error($e);
-            echo "Error: ".$e->getMessage()."\n";
-        }
     }
     
     //todo make events, add some kind of profiling class
     public function shutdown()
     {
         $data = $this->getGuid()->getStats();
-        
-        $sbs = vsprintf('%0dkb', $data['memory_at_start'] / 1024); //ekhm... xxx system before start 
-        $sas = vsprintf('%0dkb', $data['memory_total'] / 1024); //system after start
-        $mu = vsprintf('%0dkb', ($data['memory_total'] - $data['memory_at_start']) / 1024); //memory used
+        $sbs = vsprintf('%0dkb', $data['memory_at_start'] / 1024); 
+        $sas = vsprintf('%0dkb', $data['memory_total'] / 1024);
+        $mu = vsprintf('%0dkb', ($data['memory_total'] - $data['memory_at_start']) / 1024);
         $time = vsprintf('%.3f', round($data['time'], 3));
-        
-        $s = "${time}s $mu $sbs/$sas";
+        $s = "${time}s $mu $sbs/$sas"; 
         
         $this->getLogger()->monitor($s);
         

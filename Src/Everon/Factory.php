@@ -330,14 +330,16 @@ class Factory implements Interfaces\Factory
     /**
      * @param Interfaces\Config $Config
      * @param Interfaces\RouterValidator $Validator
-     * @return Interfaces\Router
+     * @param string $ns
+     * @return Interfaces\Router|Router
      * @throws Exception\Factory
      */
-    public function buildRouter(Interfaces\Config $Config, Interfaces\RouterValidator $Validator)
+    public function buildRouter(Interfaces\Config $Config, Interfaces\RouterValidator $Validator, $ns='Everon')
     {
         try {
-            $RouteItem = new Router($Config, $Validator);
-            $this->injectDependencies('Everon\Router', $RouteItem);
+            $class_name = $this->getFullClassName($ns, 'Router');
+            $RouteItem = new $class_name($Config, $Validator);
+            $this->injectDependencies($class_name, $RouteItem);
             return $RouteItem;
         }
         catch (\Exception $e) {

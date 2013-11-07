@@ -11,6 +11,7 @@ namespace Everon;
 
 use Everon\Interfaces;
 use Everon\Exception;
+use Everon\Http;
 
 class Mvc extends Core implements Interfaces\Core
 {
@@ -19,7 +20,25 @@ class Mvc extends Core implements Interfaces\Core
         return $this->getFactory()->buildController($name, 'Everon\Mvc\Controller');
     }
 
-    //todo make events
+    /**
+     * @param Guid $Guid
+     * @return void
+     */
+    public function run(Guid $Guid)
+    {
+        try {
+            parent::run($Guid);
+        }
+        catch (Http\Exception\NotFound $e) {
+            $this->getLogger()->notFound($e);
+            echo $e->getMessage()."\n";
+        }
+        catch (Exception $e) {
+            $this->getLogger()->error($e);
+            echo "Error: ".$e->getMessage()."\n";
+        }        
+    }
+
     public function shutdown()
     {
         $s = parent::shutdown();

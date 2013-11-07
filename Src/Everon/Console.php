@@ -19,6 +19,25 @@ class Console extends Core implements Interfaces\Core
         return $this->getFactory()->buildController($name, 'Everon\Console\Controller');
     }
 
+    /**
+     * @param Guid $Guid
+     * @return void
+     */
+    public function run(Guid $Guid)
+    {
+        try {
+            parent::run($Guid);
+        }
+        catch (Exception\InvalidRoute $e) {
+            $this->getLogger()->notFound($e);
+            echo "Unknown command: ".$e->getMessage()."\n";
+        }
+        catch (Exception $e) {
+            $this->getLogger()->error($e);
+            echo "Error: ".$e->getMessage()."\n";
+        }
+    }
+
     public function handleExceptions(\Exception $Exception)
     {
         $this->restorePreviousExceptionHandler();

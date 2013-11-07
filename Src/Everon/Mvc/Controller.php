@@ -12,6 +12,7 @@ namespace Everon\Mvc;
 use Everon\Interfaces;
 use Everon\Dependency;
 use Everon\Exception;
+use Everon\Http;
 
 abstract class Controller extends \Everon\Controller implements Interfaces\Controller, Interfaces\MvcController
 {
@@ -36,19 +37,17 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
 
     protected function prepareResponse($action)
     {
-        $CurrentView = $this->getView();
-        if ($this->isCallable($CurrentView, $action)) {
-            $CurrentView->{$action}();
+        if ($this->isCallable($this->getView(), $action)) {
+            $this->getView()->{$action}();
         }
 
         $Page = $this->getView()->getPage($action);
         $Page = $Page ?: $this->getViewManager()->getDefaultView();
 
         if ($Page === null) {
-            header('HTTP/1.1 404 Template not found'); //xxx
-            throw new Exception\View('Page: "%s/%s" not found', [$this->getName(),$action]);
+            throw new Http\Exception\NotFound('Page: "%s/%s" not found', [$this->getName(),$action]);
         }
-        
+
         $this->getViewManager()->compileTemplate($Page);
         $this->getResponse()->setData((string) $Page);
     }

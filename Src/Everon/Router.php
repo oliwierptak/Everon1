@@ -36,7 +36,7 @@ class Router implements Interfaces\Router
     /**
      * @param Interfaces\Request $Request
      * @return Interfaces\ConfigItemRouter
-     * @throws Exception\PageNotFound
+     * @throws Exception\InvalidRoute
      * @throws Exception\Router
      */
     public function getRouteByRequest(Interfaces\Request $Request)
@@ -61,14 +61,14 @@ class Router implements Interfaces\Router
         if ($Request->isEmptyUrl() && $Item === null) {
             $DefaultItem = $this->getConfig()->getDefaultItem() ?: $DefaultItem;
             if ($DefaultItem === null) {
-                throw new Exception\PageNotFound('Default route does not exist');
+                throw new Exception\InvalidRoute('Default route does not exist');
             }
             
             $Item = $DefaultItem;
         }
 
         if ($Item === null) {
-            throw new Exception\PageNotFound($Request->getLocation());
+            throw new Exception\InvalidRoute($Request->getLocation());
         }
         
         $this->validateAndUpdateRequest($Item, $Request);
