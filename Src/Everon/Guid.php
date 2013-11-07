@@ -12,6 +12,7 @@ namespace Everon;
 class Guid
 {
     protected $guid;
+    protected $system_memory_at_start = null;
     
     public function __construct()
     {
@@ -21,6 +22,25 @@ class Guid
     public function getValue()
     {
         return $this->guid;
+    }
+    
+    public function getSystemMemoryAtStart()
+    {
+        return $this->system_memory_at_start;
+    }
+    
+    public function setSystemMemoryAtStart($value)
+    {
+        $this->system_memory_at_start = $value;
+    }
+    
+    public function getStats()
+    {
+        return [
+            'memory_at_start' => $this->system_memory_at_start,
+            'memory_total' => (memory_get_usage(true)),
+            'time' => microtime(true) - $_SERVER['REQUEST_TIME_FLOAT']
+        ];
     }
     
     public function __toString()

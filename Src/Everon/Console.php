@@ -24,5 +24,11 @@ class Console extends Core implements Interfaces\Core
         $this->restorePreviousExceptionHandler();
         $this->getLogger()->console($Exception);
         echo $Exception;
+    }
+    
+    public function shutdown()
+    {
+        $s = parent::shutdown();
+        echo "\nExecuted in $s\n";
     }    
 }

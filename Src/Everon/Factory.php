@@ -230,18 +230,17 @@ class Factory implements Interfaces\Factory
     /**
      * @param $class_name
      * @param k
-     * @param string $default_extension
      * @param array $variables
      * @param string $ns
      * @return Interfaces\View
      * @throws Exception\Factory
      */
-    public function buildView($class_name, $template_directory, $default_extension, array $variables, $ns='Everon\View')
+    public function buildView($class_name, $template_directory, array $variables, $ns='Everon\View')
     {
         try {
             $class_name = $this->getFullClassName($ns, $class_name);
 
-            $View = new $class_name($template_directory, $default_extension, $variables);
+            $View = new $class_name($template_directory, $variables);
             $this->injectDependencies($class_name, $View);
             return $View;
         }

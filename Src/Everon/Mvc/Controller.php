@@ -41,29 +41,16 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
             $CurrentView->{$action}();
         }
 
-        $DefaultView = $this->getViewManager()->getDefaultView();
-        $CompiledView = $this->compileView($action, $DefaultView);
-        $this->getResponse()->setData((string) $CompiledView);
-    }
+        $Page = $this->getView()->getPage($action);
+        $Page = $Page ?: $this->getViewManager()->getDefaultView();
 
-    /**
-     * @param $action
-     * @param Interfaces\View $DefaultView
-     * @return Interfaces\View
-     */
-    protected function compileView($action, Interfaces\View $DefaultView)
-    {
-        /**
-         * @var Interfaces\TemplateContainer $ActionTemplate
-         * @var Interfaces\TemplateContainer $ViewTemplate
-         */
-        $ActionTemplate = $this->getView()->getTemplate($action, $this->getView()->getData());
-        $ViewTemplate = $this->getView()->getViewTemplate() ?: $DefaultView->getViewTemplate();
+        if ($Page === null) {
+            header('HTTP/1.1 404 Template not found'); //xxx
+            throw new Exception\View('Page: "%s/%s" not found', [$this->getName(),$action]);
+        }
         
-        $ViewTemplate->set('View.Main', $ActionTemplate);
-        $this->getViewManager()->compileTemplate($ViewTemplate);
-        
-        return $ViewTemplate;
+        $this->getViewManager()->compileTemplate($Page);
+        $this->getResponse()->setData((string) $Page);
     }
 
     protected function response()

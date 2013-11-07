@@ -83,13 +83,18 @@ abstract class Core implements Interfaces\Core
     //todo make events, add some kind of profiling class
     public function shutdown()
     {
-        $m = vsprintf('%04d kb', (memory_get_usage(true)/1024));
-        $mp = vsprintf('%04d kb', (memory_get_peak_usage(true)/1024));
+        $data = $this->getGuid()->getStats();
         
-        $s = vsprintf('%.3f', round(microtime(true) - $_SERVER['REQUEST_TIME_FLOAT'], 3)) .
-            "s $m / $mp";
-
+        $sbs = vsprintf('%0dkb', $data['memory_at_start'] / 1024); //ekhm... xxx system before start 
+        $sas = vsprintf('%0dkb', $data['memory_total'] / 1024); //system after start
+        $mu = vsprintf('%0dkb', ($data['memory_total'] - $data['memory_at_start']) / 1024); //memory used
+        $time = vsprintf('%.3f', round($data['time'], 3));
+        
+        $s = "${time}s $mu $sbs/$sas";
+        
         $this->getLogger()->monitor($s);
+        
+        return $s;
     }
     
     protected function restorePreviousExceptionHandler()

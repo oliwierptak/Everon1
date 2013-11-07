@@ -9,6 +9,8 @@
  */
 namespace Everon\Interfaces;
 
+use Everon\Interfaces;
+
 interface View
 {
     function getContainer();
@@ -21,6 +23,8 @@ interface View
     function get($name);
     function getData();
     function setData(array $data);
-    function getViewTemplate();
+    function getPage($action);
     function url($url);
+    function setDefaultExtension($extension);
+    function getDefaultExtension();
 }

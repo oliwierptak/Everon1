@@ -42,7 +42,7 @@ class Manager implements Interfaces\ViewManager
         $this->ViewCollection = new Helper\Collection([]);
         $this->view_directory = $view_directory;
     }
-
+    
     /**
      * @param Interfaces\TemplateContainer $Template
      * @throws Exception|\Exception
@@ -114,7 +114,8 @@ class Manager implements Interfaces\ViewManager
 
             $default_extension = $this->getConfigManager()->getApplicationConfig()->go('view')->get('default_extension');
             $ViewVariables = $this->getConfigManager()->getViewConfig()->get($name);
-            $View = $this->getFactory()->buildView($name, $template_directory, $default_extension, $ViewVariables);
+            $View = $this->getFactory()->buildView($name, $template_directory, $ViewVariables);
+            $View->setDefaultExtension($default_extension);
             $this->ViewCollection->set($name, $View);
         }
 

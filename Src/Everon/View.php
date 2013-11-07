@@ -25,18 +25,15 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
      */
     protected $Container = null;
     
-    protected $default_extension = null;
+    protected $default_extension = '.htm';
     
     protected $variables = [];
     
-    protected $ViewTemplate = null;
-
     
-    public function __construct($template_directory, $default_extension, array $variables)
+    public function __construct($template_directory, array $variables)
     {
         $this->name = $this->stringLastTokenToName(get_class($this));
         $this->template_directory = $template_directory;
-        $this->default_extension = $default_extension;
         $this->variables = $variables;
     }
 
@@ -179,15 +176,26 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
     }
 
     /**
-     * @return Interfaces\TemplateContainer
+     * @param $action
+     * @return Interfaces\TemplateContainer|null Whole page with 'header, body and footer'
      */
-    public function getViewTemplate()
+    public function getPage($action)
     {
-        if ($this->ViewTemplate === null) {
-            $this->ViewTemplate = $this->getTemplate('index', $this->getViewVariables());
+        $ActionTemplate = $this->getTemplate($action, $this->getData());
+        $ViewTemplate = $this->getTemplate('index', $this->getViewVariables());
+        
+        if ($ActionTemplate === null || $ViewTemplate === null) {
+            return null;
         }
         
-        return $this->ViewTemplate;
+        $ViewTemplate->set('View.Main', $ActionTemplate);
+
+        return $ViewTemplate;
+    }
+    
+    public function getViewTemplate()
+    {
+        return $this->getTemplate('index', $this->getViewVariables());
     }
     
     public function getViewVariables()
@@ -204,5 +212,14 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
     {
         return $url;
     }
-
+    
+    public function setDefaultExtension($extension)
+    {
+        $this->default_extension = $extension;
+    }
+    
+    public function getDefaultExtension()
+    {
+        return $this->default_extension;
+    }
 }

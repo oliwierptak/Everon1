@@ -12,6 +12,7 @@
 <body>
 </evBlock>
 
+
 <div evLoop="{View.AdminMenuItems = Section > MenuItems}" evAcl="admin,poweruser" evBlock="Menu">
     <h3 class="row_{MenuItems:odd}">{MenuItems:index+1} {Section}</h3>
     <ul evLoop="{MenuItems = Item}">
@@ -19,10 +20,6 @@
         <li><a href="{Item.Link}">{Item.Title}</a></li>
         <li evLoop="{MenuItems:last}">LAST: <a href="{Item.Link}">{Item.Title}</a><hr /></li>
     </ul>
-</div>
-    
-<div evAcl="!admin,!poweruser" evBlock="unregisteredMessage">
-    Log in to see administration menu.
 </div>
 
 <evBlock name="body">{View.Main}</evBlock>

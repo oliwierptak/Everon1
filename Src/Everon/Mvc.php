@@ -22,14 +22,7 @@ class Mvc extends Core implements Interfaces\Core
     //todo make events
     public function shutdown()
     {
-        parent::shutdown();
-        $m = vsprintf('%04d kb', (memory_get_usage(true)/1024));
-        $mp = vsprintf('%04d kb', (memory_get_peak_usage(true)/1024));
-
-        $s = vsprintf('%.3f', round(microtime(true) - $_SERVER['REQUEST_TIME_FLOAT'], 3)) .
-            "s $m / $mp";
-
+        $s = parent::shutdown();
         echo "<hr><pre>$s</pre>";
-
     }
 }

@@ -4,9 +4,8 @@
  */
 namespace Everon;
 
-require_once('/var/www/Kint/Kint.class.php');
+$system_memory = (string) (memory_get_usage(true));
 error_reporting(E_ALL);
-echo ('Start: '.memory_get_usage(TRUE)/1024)." kb<hr/>";
 
 /**
  * @var Guid $Guid
@@ -18,5 +17,6 @@ require_once(
         [dirname(__FILE__), '..', 'Config', 'Bootstrap', 'mvc.php'])
 )));
 
+$Guid->setSystemMemoryAtStart($system_memory);
 $Application = $Factory->buildMvc();
 $Application->run($Guid);

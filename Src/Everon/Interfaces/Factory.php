@@ -146,13 +146,12 @@ interface Factory
     /**
      * @param $class_name
      * @param $template_directory
-     * @param string $default_extension
      * @param array $variables
      * @param string $ns
      * @return Interfaces\View
      * @throws Exception\Factory
      */
-    function buildView($class_name, $template_directory, $default_extension, array $variables, $ns='Everon\View');
+    function buildView($class_name, $template_directory, array $variables, $ns='Everon\View');
 
     /**
      * @param array $compilers_to_init
