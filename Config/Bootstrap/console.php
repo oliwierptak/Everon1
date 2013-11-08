@@ -1,11 +1,10 @@
 <?php
 namespace Everon;
 
-$BootstrapFile = new \SplFileInfo(
-    implode(DIRECTORY_SEPARATOR,
-        [dirname(__FILE__), '..', '..', 'Src', 'Everon', 'Lib', 'Bootstrap.php'])
+require_once(
+implode(DIRECTORY_SEPARATOR,
+    [dirname(__FILE__), '..', '..', 'Src', 'Everon', 'Lib', 'Bootstrap.php'])    
 );
-require_once($BootstrapFile);
 
 /**
  * @var Bootstrap $Bootstrap
