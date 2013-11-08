@@ -16,4 +16,5 @@ interface ConfigLoaderItem
 {
     function getFilename();
     function getData();
+    function setData(array $data);
 }

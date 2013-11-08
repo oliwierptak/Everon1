@@ -16,72 +16,72 @@ use Everon\Interfaces;
 
 class ExpressionMatcher implements Interfaces\ConfigExpressionMatcher
 {
-    /**
-     * @var \Closure
-     */
-    protected $Compiler = null;
-    
-    protected $expressions = [
-        '%application.env.url%'
-    ];
+    protected $expressions = ['%application.env.url%'=>'']; //defaults
+    protected $values = [];
     
 
     /**
      * @param array $expressions
      * @return \Closure
      */
-    protected function buildCompiler(array $expressions)
+    protected function buildCompiler()
     {
-        $Compiler = function(array &$data) use ($expressions) {
-            if (empty($expressions) === false && empty($data) === false) {
-                array_walk_recursive($data, function(&$item) use ($expressions) {
-                    $item = str_replace(array_keys($expressions), array_values($expressions), $item);
+        $Compiler = function(array &$data) {
+            if (empty($this->values) === false && empty($data) === false) {
+                array_walk_recursive($data, function(&$item) {
+                    $item = str_replace(array_keys($this->values), array_values($this->values), $item);
                 });
             }
         };
-        
+
         return $Compiler;
     }
 
     /**
      * @param array $configs_data
+     * @param array $custom_expressions
      * @return callable
      */
-    public function getCompiler(array $configs_data)
+    public function createCompiler(array $configs_data, array $custom_expressions=[])
     {
-        $expressions = [];
+        $this->tokenizeExpressions($configs_data);
         foreach ($this->expressions as $item) {
             $tokens = explode('.', trim($item, '%'));   //eg. %application.env.url%
-            list($config_name, $config_section, $config_section_variable) = $tokens;
-            /**
-             * @var Interfaces\ConfigLoaderItem $ConfigLoaderItem
-             */
-            $ConfigLoaderItem = $configs_data[$config_name];
-            $data = $ConfigLoaderItem->getData();
+            if (count($tokens) < 3) {
+                continue;
+            }
             
-            $expressions[$item] = $data[$config_section][$config_section_variable];
+            list($config_name, $config_section, $config_section_variable) = $tokens;
+            $data = $configs_data[$config_name];
+            $this->values[$item] = $data[$config_section][$config_section_variable];
         }
 
-        //todo: remove it from here, put into manager
-        $expressions['%root%'] = getcwd().DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR;
-        return $this->buildCompiler($expressions);
+        //todo: remove it from here, put into manager and read the value from Environment 
+        //$values['%application.env.root%'] = getcwd().DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR;
+        
+        //to update self referencing, eg.
+        //'%application.assets.themes%' => string (34) "%application.env.url_statc%themes/"
+        $Compiler = $this->buildCompiler();
+        $Compiler($this->values); 
+        
+        return $this->buildCompiler();
     }
-
-    /**
-     * @param array $expressions
-     */
-    public function setExpressions(array $expressions)
+    
+    public function tokenizeExpressions(array $data)
     {
-        $this->expressions = $expressions;
-        $this->Compiler = null;
-    }
+        /**
+         * @var  Loader\Item $config_data
+         */
+        foreach ($data as $config_name => $config_data) {
+            $Callback = function($item) {
+                preg_match('(%([^\%]*)\.([^\%]*)\.([^\%]*)%)', $item, $matches); //%application.assets.themes%
+                if (empty($matches) === false) {
+                    $this->expressions[$matches[0]] = $matches[0];
+                }
+            };
+            array_walk_recursive($config_data, $Callback);
+        }
 
-    /**
-     * @return array
-     */
-    public function getExpressions()
-    {
-        return $this->expressions;
+        $this->expressions = array_keys($this->expressions);
     }
-
 }

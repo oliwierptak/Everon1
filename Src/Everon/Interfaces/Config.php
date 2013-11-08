@@ -29,11 +29,6 @@ interface Config
     function getDefaultItem();
 
     /**
-     * @return array
-     */
-    function getData();
-
-    /**
      * @return \array
      */
     function getItems();
@@ -67,14 +62,4 @@ interface Config
      * @return array
      */
     function toArray();
-
-    /**
-     * @return Interfaces\ConfigExpressionMatcher|null
-     */
-    function getCompiler();
-
-    /**
-     * @param \Closure $Compiler Wrapped Interfaces\ConfigExpressionMatcher
-     */
-    function setCompiler(\Closure $Compiler);    
 }

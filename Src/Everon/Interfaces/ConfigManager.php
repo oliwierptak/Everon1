@@ -13,7 +13,7 @@ use Everon\Interfaces;
 
 interface ConfigManager
 {
-    function register(Config $Config);
+    function register(Interfaces\Config $Config);
     function unRegister($name);
     function isRegistered($name);
     

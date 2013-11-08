@@ -57,13 +57,22 @@ class Manager implements Interfaces\ConfigManager
     {
         $default_config_data = $this->getCacheConfigData();
         $configs_data = $this->getConfigLoader()->load((bool) $default_config_data['enabled']['config_manager']);
-        $Compiler = $this->ExpressionMatcher->getCompiler($configs_data);
-
+        /**
+         * @var Interfaces\ConfigLoaderItem $ConfigLoaderItem
+         */
+        $d = [];
         foreach ($configs_data as $name => $ConfigLoaderItem) {
+            $d[$name] = $ConfigLoaderItem->toArray();
+        }
+
+        $Compiler = $this->ExpressionMatcher->createCompiler($d);
+        $Compiler($d);
+        
+        foreach ($configs_data as $name => $ConfigLoaderItem) {
+            $ConfigLoaderItem->setData($d[$name]);
             if ($this->isRegistered($name) === false) {
-                $Config = $this->getFactory()->buildConfig($name, $ConfigLoaderItem);
+                $Config = $this->getFactory()->buildConfig($name, $ConfigLoaderItem, $Compiler);
                 $this->register($Config);
-                $Config->setCompiler($Compiler);
             }
         }
     }
@@ -83,14 +92,14 @@ class Manager implements Interfaces\ConfigManager
    
     /**
      * @param Interfaces\Config $Config
-     * @throws Exception\Config
+     * @throws \Everon\Exception\Config
      */
     public function register(Interfaces\Config $Config)
     {
         if (isset($this->configs[$Config->getName()])) {
             throw new Exception\Config('Config with name: "%s" already registered', $Config->getName());
         }
-        
+
         $this->configs[$Config->getName()] = $Config;
         $this->getConfigLoader()->saveConfigToCache($Config);
     }

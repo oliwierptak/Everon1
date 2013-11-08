@@ -12,7 +12,7 @@ namespace Everon\Config\Loader;
 use Everon\Interfaces;
 use Everon\Helper;
 
-class Item implements Interfaces\ConfigLoaderItem
+class Item implements Interfaces\ConfigLoaderItem, Interfaces\Arrayable
 {
     use Helper\ToArray;
     
@@ -36,5 +36,13 @@ class Item implements Interfaces\ConfigLoaderItem
     public function getData()
     {
         return $this->data;
+    }
+
+    /**
+     * @param $data
+     */
+    public function setData(array $data)
+    {
+        $this->data = $data;
     }
 }   

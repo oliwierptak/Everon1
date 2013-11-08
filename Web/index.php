@@ -12,10 +12,9 @@ error_reporting(E_ALL);
  * @var Interfaces\Factory $Factory
  * @var Interfaces\Core $Application
  */
-require_once( 
-    (new \SplFileInfo(implode(DIRECTORY_SEPARATOR,
-        [dirname(__FILE__), '..', 'Config', 'Bootstrap', 'mvc.php'])
-)));
+require_once(
+    implode(DIRECTORY_SEPARATOR,
+        [dirname(__FILE__), '..', 'Config', 'Bootstrap', 'mvc.php']));
 
 $Guid->setSystemMemoryAtStart($system_memory);
 $Application = $Factory->buildMvc();

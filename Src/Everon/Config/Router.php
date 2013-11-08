@@ -14,15 +14,11 @@ use Everon\Interfaces;
 
 class Router extends \Everon\Config implements Interfaces\Config
 {      
-    
-    protected function buildItem($name, array $config_data)
+    protected function buildItem($name, array $data)
     {
-        if ($this->getCompiler() instanceof \Closure) {
-            $config_data['url'] = '%application.env.url%'.$config_data['url'];
-            $this->getCompiler()->__invoke($config_data);
-        }
+        /*$data['url'] = '%application.e4nv.url%'.$data['url'];
+        $data = $this->recompile($data);*/
         
-        return $this->getFactory()->buildConfigItemRouter($name, $config_data);
+        return $this->getFactory()->buildConfigItemRouter($name, $data);
     }
-
 }

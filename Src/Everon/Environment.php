@@ -46,7 +46,7 @@ class Environment implements Interfaces\Environment
             'web_cache' => $this->getWeb().'cache'.DIRECTORY_SEPARATOR,
             'web_css' => $this->getWeb().'css'.DIRECTORY_SEPARATOR,
             'web_images' => $this->getWeb().'images'.DIRECTORY_SEPARATOR,
-            'web_javascript' => $this->getWeb().'javascript'.DIRECTORY_SEPARATOR,
+            'web_javascript' => $this->getWeb().'js'.DIRECTORY_SEPARATOR,
         ];
 
         $this->resources += [

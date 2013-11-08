@@ -44,24 +44,24 @@ class Config implements Interfaces\Config, Interfaces\Arrayable
     protected $DefaultItem = null;
 
     /**
+     * @var \Closure
+     */
+    protected $Compiler = null;
+
+    /**
      * @var array
      */
     protected $items = null;
 
-    /**
-     * @var \Closure
-     */
-    protected $Compiler = null;
-    
     protected $inheritance_symbol = '<';
     
 
-    //todo: interface should only expose items, they can be recompiled internaly, dont expose $data
     /**
      * @param $name
      * @param Interfaces\ConfigLoaderItem $ConfigLoaderItem
+     * @param callable $Compiler
      */
-    public function __construct($name, Interfaces\ConfigLoaderItem $ConfigLoaderItem)
+    public function __construct($name, Interfaces\ConfigLoaderItem $ConfigLoaderItem, \Closure $Compiler)
     {
         $filename = $ConfigLoaderItem->getFilename();
         $data = $ConfigLoaderItem->getData();
@@ -69,6 +69,7 @@ class Config implements Interfaces\Config, Interfaces\Arrayable
         $this->name = $name;
         $this->filename = $filename;
         $this->data = $data;
+        $this->Compiler = $Compiler;
     }
 
     protected function processData()
@@ -125,9 +126,11 @@ class Config implements Interfaces\Config, Interfaces\Arrayable
     }
 
     protected function initItems()
-    {       
+    {
+        $this->processData();
+        
         $DefaultOrFirstItem = null;
-        foreach ($this->getData() as $item_name => $config_data) {
+        foreach ($this->data as $item_name => $config_data) {
             $RouteItem = $this->buildItem($item_name, $config_data); 
             $this->items[$item_name] = $RouteItem;
 
@@ -142,17 +145,9 @@ class Config implements Interfaces\Config, Interfaces\Arrayable
         }
     }
 
-    protected function buildItem($name, array $config_data)
+    protected function buildItem($name, array $data)
     {
-        return $this->getFactory()->buildConfigItem($name, $config_data);
-    }
-
-    /**
-     * @return array
-     */
-    protected function getToArray()
-    {
-        return $this->getData();
+        return $this->getFactory()->buildConfigItem($name, $data);
     }
 
     public function getName()
@@ -166,22 +161,6 @@ class Config implements Interfaces\Config, Interfaces\Arrayable
     public function setName($name)
     {
         $this->name = $name;
-    }
-
-    /**
-     * @return callable|null  Wrapped Interfaces\ConfigExpressionMatcher
-     */
-    public function getCompiler()
-    {
-        return $this->Compiler;
-    }
-
-    /**
-     * @param \Closure $Compiler Wrapped Interfaces\ConfigExpressionMatcher
-     */
-    public function setCompiler(\Closure $Compiler)
-    {
-        $this->Compiler = $Compiler;
     }
 
     public function getFilename()
@@ -216,14 +195,13 @@ class Config implements Interfaces\Config, Interfaces\Arrayable
         
         return $this->DefaultItem;
     }
-    
+
     /**
      * @return array
      */
-    public function getData()
+    protected function getToArray()
     {
-        $this->processData();
-        return $this->data;
+        return $this->getItems();
     }
 
     /**
@@ -297,4 +275,25 @@ class Config implements Interfaces\Config, Interfaces\Arrayable
         return $this;
     }
     
+    public function recompile($data)
+    {
+        $this->Compiler->__invoke($data);
+        return $data;
+    }
+
+    /**
+     * @return callable|null  Wrapped Interfaces\ConfigExpressionMatcher
+     */
+    public function getCompiler()
+    {
+        return $this->Compiler;
+    }
+
+    /**
+     * @param \Closure $Compiler Wrapped Interfaces\ConfigExpressionMatcher
+     */
+    public function setCompiler(\Closure $Compiler)
+    {
+        $this->Compiler = $Compiler;
+    }
 }

@@ -50,7 +50,7 @@ class Container implements Interfaces\TemplateContainer, Interfaces\Arrayable
     /**
      * @param $name
      * @param $value
-     * @return Interfaces\TemplateCompiler
+     * @return Interfaces\TemplateContainer
      * @throws Exception\Template
      */
     public function set($name, $value)

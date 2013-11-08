@@ -13,7 +13,10 @@ use Everon\Interfaces;
 
 interface ConfigExpressionMatcher
 {
-    function getCompiler(array $configs_data);
-    function setExpressions(array $expressions);
-    function getExpressions();
+    /**
+     * @param array $configs_data
+     * @param array $custom_expressions
+     * @return callable
+     */
+    function createCompiler(array $configs_data, array $custom_expressions=[]);
 }

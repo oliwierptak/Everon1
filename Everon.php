@@ -15,9 +15,8 @@ namespace Everon;
  * @var Interfaces\Core $Console
  */
 require_once(
-    (new \SplFileInfo(implode(DIRECTORY_SEPARATOR,
-        [dirname(__FILE__), 'Config', 'Bootstrap', 'console.php'])
-)));
+    implode(DIRECTORY_SEPARATOR, [dirname(__FILE__), 'Config', 'Bootstrap', 'console.php'])
+);
 
 $Console = $Factory->buildConsole();
 $Console->run($Guid);

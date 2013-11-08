@@ -35,7 +35,7 @@ class ConfigExpressionMatcherTest extends \Everon\TestCase
             ->method('getConfigByName')
             ->will($this->returnValue($Config));
 
-        $Compiler = $Matcher->getCompiler($Manager);
+        $Compiler = $Matcher->createCompiler($Manager);
 
         $data = ['this_is_my_url' => '%application.env.url%'];
         $Compiler($data);

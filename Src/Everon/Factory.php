@@ -106,10 +106,11 @@ class Factory implements Interfaces\Factory
     /**
      * @param $name
      * @param Interfaces\ConfigLoaderItem $ConfigLoaderItem
+     * @param callable $Compiler
      * @return Interfaces\Config
      * @throws Exception\Factory
      */
-    public function buildConfig($name, Interfaces\ConfigLoaderItem $ConfigLoaderItem)
+    public function buildConfig($name, Interfaces\ConfigLoaderItem $ConfigLoaderItem, \Closure $Compiler)
     {
         try {
             $class_name = ucfirst($this->stringUnderscoreToCamel($name));
@@ -124,7 +125,7 @@ class Factory implements Interfaces\Factory
                 $class_name = 'Everon\Config';
             }
 
-            $Config = new $class_name($name, $ConfigLoaderItem);
+            $Config = new $class_name($name, $ConfigLoaderItem, $Compiler);
             $this->injectDependencies($class_name, $Config);
             return $Config;
         }

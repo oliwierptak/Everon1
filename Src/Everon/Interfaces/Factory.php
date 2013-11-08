@@ -40,10 +40,11 @@ interface Factory
     /**
      * @param $name
      * @param Interfaces\ConfigLoaderItem $ConfigLoaderItem
+     * @param callable $Compiler
      * @return Interfaces\Config
      * @throws Exception\Factory
      */
-    function buildConfig($name, Interfaces\ConfigLoaderItem $ConfigLoaderItem);
+    function buildConfig($name, Interfaces\ConfigLoaderItem $ConfigLoaderItem, \Closure $Compiler);
 
     /**
      * @param Interfaces\ConfigLoader $Loader
