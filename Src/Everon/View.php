@@ -179,25 +179,31 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
      * @param $action
      * @return Interfaces\TemplateContainer|null Whole page with 'header, body and footer'
      */
-    public function getPage($action)
+    public function getViewTemplateByAction($action)
     {
         $ActionTemplate = $this->getTemplate($action, $this->getData());
-        $ViewTemplate = $this->getTemplate('index', $this->getViewVariables());
+        $ViewTemplate = $this->getViewTemplate();
         
         if ($ActionTemplate === null || $ViewTemplate === null) {
             return null;
         }
         
         $ViewTemplate->set('View.Main', $ActionTemplate);
-
+        
         return $ViewTemplate;
     }
-    
+
+    /**
+     * @return Interfaces\TemplateContainer
+     */
     public function getViewTemplate()
     {
         return $this->getTemplate('index', $this->getViewVariables());
     }
-    
+
+    /**
+     * @return array
+     */
     public function getViewVariables()
     {
         $data = [];

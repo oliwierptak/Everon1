@@ -41,15 +41,15 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
             $this->getView()->{$action}();
         }
 
-        $Page = $this->getView()->getPage($action);
-        $Page = $Page ?: $this->getViewManager()->getDefaultView();
+        $PageTemplate = $this->getView()->getViewTemplateByAction($action);
+        $PageTemplate = $PageTemplate ?: $this->getViewManager()->getDefaultView()->getViewTemplate();
 
-        if ($Page === null) {
+        if ($PageTemplate === null) {
             throw new Http\Exception\NotFound('Page: "%s/%s" not found', [$this->getName(),$action]);
         }
 
-        $this->getViewManager()->compileTemplate($Page);
-        $this->getResponse()->setData((string) $Page);
+        $this->getViewManager()->compileTemplate($PageTemplate);
+        $this->getResponse()->setData((string) $PageTemplate);
     }
 
     protected function response()

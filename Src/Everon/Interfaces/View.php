@@ -23,8 +23,10 @@ interface View
     function get($name);
     function getData();
     function setData(array $data);
-    function getPage($action);
+    function getViewTemplateByAction($action);
     function url($url);
     function setDefaultExtension($extension);
     function getDefaultExtension();
+    function getViewTemplate();
+    function getViewVariables();
 }
