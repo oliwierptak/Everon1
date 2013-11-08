@@ -125,7 +125,9 @@ class Response implements Interfaces\Response
     
     public function send()
     {
-        $this->sendHeaders();
+        if (headers_sent() === false) {
+            $this->sendHeaders();
+        }
     }
 
 }
