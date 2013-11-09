@@ -16,6 +16,7 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
     use Helper\String\EndsWith;
     use Helper\String\LastTokenToName;
     use Helper\ToString;
+    use Helper\toArray;
 
     protected $name = null;
     protected $template_directory = null;
@@ -98,7 +99,7 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
             $this->Container = $Container;
         }
         else if (is_string($Container)) {
-            $this->Container = $this->getFactory()->buildTemplateContainer($Container, $this->getViewVariables());
+            $this->Container = $this->getFactory()->buildTemplateContainer($Container, []);
         }
      
         if (is_null($this->Container)) {
@@ -157,11 +158,6 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
         return $this->getContainer()->getData();
     }
     
-    public function toArray()
-    {
-        return $this->getContainer()->toArray();
-    }
-
     /**
      * @return array
      */
@@ -181,7 +177,8 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
      */
     public function getViewTemplateByAction($action)
     {
-        $ActionTemplate = $this->getTemplate($action, $this->getData());
+        $data = array_merge($this->getData(), $this->getViewVariables());
+        $ActionTemplate = $this->getTemplate($action, $data);
         $ViewTemplate = $this->getViewTemplate();
         
         if ($ActionTemplate === null || $ViewTemplate === null) {
@@ -189,6 +186,15 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
         }
         
         $ViewTemplate->set('View.Main', $ActionTemplate);
+        
+        foreach ($this->getData() as $key => $value) {
+            if (substr($key, 0, strlen("View.")) !== "View.") {
+                $ViewTemplate->set($this->getName().".$key", $value);
+            }
+        }
+        //$ActionTemplate->setData($data);
+        $data = array_merge($this->getViewVariables(), $ViewTemplate->getData());
+        $ViewTemplate->setData($data);
         
         return $ViewTemplate;
     }
@@ -204,7 +210,7 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
     /**
      * @return array
      */
-    public function getViewVariables()
+    protected function getViewVariables()
     {
         $data = [];
         foreach ($this->variables as $key => $value) {

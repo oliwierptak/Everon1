@@ -13,17 +13,20 @@
 </evBlock>
 
 
-<div evLoop="{View.AdminMenuItems = Section > MenuItems}" evAcl="admin,poweruser" evBlock="Menu">
-    <h3 class="row_{MenuItems:odd}">{MenuItems:index+1} {Section}</h3>
-    <ul evLoop="{MenuItems = Item}">
-        <li evLoop="{MenuItems:first}">FIRST: <a href="{Item.Link}">{Item.Title}</a></li>
-        <li><a href="{Item.Link}">{Item.Title}</a></li>
-        <li evLoop="{MenuItems:last}">LAST: <a href="{Item.Link}">{Item.Title}</a><hr /></li>
-    </ul>
-</div>
 
-<evBlock name="body">{View.Main}</evBlock>
+<div loop="View.AdminMenuItems">
+    <e>foreach ($View->AdminMenuItems as $Section as $MenuItems) :</e>
+        <h3 class="menu_item_<{echo $odd ? 'odd' : 'even'}>"><e>"$step - $Section"</e></h3>
+        <e>foreach ($MenuItems as $Item) :</e>
+            <ul>
+                <li><a href="<{$Item->link}>"><e>$Item->title for {View.title}</e></a></li>
+            </ul>
+        <e>endfor</e>
+    <e>endfor</e>
+</div>
         
+<evBlock name="body">{View.Main}</evBlock>
+
 <evBlock name="Footer">
 </body>
 </html>

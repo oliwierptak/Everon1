@@ -8,12 +8,12 @@ class Login extends View
     public function form()
     {
         $redirect_url = urlencode('/login/reset password');
-        $this->set('login_url', $this->url("login/submit/session/adf24ds34/redirect/{urlencode:${redirect_url}}?and=something&else=2457"));
-        
+        $this->set('login_url', $this->url("login/submit/session/adf24ds34/redirect/${redirect_url}?and=something&else=2457"));
         $FormElement = new \Everon\View\Html\Form([
             'action' => $this->get('login_url')
         ]);
 
+        $this->set('canShowInfo', true);
         $this->set('Form', $FormElement);
     }
 

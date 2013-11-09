@@ -9,8 +9,21 @@
     <meta name="description" content="{View.description}" />
 </head>
 <body bgcolor="#d3d3d3">
-    <h3>{View.title}</h3>
-    
+    <e>
+        $s = urlencode('login/submit/session/adf24ds34/redirect/'.urlencode('{View.title}').'?and=something&else=2457');
+        echo urldecode($s);
+    </e>
+    <h2>::{View.title}</h2>
+    <e>
+        if ({Login.canShowInfo} === 1) {
+            echo 'showing info';
+        }
+        else {
+            echo 'not showing info';
+        }
+    </e>
+
+    <br />
     {View.Main}
 
     <div evAcl="!admin,!poweruser" evBlock="unregisteredMessage">

@@ -28,5 +28,4 @@ interface View
     function setDefaultExtension($extension);
     function getDefaultExtension();
     function getViewTemplate();
-    function getViewVariables();
 }

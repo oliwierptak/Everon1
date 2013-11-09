@@ -1,5 +1,11 @@
-<form action="{urlencode:Form.action}" method="{Form.method}" enctype="{Form.enctype}">
+<form action="<{urlencode('{Form.action}')}>" method="{Form.method}" enctype="{Form.enctype}">
     <input type="hidden" name="token" value="3">
+    <e>
+        if ({canShowInfo} === 1) {
+            echo 'showing something in Login';
+        }
+    </e>    
+    <b style="color: red"><e>'{View.title}'</e></b>
     <table border="0">
         <tr>
             <td>Username</td>
