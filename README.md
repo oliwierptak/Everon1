@@ -34,18 +34,38 @@ class MyModel
 Let's say you need a logger for that particular model. All you must write is one line. Everon does the rest.
 
 ```php
-class MyModel
+class SampleModel
 {
     use Dependency\Injection\Logger;
         
     public function helloWorld()
     {
-        $this->getLogger()->log('Hello Log');
+        $greeting = 'Hello world';
+        $this->getLogger()->log($greeting);        
+        return $greeting;
     }
 }
 ```
-If you need specific constructor injection you can extend default Factory class.
- 
+Let's plug this model into a Controller, so we can use it in some incoming user request.
+Note: Mvc\Controller, which SampleController extends from, implements getView() and getModel().
+[See here.](https://github.com/oliwierptak/Everon/blob/master/Src/Everon/Mvc/Controller.php)
+
+```php
+class SampleController extends Mvc\Controller
+{
+    public function helloWorld()
+    {
+        $Model = $this->getModelManager()->getModel('SampleModel');
+        $greeting = $Model->helloWorld();
+        $this->getView()->setContainer($greeting);
+    }
+}
+```
+When your 'tools' like Controllers, Models or Views don't require specific set of functionality, it's not there.
+Unlike other frameworks, in Everon, when one of your, say Controllers, require a View, a Request or a Model, 
+it does not mean, that from now on, every Controller will be stuffed with responsibilities/implementations 
+they don't actually need/use.
+
 One line, on demand, lazy loaded dependency injection. No annotations, yaml or xml files to configure.
 In fact, there isn't any configuration file needed at all. 
 Instead, Everon applications use [root composition pattern](http://blog.ploeh.dk/2011/07/28/CompositionRoot/) to create
@@ -55,6 +75,7 @@ for implementation details.
 #### What's the best way to inject dependencies?
 Use constructor for dependencies that are part of what the class is doing, and use setters/getters for infrastructure
 type dependencies. In general, a Logger could be good example of infrastructure type dependency.
+If you need specific constructor injection you can extend default Factory class.
 
 
 ## Factory
