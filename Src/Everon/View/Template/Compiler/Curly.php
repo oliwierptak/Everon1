@@ -50,7 +50,7 @@ class Curly implements Interfaces\TemplateCompiler
         'endfor',
     ];
     
-    protected $compile_erros = [];
+    protected $compile_errors_trace = [];
 
     /**
      * @param $template_content
@@ -65,14 +65,13 @@ class Curly implements Interfaces\TemplateCompiler
 
     protected function compileCurly($template_content)
     {
-        $this->compile_erros = [];
+        $this->compile_errors_trace = [];
         $tag_name = 'e';
-        $pattern = "@<$tag_name(?:\s[^/]*?)?>(.*?)</$tag_name\s*>@si";
         $content = preg_replace_callback($pattern,  [$this, 'evalPhp'], $template_content);
         
-        if ($this->compile_erros) {
+        if ($this->compile_errors_trace) {
             $this->getLogger()->template_compiler_trace(
-                implode("\n", $this->compile_erros)
+                implode("\n", $this->compile_errors_trace)
             );
         }
         
@@ -123,7 +122,7 @@ class Curly implements Interfaces\TemplateCompiler
         }
         
         if ($e === false) {
-            $this->compile_erros[] = $output;
+            $this->compile_errors_trace[] = $output;
             $output = '';
         }
 
