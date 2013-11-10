@@ -16,7 +16,7 @@ Very alpha version
 * ReflectionAPI only used in tests
 * Clear, small and simple API
 * Convention over configuration
-* Clean code
+* Clean code 
 
 ## Dependency Injection
 Consider this model, as you can see it does not inherit from anything, and there is no constructor.
@@ -41,11 +41,12 @@ class SampleModel
     public function helloWorld()
     {
         $greeting = 'Hello world';
-        $this->getLogger()->log($greeting);        
+        $this->getLogger()->log($greeting);
         return $greeting;
     }
 }
 ```
+Now the Logger is accessible by simply calling `$this->getLogger()`.
 Let's plug this model into a Controller, so we can use it in some incoming user request.
 Note: Mvc\Controller, which SampleController extends from, implements getView() and getModel().
 [See here.](https://github.com/oliwierptak/Everon/blob/master/Src/Everon/Mvc/Controller.php)
@@ -63,9 +64,16 @@ class SampleController extends Mvc\Controller
 ```
 When your 'tools' like Controllers, Models or Views don't require specific set of functionality, it's not there.
 Unlike other frameworks, in Everon, when one of your, say Controllers, require a View, a Request or a Model, 
-it does not mean, that from now on, every Controller will be stuffed with responsibilities/implementations 
-they don't actually need/use.
+it does not mean, that from now on, every other Controller as well will be stuffed, 
+with responsibilities/implementations/source code they don't actually use.
 
+In one application, you can specify with surgical precision what parts require what collaborators to do their work.
+For example, a console application which only require one specific Controller to have a View, in order to compose
+and send e-mails in HTML format. Or that cron job application for generating Reports. 
+
+Maybe for your case, it makes more sense to use the Model View ViewModel (MVVM) instead of MVC?
+No problem, just take Everon's parts and put them together in your way. 
+ 
 One line, on demand, lazy loaded dependency injection. No annotations, yaml or xml files to configure.
 In fact, there isn't any configuration file needed at all. 
 Instead, Everon applications use [root composition pattern](http://blog.ploeh.dk/2011/07/28/CompositionRoot/) to create
@@ -149,5 +157,4 @@ for `static_url` property will be set to '/static/blue' as defined in the parent
 The rest of the missing properties, like `$charset`, will be inherited from `[Default]` section.
 
 See [view.ini](https://github.com/oliwierptak/Everon/blob/master/Config/view.ini) for more examples.
-
 
