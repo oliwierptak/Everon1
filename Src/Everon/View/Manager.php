@@ -112,8 +112,8 @@ class Manager implements Interfaces\ViewManager
                 throw new Exception\ViewManager('View template directory: "%s" does not exist', $template_directory);
             }
 
-            $default_extension = $this->getConfigManager()->getApplicationConfig()->go('view')->get('default_extension');
-            $ViewVariables = $this->getConfigManager()->getViewConfig()->get($name);
+            $default_extension = $this->getConfigManager()->getConfigValue('application.view.default_extension');
+            $ViewVariables = $this->getConfigManager()->getConfigValue("view.$name");
             $View = $this->getFactory()->buildView($name, $template_directory, $ViewVariables);
             $View->setDefaultExtension($default_extension);
             $this->ViewCollection->set($name, $View);

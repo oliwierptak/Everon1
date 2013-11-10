@@ -103,10 +103,13 @@ class Curly implements Interfaces\TemplateCompiler
         try {
             $code = $this->phpizer($matches[1]);
             $code = rtrim($code, ';').";";
-            $this->getLogger()->template_eval($code);
             $e = @eval($code);
             if ($e === false) {
+                $this->getLogger()->template_eval_error($code);
                 debug_print_backtrace();
+            }
+            else {
+                $this->getLogger()->template_eval($code);
             }
         }
         catch (\Exception $e) {

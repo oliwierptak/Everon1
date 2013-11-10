@@ -43,10 +43,14 @@ class Environment implements Interfaces\Environment
         ];
 
         $this->resources += [
-            'web_cache' => $this->getWeb().'cache'.DIRECTORY_SEPARATOR,
-            'web_css' => $this->getWeb().'css'.DIRECTORY_SEPARATOR,
-            'web_images' => $this->getWeb().'images'.DIRECTORY_SEPARATOR,
-            'web_javascript' => $this->getWeb().'js'.DIRECTORY_SEPARATOR,
+            'web_assets' => $this->getWeb().'assets'.DIRECTORY_SEPARATOR,
+        ];
+        
+        $this->resources += [
+            'web_cache' => $this->getAssets().'cache'.DIRECTORY_SEPARATOR,
+            'web_css' => $this->getAssets().'css'.DIRECTORY_SEPARATOR,
+            'web_images' => $this->getAssets().'images'.DIRECTORY_SEPARATOR,
+            'web_javascript' => $this->getAssets().'js'.DIRECTORY_SEPARATOR,
         ];
 
         $this->resources += [
@@ -244,4 +248,20 @@ class Environment implements Interfaces\Environment
     {
         $this->resources['web_cache'] = $web_cache;
     }
+    
+    public function getAssets()
+    {
+        return $this->resources['web_assets'];
+    }
+    
+    public function setAssets($assets)
+    {
+        $this->resources['web_assets'] = $assets;
+    }
+    
+    public function toArray()
+    {
+        return $this->resources;
+    }
+    
 }

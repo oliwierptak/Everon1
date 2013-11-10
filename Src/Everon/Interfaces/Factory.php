@@ -48,11 +48,10 @@ interface Factory
 
     /**
      * @param Interfaces\ConfigLoader $Loader
-     * @param Interfaces\ConfigExpressionMatcher $Matcher
      * @return Config\Manager|mixed
      * @throws Exception\Factory
      */
-    public function buildConfigManager(Interfaces\ConfigLoader $Loader, Interfaces\ConfigExpressionMatcher $Matcher);
+    public function buildConfigManager(Interfaces\ConfigLoader $Loader);
 
     /**
      * @return Interfaces\ConfigExpressionMatcher

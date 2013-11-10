@@ -22,8 +22,11 @@ interface ConfigManager
      * @return Interfaces\Config
      */    
     function getConfigByName($name);
-    function getApplicationConfig();
-    function getRouterConfig();
-    function getViewConfig();
     function getConfigs();
+    
+    /**
+     * @param $expression
+     * @return mixed|null
+     */
+    function getConfigValue($expression);    
 }

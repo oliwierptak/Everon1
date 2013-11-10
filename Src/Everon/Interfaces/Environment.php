@@ -47,4 +47,5 @@ interface Environment
     function setWebCache($view_template_cache);
     function getWeb();
     function setWeb($web);
+    function toArray();
 }

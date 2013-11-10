@@ -18,7 +18,7 @@ $Bootstrap->getClassLoader()->add('Everon\Mvc\Controller', $Environment->getCont
 
 //replace default Router
 $Container->register('Router', function() use ($Factory) {
-    $RouteConfig = $Factory->getDependencyContainer()->resolve('ConfigManager')->getRouterConfig();
+    $RouteConfig = $Factory->getDependencyContainer()->resolve('ConfigManager')->getConfigByName('router');
     $RouterValidator = $Factory->buildRouterValidator();
     return $Factory->buildRouter($RouteConfig, $RouterValidator, 'Everon\Mvc');
 });

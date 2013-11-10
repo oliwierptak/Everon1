@@ -170,7 +170,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         });
 
         $Container->register('Router', function() use ($Factory) {
-            $RouteConfig = $Factory->getDependencyContainer()->resolve('ConfigManager')->getRouterConfig();
+            $RouteConfig = $Factory->getDependencyContainer()->resolve('ConfigManager')->getConfigByName('router');
             $RouterValidator = $Factory->buildRouterValidator();
             return $Factory->buildRouter($RouteConfig, $RouterValidator);
         });

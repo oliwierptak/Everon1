@@ -18,6 +18,10 @@ trait EndsWith
      */
     public function stringEndsWith($string, $end)
     {
+        if ($end === null) {
+            return false;
+        }
+        
         return substr_compare($string, $end, -strlen($end), strlen($end)) === 0;
     }
 }

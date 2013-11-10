@@ -22,9 +22,8 @@ if (isset($Factory) === false) {
 }
 
 $Container->propose('Logger', function() use ($Factory) {
-    $Config = $Factory->getDependencyContainer()->resolve('ConfigManager')->getApplicationConfig();
+    $enabled = $Factory->getDependencyContainer()->resolve('ConfigManager')->getConfigValue('application.logger.enabled');
     $log_directory = $Factory->getDependencyContainer()->resolve('Environment')->getLog();
-    $enabled = (bool) $Config->go('logger')->get('enabled');
     return $Factory->buildLogger($log_directory, $enabled);
 });
 
@@ -39,9 +38,8 @@ $Container->propose('ConfigManager', function() use ($Factory) {
      */
     $Environment = $Factory->getDependencyContainer()->resolve('Environment');
     $config_cache_directory = $Environment->getCacheConfig();
-    $Matcher = $Factory->buildConfigExpressionMatcher();
     $Loader = $Factory->buildConfigLoader($Environment->getConfig(), $config_cache_directory);
-    return $Factory->buildConfigManager($Loader, $Matcher);
+    return $Factory->buildConfigManager($Loader);
 });
 
 $Container->propose('Request', function() use ($Factory) {
@@ -55,18 +53,15 @@ $Container->propose('Router', function() use ($Factory) {
 });
 
 $Container->propose('ModelManager', function() use ($Factory) {
-    $Config = $Factory->getDependencyContainer()->resolve('ConfigManager')->getApplicationConfig();
-    return $Factory->buildModelManager(
-        $Config->go('model')->get('manager', 'Everon')
-    );
+    $manager_name = $Factory->getDependencyContainer()->resolve('ConfigManager')->getConfigValue('application.model.manager');
+    return $Factory->buildModelManager($manager_name);
 });
 
 $Container->propose('ViewManager', function() use ($Factory) {
-    $ApplicationConfig = $Factory->getDependencyContainer()->resolve('ConfigManager')->getApplicationConfig();
-    $ViewConfig = $Factory->getDependencyContainer()->resolve('ConfigManager')->getViewConfig();
+    $compilers = $Factory->getDependencyContainer()->resolve('ConfigManager')->getConfigValue('application.view.compilers');
 
     return $Factory->buildViewManager(
-        $ApplicationConfig->go('view')->get('compilers'),
+        $compilers,
         $Factory->getDependencyContainer()->resolve('Environment')->getView()
     );
 });

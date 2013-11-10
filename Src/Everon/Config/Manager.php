@@ -16,6 +16,7 @@ use Everon\Interfaces;
 
 class Manager implements Interfaces\ConfigManager
 {
+    use Dependency\Injection\Environment;
     use Dependency\Injection\Factory;
     use Dependency\ConfigLoader;
 
@@ -32,6 +33,8 @@ class Manager implements Interfaces\ConfigManager
     protected $default_cache_config_filename = 'cache.ini';
     
     protected $default_config_name = 'cache';
+    
+    protected $ExpressionMatcher = null; 
 
     /**
      * @var array
@@ -45,12 +48,10 @@ class Manager implements Interfaces\ConfigManager
 
     /**
      * @param Interfaces\ConfigLoader $Loader
-     * @param Interfaces\ConfigExpressionMatcher $Matcher
      */
-    public function __construct(Interfaces\ConfigLoader $Loader, Interfaces\ConfigExpressionMatcher $Matcher)
+    public function __construct(Interfaces\ConfigLoader $Loader)
     {
         $this->ConfigLoader = $Loader;
-        $this->ExpressionMatcher = $Matcher;
     }
 
     protected function loadAndRegisterConfigs()
@@ -64,8 +65,8 @@ class Manager implements Interfaces\ConfigManager
         foreach ($configs_data as $name => $ConfigLoaderItem) {
             $d[$name] = $ConfigLoaderItem->toArray();
         }
-
-        $Compiler = $this->ExpressionMatcher->createCompiler($d);
+        
+        $Compiler = $this->getExpressionMatcher()->createCompiler($d, $this->getEnvironmentExpressions());
         $Compiler($d);
         
         foreach ($configs_data as $name => $ConfigLoaderItem) {
@@ -75,6 +76,17 @@ class Manager implements Interfaces\ConfigManager
                 $this->register($Config);
             }
         }
+    }
+    
+    protected function getEnvironmentExpressions()
+    {
+        $data = $this->getEnvironment()->toArray();
+        foreach ($data as $key => $value) {
+            $data["%environment.paths.$key%"] = $value;
+            unset($data[$key]);
+        }
+        
+        return $data;
     }
 
     protected function getCacheConfigData()
@@ -88,6 +100,18 @@ class Manager implements Interfaces\ConfigManager
         }
         
         return $data;
+    }
+
+    /**
+     * @return Interfaces\ConfigExpressionMatcher
+     */
+    protected function getExpressionMatcher()
+    {
+        if ($this->ExpressionMatcher === null) {
+            $this->ExpressionMatcher = $this->getFactory()->buildConfigExpressionMatcher();
+        }
+        
+        return $this->ExpressionMatcher;
     }
    
     /**
@@ -136,30 +160,37 @@ class Manager implements Interfaces\ConfigManager
         return $this->configs[$name];
     }
 
-    /**
-     * @return \Everon\Interfaces\Config
-     */
-    public function getApplicationConfig()
-    {
-        return $this->getConfigByName('application');
-    }
 
     /**
-     * @return \Everon\Interfaces\Config
+     * @param $expression
+     * @return mixed|null
      */
-    public function getRouterConfig()
+    public function getConfigValue($expression)
     {
-        return $this->getConfigByName('router');
+        $tokens = explode('.', $expression);
+        $token_count = count($tokens);
+        if ($token_count < 2) { //view.compilers or application.env.url
+            return null;
+        }
+        
+        switch ($token_count) {
+            case 2:
+                list($name, $section) = $tokens;
+                $Config = $this->getConfigByName($name);
+                return $Config->get($section);
+                break;
+            
+            default:
+                list($name, $section, $item) = $tokens;
+                $Config = $this->getConfigByName($name);
+                $Config->go($section);
+                return $Config->get($item, null);
+                break;
+        }
+        
     }
+
     
-    /**
-     * @return \Everon\Interfaces\Config
-     */
-    public function getViewConfig()
-    {
-        return $this->getConfigByName('view');
-    }
-
     /**
      * @return array|null
      */

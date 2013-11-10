@@ -16,12 +16,11 @@ use Everon\Interfaces;
 
 class ExpressionMatcher implements Interfaces\ConfigExpressionMatcher
 {
-    protected $expressions = ['%application.env.url%'=>'']; //defaults
+    protected $expressions = [];
     protected $values = [];
     
 
     /**
-     * @param array $expressions
      * @return \Closure
      */
     protected function buildCompiler()
@@ -44,22 +43,30 @@ class ExpressionMatcher implements Interfaces\ConfigExpressionMatcher
      */
     public function createCompiler(array $configs_data, array $custom_expressions=[])
     {
-        $this->tokenizeExpressions($configs_data);
+        $this->expressions = [];
+        $this->values = [];
+        
+        $this->tokenizeExpressions($configs_data, $custom_expressions);
         foreach ($this->expressions as $item) {
             $tokens = explode('.', trim($item, '%'));   //eg. %application.env.url%
             if (count($tokens) < 3) {
                 continue;
             }
-            
+
             list($config_name, $config_section, $config_section_variable) = $tokens;
+            if (isset($configs_data[$config_name]) === false) {
+                continue;
+            }
+            
             $data = $configs_data[$config_name];
+            if (isset($data[$config_section][$config_section_variable]) === false) {
+                continue;
+            }
+            
             $this->values[$item] = $data[$config_section][$config_section_variable];
         }
 
-        //todo: remove it from here, put into manager and read the value from Environment 
-        //$values['%application.env.root%'] = getcwd().DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR;
-        
-        //to update self referencing, eg.
+        //compile to update self references, eg.
         //'%application.assets.themes%' => string (34) "%application.env.url_statc%themes/"
         $Compiler = $this->buildCompiler();
         $Compiler($this->values); 
@@ -67,21 +74,23 @@ class ExpressionMatcher implements Interfaces\ConfigExpressionMatcher
         return $this->buildCompiler();
     }
     
-    public function tokenizeExpressions(array $data)
+    public function tokenizeExpressions(array $data, array $custom_expressions)
     {
+        $SetExpressions = function($item) {
+            preg_match('(%([^\%]*)\.([^\%]*)\.([^\%]*)%)', $item, $matches); //%application.assets.themes%
+            if (empty($matches) === false) {
+                $this->expressions[$matches[0]] = $matches[0];
+            }
+        };
+        
         /**
          * @var  Loader\Item $config_data
          */
         foreach ($data as $config_name => $config_data) {
-            $Callback = function($item) {
-                preg_match('(%([^\%]*)\.([^\%]*)\.([^\%]*)%)', $item, $matches); //%application.assets.themes%
-                if (empty($matches) === false) {
-                    $this->expressions[$matches[0]] = $matches[0];
-                }
-            };
-            array_walk_recursive($config_data, $Callback);
+            array_walk_recursive($config_data, $SetExpressions);
         }
 
         $this->expressions = array_keys($this->expressions);
+        $this->expressions = array_merge($this->expressions, $custom_expressions);
     }
 }
