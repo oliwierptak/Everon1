@@ -69,7 +69,8 @@ they don't actually need/use.
 One line, on demand, lazy loaded dependency injection. No annotations, yaml or xml files to configure.
 In fact, there isn't any configuration file needed at all. 
 Instead, Everon applications use [root composition pattern](http://blog.ploeh.dk/2011/07/28/CompositionRoot/) to create
-whole object graphs in one place. See example [Bootstrap/mvc.php](https://github.com/oliwierptak/Everon/blob/master/Config/Bootstrap/mvc.php)
+whole [object graphs in one place](https://github.com/oliwierptak/Everon/blob/master/Src/Everon/Lib/Dependencies.php).
+See example [Bootstrap/mvc.php](https://github.com/oliwierptak/Everon/blob/master/Config/Bootstrap/mvc.php)
 for implementation details.
 
 #### What's the best way to inject dependencies?
@@ -79,13 +80,13 @@ If you need specific constructor injection you can extend default Factory class.
 
 
 ## Factory
-One Factory class to take care of creation of all objects.   
+[One Factory](https://github.com/oliwierptak/Everon/blob/master/Src/Everon/Factory.php) class to take care of creation of all objects.   
 You have full control how classes are instantiated and what dependencies they require,
 all you have to do is to extend default Factory class.
 
 
 ## Routing
-Consider this routing example for this url: `/login/submit/session/adf24ds34/redirect/%2Flogin%2Fresetpassword?token=abcd&pif=2457`
+Consider this routing example for an url: `/login/submit/session/adf24ds34/redirect/%2Flogin%2Fresetpassword?token=abcd&pif=2457`
   
     [login_submit]
     url = login/submit/session/{sid}/redirect/{location}
