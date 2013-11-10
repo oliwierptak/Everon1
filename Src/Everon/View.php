@@ -14,6 +14,7 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
     use Dependency\Injection\Factory;
     
     use Helper\String\EndsWith;
+    use Helper\String\StartsWith;
     use Helper\String\LastTokenToName;
     use Helper\ToString;
     use Helper\toArray;
@@ -188,13 +189,15 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
         $ViewTemplate->set('View.Main', $ActionTemplate);
         
         foreach ($this->getData() as $key => $value) {
-            if (substr($key, 0, strlen("View.")) !== "View.") {
+            if ($this->stringStartsWith($key, 'View.') === false && 
+                $this->stringStartsWith($key, "${this}->getName().") === false) {
                 $ViewTemplate->set($this->getName().".$key", $value);
             }
         }
-        //$ActionTemplate->setData($data);
-        $data = array_merge($this->getViewVariables(), $ViewTemplate->getData());
-        $ViewTemplate->setData($data);
+        
+        $ViewTemplate->setData(
+            array_merge($this->getViewVariables(), $ViewTemplate->getData())
+        );
         
         return $ViewTemplate;
     }

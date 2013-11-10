@@ -5,5 +5,5 @@ use Everon\View;
 
 class Index extends View
 {
-    ``
+
 }
