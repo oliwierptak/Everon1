@@ -62,11 +62,6 @@ class SampleController extends Mvc\Controller
     }
 }
 ```
-When your 'tools' like Controllers, Models or Views don't require specific set of functionality, it's not there.
-Unlike other frameworks, in Everon, when one of your, say Controllers, require a View, a Request or a Model, 
-it does not mean, that from now on, every other Controller as well will be stuffed, 
-with responsibilities/implementations/source code they don't actually use.
-
 One line, on demand, lazy loaded dependency injection. No annotations, yaml or xml files to configure.
 In fact, there isn't any configuration file needed at all. 
 Instead, Everon applications use [root composition pattern](http://blog.ploeh.dk/2011/07/28/CompositionRoot/) to create
