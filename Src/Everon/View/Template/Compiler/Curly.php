@@ -67,6 +67,7 @@ class Curly implements Interfaces\TemplateCompiler
     {
         $this->compile_errors_trace = [];
         $tag_name = 'e';
+        $pattern = "@<$tag_name(?:\s[^/]*?)?>(.*?)</$tag_name\s*>@si";
         $content = preg_replace_callback($pattern,  [$this, 'evalPhp'], $template_content);
         
         if ($this->compile_errors_trace) {
