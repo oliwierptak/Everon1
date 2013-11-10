@@ -79,7 +79,6 @@ class Bootstrap
         $this->setupClassLoader();
         
         $this->getClassLoader()->add('Everon', $this->getEnvironment()->getSource());
-        $this->getClassLoader()->add('Everon\View', $this->getEnvironment()->getView());
         $this->getClassLoader()->register();
     }
     

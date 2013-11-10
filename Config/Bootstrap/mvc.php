@@ -13,6 +13,7 @@ require_once(
  * @var Interfaces\Factory $Factory
  */
 
+$Bootstrap->getClassLoader()->add('Everon\View', $Environment->getView());
 $Bootstrap->getClassLoader()->add('Everon\Model', $Environment->getModel());
 $Bootstrap->getClassLoader()->add('Everon\Mvc\Controller', $Environment->getController());
 
@@ -26,4 +27,18 @@ $Container->register('Router', function() use ($Factory) {
 //replace default Request
 $Container->register('Request', function() use ($Factory) {
     return $Factory->buildRequest($_SERVER, $_GET, $_POST, $_FILES);
+});
+
+$Container->register('ModelManager', function() use ($Factory) {
+    $manager_name = $Factory->getDependencyContainer()->resolve('ConfigManager')->getConfigValue('application.model.manager');
+    return $Factory->buildModelManager($manager_name);
+});
+
+$Container->register('ViewManager', function() use ($Factory) {
+    $compilers = $Factory->getDependencyContainer()->resolve('ConfigManager')->getConfigValue('application.view.compilers');
+
+    return $Factory->buildViewManager(
+        $compilers,
+        $Factory->getDependencyContainer()->resolve('Environment')->getView()
+    );
 });

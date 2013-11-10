@@ -51,17 +51,3 @@ $Container->propose('Router', function() use ($Factory) {
     $RouterValidator = $Factory->buildRouterValidator();
     return $Factory->buildRouter($RouteConfig, $RouterValidator);
 });
-
-$Container->propose('ModelManager', function() use ($Factory) {
-    $manager_name = $Factory->getDependencyContainer()->resolve('ConfigManager')->getConfigValue('application.model.manager');
-    return $Factory->buildModelManager($manager_name);
-});
-
-$Container->propose('ViewManager', function() use ($Factory) {
-    $compilers = $Factory->getDependencyContainer()->resolve('ConfigManager')->getConfigValue('application.view.compilers');
-
-    return $Factory->buildViewManager(
-        $compilers,
-        $Factory->getDependencyContainer()->resolve('Environment')->getView()
-    );
-});
