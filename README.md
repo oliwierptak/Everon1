@@ -71,7 +71,7 @@ In one application, you can specify with surgical precision what parts require w
 For example, a console application which only require one specific Controller to have a View, in order to compose
 and send e-mails in HTML format. Or that cron job application for generating Reports. 
 
-Maybe for your case, it makes more sense to use the Model View ViewModel (MVVM) instead of MVC?
+Maybe for your case, it makes more sense to use the Model View Presenter (MVP) instead of MVC?
 No problem, just take Everon's parts and put them together in your way. 
  
 One line, on demand, lazy loaded dependency injection. No annotations, yaml or xml files to configure.
