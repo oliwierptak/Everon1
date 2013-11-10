@@ -95,7 +95,6 @@ class Logger implements Interfaces\Logger
             
             $message = empty($parameters) === false ? vsprintf($message, $parameters) : $message;
             $message = $StarDate->format($this->getLogDateFormat())." ${id} ".$message;
-            $message = $this->oneLiner($message);
             error_log($message."\n", 3, $Filename->getPathname());
 
             if ($ExceptionToTrace instanceof \Exception) {
@@ -131,16 +130,6 @@ class Logger implements Interfaces\Logger
             $h = fopen($Filename->getPathname(), 'w');
             fclose($h);
         }
-    }
-    
-    //todo this 
-    protected function oneLiner($lines)
-    {
-        return str_replace([
-            chr(13).chr(10),
-            chr(13),
-            chr(10),
-        ], '|', $lines);
     }
     
     public function getLogDateFormat()

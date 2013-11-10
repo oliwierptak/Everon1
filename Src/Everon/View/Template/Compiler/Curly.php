@@ -47,6 +47,7 @@ class Curly implements Interfaces\TemplateCompiler
         'while',
         'class',
         'list',
+        'endfor',
     ];
     
     protected $compile_erros = [];
@@ -66,11 +67,11 @@ class Curly implements Interfaces\TemplateCompiler
     {
         $this->compile_erros = [];
         $tag_name = 'e';
-        $pattern = "@<$tag_name(?:\s[^/]*?)?>(.*?)</$tag_name\s*>@s";
+        $pattern = "@<$tag_name(?:\s[^/]*?)?>(.*?)</$tag_name\s*>@si";
         $content = preg_replace_callback($pattern,  [$this, 'evalPhp'], $template_content);
         
         if ($this->compile_erros) {
-            $this->getLogger()->template_compiler(
+            $this->getLogger()->template_compiler_trace(
                 implode("\n", $this->compile_erros)
             );
         }
@@ -87,7 +88,7 @@ class Curly implements Interfaces\TemplateCompiler
         }
         else {
             $keywords = implode('|', $this->php_keyword);
-            $needs_echo = preg_match('@^('.$keywords.')@i', $code, $m) === 0;
+            $needs_echo = preg_match('@^('.$keywords.')@i', $code) === 0;
         }
 
         if ($needs_echo) {
@@ -99,24 +100,27 @@ class Curly implements Interfaces\TemplateCompiler
 
     protected function evalPhp($matches) 
     {
-        ob_start();
+        $e = false;
         try {
+            ob_start();
             $code = $this->phpizer($matches[1]);
             $code = rtrim($code, ';').";";
             $e = @eval($code);
             if ($e === false) {
-                $this->getLogger()->template_eval_error($code);
+                $this->getLogger()->curly_eval_error($code);
                 debug_print_backtrace();
             }
             else {
-                $this->getLogger()->template_eval($code);
+                $this->getLogger()->curly_eval($code);
             }
         }
         catch (\Exception $e) {
+            $e = false;
         }
-
-        $output = ob_get_contents();
-        ob_end_clean();
+        finally {
+            $output = ob_get_contents();
+            ob_end_clean();
+        }
         
         if ($e === false) {
             $this->compile_erros[] = $output;

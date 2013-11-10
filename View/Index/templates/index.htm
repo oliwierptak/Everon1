@@ -19,7 +19,7 @@
         <h3 class="menu_item_<{echo $odd ? 'odd' : 'even'}>"><e>"$step - $Section"</e></h3>
         <e>foreach ($MenuItems as $Item) :</e>
             <ul>
-                <li><a href="<{$Item->link}>"><e>$Item->title for {View.title}</e></a></li>
+                <li><a href="<{$Item->link}>"><e>$Item->title .'for {View.title}'</e></a></li>
             </ul>
         <e>endfor</e>
     <e>endfor</e>

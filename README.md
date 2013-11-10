@@ -2,10 +2,9 @@
 Very alpha version
 
 ## Requirements
-* Php 5.4+ only
+* Php 5.5+ only
 
 ## Features
-* 99% code coverage
 * One line, lazy loaded dependency injection (via setters or constructors)
 * Minimized file/memory access/usage due to callbacks and lazy load
 * Factory gives full control on how each and every object is created and what dependencies it needs
