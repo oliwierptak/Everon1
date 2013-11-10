@@ -67,13 +67,6 @@ Unlike other frameworks, in Everon, when one of your, say Controllers, require a
 it does not mean, that from now on, every other Controller as well will be stuffed, 
 with responsibilities/implementations/source code they don't actually use.
 
-In one application, you can specify with surgical precision what parts require what collaborators to do their work.
-For example, a console application which only require one specific Controller to have a View, in order to compose
-and send e-mails in HTML format. Or that cron job application for generating Reports. 
-
-Maybe for your case, it makes more sense to use the Model View Presenter (MVP) instead of MVC?
-No problem, just take Everon's parts and put them together in your way. 
- 
 One line, on demand, lazy loaded dependency injection. No annotations, yaml or xml files to configure.
 In fact, there isn't any configuration file needed at all. 
 Instead, Everon applications use [root composition pattern](http://blog.ploeh.dk/2011/07/28/CompositionRoot/) to create
@@ -158,3 +151,11 @@ The rest of the missing properties, like `$charset`, will be inherited from `[De
 
 See [view.ini](https://github.com/oliwierptak/Everon/blob/master/Config/view.ini) for more examples.
 
+## Flexibility
+Due to to effortless dependency injection and modularity in one application, you can specify with surgical 
+precision, which parts require what collaborators to do their work.
+For example, a console application that requires only one specific Controller to have a View, in order to compose
+and send e-mails in HTML format. Or that cron job application for generating Reports. 
+
+Maybe for your case, it makes more sense to use the Model View Presenter (MVP) instead of MVC?
+No problem, just take Everon's parts and put them together in your way. 
