@@ -26,7 +26,7 @@ class Popo implements Interfaces\Arrayable
      * @var array
      */
     protected $data = [];
-
+    
 
     /**
      * @param array $data
@@ -35,7 +35,17 @@ class Popo implements Interfaces\Arrayable
     {
         $this->data = $data;
     }
-
+    
+    public function __get($property)
+    {
+        throw new Exception\Popo('Public properties are not exposed');
+    }
+    
+    public function __set($property, $value)
+    {
+        throw new Exception\Popo('Public properties do not exists');
+    }
+    
     /**
      * @param $name
      * @param $arguments
