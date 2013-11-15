@@ -17,7 +17,7 @@ trait IsCallable
      * @param $method
      * @return bool
      */
-    public function isCallable($Object, $method)
+    protected function isCallable($Object, $method)
     {
         //method exists is faster, use it first
         if (method_exists($Object, $method) === false || is_callable([$Object, $method]) === false) {

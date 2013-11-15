@@ -22,37 +22,13 @@ class ConfigExpressionMatcherTest extends \Everon\TestCase
     /**
      * @dataProvider dataProvider
      */
-    public function testGetCompiler(Interfaces\ConfigExpressionMatcher $Matcher)
+    public function testCreateCompilerAndCompile(Interfaces\ConfigExpressionMatcher $Matcher, array $data)
     {
-        $Config = $this->getMock('Everon\Interfaces\Config');
-        $Config->expects($this->any())
-            ->method('get')
-            ->with('url')
-            ->will($this->returnValue('/testme'));
-
-        $Manager = $this->getMock('Everon\Interfaces\ConfigManager');
-        $Manager->expects($this->any())
-            ->method('getConfigByName')
-            ->will($this->returnValue($Config));
-
-        $Compiler = $Matcher->createCompiler($Manager);
-
-        $data = ['this_is_my_url' => '%application.env.url%'];
-        $Compiler($data);
-        $this->assertEquals($data, ['this_is_my_url' => '/testme']);
-
-        $data = [];
-        $Compiler($data);
-        $this->assertEquals($data, []);
-    }
-
-    /**
-     * @dataProvider dataProvider
-     */
-    public function testSetters(Interfaces\ConfigExpressionMatcher $Matcher)
-    {
-        $Matcher->setExpressions(['%test.me%']);
-        $this->assertEquals(['%test.me%'], $Matcher->getExpressions());
+        $data['application']['env']['url'] = '/testme';
+        $data['test']['config']['url'] = '%application.env.url%';
+        $Compiler = $Matcher->getCompiler($data);
+        $Compiler($data);        
+        $this->assertEquals($data['test']['config']['url'], $data['application']['env']['url']);
     }
 
     public function dataProvider()
@@ -60,12 +36,12 @@ class ConfigExpressionMatcherTest extends \Everon\TestCase
         /**
          * @var \Everon\Interfaces\Factory $Factory
          */
-        $Factory = $this->getFactory();
-        
+        $Factory = $this->getFactory();        
+        $data['application'] = parse_ini_file($this->Environment->getConfig().'application.ini', true);
         $Matcher = $Factory->buildConfigExpressionMatcher();
 
         return [
-            [$Matcher]
+            [$Matcher, $data]
         ];
     }
 

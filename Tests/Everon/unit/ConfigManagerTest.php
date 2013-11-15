@@ -9,6 +9,8 @@
  */
 namespace Everon\Test;
 
+use Everon\Environment;
+
 class ConfigManagerTest extends \Everon\TestCase
 {
     public function testConstructor()
@@ -59,14 +61,11 @@ class ConfigManagerTest extends \Everon\TestCase
      */
     public function testLoadAndRegisterConfigs(\Everon\Interfaces\ConfigManager $ConfigManager, \Everon\Interfaces\Config $Expected)
     {
-        $Config = $ConfigManager->getApplicationConfig();
+        $Config = $ConfigManager->getConfigByName('application');
         $this->assertInstanceOf('\Everon\Config', $Config);
 
-        $Config = $ConfigManager->getRouterConfig();
+        $Config = $ConfigManager->getConfigByName('router');
         $this->assertInstanceOf('\Everon\Config\Router', $Config);
-
-        $Config = $ConfigManager->getViewConfig();
-        $this->assertInstanceOf('\Everon\Config\View', $Config);
 
         $Config = $ConfigManager->getConfigByName('test');
         $this->assertInstanceOf('\Everon\Interfaces\Config', $Config);
@@ -78,14 +77,11 @@ class ConfigManagerTest extends \Everon\TestCase
      */
     public function testSettersAndGetters(\Everon\Interfaces\ConfigManager $ConfigManager, \Everon\Interfaces\Config $Expected)
     {
-        $Config = $ConfigManager->getApplicationConfig();
+        $Config = $ConfigManager->getConfigByName('application');
         $this->assertInstanceOf('Everon\Config', $Config);
         
-        $Config = $ConfigManager->getRouterConfig();
+        $Config = $ConfigManager->getConfigByName('router');
         $this->assertInstanceOf('Everon\Config\Router', $Config);
-
-        $Config = $ConfigManager->getViewConfig();
-        $this->assertInstanceOf('Everon\Config\View', $Config);
         
         $Config = $ConfigManager->getConfigByName('test');
         $this->assertInstanceOf('Everon\Config', $Config);
@@ -106,8 +102,8 @@ class ConfigManagerTest extends \Everon\TestCase
      */
     public function testRegisterWithCache(\Everon\Interfaces\ConfigManager $ConfigManager, \Everon\Interfaces\Config $Expected)
     {
-        $ConfigManager->disableCache();
-        $ConfigManager->enableCache();
+        $ConfigManager->getConfigLoader()->disableCache();
+        $ConfigManager->getConfigLoader()->enableCache();
         $ConfigManager->unRegister($Expected->getName());
         $ConfigManager->register($Expected);
         $Config = $ConfigManager->getConfigByName($Expected->getName());
@@ -119,11 +115,11 @@ class ConfigManagerTest extends \Everon\TestCase
      */
     public function testLoadAndRegisterConfigsWithCache(\Everon\Interfaces\ConfigManager $ConfigManager, \Everon\Interfaces\Config $Expected)
     {
-        $ConfigManager->enableCache();
+        $ConfigManager->getConfigLoader()->enableCache();
 
         $Property = $this->getProtectedProperty('Everon\Config\Manager', 'configs');
         $Property->setValue($ConfigManager, null);
-        $Config = $ConfigManager->getApplicationConfig();
+        $Config = $ConfigManager->getConfigByName('application');
 
         $this->assertInstanceOf('Everon\Interfaces\Config', $Config);
     }
@@ -133,32 +129,13 @@ class ConfigManagerTest extends \Everon\TestCase
      */
     public function testGetConfigsWithCache(\Everon\Interfaces\ConfigManager $ConfigManager, \Everon\Interfaces\Config $Expected)
     {
-        $ConfigManager->enableCache();
+        $ConfigManager->getConfigLoader()->enableCache();
 
         $Property = $this->getProtectedProperty('Everon\Config\Manager', 'configs');
         $Property->setValue($ConfigManager, null);
 
         $configs = $ConfigManager->getConfigs();
         $this->assertNotEmpty($configs);
-    }
-
-    /**
-     * @dataProvider dataProvider
-     */
-    public function testSetupCachingAndDefaultConfig(\Everon\Interfaces\ConfigManager $ConfigManager, \Everon\Interfaces\Config $Expected)
-    {
-        $PropertyDefaultConfigName = $this->getProtectedProperty('Everon\Config\Manager', 'default_config_name');
-        $PropertyDefaultConfigName->setValue($ConfigManager, $Expected->getName());
-
-        $PropertyConfigs = $this->getProtectedProperty('Everon\Config\Manager', 'configs');
-
-        $configs = [$Expected->getName() => $Expected];
-        $PropertyConfigs->setValue($ConfigManager, $configs);
-
-        $Method = $this->getProtectedMethod('Everon\Config\Manager', 'setupCachingAndDefaultConfig');
-        $Method->invoke($ConfigManager);
-
-        $this->assertInstanceOf('Everon\Config', $ConfigManager->getApplicationConfig());
     }
 
     public function dataProvider()
@@ -168,13 +145,28 @@ class ConfigManagerTest extends \Everon\TestCase
          */
         $Factory = $this->getFactory();
 
+        //$name, Interfaces\ConfigLoaderItem $ConfigLoaderItem, \Closure $Compiler
+        $Compiler = function(&$data) {};
+
+        $filename = $this->getConfigDirectory().'test.ini';
+        $ConfigLoaderItem = new \Everon\Config\Loader\Item($filename, parse_ini_file($filename, true));
         $Expected = new \Everon\Config(
             'test',
-            $this->getConfigDirectory().'test.ini',
-            ['test'=>1]
+            $ConfigLoaderItem,
+            $Compiler
         );
         
-        $ConfigManager = $Factory->getDependencyContainer()->resolve('ConfigManager');
+        $Loader = new \Everon\Config\Loader($this->getConfigDirectory(), $this->getConfigCacheDirectory());
+        $Loader->setFactory($Factory);
+        
+        $ConfigManager = new \Everon\Config\Manager($Loader);
+        $ConfigManager->setFactory($Factory);
+        
+        //todo add setter in TestCase for setting up Environment for tests
+        $Environment = new Environment($this->Environment->getRoot());
+        $Environment->setConfig($this->getConfigDirectory());
+        $Environment->setCacheConfig($this->getConfigCacheDirectory());
+        $ConfigManager->setEnvironment($Environment);
         
         return [
             [$ConfigManager, $Expected]

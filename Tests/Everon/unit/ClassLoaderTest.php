@@ -46,7 +46,7 @@ class ClassLoaderTest extends \Everon\TestCase
     public function dataProvider()
     {
         $Loader = new \Everon\ClassLoader(null);
-        $Environment = new \Everon\Environment(PROJECT_ROOT);
+        $Environment = $this->Environment;
         
         return [
             [$Loader, $Environment]

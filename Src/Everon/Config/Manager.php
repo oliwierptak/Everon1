@@ -66,7 +66,7 @@ class Manager implements Interfaces\ConfigManager
             $d[$name] = $ConfigLoaderItem->toArray();
         }
         
-        $Compiler = $this->getExpressionMatcher()->createCompiler($d, $this->getEnvironmentExpressions());
+        $Compiler = $this->getExpressionMatcher()->getCompiler($d, $this->getEnvironmentExpressions());
         $Compiler($d);
         
         foreach ($configs_data as $name => $ConfigLoaderItem) {
@@ -169,25 +169,22 @@ class Manager implements Interfaces\ConfigManager
     {
         $tokens = explode('.', $expression);
         $token_count = count($tokens);
-        if ($token_count < 2) { //view.compilers or application.env.url
+        if ($token_count < 2) {
             return null;
         }
         
-        switch ($token_count) {
-            case 2:
-                list($name, $section) = $tokens;
-                $Config = $this->getConfigByName($name);
-                return $Config->get($section);
-                break;
-            
-            default:
-                list($name, $section, $item) = $tokens;
-                $Config = $this->getConfigByName($name);
-                $Config->go($section);
-                return $Config->get($item, null);
-                break;
+        if (count($tokens) == 2) { //view.compilers or application.env.url
+            array_push($tokens, null);  
         }
         
+        list($name, $section, $item) = $tokens;
+        $Config = $this->getConfigByName($name);
+        if ($item !== null) {
+            $Config->go($section);
+            return $Config->get($item, null);
+        }
+        
+        return $Config->get($section);
     }
 
     

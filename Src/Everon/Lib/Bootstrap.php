@@ -16,7 +16,15 @@ require_once(implode(DIRECTORY_SEPARATOR, [$root, 'Src', 'Everon', 'Bootstrap.ph
 require_once(implode(DIRECTORY_SEPARATOR, [$root, 'Src', 'Everon', 'Guid.php']));
 
 $Guid = new Guid();
-Bootstrap::setup($Guid->getValue(), $root, '500.log');
+if (isset($CustomSetup)) {
+    $CustomSetup();
+}
+else {
+    Bootstrap::setup($Guid->getValue(), $root, '500.log');
+}
+
+require_once(implode(DIRECTORY_SEPARATOR, [$root, 'Src', 'Everon', 'Interfaces', 'Environment.php']));
+require_once(implode(DIRECTORY_SEPARATOR, [$root, 'Src', 'Everon', 'Environment.php']));
 
 $Environment = new Environment($root);
 $Bootstrap = new Bootstrap($Environment);

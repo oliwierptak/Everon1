@@ -7,15 +7,14 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon\Interfaces;
+namespace Everon\Helper;
 
-/**
- * @method array toArray()
- */
-interface ConfigItem
+use Everon\Exception;
+
+trait IsCli
 {
-    function getName();
-    function setName($name);
-    function isDefault();
-    function setIsDefault($is_default);
+    protected function isCli()
+    {
+        return (php_sapi_name() === 'cli');
+    }
 }

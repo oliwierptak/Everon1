@@ -9,20 +9,19 @@
  */
 namespace Everon\Helper;
 
-
 trait IsIterable
 {
     /**
      * @param $input
      * @return bool
      */
-    public function isIterable($input)
+    protected function isIterable($input)
     {
         if (isset($input) && is_array($input)) {//isset is much faster
             return true;
         }
         
-        if ($input instanceof \ArrayAccess || $input instanceof \Iterator) {
+        if ($input instanceof Interfaces\Arrayable || $input instanceof \ArrayAccess || $input instanceof \Iterator) {
             return true;
         }
         

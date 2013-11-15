@@ -55,24 +55,13 @@ class Loader implements Interfaces\ConfigLoader
         return @parse_ini_file($filename, true);
     }
 
-    protected function setupCaching($use_cache)
-    {
-        $Config = new \SplFileInfo($this->getCacheDirectory().'.cache');
-        $this->use_cache = $Config->isFile() || $use_cache;
-        if ($this->use_cache &&  $Config->isFile() === false) {
-            $h = fopen($Config->getPathname(), 'w');
-            //fwrite($h, $this->get) todo: make getGuid a dependency, and echo its value here
-            fclose($h);
-        }
-    }
-
     /**
      * @param $use_cache
      * @return array
      */
     public function load($use_cache)
     {
-        $this->setupCaching($use_cache);
+        $this->use_cache = $use_cache;
         
         /**
          * @var \SplFileInfo $ConfigFile

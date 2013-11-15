@@ -39,18 +39,11 @@ class Environment implements Interfaces\Environment
         ];
 
         $this->resources += [
-            'view_template' => $this->getView().'Templates'.DIRECTORY_SEPARATOR,
-        ];
-
-        $this->resources += [
-            'web_assets' => $this->getWeb().'assets'.DIRECTORY_SEPARATOR,
+            'assets' => $this->getWeb().'assets'.DIRECTORY_SEPARATOR,
         ];
         
         $this->resources += [
-            'web_cache' => $this->getAssets().'cache'.DIRECTORY_SEPARATOR,
-            'web_css' => $this->getAssets().'css'.DIRECTORY_SEPARATOR,
-            'web_images' => $this->getAssets().'images'.DIRECTORY_SEPARATOR,
-            'web_javascript' => $this->getAssets().'js'.DIRECTORY_SEPARATOR,
+            'themes' => $this->getAssets().'themes'.DIRECTORY_SEPARATOR,
         ];
 
         $this->resources += [
@@ -69,6 +62,7 @@ class Environment implements Interfaces\Environment
         ];
     }
 
+    //todo: replace all methods with get('Src.Everon.Lib');
     public function getRoot()
     {
         return $this->resources['root'];
@@ -107,16 +101,6 @@ class Environment implements Interfaces\Environment
     public function setView($view)
     {
         $this->resources['view'] = $view;
-    }
-
-    public function getViewTemplate()
-    {
-        return $this->resources['view_template'];
-    }
-
-    public function setViewTemplate($view_template)
-    {
-        $this->resources['view_template'] = $view_template;
     }
 
     public function getController()
@@ -238,25 +222,15 @@ class Environment implements Interfaces\Environment
     {
         $this->resources['web'] = $web;
     }
-
-    public function getWebCache()
-    {
-        return $this->resources['web_cache'];
-    }
-
-    public function setWebCache($web_cache)
-    {
-        $this->resources['web_cache'] = $web_cache;
-    }
     
     public function getAssets()
     {
-        return $this->resources['web_assets'];
+        return $this->resources['assets'];
     }
     
     public function setAssets($assets)
     {
-        $this->resources['web_assets'] = $assets;
+        $this->resources['assets'] = $assets;
     }
     
     public function toArray()

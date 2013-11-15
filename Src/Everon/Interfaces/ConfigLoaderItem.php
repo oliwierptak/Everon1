@@ -12,6 +12,9 @@ namespace Everon\Interfaces;
 use Everon\Exception;
 use Everon\Interfaces;
 
+/**
+ * @method array toArray()
+ */
 interface ConfigLoaderItem
 {
     function getFilename();

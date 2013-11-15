@@ -33,7 +33,7 @@ class Logger implements Interfaces\Logger
     public function __construct($directory, $enabled)
     {
         $this->log_directory = $directory;
-        $this->enabled = $enabled;
+        $this->enabled = (bool) $enabled;
     }
     
     public function setGuid($guid)
@@ -193,6 +193,10 @@ class Logger implements Interfaces\Logger
      */
     public function __call($name, array $arguments=[])
     {
+        if ($this->enabled === false) {
+            return null;
+        }
+        
         $name = escapeshellarg(preg_replace('/[^a-z0-9_]/i', '', $name));
         $name = str_replace(['"', "'"], '', $name);
 

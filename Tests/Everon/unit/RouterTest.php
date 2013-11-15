@@ -67,9 +67,8 @@ class RouterTest extends \Everon\TestCase
          * @var \Everon\Interfaces\Factory $Factory
          */
         $Factory = $this->getFactory();
-
-        $RouterConfig = $Factory->getDependencyContainer()->resolve('ConfigManager')->getRouterConfig();
-
+        $RouterConfig = $Factory->getDependencyContainer()->resolve('ConfigManager')->getConfigByName('router');
+        
         return [
             [$Factory,
                 $Factory->buildRequest($this->getServerDataForRequest([
@@ -82,7 +81,7 @@ class RouterTest extends \Everon\TestCase
                     []
                 ), 
                 $RouterConfig, 
-                ['controller'=>'\Everon\Test\MyController', 'action'=>'testOne']],
+                ['controller'=>'\Everon\Test\MyController', 'action'=>'one']],
             [$Factory,
                 $Factory->buildRequest($this->getServerDataForRequest([
                     'REQUEST_METHOD' => 'POST',
@@ -94,19 +93,24 @@ class RouterTest extends \Everon\TestCase
                     []
                 ), 
                 $RouterConfig, 
-                ['controller'=>'\Everon\Test\MyController', 'action'=>'testTwo']],
+                ['controller'=>'\Everon\Test\MyController', 'action'=>'two']],
             [$Factory,
                 $Factory->buildRequest($this->getServerDataForRequest([
                     'REQUEST_METHOD' => 'POST',
                     'REQUEST_URI' => '/login/submit/session/adf24ds34/redirect/account%5Csummary?and=something&else=2457',
                     'QUERY_STRING' => 'and=something&else=2457',
-                    ]),
-                    ['and' => 'something', 'else' => 2457],
-                    ['username' => 'test', 'password' => 'test123'],
+                    ]), [
+                        'and'=>'something',
+                        'else'=>2457
+                    ],[
+                        'token' => 123,
+                        'username' => 'test',
+                        'password' => 'aaa'
+                    ],
                     []
                 ), 
                 $RouterConfig, 
-                ['controller'=>'\Everon\Test\MyController', 'action'=>'testComplex']],
+                ['controller'=>'\Everon\Test\MyController', 'action'=>'complex']],
         ];
     }
 

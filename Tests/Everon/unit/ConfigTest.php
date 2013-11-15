@@ -14,25 +14,12 @@ class ConfigTest extends \Everon\TestCase
 
     public function testConstructor()
     {
-        $Config = new \Everon\Config('test', 'test.ini', ['test' => 'true']);
-        $this->assertInstanceOf('\Everon\Interfaces\Config', $Config);
-    }
-    
-    public function testGetDataShouldInvokeClosureWhenNeeded()
-    {
-        $Config = new \Everon\Config('test', 'test.ini', function() {
-            return ['test' => true];
-        });
-        $this->assertTrue($Config->get('test'));
-    }
+        $filename = $this->getConfigDirectory().'test.ini';
+        $ConfigLoaderItem = new \Everon\Config\Loader\Item($filename, parse_ini_file($filename, true));
 
-    /**
-     * @expectedException \Everon\Exception\Config 
-     * @expectedExceptionMessage Invalid data type for: "test@test.ini"
-     */
-    public function testConstructorShouldThrowExceptionWhenDataNotArrayOrClosure()
-    {
-        $Config = new \Everon\Config('test', 'test.ini', null);
+        $Compiler = function(&$item) {};
+        $Config = new \Everon\Config('test', $ConfigLoaderItem, $Compiler);
+        $this->assertInstanceOf('\Everon\Interfaces\Config', $Config);
     }
 
     /**
@@ -45,10 +32,9 @@ class ConfigTest extends \Everon\TestCase
         
         $this->assertEquals('test.ini', $Config->getFilename());
         $this->assertEquals('test', $Config->getName());
-
-        $this->assertEquals('yes, this is test', $Config->go('test')->get('halo'));
-        $this->assertEquals('really_deep', $Config->go('another_test')->go('goodbye')->go('this')->go('is')->get('getting'));
-        $this->assertEquals(['halo' => 'yes, this is test'], $Config->get('test'));
+        
+        $this->assertEquals('1', $Config->go('section')->get('test'));
+        $this->assertInternalType('array', $Config->go('another_section')->get('some'));
     }
     
     /**
@@ -56,27 +42,20 @@ class ConfigTest extends \Everon\TestCase
      */
     public function testGetNonExistingValueShouldReturnNullOrDefault(\Everon\Interfaces\Config $Config)
     {
-        $this->assertEquals('yes, this is test', $Config->go('test')->get('halo'));
-        $this->assertEquals(null, $Config->get('errorrrr'));
-        $this->assertEquals(null, $Config->go('errorrrr')->get('more error'));
-        $this->assertEquals('default', $Config->get('errorrrr', 'default'));
+        //todo $Config->get() return default value even when section was not found
+        $this->assertEquals('1', $Config->go('section')->get('test'));
+        $this->assertEquals(null, $Config->go('section')->get('foo'));
+        $this->assertEquals(null, $Config->go('section')->get('more error'));
+        $this->assertEquals('default', $Config->go('section')->get('foobar', 'default'));
     }
 
     public function dataProvider()
     {
-        $Config = new \Everon\Config('test', 'test.ini', [
-            'test' => [
-                'halo' => 'yes, this is test'
-            ],
-            'another_test' => [
-                'goodbye' => [ 
-                    'bye' => 'now',
-                    'this' => [
-                        'is' => ['getting' => 'really_deep']
-                    ]
-                ] 
-            ]
-        ]);
+        $filename = $this->getConfigDirectory().'test.ini';
+        $ConfigLoaderItem = new \Everon\Config\Loader\Item($filename, parse_ini_file($filename, true));
+        $Compiler = function(&$item) {};        
+        $Config = new \Everon\Config('test', $ConfigLoaderItem, $Compiler);
+        $Config->setFactory($this->getFactory());
         
         return [
             [$Config]

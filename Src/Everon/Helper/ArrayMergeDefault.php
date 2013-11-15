@@ -13,7 +13,7 @@ namespace Everon\Helper;
 trait ArrayMergeDefault
 {
 
-    public function arrayMergeDefault($default, $data)
+    public function arrayMergeDefault(array $default, array $data)
     {
         foreach ($default as $name => $value) {
             if (is_array($value)) {

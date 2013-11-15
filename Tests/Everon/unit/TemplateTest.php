@@ -24,6 +24,7 @@ class TemplateTest extends \Everon\TestCase
 
     public function tearDown()
     {
+        parent::tearDown();
         if (is_file(self::$template_filename1)) {
             unlink(self::$template_filename1);
         }
@@ -62,8 +63,8 @@ class TemplateTest extends \Everon\TestCase
 
     public function dataProvider()
     {
-        self::$template_filename1 = $this->getTempDirectory().'template_1_'.$this->dateAsTime(time()).'.htm';
-        self::$template_filename2 = $this->getTempDirectory().'template_2_'.$this->dateAsTime(time()).'.htm';
+        self::$template_filename1 = $this->getTmpDirectory().'template_1_'.$this->dateAsTime(time()).'.htm';
+        self::$template_filename2 = $this->getTmpDirectory().'template_2_'.$this->dateAsTime(time()).'.htm';
 
         return [
             [new \Everon\View\Template(self::$template_filename1, ['world' => 'World']),
