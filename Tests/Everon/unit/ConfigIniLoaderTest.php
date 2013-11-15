@@ -15,12 +15,9 @@ class ConfigIniLoaderTest extends \Everon\TestCase
 {
     protected function setUp()
     {
-        if (is_dir($this->getTempDirectory()) === false) {
-            @mkdir($this->getTempDirectory(), 0775, true);
+        if (is_dir($this->getTmpDirectory()) === false) {
+            @mkdir($this->getTmpDirectory(), 0775, true);
         }
-
-        @unlink($this->getConfigCacheDirectory().'test.ini.php');
-        @unlink($this->getConfigCacheDirectory().'application.ini.php');
     }
     
     public function testConstructor()
@@ -36,13 +33,19 @@ class ConfigIniLoaderTest extends \Everon\TestCase
      */
     public function testLoad(Interfaces\ConfigLoader $ConfigLoader)
     {
-        $Compiler = function(){};
-        $list = $ConfigLoader->load($Compiler, false, 'default.ini');
-        $this->assertInternalType('array', $list);
+        $config_list = $ConfigLoader->load(false);
+        $this->assertInternalType('array', $config_list);
 
-        list($config_filename, $config_data) = $list['test'];
+        /**
+         * @var Interfaces\ConfigLoaderItem $ConfigItem
+         */
+        $ConfigItem = $config_list['test']; 
+        $config_filename = $ConfigItem->getFilename();
+        $config_data = $ConfigItem->getData();
+        
         $this->assertEquals($ConfigLoader->getConfigDirectory().'test.ini', $config_filename);
-        $this->assertInternalType('array', $config_data());
+        $this->assertInternalType('array', $config_data);
+        $this->assertEquals(1, $config_data['section']['test']);
     }
 
     /**
@@ -52,17 +55,20 @@ class ConfigIniLoaderTest extends \Everon\TestCase
     {
         file_put_contents($ConfigLoader->getCacheDirectory().'test.ini.php', "<?php \$cache = array ('test' => 2);");
 
-        $Compiler = function(){};
-        $list = $ConfigLoader->load($Compiler, true, 'default.ini');
+        $config_list = $ConfigLoader->load(true);
 
-        $this->assertInternalType('array', $list);
-        $this->assertInternalType('array', $list['test']);
+        /**
+         * @var Interfaces\ConfigLoaderItem $ConfigItem
+         */
+        $ConfigItem = $config_list['test'];
+        $config_filename = $ConfigItem->getFilename();
+        $config_data = $ConfigItem->getData();
+        
+        $this->assertInternalType('array', $config_list);
+        $this->assertInternalType('array', $config_data);
 
-        list($config_filename, $config_data) = $list['test'];
-
-        $this->assertEquals($ConfigLoader->getConfigDirectory().'test.ini', $config_filename);
-        $this->assertInternalType('callable', $config_data);
-        $this->assertInternalType('array', $config_data());
+        $this->assertEquals($ConfigLoader->getConfigDirectory().'test.ini', $config_filename);        
+        $this->assertInternalType('array', $config_data);
     }
 
     /**
@@ -83,7 +89,7 @@ class ConfigIniLoaderTest extends \Everon\TestCase
     {
         $filename = $this->getConfigCacheDirectory().'application.ini';
         $cache_filename = $this->getConfigCacheDirectory().'application.ini.php';
-        $ConfigMock = $this->getMock('Everon\Interfaces\Config');
+        $ConfigMock = $this->getMock('Everon\Test\InterfaceConfig', [], [], '', false);
         
         $ConfigMock->expects($this->once())
             ->method('getFilename')
@@ -92,7 +98,7 @@ class ConfigIniLoaderTest extends \Everon\TestCase
         $ConfigMock->expects($this->once())
             ->method('toArray')
             ->will($this->returnValue(['test'=>1]));
-            
+        
         $ConfigLoader->saveConfigToCache($ConfigMock);
         
         include($cache_filename);
@@ -107,7 +113,7 @@ class ConfigIniLoaderTest extends \Everon\TestCase
     public function testSaveConfigToCacheShouldThrowExceptionOnError(Interfaces\ConfigLoader $ConfigLoader)
     {
         $ex = new \Exception();
-        $ConfigMock = $this->getMock('Everon\Interfaces\Config');
+        $ConfigMock = $this->getMock('Everon\Test\InterfaceConfig', [], [], '', false);
 
         $ConfigMock->expects($this->once())
             ->method('toArray')
@@ -126,7 +132,6 @@ class ConfigIniLoaderTest extends \Everon\TestCase
          * @var \Everon\Interfaces\Factory $Factory
          */
         $Factory = $this->getFactory();
-        
         $ConfigLoader = $Factory->buildConfigLoader($this->getConfigDirectory(), $this->getConfigCacheDirectory());
 
         return [

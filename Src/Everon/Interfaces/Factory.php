@@ -139,10 +139,12 @@ interface Factory
     function buildTemplateContainer($template_string, array $template_data);
 
     /**
-     * @param $name
+     * @param $class_name
+     * @param string $ns
      * @return Interfaces\TemplateCompiler
+     * @throws Exception\Factory
      */
-    function buildTemplateCompiler($name);
+    function buildTemplateCompiler($class_name, $ns='Everon\View\Template\Compiler');
 
     /**
      * @param $class_name

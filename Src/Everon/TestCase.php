@@ -14,48 +14,44 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
     
     protected $suite_name = 'Everon';
 
+    protected $backupGlobalsBlacklist = array('Container', 'Factory');
+
     /**
      * @var Interfaces\Environment
      */
     protected $Environment = null;
-
-    /**
-     * @var \Everon\Interfaces\Factory
-     */
-    protected $Factory = null;
 
 
     public function __construct($name = NULL, array $data = array(), $dataName = '')
     {
         parent::__construct($name, $data, $dataName);
 
-        $this->Environment = new Environment(PROJECT_ROOT);
-
-        $dir = $this->getDoublesDirectory();
-        $includes = [
-            'MyController.php',
-            'MyModel.php',
-            'MyModelManager.php',
-            'MyView.php'
-        ];
+        $nesting = implode('..', array_fill(0, 3, DIRECTORY_SEPARATOR));
+        $root =  realpath(dirname(__FILE__).$nesting).DIRECTORY_SEPARATOR;
         
-        for ($a=0; $a<count($includes); ++$a) {
-            include_once($dir.$includes[$a]);
+        $this->Environment = new Environment($root);
+        
+        $dir = $this->getDoublesDirectory();
+        $Doubles = new \GlobIterator($dir.'*.*');
+        foreach ($Doubles as $filename => $Include) {
+            include_once($Include->getPathname());
         }
     }
 
-    private function removeDirectoryRecursive($dir)
+    protected function setUp()
     {
-        die('nononono');
-        return;
-        if (is_dir($dir)) {
-            $It = new \RecursiveIteratorIterator(
-                new \RecursiveDirectoryIterator($dir, \FilesystemIterator::SKIP_DOTS),
-                \RecursiveIteratorIterator::CHILD_FIRST
-            );
-
-            array_map('unlink', iterator_to_array($It));
-            rmdir($dir);
+        parent::setUp();
+        $directories = [
+            $this->getTmpDirectory(),
+            $this->getConfigCacheDirectory(),
+            $this->getLogDirectory(),
+        ];
+        
+        foreach ($directories as $dir) {
+            $TmpFiles = new \GlobIterator($dir.'*.*');
+            foreach ($TmpFiles as $filename => $File) {
+                @unlink($File->getPathname());
+            }
         }
     }
     
@@ -76,7 +72,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         return $server;
     }
 
-    public function getTempDirectory()
+    public function getTmpDirectory()
     {
         return $this->Environment->getTest().$this->suite_name.DIRECTORY_SEPARATOR.'tmp'.DIRECTORY_SEPARATOR;
     }
@@ -103,7 +99,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
 
     public function getLogDirectory()
     {
-        return $this->getTempDirectory().'logs'.DIRECTORY_SEPARATOR;
+        return $this->getTmpDirectory().'logs'.DIRECTORY_SEPARATOR;
     }
 
     public function getConfigDirectory()
@@ -118,7 +114,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
 
     protected function getConfigCacheDirectory()
     {
-        return $this->getTempDirectory().'config'.DIRECTORY_SEPARATOR;
+        return $this->getTmpDirectory().'config'.DIRECTORY_SEPARATOR;
     }
     
     public function getProtectedProperty($class_name, $name)
@@ -146,17 +142,17 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
     {
         $Factory = new Factory(new Dependency\Container());
         $Container = $Factory->getDependencyContainer();
-        $Environment = $this->Environment;
-        
-        $Environment->setLog($this->getLogDirectory());
-        $Environment->setConfig($this->getConfigDirectory());
-        $Environment->setCacheConfig($this->getConfigCacheDirectory());
-        $Environment->setViewTemplate($this->getTemplateDirectory());
 
-        require($Environment->getEveronLib().'Dependencies.php');
+        $TestEnvironment = new \Everon\Environment($this->Environment->getRoot());
+        $TestEnvironment->setLog($this->getLogDirectory());
+        $TestEnvironment->setConfig($this->getConfigDirectory());
+        $TestEnvironment->setCacheConfig($this->getConfigCacheDirectory());
+        $TestEnvironment->setTmp($this->getTmpDirectory());
 
-        $Container->register('Environment', function() use ($Environment) {
-            return $Environment;
+        require($this->Environment->getEveronLib().'Dependencies.php');
+
+        $Container->register('Environment', function() use ($TestEnvironment) {
+            return $TestEnvironment;
         });
 
         $Container->register('Request', function() use ($Factory) {
@@ -167,12 +163,6 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
             ]);
             
             return $Factory->buildRequest($server_data, $_GET, $_POST, $_FILES);
-        });
-
-        $Container->register('Router', function() use ($Factory) {
-            $RouteConfig = $Factory->getDependencyContainer()->resolve('ConfigManager')->getConfigByName('router');
-            $RouterValidator = $Factory->buildRouterValidator();
-            return $Factory->buildRouter($RouteConfig, $RouterValidator);
         });
 
         return $Factory;

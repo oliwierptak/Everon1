@@ -260,7 +260,7 @@ class Factory implements Interfaces\Factory
         try {
             $compilers = [];
             foreach ($compilers_to_init as $name => $extension) {
-                $compilers[] = $this->buildTemplateCompiler($this->stringUnderscoreToCamel($name));
+                $compilers[$extension][] = $this->buildTemplateCompiler($this->stringUnderscoreToCamel($name));
             }
             
             $Manager = new View\Manager($compilers, $view_directory);
@@ -269,6 +269,29 @@ class Factory implements Interfaces\Factory
         }
         catch (\Exception $e) {
             throw new Exception\Factory('ViewManager initialization error', null, $e);
+        }
+    }
+
+    /**
+     * @param $class_name
+     * @param string $ns
+     * @return Interfaces\TemplateCompiler
+     * @throws Exception\Factory
+     */
+    public function buildTemplateCompiler($class_name, $ns='Everon\View\Template\Compiler')
+    {
+        try {
+            $class_name = $this->getFullClassName($ns, $class_name);
+
+            /**
+             * @var Interfaces\TemplateCompiler $Compiler
+             */
+            $Compiler = new $class_name();
+            $this->injectDependencies($class_name, $Compiler);
+            return $Compiler;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('TemplateCompiler: "%s" initialization error', $class_name, $e);
         }
     }
 
@@ -435,29 +458,6 @@ class Factory implements Interfaces\Factory
         }
         catch (\Exception $e) {
             throw new Exception\Factory('TemplateContainer initialization error', null, $e);
-        }
-    }
-
-    /**
-     * @param $class_name
-     * @param string $ns
-     * @return Interfaces\TemplateCompiler
-     * @throws Exception\Factory
-     */
-    public function buildTemplateCompiler($class_name, $ns='Everon\View\Template\Compiler')
-    {
-        try {
-            $class_name = $this->getFullClassName($ns, $class_name);
-
-            /**
-             * @var Interfaces\TemplateCompiler $Compiler
-             */
-            $Compiler = new $class_name();
-            $this->injectDependencies($class_name, $Compiler);
-            return $Compiler;
-        }
-        catch (\Exception $e) {
-            throw new Exception\Factory('TemplateCompiler: "%s" initialization error', $class_name, $e);
         }
     }
 

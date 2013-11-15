@@ -108,18 +108,21 @@ class Response implements Interfaces\Response
     public function toHtml()
     {
         $this->setContentType('text/html');
-        return is_array($this->data) ? implode('', $this->data) : $this->data;
+        $this->send();
+        return (string) $this->data;
     }
 
     public function toJson($root='data')
     {
         $this->setContentType('application/json');
+        $this->send();
         return json_encode([$root=>$this->data]);
     }
     
     public function toText()
     {
         $this->setContentType('text/plain');
+        $this->send();
         return (string) $this->data;
     }
     

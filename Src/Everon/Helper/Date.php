@@ -14,28 +14,31 @@ trait Date
     /**
      * @param $timestamp
      * @param $format
+     * @param \DateTimeZone $TimeZone
      * @return string
      */
-    protected function dateFormat($timestamp, $format)
+    protected function dateFormat($timestamp, $format, \DateTimeZone $TimeZone=null)
     {
-        return (new \DateTime('@'.$timestamp))->format($format);
+        return (new \DateTime('@'.$timestamp, $TimeZone ?: (new \DateTimeZone(date_default_timezone_get()))))->format($format);
     }
 
     /**
-     * @param integer $timestamp
+     * @param $timestamp
+     * @param \DateTimeZone $TimeZone
      * @return string
      */
-    public function dateAsMysql($timestamp)
+    protected function dateAsMysql($timestamp, \DateTimeZone $TimeZone=null)
     {
-        return $this->dateFormat($timestamp, 'Y-m-d@H:i:s');
+        return $this->dateFormat($timestamp, 'Y-m-d@H:i:s', $TimeZone);
     }
 
     /**
-     * @param integer $timestamp
+     * @param $timestamp
+     * @param \DateTimeZone $TimeZone
      * @return string
      */
-    public function dateAsTime($timestamp)
+    protected function dateAsTime($timestamp, \DateTimeZone $TimeZone=null)
     {
-        return $this->dateFormat($timestamp, 'His');
+        return $this->dateFormat($timestamp, 'His', $TimeZone);
     }
 }

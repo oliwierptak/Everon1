@@ -15,13 +15,13 @@ class LoggerTest extends \Everon\TestCase
 
     public function testConstructor()
     {
-        $Logger = new \Everon\Logger($this->getLogDirectory());
+        $Logger = new \Everon\Logger($this->getLogDirectory(), true);
         $this->assertInstanceOf('\Everon\Interfaces\Logger', $Logger);
     }
 
     protected function setUp()
     {
-        $Logger = new \Everon\Logger($this->getLogDirectory());
+        $Logger = new \Everon\Logger($this->getLogDirectory(), true);
         
         foreach ($Logger->getLogFiles() as $level => $filename) {
             $log_file = $this->getLogDirectory().$filename;
@@ -33,7 +33,7 @@ class LoggerTest extends \Everon\TestCase
 
     public function testSetGetFiles()
     {
-        $Logger = new \Everon\Logger($this->getLogDirectory());
+        $Logger = new \Everon\Logger($this->getLogDirectory(), true);
         $files = [
             'error' => 'test-everon-error.log',
         ];
@@ -44,18 +44,18 @@ class LoggerTest extends \Everon\TestCase
 
     public function testWriting()
     {
-        $Logger = new \Everon\Logger($this->getLogDirectory());
+        $Logger = new \Everon\Logger($this->getLogDirectory(), true);
         $dates = [
             'warning' => $Logger->warn('warning'),
             'error' => $Logger->error('error'),
             'debug' => $Logger->debug('debug'),
-            'trace' => $Logger->trace('trace')
+            'trace' => $Logger->trace('trace'),
+            'critical' => $Logger->critical('critical'),
+            'notFound' => $Logger->notFound('notFound')
         ];
-
-        foreach ($Logger->getLogFiles() as $level => $filename) {
-            $log_file = $this->getLogDirectory().$filename;
-            $log_entry = $dates[$level]->format($Logger->getLogDateFormat()).' - '.$level;
-            $this->assertEquals($log_entry."\n", file_get_contents($log_file));
+        
+        foreach ($dates as $log_time) {
+            $this->assertInstanceOf('DateTime', $log_time);
         }
     }
 

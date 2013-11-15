@@ -7,16 +7,11 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon\Interfaces;
+namespace Everon\Test;
 
 use Everon\Interfaces;
 
-interface ConfigExpressionMatcher
+interface InterfaceConfig extends Interfaces\Config, Interfaces\Arrayable
 {
-    /**
-     * @param array $configs_data
-     * @param array $custom_expressions
-     * @return callable
-     */
-    function getCompiler(array $configs_data, array $custom_expressions=[]);
+
 }

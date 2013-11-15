@@ -9,6 +9,9 @@
  */
 namespace Everon\Interfaces;
 
+/**
+ * @method array toArray()
+ */
 interface Environment
 {
     function getRoot();
@@ -19,8 +22,6 @@ interface Environment
     function setModel($model);
     function getView();
     function setView($view);
-    function getViewTemplate();
-    function setViewTemplate($view_template);
     function getController();
     function setController($controller);
     function getSource();
@@ -43,9 +44,6 @@ interface Environment
     function setCacheConfig($cache_config);
     function getLog();
     function setLog($log);
-    function getWebCache();
-    function setWebCache($view_template_cache);
     function getWeb();
     function setWeb($web);
-    function toArray();
 }

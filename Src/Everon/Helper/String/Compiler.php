@@ -39,6 +39,11 @@ trait Compiler
 
         return $tokens;
     }
+    
+    protected function stringCompilerCompile($template_content, array $data)
+    {
+        return str_replace(array_keys($data), array_values($data), $template_content);
+    }
 
     /**
      * @param $template_content
@@ -46,20 +51,22 @@ trait Compiler
      * @param array $tags
      * @return mixed
      */
-    public function stringCompilerCompile($template_content, array $data, array $tags=['{','}'])
+    protected function stringCompilerRun($template_content, array $data, array $tags=['{','}'])
     {
+        $tokens = [];
         list($opening_tag, $closing_tag) = $tags;
         foreach ($data as $name => $value) {
             $value = ($value instanceof \Closure) ? $value() : $value;
             $value = (is_object($value) && method_exists($value, 'toArray')) ? $value->toArray() : $value;
             if ($this->isIterable($value)) {
-                $tokens = $this->stringCompilerGetTokens($name, $value, $tags);
-                $template_content = str_replace(array_keys($tokens), array_values($tokens), $template_content);
+                $tokens = array_merge($tokens, $this->stringCompilerGetTokens($name, $value, $tags));
             }
             else {
-                $template_content = str_replace($opening_tag.$name.$closing_tag, $value, $template_content);
+                $tokens[$opening_tag.$name.$closing_tag] = $value;
             }
         }
+        
+        $template_content = $this->stringCompilerCompile($template_content, $tokens);
     
         return $template_content;
     }

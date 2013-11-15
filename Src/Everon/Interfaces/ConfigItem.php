@@ -9,12 +9,13 @@
  */
 namespace Everon\Interfaces;
 
-
+/**
+ * @method array toArray()
+ */
 interface ConfigItem
 {
     function getName();
     function setName($name);
     function isDefault();
     function setIsDefault($is_default);
-    function toArray();
 }

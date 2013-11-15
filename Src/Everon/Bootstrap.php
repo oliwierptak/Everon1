@@ -51,11 +51,8 @@ class Bootstrap
         require_once($this->Environment->getEveronInterface().'ClassLoader.php');
         require_once($this->Environment->getEveron().'ClassLoader.php');
 
-        $use_cache = false;
-        $ini = @parse_ini_file($this->Environment->getConfig().'application.ini', true);
-        if (is_array($ini) && array_key_exists('cache', $ini) && array_key_exists('autoloader', $ini['cache'])) {
-            $use_cache = (bool) $ini['cache']['autoloader'];
-        }
+        $ini = @parse_ini_file($this->Environment->getConfig().'cache.ini', true);
+        $use_cache = (bool) @$ini['enabled']['autoloader'];
 
         $ClassMap = null;
         if ($use_cache) {
@@ -104,10 +101,10 @@ class Bootstrap
             $id = substr($guid_value, 0, 6);
             $message = "$timestamp ${id} \n$Exception \n\n";
             error_log($message, 3, $log_filename);
-            header("HTTP/1.1 500 Internal Server Error. Request ID: $guid_value"); //xxx
+            
+            if (php_sapi_name() !== 'cli' || headers_sent() === false) {
+                header("HTTP/1.1 500 Internal Server Error. Request ID: $guid_value"); //xxx
+            }
         });
-
-        require_once(implode(DIRECTORY_SEPARATOR, [$root, 'Src', 'Everon', 'Interfaces', 'Environment.php']));
-        require_once(implode(DIRECTORY_SEPARATOR, [$root, 'Src', 'Everon', 'Environment.php']));
     }
-}
+}   

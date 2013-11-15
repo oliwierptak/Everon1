@@ -17,12 +17,12 @@ class ClassMapTest extends \Everon\TestCase
     
     public function setUp()
     {
-        @unlink($this->getTempDirectory().'class_map_test.php');
+        @unlink($this->getTmpDirectory().'class_map_test.php');
     }
 
     public function testConstructor()
     {      
-        $ClassMap = new \Everon\ClassMap($this->getTempDirectory().'class_map_test.php');
+        $ClassMap = new \Everon\ClassMap($this->getTmpDirectory().'class_map_test.php');
         $this->assertInstanceOf('Everon\Interfaces\ClassMap', $ClassMap);
     }
 
@@ -69,7 +69,7 @@ class ClassMapTest extends \Everon\TestCase
 
     public function dataProvider()
     {
-        $filename = $this->getTempDirectory().'class_map_test.php';
+        $filename = $this->getTmpDirectory().'class_map_test.php';
         
         $ClassMap = new \Everon\ClassMap($filename);
         return [

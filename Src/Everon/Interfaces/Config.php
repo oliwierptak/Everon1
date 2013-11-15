@@ -11,6 +11,9 @@ namespace Everon\Interfaces;
 
 use Everon\Interfaces;
 
+/**
+ * @method array toArray();
+ */
 interface Config
 {
     function getName();
@@ -57,9 +60,4 @@ interface Config
      * @return \Everon\Interfaces\Config
      */    
     function go($where);
-
-    /**
-     * @return array
-     */
-    function toArray();
 }

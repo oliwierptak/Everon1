@@ -20,27 +20,27 @@ class EnvironmentTest extends \Everon\TestCase
 
     public function testGetters()
     {
-        $Environment = new \Everon\Environment(PROJECT_ROOT);
+        $root = $this->Environment->getRoot();
+        $Environment = new \Everon\Environment($root);
 
-        $this->assertEquals(PROJECT_ROOT, $Environment->getRoot());
+        $this->assertEquals($root, $Environment->getRoot());
 
-        $this->assertEquals(PROJECT_ROOT.'Config'.DIRECTORY_SEPARATOR, $Environment->getConfig());
-        $this->assertEquals(PROJECT_ROOT.'Model'.DIRECTORY_SEPARATOR, $Environment->getModel());
-        $this->assertEquals(PROJECT_ROOT.'View'.DIRECTORY_SEPARATOR, $Environment->getView());
-        $this->assertEquals(PROJECT_ROOT.'View'.DIRECTORY_SEPARATOR.'Templates'.DIRECTORY_SEPARATOR, $Environment->getViewTemplate());
-        $this->assertEquals(PROJECT_ROOT.'Controller'.DIRECTORY_SEPARATOR, $Environment->getController());
+        $this->assertEquals($root.'Config'.DIRECTORY_SEPARATOR, $Environment->getConfig());
+        $this->assertEquals($root.'Model'.DIRECTORY_SEPARATOR, $Environment->getModel());
+        $this->assertEquals($root.'View'.DIRECTORY_SEPARATOR, $Environment->getView());
+        $this->assertEquals($root.'Controller'.DIRECTORY_SEPARATOR, $Environment->getController());
 
-        $this->assertEquals(PROJECT_ROOT.'Tests'.DIRECTORY_SEPARATOR, $Environment->getTest());
+        $this->assertEquals($root.'Tests'.DIRECTORY_SEPARATOR, $Environment->getTest());
 
-        $this->assertEquals(PROJECT_ROOT.'Src'.DIRECTORY_SEPARATOR, $Environment->getSource());
-        $this->assertEquals(PROJECT_ROOT.'Src'.DIRECTORY_SEPARATOR.'Everon'.DIRECTORY_SEPARATOR, $Environment->getEveron());
-        $this->assertEquals(PROJECT_ROOT.'Src'.DIRECTORY_SEPARATOR.'Everon'.DIRECTORY_SEPARATOR.'Interfaces'.DIRECTORY_SEPARATOR, $Environment->getEveronInterface());
-        $this->assertEquals(PROJECT_ROOT.'Src'.DIRECTORY_SEPARATOR.'Everon'.DIRECTORY_SEPARATOR.'Lib'.DIRECTORY_SEPARATOR, $Environment->getEveronLib());
+        $this->assertEquals($root.'Src'.DIRECTORY_SEPARATOR, $Environment->getSource());
+        $this->assertEquals($root.'Src'.DIRECTORY_SEPARATOR.'Everon'.DIRECTORY_SEPARATOR, $Environment->getEveron());
+        $this->assertEquals($root.'Src'.DIRECTORY_SEPARATOR.'Everon'.DIRECTORY_SEPARATOR.'Interfaces'.DIRECTORY_SEPARATOR, $Environment->getEveronInterface());
+        $this->assertEquals($root.'Src'.DIRECTORY_SEPARATOR.'Everon'.DIRECTORY_SEPARATOR.'Lib'.DIRECTORY_SEPARATOR, $Environment->getEveronLib());
 
-        $this->assertEquals(PROJECT_ROOT.'Tmp'.DIRECTORY_SEPARATOR, $Environment->getTmp());
-        $this->assertEquals(PROJECT_ROOT.'Tmp'.DIRECTORY_SEPARATOR.'logs'.DIRECTORY_SEPARATOR, $Environment->getLog());
-        $this->assertEquals(PROJECT_ROOT.'Tmp'.DIRECTORY_SEPARATOR.'cache'.DIRECTORY_SEPARATOR, $Environment->getCache());
-        $this->assertEquals(PROJECT_ROOT.'Tmp'.DIRECTORY_SEPARATOR.'cache'.DIRECTORY_SEPARATOR.'config'.DIRECTORY_SEPARATOR, $Environment->getCacheConfig());
+        $this->assertEquals($root.'Tmp'.DIRECTORY_SEPARATOR, $Environment->getTmp());
+        $this->assertEquals($root.'Tmp'.DIRECTORY_SEPARATOR.'logs'.DIRECTORY_SEPARATOR, $Environment->getLog());
+        $this->assertEquals($root.'Tmp'.DIRECTORY_SEPARATOR.'cache'.DIRECTORY_SEPARATOR, $Environment->getCache());
+        $this->assertEquals($root.'Tmp'.DIRECTORY_SEPARATOR.'cache'.DIRECTORY_SEPARATOR.'config'.DIRECTORY_SEPARATOR, $Environment->getCacheConfig());
     }
     
     public function testSetters()
@@ -58,9 +58,6 @@ class EnvironmentTest extends \Everon\TestCase
         
         $Environment->setView('test');
         $this->assertEquals('test', $Environment->getView());
-        
-        $Environment->setViewTemplate('test');
-        $this->assertEquals('test', $Environment->getViewTemplate());
         
         $Environment->setController('test');
         $this->assertEquals('test', $Environment->getController());

@@ -208,7 +208,7 @@ class RequestTest extends \Everon\TestCase
     }
 
     public function dataProvider()
-    {
+    {        
         return [[
             new \Everon\Request($this->getServerDataForRequest([
                 'REQUEST_METHOD' => 'POST',

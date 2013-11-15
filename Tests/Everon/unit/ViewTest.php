@@ -14,7 +14,7 @@ class ViewTest extends \Everon\TestCase
 
     public function testConstructor()
     {
-        $View = new \Everon\Test\MyView($this->Environment->getViewTemplate(), function(){});
+        $View = new \Everon\Test\MyView($this->getTemplateDirectory(), []);
         $this->assertInstanceOf('\Everon\View', $View);
     }
 
@@ -149,14 +149,14 @@ EOF;
      */
     public function testSetOutput(\Everon\Interfaces\View $View)
     {
-        $View->setOutput('');
-        $this->assertInstanceOf('\Everon\Interfaces\TemplateContainer', $View->getOutput());
+        $View->setContainer('');
+        $this->assertInstanceOf('\Everon\Interfaces\TemplateContainer', $View->getContainer());
 
-        $View->setOutput([]);
-        $this->assertInstanceOf('\Everon\Interfaces\TemplateContainer', $View->getOutput());
+        $View->setContainer([]);
+        $this->assertInstanceOf('\Everon\Interfaces\TemplateContainer', $View->getContainer());
         
-        $View->setOutput(new \Everon\View\Template\Container('', []));
-        $this->assertInstanceOf('\Everon\Interfaces\TemplateContainer', $View->getOutput());
+        $View->setContainer(new \Everon\View\Template\Container('', []));
+        $this->assertInstanceOf('\Everon\Interfaces\TemplateContainer', $View->getContainer());
     }
 
     /**
@@ -166,8 +166,8 @@ EOF;
      */
     public function testSetOutputShouldThrowExceptionWhenWrongInputIsSet(\Everon\Interfaces\View $View)
     {
-        $View->setOutput(null);
-        $this->assertInstanceOf('\Everon\Interfaces\TemplateContainer', $View->getOutput());
+        $View->setContainer(null);
+        $this->assertInstanceOf('\Everon\Interfaces\TemplateContainer', $View->getContainer());
     }
     
     /**
@@ -178,7 +178,7 @@ EOF;
         $PropertyOutput = $this->getProtectedProperty('\Everon\View', 'Container');
         $PropertyOutput->setValue($View, null);
         
-        $Output = $View->getOutput();
+        $Output = $View->getContainer();
         $this->assertEquals('', $Output);
     }
 
@@ -192,7 +192,7 @@ EOF;
             return $Method->invoke($ViewManager, $Template);
         };*/
         
-        $View = $Factory->buildView('MyView', $this->Environment->getViewTemplate(), 'Everon\Test');
+        $View = $Factory->buildView('MyView', $this->getTemplateDirectory(), [], 'Everon\Test');
         
         return [
             [$View]
