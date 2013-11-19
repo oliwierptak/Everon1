@@ -9,16 +9,15 @@
  */
 namespace Everon\Interfaces;
 
-
-interface TemplateContainer
+interface TemplateContainer extends Arrayable
 {
     function set($name, $value);
     function get($name, $default=null);
+    function delete($name);    
     function setCompiledContent($data);
     function getCompiledContent();
     function getTemplateContent();
     function setTemplateContent($content);
-    function toArray();
     function getData();
     function setData(array $data);    
 }

@@ -9,7 +9,7 @@
  */
 namespace Everon\Interfaces;
 
-interface Request
+interface Request extends Arrayable
 {
     function setMethod($method);
     function getMethod();

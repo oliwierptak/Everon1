@@ -19,9 +19,10 @@ abstract class Exception extends \Exception
 
 
     /**
-     * @param string|\Exception $message
-     * @param null|array $params
-     * @param null|\Exception $Previous
+     * @param string $message
+     * @param null $params
+     * @param null $Previous
+     * @param null $Callback
      */
     public function __construct($message, $params=null, $Previous=null, $Callback=null)
     {
@@ -29,7 +30,7 @@ abstract class Exception extends \Exception
         if ($message instanceof \Exception) {
             $message = $message->getMessage();
         }
-        else if ($Previous instanceof \Exception) { //else to avoid displaying duplicated error messages
+        else if ($Previous instanceof \Exception) { //avoid displaying duplicated error messages
             $message .= $this->formatExceptionParams(".\n%s", $Previous->getMessage());
         }
 
@@ -67,6 +68,5 @@ abstract class Exception extends \Exception
     {
         return self::getErrorMessageFromException($this);
     }
-
 
 }

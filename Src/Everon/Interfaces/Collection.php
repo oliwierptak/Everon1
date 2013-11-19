@@ -9,7 +9,7 @@
  */
 namespace Everon\Interfaces;
 
-interface Collection
+interface Collection extends Arrayable
 {
     function has($name);
     function remove($name);

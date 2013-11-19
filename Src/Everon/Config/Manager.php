@@ -22,7 +22,7 @@ class Manager implements Interfaces\ConfigManager
 
     use Helper\Asserts;
     use Helper\Asserts\IsArrayKey;
-    use Helper\ArrayMergeDefault;
+    use Helper\Arrays;
 
 
     /**

@@ -9,8 +9,11 @@
  */
 namespace Everon\View;
 
+use Everon\Helper;
+use Everon\Interfaces;
 
-abstract class Element extends \Everon\Helper\Popo implements \Everon\Interfaces\ViewElement
+
+abstract class Element extends Helper\Popo implements Interfaces\ViewElement
 {
     /**
      * @param array $defaults

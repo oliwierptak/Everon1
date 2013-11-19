@@ -9,10 +9,8 @@
  */
 namespace Everon\Interfaces;
 
-interface ViewElement
+interface ViewElement extends Arrayable
 {
-    function toArray();
-    
     /**
      * @param $name
      * @param mixed $data

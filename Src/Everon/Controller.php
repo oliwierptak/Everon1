@@ -77,9 +77,7 @@ abstract class Controller implements Interfaces\Controller
         }
         
         $this->prepareResponse($action);
-
         $this->getLogger()->response('[%s] %s : %s', [$this->getResponse()->getStatus(), $this->getName(), $action]);
-        
         $this->response();
     }
 

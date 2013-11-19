@@ -9,9 +9,7 @@
  */
 namespace Everon\Interfaces;
 
-/**
- * @method array toArray()
- */
+
 interface Environment
 {
     function getRoot();
@@ -46,4 +44,5 @@ interface Environment
     function setLog($log);
     function getWeb();
     function setWeb($web);
+    function toArray();
 }

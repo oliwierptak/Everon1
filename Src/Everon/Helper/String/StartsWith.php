@@ -16,7 +16,7 @@ trait StartsWith
      * @param $start
      * @return bool
      */
-    public function stringStartsWith($string, $start)
+    protected function stringStartsWith($string, $start)
     {
         return mb_strpos($string, $start) === 0;
     }

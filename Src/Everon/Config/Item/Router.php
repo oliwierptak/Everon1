@@ -15,9 +15,9 @@ use Everon\Helper;
 
 class Router extends \Everon\Config\Item implements Interfaces\ConfigItemRouter
 {
+    use Helper\Arrays;
     use Helper\Asserts;
     use Helper\Asserts\IsStringAndNonEmpty;
-    use Helper\ArrayFilterKeys;
     use Helper\Regex;
 
     protected $url = null;
@@ -111,7 +111,7 @@ class Router extends \Everon\Config\Item implements Interfaces\ConfigItemRouter
     public function filterQueryKeys($get_data)
     {
         $keys_to_keep = array_keys($get_data);
-        return $this->arrayFilterKeys($keys_to_keep, $this->getQueryRegex(), true);
+        return $this->arrayKeep($keys_to_keep, $this->getQueryRegex());
     }
 
     /**
@@ -121,7 +121,7 @@ class Router extends \Everon\Config\Item implements Interfaces\ConfigItemRouter
     public function filterGetKeys($get_data)
     {
         $keys_to_remove = array_keys($get_data);
-        return $this->arrayFilterKeys($keys_to_remove, $this->getGetRegex(), false);
+        return $this->arrayRemove($keys_to_remove, $this->getGetRegex());
     }
 
     /**

@@ -11,10 +11,7 @@ namespace Everon\Interfaces;
 
 use Everon\Interfaces;
 
-/**
- * @method array toArray();
- */
-interface Config
+interface Config extends Arrayable
 {
     function getName();
     function setName($name);

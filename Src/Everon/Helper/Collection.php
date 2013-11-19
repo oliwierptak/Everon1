@@ -13,10 +13,7 @@ use Everon\Helper;
 use Everon\Interfaces;
 
 
-class Collection implements
-    \Countable, \ArrayAccess, \IteratorAggregate,
-    Interfaces\Collection,
-    Interfaces\Arrayable
+class Collection implements \Countable, \ArrayAccess, \IteratorAggregate, Interfaces\Collection
 {
     use Helper\ToArray;
 

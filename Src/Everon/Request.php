@@ -10,7 +10,7 @@
 namespace Everon;
 
 
-class Request implements Interfaces\Request, Interfaces\Arrayable
+class Request implements Interfaces\Request 
 {
     use Helper\ToArray;
 

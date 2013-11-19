@@ -12,7 +12,7 @@ namespace Everon\Config\Loader;
 use Everon\Interfaces;
 use Everon\Helper;
 
-class Item implements Interfaces\ConfigLoaderItem, Interfaces\Arrayable
+class Item implements Interfaces\ConfigLoaderItem
 {
     use Helper\ToArray;
     

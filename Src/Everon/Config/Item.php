@@ -12,7 +12,7 @@ namespace Everon\Config;
 use Everon\Helper;
 use Everon\Interfaces;
 
-class Item implements Interfaces\ConfigItem, Interfaces\Arrayable
+class Item implements Interfaces\ConfigItem
 {
     const PROPERTY_NAME = '____name';
 

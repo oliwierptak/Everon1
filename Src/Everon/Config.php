@@ -13,13 +13,13 @@ use Everon\Helper;
 use Everon\Exception;
 
 
-class Config implements Interfaces\Config, Interfaces\Arrayable
+class Config implements Interfaces\Config
 {
     use Dependency\Injection\Factory;
 
     use Helper\Asserts;
     use Helper\Asserts\IsArrayKey;
-    use Helper\ArrayMergeDefault;
+    use Helper\Arrays;
     use Helper\ToArray;
 
     /**
