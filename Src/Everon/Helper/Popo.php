@@ -21,11 +21,6 @@ use Everon\Helper;
 class Popo implements Interfaces\Arrayable
 {
     use Helper\ToArray;
-
-    /**
-     * @var array
-     */
-    protected $data = [];
     
 
     /**

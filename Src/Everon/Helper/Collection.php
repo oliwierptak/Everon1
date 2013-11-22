@@ -17,10 +17,6 @@ class Collection implements \Countable, \ArrayAccess, \IteratorAggregate, Interf
 {
     use Helper\ToArray;
 
-    /**
-     * @var array
-     */
-    protected $data = [];
     
     protected $position = 0;
     

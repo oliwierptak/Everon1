@@ -17,7 +17,7 @@ class Item implements Interfaces\ConfigLoaderItem
     use Helper\ToArray;
     
     protected $filename = null;
-    protected $data = [];
+    
     
     public function __construct($filename, array $data)
     {

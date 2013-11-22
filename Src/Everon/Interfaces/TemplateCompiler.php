@@ -9,10 +9,7 @@
  */
 namespace Everon\Interfaces;
 
-/**
- * @method array toArray()
- */
 interface TemplateCompiler
 {
-    function compile($template_content, array $data);
+    function compile($scope_name, $template_content, array $data);
 }

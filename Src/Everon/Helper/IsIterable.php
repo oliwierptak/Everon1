@@ -21,7 +21,7 @@ trait IsIterable
             return true;
         }
         
-        if ($input instanceof Interfaces\Arrayable || $input instanceof \ArrayAccess || $input instanceof \Iterator) {
+        if ($input instanceof \Everon\Interfaces\Arrayable || $input instanceof \ArrayAccess || $input instanceof \Iterator) {
             return true;
         }
         

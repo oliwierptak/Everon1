@@ -17,15 +17,10 @@ class Config implements Interfaces\Config
 {
     use Dependency\Injection\Factory;
 
+    use Helper\Arrays;
     use Helper\Asserts;
     use Helper\Asserts\IsArrayKey;
-    use Helper\Arrays;
     use Helper\ToArray;
-
-    /**
-     * @var array
-     */
-    protected $data = [];
     
     protected $name = null;
 

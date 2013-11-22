@@ -18,6 +18,7 @@ class Router extends \Everon\Config\Item implements Interfaces\ConfigItemRouter
     use Helper\Arrays;
     use Helper\Asserts;
     use Helper\Asserts\IsStringAndNonEmpty;
+    use Helper\IsIterable;
     use Helper\Regex;
 
     protected $url = null;

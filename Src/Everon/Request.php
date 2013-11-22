@@ -15,11 +15,6 @@ class Request implements Interfaces\Request
     use Helper\ToArray;
 
     /**
-     * @var array
-     */
-    protected $data = [];    
-
-    /**
      * @var Interfaces\Collection $_SERVER
      */
     protected $ServerCollection = null;

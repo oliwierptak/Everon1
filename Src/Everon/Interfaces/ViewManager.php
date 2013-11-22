@@ -15,11 +15,11 @@ use Everon\Interfaces;
 interface ViewManager
 {
     /**
+     * @param Interfaces\Template $scope_name
      * @param Interfaces\Template $Template
-     * @throws Exception|\Exception
-     * @throws Exception\TemplateCompiler
+     * @throws \Everon\Exception\ViewManager
      */
-    function compileTemplate(Interfaces\Template $Template);
+    function compileTemplate($scope_name, Interfaces\Template $Template);
         
     /**
      * @param $name

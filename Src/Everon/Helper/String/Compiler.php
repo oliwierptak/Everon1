@@ -65,9 +65,9 @@ trait Compiler
                 $tokens[$opening_tag.$name.$closing_tag] = $value;
             }
         }
-        
+
         $template_content = $this->stringCompilerCompile($template_content, $tokens);
-    
+
         return $template_content;
     }
 

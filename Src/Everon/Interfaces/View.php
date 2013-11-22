@@ -12,7 +12,7 @@ namespace Everon\Interfaces;
 use Everon\Interfaces;
 use Everon\Exception;
 
-interface View extends Arrayable
+interface View
 {
     /**
      * @param $name

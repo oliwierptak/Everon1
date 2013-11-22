@@ -12,6 +12,11 @@ namespace Everon\Helper;
 trait ToArray
 {
     use IsIterable;
+
+    /**
+     * @var array
+     */
+    protected $data = [];    
     
     /**
      * array|stdClass $this->data is declared in class which uses this trait

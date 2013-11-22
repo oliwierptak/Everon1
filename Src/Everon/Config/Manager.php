@@ -20,9 +20,10 @@ class Manager implements Interfaces\ConfigManager
     use Dependency\Injection\Factory;
     use Dependency\ConfigLoader;
 
+    use Helper\Arrays;
     use Helper\Asserts;
     use Helper\Asserts\IsArrayKey;
-    use Helper\Arrays;
+    use Helper\IsIterable;
 
 
     /**
