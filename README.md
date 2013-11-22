@@ -54,7 +54,7 @@ Note: `Mvc\Controller`, which `Controller\Greet` extends from, implements `getVi
 ```php
 class Controller\Greet extends Mvc\Controller
 {
-    public function helloWorld()
+    public function sayHello()
     {
         $greeting = $this->getModel()->helloWorld();
         $this->getView()->setContainer($greeting);
