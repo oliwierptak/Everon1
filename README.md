@@ -146,7 +146,7 @@ The rest of the missing properties, like `$charset`, will be inherited from `[De
 
 See [view.ini](https://github.com/oliwierptak/Everon/blob/master/Config/view.ini) for more examples.
 
-## Your way
+## Flexibility
 Due to to effortless dependency injection and modularity in one application, you can specify with surgical 
 precision, which parts require what collaborators to do their work.
 For example, a console application that requires only one specific Controller to have a View, in order to compose
