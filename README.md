@@ -48,9 +48,11 @@ class Model\Greet
 ```
 The Logger is accessible by simply calling `$this->getLogger()`.
 Now, let's plug this model into a Controller, so we can use it in some incoming user request.
+Note: `Mvc\Controller`, which `Controller\Greet` extends from, implements `getView()` and `getModel()`.
+[See here.](https://github.com/oliwierptak/Everon/blob/master/Src/Everon/Mvc/Controller.php)
 
 ```php
-class Controller\Greet extends [Mvc\Controller]((https://github.com/oliwierptak/Everon/blob/master/Src/Everon/Mvc/Controller.php))
+class Controller\Greet extends Mvc\Controller
 {
     public function helloWorld()
     {
