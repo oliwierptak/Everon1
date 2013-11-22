@@ -34,7 +34,7 @@ class MyModel
 Let's say you need a logger for that particular model. All you must write is one line. Everon does the rest.
 
 ```php
-class SampleModel
+class MyModel
 {
     use Dependency\Injection\Logger;
         
@@ -52,11 +52,11 @@ Note: Mvc\Controller, which SampleController extends from, implements getView() 
 [See here.](https://github.com/oliwierptak/Everon/blob/master/Src/Everon/Mvc/Controller.php)
 
 ```php
-class SampleController extends Mvc\Controller
+class MyController extends Mvc\Controller
 {
     public function helloWorld()
     {
-        $Model = $this->getModelManager()->getModel('SampleModel');
+        $Model = $this->getModelManager()->getModel('MyModel');
         $greeting = $Model->helloWorld();
         $this->getView()->setContainer($greeting);
     }
