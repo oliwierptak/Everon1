@@ -128,7 +128,7 @@ Consider this example:
     [ThemeBlue]
     static_url = '%application.env.url%static/blue/'
     
-    [Account < ThemeBlue]
+    ['Account < ThemeBlue']
     title = 'Your Account'
     description = 'Account'
     
