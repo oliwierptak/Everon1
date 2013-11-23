@@ -7,14 +7,16 @@ class Login extends View
 {
     public function form()
     {
-        $redirect_url = urlencode('/login/reset password');
-        $this->set('login_url', $this->url("login/submit/session/adf24ds34/redirect/${redirect_url}?and=something&else=2457"));
         $FormElement = new \Everon\View\Html\Form([
-            'action' => $this->get('login_url')
+            'action' => $this->get('form_action_url') //get value set in Controller->form()
         ]);
 
-        $this->set('canShowInfo', true);
-        $this->set('Form', $FormElement);
+        if ($this->get('canShowInfo')) {
+            $this->set('View.reload', 'res234324fsfas23dfas'); //View.xxx variables will be accessible between partials
+        }
+        
+        $this->set('canShowInfo', false); //view overpowers controller. canShowInfo will be set to false
+        $this->set('Form', $FormElement); //variable accessible only in Login view
     }
 
     public function submit()

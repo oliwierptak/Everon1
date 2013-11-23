@@ -14,13 +14,12 @@ use Everon\Helper;
 use Everon\Interfaces;
 
 
-class Container implements Interfaces\TemplateContainer, Interfaces\Arrayable
+class Container implements Interfaces\TemplateContainer
 {
+    use Helper\Arrays;
     use Helper\ToString;
     use Helper\ToArray;
-
-    protected $data = [];
-
+    
     /**
      * @var array|null
      */
@@ -78,6 +77,15 @@ class Container implements Interfaces\TemplateContainer, Interfaces\Arrayable
     }
 
     /**
+     * @param $name
+     */
+    public function delete($name)
+    {
+        $this->data[$name] = null;
+        unset($this->data[$name]);
+    }
+
+    /**
      * @return array
      */
     public function getData()
@@ -129,7 +137,7 @@ class Container implements Interfaces\TemplateContainer, Interfaces\Arrayable
     {
         $this->template_content = $content;
     }
-
+    
     /**
      * @return string
      */

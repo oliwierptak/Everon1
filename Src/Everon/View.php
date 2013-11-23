@@ -9,17 +9,18 @@
  */
 namespace Everon;
 
-abstract class View implements Interfaces\View, Interfaces\Arrayable
+abstract class View implements Interfaces\View
 {
     use Dependency\Injection\Factory;
-    
+
+    use Helper\Arrays;
+    use Helper\IsIterable;
     use Helper\String\EndsWith;
-    use Helper\String\StartsWith;
     use Helper\String\LastTokenToName;
-    use Helper\ToString;
-    use Helper\toArray;
+    use Helper\String\StartsWith;
 
     protected $name = null;
+    
     protected $template_directory = null;
 
     /**
@@ -28,33 +29,43 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
     protected $Container = null;
     
     protected $default_extension = '.htm';
-    
+
+    /**
+     * @var array
+     */
     protected $variables = [];
     
     
+
+    /**
+     * @param $template_directory
+     * @param array $variables
+     */
     public function __construct($template_directory, array $variables)
     {
         $this->name = $this->stringLastTokenToName(get_class($this));
         $this->template_directory = $template_directory;
-        $this->variables = $variables;
+        $this->variables = $this->arrayDotKeysToScope($variables);
     }
 
     /**
-     * @param $name
+     * @inheritdoc
      */
     public function setName($name)
     {
         $this->name = $name;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function getName()
     {
         return $this->name;
     }
 
     /**
-     * @param $name
-     * @return \SplFileInfo
+     * @inheritdoc
      */
     public function getTemplateFilename($name)
     {
@@ -65,13 +76,16 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
         return new \SplFileInfo($this->getTemplateDirectory().$name);
     }
 
+    /**
+     * @inheritdoc
+     */
     public function getTemplateDirectory()
     {
         return $this->template_directory;
     }
 
     /**
-     * @param $directory
+     * @inheritdoc
      */
     public function setTemplateDirectory($directory)
     {
@@ -79,7 +93,7 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
     }
 
     /**
-     * @return Interfaces\TemplateContainer
+     * @inheritdoc
      */
     public function getContainer()
     {
@@ -91,8 +105,7 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
     }
 
     /**
-     * @param mixed $Container Instance of Interfaces\TemplateContainer, string or array
-     * @throws Exception\Template
+     * @inheritdoc
      */
     public function setContainer($Container)
     {
@@ -106,12 +119,42 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
         if (is_null($this->Container)) {
             throw new Exception\Template('Invalid Container type');
         }
+        
+        $data = array_merge($this->Container->getData(), $this->variables);
+        $this->Container->setData($data);
     }
 
     /**
-     * @param $name
-     * @param $data
-     * @return Interfaces\TemplateContainer
+     * @inheritdoc
+     */
+    public function getViewTemplateByAction($action)
+    {
+        $data = $this->getData();
+        $ActionTemplate = $this->getTemplate($action, $data);
+        $ViewTemplate = $this->getViewTemplate();
+
+        if ($ActionTemplate === null || $ViewTemplate === null) {
+            return null;
+        }
+
+        $ViewTemplate->setData(array_merge(
+            $data, $ViewTemplate->getData()
+        ));
+        $ViewTemplate->set('View.Body', $ActionTemplate);
+
+        return $ViewTemplate;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getViewTemplate()
+    {
+        return $this->getTemplate('index', $this->variables);
+    }
+
+    /**
+     * @inheritdoc
      */
     public function getTemplate($name, $data)
     {
@@ -125,8 +168,7 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
     }
 
     /**
-     * @param $name
-     * @param mixed $value
+     * @inheritdoc
      */
     public function set($name, $value)
     {
@@ -134,9 +176,7 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
     }
 
     /**
-     * @param $name
-     * @param mixed|null $default
-     * @return null
+     * @inheritdoc
      */
     public function get($name, $default=null)
     {
@@ -144,7 +184,15 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
     }
 
     /**
-     * @param array $data
+     * @inheritdoc
+     */
+    public function delete($name)
+    {
+        $this->getContainer()->delete($name);
+    }
+
+    /**
+     * @inheritdoc
      */
     public function setData(array $data)
     {
@@ -152,87 +200,34 @@ abstract class View implements Interfaces\View, Interfaces\Arrayable
     }
 
     /**
-     * @return array
+     * @inheritdoc
      */
     public function getData()
     {
         return $this->getContainer()->getData();
     }
     
-    /**
-     * @return array
-     */
-    protected function getToArray()
-    {
-        return $this->getContainer()->toArray();
-    }
-
     protected function getToString()
     {
         return (string) $this->getContainer();
     }
 
-    /**
-     * @param $action
-     * @return Interfaces\TemplateContainer|null Whole page with 'header, body and footer'
-     */
-    public function getViewTemplateByAction($action)
-    {
-        $data = array_merge($this->getData(), $this->getViewVariables());
-        $ActionTemplate = $this->getTemplate($action, $data);
-        $ViewTemplate = $this->getViewTemplate();
-        
-        if ($ActionTemplate === null || $ViewTemplate === null) {
-            return null;
-        }
-        
-        $ViewTemplate->set('View.Main', $ActionTemplate);
-        
-        foreach ($this->getData() as $key => $value) {
-            if ($this->stringStartsWith($key, 'View.') === false && 
-                $this->stringStartsWith($key, "${this}->getName().") === false) {
-                $ViewTemplate->set($this->getName().".$key", $value);
-            }
-        }
-        
-        $ViewTemplate->setData(
-            array_merge($this->getViewVariables(), $ViewTemplate->getData())
-        );
-        
-        return $ViewTemplate;
-    }
-
-    /**
-     * @return Interfaces\TemplateContainer
-     */
-    public function getViewTemplate()
-    {
-        return $this->getTemplate('index', $this->getViewVariables());
-    }
-
-    /**
-     * @return array
-     */
-    protected function getViewVariables()
-    {
-        $data = [];
-        foreach ($this->variables as $key => $value) {
-            $data["View.$key"] = $value; //todo: introduce some kind of scopes
-        }
-        
-        return $data;
-    }
-    
     public function url($url)
     {
         return $url;
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public function setDefaultExtension($extension)
     {
         $this->default_extension = $extension;
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public function getDefaultExtension()
     {
         return $this->default_extension;

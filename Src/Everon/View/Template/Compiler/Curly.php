@@ -13,11 +13,13 @@ use Everon\Exception;
 use Everon\Helper;
 use Everon\Interfaces;
 use Everon\Dependency;
+use Everon\View\Template\Compiler;
 
-class Curly implements Interfaces\TemplateCompiler
+class Curly extends Compiler
 {
     use Dependency\Injection\Logger;
-    
+
+    use Helper\Arrays;
     use Helper\IsIterable;
     use Helper\String\Compiler;
 
@@ -59,13 +61,24 @@ class Curly implements Interfaces\TemplateCompiler
      */
     public function compile($template_content, array $data)
     {
-        $content = $this->stringCompilerCompile($template_content, $data, ['{','}']);
+        $this->data = $data;
+        $content = $this->stringCompilerRun($template_content, $data, ['{','}']);
         return $this->compileCurly($content);
     }
 
     protected function compileCurly($template_content)
     {
         $this->compile_errors_trace = [];
+
+        foreach ($this->data as $scope_name => $values) {
+            $$scope_name = new \stdClass();
+            foreach ($values as $key => $value) {
+                $$scope_name->$key = $value;
+            }
+            $this->data[$scope_name] = $$scope_name;
+        }
+        
+        
         $tag_name = 'e';
         $pattern = "@<$tag_name(?:\s[^/]*?)?>(.*?)</$tag_name\s*>@si";
         $content = preg_replace_callback($pattern,  [$this, 'evalPhp'], $template_content);
@@ -79,7 +92,7 @@ class Curly implements Interfaces\TemplateCompiler
         return $content;
     }
 
-    protected function phpizer($code) 
+    protected function phpize($code) 
     {
         $code = trim($code);
         
@@ -103,7 +116,7 @@ class Curly implements Interfaces\TemplateCompiler
         $e = false;
         try {
             ob_start();
-            $code = $this->phpizer($matches[1]);
+            $code = $this->phpize($matches[1]);
             $code = rtrim($code, ';').";";
             $e = @eval($code);
             if ($e === false) {

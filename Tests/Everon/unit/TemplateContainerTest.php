@@ -14,7 +14,7 @@ class TemplateContainerTest extends \Everon\TestCase
 
     public function testConstructor()
     {
-        $Container = new \Everon\View\Template\Container('Hello {world}!', ['world' => 'World']);
+        $Container = new \Everon\View\Template\Container('Hello {test.world}!', ['test.world' => 'World']);
         $this->assertInstanceOf('\Everon\View\Template\Container', $Container);
     }
 
@@ -73,7 +73,7 @@ class TemplateContainerTest extends \Everon\TestCase
     public function dataProvider()
     {
         return [
-            [new \Everon\View\Template\Container('Hello {world}!', ['world' => 'World']),
+            [new \Everon\View\Template\Container('Hello {test.world}!', ['test.world' => 'World']),
                 'Hello World!'],
             [new \Everon\View\Template\Container('My name is <b>{name}</b>.', ['name' => 'John Doe']),
                 'My name is <b>John Doe</b>.'],
