@@ -9,48 +9,88 @@
  */
 namespace Everon\View\Template\Compiler;
 
+use Everon\Helper;
 use Everon\View\Template\Compiler;
 
 class E extends Compiler
 {
-
+    use Helper\String\Compiler;
+    
     /**
      * @inheritdoc
      */
     public function compile($scope_name, $template_content, array $data)
     {
-        $curly_data = $this->arrayToValues($data);
-        $curly_data = $this->arrayDotKeysFlattern($curly_data);
-        $template_content = $this->stringCompilerRun($template_content, $curly_data);
+        try {
+            $curly_data = $this->arrayToValues($data);
+            $curly_data = $this->arrayDotKeysFlattern($curly_data);
+            $content = $this->stringCompilerRun($template_content, $curly_data);
 
-        $this->content = $template_content;
-        $this->scope_name = $scope_name;
+            $data = $this->arrayDotKeysToArray(
+                $this->arrayDotKeysToScope($data, $scope_name)
+            );
 
-        $this->data = $this->arrayDotKeysToArray(
-            $this->arrayDotKeysToScope($data, $scope_name)
-        );
-
-        $tag_name = 'e';
-        $pattern = "@<$tag_name(?:\s[^/]*?)?>(.*?)</$tag_name\s*>@si";
-        $this->content = preg_replace_callback($pattern,  [$this, 'evalPhp'], $this->content);
-        $this->content = $this->run($this->content);
-
-        return $this->content;        
+            $tag_name = 'e';
+            $pattern = "@<$tag_name(?:\s[^/]*?)?>(.*?)</$tag_name\s*>@si";
+            $content = preg_replace_callback($pattern,  [$this, 'evalPhp'], $content);
+            $scope = $this->getScope($data);
+            return $this->runPhp($content, $scope);
+        }
+        catch (\Exception $e) {
+            $this->getLogger()->e_error($e);
+            return '';
+        }
     }
 
-    protected function compileScope()
+    /**
+     * @param $php
+     * @param $scope
+     * @return string
+     */
+    protected function runPhp($php, $scope)
     {
-        $this->scope = [];
-        foreach ($this->data as $scope_name => $values) {
+        $tmpphp = tmpfile();
+        $content = '';
+        try {
+            fwrite($tmpphp, $php);
+
+            $meta = stream_get_meta_data($tmpphp);
+            $php_file = $meta['uri'];
+
+            ob_start();
+            extract($scope);
+            include $php_file;
+            $content = ob_get_contents();
+        }
+        catch (\Exception $e) {
+            $this->getLogger()->e_error($e);
+            $content = '';
+        }
+        finally {
+            ob_end_clean();
+            fclose($tmpphp);
+            return $content;
+        }
+    }
+
+    /**
+     * @param $data
+     * @return array
+     */
+    protected function getScope($data)
+    {
+        $scope = [];
+        foreach ($data as $scope_name => $values) {
             $$scope_name = new \stdClass();
             foreach ($values as $key => $value) {
                 $$scope_name->$key = $value;
             }
 
-            $this->scope[$scope_name] = $$scope_name;
+            $scope[$scope_name] = $$scope_name;
         }
+        
+        return $scope;
     }
-
 
     /**
      * @param $code
@@ -73,16 +113,14 @@ class E extends Compiler
         return $code;
     }
 
+    /**
+     * @param $matches
+     * @return string
+     */
     protected function evalPhp($matches)
     {
-        try {
-            $code = $this->phpize($matches[1]);
-            $this->getLogger()->e($code);
-            return $code;
-        }
-        catch (\Exception $e) {
-            $this->getLogger()->e_error($e);
-            return '';
-        }
+        $code = $this->phpize($matches[1]);
+        $this->getLogger()->e($code);
+        return $code;
     }    
 }

@@ -71,23 +71,23 @@ trait Arrays
     }
 
     /**
-     * @param array $filter
+     * @param array $keys_to_keep
      * @param array $data
      * @return array
      */
-    protected function arrayKeep(array $filter, array $data)
+    protected function arrayKeep(array $keys_to_keep, array $data)
     {
-        return $this->arrayFilterKeys($filter, $data, true);
+        return $this->arrayFilterKeys($keys_to_keep, $data, true);
     }
 
     /**
-     * @param array $filter
+     * @param array $keys_to_remove
      * @param array $data
      * @return array
      */
-    protected function arrayRemove(array $filter, array $data)
+    protected function arrayRemove(array $keys_to_remove, array $data)
     {
-        return $this->arrayFilterKeys($filter, $data, false);
+        return $this->arrayFilterKeys($keys_to_remove, $data, false);
     }
 
     /**
@@ -106,11 +106,11 @@ trait Arrays
      * ]
      *
      * 
-     * @param $input
+     * @param array $input
      * @param string $default_name 'View' is the default
      * @return array
      */
-    protected function arrayDotKeysToScope($input, $default_name='View')
+    protected function arrayDotKeysToScope(array $input, $default_name='View')
     {
         $data = [];
         foreach($input as $key => $value) {
@@ -144,10 +144,10 @@ trait Arrays
      *      ]
      * ]
      * 
-     * @param $data
+     * @param array $data
      * @return array
      */
-    protected function arrayDotKeysToArray($data)
+    protected function arrayDotKeysToArray(array $data)
     {
         $result = [];
         foreach($data as $key => $value) {
@@ -187,6 +187,7 @@ trait Arrays
                 unset($data[$name]);
             }
         }
+        
         return $data;
     }
 }

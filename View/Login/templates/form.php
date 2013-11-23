@@ -5,7 +5,7 @@
             echo 'showing something in Login';
         }
     ?>
-    <b style="color: red"><?php echo $View->title ?></e></b>
+    <b style="color: red"><?php echo $View->title; ?></e></b>
     <b style="color: purple">A title</b>
     <table border="0">
         <tr>
