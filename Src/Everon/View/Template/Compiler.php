@@ -23,8 +23,6 @@ abstract class Compiler implements Interfaces\TemplateCompiler
     use Helper\IsIterable;
     use Helper\String\Compiler;
 
-    protected $compile_errors_trace = [];
-    
     protected $scope_name = null;
     protected $content = null;
     protected $data = [];
@@ -49,12 +47,29 @@ abstract class Compiler implements Interfaces\TemplateCompiler
         //else make cache +json file with variables
         //include it and return result
         //do it in view/view manager
-        
-        extract($this->scope);
-        ob_start();
-        echo $php;
-        $content = ob_get_contents();
-        ob_end_clean();
-        return $content;        
+
+        $tmpphp = tmpfile();
+        $content = '';
+        try {
+            fwrite($tmpphp, $php);
+
+            $meta = stream_get_meta_data($tmpphp);
+            $php_file = $meta['uri'];
+            
+            ob_start();
+            $this->compileScope();
+            extract($this->scope);
+            include $php_file;
+            $content = ob_get_contents();
+        }
+        catch (\Exception $e) {
+            $content = '';
+        }
+        finally {
+            ob_end_clean();
+            fclose($tmpphp);
+            return $content;
+        }
+
     }
 }

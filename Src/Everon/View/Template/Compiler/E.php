@@ -59,18 +59,10 @@ class E extends Compiler
             $this->arrayDotKeysToScope($data, $scope_name)
         );
 
-        $this->compileScope();
-
         $tag_name = 'e';
         $pattern = "@<$tag_name(?:\s[^/]*?)?>(.*?)</$tag_name\s*>@si";
         $this->content = preg_replace_callback($pattern,  [$this, 'evalPhp'], $this->content);
         $this->content = $this->run($this->content);
-
-        if ($this->compile_errors_trace) {
-            $this->getLogger()->e_trace(
-                implode("\n", $this->compile_errors_trace)
-            );
-        }
 
         return $this->content;        
     }
