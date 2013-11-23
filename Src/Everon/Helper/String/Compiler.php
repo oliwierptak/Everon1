@@ -56,8 +56,6 @@ trait Compiler
         $tokens = [];
         list($opening_tag, $closing_tag) = $tags;
         foreach ($data as $name => $value) {
-            $value = ($value instanceof \Closure) ? $value() : $value;
-            $value = (is_object($value) && method_exists($value, 'toArray')) ? $value->toArray() : $value;
             if ($this->isIterable($value)) {
                 $tokens = array_merge($tokens, $this->stringCompilerGetTokens($name, $value, $tags));
             }
