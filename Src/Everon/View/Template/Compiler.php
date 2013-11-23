@@ -42,12 +42,6 @@ abstract class Compiler implements Interfaces\TemplateCompiler
     
     protected function run($php)
     {
-        //read from cache, md5 on data etc
-        //if ok, include it and return result
-        //else make cache +json file with variables
-        //include it and return result
-        //do it in view/view manager
-
         $tmpphp = tmpfile();
         $content = '';
         try {
