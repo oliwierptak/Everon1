@@ -22,7 +22,7 @@ Very alpha version
 Consider this model, as you can see it does not inherit from anything, and there is no constructor.
 
 ```php
-class MyModel
+class Model\Greet
 {
     public function helloWorld()
     {
