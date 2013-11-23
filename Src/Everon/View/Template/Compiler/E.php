@@ -14,35 +14,6 @@ use Everon\View\Template\Compiler;
 class E extends Compiler
 {
 
-    protected $php_keyword = [
-        'foreach',
-        'eval',
-        'for',
-        'if',
-        'switch',
-        'unset',
-        'new',
-        'echo',
-        'require',
-        'include',
-        'require_once',
-        'include_once',
-        'array',
-        'try',
-        'catch',
-        'final',
-        'throw',
-        'else',
-        'function',
-        'isset',
-        'unset',
-        'print',
-        'while',
-        'class',
-        'list',
-        'endfor',
-    ];
-    
     /**
      * @inheritdoc
      */
@@ -87,14 +58,9 @@ class E extends Compiler
      */
     protected function phpize($code)
     {
-        $code = trim($code);
-
+        $needs_echo = false;
         if ($code[0] === '$') {
-            $needs_echo = false;
-        }
-        else {
-            $keywords = implode('|', $this->php_keyword);
-            $needs_echo = preg_match('@^('.$keywords.')@i', $code) === 0;
+            $needs_echo = true;
         }
 
         if ($needs_echo) {

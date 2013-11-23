@@ -10,10 +10,9 @@
 </head>
 <body bgcolor="#d3d3d3">
     <e>
-        $s = urlencode('login/submit/session/adf24ds34/redirect/'.urlencode($View->title).'?and=something&else=2457');
-        echo urldecode($s);
+        $s = urlencode('url encoded');
     </e>
-    <h2>::{View.title}</h2>
+    <h2>::{View.title} <e>$s</e></h2>
     <e>
         if ($Login->canShowInfo) {
             echo 'showing info';
