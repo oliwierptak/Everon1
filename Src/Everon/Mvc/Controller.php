@@ -12,12 +12,20 @@ namespace Everon\Mvc;
 use Everon\Interfaces;
 use Everon\Dependency;
 use Everon\Exception;
+use Everon\Helper;
 use Everon\Http;
 
 abstract class Controller extends \Everon\Controller implements Interfaces\Controller, Interfaces\MvcController
 {
     use Dependency\Injection\ViewManager;
     use Dependency\Injection\ModelManager;
+    use Dependency\Injection\Environment;
+    
+    use Helper\Arrays;
+    use Helper\IsIterable;
+    use Helper\String\StartsWith;
+    
+    protected $CacheLoader = null;
 
     /**
      * @return Interfaces\View
@@ -45,16 +53,25 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
         $PageTemplate = $PageTemplate ?: $this->getViewManager()->getDefaultView()->getViewTemplate();
 
         if ($PageTemplate === null) {
-            throw new Http\Exception\NotFound('Page: "%s/%s" not found', [$this->getName(),$action]);
+            throw new Http\Exception\NotFound('Page template: "%s/%s" not found', [$this->getName(),$action]);
         }
-
-        $this->getViewManager()->compileTemplate($PageTemplate);
-        $this->getResponse()->setData((string) $PageTemplate);
+        /*
+        $filename = basename($PageTemplate->getTemplateFile());
+        $this->CacheLoader = new \SplFileInfo($this->getEnvironment()->getCache().'view'.DIRECTORY_SEPARATOR.''.$filename);
+        $this->CacheLoaderData = new \SplFileInfo($this->getEnvironment()->getCache().'view'.DIRECTORY_SEPARATOR.''.$filename.'.json');
+        */
+        
+        $this->getView()->setContainer($PageTemplate);
+        //$this->getViewManager()->compileTemplate($this->getView()->getName(), $PageTemplate);
+        $this->getViewManager()->compileView($this->getView());
+        
+        $content = (string) $PageTemplate;
+        $this->getResponse()->setData($content);
+ 
     }
 
     protected function response()
     {
-        $this->getResponse()->send();
         echo $this->getResponse()->toHtml();
     }
 

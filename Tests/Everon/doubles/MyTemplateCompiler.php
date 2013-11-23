@@ -7,9 +7,8 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon\Interfaces;
+namespace Everon\Test;
 
-interface TemplateCompiler
+class MyTemplateCompiler extends \Everon\View\Template\Compiler
 {
-    function compile($scope_name, $template_content, array $data);
 }

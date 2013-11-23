@@ -12,7 +12,7 @@ namespace Everon\View;
 use Everon\Exception;
 use Everon\Interfaces;
 
-class Template extends Template\Container implements Interfaces\TemplateContainer
+class Template extends Template\Container implements Interfaces\Template
 {
 
     /**
@@ -36,6 +36,12 @@ class Template extends Template\Container implements Interfaces\TemplateContaine
         parent::__construct($LoadOnDemand, $data);
     }
 
+    protected function loadTemplate()
+    {
+        $this->validateTemplateFilename();
+        $this->setTemplateContent(file_get_contents($this->getTemplateFile()));
+    }
+
     /**
      * @throws Exception\Template
      */
@@ -47,7 +53,7 @@ class Template extends Template\Container implements Interfaces\TemplateContaine
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
     public function getTemplateFile()
     {
@@ -62,9 +68,4 @@ class Template extends Template\Container implements Interfaces\TemplateContaine
         $this->template_file = $filename;
     }
 
-    protected function loadTemplate()
-    {
-        $this->validateTemplateFilename();
-        $this->setTemplateContent(file_get_contents($this->getTemplateFile()));
-    }
 }

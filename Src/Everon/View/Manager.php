@@ -18,8 +18,9 @@ class Manager implements Interfaces\ViewManager
 {
     use Dependency\Injection\Factory;
     use Dependency\Injection\ConfigManager;
-    
+
     use Helper\String\LastTokenToName;
+    use Helper\String\EndsWith;
 
 
     /**
@@ -30,6 +31,8 @@ class Manager implements Interfaces\ViewManager
     protected $view_directory = null;
     
     protected $compilers = [];
+    
+    protected $Cache = null;
 
 
     /**
@@ -41,57 +44,78 @@ class Manager implements Interfaces\ViewManager
         $this->compilers = $compilers;
         $this->ViewCollection = new Helper\Collection([]);
         $this->view_directory = $view_directory;
+        $this->Cache = new \Everon\View\Cache();
     }
-    
+
     /**
-     * @param Interfaces\TemplateContainer $Template
-     * @throws Exception|\Exception
-     * @throws Exception\TemplateCompiler
+     * @param Interfaces\Template $scope_name
+     * @param Interfaces\Template $Template
+     * @throws \Everon\Exception\ViewManager
      */
-    public function compileTemplate(Interfaces\TemplateContainer $Template)
+    public function compileTemplate($scope_name, Interfaces\Template $Template)
     {
         try {
             $compiled_content = null;
-
+            
             /**
              * @var Interfaces\TemplateCompiler $Compiler
-             * @var Interfaces\TemplateContainer $Include
-             * @var Interfaces\TemplateContainer $TemplateInclude
              */
-            foreach ($this->compilers as $Compiler) {
-                foreach ($Template->getData() as $name => $Include) {
-                    if (($Include instanceof Interfaces\TemplateContainer) === false) {
-                        continue;
+            foreach ($this->compilers as $extension => $compiler_list) {
+                foreach ($compiler_list as $Compiler) {
+                    if ($this->stringEndsWith($Template->getTemplateFile()->getFilename(), $extension)) {
+                        $this->compileOne($scope_name, $Compiler, $Template, $compiled_content);
                     }
-
-                    foreach ($Include->getData() as $include_name => $TemplateInclude) {
-                        if (($TemplateInclude instanceof Interfaces\TemplateContainer) === false) {
-                            continue;
-                        }
-
-                        $this->compileTemplate($TemplateInclude);
-                        $Include->set($include_name, $TemplateInclude->getCompiledContent());
-                    }
-
-                    $Include->setCompiledContent(
-                        $Compiler->compile($Include->getTemplateContent(), $Include->getData())
-                    );
-                    
-                    $Template->set($name, $Include->getCompiledContent());
                 }
-
-                $compiled_content = $compiled_content ?: $Template->getTemplateContent();
-                $compiled_content = $Compiler->compile($compiled_content, $Template->getData());
             }
             
             $Template->setCompiledContent($compiled_content);
         }
         catch (Exception $e) {
-            throw $e;
+            throw new Exception\ViewManager($e);
         }
-        catch (\Exception $e) {
-            throw new Exception\TemplateCompiler($e);
+    }
+    
+    public function compileView(Interfaces\View $View)
+    {
+        $Template = $View->getContainer();
+        $this->compileTemplate($View->getName(), $Template);
+    }
+
+    /**
+     * @param $scope_name
+     * @param Interfaces\TemplateCompiler $Compiler
+     * @param Interfaces\TemplateContainer $Template
+     * @param $compiled_content
+     */
+    protected function compileOne($scope_name, Interfaces\TemplateCompiler $Compiler, Interfaces\TemplateContainer $Template, &$compiled_content)
+    {
+        /**
+         * @var Interfaces\TemplateContainer $Include
+         * @var Interfaces\TemplateContainer $TemplateInclude
+         */        
+        foreach ($Template->getData() as $name => $Include) {
+            if (($Include instanceof Interfaces\TemplateContainer) === false) {
+                continue;
+            }
+
+            foreach ($Include->getData() as $include_name => $TemplateInclude) {
+                if (($TemplateInclude instanceof Interfaces\TemplateContainer) === false) {
+                    continue;
+                }
+
+                $this->compileOne($scope_name, $Compiler, $TemplateInclude, $compiled_content); //xxx
+                $Include->set($include_name, $TemplateInclude->getCompiledContent());
+            }
+
+            $Include->setCompiledContent(
+                $Compiler->compile($scope_name, $Include->getTemplateContent(), $Include->getData())
+            );
+
+            $Template->set($name, $Include->getCompiledContent());
         }
+
+        $compiled_content = $compiled_content ?: $Template->getTemplateContent();
+        $compiled_content = $Compiler->compile($scope_name, $compiled_content, $Template->getData());        
     }
 
     public function getCompilers()

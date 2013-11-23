@@ -67,13 +67,13 @@ class TemplateTest extends \Everon\TestCase
         self::$template_filename2 = $this->getTmpDirectory().'template_2_'.$this->dateAsTime(time()).'.htm';
 
         return [
-            [new \Everon\View\Template(self::$template_filename1, ['world' => 'World']),
-                'Hello {world}!',
+            [new \Everon\View\Template(self::$template_filename1, ['test.world' => 'World']),
+                'Hello {test.world}!',
                 'Hello World!',
                 self::$template_filename1
             ],
-            [new \Everon\View\Template(self::$template_filename2, ['name' => 'John Doe']),
-                'My name is <b>{name}</b>.',
+            [new \Everon\View\Template(self::$template_filename2, ['user.name' => 'John Doe']),
+                'My name is <b>{user.name}</b>.',
                 'My name is <b>John Doe</b>.',
                 self::$template_filename2
             ]

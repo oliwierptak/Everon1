@@ -9,7 +9,11 @@
  */
 namespace Everon\Interfaces;
 
-interface TemplateCompiler
+interface Template extends TemplateContainer
 {
-    function compile($scope_name, $template_content, array $data);
+    /**
+     * @return callable|mixed|string
+     */
+    function getTemplateFile();
+    function setTemplateFile($filename);
 }
