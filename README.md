@@ -150,7 +150,7 @@ See [view.ini](https://github.com/oliwierptak/Everon/blob/master/Config/view.ini
 Due to to effortless dependency injection and modularity in one application, you can specify with surgical 
 precision, which parts require what collaborators to do their work.
 For example, a console application that requires only one specific Controller to have a View, in order to compose
-and send e-mails in HTML format. Or that cron job application for generating Reports. 
+and send e-mails in HTML format. Or that cron job controller for aggregating data which does not need View at all. 
 
 Maybe for your case, it makes more sense to use the Model View Presenter (MVP) instead of MVC?
 No problem, just take Everon's parts and put them together in your way. 
