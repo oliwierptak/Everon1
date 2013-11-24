@@ -109,11 +109,6 @@ It could be translated into commands for Everon:
 Unless all those conditions are met, the request won't pass and error exception will be thrown.
 Of course you can write your own regular expressions. See [router.ini](https://github.com/oliwierptak/Everon/blob/master/Config/router.ini) for more examples.
 
-## Sharable config variables
-In Everon configuration files share their variables with other configuration files, 
-by using `%config_name.value_name%` notation.
-For example '%application.env.url%s' variable is used in view config below.
-
 
 ## Config inheritance
 Not only one config can use values from another file, the config sections can be inherited. 
@@ -145,6 +140,11 @@ for `static_url` property will be set to '/static/blue' as defined in the parent
 The rest of the missing properties, like `$charset`, will be inherited from `[Default]` section.
 
 See [view.ini](https://github.com/oliwierptak/Everon/blob/master/Config/view.ini) for more examples.
+
+#### Sharable config variables
+In Everon configuration files share their variables with other configuration files, 
+by using `%config_name.value_name%` notation.
+
 
 ## Flexibility
 Due to to effortless dependency injection and modularity in one application, you can specify with surgical 
