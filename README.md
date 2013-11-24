@@ -142,7 +142,7 @@ The rest of the missing properties, like `$charset`, will be inherited from `[De
 See [view.ini](https://github.com/oliwierptak/Everon/blob/master/Config/view.ini) for more examples.
 
 #### Sharable config variables
-In Everon configuration files share their variables with other configuration files, 
+In Everon, configuration files share their variables with other configuration files, 
 by using `%config_name.value_name%` notation. For example, `%application.env.url%s` will grab url from `application.ini`
 which is stored under `env` section.
 
