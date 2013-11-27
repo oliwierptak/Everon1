@@ -119,7 +119,8 @@ class E extends Compiler
             $code = "echo $code";
         }
 
-        if ($this->stringEndsWith(trim($code), ':') === false) {
+        $s = trim(str_replace(["\n", "\r", "\r\n"], '', $code));
+        if ($this->stringEndsWith($s, '}') === false && $this->stringEndsWith($s, ';') === false) {
             $code = rtrim($code, ';').";";
         }
         
