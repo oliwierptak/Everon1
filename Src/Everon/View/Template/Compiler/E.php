@@ -97,7 +97,7 @@ class E extends Compiler
     {
         $scope = [];
         foreach ($data as $scope_name => $values) {
-            $$scope_name = new Helper\Popm($values);
+            $$scope_name = new Helper\PopoProps($values);
             $scope[$scope_name] = $$scope_name;
         }
 

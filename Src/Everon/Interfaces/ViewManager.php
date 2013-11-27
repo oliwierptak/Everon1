@@ -20,6 +20,11 @@ interface ViewManager
      * @throws \Everon\Exception\ViewManager
      */
     function compileTemplate($scope_name, Interfaces\Template $Template);
+
+    /**
+     * @param Interfaces\View $View
+     */
+    function compileView(Interfaces\View $View);
         
     /**
      * @param $name

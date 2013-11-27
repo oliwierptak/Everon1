@@ -11,7 +11,7 @@ namespace Everon\Interfaces;
 
 use Everon\Interfaces;
 
-interface MvcController
+interface MvcController extends Interfaces\Controller
 {
 
     /**

@@ -48,9 +48,7 @@ class Manager implements Interfaces\ViewManager
     }
 
     /**
-     * @param Interfaces\Template $scope_name
-     * @param Interfaces\Template $Template
-     * @throws \Everon\Exception\ViewManager
+     * @inheritdoc
      */
     public function compileTemplate($scope_name, Interfaces\Template $Template)
     {
@@ -63,7 +61,7 @@ class Manager implements Interfaces\ViewManager
             foreach ($this->compilers as $extension => $compiler_list) {
                 foreach ($compiler_list as $Compiler) {
                     if ($this->stringEndsWith($Template->getTemplateFile()->getFilename(), $extension)) {
-                        $this->compileOne($scope_name, $Compiler, $Template, $compiled_content);
+                        $this->compileTemplateRecursive($scope_name, $Compiler, $Template, $compiled_content);
                     }
                 }
             }
@@ -74,7 +72,10 @@ class Manager implements Interfaces\ViewManager
             throw new Exception\ViewManager($e);
         }
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public function compileView(Interfaces\View $View)
     {
         $Template = $View->getContainer();
@@ -87,7 +88,7 @@ class Manager implements Interfaces\ViewManager
      * @param Interfaces\TemplateContainer $Template
      * @param $compiled_content
      */
-    protected function compileOne($scope_name, Interfaces\TemplateCompiler $Compiler, Interfaces\TemplateContainer $Template, &$compiled_content)
+    protected function compileTemplateRecursive($scope_name, Interfaces\TemplateCompiler $Compiler, Interfaces\TemplateContainer $Template, &$compiled_content)
     {
         /**
          * @var Interfaces\TemplateContainer $Include
@@ -103,7 +104,7 @@ class Manager implements Interfaces\ViewManager
                     continue;
                 }
 
-                $this->compileOne($scope_name, $Compiler, $TemplateInclude, $compiled_content); //xxx
+                $this->compileTemplateRecursive($scope_name, $Compiler, $TemplateInclude, $compiled_content);
                 $Include->set($include_name, $TemplateInclude->getCompiledContent());
             }
 

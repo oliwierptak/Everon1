@@ -14,7 +14,7 @@ use Everon\Interfaces;
 use Everon\Helper;
 
 /**
- * Plain Old PHP Object
+ * Plain Old PHP Object, data accessible only via method calls, eg. $Popo->getTitle(), $Popo->setTitle('title')
  *
  * http://en.wikipedia.org/wiki/POJO
  */

@@ -79,12 +79,13 @@ interface View
      * @param array $data
      */    
     function setData(array $data);
-    
+
     /**
      * @param $action
-     * @return Interfaces\Template Complete page with 'header, body and footer'
+     * @param Interfaces\Template $DefaultViewTemplate
+     * @return Interfaces\Template|Interfaces\TemplateContainer|null
      */
-    function getViewTemplateByAction($action);
+    function getViewTemplateByAction($action, Interfaces\Template $DefaultViewTemplate);
     
     function url($url);
 

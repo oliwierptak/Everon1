@@ -125,22 +125,27 @@ abstract class View implements Interfaces\View
     }
 
     /**
-     * @inheritdoc
+     * @param $action
+     * @param Interfaces\Template $DefaultViewTemplate
+     * @return Interfaces\Template|Interfaces\TemplateContainer|null
      */
-    public function getViewTemplateByAction($action)
+    public function getViewTemplateByAction($action, Interfaces\Template $DefaultViewTemplate)
     {
         $data = $this->getData();
         $ActionTemplate = $this->getTemplate($action, $data);
         $ViewTemplate = $this->getViewTemplate();
-
-        if ($ActionTemplate === null || $ViewTemplate === null) {
-            return null;
+        
+        if ($ViewTemplate === null) {
+            $ViewTemplate = $DefaultViewTemplate; 
         }
 
         $ViewTemplate->setData(array_merge(
             $data, $ViewTemplate->getData()
         ));
-        $ViewTemplate->set('View.Body', $ActionTemplate);
+
+        if ($ActionTemplate !== null) {
+            $ViewTemplate->set('View.Body', $ActionTemplate);
+        }        
 
         return $ViewTemplate;
     }

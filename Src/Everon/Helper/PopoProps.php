@@ -14,16 +14,29 @@ use Everon\Interfaces;
 use Everon\Helper;
 
 /**
- * Plain Old PHP Object
+ * Plain Old PHP Object, data accessible only via public properties, eg. $PopoProps->title, $PopoProps->title = 'title'
  *
  * http://en.wikipedia.org/wiki/POJO
  */
-class Popm extends Popo
+class PopoProps extends Popo
 {
+    /**
+     * When set to true, accessing unset property will throw exception
+     * 
+     * @var bool
+     */
+    protected $strict = false;
+    
     public function __get($property)
     {
+        $camelized = preg_split('/(?<=\\w)(?=[A-Z])/', $property);
+        $property = strtolower(implode('_', $camelized));        
         if (array_key_exists($property, $this->data) === false) {
-            throw new Exception\Popo('Unknown public property: "%s" in "%s"', array($property, get_class($this)));
+            if ($this->strict) {
+                throw new Exception\Popo('Unknown public property: "%s" in "%s"', array($property, get_class($this)));
+            }
+            
+            $this->data[$property] = null;
         }
         
         return $this->data[$property];
@@ -32,15 +45,14 @@ class Popm extends Popo
     public function __set($name, $value)
     {
         $camelized = preg_split('/(?<=\\w)(?=[A-Z])/', $name);
-        array_shift($camelized);
         $property = strtolower(implode('_', $camelized));
         
         $this->data[$property] = $value;
-    }    
+    }
     
     public function __call($name, $arguments)
     {
-        throw new Exception\Popo('Only public properties are available');
+        throw new Exception\Popo('Call by method: "%s" is not enabled in: "%"', [$name, 'PopoProps']);
     }
         
 }

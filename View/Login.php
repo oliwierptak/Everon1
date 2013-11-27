@@ -22,12 +22,12 @@ class Login extends View
     public function submit()
     {
         //User was assigned to this view by Login controller
-        $this->setContainer('Logged as: {User.username}. <br><br>Redirecting to {redirect_url}');
+        $this->set('View.Body', '<h3>Logged as: {User.username}</h3>. <br><br>Redirecting to {redirect_url}');
     }
     
     public function submitOnError()
     {
-        $this->setContainer('Invalid username or password.<br /><br /><small><u>Forgot your password?</u></small>');
+        $this->set('View.Body', 'Invalid username or password.<br /><br /><small><u>Forgot your password?</u></small>');
     }
 
 }

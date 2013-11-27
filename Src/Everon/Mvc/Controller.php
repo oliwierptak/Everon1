@@ -15,7 +15,7 @@ use Everon\Exception;
 use Everon\Helper;
 use Everon\Http;
 
-abstract class Controller extends \Everon\Controller implements Interfaces\Controller, Interfaces\MvcController
+abstract class Controller extends \Everon\Controller implements Interfaces\MvcController
 {
     use Dependency\Injection\ViewManager;
     use Dependency\Injection\ModelManager;
@@ -49,8 +49,9 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
             $this->getView()->{$action}();
         }
 
-        $PageTemplate = $this->getView()->getViewTemplateByAction($action);
-        $PageTemplate = $PageTemplate ?: $this->getViewManager()->getDefaultView()->getViewTemplate();
+        $PageTemplate = $this->getView()->getViewTemplateByAction(
+            $action, $this->getViewManager()->getDefaultView()->getViewTemplate()
+        );
 
         if ($PageTemplate === null) {
             throw new Http\Exception\NotFound('Page template: "%s/%s" not found', [$this->getName(),$action]);
@@ -62,12 +63,10 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
         */
         
         $this->getView()->setContainer($PageTemplate);
-        //$this->getViewManager()->compileTemplate($this->getView()->getName(), $PageTemplate);
         $this->getViewManager()->compileView($this->getView());
         
         $content = (string) $PageTemplate;
         $this->getResponse()->setData($content);
- 
     }
 
     protected function response()
