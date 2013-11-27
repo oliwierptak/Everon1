@@ -33,19 +33,19 @@ abstract class View implements Interfaces\View
     /**
      * @var array
      */
-    protected $variables = [];
+    protected $vars = [];
     
     
 
     /**
      * @param $template_directory
-     * @param array $variables
+     * @param array $vars
      */
-    public function __construct($template_directory, array $variables)
+    public function __construct($template_directory, array $vars)
     {
         $this->name = $this->stringLastTokenToName(get_class($this));
         $this->template_directory = $template_directory;
-        $this->variables = $this->arrayDotKeysToScope($variables);
+        $this->vars = $this->arrayDotKeysToScope($vars);
     }
 
     /**
@@ -120,7 +120,7 @@ abstract class View implements Interfaces\View
             throw new Exception\Template('Invalid Container type');
         }
         
-        $data = array_merge($this->Container->getData(), $this->variables);
+        $data = array_merge($this->Container->getData(), $this->vars);
         $this->Container->setData($data);
     }
 
@@ -150,7 +150,7 @@ abstract class View implements Interfaces\View
      */
     public function getViewTemplate()
     {
-        return $this->getTemplate('index', $this->variables);
+        return $this->getTemplate('index', $this->vars);
     }
 
     /**
@@ -159,7 +159,6 @@ abstract class View implements Interfaces\View
     public function getTemplate($name, $data)
     {
         $Filename = $this->getTemplateFilename($name);
-
         if ($Filename->isFile() === false) {
             return null;
         }

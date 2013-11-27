@@ -15,6 +15,7 @@ use Everon\View\Template\Compiler;
 class E extends Compiler
 {
     use Helper\String\Compiler;
+    use Helper\String\EndsWith;
     
     /**
      * @inheritdoc
@@ -22,6 +23,7 @@ class E extends Compiler
     public function compile($scope_name, $template_content, array $data)
     {
         try {
+            $this->scope_name = $scope_name;
             $curly_data = $this->arrayToValues($data);
             $curly_data = $this->arrayDotKeysFlattern($curly_data);
             $content = $this->stringCompilerRun($template_content, $curly_data);
@@ -29,6 +31,8 @@ class E extends Compiler
             $data = $this->arrayDotKeysToArray(
                 $this->arrayDotKeysToScope($data, $scope_name)
             );
+            
+            $this->data = $data;
 
             $tag_name = 'e';
             $pattern = "@<$tag_name(?:\s[^/]*?)?>(.*?)</$tag_name\s*>@si";
@@ -49,6 +53,17 @@ class E extends Compiler
      */
     protected function runPhp($php, $scope)
     {
+        $handleError = function($errno, $errstr, $errfile, $errline, array $errcontext) {
+            // error was suppressed with the @-operator
+            if (0 === error_reporting()) {
+                return false;
+            }
+
+            throw new \ErrorException($errstr, 0, $errno, $errfile, $errline);
+        };
+        
+        $old_error_handler = set_error_handler($handleError);
+        
         $tmpphp = tmpfile();
         $content = '';
         try {
@@ -56,23 +71,24 @@ class E extends Compiler
 
             $meta = stream_get_meta_data($tmpphp);
             $php_file = $meta['uri'];
-
+            
             ob_start();
             extract($scope);
             include $php_file;
             $content = ob_get_contents();
         }
         catch (\Exception $e) {
-            $this->getLogger()->e_error($e);
+            $this->getLogger()->e_error($e."\n".$php);
             $content = '';
         }
         finally {
             ob_end_clean();
             fclose($tmpphp);
+            restore_error_handler($old_error_handler);
             return $content;
         }
     }
-
+    
     /**
      * @param $data
      * @return array
@@ -81,14 +97,10 @@ class E extends Compiler
     {
         $scope = [];
         foreach ($data as $scope_name => $values) {
-            $$scope_name = new \stdClass();
-            foreach ($values as $key => $value) {
-                $$scope_name->$key = $value;
-            }
-
+            $$scope_name = new Helper\Popm($values);
             $scope[$scope_name] = $$scope_name;
         }
-        
+
         return $scope;
     }
 
@@ -99,7 +111,7 @@ class E extends Compiler
     protected function phpize($code)
     {
         $needs_echo = false;
-        if ($code[0] === '$') {
+        if ($code[0] === '$' || $code[0] === '"' || $code[0] === "'") {
             $needs_echo = true;
         }
 
@@ -107,7 +119,10 @@ class E extends Compiler
             $code = "echo $code";
         }
 
-        $code = rtrim($code, ';').";";
+        if ($this->stringEndsWith(trim($code), ':') === false) {
+            $code = rtrim($code, ';').";";
+        }
+        
         $code = "<?php $code ?>";
 
         return $code;

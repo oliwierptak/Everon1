@@ -1,33 +1,25 @@
-<evBlock name="Header">
-<!DOCTYPE html>
-
 <html lang="{View.lang}">
 <head>
     <title>{View.title}</title>
     <link rel="stylesheet" type="text/css" href="{View.static_url}common.css" media="all" />
     <meta charset="{View.charset}" />
     <meta name="keywords" content="{View.keywords}" />
-    <meta name="description" content="{View.description}" />    
+    <meta name="description" content="{View.description}" />
 </head>
-<body>
-</evBlock>
-
-
+<body bgcolor="#d3d3d3">
 
 <div loop="View.AdminMenuItems">
-    <e>foreach ($View->AdminMenuItems as $Section as $MenuItems) :</e>
-        <h3 class="menu_item_<{echo $odd ? 'odd' : 'even'}>"><e>"$step - $Section"</e></h3>
+    <e>foreach ($View->AdminMenuItems as $Section => $MenuItems) :</e>
+        <h3 class="menu_item_<{echo $odd ? 'odd' : 'even'}>"><e>"$Section"</e></h3>
         <e>foreach ($MenuItems as $Item) :</e>
             <ul>
                 <li><a href="<{$Item->link}>"><e>$Item->title .'for {View.title}'</e></a></li>
             </ul>
-        <e>endfor</e>
-    <e>endfor</e>
+        <e>endforeach</e>
+    <e>endforeach</e>
 </div>
-        
-<evBlock name="body">{View.Body}</evBlock>
 
-<evBlock name="Footer">
+{View.Body}
+
 </body>
 </html>
-</evBlock>
