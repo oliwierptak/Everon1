@@ -1,10 +1,15 @@
 <?php
 namespace Everon\View;
 
+use Everon\Interfaces\DependencyContainer;
 use Everon\View;
+use Everon\Dependency;
+use Everon\View\Index as DefaultView;
 
-class Login extends View
+class Login extends DefaultView
 {
+    use Dependency\Injection\Response;
+    
     public function form()
     {
         $FormElement = new \Everon\View\Html\Form([
@@ -22,7 +27,10 @@ class Login extends View
     public function submit()
     {
         //User was assigned to this view by Login controller
-        $this->set('View.Body', '<h3>Logged as: {User.username}</h3>. <br><br>Redirecting to {redirect_url}');
+        $this->set('View.Body', 'Logged as: <b>{User.username}</b><br/><br/> Redirecting to <i>{View.redirectUrl}</i>');
+        
+        $url = $this->url($this->get('View.redirectUrl'));
+        $this->getResponse()->addHeader('refresh', '3; url='.$url);
     }
     
     public function submitOnError()

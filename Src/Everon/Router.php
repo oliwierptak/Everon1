@@ -48,7 +48,7 @@ class Router implements Interfaces\Router
             /**
              * @var Interfaces\ConfigItemRouter $RouteItem
              */
-            if ($RouteItem->matchesByUrl($Request->getUrl())) {
+            if ($RouteItem->matchesByPath($Request->getPath())) {
                 $Item = $RouteItem;
                 break;
             }
@@ -68,7 +68,7 @@ class Router implements Interfaces\Router
         }
 
         if ($Item === null) {
-            throw new Exception\InvalidRoute($Request->getLocation());
+            throw new Exception\InvalidRoute($Request->getPath());
         }
         
         $this->validateAndUpdateRequest($Item, $Request);

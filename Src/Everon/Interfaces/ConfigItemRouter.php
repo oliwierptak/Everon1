@@ -32,5 +32,5 @@ interface ConfigItemRouter
     function getCleanUrl($str, $marker='?');
     function filterQueryKeys($get_data);
     function filterGetKeys($get_data);
-    function matchesByUrl($request_url);
+    function matchesByPath($request_path);
 }

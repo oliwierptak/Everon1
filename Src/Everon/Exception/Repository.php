@@ -11,6 +11,8 @@ namespace Everon\Exception;
 
 use Everon\Exception as EveronException;
 
+class ErrorHandler extends \ErrorException{};
+
 class Asserts extends EveronException{};
 class Base extends EveronException{};
 class Config extends EveronException{};
@@ -34,5 +36,6 @@ class RouterValidator extends EveronException{};
 class ConfigItem extends EveronException{};
 class Template extends EveronException{};
 class TemplateCompiler extends EveronException{};
+class TemplateEvaluationError extends ErrorHandler{};
 class View extends EveronException{};
 class ViewManager extends EveronException{};

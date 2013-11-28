@@ -96,6 +96,10 @@ class Manager implements Interfaces\ViewManager
          */        
         foreach ($Template->getData() as $name => $Include) {
             if (($Include instanceof Interfaces\TemplateContainer) === false) {
+                if (is_string($Include)) { //compile string values with curly
+                    $IncludeValue = $Compiler->compile($scope_name, $Include, $Template->getData());
+                    $Template->set($name, $IncludeValue);
+                }
                 continue;
             }
 
@@ -116,7 +120,7 @@ class Manager implements Interfaces\ViewManager
         }
 
         $compiled_content = $compiled_content ?: $Template->getTemplateContent();
-        $compiled_content = $Compiler->compile($scope_name, $compiled_content, $Template->getData());        
+        $compiled_content = $Compiler->compile($scope_name, $compiled_content, $Template->getData());
     }
 
     public function getCompilers()

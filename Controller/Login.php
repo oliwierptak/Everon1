@@ -31,8 +31,8 @@ class Login extends Controller implements Interfaces\Controller
             return false;
         }
 
-        $this->getView()->set('redirect_url', '/account/summary');
         $this->getView()->set('User', $User);
+        $this->getView()->set('View.redirectUrl', '/account');
         //$this->getView()->set('Account', $this->getViewManager()->getView('Account'));
        
 

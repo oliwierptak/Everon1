@@ -59,7 +59,7 @@ class E extends Compiler
                 return false;
             }
 
-            throw new \ErrorException($errstr, 0, $errno, $errfile, $errline);
+            throw new \Everon\Exception\TemplateEvaluationError($errstr, 0, $errno, $errfile, $errline);
         };
         
         $old_error_handler = set_error_handler($handleError);

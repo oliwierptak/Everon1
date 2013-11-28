@@ -21,4 +21,6 @@ interface Response
     function getResult();
     function setStatus($status);
     function getStatus();
+    function addHeader($name, $value);
+    function getHeader($name);
 }

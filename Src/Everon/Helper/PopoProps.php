@@ -29,14 +29,15 @@ class PopoProps extends Popo
     
     public function __get($property)
     {
-        $camelized = preg_split('/(?<=\\w)(?=[A-Z])/', $property);
-        $property = strtolower(implode('_', $camelized));        
+        if (array_key_exists($property, $this->data) === false) {
+            $camelized = preg_split('/(?<=\\w)(?=[A-Z])/', $property);
+            $property = strtolower(implode('_', $camelized));
+        }
+        
         if (array_key_exists($property, $this->data) === false) {
             if ($this->strict) {
                 throw new Exception\Popo('Unknown public property: "%s" in "%s"', array($property, get_class($this)));
             }
-            
-            $this->data[$property] = null;
         }
         
         return $this->data[$property];

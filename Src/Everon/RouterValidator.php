@@ -25,7 +25,7 @@ class RouterValidator implements Interfaces\RouterValidator
      */
     public function validate(Interfaces\ConfigItemRouter $RouteItem, Interfaces\Request $Request)
     {
-        $parsed_query_parameters = $this->validateQuery($RouteItem, $Request->getUrl(), $Request->getQueryCollection());
+        $parsed_query_parameters = $this->validateQuery($RouteItem, $Request->getPath(), $Request->getQueryCollection());
         $this->validateRoute(
             $RouteItem->getName(),
             (array) $RouteItem->getQueryRegex(),

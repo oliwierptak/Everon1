@@ -133,4 +133,14 @@ class Response implements Interfaces\Response
         }
     }
 
+    public function addHeader($name, $value)
+    {
+        $this->HeaderCollection->set($name, $value);
+    }
+    
+    public function getHeader($name)
+    {
+        $this->HeaderCollection->get($name);
+    }
+
 }

@@ -12,6 +12,7 @@ namespace Everon;
 abstract class View implements Interfaces\View
 {
     use Dependency\Injection\Factory;
+    use Dependency\Injection\Request;
 
     use Helper\Arrays;
     use Helper\IsIterable;
@@ -218,7 +219,7 @@ abstract class View implements Interfaces\View
 
     public function url($url)
     {
-        return $url;
+        return $this->getRequest()->getAddress().$url;
     }
 
     /**

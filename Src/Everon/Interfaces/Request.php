@@ -11,12 +11,14 @@ namespace Everon\Interfaces;
 
 interface Request extends Arrayable
 {
+    function setAddress($address);
+    function getAddress();
     function setMethod($method);
     function getMethod();
     function setUrl($url);
     function getUrl();
-    function setLocation($location);
-    function getLocation();
+    function setPath($path);
+    function getPath();
     function getGetParameter($name, $default=null);
     function setGetParameter($name, $value);
     function getQueryParameter($name, $default=null);

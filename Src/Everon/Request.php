@@ -37,6 +37,11 @@ class Request implements Interfaces\Request
      * @var Interfaces\Collection $_FILES
      */
     protected $FileCollection = null;
+
+    /**
+     * @var string eg. http://dev.localhost:80
+     */
+    protected $address = null;
     
     /**
      * @var string REQUEST_METHOD
@@ -51,7 +56,7 @@ class Request implements Interfaces\Request
     /**
      * @var string Full url with hostname, path, protocol, etc. Eg. http://everon.nova:81/list?XDEBUG_PROFILE&param=1
      */
-    protected $location = null;
+    protected $path = null;
 
     /**
      * @var string QUERY_STRING
@@ -97,22 +102,28 @@ class Request implements Interfaces\Request
     public function getDataFromGlobals()
     {
         return [
+            'address' => $this->getServerAddressFromGlobals(),
             'method' => $this->ServerCollection['REQUEST_METHOD'],
-            'url' => $this->ServerCollection['REQUEST_URI'],
+            'url' => $this->getUrlFromGlobals(),
             'query_string' => $this->ServerCollection['QUERY_STRING'],
-            'location' => $this->getLocationFromGlobals(),
+            'path' => $this->ServerCollection['REQUEST_URI'],
             'protocol' => $this->getProtocolFromGlobals(),
             'port' => $this->getPortFromGlobals(),
             'secure' => $this->getSecureFromGlobals()
         ];
     }
 
-    protected function getLocationFromGlobals()
+    protected function getUrlFromGlobals()
+    {
+        return $this->getServerAddressFromGlobals().@$this->ServerCollection['REQUEST_URI'];
+    }
+    
+    protected function getServerAddressFromGlobals()
     {
         $host = $this->getHostNameFromGlobals();
         $port = $this->getPortFromGlobals();
         $protocol = $this->getProtocolFromGlobals();
-        
+
         if ($protocol !== '') {
             $protocol = strtolower(substr($protocol, 0, strpos($protocol, '/'))).'://';
         }
@@ -121,8 +132,8 @@ class Request implements Interfaces\Request
         if ($port !== 0 && $port !== 80) {
             $port_str = ':'.$port;
         }
-        
-        return $protocol.$host.$port_str.@$this->ServerCollection['REQUEST_URI'];
+
+        return $protocol.$host.$port_str;        
     }
     
     protected function getHostNameFromGlobals()
@@ -209,13 +220,14 @@ class Request implements Interfaces\Request
         $this->validate($data);
         
         $this->data = $data;
+        $this->address = $data['address'];
         $this->method = $data['method'];
         $this->url = $data['url'];
         $this->query_string = $data['query_string'];
         $this->protocol = $data['protocol'];
         $this->port = (integer) $data['port'];
         $this->secure = (boolean) $data['secure'];
-        $this->location = $data['location'];
+        $this->path = $data['path'];
         
         if (trim($data['query_string']) !== '') {
             parse_str($data['query_string'], $query);
@@ -230,10 +242,11 @@ class Request implements Interfaces\Request
     protected function validate(array $data)
     {
         $required = [
+            'address',
             'method',
             'url',
             'query_string',
-            'location',
+            'path',
             'protocol',
             'port',
             'secure'            
@@ -259,6 +272,16 @@ class Request implements Interfaces\Request
     public function isSecure()
     {
         return $this->secure;
+    }
+    
+    public function getAddress()
+    {
+        return $this->address;
+    }
+    
+    public function setAddress($address)
+    {
+        $this->address = $address;
     }
 
     /**
@@ -373,16 +396,16 @@ class Request implements Interfaces\Request
     }
 
     /**
-     * @param $location
+     * @param $path
      */
-    public function setLocation($location)
+    public function setPath($path)
     {
-        $this->location = $location;
+        $this->path = $path;
     }
 
-    public function getLocation()
+    public function getPath()
     {
-        return $this->location;
+        return $this->path;
     }
 
     /**
@@ -497,7 +520,7 @@ class Request implements Interfaces\Request
      */
     public function isEmptyUrl()
     {
-        $url_path = parse_url($this->url, PHP_URL_PATH);
+        $url_path = parse_url($this->path, PHP_URL_PATH);
         return $url_path === '/';
     }
 

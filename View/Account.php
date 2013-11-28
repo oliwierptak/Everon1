@@ -2,8 +2,8 @@
 namespace Everon\View;
 
 use Everon\View;
+use Everon\View\Index as DefaultView;
 
-class Account extends View
+class Account extends DefaultView
 {
-    
 }

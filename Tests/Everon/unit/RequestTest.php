@@ -48,7 +48,7 @@ class RequestTest extends \Everon\TestCase
         $this->assertEquals($expected['method'], $Request->getMethod());
         $this->assertEquals($expected['url'], $Request->getUrl());
         $this->assertEquals($expected['query_string'], $Request->getQueryString());
-        $this->assertEquals($expected['location'], $Request->getLocation());
+        $this->assertEquals($expected['location'], $Request->getPath());
         $this->assertEquals($expected['port'], $Request->getPort());
         $this->assertEquals($expected['protocol'], $Request->getProtocol());
         $this->assertFalse($Request->isSecure());
@@ -56,14 +56,14 @@ class RequestTest extends \Everon\TestCase
         $Request->setMethod($expected['method']);
         $Request->setUrl($expected['url']);
         $Request->setQueryString($expected['query_string']);
-        $Request->setLocation($expected['location']);
+        $Request->setPath($expected['location']);
         $Request->setPort($expected['port']);
         $Request->setProtocol($expected['protocol']);
 
         $this->assertEquals($expected['method'], $Request->getMethod());
         $this->assertEquals($expected['url'], $Request->getUrl());
         $this->assertEquals($expected['query_string'], $Request->getQueryString());
-        $this->assertEquals($expected['location'], $Request->getLocation());
+        $this->assertEquals($expected['location'], $Request->getPath());
         $this->assertEquals($expected['port'], $Request->getPort());
         $this->assertEquals($expected['protocol'], $Request->getProtocol());
         $this->assertFalse($Request->isSecure());
@@ -190,13 +190,13 @@ class RequestTest extends \Everon\TestCase
         $Server['HTTP_HOST'] = $Server['SERVER_NAME'];
         unset($Server['SERVER_NAME']);
         $Request->setServerCollection($Server);
-        $this->assertEquals($expected['location'], $Request->getLocation());
+        $this->assertEquals($expected['location'], $Request->getPath());
 
         $Server = $Request->getServerCollection();
         unset($Server['HTTP_HOST']);
         unset($Server['SERVER_NAME']);
         $Request->setServerCollection($Server);
-        $this->assertEquals($expected['location_address'], $Request->getLocation());
+        $this->assertEquals($expected['location_address'], $Request->getPath());
     }
 
     /**

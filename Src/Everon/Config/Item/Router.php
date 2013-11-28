@@ -126,10 +126,10 @@ class Router extends \Everon\Config\Item implements Interfaces\ConfigItemRouter
     }
 
     /**
-     * @param $request_url
+     * @param $request_path
      * @return bool
      */
-    public function matchesByUrl($request_url)
+    public function matchesByPath($request_path)
     {
         try {
             $data = $this->getQueryRegex();
@@ -140,7 +140,7 @@ class Router extends \Everon\Config\Item implements Interfaces\ConfigItemRouter
             }
 
             $pattern = $this->regexCompleteAndValidate($this->getName(), $pattern);
-            $subject = $this->getCleanUrl($request_url);
+            $subject = $this->getCleanUrl($request_path);
 
             return preg_match($pattern, $subject, $matches) === 1;
         }
