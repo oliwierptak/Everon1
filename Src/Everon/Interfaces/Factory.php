@@ -111,17 +111,17 @@ interface Factory
 
     /**
      * @param Interfaces\Config $Config
-     * @param Interfaces\RouterValidator $Validator
+     * @param Interfaces\RequestValidator $Validator
      * @param string $ns
      * @return Interfaces\Router
      */
-    function buildRouter(Interfaces\Config $Config, Interfaces\RouterValidator $Validator, $ns='Everon');
+    function buildRouter(Interfaces\Config $Config, Interfaces\RequestValidator $Validator, $ns='Everon');
 
     /**
-     * @return Interfaces\RouterValidator
+     * @return Interfaces\RequestValidator
      * @throws Exception\Factory
      */
-    function buildRouterValidator();
+    function buildRequestValidator();
 
     /**
      * @param $filename

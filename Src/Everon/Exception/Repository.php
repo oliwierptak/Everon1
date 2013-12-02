@@ -32,7 +32,7 @@ class Popo extends EveronException{};
 class Request extends EveronException{};
 class Response extends EveronException{};
 class Router extends EveronException{};
-class RouterValidator extends EveronException{};
+class RequestValidator extends EveronException{};
 class ConfigItem extends EveronException{};
 class Template extends EveronException{};
 class TemplateCompiler extends EveronException{};

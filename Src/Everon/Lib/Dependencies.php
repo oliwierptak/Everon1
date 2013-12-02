@@ -48,6 +48,6 @@ $Container->propose('Request', function() use ($Factory) {
 
 $Container->propose('Router', function() use ($Factory) {
     $RouteConfig = $Factory->getDependencyContainer()->resolve('ConfigManager')->getConfigByName('console');
-    $RouterValidator = $Factory->buildRouterValidator();
-    return $Factory->buildRouter($RouteConfig, $RouterValidator);
+    $RequestValidator = $Factory->buildRequestValidator();
+    return $Factory->buildRouter($RouteConfig, $RequestValidator);
 });

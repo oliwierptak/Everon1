@@ -11,7 +11,7 @@ namespace Everon\Interfaces;
 
 use Everon\Interfaces;
 
-interface RouterValidator
+interface RequestValidator
 {
     function validate(Interfaces\ConfigItemRouter $RouteItem, Interfaces\Request $Request);
 }

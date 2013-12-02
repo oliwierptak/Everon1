@@ -11,19 +11,19 @@ namespace Everon\Test;
 
 use Everon\Interfaces;
 
-class RouterValidatorTest extends \Everon\TestCase
+class RequestValidatorTest extends \Everon\TestCase
 {
 
     public function testConstructor()
     {
-        $Validator = new \Everon\RouterValidator();
-        $this->assertInstanceOf('\Everon\Interfaces\RouterValidator', $Validator);
+        $Validator = new \Everon\RequestValidator();
+        $this->assertInstanceOf('\Everon\Interfaces\RequestValidator', $Validator);
     }
 
     /**
      * @dataProvider dataProvider
      */
-    public function testValidate(Interfaces\RouterValidator $Validator, Interfaces\ConfigItemRouter $RouteItem, Interfaces\Request $Request)
+    public function testValidate(Interfaces\RequestValidator $Validator, Interfaces\ConfigItemRouter $RouteItem, Interfaces\Request $Request)
     {
         $result = $Validator->validate($RouteItem, $Request);
         $this->assertInternalType('array', $result);
@@ -34,7 +34,7 @@ class RouterValidatorTest extends \Everon\TestCase
      * @expectedException \Everon\Exception\InvalidRouterParameter
      * @expectedExceptionMessage Invalid required parameter: "password" for route: "test_complex"
      */
-    public function testValidateShouldThrowExceptionWhenError(Interfaces\RouterValidator $Validator, Interfaces\ConfigItemRouter $RouteItem, Interfaces\Request $Request)
+    public function testValidateShouldThrowExceptionWhenError(Interfaces\RequestValidator $Validator, Interfaces\ConfigItemRouter $RouteItem, Interfaces\Request $Request)
     {
         $post = $Request->getPostCollection();
         $post['password'] = '';
@@ -46,9 +46,9 @@ class RouterValidatorTest extends \Everon\TestCase
     
     /**
      * @dataProvider dataProvider
-     * @expectedException \Everon\Exception\RouterValidator
+     * @expectedException \Everon\Exception\RequestValidator
      */
-    public function testValidateQueryShouldThrowExceptionWhenError(Interfaces\RouterValidator $Validator, Interfaces\ConfigItemRouter $RouteItem, Interfaces\Request $Request)
+    public function testValidateQueryShouldThrowExceptionWhenError(Interfaces\RequestValidator $Validator, Interfaces\ConfigItemRouter $RouteItem, Interfaces\Request $Request)
     {
         $RouteItemMock = $this->getMockBuilder('Everon\Config\Item\Router')
             ->disableOriginalConstructor()
@@ -68,9 +68,9 @@ class RouterValidatorTest extends \Everon\TestCase
     
     /**
      * @dataProvider dataProvider
-     * @expectedException \Everon\Exception\RouterValidator
+     * @expectedException \Everon\Exception\RequestValidator
      */
-    public function testValidatePostShouldThrowExceptionWhenError(Interfaces\RouterValidator $Validator, Interfaces\ConfigItemRouter $RouteItem, Interfaces\Request $Request)
+    public function testValidatePostShouldThrowExceptionWhenError(Interfaces\RequestValidator $Validator, Interfaces\ConfigItemRouter $RouteItem, Interfaces\Request $Request)
     {
         $RouteItemMock = $this->getMock('Everon\Config\Item\Router', [], [], '', false);
         $RouteItemMock->expects($this->once())
@@ -108,7 +108,7 @@ class RouterValidatorTest extends \Everon\TestCase
 
         $Config = $Factory->getDependencyContainer()->resolve('ConfigManager')->getConfigByName('router');
         $RouteItem = $Config->getItemByName('test_complex');
-        $Validator = new \Everon\RouterValidator();
+        $Validator = new \Everon\RequestValidator();
         
         return [
             [$Validator, $RouteItem, $Request]

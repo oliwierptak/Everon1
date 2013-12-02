@@ -17,7 +17,7 @@ class RouterTest extends \Everon\TestCase
      */
     public function testConstructor(\Everon\Interfaces\Factory $Factory, \Everon\Interfaces\Request $Request, \Everon\Config\Router $Config, $expected)
     {
-        $Router = new \Everon\Router($Config, $Factory->buildRouterValidator());
+        $Router = new \Everon\Router($Config, $Factory->buildRequestValidator());
         $this->assertInstanceOf('\Everon\Interfaces\Router', $Router);
     }
 
@@ -28,7 +28,7 @@ class RouterTest extends \Everon\TestCase
     public function testPageNotFound(\Everon\Interfaces\Factory $Factory, \Everon\Interfaces\Request $Request, \Everon\Config\Router $Config, $expected)
     {
         $Request->setPath('/wrong/page/htm');
-        $Router = $Factory->buildRouter($Config, $Factory->buildRouterValidator());
+        $Router = $Factory->buildRouter($Config, $Factory->buildRequestValidator());
 
         $Item = $Router->getRouteByRequest($Request);
     }
@@ -39,7 +39,7 @@ class RouterTest extends \Everon\TestCase
      */
     public function testGetRouteItemByRequest(\Everon\Interfaces\Factory $Factory, \Everon\Interfaces\Request $Request, \Everon\Config\Router $Config, $expected)
     {
-        $Router = $Factory->buildRouter($Config, $Factory->buildRouterValidator());
+        $Router = $Factory->buildRouter($Config, $Factory->buildRequestValidator());
         $Item = $Router->getRouteByRequest($Request);
         
         $this->assertInstanceOf('Everon\Interfaces\ConfigItemRouter', $Item);
@@ -52,7 +52,7 @@ class RouterTest extends \Everon\TestCase
      */
     public function testGetRouteItemByRequestShouldReturnDefault(\Everon\Interfaces\Factory $Factory, \Everon\Interfaces\Request $Request, \Everon\Config\Router $Config, $expected)
     {
-        $Router = $Factory->buildRouter($Config, $Factory->buildRouterValidator());
+        $Router = $Factory->buildRouter($Config, $Factory->buildRequestValidator());
         $Item = $Router->getRouteByRequest($Request);
 
         $this->assertInstanceOf('Everon\Interfaces\ConfigItemRouter', $Item);

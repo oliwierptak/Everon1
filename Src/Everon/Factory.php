@@ -352,12 +352,12 @@ class Factory implements Interfaces\Factory
 
     /**
      * @param Interfaces\Config $Config
-     * @param Interfaces\RouterValidator $Validator
+     * @param Interfaces\RequestValidator $Validator
      * @param string $ns
      * @return Interfaces\Router|Router
      * @throws Exception\Factory
      */
-    public function buildRouter(Interfaces\Config $Config, Interfaces\RouterValidator $Validator, $ns='Everon')
+    public function buildRouter(Interfaces\Config $Config, Interfaces\RequestValidator $Validator, $ns='Everon')
     {
         try {
             $class_name = $this->getFullClassName($ns, 'Router');
@@ -371,18 +371,18 @@ class Factory implements Interfaces\Factory
     }
 
     /**
-     * @return Interfaces\RouterValidator
+     * @return Interfaces\RequestValidator
      * @throws Exception\Factory
      */
-    public function buildRouterValidator()
+    public function buildRequestValidator()
     {
         try {
-            $RouteItem = new RouterValidator();
-            $this->injectDependencies('Everon\RouterValidator', $RouteItem);
+            $RouteItem = new RequestValidator();
+            $this->injectDependencies('Everon\RequestValidator', $RouteItem);
             return $RouteItem;
         }
         catch (\Exception $e) {
-            throw new Exception\Factory('RouterValidator initialization error', null, $e);
+            throw new Exception\Factory('RequestValidator initialization error', null, $e);
         }
     }
 

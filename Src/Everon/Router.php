@@ -12,7 +12,7 @@ namespace Everon;
 class Router implements Interfaces\Router
 {
     use Dependency\Config;
-    use Dependency\RouterValidator;
+    use Dependency\RequestValidator;
 
     use Helper\Asserts\IsArrayKey;
     use Helper\Regex;
@@ -25,12 +25,12 @@ class Router implements Interfaces\Router
 
     /**
      * @param Interfaces\Config $Config
-     * @param Interfaces\RouterValidator $Validator
+     * @param Interfaces\RequestValidator $Validator
      */
-    public function __construct(Interfaces\Config $Config, Interfaces\RouterValidator $Validator)
+    public function __construct(Interfaces\Config $Config, Interfaces\RequestValidator $Validator)
     {
         $this->Config = $Config;
-        $this->RouterValidator = $Validator;
+        $this->RequestValidator = $Validator;
     }
 
     /**
@@ -82,7 +82,7 @@ class Router implements Interfaces\Router
      */
     public function validateAndUpdateRequest(Interfaces\ConfigItemRouter $RouteItem, Interfaces\Request $Request)
     {
-        list($query, $get, $post) = $this->getRouterValidator()->validate($RouteItem, $Request);
+        list($query, $get, $post) = $this->getRequestValidator()->validate($RouteItem, $Request);
 
         $Request->setQueryCollection(
             array_merge($Request->getQueryCollection(), $query)

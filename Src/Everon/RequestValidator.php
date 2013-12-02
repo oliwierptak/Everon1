@@ -9,7 +9,7 @@
  */
 namespace Everon;
 
-class RouterValidator implements Interfaces\RouterValidator
+class RequestValidator implements Interfaces\RequestValidator
 {
     use Helper\Asserts;
     use Helper\Asserts\IsArrayKey;    
@@ -70,7 +70,7 @@ class RouterValidator implements Interfaces\RouterValidator
      * @param $request_url
      * @param array $get_data
      * @return array
-     * @throws Exception\RouterValidator
+     * @throws Exception\RequestValidator
      */
     protected function validateQuery(Interfaces\ConfigItemRouter $RouteItem, $request_url, array $get_data)
     {
@@ -95,7 +95,7 @@ class RouterValidator implements Interfaces\RouterValidator
             return $parsed_query;
         }
         catch (\Exception $e) {
-            throw new Exception\RouterValidator($e);
+            throw new Exception\RequestValidator($e);
         }
     }
 
@@ -103,7 +103,7 @@ class RouterValidator implements Interfaces\RouterValidator
      * @param Interfaces\ConfigItemRouter $RouteItem
      * @param array $get_data
      * @return array
-     * @throws Exception\RouterValidator
+     * @throws Exception\RequestValidator
      */
     protected function validateGet(Interfaces\ConfigItemRouter $RouteItem, array $get_data)
     {
@@ -123,7 +123,7 @@ class RouterValidator implements Interfaces\RouterValidator
             return $parsed_get;
         }
         catch (\Exception $e) {
-           throw new Exception\RouterValidator($e);
+           throw new Exception\RequestValidator($e);
         }        
     }
 
@@ -131,7 +131,7 @@ class RouterValidator implements Interfaces\RouterValidator
      * @param Interfaces\ConfigItemRouter $RouteItem
      * @param array $post_data
      * @return array
-     * @throws Exception\RouterValidator
+     * @throws Exception\RequestValidator
      */
     protected function validatePost(Interfaces\ConfigItemRouter $RouteItem, array $post_data)
     {
@@ -153,7 +153,7 @@ class RouterValidator implements Interfaces\RouterValidator
             return $post_data;
         }
         catch (\Exception $e) {
-            throw new Exception\RouterValidator($e);
+            throw new Exception\RequestValidator($e);
         }
     }
 

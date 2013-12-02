@@ -20,8 +20,8 @@ $Bootstrap->getClassLoader()->add('Everon\Mvc\Controller', $Environment->getCont
 //replace default Router
 $Container->register('Router', function() use ($Factory) {
     $RouteConfig = $Factory->getDependencyContainer()->resolve('ConfigManager')->getConfigByName('router');
-    $RouterValidator = $Factory->buildRouterValidator();
-    return $Factory->buildRouter($RouteConfig, $RouterValidator, 'Everon\Mvc');
+    $RequestValidator = $Factory->buildRequestValidator();
+    return $Factory->buildRouter($RouteConfig, $RequestValidator, 'Everon\Mvc');
 });
 
 //replace default Request
