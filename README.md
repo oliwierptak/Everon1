@@ -145,7 +145,7 @@ See [view.ini](https://github.com/oliwierptak/Everon/blob/master/Config/view.ini
 
 #### Sharable config variables
 In Everon, configuration files share their variables with other configuration files, 
-by using `%config_name.value_name%` notation. For example, `%application.env.url%s` will grab url from `application.ini`
+by using `%config_name.section.value%` notation. For example, `%application.env.url%s` will grab url from `application.ini`
 which is stored under `env` section.
 
 
