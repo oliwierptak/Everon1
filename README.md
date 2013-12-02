@@ -26,7 +26,8 @@ class Model\Greet
 {
     public function helloWorld()
     {
-
+        $greeting = 'Hello world';
+        return $greeting;
     }    
 }
 ```
