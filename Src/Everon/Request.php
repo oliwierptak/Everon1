@@ -41,7 +41,7 @@ class Request implements Interfaces\Request
     /**
      * @var string eg. http://dev.localhost:80
      */
-    protected $address = null;
+    protected $location = null;
     
     /**
      * @var string REQUEST_METHOD
@@ -49,7 +49,7 @@ class Request implements Interfaces\Request
     protected $method = null;
 
     /**
-     * @var string REQUEST_URI
+     * @var string REQUEST_URI location + path, eg. eg. http://dev.localhost:80/login/submit?foo=bar
      */
     protected $url = null;
 
@@ -102,7 +102,7 @@ class Request implements Interfaces\Request
     public function getDataFromGlobals()
     {
         return [
-            'address' => $this->getServerAddressFromGlobals(),
+            'location' => $this->getServerLocationFromGlobals(),
             'method' => $this->ServerCollection['REQUEST_METHOD'],
             'url' => $this->getUrlFromGlobals(),
             'query_string' => $this->ServerCollection['QUERY_STRING'],
@@ -115,10 +115,10 @@ class Request implements Interfaces\Request
 
     protected function getUrlFromGlobals()
     {
-        return $this->getServerAddressFromGlobals().@$this->ServerCollection['REQUEST_URI'];
+        return $this->getServerLocationFromGlobals().@$this->ServerCollection['REQUEST_URI'];
     }
     
-    protected function getServerAddressFromGlobals()
+    protected function getServerLocationFromGlobals()
     {
         $host = $this->getHostNameFromGlobals();
         $port = $this->getPortFromGlobals();
@@ -220,7 +220,7 @@ class Request implements Interfaces\Request
         $this->validate($data);
         
         $this->data = $data;
-        $this->address = $data['address'];
+        $this->location = $data['location'];
         $this->method = $data['method'];
         $this->url = $data['url'];
         $this->query_string = $data['query_string'];
@@ -242,7 +242,7 @@ class Request implements Interfaces\Request
     protected function validate(array $data)
     {
         $required = [
-            'address',
+            'location',
             'method',
             'url',
             'query_string',
@@ -274,14 +274,14 @@ class Request implements Interfaces\Request
         return $this->secure;
     }
     
-    public function getAddress()
+    public function getLocation()
     {
-        return $this->address;
+        return $this->location;
     }
     
-    public function setAddress($address)
+    public function setLocation($location)
     {
-        $this->address = $address;
+        $this->location = $location;
     }
 
     /**

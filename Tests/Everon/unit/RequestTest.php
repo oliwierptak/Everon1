@@ -47,8 +47,9 @@ class RequestTest extends \Everon\TestCase
     {
         $this->assertEquals($expected['method'], $Request->getMethod());
         $this->assertEquals($expected['url'], $Request->getUrl());
+        $this->assertEquals($expected['location'], $Request->getLocation());
         $this->assertEquals($expected['query_string'], $Request->getQueryString());
-        $this->assertEquals($expected['location'], $Request->getPath());
+        $this->assertEquals($expected['path'], $Request->getPath());
         $this->assertEquals($expected['port'], $Request->getPort());
         $this->assertEquals($expected['protocol'], $Request->getProtocol());
         $this->assertFalse($Request->isSecure());
@@ -56,14 +57,14 @@ class RequestTest extends \Everon\TestCase
         $Request->setMethod($expected['method']);
         $Request->setUrl($expected['url']);
         $Request->setQueryString($expected['query_string']);
-        $Request->setPath($expected['location']);
+        $Request->setPath($expected['path']);
         $Request->setPort($expected['port']);
         $Request->setProtocol($expected['protocol']);
 
         $this->assertEquals($expected['method'], $Request->getMethod());
         $this->assertEquals($expected['url'], $Request->getUrl());
         $this->assertEquals($expected['query_string'], $Request->getQueryString());
-        $this->assertEquals($expected['location'], $Request->getPath());
+        $this->assertEquals($expected['path'], $Request->getPath());
         $this->assertEquals($expected['port'], $Request->getPort());
         $this->assertEquals($expected['protocol'], $Request->getProtocol());
         $this->assertFalse($Request->isSecure());
@@ -103,7 +104,7 @@ class RequestTest extends \Everon\TestCase
     /**
      * @dataProvider dataProvider
      * @expectedException \Everon\Exception\Request
-     * @expectedExceptionMessage Missing required parameter: "method"
+     * @expectedExceptionMessage Missing required parameter: "location"
      */
     public function testValidateShouldThrowExceptionWhenWrongData(\Everon\Interfaces\Request $Request, array $expected)
     {
@@ -120,10 +121,11 @@ class RequestTest extends \Everon\TestCase
     {
         $method = $this->getProtectedMethod('\Everon\Request', 'validate');
         $this->assertEquals('', $method->invoke($Request, [
+            'location' => 'wrong',
             'method'=>'wrong',
             'url'=>'/',
             'query_string'=> '',
-            'location' => '',
+            'path' => '',
             'protocol' => '',
             'port' => '',
             'secure' => ''            
@@ -190,13 +192,13 @@ class RequestTest extends \Everon\TestCase
         $Server['HTTP_HOST'] = $Server['SERVER_NAME'];
         unset($Server['SERVER_NAME']);
         $Request->setServerCollection($Server);
-        $this->assertEquals($expected['location'], $Request->getPath());
+        $this->assertEquals($expected['path'], $Request->getPath());
 
         $Server = $Request->getServerCollection();
         unset($Server['HTTP_HOST']);
         unset($Server['SERVER_NAME']);
         $Request->setServerCollection($Server);
-        $this->assertEquals($expected['location_address'], $Request->getPath());
+        $this->assertEquals($expected['location_fallback'], $Request->getLocation());
     }
 
     /**
@@ -219,11 +221,13 @@ class RequestTest extends \Everon\TestCase
                     'password' => 'test'],
                 []),
             //expected
-            ['location' => 'http://everon.nova/login',
+            [
+                'location' => 'http://everon.nova',
+                'location_fallback' => 'http://127.0.0.1',
+                'url' => 'http://everon.nova/login',
+                'path' => '/login',
                 'method' => 'POST',
-                'url' => '/login',
                 'query_string' => '',
-                'location_address' => 'http://127.0.0.1/login',
                 'port' => 80,
                 'protocol' => 'HTTP/1.1',
                 'get' => [],
@@ -240,11 +244,13 @@ class RequestTest extends \Everon\TestCase
                 [],
                 []),
             //expected
-            ['location' => 'http://everon.nova/search?param1=val1&param2=val2',
+            [
+                'location' => 'http://everon.nova',
+                'location_fallback' => 'http://127.0.0.1',
+                'url' => 'http://everon.nova/search?param1=val1&param2=val2',
+                'path' => '/search?param1=val1&param2=val2',
                 'method' => 'GET',
-                'url' => '/search?param1=val1&param2=val2',
                 'query_string' => 'param1=val1&param2=val2',                
-                'location_address' => 'http://127.0.0.1/search?param1=val1&param2=val2',
                 'port' => 80,
                 'protocol' => 'HTTP/1.1',
                 'get' => ['param1' => 'val1', 'param2' => 'val2'],

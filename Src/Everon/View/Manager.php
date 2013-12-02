@@ -167,5 +167,5 @@ class Manager implements Interfaces\ViewManager
     {
         return $this->getView('Index');
     }
-
+    
 }

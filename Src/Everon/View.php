@@ -219,7 +219,7 @@ abstract class View implements Interfaces\View
 
     public function url($url)
     {
-        return $this->getRequest()->getAddress().$url;
+        return $this->getRequest()->getLocation().$url;
     }
 
     /**

@@ -89,7 +89,7 @@ class ConfigIniLoaderTest extends \Everon\TestCase
     {
         $filename = $this->getConfigCacheDirectory().'application.ini';
         $cache_filename = $this->getConfigCacheDirectory().'application.ini.php';
-        $ConfigMock = $this->getMock('Everon\Test\InterfaceConfig', [], [], '', false);
+        $ConfigMock = $this->getMock('Everon\Interfaces\Config', [], [], '', false);
         
         $ConfigMock->expects($this->once())
             ->method('getFilename')
@@ -113,7 +113,7 @@ class ConfigIniLoaderTest extends \Everon\TestCase
     public function testSaveConfigToCacheShouldThrowExceptionOnError(Interfaces\ConfigLoader $ConfigLoader)
     {
         $ex = new \Exception();
-        $ConfigMock = $this->getMock('Everon\Test\InterfaceConfig', [], [], '', false);
+        $ConfigMock = $this->getMock('Everon\Interfaces\Config', [], [], '', false);
 
         $ConfigMock->expects($this->once())
             ->method('toArray')

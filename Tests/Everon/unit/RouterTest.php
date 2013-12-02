@@ -27,7 +27,7 @@ class RouterTest extends \Everon\TestCase
      */
     public function testPageNotFound(\Everon\Interfaces\Factory $Factory, \Everon\Interfaces\Request $Request, \Everon\Config\Router $Config, $expected)
     {
-        $Request->setUrl('/wrong/page/htm');
+        $Request->setPath('/wrong/page/htm');
         $Router = $Factory->buildRouter($Config, $Factory->buildRouterValidator());
 
         $Item = $Router->getRouteByRequest($Request);
