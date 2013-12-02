@@ -32,7 +32,7 @@ class Model\Greet
 }
 ```
     
-Let's say you need a logger for that particular model. All you must write is one line. Everon does the rest.
+Let's say you need a logger for that particular model. All you need to write is one line. Everon does the rest.
 
 ```php
 class Model\Greet
