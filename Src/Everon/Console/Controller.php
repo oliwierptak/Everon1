@@ -29,9 +29,9 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
         $this->consoleOutput($this->getResponse()->toText());
     }
 
-    protected function consoleOutput($line)
+    protected function consoleOutput($output)
     {
-        echo $line."\n";
+        echo $output."\n";
     }
     
 }
