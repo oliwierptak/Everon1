@@ -16,7 +16,7 @@ Very alpha version
 * ReflectionAPI only used in tests
 * Clear, small and simple API
 * Convention over configuration
-* Clean code 
+* Clean code
 
 ## Dependency Injection
 Consider this model, as you can see it does not inherit from anything, and there is no constructor.
