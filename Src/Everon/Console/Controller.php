@@ -26,10 +26,10 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
     
     protected function response()
     {
-        $this->writeln($this->getResponse()->toText());
+        $this->consoleOutput($this->getResponse()->toText());
     }
 
-    protected function writeln($line)
+    protected function consoleOutput($line)
     {
         echo $line."\n";
     }
