@@ -18,42 +18,51 @@ use Everon\Helper;
  *
  * http://en.wikipedia.org/wiki/POJO
  */
-class PopoProps extends Popo
+class PopoProps implements Interfaces\Arrayable
 {
+    use Helper\ToArray;
+    
     /**
      * When set to true, accessing unset property will throw exception
      * 
      * @var bool
      */
     protected $strict = false;
+
+    /**
+     * @param array $data
+     */
+    public function __construct(array $data)
+    {
+        $keys = array_keys($data);
+        array_walk($keys, function(&$item) {
+            $item = mb_strtolower($item);
+        });
+        $this->data = array_combine($keys, array_values($data));    
+    }
     
     public function __get($property)
     {
-        if (array_key_exists($property, $this->data) === false) {
-            $camelized = preg_split('/(?<=\\w)(?=[A-Z])/', $property);
-            $property = strtolower(implode('_', $camelized));
-        }
-        
+        $property = mb_strtolower($property);
         if (array_key_exists($property, $this->data) === false) {
             if ($this->strict) {
-                throw new Exception\Popo('Unknown public property: "%s" in "%s"', array($property, get_class($this)));
+                throw new Exception\Popo('Unknown public property: "%s" in "%s"', [$property, get_class($this)]);
             }
+
+            return null;
         }
-        
+
         return $this->data[$property];
     }
 
     public function __set($name, $value)
     {
-        $camelized = preg_split('/(?<=\\w)(?=[A-Z])/', $name);
-        $property = strtolower(implode('_', $camelized));
-        
-        $this->data[$property] = $value;
+        $this->data[mb_strtolower($name)] = $value;
     }
     
     public function __call($name, $arguments)
     {
-        throw new Exception\Popo('Call by method: "%s" is not enabled in: "%"', [$name, 'PopoProps']);
+        throw new Exception\Popo('Call by method: "%s" is not allowed in: "%"', [$name, 'PopoProps']);
     }
         
 }
