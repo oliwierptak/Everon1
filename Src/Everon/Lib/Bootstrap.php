@@ -8,7 +8,6 @@
  * file that was distributed with this source code.
  */
 namespace Everon;
-require_once('/var/www/Everon/prepend.php');
 
 $nesting = implode('..', array_fill(0, 4, DIRECTORY_SEPARATOR));
 $root =  realpath(dirname(__FILE__).$nesting).DIRECTORY_SEPARATOR;
