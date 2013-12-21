@@ -86,7 +86,7 @@ class RequestValidator implements Interfaces\RequestValidator
     
                 if (preg_match($url_pattern, $request_url, $params_tokens)) {
                     array_shift($params_tokens); //remove url
-                    if (count($validators_for_query) == count($params_tokens)) {
+                    if (count($validators_for_query) === count($params_tokens)) {
                         $parsed_query = array_combine(array_keys($validators_for_query), array_values($params_tokens));
                     }
                 }
