@@ -27,6 +27,7 @@ abstract class Controller implements Interfaces\Controller
     protected $name = null;
 
     /**
+     * @param $action
      * @return void
      */
     protected abstract function prepareResponse($action);
