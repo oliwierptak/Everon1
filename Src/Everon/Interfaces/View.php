@@ -100,4 +100,9 @@ interface View
      * @return Interfaces\Template Loads 'index.htm' from template directory
      */    
     function getViewTemplate();
+
+    /**
+     * @return \SplFileInfo
+     */
+    function getFilename();
 }

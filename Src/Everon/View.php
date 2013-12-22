@@ -9,6 +9,8 @@
  */
 namespace Everon;
 
+use Symfony\Component\Finder\SplFileInfo;
+
 abstract class View implements Interfaces\View
 {
     use Dependency\Injection\Factory;
@@ -146,7 +148,7 @@ abstract class View implements Interfaces\View
 
         if ($ActionTemplate !== null) {
             $ViewTemplate->set('View.Body', $ActionTemplate);
-        }        
+        }
 
         return $ViewTemplate;
     }
@@ -236,5 +238,13 @@ abstract class View implements Interfaces\View
     public function getDefaultExtension()
     {
         return $this->default_extension;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getFilename()
+    {
+        return new \SplFileInfo($this->template_directory.$this->name.$this->default_extension);
     }
 }

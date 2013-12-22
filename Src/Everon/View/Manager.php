@@ -44,7 +44,11 @@ class Manager implements Interfaces\ViewManager
         $this->compilers = $compilers;
         $this->ViewCollection = new Helper\Collection([]);
         $this->view_directory = $view_directory;
-        $this->Cache = new \Everon\View\Cache();
+        $cache_directory = getcwd().'../../Tmp/cache/view/';
+        if (!is_dir($cache_directory)) {
+            die('cache dir does not existt');
+        }
+        $this->Cache = new \Everon\View\Cache($cache_directory);
     }
 
     /**
@@ -78,8 +82,17 @@ class Manager implements Interfaces\ViewManager
      */
     public function compileView(Interfaces\View $View)
     {
+        /**
+         * @var $Template Interfaces\Template
+         */
         $Template = $View->getContainer();
-        $this->compileTemplate($View->getName(), $Template);
+        
+        if ($this->getConfigManager()->getConfigValue('cache.enabled.view')) {
+            $this->Cache->handle($this, $View);
+        }
+        else {
+            $this->compileTemplate($View->getName(), $Template);
+        }
     }
 
     /**
