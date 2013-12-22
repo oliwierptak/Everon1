@@ -27,7 +27,11 @@ abstract class Core implements Interfaces\Core
     protected $Guid = null;
     
     protected $previous_exception_handler = null;
-    
+
+    /**
+     * @param $name
+     * @return Interfaces\Controller
+     */
     protected abstract function createController($name);
     
     
