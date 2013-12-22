@@ -9,15 +9,48 @@
  */
 namespace Everon\Interfaces;
 
+use Everon\Exception;
+
 interface FileSystem
 {
     function getRoot();
-    
+
+    /**
+     * @param $path
+     * @param int $mode
+     * @throws Exception\FileSystem
+     */    
     function createPath($path);
+
+    /**
+     * @param $path
+     * @throws Exception\FileSystem
+     */    
     function deletePath($path);
+
+    /**
+     * @param $path
+     * @return array
+     */    
     function listPath($path);
-    
+
+    /**
+     * @param $filename
+     * @param $content
+     * @throws Exception\FileSystem
+     */    
     function save($filename, $content);
+
+    /**
+     * @param $filename
+     * @return string
+     * @throws Exception\FileSystem
+     */    
     function load($filename);
+
+    /**
+     * @param $filename
+     * @throws Exception\FileSystem
+     */    
     function delete($filename);
 }

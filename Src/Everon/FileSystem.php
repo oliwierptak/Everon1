@@ -15,12 +15,19 @@ use Everon\Exception;
 class FileSystem implements Interfaces\FileSystem
 {
     protected $root = null;
-    
+
+    /**
+     * @param $root
+     */
     public function __construct($root)
     {
         $this->root = $root;
     }
-    
+
+    /**
+     * @param $path
+     * @return string
+     */
     protected function getRelativePath($path)
     {
         $is_absolute = mb_strtolower($this->root) === mb_strtolower(mb_substr($path, 0, mb_strlen($this->root)));
@@ -36,12 +43,15 @@ class FileSystem implements Interfaces\FileSystem
         $path = $this->root.$path;
         return $path;
     }
-    
+
     public function getRoot()
     {
         return $this->root;
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public function createPath($path, $mode=0775)
     {
         try {
@@ -52,7 +62,10 @@ class FileSystem implements Interfaces\FileSystem
             throw new Exception\FileSystem($e);
         }
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public function deletePath($path)
     {
         $path = $this->getRelativePath($path);
@@ -71,7 +84,10 @@ class FileSystem implements Interfaces\FileSystem
             throw new Exception\FileSystem($e);
         }
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public function listPath($path)
     {
         $result = [];
@@ -84,7 +100,10 @@ class FileSystem implements Interfaces\FileSystem
         
         return $result;
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public function save($filename, $content)
     {
         $filename = $this->getRelativePath($filename);
@@ -100,7 +119,10 @@ class FileSystem implements Interfaces\FileSystem
             throw new Exception\FileSystem($e);
         }
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public function load($filename)
     {
         $filename = $this->getRelativePath($filename);
@@ -111,7 +133,10 @@ class FileSystem implements Interfaces\FileSystem
             throw new Exception\FileSystem($e);
         }
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public function delete($filename)
     {
         $filename = $this->getRelativePath($filename);
