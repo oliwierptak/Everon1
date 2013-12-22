@@ -4,6 +4,8 @@
  */
 namespace Everon;
 
+include('/var/www/Everon/prepend.php');
+
 $system_memory = (string) (memory_get_usage(true));
 error_reporting(E_ALL);
 

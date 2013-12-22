@@ -12,31 +12,49 @@ namespace Everon;
 use Everon\Interfaces;
 use Everon\Exception;
 
-class Filesystem implements Interfaces\FileSystem
+class FileSystem implements Interfaces\FileSystem
 {
+    /**
+     * @var string location of the file system root folder
+     */
     protected $root = null;
-    
+
+    /**
+     * @param $root
+     */
     public function __construct($root)
     {
         $this->root = $root;
     }
-    
+
+    /**
+     * @param $path
+     * @return string
+     */
     protected function getRelativePath($path)
     {
+        $is_absolute = mb_strtolower($this->root) === mb_strtolower(mb_substr($path, 0, mb_strlen($this->root)));
         if ($path[0] === DIRECTORY_SEPARATOR && $path[1] === DIRECTORY_SEPARATOR) { //eg. '//Tests/Everon/tmp/'
-            //strip semi-root
-            $path = substr($path, 2, strlen($path));
+            //strip virtual root
+            $path = mb_substr($path, 2, mb_strlen($path));
         }
+        else if ($is_absolute) { //absolute, eg. '/var/www/Everon/Tests/Everon/tmp/';
+            //strip absolute root from path
+            $path = mb_substr($path, mb_strlen($this->root));
+        }        
         
         $path = $this->root.$path;
         return $path;
     }
-    
+
     public function getRoot()
     {
         return $this->root;
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public function createPath($path, $mode=0775)
     {
         try {
@@ -47,32 +65,93 @@ class Filesystem implements Interfaces\FileSystem
             throw new Exception\FileSystem($e);
         }
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public function deletePath($path)
     {
-        $path = $this->getRelativePath($path);
-        
-        if (is_dir($path)) {
-            $It = new \RecursiveIteratorIterator(
-                new \RecursiveDirectoryIterator($path, \FilesystemIterator::SKIP_DOTS),
-                \RecursiveIteratorIterator::CHILD_FIRST
-            );
+        try {
+            $path = $this->getRelativePath($path);
+            if (is_dir($path)) {
+                $It = new \RecursiveIteratorIterator(
+                    new \RecursiveDirectoryIterator($path, \FilesystemIterator::SKIP_DOTS),
+                    \RecursiveIteratorIterator::CHILD_FIRST
+                );
 
-            array_map('unlink', iterator_to_array($It));
-            rmdir($path);
-        }        
+                array_map('unlink', iterator_to_array($It));
+                rmdir($path);
+            }
+        }
+        catch (\Exception $e) {
+            throw new Exception\FileSystem($e);
+        }
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public function listPath($path)
     {
-        $result = [];
-        $path = $this->getRelativePath($path);
-        $Files = new \GlobIterator($path.'*.*');
-        
-        foreach ($Files as $filename => $File) {
-            $result[] = $File;
+        try {
+            $result = [];
+            $path = $this->getRelativePath($path);
+            $Files = new \GlobIterator($path.DIRECTORY_SEPARATOR.'*.*');
+            
+            foreach ($Files as $filename => $File) {
+                $result[] = $File;
+            }
+            
+            return $result;
         }
-        
-        return $result;
+        catch (\Exception $e) {
+            throw new Exception\FileSystem($e);
+        }            
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function save($filename, $content)
+    {
+        try {
+            $filename = $this->getRelativePath($filename);
+            $Filename = new \SplFileInfo($filename);
+            $this->createPath($Filename->getPath());
+            $h = fopen($Filename->getPathname(), 'w');
+            fwrite($h, $content);
+            fclose($h);
+        }
+        catch (\Exception $e) {
+            throw new Exception\FileSystem($e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function load($filename)
+    {
+        try {
+            $filename = $this->getRelativePath($filename);
+            return file_get_contents($filename);
+        }
+        catch (\Exception $e) {
+            throw new Exception\FileSystem($e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function delete($filename)
+    {
+        try {
+            $filename = $this->getRelativePath($filename);
+            unlink($filename);
+        }
+        catch (\Exception $e) {
+            throw new Exception\FileSystem($e);
+        }
     }
 }
