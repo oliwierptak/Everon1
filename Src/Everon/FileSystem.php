@@ -71,8 +71,8 @@ class FileSystem implements Interfaces\FileSystem
      */
     public function deletePath($path)
     {
-        $path = $this->getRelativePath($path);
         try {
+            $path = $this->getRelativePath($path);
             if (is_dir($path)) {
                 $It = new \RecursiveIteratorIterator(
                     new \RecursiveDirectoryIterator($path, \FilesystemIterator::SKIP_DOTS),
@@ -93,15 +93,20 @@ class FileSystem implements Interfaces\FileSystem
      */
     public function listPath($path)
     {
-        $result = [];
-        $path = $this->getRelativePath($path);
-        $Files = new \GlobIterator($path.DIRECTORY_SEPARATOR.'*.*');
-        
-        foreach ($Files as $filename => $File) {
-            $result[] = $File;
+        try {
+            $result = [];
+            $path = $this->getRelativePath($path);
+            $Files = new \GlobIterator($path.DIRECTORY_SEPARATOR.'*.*');
+            
+            foreach ($Files as $filename => $File) {
+                $result[] = $File;
+            }
+            
+            return $result;
         }
-        
-        return $result;
+        catch (\Exception $e) {
+            throw new Exception\FileSystem($e);
+        }            
     }
 
     /**
@@ -109,10 +114,9 @@ class FileSystem implements Interfaces\FileSystem
      */
     public function save($filename, $content)
     {
-        $filename = $this->getRelativePath($filename);
-        $Filename = new \SplFileInfo($filename);
-        
         try {
+            $filename = $this->getRelativePath($filename);
+            $Filename = new \SplFileInfo($filename);
             $this->createPath($Filename->getPath());
             $h = fopen($Filename->getPathname(), 'w');
             fwrite($h, $content);
@@ -128,8 +132,8 @@ class FileSystem implements Interfaces\FileSystem
      */
     public function load($filename)
     {
-        $filename = $this->getRelativePath($filename);
         try {
+            $filename = $this->getRelativePath($filename);
             return file_get_contents($filename);
         }
         catch (\Exception $e) {
@@ -142,8 +146,8 @@ class FileSystem implements Interfaces\FileSystem
      */
     public function delete($filename)
     {
-        $filename = $this->getRelativePath($filename);
         try {
+            $filename = $this->getRelativePath($filename);
             unlink($filename);
         }
         catch (\Exception $e) {
