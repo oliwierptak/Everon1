@@ -58,9 +58,7 @@ abstract class Core implements Interfaces\Core
              * @var \Everon\Interfaces\ConfigItemRouter $CurrentRoute
              */
             $CurrentRoute = $this->getRouter()->getRouteByRequest($this->getRequest());
-            $controller_name = $CurrentRoute->getController();
-
-            $this->Controller = $this->createController($controller_name);
+            $this->Controller = $this->createController($CurrentRoute->getController());
             $this->Controller->execute($CurrentRoute->getAction());
         }
         catch (Exception\InvalidRouterParameter $e) {
