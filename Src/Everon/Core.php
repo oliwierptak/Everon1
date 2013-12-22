@@ -59,11 +59,10 @@ abstract class Core implements Interfaces\Core
              */
             $CurrentRoute = $this->getRouter()->getRouteByRequest($this->getRequest());
             $controller_name = $CurrentRoute->getController();
-            $action = $CurrentRoute->getAction();
 
             $Controller = $this->createController($controller_name);
             $this->Controller = $Controller;
-            $Controller->execute($action);
+            $Controller->execute($CurrentRoute->getAction());
         }
         catch (Exception\InvalidRouterParameter $e) {
             //todo: raise event for form validation
