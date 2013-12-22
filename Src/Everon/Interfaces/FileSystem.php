@@ -17,12 +17,7 @@ interface FileSystem
     function deletePath($path);
     function listPath($path);
     
-/*    function load($filename);
     function save($filename, $content);
+    function load($filename);
     function delete($filename);
-    function getExtension();
-    
-    
-    
-    function listPath($path);*/
 }
