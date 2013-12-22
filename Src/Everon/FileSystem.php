@@ -14,6 +14,9 @@ use Everon\Exception;
 
 class FileSystem implements Interfaces\FileSystem
 {
+    /**
+     * @var string location of the file system root folder
+     */
     protected $root = null;
 
     /**
