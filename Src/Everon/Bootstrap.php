@@ -51,8 +51,8 @@ class Bootstrap
         require_once($this->Environment->getEveronInterface().'ClassLoader.php');
         require_once($this->Environment->getEveron().'ClassLoader.php');
 
-        $ini = @parse_ini_file($this->Environment->getConfig().'cache.ini', true);
-        $use_cache = (bool) @$ini['enabled']['autoloader'];
+        $ini = @parse_ini_file($this->Environment->getConfig().'application.ini', true);
+        $use_cache = (bool) @$ini['cache']['autoloader'];
 
         $ClassMap = null;
         if ($use_cache) {
