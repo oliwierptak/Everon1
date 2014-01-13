@@ -53,9 +53,9 @@ class Cache
         
         if ($CacheFile !== null && $DataFile !== null) {
             
-            $tmpphp = $this->getFileSystem()->createTmpFile();
-            $this->getFileSystem()->writeTmpFile($tmpphp, $DataFile);
-            $php_file = $this->getFileSystem()->getTmpFilename($tmpphp);
+            $TmpDataFile = $this->getFileSystem()->createTmpFile();
+            $TmpDataFile->write($DataFile);
+            $php_file = $TmpDataFile->getFilename();
 
             include $php_file; //load $cache
 
@@ -63,7 +63,7 @@ class Cache
             $Template->setData($cache);
             $Template->setCompiledContent($this->runPhp($CacheFile, $cache));
             
-            $this->getFileSystem()->closeTmpFile($tmpphp);
+            $TmpDataFile->close();
             
             return;
         }

@@ -29,11 +29,11 @@ trait RunPhp
 
         $old_error_handler = set_error_handler($handleError);
 
-        $tmpphp = $this->getFileSystem()->createTmpFile();
+        $TmpPhpFile = $this->getFileSystem()->createTmpFile();
         $content = '';
         try {
-            $this->getFileSystem()->writeTmpFile($tmpphp, $php);
-            $php_file = $this->getFileSystem()->getTmpFilename($tmpphp); 
+            $TmpPhpFile->write($php);
+            $php_file = $TmpPhpFile->getFilename(); 
 
             ob_start();
             extract($scope);
@@ -46,7 +46,7 @@ trait RunPhp
         }
         finally {
             ob_end_clean();
-            $this->getFileSystem()->closeTmpFile($tmpphp);
+            $TmpPhpFile->close();
             restore_error_handler($old_error_handler);
             return $content;
         }

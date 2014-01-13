@@ -59,7 +59,9 @@ class FileSystem implements Interfaces\FileSystem
     {
         try {
             $path = $this->getRelativePath($path);
-            mkdir($path, $mode, true);
+            if (is_dir($path) === false) {
+                mkdir($path, $mode, true);
+            }
         }
         catch (\Exception $e) {
             throw new Exception\FileSystem($e);
@@ -169,27 +171,10 @@ class FileSystem implements Interfaces\FileSystem
     }
 
     /**
-     * @inheritdoc
+     * @return FileSystem\TmpFile
      */
     public function createTmpFile()
     {
-        return tmpfile();
+        return new FileSystem\TmpFile();
     }
-    
-    public function writeTmpFile($handler, $content)
-    {
-        fwrite($handler, $content);
-    }
-    
-    public function getTmpFilename($handler)
-    {
-        $meta = stream_get_meta_data($handler);
-        return $meta['uri'];
-    }
-    
-    public function closeTmpFile($handler)
-    {
-        fclose($handler);
-    }
-
 }

@@ -60,11 +60,8 @@ interface FileSystem
      */    
     function delete($filename);
 
-    function createTmpFile();
-    
-    function writeTmpFile($handler, $content);
-    
-    function getTmpFilename($handler);
-
-    function closeTmpFile($handler);
+    /**
+     * @return \Everon\Interfaces\FileSystemTmpFile
+     */
+    function createTmpFile();    
 }
