@@ -87,6 +87,16 @@ class Popo implements Interfaces\Arrayable
     public function getData()
     {
         return $this->data;
-    }    
+    }
+
+    public function __sleep()
+    {
+        return ['data'];
+    }
+
+    public static function __set_state(array $array)
+    {
+        return new self($array['data']);
+    }
     
 }

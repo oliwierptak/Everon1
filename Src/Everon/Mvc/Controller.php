@@ -63,7 +63,7 @@ abstract class Controller extends \Everon\Controller implements Interfaces\MvcCo
         */
         
         $this->getView()->setContainer($PageTemplate);
-        $this->getViewManager()->compileView($this->getView());
+        $this->getViewManager()->compileView($action, $this->getView());
         
         $content = (string) $PageTemplate;
         $this->getResponse()->setData($content);

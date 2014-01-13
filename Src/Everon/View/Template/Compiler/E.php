@@ -9,11 +9,14 @@
  */
 namespace Everon\View\Template\Compiler;
 
+use Everon\Dependency;
 use Everon\Helper;
 use Everon\View\Template\Compiler;
 
 class E extends Compiler
 {
+    use Dependency\FileSystem;
+    
     use Helper\String\Compiler;
     use Helper\String\EndsWith;
     use Helper\RunPhp;

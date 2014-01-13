@@ -16,6 +16,7 @@ use Everon\Interfaces;
 
 class Cache
 {
+    use Dependency\Injection\Logger;
     use Dependency\FileSystem;
     use Helper\RunPhp;
 
@@ -38,14 +39,14 @@ class Cache
         return $this->Repository;
     }
     
-    public function handle(Interfaces\ViewManager $ViewManager, Interfaces\View $View)
+    public function handle(Interfaces\ViewManager $ViewManager, Interfaces\View $View, $action)
     {
         $Template = $View->getContainer();
         $Filename = $View->getFilename();
         $Repository = $this->getRepository();
         
-        $cache_filename = '//'.$View->getName().DIRECTORY_SEPARATOR.'templates'.DIRECTORY_SEPARATOR.$Filename->getBasename();
-        $data_filename = '//'.$View->getName().DIRECTORY_SEPARATOR.'templates'.DIRECTORY_SEPARATOR.$Filename->getBasename().'.cache.php';
+        $cache_filename = '//'.$View->getName().DIRECTORY_SEPARATOR.$action.'.php';
+        $data_filename = '//'.$View->getName().DIRECTORY_SEPARATOR.$action.'.cache.php';
         
         $CacheFile = $this->getFileSystem()->load($cache_filename);
         $DataFile = $this->getFileSystem()->load($data_filename);
@@ -58,9 +59,9 @@ class Cache
 
             include $php_file; //load $cache
 
-            $View->getContainer()->setTemplateContent($CacheFile);
-            $View->getContainer()->setData($cache);
-            $View->getContainer()->setCompiledContent($this->runPhp($CacheFile, $cache));
+            $Template->setTemplateContent($CacheFile);
+            $Template->setData($cache);
+            $Template->setCompiledContent($this->runPhp($CacheFile, $cache));
             
             $this->getFileSystem()->closeTmpFile($tmpphp);
             
@@ -68,11 +69,11 @@ class Cache
         }
         
         if ($Repository->has($Filename->getPathname())) {
-            die('has');
+            $View->setContainer($Repository->get($Filename->getPathname()));
         }
         else {
             $ViewManager->compileTemplate($View->getName(), $Template);
-            $Scope = $View->getContainer()->getScope();
+            $Scope = $Template->getScope();
             $content = $Scope->getPhp();
             
             $this->getFileSystem()->save($cache_filename, $content);
@@ -80,7 +81,7 @@ class Cache
             $data = var_export($Scope->getData(), true);
             $this->getFileSystem()->save($data_filename, "<?php \$cache = $data; ");
 
-            $Repository->set($cache_filename, $Scope);
+            $Repository->set($cache_filename, $Template);
         }
     }
 }

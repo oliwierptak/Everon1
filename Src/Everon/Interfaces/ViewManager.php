@@ -22,9 +22,10 @@ interface ViewManager
     function compileTemplate($scope_name, Interfaces\Template $Template);
 
     /**
+     * @param $action
      * @param Interfaces\View $View
      */
-    function compileView(Interfaces\View $View);
+    function compileView($action, Interfaces\View $View);
         
     /**
      * @param $name

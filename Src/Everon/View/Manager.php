@@ -50,7 +50,7 @@ class Manager implements Interfaces\ViewManager
     {
         $cache_directory = getcwd().'../../Tmp/cache/view/';
         if (!is_dir($cache_directory)) {
-            die('cache dir does not existt');
+            throw new Exception\ViewManager('cache dir does not existt');
         }
         
         if ($this->Cache === null) {
@@ -75,6 +75,7 @@ class Manager implements Interfaces\ViewManager
              */
             foreach ($this->compilers as $extension => $compiler_list) {
                 foreach ($compiler_list as $Compiler) {
+                    $Compiler->setFileSystem($this->getCache()->getFileSystem());
                     if ($this->stringEndsWith($Template->getTemplateFile()->getFilename(), $extension)) {
                         $this->compileTemplateRecursive($Compiler, $Template, $Scope);
                     }
@@ -92,7 +93,7 @@ class Manager implements Interfaces\ViewManager
     /**
      * @inheritdoc
      */
-    public function compileView(Interfaces\View $View)
+    public function compileView($action, Interfaces\View $View)
     {
         /**
          * @var $Template Interfaces\Template
@@ -100,7 +101,7 @@ class Manager implements Interfaces\ViewManager
         $Template = $View->getContainer();
         
         if ($this->getConfigManager()->getConfigValue('application.cache.view')) {
-            $this->getCache()->handle($this, $View);
+            $this->getCache()->handle($this, $View, $action);
         }
         else {
             $this->compileTemplate($View->getName(), $Template);
