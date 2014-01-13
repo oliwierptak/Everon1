@@ -18,6 +18,17 @@ interface TemplateContainer extends Arrayable
     function getCompiledContent();
     function getTemplateContent();
     function setTemplateContent($content);
+
+    /**
+     * @param TemplateCompilerScope $Scope
+     */
+    function setScope(TemplateCompilerScope $Scope);
+    
+    /**
+     * @return TemplateCompilerScope
+     */
+    function getScope();
+    
     function getData();
     function setData(array $data);    
 }

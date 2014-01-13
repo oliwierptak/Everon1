@@ -16,17 +16,18 @@ use Everon\Interfaces;
 
 class Cache
 {
+    use Dependency\FileSystem;
+    use Helper\RunPhp;
 
     /**
      * @var Interfaces\Collection
      */
     protected $Repository = null;
     
-    public function __construct($cache_directory)
+    public function __construct(Interfaces\FileSystem $FileSystem)
     {
-        $this->cache_directory = $cache_directory;
+        $this->FileSystem = $FileSystem;
     }
-    
     
     public function getRepository()
     {
@@ -43,24 +44,43 @@ class Cache
         $Filename = $View->getFilename();
         $Repository = $this->getRepository();
         
-        if ($Repository->has($Filename->getPathname())) {
+        $cache_filename = '//'.$View->getName().DIRECTORY_SEPARATOR.'templates'.DIRECTORY_SEPARATOR.$Filename->getBasename();
+        $data_filename = '//'.$View->getName().DIRECTORY_SEPARATOR.'templates'.DIRECTORY_SEPARATOR.$Filename->getBasename().'.cache.php';
+        
+        $CacheFile = $this->getFileSystem()->load($cache_filename);
+        $DataFile = $this->getFileSystem()->load($data_filename);
+        
+        if ($CacheFile !== null && $DataFile !== null) {
             
+            $tmpphp = $this->getFileSystem()->createTmpFile();
+            $this->getFileSystem()->writeTmpFile($tmpphp, $DataFile);
+            $php_file = $this->getFileSystem()->getTmpFilename($tmpphp);
+
+            include $php_file; //load $cache
+
+            $View->getContainer()->setTemplateContent($CacheFile);
+            $View->getContainer()->setData($cache);
+            $View->getContainer()->setCompiledContent($this->runPhp($CacheFile, $cache));
+            
+            $this->getFileSystem()->closeTmpFile($tmpphp);
+            
+            return;
+        }
+        
+        if ($Repository->has($Filename->getPathname())) {
+            die('has');
         }
         else {
-            $CacheFilename = new \SplFileInfo($this->cache_directory.$View->getName().DIRECTORY_SEPARATOR.$Filename->getBasename());
-            $CacheDataFilename = new \SplFileInfo($this->cache_directory.$View->getName().DIRECTORY_SEPARATOR.$Filename->getBasename().'.cache.php');
             $ViewManager->compileTemplate($View->getName(), $Template);
+            $Scope = $View->getContainer()->getScope();
+            $content = $Scope->getPhp();
+            
+            $this->getFileSystem()->save($cache_filename, $content);
 
-            $content = (string) $View->getContainer();
+            $data = var_export($Scope->getData(), true);
+            $this->getFileSystem()->save($data_filename, "<?php \$cache = $data; ");
 
-            $h = fopen($CacheFilename->getPathname(), 'w');
-            fwrite($h, $content);
-            fclose($h);
-
-            $data = var_export($View->getData(), true);
-            $h = fopen($CacheDataFilename->getPathname(), 'w');
-            fwrite($h, "<?php \$cache = $data; ");
-            fclose($h);
+            $Repository->set($cache_filename, $Scope);
         }
     }
 }

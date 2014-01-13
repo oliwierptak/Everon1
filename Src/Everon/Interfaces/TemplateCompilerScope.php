@@ -9,13 +9,14 @@
  */
 namespace Everon\Interfaces;
 
-interface TemplateCompiler
+interface TemplateCompilerScope
 {
-    /**
-     * @param $scope_name
-     * @param $template_content
-     * @param array $data
-     * @return TemplateCompilerScope
-     */    
-    function compile($scope_name, $template_content, array $data);
+    function setName($name);
+    function getName();
+    function setCompiled($compiled);
+    function getCompiled();
+    function setPhp($php);
+    function getPhp();
+    function getData();
+    function setData(array $data);    
 }

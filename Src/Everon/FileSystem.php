@@ -112,6 +112,15 @@ class FileSystem implements Interfaces\FileSystem
     /**
      * @inheritdoc
      */
+    function create($filename)
+    {
+        $filename = $this->getRelativePath($filename);
+        return new \SplFileInfo($filename);
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function save($filename, $content)
     {
         try {
@@ -134,6 +143,10 @@ class FileSystem implements Interfaces\FileSystem
     {
         try {
             $filename = $this->getRelativePath($filename);
+            if (file_exists($filename) === false) {
+                return null;
+            }
+            
             return file_get_contents($filename);
         }
         catch (\Exception $e) {
@@ -154,4 +167,29 @@ class FileSystem implements Interfaces\FileSystem
             throw new Exception\FileSystem($e);
         }
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function createTmpFile()
+    {
+        return tmpfile();
+    }
+    
+    public function writeTmpFile($handler, $content)
+    {
+        fwrite($handler, $content);
+    }
+    
+    public function getTmpFilename($handler)
+    {
+        $meta = stream_get_meta_data($handler);
+        return $meta['uri'];
+    }
+    
+    public function closeTmpFile($handler)
+    {
+        fclose($handler);
+    }
+
 }

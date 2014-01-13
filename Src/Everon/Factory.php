@@ -70,7 +70,7 @@ class Factory implements Interfaces\Factory
         $class = $namespace.'\\'.$class_name;
         return $class;
     }
-
+    
     /**
      * @return Interfaces\Core
      * @throws Exception\Factory
@@ -250,6 +250,23 @@ class Factory implements Interfaces\Factory
     }
 
     /**
+     * @param Interfaces\FileSystem $FileSystem
+     * @return View\Cache
+     * @throws Exception\Factory
+     */
+    public function buildViewCache(Interfaces\FileSystem $FileSystem)
+    {
+        try {
+            $ViewCache = new View\Cache($FileSystem);
+            $this->injectDependencies('Everon\View\Cache', $ViewCache);
+            return $ViewCache;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('ViewCache initialization error', null, $e);
+        }
+    }    
+
+    /**
      * @param array $compilers_to_init
      * @param $view_directory
      * @return Interfaces\ViewManager
@@ -424,7 +441,6 @@ class Factory implements Interfaces\Factory
         }
     }
 
-
     /**
      * @param $filename
      * @param array $template_data
@@ -440,6 +456,24 @@ class Factory implements Interfaces\Factory
         }
         catch (\Exception $e) {
             throw new Exception\Factory('Template initialization error', null, $e);
+        }
+    }
+
+
+    /**
+     * @param $root
+     * @return FileSystem
+     * @throws Exception\Factory
+     */
+    public function buildFileSystem($root)
+    {
+        try {
+            $FileSystem = new FileSystem($root);
+            $this->injectDependencies('Everon\FileSystem', $FileSystem);
+            return $FileSystem;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('FileSystem initialization error', null, $e);
         }
     }
 

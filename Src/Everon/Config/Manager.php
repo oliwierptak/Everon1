@@ -31,21 +31,16 @@ class Manager implements Interfaces\ConfigManager
      */
     protected $configs = null;
 
-    protected $default_cache_config_filename = 'cache.ini';
+    protected $default_config_filename = 'application.ini';
     
-    protected $default_config_name = 'cache';
+    protected $default_config_name = 'application';
     
     protected $ExpressionMatcher = null; 
 
     /**
      * @var array
      */
-    protected $default_cache_config_data = [
-        'cache' => [
-            'config_manager' => false,
-            'autoloader' => false,
-        ]
-    ];
+    protected $default_config_data = null;
 
     /**
      * @param Interfaces\ConfigLoader $Loader
@@ -57,8 +52,8 @@ class Manager implements Interfaces\ConfigManager
 
     protected function loadAndRegisterConfigs()
     {
-        $default_config_data = $this->getCacheConfigData();
-        $configs_data = $this->getConfigLoader()->load((bool) $default_config_data['enabled']['config_manager']);
+        $default_config_data = $this->getDefaultConfigData();
+        $configs_data = $this->getConfigLoader()->load((bool) $default_config_data['cache']['config_manager']);
         /**
          * @var Interfaces\ConfigLoaderItem $ConfigLoaderItem
          */
@@ -90,17 +85,57 @@ class Manager implements Interfaces\ConfigManager
         return $data;
     }
 
-    protected function getCacheConfigData()
+    protected function getDefaultConfigData()
     {
-        $data = $this->default_cache_config_data;
-        $directory = $this->getConfigLoader()->getConfigDirectory();
+        if ($this->default_config_data !== null) {
+            return $this->default_config_data;
+        }
 
-        $ini = $this->getConfigLoader()->read($directory.$this->default_cache_config_filename);
+        $this->default_config_data = parse_ini_string($this->getDefaults(), true);
+        
+        $directory = $this->getConfigLoader()->getConfigDirectory();
+        $ini = $this->getConfigLoader()->read($directory.$this->default_config_filename);
         if (is_array($ini)) {
-            $data = $this->arrayMergeDefault($data, $ini);
+            $this->default_config_data = $this->arrayMergeDefault($this->default_config_data, $ini);
         }
         
-        return $data;
+        return $this->default_config_data;
+    }
+    
+    protected function getDefaults()
+    {
+        return <<<EOF
+; Everon application configuration example
+
+[env]
+url = /
+url_statc = /assets/
+name = everon-dev
+
+[assets]
+css = %application.env.url_statc%css/
+images = %application.env.url_statc%images/
+js = %application.env.url_statc%js/
+themes = %application.env.url_statc%themes/
+
+[cache]
+config_manager = false
+autoloader = false
+view = true
+
+[model]
+manager = Everon
+
+[view]
+compilers[e] = '.htm'
+default_extension = '.htm'
+
+[logger]
+enabled = true
+rotate = 512             ; KB
+format = 'c'             ; todo: implment me
+format[trace] = 'U'      ; todo: implment me
+EOF;
     }
 
     /**

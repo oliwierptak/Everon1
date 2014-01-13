@@ -44,11 +44,21 @@ class Manager implements Interfaces\ViewManager
         $this->compilers = $compilers;
         $this->ViewCollection = new Helper\Collection([]);
         $this->view_directory = $view_directory;
+    }
+    
+    public function getCache()
+    {
         $cache_directory = getcwd().'../../Tmp/cache/view/';
         if (!is_dir($cache_directory)) {
             die('cache dir does not existt');
         }
-        $this->Cache = new \Everon\View\Cache($cache_directory);
+        
+        if ($this->Cache === null) {
+            $FileSystem = $this->getFactory()->buildFileSystem($cache_directory);
+            $this->Cache = $this->getFactory()->buildViewCache($FileSystem);
+        }
+        
+        return $this->Cache;
     }
 
     /**
@@ -57,7 +67,8 @@ class Manager implements Interfaces\ViewManager
     public function compileTemplate($scope_name, Interfaces\Template $Template)
     {
         try {
-            $compiled_content = null;
+            $Scope = new Template\Compiler\Scope();
+            $Scope->setName($scope_name);
             
             /**
              * @var Interfaces\TemplateCompiler $Compiler
@@ -65,12 +76,13 @@ class Manager implements Interfaces\ViewManager
             foreach ($this->compilers as $extension => $compiler_list) {
                 foreach ($compiler_list as $Compiler) {
                     if ($this->stringEndsWith($Template->getTemplateFile()->getFilename(), $extension)) {
-                        $this->compileTemplateRecursive($scope_name, $Compiler, $Template, $compiled_content);
+                        $this->compileTemplateRecursive($Compiler, $Template, $Scope);
                     }
                 }
             }
             
-            $Template->setCompiledContent($compiled_content);
+            $Template->setCompiledContent($Scope->getCompiled());
+            $Template->setScope($Scope);
         }
         catch (Exception $e) {
             throw new Exception\ViewManager($e);
@@ -87,8 +99,8 @@ class Manager implements Interfaces\ViewManager
          */
         $Template = $View->getContainer();
         
-        if ($this->getConfigManager()->getConfigValue('cache.enabled.view')) {
-            $this->Cache->handle($this, $View);
+        if ($this->getConfigManager()->getConfigValue('application.cache.view')) {
+            $this->getCache()->handle($this, $View);
         }
         else {
             $this->compileTemplate($View->getName(), $Template);
@@ -96,12 +108,12 @@ class Manager implements Interfaces\ViewManager
     }
 
     /**
-     * @param $scope_name
      * @param Interfaces\TemplateCompiler $Compiler
      * @param Interfaces\TemplateContainer $Template
-     * @param $compiled_content
+     * @param $Scope
      */
-    protected function compileTemplateRecursive($scope_name, Interfaces\TemplateCompiler $Compiler, Interfaces\TemplateContainer $Template, &$compiled_content)
+    protected function compileTemplateRecursive(Interfaces\TemplateCompiler $Compiler, 
+        Interfaces\TemplateContainer $Template, Interfaces\TemplateCompilerScope $Scope)
     {
         /**
          * @var Interfaces\TemplateContainer $Include
@@ -109,9 +121,9 @@ class Manager implements Interfaces\ViewManager
          */        
         foreach ($Template->getData() as $name => $Include) {
             if (($Include instanceof Interfaces\TemplateContainer) === false) {
-                if (is_string($Include)) { //compile string values with curly
-                    $IncludeValue = $Compiler->compile($scope_name, $Include, $Template->getData());
-                    $Template->set($name, $IncludeValue);
+                if (is_string($Include)) {
+                    $IncludeScope = $Compiler->compile($Scope->getName(), $Include, $Template->getData());
+                    $Template->set($name, $IncludeScope->getPhp());
                 }
                 continue;
             }
@@ -121,19 +133,22 @@ class Manager implements Interfaces\ViewManager
                     continue;
                 }
 
-                $this->compileTemplateRecursive($scope_name, $Compiler, $TemplateInclude, $compiled_content);
-                $Include->set($include_name, $TemplateInclude->getCompiledContent());
+                $this->compileTemplateRecursive($Compiler, $TemplateInclude, $Scope);
+                $Include->set($include_name, $TemplateInclude->getScope()->getPhp());
             }
-
-            $Include->setCompiledContent(
-                $Compiler->compile($scope_name, $Include->getTemplateContent(), $Include->getData())
-            );
-
-            $Template->set($name, $Include->getCompiledContent());
+            
+            $ContentScope = $Compiler->compile($Scope->getName(), $Include->getTemplateContent(), $Include->getData());
+            $Include->setCompiledContent($ContentScope->getCompiled());
+            $Include->setScope($ContentScope);
+            
+            $Template->set($name, $Include->getScope()->getPhp());
         }
 
-        $compiled_content = $compiled_content ?: $Template->getTemplateContent();
-        $compiled_content = $Compiler->compile($scope_name, $compiled_content, $Template->getData());
+        $ContentScope = $Compiler->compile($Scope->getName(), $Template->getTemplateContent(), $Template->getData());
+        
+        $Scope->setCompiled($ContentScope->getCompiled());
+        $Scope->setPhp($ContentScope->getPhp());
+        $Scope->setData($ContentScope->getData());
     }
 
     public function getCompilers()

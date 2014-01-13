@@ -29,6 +29,8 @@ class Container implements Interfaces\TemplateContainer
      * @var string|\Closure
      */
     protected $template_content = null;
+    
+    protected $Scope = null;
 
 
     /**
@@ -137,6 +139,22 @@ class Container implements Interfaces\TemplateContainer
     {
         $this->template_content = $content;
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function setScope(Interfaces\TemplateCompilerScope $Scope)
+    {
+        $this->Scope = $Scope;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getScope()
+    {
+        return $this->Scope;
+    }    
     
     /**
      * @return string
@@ -149,5 +167,5 @@ class Container implements Interfaces\TemplateContainer
 
         return (string) $this->getTemplateContent();
     }
-
+    
 }

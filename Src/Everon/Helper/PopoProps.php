@@ -64,5 +64,20 @@ class PopoProps implements Interfaces\Arrayable
     {
         throw new Exception\Popo('Call by method: "%s" is not allowed in: "%"', [$name, 'PopoProps']);
     }
+    
+    public function __sleep()
+    {
+        return ['data', 'strict'];
+    }
+    
+    public function __wakeup()
+    {
+        echo 'wakingup';
+    }
+
+    public static function __set_state(array $array) 
+    {
+        return new self($array);
+    }
         
 }

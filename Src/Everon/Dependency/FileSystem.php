@@ -19,7 +19,7 @@ trait FileSystem
     /**
      * @return \Everon\Interfaces\FileSystem
      */
-    public function getViewManager()
+    public function getFileSystem()
     {
         return $this->FileSystem;
     }
@@ -27,7 +27,7 @@ trait FileSystem
     /**
      * @param \Everon\Interfaces\FileSystem $FileSystem
      */
-    public function setViewManager(\Everon\Interfaces\FileSystem $FileSystem)
+    public function setFileSystem(\Everon\Interfaces\FileSystem $FileSystem)
     {
         $this->FileSystem = $FileSystem;
     }

@@ -12,6 +12,7 @@ namespace Everon\Interfaces;
 use Everon\Config;
 use Everon\Interfaces;
 use Everon\Exception;
+use Everon\View;
 
 interface Factory
 {
@@ -124,6 +125,13 @@ interface Factory
     function buildRequestValidator();
 
     /**
+     * @param $root
+     * @return FileSystem
+     * @throws Exception\Factory
+     */
+    public function buildFileSystem($root);    
+
+    /**
      * @param $filename
      * @param array $template_data
      * @return Interfaces\TemplateContainer
@@ -155,6 +163,13 @@ interface Factory
      * @throws Exception\Factory
      */
     function buildView($class_name, $template_directory, array $variables, $ns='Everon\View');
+
+    /**
+     * @param Interfaces\FileSystem $FileSystem
+     * @return View\Cache
+     * @throws Exception\Factory
+     */
+    function buildViewCache(Interfaces\FileSystem $FileSystem);
 
     /**
      * @param array $compilers_to_init

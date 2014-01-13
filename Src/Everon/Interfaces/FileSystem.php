@@ -36,6 +36,12 @@ interface FileSystem
 
     /**
      * @param $filename
+     * @return \SplFileInfo
+     */    
+    function create($filename);
+    
+    /**
+     * @param $filename
      * @param $content
      * @throws Exception\FileSystem
      */    
@@ -53,4 +59,12 @@ interface FileSystem
      * @throws Exception\FileSystem
      */    
     function delete($filename);
+
+    function createTmpFile();
+    
+    function writeTmpFile($handler, $content);
+    
+    function getTmpFilename($handler);
+
+    function closeTmpFile($handler);
 }

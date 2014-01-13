@@ -16,6 +16,7 @@ class E extends Compiler
 {
     use Helper\String\Compiler;
     use Helper\String\EndsWith;
+    use Helper\RunPhp;
     
     /**
      * @inheritdoc
@@ -26,7 +27,7 @@ class E extends Compiler
             $this->scope_name = $scope_name;
             $curly_data = $this->arrayToValues($data);
             $curly_data = $this->arrayDotKeysFlattern($curly_data);
-            $content = $this->stringCompilerRun($template_content, $curly_data);
+            $php_content = $this->stringCompilerRun($template_content, $curly_data);
 
             $data = $this->arrayDotKeysToArray(
                 $this->arrayDotKeysToScope($data, $scope_name)
@@ -36,9 +37,16 @@ class E extends Compiler
 
             $tag_name = 'e';
             $pattern = "@<$tag_name(?:\s[^/]*?)?>(.*?)</$tag_name\s*>@si";
-            $content = preg_replace_callback($pattern,  [$this, 'evalPhp'], $content);
-            $scope = $this->getScope($data);
-            return $this->runPhp($content, $scope);
+            $php_content = preg_replace_callback($pattern,  [$this, 'evalPhp'], $php_content);
+            $scope_data = $this->getScope($data);
+            
+            $Scope = new Scope();
+            $Scope->setName($scope_name);
+            $Scope->setPhp($php_content);
+            $Scope->setCompiled($this->runPhp($php_content, $scope_data));
+            $Scope->setData($scope_data);
+            
+            return $Scope;
         }
         catch (\Exception $e) {
             $this->getLogger()->e_error($e);
@@ -46,49 +54,6 @@ class E extends Compiler
         }
     }
 
-    /**
-     * @param $php
-     * @param $scope
-     * @return string
-     */
-    protected function runPhp($php, $scope)
-    {
-        $handleError = function($errno, $errstr, $errfile, $errline, array $errcontext) {
-            // error was suppressed with the @-operator
-            if (0 === error_reporting()) {
-                return false;
-            }
-
-            throw new \Everon\Exception\TemplateEvaluationError($errstr, 0, $errno, $errfile, $errline);
-        };
-        
-        $old_error_handler = set_error_handler($handleError);
-        
-        $tmpphp = tmpfile();
-        $content = '';
-        try {
-            fwrite($tmpphp, $php);
-
-            $meta = stream_get_meta_data($tmpphp);
-            $php_file = $meta['uri'];
-            
-            ob_start();
-            extract($scope);
-            include $php_file;
-            $content = ob_get_contents();
-        }
-        catch (\Exception $e) {
-            $this->getLogger()->e_error($e."\n".$php);
-            $content = '';
-        }
-        finally {
-            ob_end_clean();
-            fclose($tmpphp);
-            restore_error_handler($old_error_handler);
-            return $content;
-        }
-    }
-    
     /**
      * @param $data
      * @return array
