@@ -299,12 +299,12 @@ class FactoryTest extends \Everon\TestCase
     /**
      * @dataProvider dataProvider
      * @expectedException \Everon\Exception\Factory
-     * @expectedExceptionMessage Model: "Everon\Model\wrong class" initialization error.
-     * File for class: "Everon\Model\wrong class" could not be found
+     * @expectedExceptionMessage Model: "Everon\Model\DummyNotExisting" initialization error.
+     * Class: "Everon\Model\DummyNotExisting" could not be found"
      */
     public function testBuildModelShouldThrowExceptionWhenWrongClass(Interfaces\Factory $Factory)
     {
-        $Factory->buildModel('wrong class');
+        $Factory->buildModel('DummyNotExisting');
     }
     
     /**
