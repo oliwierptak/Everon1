@@ -14,7 +14,6 @@ use Everon\Exception as EveronException;
 class ErrorHandler extends \ErrorException{};
 
 class Asserts extends EveronException{};
-class Base extends EveronException{};
 class Config extends EveronException{};
 class Core extends EveronException{};
 class Controller extends EveronException{};
