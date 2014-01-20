@@ -83,9 +83,9 @@ class FactoryTest extends \Everon\TestCase
             return $ViewManagerMock;
         });
         
-        $ModelManagerMock = $this->getMock('\Everon\Interfaces\ModelManager');
-        $Factory->getDependencyContainer()->register('ModelManager', function() use ($ModelManagerMock) {
-            return $ModelManagerMock;
+        $DomainManagerMock = $this->getMock('\Everon\Interfaces\DomainManager');
+        $Factory->getDependencyContainer()->register('DomainManager', function() use ($DomainManagerMock) {
+            return $DomainManagerMock;
         });
 
         $Controller = $Factory->buildController('MyController', 'Everon\Test');
@@ -115,22 +115,22 @@ class FactoryTest extends \Everon\TestCase
             return $RequestMock;
         });
         
-        $Model = $Factory->buildModel('MyModel', '\Everon\Test');
+        $Model = $Factory->buildDomainModel('MyModel', '\Everon\Test');
         $this->assertInstanceOf('\Everon\Test\MyModel', $Model);
     }
 
     /**
      * @dataProvider dataProvider
      */
-    public function testBuildModelManager(Interfaces\Factory $Factory)
+    public function testBuildDomainManager(Interfaces\Factory $Factory)
     {
         $ConfigManager = $this->getMock('\Everon\Interfaces\ConfigManager');
         $Factory->getDependencyContainer()->register('ConfigManager', function() use ($ConfigManager) {
             return $ConfigManager;
         });
         
-        $Model = $Factory->buildModelManager('MyModelManager', 'Everon\Test');
-        $this->assertInstanceOf('\Everon\Interfaces\ModelManager', $Model);
+        $Model = $Factory->buildDomainManager('MyDomainManager', 'Everon\Test');
+        $this->assertInstanceOf('\Everon\Interfaces\DomainManager', $Model);
     }
 
     /**
@@ -280,7 +280,7 @@ class FactoryTest extends \Everon\TestCase
     public function testBuildControllerShouldThrowExceptionWhenWrongClass(Interfaces\Factory $FactoryMock)
     {
         $ViewManager = $this->getMock('Everon\Interfaces\ViewManager');
-        $ModelManager = $this->getMock('Everon\Interfaces\ModelManager');
+        $DomainManager = $this->getMock('Everon\Interfaces\DomainManager');
         $FactoryMock->buildController('Test');
     }
     
@@ -304,18 +304,18 @@ class FactoryTest extends \Everon\TestCase
      */
     public function testBuildModelShouldThrowExceptionWhenWrongClass(Interfaces\Factory $Factory)
     {
-        $Factory->buildModel('DummyNotExisting');
+        $Factory->buildDomainModel('DummyNotExisting');
     }
     
     /**
      * @dataProvider dataProvider
      * @expectedException \Everon\Exception\Factory
-     * @expectedExceptionMessage ModelManager: "Everon\Model\Manager\Test" initialization error.
+     * @expectedExceptionMessage DomainManager: "Everon\Model\Manager\Test" initialization error.
      * File for class: "Everon\Model\Manager\Test" could not be found
      */
-    public function testBuildModelManagerShouldThrowExceptionWhenWrongClass(Interfaces\Factory $Factory)
+    public function testBuildDomainManagerShouldThrowExceptionWhenWrongClass(Interfaces\Factory $Factory)
     {
-        $Factory->buildModelManager('Test');
+        $Factory->buildDomainManager('Test');
     }
     
     /**

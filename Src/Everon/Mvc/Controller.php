@@ -18,7 +18,7 @@ use Everon\Http;
 abstract class Controller extends \Everon\Controller implements Interfaces\MvcController
 {
     use Dependency\Injection\ViewManager;
-    use Dependency\Injection\ModelManager;
+    use Dependency\Injection\DomainManager;
     use Dependency\Injection\Environment;
     
     use Helper\Arrays;
@@ -40,7 +40,7 @@ abstract class Controller extends \Everon\Controller implements Interfaces\MvcCo
      */
     public function getModel()
     {
-        return $this->getModelManager()->getModel($this->getName());
+        return $this->getDomainManager()->getModel($this->getName());
     }
 
     protected function prepareResponse($action)

@@ -28,6 +28,7 @@ class InvalidRoute extends EveronException{};
 class Logger extends EveronException{};
 class Factory extends EveronException{};
 class Model extends EveronException{};
+class Pdo extends EveronException{};
 class Popo extends EveronException{};
 class Request extends EveronException{};
 class Response extends EveronException{};

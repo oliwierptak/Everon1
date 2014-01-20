@@ -9,9 +9,11 @@
  */
 namespace Everon;
 
-use Everon\Exception\ConfigItem;
 use Everon\Helper;
 use Everon\Interfaces;
+use Everon\DataMapper\Interfaces\Schema as SchemaInterface;
+use Everon\DataMapper\Exception\Schema as SchemaException;
+use Everon\DataMapper\Schema;
 
 class Factory implements Interfaces\Factory
 {
@@ -48,7 +50,7 @@ class Factory implements Interfaces\Factory
      * @param $class_name
      * @param $Receiver
      */
-    protected function injectDependencies($class_name, $Receiver)
+    public function injectDependencies($class_name, $Receiver)
     {
         $this->getDependencyContainer()->inject($class_name, $Receiver);
         if ($this->getDependencyContainer()->wantsFactory($class_name)) {
@@ -61,7 +63,7 @@ class Factory implements Interfaces\Factory
      * @param $class_name
      * @return string
      */
-    protected function getFullClassName($namespace, $class_name)
+    public function getFullClassName($namespace, $class_name)
     {
         if ($class_name[0] === '\\') {
             return $class_name; //absolute name
@@ -313,40 +315,93 @@ class Factory implements Interfaces\Factory
     }
 
     /**
+     * @param $dsn
+     * @param $username
+     * @param $password
+     * @param $options
+     * @return \Everon\Interfaces\PdoAdapter
+     */
+    public function buildPdo($dsn, $username, $password, $options)
+    {
+        return new PdoAdapter($dsn, $username, $password, $options);
+    }
+
+    public function buildDomainRepository(SchemaInterface\Table $Table, PdoAdapter $Pdo)
+    {
+        try {
+            $name = $Table->getName();
+            $class_name = ucfirst($this->stringUnderscoreToCamel($name));
+            $class_name = $this->getFullClassName('Everon\Domain\Repository', $class_name);
+            $Repository = new $class_name($Table, $Pdo);
+
+            $this->injectDependencies($class_name, $Repository);
+            return $Repository;
+        }
+        catch (\Exception $e) {
+            throw new SchemaException\Repository('Repository initialization error', null, $e);
+        }
+    }
+
+    /**
      * @param $class_name
      * @param string $ns
      * @return mixed
      * @throws Exception\Factory
      */
-    public function buildModel($class_name, $ns='Everon\Model')
+    public function buildDomainModel($class_name, $ns='Everon\Domain')
     {
         try {
-            $class_name = $this->getFullClassName($ns, $class_name);
+            $class_name = $this->getFullClassName($ns, $class_name.'\Model');
             $Model = new $class_name();
             $this->injectDependencies($class_name, $Model);
             return $Model;
         }
         catch (\Exception $e) {
-            throw new Exception\Factory('Model: "%s" initialization error', $class_name, $e);
+            throw new Exception\Factory('DomainModel: "%s" initialization error', $class_name, $e);
         }
     }
 
     /**
      * @param $class_name
      * @param $ns
-     * @return Interfaces\ModelManager
+     * @return Interfaces\DomainManager
      * @throws Exception\Factory
      */
-    public function buildModelManager($class_name, $ns='Everon\Model\Manager')
+    public function buildDomainManager($class_name, $ns='Everon\Domain\Manager')
     {
         try {
             $class_name = $this->getFullClassName($ns, $class_name);
-            $ModelManager = new $class_name();
-            $this->injectDependencies($class_name, $ModelManager);
-            return $ModelManager;
+            $DomainManager = new $class_name();
+            $this->injectDependencies($class_name, $DomainManager);
+            return $DomainManager;
         }
         catch (\Exception $e) {
-            throw new Exception\Factory('ModelManager: "%s" initialization error', $class_name, $e);
+            throw new Exception\Factory('DomainManager: "%s" initialization error', $class_name, $e);
+        }
+    }
+
+    public function buildSchemaTable($name, array $columns, array $constraints, array $foreign_keys)
+    {
+        try {
+            $column_list = array();
+            foreach ($columns as $column_data) {
+                $column_list[] = new Schema\MySql\Column($column_data); //todo: xxx
+            }
+
+            $constraint_list = array();
+            foreach ($constraints as $constraint_data) {
+                $constraint_list[] = new Schema\Constraint($constraint_data);
+            }
+
+            $fk_list = array();
+            foreach ($foreign_keys as $fk_data) {
+                $fk_list[] = new Schema\ForeignKey($fk_data);
+            }
+
+            return new Schema\Table($name, $column_list, $constraint_list, $fk_list);
+        }
+        catch (\Exception $e) {
+            throw new SchemaException\Table('Table initialization error', null, $e);
         }
     }
 

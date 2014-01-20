@@ -14,7 +14,7 @@ require_once(
  */
 
 $Bootstrap->getClassLoader()->add('Everon\View', $Environment->getView());
-$Bootstrap->getClassLoader()->add('Everon\Model', $Environment->getModel());
+$Bootstrap->getClassLoader()->add('Everon\Domain', $Environment->getDomain());
 $Bootstrap->getClassLoader()->add('Everon\Mvc\Controller', $Environment->getController());
 
 //replace default Router
@@ -29,9 +29,9 @@ $Container->register('Request', function() use ($Factory) {
     return $Factory->buildRequest($_SERVER, $_GET, $_POST, $_FILES);
 });
 
-$Container->register('ModelManager', function() use ($Factory) {
+$Container->register('DomainManager', function() use ($Factory) {
     $manager_name = $Factory->getDependencyContainer()->resolve('ConfigManager')->getConfigValue('application.model.manager');
-    return $Factory->buildModelManager($manager_name);
+    return $Factory->buildDomainManager($manager_name);
 });
 
 $Container->register('ViewManager', function() use ($Factory) {

@@ -16,8 +16,8 @@ interface Environment
     function setRoot($root);
     function getConfig();
     function setConfig($config);
-    function getModel();
-    function setModel($model);
+    function getDomain();
+    function setDomain($domain);
     function getView();
     function setView($view);
     function getController();

@@ -25,7 +25,7 @@ class Environment implements Interfaces\Environment
 
         $this->resources += [
             'config' => $this->getRoot().'Config'.DIRECTORY_SEPARATOR,
-            'model' => $this->getRoot().'Model'.DIRECTORY_SEPARATOR,
+            'domain' => $this->getRoot().'Domain'.DIRECTORY_SEPARATOR,
             'view' => $this->getRoot().'View'.DIRECTORY_SEPARATOR,
             'controller' => $this->getRoot().'Controller'.DIRECTORY_SEPARATOR,
             'source' => $this->getRoot().'Src'.DIRECTORY_SEPARATOR,
@@ -83,14 +83,14 @@ class Environment implements Interfaces\Environment
         $this->resources['config'] = $config;
     }
 
-    public function getModel()
+    public function getDomain()
     {
-        return $this->resources['model'];
+        return $this->resources['domain'];
     }
     
-    public function setModel($model)
+    public function setDomain($domain)
     {
-        $this->resources['model'] = $model;
+        $this->resources['domain'] = $domain;
     }
 
     public function getView()

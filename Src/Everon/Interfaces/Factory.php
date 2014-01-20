@@ -27,6 +27,19 @@ interface Factory
     function setDependencyContainer(Interfaces\DependencyContainer $Container);
 
     /**
+     * @param $class_name
+     * @param $Receiver
+     */
+    function injectDependencies($class_name, $Receiver);
+
+    /**
+     * @param $namespace
+     * @param $class_name
+     * @return string
+     */
+    function getFullClassName($namespace, $class_name);    
+
+    /**
      * @return Interfaces\Core
      * @throws Exception\Factory
      */
@@ -84,15 +97,15 @@ interface Factory
      */
     function buildController($class_name, $ns='Everon\Controller');
 
-    function buildModel($class_name);
+    function buildDomainModel($class_name);
 
     /**
      * @param $class_name
      * @param string $ns
-     * @return Interfaces\ModelManager
+     * @return Interfaces\DomainManager
      * @throws Exception\Factory
      */
-    function buildModelManager($class_name, $ns='Everon\Model\Manager');
+    function buildDomainManager($class_name, $ns='Everon\Model\Manager');
 
     /**
      * @param $name

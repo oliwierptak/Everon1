@@ -7,56 +7,17 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon\DataMapper\Schema;
+namespace Everon\DataMapper\Schema\MySql;
 
 use Everon\Helper;
-use Everon\Interfaces;
 use Everon\DataMapper\Exception;
+use Everon\DataMapper\Schema;
 
-class Column implements ColumnInterface 
+class Column extends Schema\Column
 {
-    use Helper\Immutable;
-    
-    
-    protected $is_pk = null;
-    
-    protected $is_unique = null;
-
-    protected $name = null;
-
-    protected $type = null;
-    
-    protected $is_autoincremental = null;
-    
-    protected $length = null;
-    
-    protected $precision = null;
-    
-    protected $is_nullable = null;
-    
-    protected $default = null;
-    
-    protected $encoding = null;
-    
-    protected $ColumnInfo = null;
-    
-    protected $validation_rules = null;
-    
-
-    public function __construct(array $data)
-    {
-        $this->init($data);
-        $this->lock();
-    }
-
     protected function init(array $data)
     {
-        $this->ColumnInfo = new \stdClass();
-        foreach ($data as $index => $value) {
-            $property = strtolower($index);
-            $this->ColumnInfo->$property = $value;
-        }
-
+        $this->ColumnInfo = new Helper\PopoProps($data);
         $this->is_pk = ($this->ColumnInfo->column_key ==  'PRI');
         $this->is_unique = ($this->ColumnInfo->column_key ==  'UNI');
         $this->name = $this->ColumnInfo->column_name;
@@ -101,50 +62,4 @@ class Column implements ColumnInterface
                 break;
         }
     }
-    
-    public function isPk()
-    {
-        return $this->is_pk;
-    }
-    
-    public function isAutoIncremental()
-    {
-        return $this->is_autoincremental;
-    }
-    
-    public function getName()
-    {
-        return $this->name;
-    }
-    
-    public function getType()
-    {
-        return $this->type;
-    }
-    
-    public function getLength()
-    {
-        return $this->length;
-    }
-    
-    public function isNullable()
-    {
-        return $this->is_nullable;
-    }
-    
-    public function getDefault()
-    {
-        return $this->default;
-    }
-
-    public function toArray()
-    {
-        return get_object_vars($this);
-    }
-    
-    protected function __toString()
-    {
-        return (string) $this->name;
-    }
-    
 }
