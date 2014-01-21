@@ -71,7 +71,7 @@ class Popo implements Interfaces\Arrayable
         } 
         else if ($setter) {
             $this->call_type = self::CALL_TYPE_SETTER;
-        }        
+        }
 
         if ($setter === false && $getter === false) {
             throw new Exception\Popo('Unknown method: "%s" in "%s"', [$name, get_class($this)]);
@@ -96,7 +96,7 @@ class Popo implements Interfaces\Arrayable
             $this->call_type = self::CALL_TYPE_SETTER;
             $this->data[$property] = $arguments[0];
         }
-
+        
         return true;
     }
 

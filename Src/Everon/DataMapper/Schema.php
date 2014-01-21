@@ -42,14 +42,7 @@ class Schema implements Interfaces\Schema
 
         $this->init();
     }
-    
-/*    protected function initPdo()
-    {
-        $Connection = $this->getConnectionManager()->getConnectionByName('schema');
-        list($dsn, $username, $password, $options) = $Connection->toPdo();
-        $this->SchemaMapper = $this->getFactory()->buildPdo($dsn, $username, $password, $options);
-    }*/
-    
+
     protected function init()
     {
         $table_list = $this->SchemaMapper->getTableList();
@@ -112,7 +105,7 @@ class Schema implements Interfaces\Schema
         if (isset($this->pdo_adapters[$name]) === false) {
             $Connection = $this->getConnectionManager()->getConnectionByName($name);
             list($dsn, $username, $password, $options) = $Connection->toPdo();
-            $Pdo = $this->getFactory()->buildPdo($dsn, $username, $password, $options);
+            $Pdo = $this->getFactory()->buildPdoAdapter($dsn, $username, $password, $options);
             $this->pdo_adapters[$name] = $Pdo;
         }
 

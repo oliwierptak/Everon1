@@ -3,7 +3,6 @@
  * Everon application example.
  */
 namespace Everon;
-require_once('/var/www/kint/Kint.class.php');
 
 $system_memory = (string) (memory_get_usage(true));
 error_reporting(E_ALL);

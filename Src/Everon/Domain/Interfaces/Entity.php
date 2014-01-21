@@ -17,9 +17,9 @@ interface Entity extends Interfaces\Arrayable
     function isModified();
     function isPersisted();
     function isDeleted();
+    function isPropertyModified($name);
     function getId();
+    function getModifiedProperties();
     function getValueByName($name);
-    function incept();
-    function modify();
-    function persist();
+    function setValueByName($name, $value); 
 }

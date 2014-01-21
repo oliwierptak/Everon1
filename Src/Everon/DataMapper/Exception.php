@@ -9,11 +9,11 @@
  */
 namespace Everon\DataMapper\Exception;
 
-use Everon\Exception;
+use Everon\Exception as EveronException;
 
-class Column extends Exception{};
-class ConnectionManager extends Exception{};
-class Repository extends Exception{};
-class Pdo extends Exception{};
-class Schema extends Exception{};
-class Table extends Exception{}; 
+class Column extends EveronException{};
+class ConnectionManager extends EveronException{};
+class Repository extends EveronException{};
+class Pdo extends EveronException{};
+class Schema extends EveronException{};
+class Table extends EveronException{}; 

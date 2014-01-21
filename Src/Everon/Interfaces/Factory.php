@@ -10,8 +10,10 @@
 namespace Everon\Interfaces;
 
 use Everon\Config;
-use Everon\Interfaces;
+use Everon\DataMapper\Interfaces\Schema as SchemaInterface;
+use Everon\Domain;
 use Everon\Exception;
+use Everon\Interfaces;
 use Everon\View;
 
 interface Factory
@@ -97,15 +99,31 @@ interface Factory
      */
     function buildController($class_name, $ns='Everon\Controller');
 
+    /**
+     * @param $class_name
+     * @param string $ns
+     * @return mixed
+     * @throws Exception\Factory
+     */
     function buildDomainModel($class_name);
 
     /**
      * @param $class_name
-     * @param string $ns
+     * @param $ns
      * @return Interfaces\DomainManager
      * @throws Exception\Factory
      */
     function buildDomainManager($class_name, $ns='Everon\Model\Manager');
+
+    /**
+     * @param $name
+     * @param array $columns
+     * @param array $constraints
+     * @param array $foreign_keys
+     * @return SchemaInterface\Table
+     * @throws Exception\Factory
+     */
+    function buildSchemaTable($name, array $columns, array $constraints, array $foreign_keys);
 
     /**
      * @param $name
@@ -166,6 +184,34 @@ interface Factory
      * @throws Exception\Factory
      */
     function buildTemplateCompiler($class_name, $ns='Everon\View\Template\Compiler');
+
+    /**
+     * @param $dsn
+     * @param $username
+     * @param $password
+     * @param $options
+     * @return Interfaces\PdoAdapter|PdoAdapter
+     * @throws Exception\Factory
+     */
+    function buildPdoAdapter($dsn, $username, $password, $options);
+
+    /**
+     * @param SchemaInterface\Table $Table
+     * @param Interfaces\PdoAdapter $Pdo
+     * @return Domain\Interfaces\Repository
+     * @throws Exception\Factory
+     */
+    public function buildDomainRepository(SchemaInterface\Table $Table, Interfaces\PdoAdapter $Pdo);
+
+    /**
+     * @param $class_name
+     * @param string $id
+     * @param array $data
+     * @param string $ns
+     * @return Domain\Interfaces\Entity
+     * @throws Exception\Factory
+     */
+    function buildDomainEntity($class_name, $id, array $data, $ns='Everon\Domain');
 
     /**
      * @param $class_name
