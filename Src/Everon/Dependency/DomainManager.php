@@ -17,7 +17,7 @@ trait DomainManager
 
 
     /**
-     * @return \Everon\Interfaces\DomainManager
+     * @return \Everon\Domain\Interfaces\Manager
      */
     public function getDomainManager()
     {
@@ -25,9 +25,9 @@ trait DomainManager
     }
 
     /**
-     * @param \Everon\Interfaces\DomainManager $Manager
+     * @param \Everon\Domain\Interfaces\Manager
      */
-    public function setDomainManager(\Everon\Interfaces\DomainManager $Manager)
+    public function setDomainManager(\Everon\Domain\Interfaces\Manager $Manager)
     {
         $this->DomainManager = $Manager;
     }

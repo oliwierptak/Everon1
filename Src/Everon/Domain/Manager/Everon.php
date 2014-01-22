@@ -9,10 +9,9 @@
  */
 namespace Everon\Domain\Manager;
 
-use Everon\Interfaces;
 use Everon\Domain;
 
-class Everon extends Domain\Manager implements Interfaces\DomainManager
+class Everon extends Domain\Manager implements Domain\Interfaces\Manager
 {
     public function init()
     {

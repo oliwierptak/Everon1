@@ -364,6 +364,10 @@ class Factory implements Interfaces\Factory
     {
         try {
             $class_name = $this->getFullClassName($ns, $class_name.'\Entity');
+            
+            /**
+             * @var Domain\Interfaces\Entity $Entity
+             */
             $Entity = new $class_name($id, $data);
             $this->injectDependencies($class_name, $Entity);
             return $Entity;
@@ -380,6 +384,10 @@ class Factory implements Interfaces\Factory
     {
         try {
             $class_name = $this->getFullClassName($ns, $name.'\Repository');
+
+            /**
+             * @var Domain\Interfaces\Repository $Repository
+             */
             $Repository = new $class_name($name, $DataMapper);
             $this->injectDependencies($class_name, $Repository);
             return $Repository;
@@ -412,6 +420,10 @@ class Factory implements Interfaces\Factory
     {
         try {
             $class_name = $this->getFullClassName($ns, $class_name);
+
+            /**
+             * @var Domain\Interfaces\Manager $DomainManager
+             */
             $DomainManager = new $class_name();
             $this->injectDependencies($class_name, $DomainManager);
             return $DomainManager;
@@ -446,9 +458,11 @@ class Factory implements Interfaces\Factory
         try {
             list($dsn, $username, $password, $options) = $Connection->toPdo();
             $PdoAdapter = $this->buildPdoAdapter($dsn, $username, $password, $options);
+            
             $class_name = $Connection->getMapper().'\Reader';
             $class_name = $this->getFullClassName($ns, $class_name);
             $SchemaReader = new $class_name($name, $PdoAdapter);
+            
             $this->injectDependencies($class_name, $SchemaReader);
             return $SchemaReader;
         }

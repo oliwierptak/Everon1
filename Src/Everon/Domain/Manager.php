@@ -9,13 +9,12 @@
  */
 namespace Everon\Domain;
 
+use Everon\DataMapper\Interfaces\ConnectionManager;
 use Everon\Dependency;
-use Everon\Interfaces;
 use Everon\DataMapper\Interfaces\Schema\Reader;
 use Everon\Domain\Interfaces\Repository;
-use Everon\DataMapper\Interfaces\ConnectionManager;
 
-abstract class Manager implements Interfaces\DomainManager
+abstract class Manager implements Interfaces\Manager
 {
     use Dependency\Injection\Factory;
     use Dependency\DataMapper\ConnectionManager;
@@ -82,16 +81,15 @@ abstract class Manager implements Interfaces\DomainManager
      */
     public function getRepository($name)
     {
-        if (isset($this->models[$name]) === false) {
+        if (isset($this->repositories[$name]) === false) {
             $Connection = $this->getConnectionManager()->getConnectionByName('schema');
             $Reader = $this->getFactory()->buildSchemaReader($Connection);
             $Schema = $this->getFactory()->buildSchema($Connection->getName(), $Reader, $this->getConnectionManager());
-            //$SchemaTable = $this->getFactory()->buildSchemaTable($name, $Schema->getColumns(), $constraints, $foreign_keys);
-            $PdoAdapter = $this->getFactory()->buildDataMapper($name, $Schema);
-            $this->models[$name] = $this->getFactory()->buildDomainRepository($name, $PdoAdapter);
+            $DataMapper = $this->getFactory()->buildDataMapper($name, $Schema);
+            $this->repositories[$name] = $this->getFactory()->buildDomainRepository($name, $DataMapper);
         }
 
-        return $this->models[$name];
+        return $this->repositories[$name];
     }    
 
 }

@@ -83,7 +83,7 @@ class FactoryTest extends \Everon\TestCase
             return $ViewManagerMock;
         });
         
-        $DomainManagerMock = $this->getMock('\Everon\Interfaces\DomainManager');
+        $DomainManagerMock = $this->getMock('\Everon\Domain\Interfaces\Manager');
         $Factory->getDependencyContainer()->register('DomainManager', function() use ($DomainManagerMock) {
             return $DomainManagerMock;
         });
@@ -131,7 +131,7 @@ class FactoryTest extends \Everon\TestCase
         });
         
         $DomainManager = $Factory->buildDomainManager('MyDomainManager', 'Everon\Test');
-        $this->assertInstanceOf('\Everon\Interfaces\DomainManager', $DomainManager);
+        $this->assertInstanceOf('\Everon\Domain\Interfaces\Manager', $DomainManager);
     }
 
     /**
@@ -281,7 +281,7 @@ class FactoryTest extends \Everon\TestCase
     public function testBuildControllerShouldThrowExceptionWhenWrongClass(Interfaces\Factory $FactoryMock)
     {
         $ViewManager = $this->getMock('Everon\Interfaces\ViewManager');
-        $DomainManager = $this->getMock('Everon\Interfaces\DomainManager');
+        $DomainManager = $this->getMock('Everon\Domain\Interfaces\Manager');
         $FactoryMock->buildController('Test');
     }
     
