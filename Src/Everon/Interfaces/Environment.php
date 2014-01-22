@@ -18,6 +18,8 @@ interface Environment
     function setConfig($config);
     function getDomain();
     function setDomain($domain);
+    function getDataMapper();
+    function setDataMapper($data_mapper);
     function getView();
     function setView($view);
     function getController();

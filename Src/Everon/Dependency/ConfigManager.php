@@ -12,23 +12,24 @@ namespace Everon\Dependency;
 
 trait ConfigManager
 {
-
     /**
      * @var \Everon\Config\Manager
      */
     protected $ConfigManger = null;
 
     /**
-     * @return \Everon\Config\Manager
+     * @return \Everon\Interfaces\ConfigManager
      */
     public function getConfigManager()
     {
         return $this->ConfigManger;
     }
 
+    /**
+     * @param \Everon\Interfaces\ConfigManager $ConfigManager
+     */
     public function setConfigManager(\Everon\Interfaces\ConfigManager $ConfigManager)
     {
         $this->ConfigManger = $ConfigManager;
     }
-
 }

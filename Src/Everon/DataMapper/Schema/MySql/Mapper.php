@@ -9,8 +9,8 @@
  */
 namespace Everon\DataMapper\Schema\MySql;
 
-use Everon\DataMapper\Interfaces;
 use Everon\DataMapper;
+use Everon\DataMapper\Interfaces;
 use Everon\Domain\Interfaces\Entity;
 
 

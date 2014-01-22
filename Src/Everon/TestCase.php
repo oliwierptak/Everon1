@@ -22,7 +22,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
     protected $Environment = null;
 
 
-    public function __construct($name = NULL, array $data = array(), $dataName = '')
+    public function __construct($name = NULL, array $data=[], $dataName='')
     {
         parent::__construct($name, $data, $dataName);
 

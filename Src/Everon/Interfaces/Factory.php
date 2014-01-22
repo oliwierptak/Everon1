@@ -10,7 +10,6 @@
 namespace Everon\Interfaces;
 
 use Everon\Config;
-use Everon\DataMapper\Interfaces\Schema as SchemaInterface;
 use Everon\Domain;
 use Everon\Exception;
 use Everon\DataMapper;
@@ -106,7 +105,7 @@ interface Factory
      * @return mixed
      * @throws Exception\Factory
      */
-    function buildDomainModel($class_name);
+    function buildDomainModel($class_name, $ns='Everon\Domain');
 
     /**
      * @param $class_name
@@ -117,6 +116,16 @@ interface Factory
     function buildDomainManager($class_name, $ns='Everon\Model\Manager');
 
     /**
+     * @param $name
+     * @param DataMapper\Interfaces\Schema\Reader $Reader
+     * @param DataMapper\Interfaces\ConnectionManager $ConnectionManager
+     * @param string $ns
+     * @return mixed
+     * @throws Exception\Factory
+     */
+    function buildSchema($name, DataMapper\Interfaces\Schema\Reader $Reader, DataMapper\Interfaces\ConnectionManager $ConnectionManager, $ns='Everon\DataMapper');
+
+    /**
      * @param DataMapper\Interfaces\ConnectionItem $Connection
      * @param string $ns
      * @return mixed
@@ -125,14 +134,15 @@ interface Factory
     function buildSchemaReader(DataMapper\Interfaces\ConnectionItem $Connection, $ns='Everon\dataMapper\Schema');    
     
     /**
-     * @param $name
+     * @param $name <code>table name in database</code>
      * @param array $columns
      * @param array $constraints
      * @param array $foreign_keys
-     * @return SchemaInterface\Table
+     * @param $ns
+     * @return DataMapper\Interfaces\Schema\Table
      * @throws Exception\Factory
      */
-    function buildSchemaTable($name, array $columns, array $constraints, array $foreign_keys);
+    function buildSchemaTable($name, array $columns, array $constraints, array $foreign_keys, $ns='Everon\DataMapper\Schema');
 
     /**
      * @param $name
@@ -205,14 +215,13 @@ interface Factory
     function buildPdoAdapter($dsn, $username, $password, $options);
 
     /**
-     * @param $name
+     * @param DataMapper\Interfaces\Schema\Table $Table
      * @param DataMapper\Interfaces\Schema $Schema
      * @param string $ns
      * @return Interfaces\DataMapper
      * @throws Exception\Factory
      */
-    function buildDataMapper($name, DataMapper\Interfaces\Schema $Schema, $ns='Everon\DataMapper');
-
+    function buildDataMapper(DataMapper\Interfaces\Schema\Table $Table, DataMapper\Interfaces\Schema $Schema, $ns='Everon\DataMapper');
 
     /**
      * @param $name

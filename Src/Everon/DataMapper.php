@@ -17,9 +17,8 @@ use Everon\Interfaces;
 
 abstract class DataMapper implements Interfaces\DataMapper
 {
-    use Dependency\Schema;
-    
-    protected $Table = null;
+    use Dependency\DataMapper\Schema;
+    use Dependency\DataMapper\Table;
     
     protected $write_connection_name = 'write';
     protected $read_connection_name = 'read';
@@ -47,7 +46,11 @@ abstract class DataMapper implements Interfaces\DataMapper
         list($sql, $parameters) = $this->getUpdateSql($Entity);
         return $this->getSchema()->getPdoAdapter($this->write_connection_name)->exec($sql, $parameters);
     }
-    
+
+    /**
+     * @param Entity $Entity
+     * @return \PDOStatement
+     */
     public function delete(Entity $Entity)
     {
         list($sql, $parameters) = $this->getDeleteSql($Entity);
@@ -69,11 +72,8 @@ abstract class DataMapper implements Interfaces\DataMapper
         return $this->getSchema()->getPdoAdapter($this->read_connection_name)->exec($sql, $parameters);
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function getTable()
+    public function getName()
     {
-        return $this->Table;
+        return $this->getTable()->getName();
     }
 }

@@ -13,9 +13,10 @@ require_once(
  * @var Interfaces\Factory $Factory
  */
 
-$Bootstrap->getClassLoader()->add('Everon\View', $Environment->getView());
 $Bootstrap->getClassLoader()->add('Everon\Domain', $Environment->getDomain());
 $Bootstrap->getClassLoader()->add('Everon\Mvc\Controller', $Environment->getController());
+$Bootstrap->getClassLoader()->add('Everon\View', $Environment->getView());
+$Bootstrap->getClassLoader()->add('Everon\DataMapper', $Environment->getDataMapper());
 
 //replace default Router
 $Container->register('Router', function() use ($Factory) {

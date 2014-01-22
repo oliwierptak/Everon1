@@ -22,13 +22,13 @@ class Table implements Schema\Table
     
     protected $pk = null;
     
-    protected $columns = array();
+    protected $columns = [];
     
-    protected $primary_keys = array();
+    protected $primary_keys = [];
     
-    protected $constraints = array();
+    protected $constraints = [];
 
-    protected $foreign_keys = array();
+    protected $foreign_keys = [];
 
 
     /**
@@ -38,7 +38,7 @@ class Table implements Schema\Table
      * @param array $foreign_keys
      */
     public function __construct($name, array $columns, array $constraints, array $foreign_keys) //todo: the arrays should be collections
-    {
+    {        
         $this->name = $name;
         $this->columns = $columns;
         $this->constraints = $constraints;
@@ -62,7 +62,7 @@ class Table implements Schema\Table
     
     public function getPlaceholderForQuery($delimeter=':')
     {
-        $placeholders = array();
+        $placeholders = [];
         foreach ($this->columns as $column_name) {
             $placeholders[] = $delimeter.$column_name;
         }
@@ -76,8 +76,8 @@ class Table implements Schema\Table
      */
     public function getValuesForQuery(Entity $Entity)
     {
-        $values = array();
-        foreach ($this->columns as $column_name) {
+        $values = [];
+        foreach ($this->columns as $column_name) {//eg. column_name=user_data, Entity->getUserData(), $Entity->data['user_data']
             $values[] = $Entity->getValueByName($column_name);
         }
         

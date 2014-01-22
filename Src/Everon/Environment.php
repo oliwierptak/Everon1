@@ -17,7 +17,7 @@ class Environment implements Interfaces\Environment
     protected $resources = [];
 
 
-    public function __construct($root)
+    function __construct($root)
     {
         $this->resources = [
             'root' => $root
@@ -26,6 +26,7 @@ class Environment implements Interfaces\Environment
         $this->resources += [
             'config' => $this->getRoot().'Config'.DIRECTORY_SEPARATOR,
             'domain' => $this->getRoot().'Domain'.DIRECTORY_SEPARATOR,
+            'data_mapper' => $this->getRoot().'DataMapper'.DIRECTORY_SEPARATOR,
             'view' => $this->getRoot().'View'.DIRECTORY_SEPARATOR,
             'controller' => $this->getRoot().'Controller'.DIRECTORY_SEPARATOR,
             'source' => $this->getRoot().'Src'.DIRECTORY_SEPARATOR,
@@ -63,177 +64,187 @@ class Environment implements Interfaces\Environment
     }
 
     //todo: replace all methods with get('Src.Everon.Lib');
-    public function getRoot()
+    function getRoot()
     {
         return $this->resources['root'];
     }
     
-    public function setRoot($root)
+    function setRoot($root)
     {
         $this->resources['root'] = $root;
     }
 
-    public function getConfig()
+    function getConfig()
     {
         return $this->resources['config'];
     }
     
-    public function setConfig($config)
+    function setConfig($config)
     {
         $this->resources['config'] = $config;
     }
 
-    public function getDomain()
+    function getDomain()
     {
         return $this->resources['domain'];
     }
     
-    public function setDomain($domain)
+    function setDomain($domain)
     {
         $this->resources['domain'] = $domain;
     }
 
-    public function getView()
+    function getDataMapper()
+    {
+        return $this->resources['data_mapper'];
+    }
+    
+    function setDataMapper($data_mapper)
+    {
+        $this->resources['data_mapper'] = $data_mapper;
+    }
+    
+    function getView()
     {
         return $this->resources['view'];
     }
     
-    public function setView($view)
+    function setView($view)
     {
         $this->resources['view'] = $view;
     }
 
-    public function getController()
+    function getController()
     {
         return $this->resources['controller'];
     }
 
-    public function setController($controller)
+    function setController($controller)
     {
         $this->resources['controller'] = $controller;
     }
 
-    public function getSource()
+    function getSource()
     {
         return $this->resources['source'];
     }
     
-    public function setSource($source)
+    function setSource($source)
     {
         $this->resources['source'] = $source;
     }
 
-    public function getTest()
+    function getTest()
     {
         return $this->resources['tests'];
     }
     
-    public function setTest($test)
+    function setTest($test)
     {
         $this->resources['tests'] = $test;
     }
 
-    public function getEveron()
+    function getEveron()
     {
         return $this->resources['everon'];
     }
     
-    public function setEveron($everon)
+    function setEveron($everon)
     {
         $this->resources['everon'] = $everon;
     }
 
-    public function getEveronLib()
+    function getEveronLib()
     {
         return $this->resources['everon_lib'];
     }
     
-    public function setEveronLib($everon_lib)
+    function setEveronLib($everon_lib)
     {
         $this->resources['everon_lib'] = $everon_lib;
     }
 
-    public function getEveronInterface()
+    function getEveronInterface()
     {
         return $this->resources['everon_interface'];
     }
     
-    public function setEveronInterface($everon_interfaces)
+    function setEveronInterface($everon_interfaces)
     {
         $this->resources['everon_interface'] = $everon_interfaces;
     }
     
-    public function getEveronHelper()
+    function getEveronHelper()
     {
         return $this->resources['everon_helper'];
     }
     
-    public function setEveronHelper($everon_helper)
+    function setEveronHelper($everon_helper)
     {
         $this->resources['everon_helper'] = $everon_helper;
     }
 
-    public function getTmp()
+    function getTmp()
     {
         return $this->resources['tmp'];
     }
     
-    public function setTmp($tmp)
+    function setTmp($tmp)
     {
         $this->resources['tmp'] = $tmp;
     }
 
-    public function getCache()
+    function getCache()
     {
         return $this->resources['cache'];
     }
     
-    public function setCache($cache)
+    function setCache($cache)
     {
         $this->resources['cache'] = $cache;
     }
 
-    public function getCacheConfig()
+    function getCacheConfig()
     {
         return $this->resources['cache_config'];
     }
     
-    public function setCacheConfig($cache_config)
+    function setCacheConfig($cache_config)
     {
         $this->resources['cache_config'] = $cache_config;
     }
 
-    public function getLog()
+    function getLog()
     {
         return $this->resources['log'];
     }
     
-    public function setLog($log)
+    function setLog($log)
     {
         $this->resources['log'] = $log;
     }
 
-    public function getWeb()
+    function getWeb()
     {
         return $this->resources['web'];
     }
 
-    public function setWeb($web)
+    function setWeb($web)
     {
         $this->resources['web'] = $web;
     }
     
-    public function getAssets()
+    function getAssets()
     {
         return $this->resources['assets'];
     }
     
-    public function setAssets($assets)
+    function setAssets($assets)
     {
         $this->resources['assets'] = $assets;
     }
     
-    public function toArray()
+    function toArray()
     {
         return $this->resources;
     }

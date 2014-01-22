@@ -20,7 +20,7 @@ class EntityTest extends \Everon\TestCase
     public function testConstructor()
     {
         $DataMapperMock = $this->getMock('Everon\Interfaces\DataMapper');
-        $Repository = new \Everon\Test\MyRepository\Repository('MyRepository', $DataMapperMock);
+        $Repository = new MyRepository\Repository('MyRepository', $DataMapperMock);
         $this->assertInstanceOf('\Everon\Domain\Interfaces\Repository', $Repository);
     }
 

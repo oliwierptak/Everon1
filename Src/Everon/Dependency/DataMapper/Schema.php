@@ -7,12 +7,11 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon\Dependency;
+namespace Everon\Dependency\DataMapper;
 
 
 trait Schema
 {
-
     protected $Schema = null;
 
 
@@ -27,9 +26,8 @@ trait Schema
     /**
      * @param \Everon\DataMapper\Interfaces\Schema
      */
-    public function setView(\Everon\Interfaces\View $Schema)
+    public function setView(\Everon\DataMapper\Interfaces\Schema $Schema)
     {
         $this->Schema = $Schema;
     }
-
 }

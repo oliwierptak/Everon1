@@ -11,25 +11,58 @@ namespace Everon\Domain;
 
 use Everon\Dependency;
 use Everon\Interfaces;
+use Everon\DataMapper\Interfaces\Schema\Reader;
+use Everon\Domain\Interfaces\Repository;
+use Everon\DataMapper\Interfaces\ConnectionManager;
 
 abstract class Manager implements Interfaces\DomainManager
 {
     use Dependency\Injection\Factory;
+    use Dependency\DataMapper\ConnectionManager;
 
     /**
-     * List of Models
      * @var array
      */
     protected $models = null;
-    
-    abstract protected function init();
-    
-    
-    public function __construct()
+
+    /**
+     * @var array
+     */
+    protected $repositories = null;
+
+    /**
+     * @var ConnectionManager
+     */
+    protected $ConnectionManager = null;
+
+    /**
+     * @var Reader
+     */
+    protected $Reader = null;
+
+
+    public function __construct(Reader $Reader, ConnectionManager $Manager)
     {
-        $this->init();
+        $this->Reader = $Reader;
+        $this->ConnectionManager = $Manager;
     }
 
+    /**
+     * @param Reader $Reader
+     */
+    public function setReader(Reader $Reader)
+    {
+        $this->Reader = $Reader;
+    }
+
+    /**
+     * @return Reader
+     */
+    public function getReader()
+    {
+        return $this->Reader;
+    }
+    
     /**
      * @param $name
      * @return mixed
@@ -45,13 +78,15 @@ abstract class Manager implements Interfaces\DomainManager
     
     /**
      * @param $name
-     * @return \Everon\Domain\Interfaces\Repository
+     * @return Repository
      */
     public function getRepository($name)
     {
         if (isset($this->models[$name]) === false) {
-            
-            $Schema = $this->getFactory()->buildSchemaTable($name, $constraints, $foreign_keys);
+            $Connection = $this->getConnectionManager()->getConnectionByName('schema');
+            $Reader = $this->getFactory()->buildSchemaReader($Connection);
+            $Schema = $this->getFactory()->buildSchema($Connection->getName(), $Reader, $this->getConnectionManager());
+            //$SchemaTable = $this->getFactory()->buildSchemaTable($name, $Schema->getColumns(), $constraints, $foreign_keys);
             $PdoAdapter = $this->getFactory()->buildDataMapper($name, $Schema);
             $this->models[$name] = $this->getFactory()->buildDomainRepository($name, $PdoAdapter);
         }

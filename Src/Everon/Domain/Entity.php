@@ -29,7 +29,7 @@ class Entity extends Helper\Popo implements Interfaces\Entity
     protected $state = self::STATE_NEW;
 
 
-    public function __construct($id, array $data = array())
+    public function __construct($id, array $data=[])
     {
         $this->id = $id;
         $this->data = $data;

@@ -10,6 +10,7 @@
 namespace Everon\Interfaces;
 
 use Everon\Domain\Interfaces\Entity;
+use Everon\DataMapper\Interfaces\Schema;
 use Everon\DataMapper\Interfaces\Schema\Table;
 
 interface DataMapper
@@ -26,10 +27,21 @@ interface DataMapper
     
     function fetchAll(array $criteria);
 
+    function getName();
+
+    /**
+     * @return Schema
+     */
+    function getSchema();
+
     /**
      * @return Table
-     */    
+     */
     function getTable();
-    
-    function getName();
+
+    /**
+     * @param Table $Table
+     * @return Table
+     */
+    function setTable(Table $Table);    
 }

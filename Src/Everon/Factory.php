@@ -63,7 +63,7 @@ class Factory implements Interfaces\Factory
      */
     public function getFullClassName($namespace, $class_name)
     {
-        if ($class_name[0] === '\\') {
+        if ($class_name[0] === '\\') { //used for when laading classmap from cache
             return $class_name; //absolute name
         }
         
@@ -330,15 +330,24 @@ class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildDataMapper($name, DataMapper\Interfaces\Schema $Schema, $ns='Everon\DataMapper')
+
+    /**
+     * @param DataMapper\Interfaces\Schema\Table $Table
+     * @param DataMapper\Interfaces\Schema $Schema
+     * @param string $ns
+     * @return Interfaces\DataMapper
+     * @throws Exception\Factory
+     */
+    public function buildDataMapper(DataMapper\Interfaces\Schema\Table $Table, DataMapper\Interfaces\Schema $Schema, $ns='Everon\DataMapper')
     {
+        $name = $this->stringUnderscoreToCamel($Table->getName());
         try {
             $class_name = $this->getFullClassName($ns, $name);
 
             /**
              * @var Interfaces\DataMapper $DataMapper
              */
-            $DataMapper = new $class_name($name, $Schema);
+            $DataMapper = new $class_name($Table, $Schema);
             $this->injectDependencies($class_name, $DataMapper);
             return $DataMapper;
         }
@@ -351,7 +360,7 @@ class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildDomainEntity($class_name, $id, array $data, $ns='Everon\Domain')
+    public function buildDomainEntity($class_name, $id, array $data, $ns='Everon\Test')
     {
         try {
             $class_name = $this->getFullClassName($ns, $class_name.'\Entity');
@@ -415,13 +424,16 @@ class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildSchema($name, DataMapper\Interfaces\Schema\Reader $Reader)
+    public function buildSchema($name, DataMapper\Interfaces\Schema\Reader $Reader, DataMapper\Interfaces\Connectionmanager $ConnectionManager, $ns='Everon\DataMapper')
     {
         try {
-
+            $class_name = $this->getFullClassName($ns, $name);
+            $Schema = new $class_name($Reader, $ConnectionManager);
+            $this->injectDependencies($class_name, $Schema);
+            return $Schema;
         }
         catch (\Exception $e) {
-            throw new Exception\Factory('SchemaTable initialization error', null, $e);
+            throw new Exception\Factory('Schema: "%s" initialization error', $name, $e);
         }
     }
     
@@ -432,10 +444,9 @@ class Factory implements Interfaces\Factory
     {
         $name = $Connection->getName();
         try {
-            $driver = $Connection->getDriver();
             list($dsn, $username, $password, $options) = $Connection->toPdo();
             $PdoAdapter = $this->buildPdoAdapter($dsn, $username, $password, $options);
-            $class_name = ucfirst($this->stringUnderscoreToCamel($driver)).'\Reader';
+            $class_name = $Connection->getMapper().'\Reader';
             $class_name = $this->getFullClassName($ns, $class_name);
             $SchemaReader = new $class_name($name, $PdoAdapter);
             $this->injectDependencies($class_name, $SchemaReader);
@@ -449,28 +460,33 @@ class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildSchemaTable($name, array $columns, array $constraints, array $foreign_keys)
+    public function buildSchemaTable($name, array $columns, array $constraints, array $foreign_keys, $ns='Everon\DataMapper')
     {
         try {
-            $column_list = array();
+            $column_list = [];
             foreach ($columns as $column_data) {
-                $column_list[] = new Schema\MySql\Column($column_data); //todo: xxx
+                $class_name = $this->getFullClassName($ns, 'Schema\MySql\Column');
+                $column_list[] = $class_name($column_data); //todo: coupled to mysql
             }
 
-            $constraint_list = array();
+            $constraint_list = [];
             foreach ($constraints as $constraint_data) {
-                $constraint_list[] = new Schema\Constraint($constraint_data);
+                $class_name = $this->getFullClassName($ns, 'Schema\Constraint');
+                $constraint_list[] = $class_name($constraint_data);
             }
 
-            $fk_list = array();
+            $fk_list = [];
             foreach ($foreign_keys as $fk_data) {
-                $fk_list[] = new Schema\ForeignKey($fk_data);
+                $class_name = $this->getFullClassName($ns, 'Schema\ForeignKey');
+                $fk_list[] = $class_name($fk_data);
             }
 
-            return new Schema\Table($name, $column_list, $constraint_list, $fk_list);
+            $class_name = $this->getFullClassName($ns,'Schema\Table');
+            $Table = new $class_name($name, $column_list, $constraint_list, $fk_list);
+            return $Table;
         }
         catch (\Exception $e) {
-            throw new Exception\Factory('SchemaTable initialization error', null, $e);
+            throw new Exception\Factory('SchemaTable: "%" initialization error', $name, $e);
         }
     }
 

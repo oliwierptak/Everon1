@@ -19,7 +19,13 @@ class Schema implements Interfaces\Schema
     
     protected $name = null;
     
-    protected $tables = array();
+    protected $tables = [];
+    
+    protected $columns = [];
+    
+    protected $constraints = [];
+    
+    protected $foreign_keys = [];
 
     /**
      * @var Interfaces\ConnectionManager
@@ -61,11 +67,11 @@ class Schema implements Interfaces\Schema
         };
 
         foreach ($table_list as $name) {
-            $columns = $filterPerTableName($name, $column_list);
-            $constraints = $filterPerTableName($name, $constraint_list);
-            $foreign_keys = $filterPerTableName($name, $foreign_key_list);
+            $this->columns[$name] = $filterPerTableName($name, $column_list);
+            $this->constraints[$name] = $filterPerTableName($name, $constraint_list);
+            $this->foreign_keys[$name] = $filterPerTableName($name, $foreign_key_list);
             
-            $this->tables[$name] = $this->getFactory()->buildSchemaTable($name, $columns, $constraints, $foreign_keys);
+            $this->tables[$name] = $this->getFactory()->buildSchemaTable($name, $this->columns[$name], $this->constraints[$name], $this->foreign_keys[$name]);
         }
     }
     

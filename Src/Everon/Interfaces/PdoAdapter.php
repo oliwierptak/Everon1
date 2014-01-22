@@ -20,7 +20,7 @@ interface PdoAdapter
      * @return \PDOStatement
      * @throws Exception\Pdo
      */
-    function exec($sql, $parameters=array());
+    function exec($sql, $parameters=[]);
 
     /**
      * @param \PDO $Pdo

@@ -42,6 +42,7 @@ class Item implements Interfaces\ConnectionItem
      * password =
      * default = true
      * encoding = UTF8
+     * mapper = MySql
      * </code>
      */
     public function __construct(array $data)
@@ -54,6 +55,7 @@ class Item implements Interfaces\ConnectionItem
         $this->password = $data['password'];
         $this->encoding = $data['encoding'];
         $this->pdo_options = $data['pdo_options'];
+        $this->mapper = $data['mapper'];
 
         $this->data = $data;
         $this->dsn = $this->getDsn();
@@ -83,6 +85,11 @@ class Item implements Interfaces\ConnectionItem
     public function getHost()
     {
         return $this->host;
+    }
+    
+    public function getMapper()
+    {
+        return $this->mapper;
     }
     
     public function getName()
