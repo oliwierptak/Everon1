@@ -12,7 +12,7 @@ namespace Everon\Test;
 use Everon\Domain;
 use Everon\Domain\Interfaces;
 
-class EntityTest extends \Everon\TestCase
+class RepositoryTest extends \Everon\TestCase
 {
     /**
      * @dataProvider222 dataProvider22
