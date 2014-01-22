@@ -7,9 +7,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon\DataMapper\Interfaces;
+namespace Everon\DataMapper\Interfaces\Schema;
 
-interface SchemaMapper
+interface Reader
 {
     function getTableList();
     function getColumnList();

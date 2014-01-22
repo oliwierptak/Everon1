@@ -74,6 +74,26 @@ class Item implements Interfaces\ConnectionItem
         
         return $this->dsn;
     }
+
+    public function getDriver()
+    {
+        return $this->driver;
+    }
+    
+    public function getHost()
+    {
+        return $this->host;
+    }
+    
+    public function getName()
+    {
+        return $this->name;
+    }
+    
+    public function getEncoding()
+    {
+        return $this->encoding;
+    }
     
     public function getUsername()
     {
@@ -99,5 +119,4 @@ class Item implements Interfaces\ConnectionItem
             [\PDO::MYSQL_ATTR_INIT_COMMAND => sprintf('SET NAMES \'%s\'', $this->encoding)]
         );        
     }
-    
 }

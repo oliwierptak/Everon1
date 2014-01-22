@@ -9,7 +9,7 @@
  */
 namespace Everon\Domain;
 
-use Everon\Domain\Interfaces\Entity;
+use Everon\Domain\Interfaces;
 use Everon\Interfaces\DataMapper;
 
 abstract class Repository implements Interfaces\Repository
@@ -19,9 +19,12 @@ abstract class Repository implements Interfaces\Repository
      */
     protected $Mapper = null;
     
+    protected $name = null;
     
-    public function __construct(DataMapper $Mapper)
+    
+    public function __construct($name, DataMapper $Mapper)
     {
+        $this->name = $name;
         $this->Mapper = $Mapper;
     }
 
@@ -40,11 +43,16 @@ abstract class Repository implements Interfaces\Repository
     {
         $this->Mapper = $Mapper;
     }
+    
+    public function getName()
+    {
+        return $this->name;
+    }
 
     /**
      * @inheritdoc
      */
-    public function persist(Entity $Entity)
+    public function persist(Interfaces\Entity $Entity)
     {
         if ($Entity->isNew()) {
             $this->getMapper()->add($Entity);
@@ -52,5 +60,7 @@ abstract class Repository implements Interfaces\Repository
         else {
             $this->getMapper()->save($Entity);
         }
+
+        $Entity->persist();
     }
 }

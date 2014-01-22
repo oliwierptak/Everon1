@@ -50,7 +50,10 @@ abstract class Manager implements Interfaces\DomainManager
     public function getRepository($name)
     {
         if (isset($this->models[$name]) === false) {
-            $this->models[$name] = $this->getFactory()->buildDomainRepository($name);
+            
+            $Schema = $this->getFactory()->buildSchemaTable($name, $constraints, $foreign_keys);
+            $PdoAdapter = $this->getFactory()->buildDataMapper($name, $Schema);
+            $this->models[$name] = $this->getFactory()->buildDomainRepository($name, $PdoAdapter);
         }
 
         return $this->models[$name];

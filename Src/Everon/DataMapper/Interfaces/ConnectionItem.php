@@ -12,6 +12,10 @@ namespace Everon\DataMapper\Interfaces;
 interface ConnectionItem extends \Everon\Interfaces\Immutable, \Everon\Interfaces\Arrayable
 {
     function getDsn();
+    function getDriver();
+    function getHost();
+    function getName();
+    function getEncoding();
     function getUsername();
     function getPassword();
     function getOptions();

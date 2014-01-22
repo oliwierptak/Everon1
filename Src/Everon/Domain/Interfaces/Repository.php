@@ -27,4 +27,6 @@ interface Repository
      * @param DataMapper $Mapper
      */    
     function setMapper(DataMapper $Mapper);
+
+    function getName();
 }

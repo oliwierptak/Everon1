@@ -30,4 +30,6 @@ interface DataMapper
      * @return Table
      */    
     function getTable();
+    
+    function getName();
 }

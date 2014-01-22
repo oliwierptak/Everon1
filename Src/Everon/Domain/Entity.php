@@ -163,6 +163,11 @@ class Entity extends Helper\Popo implements Interfaces\Entity
     {
         $this->data[$name] = $value;
     }
+    
+    public function persist()
+    {
+        $this->markPersisted();
+    }
 
     /**
      * Does the usual call but also marks properties as modified when setter is used

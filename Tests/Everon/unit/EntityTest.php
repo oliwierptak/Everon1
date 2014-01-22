@@ -17,7 +17,7 @@ class EntityTest extends \Everon\TestCase
     /**
      * @dataProvider dataProvider
      */    
-    public function testConstructor(Interfaces\Entity $Entity, array $data)
+    public function testConstructor(MyEntity\Entity $Entity, array $data)
     {
         $Entity = new \Everon\Domain\Entity(1, $data);
         $this->assertInstanceOf('\Everon\Domain\Interfaces\Entity', $Entity);
@@ -27,7 +27,7 @@ class EntityTest extends \Everon\TestCase
     /**
      * @dataProvider dataProvider
      */
-    public function testEntityStateShouldBeNewWhenIdNotSet(Interfaces\Entity $Entity, array $data)
+    public function testEntityStateShouldBeNewWhenIdNotSet(MyEntity\Entity $Entity, array $data)
     {
         $Entity = new \Everon\Domain\Entity(null, $data);
         $this->assertNull($Entity->getId());
@@ -40,7 +40,7 @@ class EntityTest extends \Everon\TestCase
     /**
      * @dataProvider dataProvider
      */
-    public function testEntityStateShouldBePersistedWhenIdIsSet(Interfaces\Entity $Entity, array $data)
+    public function testEntityStateShouldBePersistedWhenIdIsSet(MyEntity\Entity $Entity, array $data)
     {
         $this->assertNotNull($Entity->getId());
         $this->assertTrue($Entity->isPersisted());
@@ -52,7 +52,7 @@ class EntityTest extends \Everon\TestCase
     /**
      * @dataProvider dataProvider
      */
-    public function testEntityShouldReturnValueByGetter(Interfaces\Entity $Entity, array $data)
+    public function testEntityShouldReturnValueByGetter(MyEntity\Entity $Entity, array $data)
     {
         $this->assertEquals($data['first_name'], $Entity->getFirstName());
         $this->assertEquals($data['date_of_birth'], $Entity->getDateOfBirth());
@@ -61,7 +61,7 @@ class EntityTest extends \Everon\TestCase
     /**
      * @dataProvider dataProvider
      */
-    public function testEntityShouldMarkModifiedProperties(Interfaces\Entity $Entity, array $data)
+    public function testEntityShouldMarkModifiedProperties(MyEntity\Entity $Entity, array $data)
     {
         $this->assertEquals($data['first_name'], $Entity->getFirstName());
         $this->assertEquals($data['last_name'], $Entity->getLastName());
@@ -82,16 +82,16 @@ class EntityTest extends \Everon\TestCase
     /**
      * @dataProvider dataProvider
      */
-    public function testEntityGetValueByNameShouldReturnValue(Interfaces\Entity $Entity, array $data)
+    public function testEntityGetValueByNameShouldReturnValue(MyEntity\Entity $Entity, array $data)
     {
         $this->assertEquals($data['first_name'], $Entity->getValueByName('first_name'));
         $this->assertEquals($data['last_name'], $Entity->getValueByName('last_name'));
     }
-    
+
     /**
      * @dataProvider dataProvider
      */
-    public function testEntitySetValueByNameShouldSetValue(Interfaces\Entity $Entity, array $data)
+    public function testEntitySetValueByNameShouldSetValue(MyEntity\Entity $Entity, array $data)
     {
         $Entity->setValueByName('first_name', 'Tom');
         $Entity->setValueByName('last_name', 'Smith');

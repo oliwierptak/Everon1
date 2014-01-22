@@ -11,9 +11,8 @@ namespace Everon\DataMapper\Schema\MySql;
 
 use Everon\DataMapper\Interfaces;
 use Everon\Interfaces\PdoAdapter;
-use Everon\Domain\Interfaces\Entity;
 
-class Reader implements Interfaces\SchemaMapper
+class Reader implements Interfaces\Schema\Reader
 {
     protected $name = null;
 

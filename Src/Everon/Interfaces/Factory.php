@@ -13,6 +13,7 @@ use Everon\Config;
 use Everon\DataMapper\Interfaces\Schema as SchemaInterface;
 use Everon\Domain;
 use Everon\Exception;
+use Everon\DataMapper;
 use Everon\Interfaces;
 use Everon\View;
 
@@ -116,6 +117,14 @@ interface Factory
     function buildDomainManager($class_name, $ns='Everon\Model\Manager');
 
     /**
+     * @param DataMapper\Interfaces\ConnectionItem $Connection
+     * @param string $ns
+     * @return mixed
+     * @throws Exception\Factory
+     */
+    function buildSchemaReader(DataMapper\Interfaces\ConnectionItem $Connection, $ns='Everon\dataMapper\Schema');    
+    
+    /**
      * @param $name
      * @param array $columns
      * @param array $constraints
@@ -196,12 +205,23 @@ interface Factory
     function buildPdoAdapter($dsn, $username, $password, $options);
 
     /**
-     * @param SchemaInterface\Table $Table
-     * @param Interfaces\PdoAdapter $Pdo
-     * @return Domain\Interfaces\Repository
+     * @param $name
+     * @param DataMapper\Interfaces\Schema $Schema
+     * @param string $ns
+     * @return Interfaces\DataMapper
      * @throws Exception\Factory
      */
-    public function buildDomainRepository(SchemaInterface\Table $Table, Interfaces\PdoAdapter $Pdo);
+    function buildDataMapper($name, DataMapper\Interfaces\Schema $Schema, $ns='Everon\DataMapper');
+
+
+    /**
+     * @param $name
+     * @param Interfaces\DataMapper $DataMapper
+     * @param string $ns
+     * @return mixed
+     * @throws Exception\Factory
+     */
+    function buildDomainRepository($name, Interfaces\DataMapper $DataMapper, $ns='Everon\Domain');
 
     /**
      * @param $class_name

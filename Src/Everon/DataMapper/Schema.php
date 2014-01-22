@@ -27,28 +27,28 @@ class Schema implements Interfaces\Schema
     protected $ConnectionManager = null;
 
     /**
-     * @var Interfaces\SchemaMapper
+     * @var Interfaces\Schema\Reader
      */
-    protected $SchemaMapper = null;
+    protected $Reader = null;
     
     protected $pdo_adapters = null;
 
     
-    public function __construct($name, Interfaces\ConnectionManager $ConnectionManager, Interfaces\SchemaMapper $SchemaMapper)
+    public function __construct($name, Interfaces\ConnectionManager $ConnectionManager, Interfaces\Schema\Reader $Reader)
     {
         $this->name = $name;
         $this->ConnectionManager = $ConnectionManager;
-        $this->SchemaMapper = $SchemaMapper;
+        $this->Reader = $Reader;
 
         $this->init();
     }
 
     protected function init()
     {
-        $table_list = $this->SchemaMapper->getTableList();
-        $column_list = $this->SchemaMapper->getColumnList();
-        $constraint_list = $this->SchemaMapper->getConstraintList();
-        $foreign_key_list = $this->SchemaMapper->getForeignKeyList();
+        $table_list = $this->Reader->getTableList();
+        $column_list = $this->Reader->getColumnList();
+        $constraint_list = $this->Reader->getConstraintList();
+        $foreign_key_list = $this->Reader->getForeignKeyList();
 
         $filterPerTableName = function($table_name, $data) {
             $result = [];

@@ -11,7 +11,6 @@ namespace Everon;
 
 use Everon\Helper;
 use Everon\Interfaces;
-use Everon\DataMapper\Interfaces\Schema as SchemaInterface;
 use Everon\DataMapper\Schema;
 
 class Factory implements Interfaces\Factory
@@ -327,25 +326,27 @@ class Factory implements Interfaces\Factory
             throw new Exception\Factory('PdoAdapter initialization error', null, $e);
         }
     }
-
-
+    
     /**
      * @inheritdoc
      */
-    public function buildDomainRepository(SchemaInterface\Table $Table, Interfaces\PdoAdapter $Pdo)
+    public function buildDataMapper($name, DataMapper\Interfaces\Schema $Schema, $ns='Everon\DataMapper')
     {
-        $name = $Table->getName();
         try {
-            $class_name = ucfirst($this->stringUnderscoreToCamel($name));
-            $class_name = $this->getFullClassName('Everon\Domain\Repository', $class_name);
-            $Repository = new $class_name($Table, $Pdo);
-            $this->injectDependencies($class_name, $Repository);
-            return $Repository;
+            $class_name = $this->getFullClassName($ns, $name);
+
+            /**
+             * @var Interfaces\DataMapper $DataMapper
+             */
+            $DataMapper = new $class_name($name, $Schema);
+            $this->injectDependencies($class_name, $DataMapper);
+            return $DataMapper;
         }
         catch (\Exception $e) {
-            throw new Exception\Factory('DomainRepository: "%s" initialization error', $name, $e);
+            throw new Exception\Factory('DataMapper: "%s" initialization error', $name, $e);
         }
     }
+
 
     /**
      * @inheritdoc
@@ -360,6 +361,22 @@ class Factory implements Interfaces\Factory
         }
         catch (\Exception $e) {
             throw new Exception\Factory('DomainEntity: "%s" initialization error', $class_name, $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildDomainRepository($name, Interfaces\DataMapper $DataMapper, $ns='Everon\Domain')
+    {
+        try {
+            $class_name = $this->getFullClassName($ns, $name.'\Repository');
+            $Repository = new $class_name($name, $DataMapper);
+            $this->injectDependencies($class_name, $Repository);
+            return $Repository;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('DomainRepository: "%s" initialization error', $name, $e);
         }
     }
 
@@ -392,6 +409,40 @@ class Factory implements Interfaces\Factory
         }
         catch (\Exception $e) {
             throw new Exception\Factory('DomainManager: "%s" initialization error', $class_name, $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildSchema($name, DataMapper\Interfaces\Schema\Reader $Reader)
+    {
+        try {
+
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('SchemaTable initialization error', null, $e);
+        }
+    }
+    
+    /**
+     * @inheritdoc
+     */
+    public function buildSchemaReader(DataMapper\Interfaces\ConnectionItem $Connection, $ns='Everon\dataMapper\Schema')
+    {
+        $name = $Connection->getName();
+        try {
+            $driver = $Connection->getDriver();
+            list($dsn, $username, $password, $options) = $Connection->toPdo();
+            $PdoAdapter = $this->buildPdoAdapter($dsn, $username, $password, $options);
+            $class_name = ucfirst($this->stringUnderscoreToCamel($driver)).'\Reader';
+            $class_name = $this->getFullClassName($ns, $class_name);
+            $SchemaReader = new $class_name($name, $PdoAdapter);
+            $this->injectDependencies($class_name, $SchemaReader);
+            return $SchemaReader;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('SchemaReader: "%s" initialization error', $name, $e);
         }
     }
 
