@@ -11,6 +11,7 @@ namespace Everon\Domain;
 
 use Everon\DataMapper\Interfaces\ConnectionManager;
 use Everon\Dependency;
+use Everon\DataMapper\Interfaces\Schema;
 use Everon\DataMapper\Interfaces\Schema\Reader;
 use Everon\Domain\Interfaces\Repository;
 
@@ -28,6 +29,11 @@ abstract class Manager implements Interfaces\Manager
      * @var array
      */
     protected $repositories = null;
+
+    /**
+     * @var array
+     */
+    protected $schemas = null;
 
     /**
      * @var ConnectionManager
@@ -82,14 +88,26 @@ abstract class Manager implements Interfaces\Manager
     public function getRepository($name)
     {
         if (isset($this->repositories[$name]) === false) {
-            $Connection = $this->getConnectionManager()->getConnectionByName('schema');
-            $Reader = $this->getFactory()->buildSchemaReader($Connection);
-            $Schema = $this->getFactory()->buildSchema($Connection->getName(), $Reader, $this->getConnectionManager());
-            $DataMapper = $this->getFactory()->buildDataMapper($name, $Schema);
+            $DataMapper = $this->getFactory()->buildDataMapper($name, $this->getSchema($name));
             $this->repositories[$name] = $this->getFactory()->buildDomainRepository($name, $DataMapper);
         }
 
         return $this->repositories[$name];
-    }    
+    }
+
+    /**
+     * @param $name
+     * @return Schema
+     */
+    public function getSchema($name)
+    {
+        if (isset($this->schemas[$name]) === false) {
+            $Connection = $this->getConnectionManager()->getConnectionByName('schema');
+            $Reader = $this->getFactory()->buildSchemaReader($Connection);
+            $this->schemas[$name] = $this->getFactory()->buildSchema($Connection->getName(), $Reader, $this->getConnectionManager());
+        }
+
+        return $this->schemas[$name];        
+    }
 
 }
