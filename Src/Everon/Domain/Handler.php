@@ -10,12 +10,11 @@
 namespace Everon\Domain;
 
 use Everon\DataMapper\Interfaces\ConnectionManager;
-use Everon\Dependency;
 use Everon\DataMapper\Interfaces\Schema;
-use Everon\DataMapper\Interfaces\Schema\Reader;
+use Everon\Dependency;
 use Everon\Domain\Interfaces\Repository;
 
-abstract class Manager implements Interfaces\Manager
+abstract class Handler implements Interfaces\Handler
 {
     use Dependency\Injection\Factory;
     use Dependency\DataMapper\ConnectionManager;
@@ -35,39 +34,12 @@ abstract class Manager implements Interfaces\Manager
      */
     protected $schemas = null;
 
-    /**
-     * @var ConnectionManager
-     */
-    protected $ConnectionManager = null;
 
-    /**
-     * @var Reader
-     */
-    protected $Reader = null;
-
-
-    public function __construct(Reader $Reader, ConnectionManager $Manager)
+    public function __construct(ConnectionManager $ConnectionManager)
     {
-        $this->Reader = $Reader;
-        $this->ConnectionManager = $Manager;
+        $this->ConnectionManager = $ConnectionManager;
     }
 
-    /**
-     * @param Reader $Reader
-     */
-    public function setReader(Reader $Reader)
-    {
-        $this->Reader = $Reader;
-    }
-
-    /**
-     * @return Reader
-     */
-    public function getReader()
-    {
-        return $this->Reader;
-    }
-    
     /**
      * @param $name
      * @return mixed

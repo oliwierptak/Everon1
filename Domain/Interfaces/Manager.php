@@ -7,14 +7,12 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon\Domain\Manager;
+namespace Everon\Domain\Interfaces;
 
-use Everon\Domain;
-
-class Everon extends Domain\Manager implements Domain\Interfaces\Manager
+interface Manager extends \Everon\Domain\Interfaces\Handler
 {
-    public function init()
-    {
-
-    }
+    /**s
+     * @return \Everon\Domain\User\Repository;
+     */
+    function getUserRepository();
 }

@@ -25,6 +25,7 @@ class Item implements Interfaces\ConnectionItem
     protected $password = null;
     protected $encoding = null;
     protected $pdo_options = null;
+    protected $mapper = null;
     
     protected $dsn = null;
 
@@ -89,6 +90,14 @@ class Item implements Interfaces\ConnectionItem
     
     public function getMapper()
     {
+        if ($this->mapper === null) {
+            switch (strtolower($this->getDriver())) {
+                case 'mysql':
+                    $this->mapper = 'MySql';
+                    break;
+            }
+        }
+        
         return $this->mapper;
     }
     
@@ -119,11 +128,11 @@ class Item implements Interfaces\ConnectionItem
     
     public function toPdo()
     {
-        return array(
+        return [
             $this->getDsn(),
-            $this->user,
-            $this->password,
+            $this->getUsername(),
+            $this->getPassword(),
             [\PDO::MYSQL_ATTR_INIT_COMMAND => sprintf('SET NAMES \'%s\'', $this->encoding)]
-        );        
+        ];        
     }
 }

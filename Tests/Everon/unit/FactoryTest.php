@@ -82,8 +82,8 @@ class FactoryTest extends \Everon\TestCase
         $Factory->getDependencyContainer()->register('ViewManager', function() use ($ViewManagerMock) {
             return $ViewManagerMock;
         });
-        
-        $DomainManagerMock = $this->getMock('\Everon\Domain\Interfaces\Manager');
+
+        $DomainManagerMock = $this->getMock('\Everon\Domain\Interfaces\Manager', [],[],'', false);
         $Factory->getDependencyContainer()->register('DomainManager', function() use ($DomainManagerMock) {
             return $DomainManagerMock;
         });
@@ -312,8 +312,8 @@ class FactoryTest extends \Everon\TestCase
     /**
      * @dataProvider dataProvider
      * @expectedException \Everon\Exception\Factory
-     * @expectedExceptionMessage DomainManager: "Everon\Model\Manager\Test" initialization error.
-     * File for class: "Everon\Model\Manager\Test" could not be found
+     * @expectedExceptionMessage DomainManager: "Everon\Model\Handler\Test" initialization error.
+     * File for class: "Everon\Model\Handler\Test" could not be found
      */
     public function testBuildDomainManagerShouldThrowExceptionWhenWrongClass(Interfaces\Factory $Factory)
     {

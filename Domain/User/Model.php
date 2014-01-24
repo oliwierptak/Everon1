@@ -7,23 +7,8 @@ use Everon\Helper;
 class Model
 {
     use Dependency\Injection\Logger;
-    
-    /**
-     * Example
-     * 
-     * @param $username
-     * @return Helper\Popo
-     */
-    public function getUser($username)
-    {
-        $data = [
-            'id' => 1,
-            'username' => $username,
-            'password' => 'easy'
-        ];
+    use Dependency\Injection\DomainManager;
 
-        return new Helper\Popo($data);
-    }
 
     /**
      * Example
@@ -34,7 +19,7 @@ class Model
      */
     public function authenticate($username, $password)
     {
-        $User = $this->getUser($username);
+        $User = $this->getDomainManager()->getUserRepository()->getUserByUsername($username);
         if ($User->getPassword() === $password) {
             $this->getLogger()->auth('Authentication successful for user: "%s"', [$username]);
             return $User;

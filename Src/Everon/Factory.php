@@ -9,6 +9,7 @@
  */
 namespace Everon;
 
+use Everon\DataMapper\Interfaces\ConnectionManager;
 use Everon\Helper;
 use Everon\Interfaces;
 use Everon\DataMapper\Schema;
@@ -326,17 +327,38 @@ class Factory implements Interfaces\Factory
             throw new Exception\Factory('PdoAdapter initialization error', null, $e);
         }
     }
-    
+
     /**
      * @inheritdoc
      */
 
+
+    public function buildConnectionManager(Interfaces\Config $DatabaseConfig , $ns='Everon\DataMapper')
+    {
+        try {
+            $class_name = $this->getFullClassName($ns, 'Connection\Manager');
+
+            $connections = [];
+            $data = $DatabaseConfig->toArray();
+            mpr($data);
+            foreach ($data as $name => $Item) {
+            
+            }
+            
+            /**
+             * @var DataMapper\Interfaces\ConnectionManager $ConnectionManager
+             */
+            $ConnectionManager = new $class_name($connections);
+            $this->injectDependencies($class_name, $ConnectionManager);
+            return $ConnectionManager;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('ConnectionManager: "%s" initialization error', null, $e);
+        }
+    }
+    
     /**
-     * @param DataMapper\Interfaces\Schema\Table $Table
-     * @param DataMapper\Interfaces\Schema $Schema
-     * @param string $ns
-     * @return Interfaces\DataMapper
-     * @throws Exception\Factory
+     * @inheritdoc
      */
     public function buildDataMapper(DataMapper\Interfaces\Schema\Table $Table, DataMapper\Interfaces\Schema $Schema, $ns='Everon\DataMapper')
     {
@@ -355,7 +377,6 @@ class Factory implements Interfaces\Factory
             throw new Exception\Factory('DataMapper: "%s" initialization error', $name, $e);
         }
     }
-
 
     /**
      * @inheritdoc
@@ -416,20 +437,20 @@ class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildDomainManager($class_name, $ns='Everon\Domain\Manager')
+    public function buildDomainManager(ConnectionManager $ConnectionManager, $ns='Everon\Domain')
     {
         try {
-            $class_name = $this->getFullClassName($ns, $class_name);
+            $class_name = $this->getFullClassName($ns, 'Manager');
 
             /**
              * @var Domain\Interfaces\Manager $DomainManager
              */
-            $DomainManager = new $class_name();
+            $DomainManager = new $class_name($ConnectionManager);
             $this->injectDependencies($class_name, $DomainManager);
             return $DomainManager;
         }
         catch (\Exception $e) {
-            throw new Exception\Factory('DomainManager: "%s" initialization error', $class_name, $e);
+            throw new Exception\Factory('DomainManager initialization error', null, $e);
         }
     }
 
