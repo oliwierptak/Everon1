@@ -9,17 +9,18 @@
  */
 namespace Everon\DataMapper\Interfaces;
 
-use Everon\DataMapper\Interfaces;
+use Everon\DataMapper\Connection;
 use Everon\DataMapper\Exception;
+use Everon\DataMapper\Interfaces;
 
 interface ConnectionManager
 {
     /**
      * @param $name
-     * @param array $data
+     * @param Interfaces\ConnectionItem $ConnectionItem
      */
-    function add($name, array $data);
-
+    function add($name, Interfaces\ConnectionItem $ConnectionItem);
+    
     /**
      * @param $name
      */

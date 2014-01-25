@@ -100,6 +100,14 @@ interface Factory
     function buildController($class_name, $ns='Everon\Controller');
 
     /**
+     * @param array $data
+     * @param string $ns
+     * @return mixed
+     * @throws Exception\Factory
+     */
+    function buildConnectionItem(array $data, $ns='Everon\DataMapper');
+
+    /**
      * @param Interfaces\Config $DatabaseConfig
      * @param string $ns
      * @return DataMapper\Interfaces\ConnectionManager
@@ -168,6 +176,14 @@ interface Factory
      * @throws Exception\Factory
      */
     function buildSchemaReader(DataMapper\Interfaces\ConnectionItem $Connection, $ns='Everon\dataMapper\Schema');    
+    
+    /**
+     * @param array $data
+     * @param string $ns
+     * @return DataMapper\Schema\Constraint
+     * @throws Exception\Factory
+     */
+    function buildSchemaConstraint(array $data, $ns='Everon\DataMapper');
     
     /**
      * @param $name <code>table name in database</code>

@@ -9,7 +9,6 @@
  */
 namespace Everon\DataMapper\Interfaces;
 
-use Everon\Domain\Interfaces\Entity;
 use Everon\Interfaces\PdoAdapter;
 
 interface Schema

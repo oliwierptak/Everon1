@@ -31,7 +31,7 @@ class RequestValidatorTest extends \Everon\TestCase
     
     /**
      * @dataProvider dataProvider
-     * @expectedException \Everon\Exception\InvalidRouterParameter
+     * @expectedException \Everon\Exception\InvalidRoute
      * @expectedExceptionMessage Invalid required parameter: "password" for route: "test_complex"
      */
     public function testValidateShouldThrowExceptionWhenError(Interfaces\RequestValidator $Validator, Interfaces\ConfigItemRouter $RouteItem, Interfaces\Request $Request)

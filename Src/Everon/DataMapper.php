@@ -76,4 +76,28 @@ abstract class DataMapper implements Interfaces\DataMapper
     {
         return $this->getTable()->getName();
     }
+
+    /**
+     * @param Entity $Entity
+     * @return array
+     */
+    public function getValuesForQuery(Entity $Entity)
+    {
+        $values = [];
+        foreach ($this->getTable()->getColumns() as $column_name) {//eg. column_name=user_data, Entity->getUserData(), $Entity->data['user_data']
+            $values[] = $Entity->getValueByName($column_name);
+        }
+
+        return $values;
+    }
+
+    public function getPlaceholderForQuery($delimeter=':')
+    {
+        $placeholders = [];
+        foreach ($this->getTable()->getColumns() as $column_name) {
+            $placeholders[] = $delimeter.$column_name;
+        }
+
+        return $placeholders;
+    }
 }

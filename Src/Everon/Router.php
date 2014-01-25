@@ -51,7 +51,7 @@ class Router implements Interfaces\Router
             if ($RouteItem->matchesByPath($Request->getPath())) {
                 $Item = $RouteItem;
                 break;
-            }
+            }   
             
             //remember the first item as default
             $DefaultItem = ($Item === null && $DefaultItem === null) ? $RouteItem : $DefaultItem;

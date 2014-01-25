@@ -9,50 +9,87 @@
  */
 namespace Everon\Test;
 
-use Everon\Environment;
+use Everon\DataMapper\Connection;
+use Everon\Interfaces;
 
 class ConnectionManagerTest extends \Everon\TestCase
 {
     public function testConstructor()
     {
-        $DatabaseConfig = $this->getFactory()->getDependencyContainer()->resolve('ConfigManager')->getConfigByName('database');
-        $connections = $DatabaseConfig->toArray();
+        $connections = [
+            'test' => []
+        ];
         $Manager = new \Everon\DataMapper\Connection\Manager($connections);
-        //$this->assertInstanceOf('\Everon\Interfaces\ConfigManager', $Manager);
+        $this->assertInstanceOf('\Everon\DataMapper\Interfaces\ConnectionManager', $Manager);
+    }
+
+    /**
+     * @dataProvider dataProvider
+     * @param Connection\Manager $Manager
+     * @param Interfaces\Config $DataBaseConfig
+     */
+    public function testAddShouldAddNewConnection(Connection\Manager $Manager, Interfaces\Config $DataBaseConfig)
+    {
+        $this->assertCount(2, $Manager->getConnections());
+        
+        $Item = $this->getMock('\Everon\DataMapper\Interfaces\ConnectionItem');
+        $Manager->add('test', $Item);
+        
+        $this->assertCount(3, $Manager->getConnections());
+        $this->assertInstanceOf('\Everon\DataMapper\Interfaces\ConnectionItem', $Manager->getConnectionByName('test'));
+        $this->assertInstanceOf('\Everon\DataMapper\Interfaces\ConnectionItem', $Manager->getConnections()['test']);
+    }
+
+    /**
+     * @dataProvider dataProvider
+     * @param Connection\Manager $Manager
+     * @param Interfaces\Config $DataBaseConfig
+     */
+    public function testRemoveShouldRemoveExistingConnection(Connection\Manager $Manager, Interfaces\Config $DataBaseConfig)
+    {
+        $this->assertCount(2, $Manager->getConnections());
+
+        $Manager->remove('example');
+
+        $this->assertCount(1, $Manager->getConnections());
+    }
+    
+    /**
+     * @dataProvider dataProvider
+     * @param Connection\Manager $Manager
+     * @param Interfaces\Config $DataBaseConfig
+     */
+    public function testGetConnectionsShouldReturnArrayWithConnections(Connection\Manager $Manager, Interfaces\Config $DataBaseConfig)
+    {
+        $this->assertInternalType('array', $Manager->getConnections());
+        $this->assertCount(2, $Manager->getConnections());
+    }
+
+    /**
+     * @dataProvider dataProvider
+     * @param Connection\Manager $Manager
+     * @param Interfaces\Config $DataBaseConfig
+     */
+    public function testGetConnectionByNameShouldReturnInstanceOfConnectionItem(Connection\Manager $Manager, Interfaces\Config $DataBaseConfig)
+    {
+        $this->assertInternalType('array', $Manager->getConnections());
+        $this->assertCount(2, $Manager->getConnections());
+        
+        $Item = $Manager->getConnectionByName('example');
+        
+        $this->assertInstanceOf('\Everon\DataMapper\Interfaces\ConnectionItem', $Item);
     }
 
     public function dataProvider()
     {
         /**
-         * @var \Everon\Interfaces\Factory $Factory
+         * @var Interfaces\Config $DatabaseConfig
          */
-        $Factory = $this->getFactory();
-
-        //$name, Interfaces\ConfigLoaderItem $ConfigLoaderItem, \Closure $Compiler
-        $Compiler = function(&$data) {};
-
-        $filename = $this->getConfigDirectory().'test.ini';
-        $ConfigLoaderItem = new \Everon\Config\Loader\Item($filename, parse_ini_file($filename, true));
-        $Expected = new \Everon\Config(
-            'test',
-            $ConfigLoaderItem,
-            $Compiler
-        );
-        
-        $Loader = new \Everon\Config\Loader($this->getConfigDirectory(), $this->getConfigCacheDirectory());
-        $Loader->setFactory($Factory);
-        
-        $ConfigManager = new \Everon\Config\Manager($Loader);
-        $ConfigManager->setFactory($Factory);
-        
-        //todo add setter in TestCase for setting up Environment for tests
-        $Environment = new Environment($this->Environment->getRoot());
-        $Environment->setConfig($this->getConfigDirectory());
-        $Environment->setCacheConfig($this->getConfigCacheDirectory());
-        $ConfigManager->setEnvironment($Environment);
+        $DatabaseConfig = $this->getFactory()->getDependencyContainer()->resolve('ConfigManager')->getConfigByName('database');
+        $ConnectionManager = $this->getFactory()->buildConnectionManager($DatabaseConfig);
         
         return [
-            [$ConfigManager, $Expected]
+            [$ConnectionManager, $DatabaseConfig]
         ];
     }
 

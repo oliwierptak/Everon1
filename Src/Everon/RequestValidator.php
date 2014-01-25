@@ -53,14 +53,14 @@ class RequestValidator implements Interfaces\RequestValidator
      * @param $route_name
      * @param array $route_params
      * @param array $parsed_request_params
-     * @throws Exception\InvalidRouterParameter
+     * @throws Exception\InvalidRoute
      */
     protected function validateRoute($route_name, array $route_params, array $parsed_request_params)
     {
         foreach ($route_params as $name => $expression) {
             $this->assertIsArrayKey($name, $parsed_request_params,
                 vsprintf('Invalid required parameter: "%s" for route: "%s"', [$name, $route_name]),
-                'InvalidRouterParameter'
+                'InvalidRoute'
             );
         }
     }

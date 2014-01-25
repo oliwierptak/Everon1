@@ -18,39 +18,37 @@ abstract class Mapper extends DataMapper
 {
     protected function getInsertSql(Entity $Entity)
     {
-        $values_str = rtrim(implode(',', $this->getTable()->getPlaceholderForQuery()), ',');
-        $sql = [];
-        $sql[] = sprintf('INSERT INTO `%s.%s`', $this->getSchema()->getName(), $this->getTable()->getName());
-        $sql[] = sprintf('VALUES (%s)', $values_str);
-        $sql = implode("\n". $sql);
-
-        return [$sql, $this->getTable()->getValuesForQuery($Entity)];
+        $values_str = rtrim(implode(',', $this->getPlaceholderForQuery()), ',');
+        $sql = sprintf('INSERT INTO `%s.%s` VALUES (%s)', $this->getSchema()->getName(), $this->getTable()->getName(), $values_str);
+        return [$sql, $this->getValuesForQuery($Entity)];
     }
 
     public function getUpdateSql(Entity $Entity)
     {
-        $values = $this->getTable()->getValuesForQuery($Entity);
+        $pk_name = $this->getTable()->getPk();
+        $values = $this->getValuesForQuery($Entity);
         $values_str = rtrim(implode('=', $values), '=');
-        $sql = sprintf('UPDATE `%s.%s` SET '.$values_str.' WHERE %s = :id', $this->getSchema()->getName(), $this->getTable()->getName(), $this->getTable()->getPk());
-        $params = $this->getTable()->getPlaceholderForQuery();
-        $params[':id'] = $Entity->getId();
+        $sql = sprintf('UPDATE `%s.%s` SET '.$values_str.' WHERE %s = :id', $this->getSchema()->getName(), $this->getTable()->getName(), $pk_name);
+        $params = $this->getPlaceholderForQuery();
+        $params[":${pk_name}"] = $Entity->getId();
         return [$sql, $params];
     }
 
     public function getDeleteSql(Entity $Entity)
     {
-        $sql = sprintf('DELETE FROM `%s.%s` WHERE %s = :id LIMIT 1', $this->getSchema()->getName(), $this->getTable()->getName(), $this->getTable()->getPk());
-        $params = $this->getTable()->getPlaceholderForQuery();
-        $params[':id'] = $Entity->getId();
+        $pk_name = $this->getTable()->getPk();
+        $sql = sprintf('DELETE FROM `%s.%s` WHERE %s = :id LIMIT 1', $this->getSchema()->getName(), $this->getTable()->getName(), $pk_name);
+        $params = $this->getPlaceholderForQuery();
+        $params[":${pk_name}"] = $Entity->getId();
         return [$sql, $params];
     }
 
     public function getFetchOneSql($id)
     {
-        $sql = 'SELECT * FROM `%s.%s` WHERE %s = :id';
         $pk_name = $this->getTable()->getPk();
+        $sql = 'SELECT * FROM `%s.%s` WHERE %s = :id';
         $sql = sprintf($sql, $this->getSchema()->getName(), $this->getTable()->getName(), $pk_name);
-        return [$sql, [':id' => $id]];
+        return [$sql, [":${pk_name}" => $id]];
     }
 
     public function getFetchAllSql(array $criteria)

@@ -43,5 +43,17 @@ interface DataMapper
      * @param Table $Table
      * @return Table
      */
-    function setTable(Table $Table);    
+    function setTable(Table $Table);
+
+
+    /**
+     * @param Entity $Entity
+     * @return array
+     */
+    function getValuesForQuery(Entity $Entity);
+
+    /**
+     * @return array
+     */
+    function getPlaceholderForQuery();
 }

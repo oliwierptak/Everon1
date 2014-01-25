@@ -241,7 +241,7 @@ class FactoryTest extends \Everon\TestCase
     /**
      * @dataProvider dataProviderForExceptions
      * @expectedException \Everon\Exception\Factory
-     * @expectedExceptionMessage Core initialization error
+     * @expectedExceptionMessage Console initialization error
      */
     public function testBuildCoreConsoleShouldThrowExceptionWhenWrongClass(Interfaces\Factory $FactoryMock)
     {
