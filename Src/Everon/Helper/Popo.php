@@ -22,6 +22,13 @@ class Popo implements Interfaces\Arrayable
 {
     use Helper\ToArray;
     
+    const CALL_TYPE_GETTER = 1;
+    const CALL_TYPE_SETTER = 2;
+    const CALL_TYPE_METHOD = 3;
+    
+    protected $call_type = null;
+    
+    protected $call_property = null;
 
     /**
      * @param array $data
@@ -49,12 +56,22 @@ class Popo implements Interfaces\Arrayable
      */
     public function __call($name, $arguments)
     {
+        $this->call_type = null;
+        $this->call_property = null;
+        
         if (empty($this->data)) {
             throw new Exception\Popo('Empty data in: "%s"', get_class($this));
         }
 
         $getter = strpos($name, 'get') === 0;
         $setter = strpos($name, 'set') === 0;
+
+        if ($getter) {
+            $this->call_type = self::CALL_TYPE_GETTER;
+        } 
+        else if ($setter) {
+            $this->call_type = self::CALL_TYPE_SETTER;
+        }
 
         if ($setter === false && $getter === false) {
             throw new Exception\Popo('Unknown method: "%s" in "%s"', [$name, get_class($this)]);
@@ -63,6 +80,7 @@ class Popo implements Interfaces\Arrayable
         $camelized = preg_split('/(?<=\\w)(?=[A-Z])/', $name);
         array_shift($camelized);
         $property = strtolower(implode('_', $camelized));
+        $this->call_property = $property;
 
         if (array_key_exists($property, $this->data) === false) {
             if ($getter) {
@@ -71,13 +89,14 @@ class Popo implements Interfaces\Arrayable
         }
 
         if ($getter) {
+            $this->call_type = self::CALL_TYPE_GETTER;
             return $this->data[$property];
         }
-
-        if ($setter) {
+        else if ($setter) {
+            $this->call_type = self::CALL_TYPE_SETTER;
             $this->data[$property] = $arguments[0];
         }
-
+        
         return true;
     }
 

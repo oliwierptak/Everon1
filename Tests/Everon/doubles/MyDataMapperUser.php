@@ -7,15 +7,10 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon\Interfaces;
+namespace Everon\Test\DataMapper;
 
-interface ModelManager
+use Everon\DataMapper;
+
+class User extends DataMapper\Schema\MySql\Mapper
 {
-
-    /**
-     * @param $name
-     * @return mixed
-     */
-    function getModel($name);
-
 }

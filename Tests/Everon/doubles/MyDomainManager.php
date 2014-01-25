@@ -7,9 +7,11 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon\Dependency\Injection;
+namespace Everon\Test;
 
-trait ModelManager
+class MyDomainManager extends \Everon\Domain\Manager
 {
-    use \Everon\Dependency\ModelManager;
+    public function init()
+    {
+    }
 }

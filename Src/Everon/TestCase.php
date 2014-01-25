@@ -22,12 +22,12 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
     protected $Environment = null;
 
 
-    public function __construct($name = NULL, array $data = array(), $dataName = '')
+    public function __construct($name = NULL, array $data=[], $dataName='')
     {
         parent::__construct($name, $data, $dataName);
 
         $nesting = implode('..', array_fill(0, 3, DIRECTORY_SEPARATOR));
-        $root =  realpath(dirname(__FILE__).$nesting).DIRECTORY_SEPARATOR;
+        $root = realpath(dirname(__FILE__).$nesting).DIRECTORY_SEPARATOR;
         
         $this->Environment = new Environment($root);
         

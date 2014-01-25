@@ -10,8 +10,10 @@
 namespace Everon\Interfaces;
 
 use Everon\Config;
-use Everon\Interfaces;
+use Everon\Domain;
 use Everon\Exception;
+use Everon\DataMapper;
+use Everon\Interfaces;
 use Everon\View;
 
 interface Factory
@@ -19,12 +21,25 @@ interface Factory
     /**
      * @return Interfaces\DependencyContainer
      */
-    public function getDependencyContainer();
+    function getDependencyContainer();
     
     /**
      * @param Interfaces\DependencyContainer $Container
      */
     function setDependencyContainer(Interfaces\DependencyContainer $Container);
+
+    /**
+     * @param $class_name
+     * @param $Receiver
+     */
+    function injectDependencies($class_name, $Receiver);
+
+    /**
+     * @param $namespace
+     * @param $class_name
+     * @return string
+     */
+    function getFullClassName($namespace, $class_name);    
 
     /**
      * @return Interfaces\Core
@@ -52,7 +67,7 @@ interface Factory
      * @return Config\Manager|mixed
      * @throws Exception\Factory
      */
-    public function buildConfigManager(Interfaces\ConfigLoader $Loader);
+    function buildConfigManager(Interfaces\ConfigLoader $Loader);
 
     /**
      * @return Interfaces\ConfigExpressionMatcher
@@ -84,15 +99,86 @@ interface Factory
      */
     function buildController($class_name, $ns='Everon\Controller');
 
-    function buildModel($class_name);
+    /**
+     * @param Interfaces\Config $DatabaseConfig
+     * @param string $ns
+     * @return DataMapper\Interfaces\ConnectionManager
+     * @throws Exception\Factory
+     */
+    function buildConnectionManager(Interfaces\Config $DatabaseConfig , $ns='Everon\DataMapper');
+
+    /**
+     * @param DataMapper\Interfaces\Schema\Table $Table
+     * @param DataMapper\Interfaces\Schema $Schema
+     * @param string $ns
+     * @return Interfaces\DataMapper
+     * @throws Exception\Factory
+     */
+    function buildDataMapper(DataMapper\Interfaces\Schema\Table $Table, DataMapper\Interfaces\Schema $Schema, $ns='Everon\DataMapper');
+
+    /**
+     * @param $name
+     * @param Interfaces\DataMapper $DataMapper
+     * @param string $ns
+     * @return mixed
+     * @throws Exception\Factory
+     */
+    function buildDomainRepository($name, Interfaces\DataMapper $DataMapper, $ns='Everon\Domain');
 
     /**
      * @param $class_name
+     * @param string $id
+     * @param array $data
      * @param string $ns
-     * @return Interfaces\ModelManager
+     * @return Domain\Interfaces\Entity
      * @throws Exception\Factory
      */
-    function buildModelManager($class_name, $ns='Everon\Model\Manager');
+    function buildDomainEntity($class_name, $id, array $data, $ns='Everon\Domain');
+    
+    /**
+     * @param $class_name
+     * @param string $ns
+     * @return mixed
+     * @throws Exception\Factory
+     */
+    function buildDomainModel($class_name, $ns='Everon\Domain');
+
+    /**
+     * @param DataMapper\Interfaces\ConnectionManager $ConnectionManager
+     * @param string $ns
+     * @return Domain\Interfaces\Manager
+     * @throws Exception\Factory
+     */
+    function buildDomainManager(DataMapper\Interfaces\ConnectionManager $ConnectionManager, $ns='Everon\Domain');
+
+    /**
+     * @param $name
+     * @param DataMapper\Interfaces\Schema\Reader $Reader
+     * @param DataMapper\Interfaces\ConnectionManager $ConnectionManager
+     * @param string $ns
+     * @return mixed
+     * @throws Exception\Factory
+     */
+    function buildSchema($name, DataMapper\Interfaces\Schema\Reader $Reader, DataMapper\Interfaces\ConnectionManager $ConnectionManager, $ns='Everon\DataMapper');
+
+    /**
+     * @param DataMapper\Interfaces\ConnectionItem $Connection
+     * @param string $ns
+     * @return mixed
+     * @throws Exception\Factory
+     */
+    function buildSchemaReader(DataMapper\Interfaces\ConnectionItem $Connection, $ns='Everon\dataMapper\Schema');    
+    
+    /**
+     * @param $name <code>table name in database</code>
+     * @param array $columns
+     * @param array $constraints
+     * @param array $foreign_keys
+     * @param $ns
+     * @return DataMapper\Interfaces\Schema\Table
+     * @throws Exception\Factory
+     */
+    function buildSchemaTable($name, array $columns, array $constraints, array $foreign_keys, $ns='Everon\DataMapper\Schema');
 
     /**
      * @param $name
@@ -129,7 +215,17 @@ interface Factory
      * @return FileSystem
      * @throws Exception\Factory
      */
-    public function buildFileSystem($root);    
+    function buildFileSystem($root);
+
+    /**
+     * @param $dsn
+     * @param $username
+     * @param $password
+     * @param $options
+     * @return Interfaces\PdoAdapter|PdoAdapter
+     * @throws Exception\Factory
+     */
+    function buildPdoAdapter($dsn, $username, $password, $options);
 
     /**
      * @param $filename
@@ -219,7 +315,7 @@ interface Factory
      * @return Interfaces\Request
      * @throws Exception\Factory
      */
-    public function buildConsoleRequest(array $server, array $get, array $post, array $files);    
+    function buildConsoleRequest(array $server, array $get, array $post, array $files);    
 
     /**
      * @param $root

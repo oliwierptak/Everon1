@@ -1,30 +1,14 @@
 <?php
-namespace Everon\Model;
+namespace Everon\Domain\User;
 
 use Everon\Dependency;
-use Everon\Exception;
-use Everon\Interfaces;
+use Everon\Helper;
 
-class User
+class Model
 {
     use Dependency\Injection\Logger;
+    use Dependency\Injection\DomainManager;
 
-    /**
-     * Example
-     * 
-     * @param $username
-     * @return \Everon\Helper\Popo
-     */
-    public function getUser($username)
-    {
-        $data = [
-            'id' => 1,
-            'username' => $username,
-            'password' => 'easy'
-        ];
-
-        return new \Everon\Helper\Popo($data);
-    }
 
     /**
      * Example
@@ -35,7 +19,7 @@ class User
      */
     public function authenticate($username, $password)
     {
-        $User = $this->getUser($username);
+        $User = $this->getDomainManager()->getUserRepository()->getUserByUsername($username);
         if ($User->getPassword() === $password) {
             $this->getLogger()->auth('Authentication successful for user: "%s"', [$username]);
             return $User;

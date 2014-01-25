@@ -13,9 +13,11 @@ require_once(
  * @var Interfaces\Factory $Factory
  */
 
-$Bootstrap->getClassLoader()->add('Everon\View', $Environment->getView());
-$Bootstrap->getClassLoader()->add('Everon\Model', $Environment->getModel());
+$Bootstrap->getClassLoader()->add('Everon', $Environment->getEveron());
+$Bootstrap->getClassLoader()->add('Everon\Domain', $Environment->getDomain());
 $Bootstrap->getClassLoader()->add('Everon\Mvc\Controller', $Environment->getController());
+$Bootstrap->getClassLoader()->add('Everon\View', $Environment->getView());
+$Bootstrap->getClassLoader()->add('Everon\DataMapper', $Environment->getDataMapper());
 
 //replace default Router
 $Container->register('Router', function() use ($Factory) {
@@ -29,9 +31,14 @@ $Container->register('Request', function() use ($Factory) {
     return $Factory->buildRequest($_SERVER, $_GET, $_POST, $_FILES);
 });
 
-$Container->register('ModelManager', function() use ($Factory) {
-    $manager_name = $Factory->getDependencyContainer()->resolve('ConfigManager')->getConfigValue('application.model.manager');
-    return $Factory->buildModelManager($manager_name);
+$Container->register('ConnectionManager', function() use ($Factory) {
+    $DatabaseConfig = $Factory->getDependencyContainer()->resolve('ConfigManager')->getConfigByName('database');
+    return $Factory->buildConnectionManager($DatabaseConfig);
+});
+
+$Container->register('DomainManager', function() use ($Factory) {
+    $ConnectionManager = $Factory->getDependencyContainer()->resolve('ConnectionManager');
+    return $Factory->buildDomainManager($ConnectionManager);
 });
 
 $Container->register('ViewManager', function() use ($Factory) {

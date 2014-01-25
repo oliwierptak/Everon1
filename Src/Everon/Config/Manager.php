@@ -192,7 +192,7 @@ EOF;
             $this->loadAndRegisterConfigs();
         }
 
-        $this->assertIsArrayKey($name, $this->configs, 'Invalid config name: %s', 'Config');
+        $this->assertIsArrayKey($name, $this->configs, 'Invalid config name: %s', 'Everon\Exception\Config');
         return $this->configs[$name];
     }
 

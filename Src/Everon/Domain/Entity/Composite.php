@@ -7,11 +7,19 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon\Test;
+namespace Everon\Domain\Entity;
 
-class MyModelManager extends \Everon\Model\Manager
+/**
+ * @method array getId()
+ */
+abstract class Composite extends \Everon\Domain\Entity
 {
-    public function init()
+
+    protected $id = [];
+
+    protected function isIdSet()
     {
+        return count($this->getId()) > 0;
     }
+
 }

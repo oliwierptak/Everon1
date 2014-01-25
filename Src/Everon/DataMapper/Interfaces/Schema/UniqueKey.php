@@ -7,17 +7,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon\Model\Manager;
+namespace Everon\DataMapper\Interfaces\Schema;
 
-use Everon\Interfaces;
-use Everon\Model;
-
-class Everon extends Model\Manager implements Interfaces\ModelManager
+interface UniqueKey extends Constraint
 {
-
-    public function init()
-    {
-
-    }
 
 }

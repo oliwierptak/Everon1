@@ -9,9 +9,10 @@
  */
 namespace Everon;
 
-use Everon\Exception\ConfigItem;
+use Everon\DataMapper\Interfaces\ConnectionManager;
 use Everon\Helper;
 use Everon\Interfaces;
+use Everon\DataMapper\Schema;
 
 class Factory implements Interfaces\Factory
 {
@@ -48,7 +49,7 @@ class Factory implements Interfaces\Factory
      * @param $class_name
      * @param $Receiver
      */
-    protected function injectDependencies($class_name, $Receiver)
+    public function injectDependencies($class_name, $Receiver)
     {
         $this->getDependencyContainer()->inject($class_name, $Receiver);
         if ($this->getDependencyContainer()->wantsFactory($class_name)) {
@@ -61,9 +62,9 @@ class Factory implements Interfaces\Factory
      * @param $class_name
      * @return string
      */
-    protected function getFullClassName($namespace, $class_name)
+    public function getFullClassName($namespace, $class_name)
     {
-        if ($class_name[0] === '\\') {
+        if ($class_name[0] === '\\') { //used for when laading classmap from cache
             return $class_name; //absolute name
         }
         
@@ -313,40 +314,212 @@ class Factory implements Interfaces\Factory
     }
 
     /**
-     * @param $class_name
-     * @param string $ns
-     * @return mixed
-     * @throws Exception\Factory
+     * @inheritdoc
      */
-    public function buildModel($class_name, $ns='Everon\Model')
+    public function buildPdoAdapter($dsn, $username, $password, $options)
     {
         try {
-            $class_name = $this->getFullClassName($ns, $class_name);
+            $Adapter = new PdoAdapter($dsn, $username, $password, $options);
+            $this->injectDependencies('Everon\PdoAdapter', $Adapter);
+            return $Adapter;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('PdoAdapter initialization error', null, $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildConnectionManager(Interfaces\Config $DatabaseConfig , $ns='Everon\DataMapper')
+    {
+        try {
+            $class_name = $this->getFullClassName($ns, 'Connection\Manager');
+
+            $connections = [];
+            $data = $DatabaseConfig->toArray();
+            foreach ($data as $name => $item_data) {
+                $Item = $this->buildConfigItem($name, $item_data);
+                $connections[$name] = $Item; 
+            }
+            
+            /**
+             * @var DataMapper\Interfaces\ConnectionManager $ConnectionManager
+             */
+            $ConnectionManager = new $class_name($connections);
+            $this->injectDependencies($class_name, $ConnectionManager);
+            return $ConnectionManager;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('ConnectionManager: "%s" initialization error', null, $e);
+        }
+    }
+    
+    /**
+     * @inheritdoc
+     */
+    public function buildDataMapper(DataMapper\Interfaces\Schema\Table $Table, DataMapper\Interfaces\Schema $Schema, $ns='Everon\DataMapper')
+    {
+        $name = $this->stringUnderscoreToCamel($Table->getName());
+        try {
+            $class_name = $this->getFullClassName($ns, $name);
+
+            /**
+             * @var Interfaces\DataMapper $DataMapper
+             */
+            $DataMapper = new $class_name($Table, $Schema);
+            $this->injectDependencies($class_name, $DataMapper);
+            return $DataMapper;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('DataMapper: "%s" initialization error', $name, $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildDomainEntity($class_name, $id, array $data, $ns='Everon\Test')
+    {
+        try {
+            $class_name = $this->getFullClassName($ns, $class_name.'\Entity');
+            
+            /**
+             * @var Domain\Interfaces\Entity $Entity
+             */
+            $Entity = new $class_name($id, $data);
+            $this->injectDependencies($class_name, $Entity);
+            return $Entity;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('DomainEntity: "%s" initialization error', $class_name, $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildDomainRepository($name, Interfaces\DataMapper $DataMapper, $ns='Everon\Domain')
+    {
+        try {
+            $class_name = $this->getFullClassName($ns, $name.'\Repository');
+
+            /**
+             * @var Domain\Interfaces\Repository $Repository
+             */
+            $Repository = new $class_name($name, $DataMapper);
+            $this->injectDependencies($class_name, $Repository);
+            return $Repository;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('DomainRepository: "%s" initialization error', $name, $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildDomainModel($class_name, $ns='Everon\Domain')
+    {
+        try {
+            $class_name = $this->getFullClassName($ns, $class_name.'\Model');
             $Model = new $class_name();
             $this->injectDependencies($class_name, $Model);
             return $Model;
         }
         catch (\Exception $e) {
-            throw new Exception\Factory('Model: "%s" initialization error', $class_name, $e);
+            throw new Exception\Factory('DomainModel: "%s" initialization error', $class_name, $e);
         }
     }
 
     /**
-     * @param $class_name
-     * @param $ns
-     * @return Interfaces\ModelManager
-     * @throws Exception\Factory
+     * @inheritdoc
      */
-    public function buildModelManager($class_name, $ns='Everon\Model\Manager')
+    public function buildDomainManager(ConnectionManager $ConnectionManager, $ns='Everon\Domain')
     {
         try {
-            $class_name = $this->getFullClassName($ns, $class_name);
-            $ModelManager = new $class_name();
-            $this->injectDependencies($class_name, $ModelManager);
-            return $ModelManager;
+            $class_name = $this->getFullClassName($ns, 'Manager');
+
+            /**
+             * @var Domain\Interfaces\Manager $DomainManager
+             */
+            $DomainManager = new $class_name($ConnectionManager);
+            $this->injectDependencies($class_name, $DomainManager);
+            return $DomainManager;
         }
         catch (\Exception $e) {
-            throw new Exception\Factory('ModelManager: "%s" initialization error', $class_name, $e);
+            throw new Exception\Factory('DomainManager initialization error', null, $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildSchema($name, DataMapper\Interfaces\Schema\Reader $Reader, DataMapper\Interfaces\Connectionmanager $ConnectionManager, $ns='Everon\DataMapper')
+    {
+        try {
+            $class_name = $this->getFullClassName($ns, $name);
+            $Schema = new $class_name($Reader, $ConnectionManager);
+            $this->injectDependencies($class_name, $Schema);
+            return $Schema;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('Schema: "%s" initialization error', $name, $e);
+        }
+    }
+    
+    /**
+     * @inheritdoc
+     */
+    public function buildSchemaReader(DataMapper\Interfaces\ConnectionItem $Connection, $ns='Everon\dataMapper\Schema')
+    {
+        $name = $Connection->getName();
+        try {
+            list($dsn, $username, $password, $options) = $Connection->toPdo();
+            $PdoAdapter = $this->buildPdoAdapter($dsn, $username, $password, $options);
+            
+            $class_name = $Connection->getMapper().'\Reader';
+            $class_name = $this->getFullClassName($ns, $class_name);
+            $SchemaReader = new $class_name($name, $PdoAdapter);
+            
+            $this->injectDependencies($class_name, $SchemaReader);
+            return $SchemaReader;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('SchemaReader: "%s" initialization error', $name, $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildSchemaTable($name, array $columns, array $constraints, array $foreign_keys, $ns='Everon\DataMapper')
+    {
+        try {
+            $column_list = [];
+            foreach ($columns as $column_data) {
+                $class_name = $this->getFullClassName($ns, 'Schema\MySql\Column');
+                $column_list[] = $class_name($column_data); //todo: coupled to mysql
+            }
+
+            $constraint_list = [];
+            foreach ($constraints as $constraint_data) {
+                $class_name = $this->getFullClassName($ns, 'Schema\Constraint');
+                $constraint_list[] = $class_name($constraint_data);
+            }
+
+            $fk_list = [];
+            foreach ($foreign_keys as $fk_data) {
+                $class_name = $this->getFullClassName($ns, 'Schema\ForeignKey');
+                $fk_list[] = $class_name($fk_data);
+            }
+
+            $class_name = $this->getFullClassName($ns,'Schema\Table');
+            $Table = new $class_name($name, $column_list, $constraint_list, $fk_list);
+            return $Table;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('SchemaTable: "%" initialization error', $name, $e);
         }
     }
 
