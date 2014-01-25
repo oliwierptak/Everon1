@@ -15,6 +15,7 @@ use Everon\Interfaces;
 class Item implements Interfaces\ConfigItem
 {
     const PROPERTY_NAME = '____name';
+    const DEFAULT_NAME = '_default';
 
     use Helper\Asserts;
     use Helper\Asserts\IsStringAndNonEmpty;
@@ -31,7 +32,7 @@ class Item implements Interfaces\ConfigItem
     public function __construct(array $data, array $defaults=[])
     {
         $empty_defaults = [
-            '_default' => false,
+            self::DEFAULT_NAME => false,
         ];
 
         $empty_defaults = array_merge($empty_defaults, $defaults);
@@ -44,8 +45,8 @@ class Item implements Interfaces\ConfigItem
     {
         $this->validateData($this->data);
         $this->setName($this->data[self::PROPERTY_NAME]);
-        $this->setIsDefault($this->data['_default']);
-        unset($this->data['_default']);
+        $this->setIsDefault($this->data[self::DEFAULT_NAME]);
+        unset($this->data[self::DEFAULT_NAME]);
     }
     
     /**
