@@ -322,7 +322,27 @@ class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildConnectionManager(Interfaces\Config $DatabaseConfig , $ns='Everon\DataMapper')
+
+    /**
+     * @inheritdoc
+     */
+    public function buildConnectionItem(array $data, $ns='Everon\DataMapper')
+    {
+        try {
+            $class_name = $this->getFullClassName($ns, 'Connection\Item');
+            $Item = new $class_name($data);
+            $this->injectDependencies($class_name, $Item);
+            return $Item;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('ConnectionItem initialization error', null, $e);
+        }
+    }
+    
+    /**
+     * @inheritdoc
+     */
+    public function buildConnectionManager(Interfaces\Config $DatabaseConfig, $ns='Everon\DataMapper')
     {
         try {
             $class_name = $this->getFullClassName($ns, 'Connection\Manager');
@@ -330,7 +350,7 @@ class Factory implements Interfaces\Factory
             $connections = [];
             $data = $DatabaseConfig->toArray();
             foreach ($data as $name => $item_data) {
-                $Item = $this->buildConfigItem($name, $item_data);
+                $Item = $this->buildConnectionItem($item_data);
                 $connections[$name] = $Item;
             }
 
@@ -492,6 +512,22 @@ class Factory implements Interfaces\Factory
         }
         catch (\Exception $e) {
             throw new Exception\Factory('SchemaTable: "%" initialization error', $name, $e);
+        }
+    } 
+    
+    /**
+     * @inheritdoc
+     */
+    public function buildSchemaConstraint(array $data, $ns='Everon\DataMapper')
+    {
+        try {
+            $class_name = $this->getFullClassName($ns, 'Schema\Constraint');
+            $constraint_list[] = $class_name($data);
+            $Constraint = new $class_name($data);
+            return $Constraint;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('SchemaConstraint initialization error', null, $e);
         }
     }
 
@@ -734,5 +770,4 @@ class Factory implements Interfaces\Factory
             throw new Exception\Factory('Environment initialization error', null, $e);
         }
     }
-
 }

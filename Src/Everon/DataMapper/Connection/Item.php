@@ -9,11 +9,15 @@
  */
 namespace Everon\DataMapper\Connection;
 
+use Everon\DataMapper\Exception\ConnectionItem as ConnectionItemException;
 use Everon\DataMapper\Interfaces;
+use Everon\Exception;
 use Everon\Helper;
 
 class Item implements Interfaces\ConnectionItem
 {
+    use Helper\Asserts;
+    use Helper\Asserts\IsArrayKey;
     use Helper\Immutable;
     use Helper\ToArray;
 
@@ -24,7 +28,7 @@ class Item implements Interfaces\ConnectionItem
     protected $user = null;
     protected $password = null;
     protected $encoding = null;
-    protected $pdo_options = null;
+    protected $options = null;
     protected $mapper = null;
     
     protected $dsn = null;
@@ -48,19 +52,48 @@ class Item implements Interfaces\ConnectionItem
      */
     public function __construct(array $data)
     {
+        $this->validate($data);
+        
         $this->driver = $data['driver'];
         $this->host = $data['host'];
         $this->port = $data['port'];
         $this->name = $data['name'];
-        $this->user = $data['username'];
+        $this->user = $data['user'];
         $this->password = $data['password'];
         $this->encoding = $data['encoding'];
-        $this->pdo_options = $data['pdo_options'];
-        $this->mapper = $data['mapper'];
-
+        $this->options = [\PDO::MYSQL_ATTR_INIT_COMMAND => sprintf('SET NAMES \'%s\'', $this->encoding)];
+        
+        if (isset($data['pdo_options'])) {
+            $this->options = array_merge($this->options, $data['pdo_options']);
+        }
+        
+        if (isset($data['mapper'])) {
+            $this->mapper = $data['mapper'];
+        }
+        
         $this->data = $data;
         $this->dsn = $this->getDsn();
+        
         $this->lock();
+    }
+    
+    protected function validate($data)
+    {
+        try {
+            $properties = [
+                'driver', 'host', 'port', 'name', 'user', 'password', 'password', 'encoding'
+            ];
+            
+            foreach ($properties as $property_name) {
+                $this->assertIsArrayKey($property_name, $data, $property_name);
+            }
+        }
+        catch (Exception\Asserts $e) {
+            throw new ConnectionItemException(sprintf(
+                    'Missing required parameter: "%s"', $e->getMessage()
+                )
+            );
+        }
     }
     
     public function getDsn()
@@ -123,7 +156,7 @@ class Item implements Interfaces\ConnectionItem
     
     public function getOptions()
     {
-        return $this->pdo_options;
+        return $this->options;
     }
     
     public function toPdo()
@@ -132,7 +165,7 @@ class Item implements Interfaces\ConnectionItem
             $this->getDsn(),
             $this->getUsername(),
             $this->getPassword(),
-            [\PDO::MYSQL_ATTR_INIT_COMMAND => sprintf('SET NAMES \'%s\'', $this->encoding)]
+            $this->getOptions()
         ];        
     }
 }

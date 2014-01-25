@@ -11,10 +11,4 @@ namespace Everon\DataMapper\Exception;
 
 use Everon\Exception as EveronException;
 
-class Column extends EveronException{};
-class ConnectionItem extends EveronException{};
-class ConnectionManager extends EveronException{};
-class Repository extends EveronException{};
-class Pdo extends EveronException{};
 class Schema extends EveronException{};
-class Table extends EveronException{}; 

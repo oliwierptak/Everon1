@@ -14,8 +14,9 @@ require_once(
  */
 
 $Bootstrap->getClassLoader()->add('Everon', $Environment->getEveron());
-$Bootstrap->getClassLoader()->add('Everon\Domain', $Environment->getDomain());
+
 $Bootstrap->getClassLoader()->add('Everon\Mvc\Controller', $Environment->getController());
+$Bootstrap->getClassLoader()->add('Everon\Domain', $Environment->getDomain());
 $Bootstrap->getClassLoader()->add('Everon\View', $Environment->getView());
 $Bootstrap->getClassLoader()->add('Everon\DataMapper', $Environment->getDataMapper());
 

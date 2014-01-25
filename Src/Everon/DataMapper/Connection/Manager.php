@@ -9,8 +9,9 @@
  */
 namespace Everon\DataMapper\Connection;
 
-use Everon\DataMapper\Interfaces;
+use Everon\DataMapper\Connection;
 use Everon\DataMapper\Exception;
+use Everon\DataMapper\Interfaces;
 
 class Manager implements Interfaces\ConnectionManager
 {
@@ -27,9 +28,9 @@ class Manager implements Interfaces\ConnectionManager
     /**
      * @inheritdoc
      */
-    public function add($name, array $data)
+    public function add($name, Interfaces\ConnectionItem $ConnectionItem)
     {
-        $this->connections[$name] = $data;
+        $this->connections[$name] = $ConnectionItem;
     }
 
     /**

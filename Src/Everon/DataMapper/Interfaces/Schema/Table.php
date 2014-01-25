@@ -9,24 +9,12 @@
  */
 namespace Everon\DataMapper\Interfaces\Schema;
 
-use Everon\Domain\Interfaces\Entity;
 use Everon\Interfaces\Arrayable;
 use Everon\Interfaces\Immutable;
 
 interface Table extends Arrayable, Immutable
 {
     function getName();
-
-    /**
-     * @return array
-     */
-    function getPlaceholderForQuery();
-
-    /**
-     * @param Entity $Entity
-     * @return array
-     */
-    function getValuesForQuery(Entity $Entity);
 
     /**
      * @return array
