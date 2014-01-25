@@ -336,11 +336,11 @@ class FactoryTest extends \Everon\TestCase
     /**
      * @dataProvider dataProviderForExceptions
      * @expectedException \Everon\Exception\Factory
-     * @expectedExceptionMessage ConfigItemRouter initialization error
+     * @expectedExceptionMessage ConfigItemRouter: "test" initialization error
      */
     public function testBuildRouteItemThrowExceptionWhenWrongClass(Interfaces\Factory $FactoryMock)
     {
-        $FactoryMock->buildConfigItemRouter('', []);
+        $FactoryMock->buildConfigItemRouter('test', []);
     }
     
     /**
