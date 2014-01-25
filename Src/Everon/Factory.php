@@ -331,8 +331,6 @@ class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-
-
     public function buildConnectionManager(Interfaces\Config $DatabaseConfig , $ns='Everon\DataMapper')
     {
         try {
