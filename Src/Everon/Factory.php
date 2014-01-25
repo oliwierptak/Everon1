@@ -340,9 +340,9 @@ class Factory implements Interfaces\Factory
 
             $connections = [];
             $data = $DatabaseConfig->toArray();
-            mpr($data);
-            foreach ($data as $name => $Item) {
-            
+            foreach ($data as $name => $item_data) {
+                $Item = $this->buildConfigItem($name, $item_data);
+                $connections[$name] = $Item; 
             }
             
             /**

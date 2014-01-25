@@ -48,9 +48,9 @@ class Manager implements Interfaces\ViewManager
     
     public function getCache()
     {
-        $cache_directory = getcwd().'../../Tmp/cache/view/';
-        if (!is_dir($cache_directory)) {
-            throw new Exception\ViewManager('cache dir does not existt');
+        $cache_directory = getcwd().'/../Tmp/cache/view/';
+        if (is_dir($cache_directory) === false) {
+            throw new Exception\ViewManager('Cache directory does not exist');
         }
         
         if ($this->Cache === null) {
