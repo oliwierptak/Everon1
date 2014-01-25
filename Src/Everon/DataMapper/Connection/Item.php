@@ -81,7 +81,7 @@ class Item implements Interfaces\ConnectionItem
     {
         try {
             $properties = [
-                'driver', 'host', 'port', 'name', 'user', 'password', 'password', 'encoding'
+                'driver', 'host', 'port', 'name', 'user', 'password', 'encoding'
             ];
             
             foreach ($properties as $property_name) {

@@ -9,6 +9,8 @@
  */
 namespace Everon\Config\Item;
 
+//todo: move it to Router\Item or Router]Route ...
+
 use Everon\Exception;
 use Everon\Interfaces;
 use Everon\Helper;

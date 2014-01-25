@@ -599,7 +599,7 @@ class Factory implements Interfaces\Factory
             return $ConfigItem;
         }
         catch (\Exception $e) {
-            throw new Exception\Factory('ConfigItemRouter initialization error', null, $e);
+            throw new Exception\Factory('ConfigItemRouter: "%s" initialization error', $name, $e);
         }
     }
 
@@ -618,7 +618,7 @@ class Factory implements Interfaces\Factory
             return $RouteItem;
         }
         catch (\Exception $e) {
-            throw new Exception\Factory('ConfigItemRouter initialization error', null, $e);
+            throw new Exception\Factory('ConfigItemRouter: "%s" initialization error', $name, $e);
         }
     }
 
