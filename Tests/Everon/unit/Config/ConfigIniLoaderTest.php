@@ -7,11 +7,11 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon\Test;
+namespace Everon\Test\Config;
 
 use Everon\Interfaces;
 
-class ConfigIniLoaderTest extends \Everon\TestCase
+class IniLoaderTest extends \Everon\TestCase
 {
     protected function setUp()
     {

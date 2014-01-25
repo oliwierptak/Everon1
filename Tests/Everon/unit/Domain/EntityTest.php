@@ -7,9 +7,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon\Test;
+namespace Everon\Test\Domain;
 
-use Everon\Domain;
+use Everon\Test\MyEntity;
 use Everon\Domain\Interfaces;
 
 class EntityTest extends \Everon\TestCase
