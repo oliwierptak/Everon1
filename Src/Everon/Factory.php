@@ -10,20 +10,20 @@
 namespace Everon;
 
 use Everon\DataMapper\Interfaces\ConnectionManager;
+use Everon\DataMapper\Schema;
 use Everon\Helper;
 use Everon\Interfaces;
-use Everon\DataMapper\Schema;
 
 class Factory implements Interfaces\Factory
 {
     use Helper\String\UnderscoreToCamel;
-    
+
     /**
      * @var Interfaces\DependencyContainer
      */
     protected $DependencyContainer = null;
-    
-    
+
+
     public function __construct(Interfaces\DependencyContainer $Container)
     {
         $this->DependencyContainer = $Container;
@@ -67,11 +67,11 @@ class Factory implements Interfaces\Factory
         if ($class_name[0] === '\\') { //used for when laading classmap from cache
             return $class_name; //absolute name
         }
-        
+
         $class = $namespace.'\\'.$class_name;
         return $class;
     }
-    
+
     /**
      * @return Interfaces\Core
      * @throws Exception\Factory
@@ -84,10 +84,10 @@ class Factory implements Interfaces\Factory
             return $Core;
         }
         catch (\Exception $e) {
-            throw new Exception\Factory('Core initialization error', null, $e);
+            throw new Exception\Factory('Console initialization error', null, $e);
         }
     }
-    
+
     /**
      * @return Interfaces\Core
      * @throws Exception\Factory
@@ -100,7 +100,7 @@ class Factory implements Interfaces\Factory
             return $Core;
         }
         catch (\Exception $e) {
-            throw new Exception\Factory('Core initialization error', null, $e);
+            throw new Exception\Factory('Mvc initialization error', null, $e);
         }
     }
 
@@ -137,7 +137,7 @@ class Factory implements Interfaces\Factory
 
     /**
      * @param Interfaces\ConfigLoader $Loader
-     * @return Config\Manager|mixed
+     * @return Interfaces\ConfigManager
      * @throws Exception\Factory
      */
     public function buildConfigManager(Interfaces\ConfigLoader $Loader)
@@ -214,10 +214,6 @@ class Factory implements Interfaces\Factory
     {
         try {
             $class_name = $this->getFullClassName($ns, $class_name);
-
-            /**
-             * @var \Everon\Controller $Controller
-             */
             $Controller = new $class_name();
             $this->injectDependencies($class_name, $Controller);
             return $Controller;
@@ -240,7 +236,6 @@ class Factory implements Interfaces\Factory
     {
         try {
             $class_name = $this->getFullClassName($ns, $class_name);
-
             $View = new $class_name($template_directory, $variables);
             $this->injectDependencies($class_name, $View);
             return $View;
@@ -265,7 +260,7 @@ class Factory implements Interfaces\Factory
         catch (\Exception $e) {
             throw new Exception\Factory('ViewCache initialization error', null, $e);
         }
-    }    
+    }
 
     /**
      * @param array $compilers_to_init
@@ -280,7 +275,7 @@ class Factory implements Interfaces\Factory
             foreach ($compilers_to_init as $name => $extension) {
                 $compilers[$extension][] = $this->buildTemplateCompiler($this->stringUnderscoreToCamel($name));
             }
-            
+
             $Manager = new View\Manager($compilers, $view_directory);
             $this->injectDependencies('Everon\View\Manager', $Manager);
             return $Manager;
@@ -300,10 +295,6 @@ class Factory implements Interfaces\Factory
     {
         try {
             $class_name = $this->getFullClassName($ns, $class_name);
-
-            /**
-             * @var Interfaces\TemplateCompiler $Compiler
-             */
             $Compiler = new $class_name();
             $this->injectDependencies($class_name, $Compiler);
             return $Compiler;
@@ -340,21 +331,18 @@ class Factory implements Interfaces\Factory
             $data = $DatabaseConfig->toArray();
             foreach ($data as $name => $item_data) {
                 $Item = $this->buildConfigItem($name, $item_data);
-                $connections[$name] = $Item; 
+                $connections[$name] = $Item;
             }
-            
-            /**
-             * @var DataMapper\Interfaces\ConnectionManager $ConnectionManager
-             */
+
             $ConnectionManager = new $class_name($connections);
             $this->injectDependencies($class_name, $ConnectionManager);
             return $ConnectionManager;
         }
         catch (\Exception $e) {
-            throw new Exception\Factory('ConnectionManager: "%s" initialization error', null, $e);
+            throw new Exception\Factory('ConnectionManager initialization error', null, $e);
         }
     }
-    
+
     /**
      * @inheritdoc
      */
@@ -363,10 +351,6 @@ class Factory implements Interfaces\Factory
         $name = $this->stringUnderscoreToCamel($Table->getName());
         try {
             $class_name = $this->getFullClassName($ns, $name);
-
-            /**
-             * @var Interfaces\DataMapper $DataMapper
-             */
             $DataMapper = new $class_name($Table, $Schema);
             $this->injectDependencies($class_name, $DataMapper);
             return $DataMapper;
@@ -383,10 +367,6 @@ class Factory implements Interfaces\Factory
     {
         try {
             $class_name = $this->getFullClassName($ns, $class_name.'\Entity');
-            
-            /**
-             * @var Domain\Interfaces\Entity $Entity
-             */
             $Entity = new $class_name($id, $data);
             $this->injectDependencies($class_name, $Entity);
             return $Entity;
@@ -403,10 +383,6 @@ class Factory implements Interfaces\Factory
     {
         try {
             $class_name = $this->getFullClassName($ns, $name.'\Repository');
-
-            /**
-             * @var Domain\Interfaces\Repository $Repository
-             */
             $Repository = new $class_name($name, $DataMapper);
             $this->injectDependencies($class_name, $Repository);
             return $Repository;
@@ -439,10 +415,6 @@ class Factory implements Interfaces\Factory
     {
         try {
             $class_name = $this->getFullClassName($ns, 'Manager');
-
-            /**
-             * @var Domain\Interfaces\Manager $DomainManager
-             */
             $DomainManager = new $class_name($ConnectionManager);
             $this->injectDependencies($class_name, $DomainManager);
             return $DomainManager;
@@ -467,7 +439,7 @@ class Factory implements Interfaces\Factory
             throw new Exception\Factory('Schema: "%s" initialization error', $name, $e);
         }
     }
-    
+
     /**
      * @inheritdoc
      */
@@ -477,11 +449,11 @@ class Factory implements Interfaces\Factory
         try {
             list($dsn, $username, $password, $options) = $Connection->toPdo();
             $PdoAdapter = $this->buildPdoAdapter($dsn, $username, $password, $options);
-            
+
             $class_name = $Connection->getMapper().'\Reader';
             $class_name = $this->getFullClassName($ns, $class_name);
+
             $SchemaReader = new $class_name($name, $PdoAdapter);
-            
             $this->injectDependencies($class_name, $SchemaReader);
             return $SchemaReader;
         }
@@ -567,9 +539,9 @@ class Factory implements Interfaces\Factory
     public function buildRequestValidator()
     {
         try {
-            $RouteItem = new RequestValidator();
-            $this->injectDependencies('Everon\RequestValidator', $RouteItem);
-            return $RouteItem;
+            $RequestValidator = new RequestValidator();
+            $this->injectDependencies('Everon\RequestValidator', $RequestValidator);
+            return $RequestValidator;
         }
         catch (\Exception $e) {
             throw new Exception\Factory('RequestValidator initialization error', null, $e);
@@ -694,9 +666,12 @@ class Factory implements Interfaces\Factory
     public function buildHttpHeaderCollection(array $headers=[])
     {
         try {
-            $Logger = new Http\HeaderCollection($headers);
-            $this->injectDependencies('Everon\Http\HeaderCollection', $Logger);
-            return $Logger;
+            /**
+             * @var Interfaces\Collection $Headers
+             */
+            $Headers = new Http\HeaderCollection($headers);
+            $this->injectDependencies('Everon\Http\HeaderCollection', $Headers);
+            return $Headers;
         }
         catch (\Exception $e) {
             throw new Exception\Factory('HttpHeaderCollection initialization error', null, $e);
@@ -722,7 +697,7 @@ class Factory implements Interfaces\Factory
             throw new Exception\Factory('Request initialization error', null, $e);
         }
     }
-    
+
     /**
      * @param array $server
      * @param array $get
@@ -739,7 +714,7 @@ class Factory implements Interfaces\Factory
             return $Request;
         }
         catch (\Exception $e) {
-            throw new Exception\Factory('Request initialization error', null, $e);
+            throw new Exception\Factory('Console Request initialization error', null, $e);
         }
     }
 
