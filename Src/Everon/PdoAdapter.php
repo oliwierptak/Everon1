@@ -23,11 +23,19 @@ class PdoAdapter implements Interfaces\PdoAdapter
 
 
     /**
-     * @param \PDO $Pdo
+     * @var DataMapper\Interfaces\ConnectionItem
      */
-    public function __construct(\PDO $Pdo)
+    protected $Connection = null;
+
+
+    /**
+     * @param \PDO $Pdo
+     * @param DataMapper\Interfaces\ConnectionItem $ConnectionItem
+     */
+    public function __construct(\PDO $Pdo, DataMapper\Interfaces\ConnectionItem $ConnectionItem)
     {
         $this->Pdo = $Pdo;
+        $this->Connection = $ConnectionItem;
     }
 
     /**

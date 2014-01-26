@@ -26,7 +26,7 @@ trait Schema
     /**
      * @param \Everon\DataMapper\Interfaces\Schema
      */
-    public function setView(\Everon\DataMapper\Interfaces\Schema $Schema)
+    public function setSchema(\Everon\DataMapper\Interfaces\Schema $Schema)
     {
         $this->Schema = $Schema;
     }

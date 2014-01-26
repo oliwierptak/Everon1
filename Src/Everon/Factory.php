@@ -206,14 +206,14 @@ class Factory implements Interfaces\Factory
 
     /**
      * @param $class_name
-     * @param string $ns
+     * @param string $namespace
      * @return Interfaces\Controller
      * @throws Exception\Factory
      */
-    public function buildController($class_name, $ns='Everon\Controller')
+    public function buildController($class_name, $namespace='Everon\Controller')
     {
         try {
-            $class_name = $this->getFullClassName($ns, $class_name);
+            $class_name = $this->getFullClassName($namespace, $class_name);
             $Controller = new $class_name();
             $this->injectDependencies($class_name, $Controller);
             return $Controller;
@@ -228,14 +228,14 @@ class Factory implements Interfaces\Factory
      * @param $class_name
      * @param k
      * @param array $variables
-     * @param string $ns
+     * @param string $namespace
      * @return Interfaces\View
      * @throws Exception\Factory
      */
-    public function buildView($class_name, $template_directory, array $variables, $ns='Everon\View')
+    public function buildView($class_name, $template_directory, array $variables, $namespace='Everon\View')
     {
         try {
-            $class_name = $this->getFullClassName($ns, $class_name);
+            $class_name = $this->getFullClassName($namespace, $class_name);
             $View = new $class_name($template_directory, $variables);
             $this->injectDependencies($class_name, $View);
             return $View;
@@ -287,14 +287,14 @@ class Factory implements Interfaces\Factory
 
     /**
      * @param $class_name
-     * @param string $ns
+     * @param string $namespace
      * @return Interfaces\TemplateCompiler
      * @throws Exception\Factory
      */
-    public function buildTemplateCompiler($class_name, $ns='Everon\View\Template\Compiler')
+    public function buildTemplateCompiler($class_name, $namespace='Everon\View\Template\Compiler')
     {
         try {
-            $class_name = $this->getFullClassName($ns, $class_name);
+            $class_name = $this->getFullClassName($namespace, $class_name);
             $Compiler = new $class_name();
             $this->injectDependencies($class_name, $Compiler);
             return $Compiler;
@@ -307,12 +307,26 @@ class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildPdoAdapter($dsn, $username, $password, $options)
+    public function buildPdo($dsn, $username, $password, $options)
     {
         try {
-            $Adapter = new PdoAdapter($dsn, $username, $password, $options);
-            $this->injectDependencies('Everon\PdoAdapter', $Adapter);
-            return $Adapter;
+            $Pdo = new \PDO($dsn, $username, $password, $options);
+            return $Pdo;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('PDO initialization error', null, $e);
+        }
+    }
+    
+    /**
+     * @inheritdoc
+     */
+    public function buildPdoAdapter(\PDO $Pdo, DataMapper\Interfaces\ConnectionItem $ConnectionItem)
+    {
+        try {
+            $PdoAdapter = new PdoAdapter($Pdo, $ConnectionItem);
+            $this->injectDependencies('Everon\PdoAdapter', $PdoAdapter);
+            return $PdoAdapter;
         }
         catch (\Exception $e) {
             throw new Exception\Factory('PdoAdapter initialization error', null, $e);
@@ -322,14 +336,10 @@ class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-
-    /**
-     * @inheritdoc
-     */
-    public function buildConnectionItem(array $data, $ns='Everon\DataMapper')
+    public function buildConnectionItem(array $data, $namespace='Everon\DataMapper')
     {
         try {
-            $class_name = $this->getFullClassName($ns, 'Connection\Item');
+            $class_name = $this->getFullClassName($namespace, 'Connection\Item');
             $Item = new $class_name($data);
             $this->injectDependencies($class_name, $Item);
             return $Item;
@@ -342,10 +352,10 @@ class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildConnectionManager(Interfaces\Config $DatabaseConfig, $ns='Everon\DataMapper')
+    public function buildConnectionManager(Interfaces\Config $DatabaseConfig, $namespace='Everon\DataMapper')
     {
         try {
-            $class_name = $this->getFullClassName($ns, 'Connection\Manager');
+            $class_name = $this->getFullClassName($namespace, 'Connection\Manager');
 
             $connections = [];
             $data = $DatabaseConfig->toArray();
@@ -366,11 +376,11 @@ class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildDataMapper(DataMapper\Interfaces\Schema\Table $Table, DataMapper\Interfaces\Schema $Schema, $ns='Everon\DataMapper')
+    public function buildDataMapper(DataMapper\Interfaces\Schema\Table $Table, DataMapper\Interfaces\Schema $Schema, $namespace='Everon\DataMapper')
     {
         $name = $this->stringUnderscoreToCamel($Table->getName());
         try {
-            $class_name = $this->getFullClassName($ns, $name);
+            $class_name = $this->getFullClassName($namespace, $name);
             $DataMapper = new $class_name($Table, $Schema);
             $this->injectDependencies($class_name, $DataMapper);
             return $DataMapper;
@@ -383,10 +393,10 @@ class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildDomainEntity($class_name, $id, array $data, $ns='Everon\Test')
+    public function buildDomainEntity($class_name, $id, array $data, $namespace='Everon\Test')
     {
         try {
-            $class_name = $this->getFullClassName($ns, $class_name.'\Entity');
+            $class_name = $this->getFullClassName($namespace, $class_name.'\Entity');
             $Entity = new $class_name($id, $data);
             $this->injectDependencies($class_name, $Entity);
             return $Entity;
@@ -399,10 +409,10 @@ class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildDomainRepository($name, Interfaces\DataMapper $DataMapper, $ns='Everon\Domain')
+    public function buildDomainRepository($name, Interfaces\DataMapper $DataMapper, $namespace='Everon\Domain')
     {
         try {
-            $class_name = $this->getFullClassName($ns, $name.'\Repository');
+            $class_name = $this->getFullClassName($namespace, $name.'\Repository');
             $Repository = new $class_name($name, $DataMapper);
             $this->injectDependencies($class_name, $Repository);
             return $Repository;
@@ -415,10 +425,10 @@ class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildDomainModel($class_name, $ns='Everon\Domain')
+    public function buildDomainModel($class_name, $namespace='Everon\Domain')
     {
         try {
-            $class_name = $this->getFullClassName($ns, $class_name.'\Model');
+            $class_name = $this->getFullClassName($namespace, $class_name.'\Model');
             $Model = new $class_name();
             $this->injectDependencies($class_name, $Model);
             return $Model;
@@ -431,10 +441,10 @@ class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildDomainManager(ConnectionManager $ConnectionManager, $ns='Everon\Domain')
+    public function buildDomainManager(ConnectionManager $ConnectionManager, $namespace='Everon\Domain')
     {
         try {
-            $class_name = $this->getFullClassName($ns, 'Manager');
+            $class_name = $this->getFullClassName($namespace, 'Manager');
             $DomainManager = new $class_name($ConnectionManager);
             $this->injectDependencies($class_name, $DomainManager);
             return $DomainManager;
@@ -447,66 +457,62 @@ class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildSchema($name, DataMapper\Interfaces\Schema\Reader $Reader, DataMapper\Interfaces\Connectionmanager $ConnectionManager, $ns='Everon\DataMapper')
+    public function buildSchema(DataMapper\Interfaces\Schema\Reader $Reader, DataMapper\Interfaces\Connectionmanager $ConnectionManager, $namespace='Everon\DataMapper')
     {
         try {
-            $class_name = $this->getFullClassName($ns, $name);
+            $class_name = $this->getFullClassName($namespace, 'Schema');
             $Schema = new $class_name($Reader, $ConnectionManager);
             $this->injectDependencies($class_name, $Schema);
             return $Schema;
         }
         catch (\Exception $e) {
-            throw new Exception\Factory('Schema: "%s" initialization error', $name, $e);
+            throw new Exception\Factory('Schema initialization error', null, $e);
         }
     }
 
     /**
      * @inheritdoc
      */
-    public function buildSchemaReader(DataMapper\Interfaces\ConnectionItem $Connection, $ns='Everon\dataMapper\Schema')
+    public function buildSchemaReader(DataMapper\Interfaces\ConnectionItem $ConnectionItem, Interfaces\PdoAdapter $PdoAdapter, $namespace='Everon\dataMapper\Schema')
     {
-        $name = $Connection->getName();
         try {
-            list($dsn, $username, $password, $options) = $Connection->toPdo();
-            $PdoAdapter = $this->buildPdoAdapter($dsn, $username, $password, $options);
+            $class_name = $ConnectionItem->getAdapterName().'\Reader';
+            $class_name = $this->getFullClassName($namespace, $class_name);
 
-            $class_name = $Connection->getMapper().'\Reader';
-            $class_name = $this->getFullClassName($ns, $class_name);
-
-            $SchemaReader = new $class_name($name, $PdoAdapter);
+            $SchemaReader = new $class_name($ConnectionItem->getName(), $PdoAdapter);
             $this->injectDependencies($class_name, $SchemaReader);
             return $SchemaReader;
         }
         catch (\Exception $e) {
-            throw new Exception\Factory('SchemaReader: "%s" initialization error', $name, $e);
+            throw new Exception\Factory('SchemaReader initialization error', null, $e);
         }
     }
 
     /**
      * @inheritdoc
      */
-    public function buildSchemaTable($name, array $columns, array $constraints, array $foreign_keys, $ns='Everon\DataMapper')
+    public function buildSchemaTable($name, array $columns, array $constraints, array $foreign_keys, $namespace='Everon\DataMapper')
     {
         try {
             $column_list = [];
             foreach ($columns as $column_data) {
-                $class_name = $this->getFullClassName($ns, 'Schema\MySql\Column');
+                $class_name = $this->getFullClassName($namespace, 'Schema\MySql\Column');
                 $column_list[] = $class_name($column_data); //todo: coupled to mysql
             }
 
             $constraint_list = [];
             foreach ($constraints as $constraint_data) {
-                $class_name = $this->getFullClassName($ns, 'Schema\Constraint');
+                $class_name = $this->getFullClassName($namespace, 'Schema\Constraint');
                 $constraint_list[] = $class_name($constraint_data);
             }
 
             $fk_list = [];
             foreach ($foreign_keys as $fk_data) {
-                $class_name = $this->getFullClassName($ns, 'Schema\ForeignKey');
+                $class_name = $this->getFullClassName($namespace, 'Schema\ForeignKey');
                 $fk_list[] = $class_name($fk_data);
             }
 
-            $class_name = $this->getFullClassName($ns,'Schema\Table');
+            $class_name = $this->getFullClassName($namespace,'Schema\Table');
             $Table = new $class_name($name, $column_list, $constraint_list, $fk_list);
             return $Table;
         }
@@ -518,10 +524,10 @@ class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildSchemaConstraint(array $data, $ns='Everon\DataMapper')
+    public function buildSchemaConstraint(array $data, $namespace='Everon\DataMapper')
     {
         try {
-            $class_name = $this->getFullClassName($ns, 'Schema\Constraint');
+            $class_name = $this->getFullClassName($namespace, 'Schema\Constraint');
             $constraint_list[] = $class_name($data);
             $Constraint = new $class_name($data);
             return $Constraint;
@@ -551,14 +557,14 @@ class Factory implements Interfaces\Factory
     /**
      * @param Interfaces\Config $Config
      * @param Interfaces\RequestValidator $Validator
-     * @param string $ns
+     * @param string $namespace
      * @return Interfaces\Router|Router
      * @throws Exception\Factory
      */
-    public function buildRouter(Interfaces\Config $Config, Interfaces\RequestValidator $Validator, $ns='Everon')
+    public function buildRouter(Interfaces\Config $Config, Interfaces\RequestValidator $Validator, $namespace='Everon')
     {
         try {
-            $class_name = $this->getFullClassName($ns, 'Router');
+            $class_name = $this->getFullClassName($namespace, 'Router');
             $RouteItem = new $class_name($Config, $Validator);
             $this->injectDependencies($class_name, $RouteItem);
             return $RouteItem;

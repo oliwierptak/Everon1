@@ -30,5 +30,5 @@ interface PdoAdapter
     /**
      * @return \PDO
      */
-    function getPdo();    
+    function getPdo();
 }
