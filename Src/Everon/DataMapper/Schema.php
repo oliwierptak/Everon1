@@ -14,10 +14,10 @@ use Everon\Helper;
 
 class Schema implements Interfaces\Schema
 {
+    use Dependency\DataMapper\SchemaReader;
     use Dependency\Injection\Factory;
     use Helper\ToArray;
-    
-    protected $name = null;
+
     
     protected $tables = [];
     
@@ -32,29 +32,27 @@ class Schema implements Interfaces\Schema
      */
     protected $ConnectionManager = null;
 
-    /**
-     * @var Interfaces\Schema\Reader
-     */
-    protected $Reader = null;
-    
     protected $pdo_adapters = null;
 
-    
-    public function __construct($name, Interfaces\ConnectionManager $ConnectionManager, Interfaces\Schema\Reader $Reader)
+
+    /**
+     * @param Interfaces\Schema\Reader $SchemaReader
+     * @param Interfaces\ConnectionManager $ConnectionManager
+     */
+    public function __construct(Interfaces\Schema\Reader $SchemaReader, Interfaces\ConnectionManager $ConnectionManager)
     {
-        $this->name = $name;
+        $this->SchemaReader = $SchemaReader;
         $this->ConnectionManager = $ConnectionManager;
-        $this->Reader = $Reader;
 
         $this->init();
     }
 
     protected function init()
     {
-        $table_list = $this->Reader->getTableList();
-        $column_list = $this->Reader->getColumnList();
-        $constraint_list = $this->Reader->getConstraintList();
-        $foreign_key_list = $this->Reader->getForeignKeyList();
+        $table_list = $this->getSchemaReader()->getTableList();
+        $column_list = $this->getSchemaReader()->getColumnList();
+        $constraint_list = $this->getSchemaReader()->getConstraintList();
+        $foreign_key_list = $this->getSchemaReader()->getForeignKeyList();
 
         $filterPerTableName = function($table_name, $data) {
             $result = [];
@@ -85,7 +83,7 @@ class Schema implements Interfaces\Schema
     
     public function getName()
     {
-        return $this->name;
+        return $this->getSchemaReader()->getName();
     }
 
     public function getTables()
@@ -111,8 +109,9 @@ class Schema implements Interfaces\Schema
         if (isset($this->pdo_adapters[$name]) === false) {
             $Connection = $this->getConnectionManager()->getConnectionByName($name);
             list($dsn, $username, $password, $options) = $Connection->toPdo();
-            $Pdo = $this->getFactory()->buildPdoAdapter($dsn, $username, $password, $options);
-            $this->pdo_adapters[$name] = $Pdo;
+            $Pdo = $this->getFactory()->buildPdo($dsn, $username, $password, $options);
+            $PdoAdapter = $this->getFactory()->buildPdoAdapter($Pdo, $Connection);
+            $this->pdo_adapters[$name] = $PdoAdapter;
         }
 
         return $this->pdo_adapters[$name];

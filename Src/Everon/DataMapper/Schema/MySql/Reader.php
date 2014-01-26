@@ -22,6 +22,10 @@ class Reader implements Interfaces\Schema\Reader
     protected $Pdo = null;
 
 
+    /**
+     * @param $name
+     * @param PdoAdapter $Pdo
+     */
     public function __construct($name, PdoAdapter $Pdo)
     {
         $this->name = $name;
@@ -32,11 +36,21 @@ class Reader implements Interfaces\Schema\Reader
     {
         return $this->name;
     }
+    
+    public function setPdo(\PDO $Pdo)
+    {
+        $this->Pdo = $Pdo;
+    }
+    
+    public function getPdo()
+    {
+        return $this->Pdo;
+    }
 
     public function getTableList()
     {
         $sql = "SHOW TABLES FROM :schema";
-        return $this->Pdo->exec($sql, ['schema'=>$this->getName()], \PDO::FETCH_COLUMN);
+        return $this->getPdo()->exec($sql, ['schema'=>$this->getName()], \PDO::FETCH_COLUMN);
     }
 
     public function getColumnList()
@@ -50,7 +64,7 @@ class Reader implements Interfaces\Schema\Reader
                 information_schema.COLUMNS.ORDINAL_POSITION ASC
         ";
 
-        return $this->Pdo->exec($sql, ['schema'=>$this->getName()], \PDO::FETCH_ASSOC);
+        return $this->getPdo()->exec($sql, ['schema'=>$this->getName()], \PDO::FETCH_ASSOC);
     }
 
     public function getConstraintList()
@@ -62,7 +76,7 @@ class Reader implements Interfaces\Schema\Reader
                 information_schema.TABLE_CONSTRAINTS.TABLE_SCHEMA = :schema
         ";
 
-        return $this->Pdo->exec($sql, ['schema'=>$this->getName()], \PDO::FETCH_ASSOC);
+        return $this->getPdo()->exec($sql, ['schema'=>$this->getName()], \PDO::FETCH_ASSOC);
     }
 
     public function getForeignKeyList()
@@ -79,7 +93,7 @@ class Reader implements Interfaces\Schema\Reader
                 information_schema.KEY_COLUMN_USAGE.TABLE_NAME
         ";
 
-        return $this->Pdo->exec($sql, ['schema'=>$this->getName()], \PDO::FETCH_ASSOC);
+        return $this->getPdo()->exec($sql, ['schema'=>$this->getName()], \PDO::FETCH_ASSOC);
     }
 
     public function getColumnsForTable($table_name)
@@ -94,7 +108,7 @@ class Reader implements Interfaces\Schema\Reader
                 information_schema.COLUMNS.ORDINAL_POSITION ASC
         ";        
 
-        return $this->Pdo->exec($sql, ['schema'=>$this->getName(), 'table'=>$table_name], \PDO::FETCH_ASSOC);
+        return $this->getPdo()->exec($sql, ['schema'=>$this->getName(), 'table'=>$table_name], \PDO::FETCH_ASSOC);
     }
 
     public function getConstraintsForTable($table_name)
@@ -107,7 +121,7 @@ class Reader implements Interfaces\Schema\Reader
                 information_schema.TABLE_CONSTRAINTS.TABLE_NAME = :table
         ";
         
-        return $this->Pdo->exec($sql, ['schema'=>$this->getName(), 'table'=>$table_name], \PDO::FETCH_ASSOC);
+        return $this->getPdo()->exec($sql, ['schema'=>$this->getName(), 'table'=>$table_name], \PDO::FETCH_ASSOC);
     }
 
     public function getForeignKeysForTable($table_name)
@@ -123,6 +137,6 @@ class Reader implements Interfaces\Schema\Reader
                 information_schema.KEY_COLUMN_USAGE.TABLE_NAME = :table
         ";
 
-        return $this->Pdo->exec($sql, ['schema'=>$this->getName(), 'table'=>$table_name], \PDO::FETCH_ASSOC);
+        return $this->getPdo()->exec($sql, ['schema'=>$this->getName(), 'table'=>$table_name], \PDO::FETCH_ASSOC);
     }
 }

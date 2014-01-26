@@ -75,8 +75,11 @@ abstract class Handler implements Interfaces\Handler
     {
         if (isset($this->schemas[$name]) === false) {
             $Connection = $this->getConnectionManager()->getConnectionByName('schema');
-            $Reader = $this->getFactory()->buildSchemaReader($Connection);
-            $this->schemas[$name] = $this->getFactory()->buildSchema($Connection->getName(), $Reader, $this->getConnectionManager());
+            list($dsn, $username, $password, $options) = $Connection->toPdo();
+            $Pdo = $this->getFactory()->buildPdo($dsn, $username, $password, $options);
+            $PdoAdapter = $this->getFactory()->buildPdoAdapter($Pdo, $Connection);
+            $SchemaReader = $this->getFactory()->buildSchemaReader($Connection, $PdoAdapter);
+            $this->schemas[$name] = $this->getFactory()->buildSchema($SchemaReader, $this->getConnectionManager());
         }
 
         return $this->schemas[$name];        

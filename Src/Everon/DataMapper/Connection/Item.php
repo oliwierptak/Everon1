@@ -29,7 +29,7 @@ class Item implements Interfaces\ConnectionItem
     protected $password = null;
     protected $encoding = null;
     protected $options = null;
-    protected $mapper = null;
+    protected $adapter_name = null;
     
     protected $dsn = null;
 
@@ -68,7 +68,7 @@ class Item implements Interfaces\ConnectionItem
         }
         
         if (isset($data['mapper'])) {
-            $this->mapper = $data['mapper'];
+            $this->adapter_name = $data['mapper'];
         }
         
         $this->data = $data;
@@ -121,17 +121,17 @@ class Item implements Interfaces\ConnectionItem
         return $this->host;
     }
     
-    public function getMapper()
+    public function getAdapterName()
     {
-        if ($this->mapper === null) {
+        if ($this->adapter_name === null) {
             switch (strtolower($this->getDriver())) {
                 case 'mysql':
-                    $this->mapper = 'MySql';
+                    $this->adapter_name = 'MySql';
                     break;
             }
         }
         
-        return $this->mapper;
+        return $this->adapter_name;
     }
     
     public function getName()

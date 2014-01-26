@@ -160,22 +160,22 @@ interface Factory
     function buildDomainManager(DataMapper\Interfaces\ConnectionManager $ConnectionManager, $ns='Everon\Domain');
 
     /**
-     * @param $name
      * @param DataMapper\Interfaces\Schema\Reader $Reader
      * @param DataMapper\Interfaces\ConnectionManager $ConnectionManager
      * @param string $ns
      * @return mixed
      * @throws Exception\Factory
      */
-    function buildSchema($name, DataMapper\Interfaces\Schema\Reader $Reader, DataMapper\Interfaces\ConnectionManager $ConnectionManager, $ns='Everon\DataMapper');
+    function buildSchema(DataMapper\Interfaces\Schema\Reader $Reader, DataMapper\Interfaces\ConnectionManager $ConnectionManager, $ns='Everon\DataMapper');
 
     /**
-     * @param DataMapper\Interfaces\ConnectionItem $Connection
+     * @param DataMapper\Interfaces\ConnectionItem $ConnectionItem
+     * @param Interfaces\PdoAdapter $PdoAdapter
      * @param string $ns
      * @return mixed
      * @throws Exception\Factory
      */
-    function buildSchemaReader(DataMapper\Interfaces\ConnectionItem $Connection, $ns='Everon\dataMapper\Schema');    
+    function buildSchemaReader(DataMapper\Interfaces\ConnectionItem $ConnectionItem, Interfaces\PdoAdapter $PdoAdapter, $ns='Everon\dataMapper\Schema');
     
     /**
      * @param array $data
@@ -234,14 +234,22 @@ interface Factory
     function buildFileSystem($root);
 
     /**
-     * @param $dsn
+     * @param DataMapper\Interfaces\ConnectionItem $dsn
      * @param $username
      * @param $password
      * @param $options
+     * @return \PDO
+     * @throws Exception\Factory
+     */
+    function buildPdo($dsn, $username, $password, $options);
+
+    /**
+     * @param \PDO $Pdo
+     * @param DataMapper\Interfaces\ConnectionItem $ConnectionItem
      * @return Interfaces\PdoAdapter|PdoAdapter
      * @throws Exception\Factory
      */
-    function buildPdoAdapter($dsn, $username, $password, $options);
+    function buildPdoAdapter(\PDO $Pdo, DataMapper\Interfaces\ConnectionItem $ConnectionItem);
 
     /**
      * @param $filename

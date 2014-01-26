@@ -14,7 +14,7 @@ interface ConnectionItem extends \Everon\Interfaces\Immutable, \Everon\Interface
     function getDsn();
     function getDriver();
     function getHost();
-    function getMapper();
+    function getAdapterName();
     function getName();
     function getEncoding();
     function getUsername();

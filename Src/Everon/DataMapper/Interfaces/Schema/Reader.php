@@ -11,6 +11,9 @@ namespace Everon\DataMapper\Interfaces\Schema;
 
 interface Reader
 {
+    function getName();
+    function setPdo(\PDO $Pdo);
+    function getPdo();
     function getTableList();
     function getColumnList();
     function getConstraintList();
