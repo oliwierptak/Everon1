@@ -108,12 +108,30 @@ class SchemaTest extends \Everon\TestCase
         $SchemaReaderMock->expects($this->once())
             ->method('getName')
             ->will($this->returnValue('everon_test'));
+        
+        $Pdo = new \Everon\Test\MyPdo();
+        $FactoryMock = $this->getMock('\Everon\Interfaces\Factory');
+        $FactoryMock->expects($this->once())
+            ->method('buildPdo')
+            ->will($this->returnValue($Pdo));
+
+        $PdoAdapterMock = $this->getMock('\Everon\Interfaces\PdoAdapter');
+        $FactoryMock->expects($this->once())
+            ->method('buildPdoAdapter')
+            ->will($this->returnValue($PdoAdapterMock));
+
+        $SchemaTableMock = $this->getMock('\Everon\DataMapper\Interfaces\Schema\Table');
+        $FactoryMock->expects($this->exactly(3))
+            ->method('buildSchemaTable')
+            ->will($this->returnValue($SchemaTableMock));
+
 
         //$C = $this->getMock('\Everon\DataMapper\Interfaces\ConnectionManager'); //why the fuck does it return null
         $DatabaseConfig = $this->getFactory()->getDependencyContainer()->resolve('ConfigManager')->getConfigByName('database');
         $ConnectionManager = $this->getFactory()->buildConnectionManager($DatabaseConfig);
         
         $Schema = $this->getFactory()->buildSchema($SchemaReaderMock, $ConnectionManager);
+        $Schema->setFactory($FactoryMock);
         
         return [
             [$Schema]
