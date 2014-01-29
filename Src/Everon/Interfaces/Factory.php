@@ -172,7 +172,7 @@ interface Factory
      * @param DataMapper\Interfaces\ConnectionItem $ConnectionItem
      * @param Interfaces\PdoAdapter $PdoAdapter
      * @param string $ns
-     * @return mixed
+     * @return DataMapper\Interfaces\Schema\Reader
      * @throws Exception\Factory
      */
     function buildSchemaReader(DataMapper\Interfaces\ConnectionItem $ConnectionItem, Interfaces\PdoAdapter $PdoAdapter, $ns='Everon\dataMapper\Schema');

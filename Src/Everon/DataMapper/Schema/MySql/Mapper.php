@@ -19,16 +19,16 @@ abstract class Mapper extends DataMapper
     protected function getInsertSql(Entity $Entity)
     {
         $values_str = rtrim(implode(',', $this->getPlaceholderForQuery()), ',');
-        $sql = sprintf('INSERT INTO `%s.%s` VALUES (%s)', $this->getSchema()->getName(), $this->getTable()->getName(), $values_str);
+        $sql = sprintf('INSERT INTO `%s.%s` VALUES (%s)', $this->getSchema()->getName(), $this->getSchemaTable()->getName(), $values_str);
         return [$sql, $this->getValuesForQuery($Entity)];
     }
 
     public function getUpdateSql(Entity $Entity)
     {
-        $pk_name = $this->getTable()->getPk();
+        $pk_name = $this->getSchemaTable()->getPk();
         $values = $this->getValuesForQuery($Entity);
         $values_str = rtrim(implode('=', $values), '=');
-        $sql = sprintf('UPDATE `%s.%s` SET '.$values_str.' WHERE %s = :id', $this->getSchema()->getName(), $this->getTable()->getName(), $pk_name);
+        $sql = sprintf('UPDATE `%s.%s` SET '.$values_str.' WHERE %s = :id', $this->getSchema()->getName(), $this->getSchemaTable()->getName(), $pk_name);
         $params = $this->getPlaceholderForQuery();
         $params[":${pk_name}"] = $Entity->getId();
         return [$sql, $params];
@@ -36,8 +36,8 @@ abstract class Mapper extends DataMapper
 
     public function getDeleteSql(Entity $Entity)
     {
-        $pk_name = $this->getTable()->getPk();
-        $sql = sprintf('DELETE FROM `%s.%s` WHERE %s = :id LIMIT 1', $this->getSchema()->getName(), $this->getTable()->getName(), $pk_name);
+        $pk_name = $this->getSchemaTable()->getPk();
+        $sql = sprintf('DELETE FROM `%s.%s` WHERE %s = :id LIMIT 1', $this->getSchema()->getName(), $this->getSchemaTable()->getName(), $pk_name);
         $params = $this->getPlaceholderForQuery();
         $params[":${pk_name}"] = $Entity->getId();
         return [$sql, $params];
@@ -45,9 +45,9 @@ abstract class Mapper extends DataMapper
 
     public function getFetchOneSql($id)
     {
-        $pk_name = $this->getTable()->getPk();
+        $pk_name = $this->getSchemaTable()->getPk();
         $sql = 'SELECT * FROM `%s.%s` WHERE %s = :id';
-        $sql = sprintf($sql, $this->getSchema()->getName(), $this->getTable()->getName(), $pk_name);
+        $sql = sprintf($sql, $this->getSchema()->getName(), $this->getSchemaTable()->getName(), $pk_name);
         return [$sql, [":${pk_name}" => $id]];
     }
 

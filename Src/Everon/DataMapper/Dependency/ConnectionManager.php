@@ -7,7 +7,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon\Dependency\Injection\DataMapper;
+namespace Everon\DataMapper\Dependency;
 
 
 trait ConnectionManager

@@ -12,7 +12,7 @@ namespace Everon;
 use Everon\Helper;
 use Everon\Exception;
 
-
+//todo: no class should rely on concrete classes, either make it abstract or remove config\router
 class Config implements Interfaces\Config
 {
     use Dependency\Injection\Factory;
@@ -40,7 +40,7 @@ class Config implements Interfaces\Config
 
     /**
      * @var \Closure
-     */
+     */ 
     protected $Compiler = null;
 
     /**

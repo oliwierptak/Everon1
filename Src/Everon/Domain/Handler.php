@@ -9,15 +9,16 @@
  */
 namespace Everon\Domain;
 
+use Everon\DataMapper\Dependency;
 use Everon\DataMapper\Interfaces\ConnectionManager;
 use Everon\DataMapper\Interfaces\Schema;
-use Everon\Dependency;
 use Everon\Domain\Interfaces\Repository;
+use Everon\Dependency\Injection\Factory as FactoryInjection;
 
 abstract class Handler implements Interfaces\Handler
 {
-    use Dependency\Injection\Factory;
-    use Dependency\DataMapper\ConnectionManager;
+    use Dependency\ConnectionManager;
+    use FactoryInjection;
 
     /**
      * @var array
@@ -84,5 +85,4 @@ abstract class Handler implements Interfaces\Handler
 
         return $this->schemas[$name];        
     }
-
 }

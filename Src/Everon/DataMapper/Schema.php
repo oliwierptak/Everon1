@@ -9,23 +9,17 @@
  */
 namespace Everon\DataMapper;
 
-use Everon\Dependency;
+use Everon\Dependency\Injection\Factory as FactoryInjection;
+use Everon\DataMapper\Dependency;
 use Everon\Helper;
 
 class Schema implements Interfaces\Schema
 {
-    use Dependency\DataMapper\SchemaReader;
-    use Dependency\Injection\Factory;
+    use Dependency\SchemaReader;
+    use FactoryInjection;
     use Helper\ToArray;
-
     
-    protected $tables = [];
-    
-    protected $columns = [];
-    
-    protected $constraints = [];
-    
-    protected $foreign_keys = [];
+    protected $tables = null;
 
     /**
      * @var Interfaces\ConnectionManager
@@ -43,33 +37,26 @@ class Schema implements Interfaces\Schema
     {
         $this->SchemaReader = $SchemaReader;
         $this->ConnectionManager = $ConnectionManager;
-
-        $this->init();
     }
-
-    protected function init()
+    
+    protected function initTables()
     {
         $table_list = $this->getSchemaReader()->getTableList();
         $column_list = $this->getSchemaReader()->getColumnList();
         $constraint_list = $this->getSchemaReader()->getConstraintList();
         $foreign_key_list = $this->getSchemaReader()->getForeignKeyList();
-
-        $filterPerTableName = function($table_name, $data) {
-            $result = [];
-            foreach ($data as $item) {
-                if ($item['TABLE_NAME'] === $table_name) {
-                    $result[] = $item;
-                }
-            }
-            return $result;
+        
+        $castToEmptyArrayWhenNull = function($name, $item) {
+            return isset($item[$name]) ? $item[$name] : [];
         };
-
-        foreach ($table_list as $name) {
-            $this->columns[$name] = $filterPerTableName($name, $column_list);
-            $this->constraints[$name] = $filterPerTableName($name, $constraint_list);
-            $this->foreign_keys[$name] = $filterPerTableName($name, $foreign_key_list);
-            
-            $this->tables[$name] = $this->getFactory()->buildSchemaTable($name, $this->columns[$name], $this->constraints[$name], $this->foreign_keys[$name]);
+        
+        foreach ($table_list as $name => $table_data) {
+            $this->tables[$name] = $this->getFactory()->buildSchemaTable(
+                $name, 
+                $castToEmptyArrayWhenNull($name, $column_list), 
+                $castToEmptyArrayWhenNull($name, $constraint_list), 
+                $castToEmptyArrayWhenNull($name, $foreign_key_list)
+            );
         }
     }
     
@@ -88,6 +75,9 @@ class Schema implements Interfaces\Schema
 
     public function getTables()
     {
+        if ($this->tables === null) {
+            $this->initTables();
+        }
         return $this->tables;
     }
     
@@ -95,16 +85,24 @@ class Schema implements Interfaces\Schema
     {
         $this->tables = $tables;
     }
-    
+
+    /**
+     * @param $name
+     * @return Interfaces\Schema\Table
+     */
     public function getTable($name)
     {
+        if (isset($this->tables[$name]) === false) {
+            $this->initTables();
+        }
+        
         return $this->tables[$name];
     }
 
     /**
      * @inheritdoc
      */
-    public function getPdoAdapter($name)
+    public function getPdoAdapterByName($name)
     {
         if (isset($this->pdo_adapters[$name]) === false) {
             $Connection = $this->getConnectionManager()->getConnectionByName($name);

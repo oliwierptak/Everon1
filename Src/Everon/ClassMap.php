@@ -87,7 +87,7 @@ class ClassMap implements Interfaces\ClassMap
             $Filename = $this->getCacheFilename();
             $h = fopen($Filename, 'w+');
             fwrite($h, "<?php return $data; ");
-            fclose($h);                
+            fclose($h);
         }
         catch (\Exception $e) {
             return null;

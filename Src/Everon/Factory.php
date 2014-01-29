@@ -310,8 +310,7 @@ class Factory implements Interfaces\Factory
     public function buildPdo($dsn, $username, $password, $options)
     {
         try {
-            $Pdo = new \PDO($dsn, $username, $password, $options);
-            return $Pdo;
+            return new \PDO($dsn, $username, $password, $options);
         }
         catch (\Exception $e) {
             throw new Exception\Factory('PDO initialization error', null, $e);
@@ -497,23 +496,23 @@ class Factory implements Interfaces\Factory
             $column_list = [];
             foreach ($columns as $column_data) {
                 $class_name = $this->getFullClassName($namespace, 'Schema\MySql\Column');
-                $column_list[] = $class_name($column_data); //todo: coupled to mysql
+                $column_list[] = new $class_name($column_data); //todo: coupled to mysql
             }
 
             $constraint_list = [];
             foreach ($constraints as $constraint_data) {
                 $class_name = $this->getFullClassName($namespace, 'Schema\Constraint');
-                $constraint_list[] = $class_name($constraint_data);
+                $constraint_list[] = new $class_name($constraint_data);
             }
 
-            $fk_list = [];
-            foreach ($foreign_keys as $fk_data) {
+            $foreign_key_list = [];
+            foreach ($foreign_keys as $foreign_key_data) {
                 $class_name = $this->getFullClassName($namespace, 'Schema\ForeignKey');
-                $fk_list[] = $class_name($fk_data);
+                $foreign_key_list[] = new $class_name($foreign_key_data);
             }
 
             $class_name = $this->getFullClassName($namespace,'Schema\Table');
-            $Table = new $class_name($name, $column_list, $constraint_list, $fk_list);
+            $Table = new $class_name($name, $column_list, $constraint_list, $foreign_key_list);
             return $Table;
         }
         catch (\Exception $e) {

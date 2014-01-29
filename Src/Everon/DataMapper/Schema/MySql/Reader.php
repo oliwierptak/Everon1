@@ -9,53 +9,19 @@
  */
 namespace Everon\DataMapper\Schema\MySql;
 
+use Everon\DataMapper\Schema;
 use Everon\DataMapper\Interfaces;
-use Everon\Interfaces\PdoAdapter;
 
-class Reader implements Interfaces\Schema\Reader
+class Reader extends Schema\Reader implements Interfaces\Schema\Reader
 {
-    protected $name = null;
-
-    /**
-     * @var PdoAdapter
-     */
-    protected $Pdo = null;
-
-
-    /**
-     * @param $name
-     * @param PdoAdapter $Pdo
-     */
-    public function __construct($name, PdoAdapter $Pdo)
+    protected function getTablesSql()
     {
-        $this->name = $name;
-        $this->Pdo = $Pdo;
-    }
-    
-    public function getName()
-    {
-        return $this->name;
-    }
-    
-    public function setPdo(\PDO $Pdo)
-    {
-        $this->Pdo = $Pdo;
-    }
-    
-    public function getPdo()
-    {
-        return $this->Pdo;
+        return "SELECT * FROM information_schema.TABLES WHERE table_schema = :schema";
     }
 
-    public function getTableList()
+    protected function getColumnsSql()
     {
-        $sql = "SHOW TABLES FROM :schema";
-        return $this->getPdo()->exec($sql, ['schema'=>$this->getName()], \PDO::FETCH_COLUMN);
-    }
-
-    public function getColumnList()
-    {
-        $sql = "
+        return "
             SELECT
                 * FROM information_schema.COLUMNS 
             WHERE  
@@ -63,25 +29,21 @@ class Reader implements Interfaces\Schema\Reader
             ORDER BY
                 information_schema.COLUMNS.ORDINAL_POSITION ASC
         ";
-
-        return $this->getPdo()->exec($sql, ['schema'=>$this->getName()], \PDO::FETCH_ASSOC);
     }
 
-    public function getConstraintList()
+    protected function getConstraintsSql()
     {
-        $sql = "
+        return "
             SELECT
                 * FROM information_schema.TABLE_CONSTRAINTS 
             WHERE  
                 information_schema.TABLE_CONSTRAINTS.TABLE_SCHEMA = :schema
         ";
-
-        return $this->getPdo()->exec($sql, ['schema'=>$this->getName()], \PDO::FETCH_ASSOC);
     }
 
-    public function getForeignKeyList()
+    protected function getForeignKeysSql()
     {
-        $sql = "
+        return "
             SELECT
                 TABLE_NAME,COLUMN_NAME,CONSTRAINT_NAME,REFERENCED_TABLE_NAME,REFERENCED_COLUMN_NAME 
             FROM
@@ -92,51 +54,5 @@ class Reader implements Interfaces\Schema\Reader
             ORDER BY 
                 information_schema.KEY_COLUMN_USAGE.TABLE_NAME
         ";
-
-        return $this->getPdo()->exec($sql, ['schema'=>$this->getName()], \PDO::FETCH_ASSOC);
-    }
-
-    public function getColumnsForTable($table_name)
-    {
-        $sql = "
-            SELECT
-                * FROM information_schema.COLUMNS 
-            WHERE  
-                information_schema.COLUMNS.TABLE_SCHEMA = :schema AND
-                information_schema.COLUMNS.TABLE_NAME = :table
-            ORDER BY
-                information_schema.COLUMNS.ORDINAL_POSITION ASC
-        ";        
-
-        return $this->getPdo()->exec($sql, ['schema'=>$this->getName(), 'table'=>$table_name], \PDO::FETCH_ASSOC);
-    }
-
-    public function getConstraintsForTable($table_name)
-    {
-        $sql = "
-            SELECT 
-                * FROM information_schema.TABLE_CONSTRAINTS 
-            WHERE  
-                information_schema.TABLE_CONSTRAINTS.TABLE_SCHEMA = :schema AND
-                information_schema.TABLE_CONSTRAINTS.TABLE_NAME = :table
-        ";
-        
-        return $this->getPdo()->exec($sql, ['schema'=>$this->getName(), 'table'=>$table_name], \PDO::FETCH_ASSOC);
-    }
-
-    public function getForeignKeysForTable($table_name)
-    {
-        $sql = "
-            SELECT
-                TABLE_NAME,COLUMN_NAME,CONSTRAINT_NAME,REFERENCED_TABLE_NAME,REFERENCED_COLUMN_NAME 
-            FROM
-                information_schema.KEY_COLUMN_USAGE
-            WHERE 
-                information_schema.KEY_COLUMN_USAGE.CONSTRAINT_SCHEMA = :schema AND
-                information_schema.KEY_COLUMN_USAGE.REFERENCED_TABLE_NAME IS NOT NULL AND
-                information_schema.KEY_COLUMN_USAGE.TABLE_NAME = :table
-        ";
-
-        return $this->getPdo()->exec($sql, ['schema'=>$this->getName(), 'table'=>$table_name], \PDO::FETCH_ASSOC);
     }
 }

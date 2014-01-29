@@ -25,17 +25,17 @@ class PdoAdapter implements Interfaces\PdoAdapter
     /**
      * @var DataMapper\Interfaces\ConnectionItem
      */
-    protected $Connection = null;
-
+    protected $ConnectionConfig = null;
+    
 
     /**
      * @param \PDO $Pdo
-     * @param DataMapper\Interfaces\ConnectionItem $ConnectionItem
+     * @param DataMapper\Interfaces\ConnectionItem $Connection
      */
-    public function __construct(\PDO $Pdo, DataMapper\Interfaces\ConnectionItem $ConnectionItem)
+    public function __construct(\PDO $Pdo, DataMapper\Interfaces\ConnectionItem $Connection)
     {
         $this->Pdo = $Pdo;
-        $this->Connection = $ConnectionItem;
+        $this->ConnectionConfig = $Connection;
     }
 
     /**
@@ -61,17 +61,22 @@ class PdoAdapter implements Interfaces\PdoAdapter
      * @return array
      * @throws Exception\Pdo
      */
-    public function exec($sql, $parameters=[], $fetch_mode=\PDO::FETCH_OBJ)
+    public function execute($sql, $parameters=[], $fetch_mode=\PDO::FETCH_ASSOC)
     {
         try {
-            $this->getLogger()->sql($sql);
+            foreach ($parameters as $index => $value) {
+                $parameters[':'.$index] = $parameters[$index];
+                unset($parameters[$index]);
+            }
+        
+            $this->getLogger()->sql($sql."|".print_r($parameters, true));
             /**
-             * @var \PDOStatement $rows
+             * @var \PDOStatement $statement
              */
-            $rows = $this->getPdo()->prepare($sql);
-            $rows->execute($parameters);
-            
-            return $rows->fetchAll($fetch_mode);
+            $statement = $this->getPdo()->prepare($sql, [\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY]);
+            $statement->execute($parameters);
+
+            return $statement->fetchAll();
         }
         catch (\PDOException $e) {
             throw new Exception\Pdo($e);

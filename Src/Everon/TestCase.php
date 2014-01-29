@@ -15,6 +15,8 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
     protected $suite_name = 'Everon';
 
     protected $backupGlobalsBlacklist = array('Container', 'Factory');
+    
+    protected $data_fixtures = null;
 
     /**
      * @var Interfaces\Environment
@@ -71,6 +73,19 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
 
         return $server;
     }
+    
+    public function getFixtureData()
+    {
+        if ($this->data_fixtures === null) {
+            $dir = $this->getDataMapperFixtures();
+            $Doubles = new \GlobIterator($dir.'db_*.php');
+            foreach ($Doubles as $filename => $Include) {
+                $this->data_fixtures[$Include->getBasename()] = require($Include->getPathname());
+            }
+        }
+
+        return $this->data_fixtures;
+    }
 
     public function getTmpDirectory()
     {
@@ -91,7 +106,12 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
     {
         return $this->Environment->getTest().$this->suite_name.DIRECTORY_SEPARATOR.'mocks'.DIRECTORY_SEPARATOR;
     }
-
+    
+    public function getDataMapperFixtures()
+    {
+        return $this->getFixtureDirectory().'data_mapper'.DIRECTORY_SEPARATOR;
+    }
+    
     public function getDoublesDirectory()
     {
         return $this->Environment->getTest().$this->suite_name.DIRECTORY_SEPARATOR.'doubles'.DIRECTORY_SEPARATOR;

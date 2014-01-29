@@ -9,16 +9,15 @@
  */
 namespace Everon\DataMapper\Interfaces\Schema;
 
+use Everon\Interfaces\PdoAdapter;
+
 interface Reader
 {
     function getName();
-    function setPdo(\PDO $Pdo);
-    function getPdo();
+    function setPdoAdapter(PdoAdapter $PdoAdapter);
+    function getPdoAdapter();
     function getTableList();
     function getColumnList();
     function getConstraintList();
     function getForeignKeyList();
-    function getColumnsForTable($table_name);
-    function getConstraintsForTable($table_name);
-    function getForeignKeysForTable($table_name);
 }
