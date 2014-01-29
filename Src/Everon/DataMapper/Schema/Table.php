@@ -17,7 +17,6 @@ class Table implements Schema\Table
 {
     use Helper\Immutable;
     
-    
     protected $name = null;
     
     protected $pk = null;

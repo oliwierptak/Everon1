@@ -190,4 +190,19 @@ trait Arrays
         
         return $data;
     }
+
+    /**
+     * @param $key
+     * @param $data
+     * @return array
+     */
+    protected function arrayArrangeByKey($key, $data)
+    {
+        $result = [];
+        for ($a=0; $a<count($data); $a++) {
+            $item = $data[$a];
+            $result[$item[$key]][] = $data[$a];
+        }
+        return $result;
+    }
 }

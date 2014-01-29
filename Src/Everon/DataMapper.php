@@ -11,14 +11,14 @@ namespace Everon;
 
 use Everon\DataMapper\Interfaces\Schema;
 use Everon\DataMapper\Interfaces\Schema\Table;
-use Everon\Dependency;
+use Everon\DataMapper\Dependency;
 use Everon\Domain\Interfaces\Entity;
 use Everon\Interfaces;
 
 abstract class DataMapper implements Interfaces\DataMapper
 {
-    use Dependency\DataMapper\Schema;
-    use Dependency\DataMapper\Table;
+    use Dependency\Schema;
+    use Dependency\SchemaTable;
     
     protected $write_connection_name = 'write';
     protected $read_connection_name = 'read';
@@ -31,20 +31,20 @@ abstract class DataMapper implements Interfaces\DataMapper
     
     public function __construct(Table $Table, Schema $Schema)
     {
-        $this->Table = $Table;
+        $this->SchemaTable = $Table;
         $this->Schema = $Schema;
     }
     
     public function add(Entity $Entity)
     {
         list($sql, $parameters) = $this->getInsertSql($Entity);
-        return $this->getSchema()->getPdoAdapter($this->write_connection_name)->exec($sql, $parameters);
+        return $this->getSchema()->getPdoAdapterByName($this->write_connection_name)->execute($sql, $parameters);  //todo: fixD law of demeter violation
     }
     
     public function save(Entity $Entity)
     {
         list($sql, $parameters) = $this->getUpdateSql($Entity);
-        return $this->getSchema()->getPdoAdapter($this->write_connection_name)->exec($sql, $parameters);
+        return $this->getSchema()->getPdoAdapterByName($this->write_connection_name)->execute($sql, $parameters);
     }
 
     /**
@@ -54,7 +54,7 @@ abstract class DataMapper implements Interfaces\DataMapper
     public function delete(Entity $Entity)
     {
         list($sql, $parameters) = $this->getDeleteSql($Entity);
-        return $this->getSchema()->getPdoAdapter($this->write_connection_name)->exec($sql, $parameters);
+        return $this->getSchema()->getPdoAdapterByName($this->write_connection_name)->execute($sql, $parameters);
     }
 
     /**
@@ -63,18 +63,18 @@ abstract class DataMapper implements Interfaces\DataMapper
     public function fetchOne($id)
     {
         list($sql, $parameters) = $this->getFetchOneSql($id);
-        return $this->getSchema()->getPdoAdapter($this->read_connection_name)->exec($sql, $parameters);
+        return $this->getSchema()->getPdoAdapterByName($this->read_connection_name)->execute($sql, $parameters);
     }
     
     public function fetchAll(array $criteria)
     {
         list($sql, $parameters) = $this->getFetchAllSql($criteria);
-        return $this->getSchema()->getPdoAdapter($this->read_connection_name)->exec($sql, $parameters);
+        return $this->getSchema()->getPdoAdapterByName($this->read_connection_name)->execute($sql, $parameters);
     }
 
     public function getName()
     {
-        return $this->getTable()->getName();
+        return $this->getSchemaTable()->getName();
     }
 
     /**
@@ -84,7 +84,7 @@ abstract class DataMapper implements Interfaces\DataMapper
     public function getValuesForQuery(Entity $Entity)
     {
         $values = [];
-        foreach ($this->getTable()->getColumns() as $column_name) {//eg. column_name=user_data, Entity->getUserData(), $Entity->data['user_data']
+        foreach ($this->getSchemaTable()->getColumns() as $column_name) {//eg. column_name=user_data, Entity->getUserData(), $Entity->data['user_data']
             $values[] = $Entity->getValueByName($column_name);
         }
 
@@ -94,7 +94,7 @@ abstract class DataMapper implements Interfaces\DataMapper
     public function getPlaceholderForQuery($delimeter=':')
     {
         $placeholders = [];
-        foreach ($this->getTable()->getColumns() as $column_name) {
+        foreach ($this->getSchemaTable()->getColumns() as $column_name) {
             $placeholders[] = $delimeter.$column_name;
         }
 

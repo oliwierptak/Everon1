@@ -17,7 +17,7 @@ interface Schema
      * @param $name
      * @return PdoAdapter
      */    
-    function getPdoAdapter($name);
+    function getPdoAdapterByName($name);
     
     /**
      * @return ConnectionManager
@@ -30,5 +30,9 @@ interface Schema
 
     function setTables($tables);
 
+    /**
+     * @param $name
+     * @return Schema\Table
+     */
     function getTable($name);
 }

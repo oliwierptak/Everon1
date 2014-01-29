@@ -48,7 +48,7 @@ class DataMapperTest extends \Everon\TestCase
             ->will($this->returnValue('phpunit_db_test'));
 
         $SchemaMock->expects($this->once())
-            ->method('getPdoAdapter')
+            ->method('getPdoAdapterByName')
             ->will($this->returnValue($PdoAdapterMock));
 
         $TableMock = $this->getMock('Everon\DataMapper\Interfaces\Schema\Table', [],[], '', false);

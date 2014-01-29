@@ -7,27 +7,27 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon\Dependency\DataMapper;
+namespace Everon\DataMapper\Dependency;
 
 
-trait Table
+trait SchemaTable
 {
-    protected $Table = null;
+    protected $SchemaTable = null;
 
 
     /**
      * @return \Everon\DataMapper\Interfaces\Schema\Table
      */
-    public function getTable()
+    public function getSchemaTable()
     {
-        return $this->Table;
+        return $this->SchemaTable;
     }
 
     /**
      * @param \Everon\DataMapper\Interfaces\Schema\Table
      */
-    public function setTable(\Everon\DataMapper\Interfaces\Schema\Table $Table)
+    public function setSchemaTable(\Everon\DataMapper\Interfaces\Schema\Table $Table)
     {
-        $this->Table = $Table;
+        $this->SchemaTable = $Table;
     }
 }

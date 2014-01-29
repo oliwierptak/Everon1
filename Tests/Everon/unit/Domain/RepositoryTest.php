@@ -69,7 +69,7 @@ class RepositoryTest extends \Everon\TestCase
             ->will($this->returnValue('phpunit_db_test'));
         
         $SchemaMock->expects($this->once())
-            ->method('getPdoAdapter')
+            ->method('getPdoAdapterByName')
             ->will($this->returnValue($PdoAdapterMock));
         
         $TableMock = $this->getMock('Everon\DataMapper\Interfaces\Schema\Table');
@@ -79,7 +79,7 @@ class RepositoryTest extends \Everon\TestCase
 
         $DataMapperMock = $this->getMock('Everon\Interfaces\DataMapper');
         $DataMapperMock->expects($this->once())
-            ->method('getTable')
+            ->method('getSchemaTable')
             ->will($this->returnValue($TableMock));
         
         $DataMapperMock->expects($this->once())

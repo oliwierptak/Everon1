@@ -34,5 +34,4 @@ trait Immutable
     {
         $this->isStateLocked = true;
     }
-
 }

@@ -37,13 +37,13 @@ interface DataMapper
     /**
      * @return Table
      */
-    function getTable();
+    function getSchemaTable();
 
     /**
      * @param Table $Table
      * @return Table
      */
-    function setTable(Table $Table);
+    function setSchemaTable(Table $Table);
 
 
     /**

@@ -20,7 +20,7 @@ class Container implements Interfaces\DependencyContainer
 
     protected $container_dependencies = [];
 
-    protected $class_dependencies = [];
+    protected $class_dependencies_to_inject = [];
     
     protected $wants_factory = [];
 
@@ -37,7 +37,7 @@ class Container implements Interfaces\DependencyContainer
             $container_name = $this->container_dependencies[$dependency_name];
         }
         else {
-            if ($container_name = $this->getContainerNameFromDependency($dependency_name)) {
+            if ($container_name = $this->getContainerNameFromDependencyToInject($dependency_name)) {
                 $this->container_dependencies[$dependency_name] = $container_name;
             }
         }
@@ -52,10 +52,24 @@ class Container implements Interfaces\DependencyContainer
 
         $Receiver->$method($this->resolve($container_name));
     }
-
-    protected function getContainerNameFromDependency($dependency_name)
+    
+    protected function demandsInjection($dependency_name)
     {
-        return str_replace('Everon\Dependency\Injection\\', '', $dependency_name);
+        $tokens = explode('\Dependency\Injection', $dependency_name);
+        $container_name = ltrim(@$tokens[1], '\\');
+        return $container_name !== '';
+    }
+    
+    protected function getContainerNameFromDependencyToInject($dependency_name)
+    {
+        $tokens = explode('\Dependency\Injection', $dependency_name);
+        $container_name = ltrim(@$tokens[1], '\\'); //eg. from Everon\Dependency\Injection\Environment\Test into Environment\Test
+        
+        if ($container_name === '') {
+            throw new Exception\DependencyContainer('Unresolved container name for: "%"', $dependency_name);
+        }
+        
+        return $container_name;
     }
 
     /**
@@ -95,19 +109,18 @@ class Container implements Interfaces\DependencyContainer
             throw new Exception\Factory('Error injecting dependency: "%s"', $class_name);
         }
 
-        if (isset($this->class_dependencies[$class_name]) === false) {
+        if (isset($this->class_dependencies_to_inject[$class_name]) === false) {
             $OnlyInjections = function($name) {
-                return strpos($name, 'Everon\Dependency\Injection') === 0;
+                return $this->demandsInjection($name);
             };
             
-            $this->class_dependencies[$class_name] = array_filter(
+            $this->class_dependencies_to_inject[$class_name] = array_filter(
                 $this->getClassDependencies($class_name), 
                 $OnlyInjections
             );
         }
 
-        $dependencies = $this->class_dependencies[$class_name];
-        foreach ($dependencies as $name) {
+        foreach ($this->class_dependencies_to_inject[$class_name] as $name) {
             if ($name === 'Everon\Dependency\Injection\Factory') {
                 $this->wants_factory[$class_name] = true;
             }
