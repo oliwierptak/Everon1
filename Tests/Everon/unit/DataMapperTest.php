@@ -44,6 +44,9 @@ class DataMapperTest extends \Everon\TestCase
         $SchemaMock->expects($this->once())
             ->method('getName')
             ->will($this->returnValue('everon_test'));
+        $SchemaMock->expects($this->once())
+            ->method('getDriver')
+            ->will($this->returnValue('MySql'));
 
         $SchemaMock->expects($this->once())
             ->method('getPdoAdapterByName')
@@ -54,7 +57,7 @@ class DataMapperTest extends \Everon\TestCase
             ->method('getName')
             ->will($this->returnValue('everon_user'));
         
-        $Table = $this->getFactory()->buildSchemaTable('example', [], [], []);
+        $Table = $this->getFactory()->buildSchemaTable('example', 'MySql', [], [], []);
         $Mapper = $this->getFactory()->buildDataMapper($Table, $SchemaMock, 'Everon\Test\DataMapper');
         
         return [

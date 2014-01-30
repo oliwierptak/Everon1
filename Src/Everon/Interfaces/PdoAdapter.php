@@ -11,6 +11,7 @@ namespace Everon\Interfaces;
 
 use Everon\Interfaces;
 use Everon\Exception;
+use Everon\DataMapper\Interfaces\ConnectionItem;
 
 interface PdoAdapter
 {
@@ -21,6 +22,16 @@ interface PdoAdapter
      * @throws Exception\Pdo
      */
     function execute($sql, $parameters=[]);
+
+    /**
+     * @param ConnectionItem $ConnectionConfig
+     */
+    function setConnectionConfig(ConnectionItem $ConnectionConfig);
+
+    /**
+     * @return ConnectionItem
+     */
+    function getConnectionConfig();
 
     /**
      * @param \PDO $Pdo

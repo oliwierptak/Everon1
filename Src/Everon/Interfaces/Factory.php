@@ -186,7 +186,8 @@ interface Factory
     function buildSchemaConstraint(array $data, $ns='Everon\DataMapper');
     
     /**
-     * @param $name <code>table name in database</code>
+     * @param string $name <code>table name in database</code>
+     * @param string $driver eg. MySql
      * @param array $columns
      * @param array $constraints
      * @param array $foreign_keys
@@ -194,7 +195,7 @@ interface Factory
      * @return DataMapper\Interfaces\Schema\Table
      * @throws Exception\Factory
      */
-    function buildSchemaTable($name, array $columns, array $constraints, array $foreign_keys, $ns='Everon\DataMapper\Schema');
+    function buildSchemaTable($name, $driver, array $columns, array $constraints, array $foreign_keys, $ns='Everon\DataMapper\Schema');
 
     /**
      * @param $name

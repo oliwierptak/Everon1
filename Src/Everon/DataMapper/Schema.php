@@ -18,7 +18,10 @@ class Schema implements Interfaces\Schema
     use Dependency\SchemaReader;
     use FactoryInjection;
     use Helper\ToArray;
-    
+
+    /**
+     * @var array
+     */
     protected $tables = null;
 
     /**
@@ -26,6 +29,9 @@ class Schema implements Interfaces\Schema
      */
     protected $ConnectionManager = null;
 
+    /**
+     * @var array
+     */
     protected $pdo_adapters = null;
 
 
@@ -52,7 +58,8 @@ class Schema implements Interfaces\Schema
         
         foreach ($table_list as $name => $table_data) {
             $this->tables[$name] = $this->getFactory()->buildSchemaTable(
-                $name, 
+                $name,
+                $this->getDriver(),
                 $castToEmptyArrayWhenNull($name, $column_list), 
                 $castToEmptyArrayWhenNull($name, $constraint_list), 
                 $castToEmptyArrayWhenNull($name, $foreign_key_list)
@@ -66,6 +73,14 @@ class Schema implements Interfaces\Schema
     public function getConnectionManager()
     {
         return $this->ConnectionManager;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getDriver()
+    {
+        return $this->getSchemaReader()->getPdoAdapter()->getConnectionConfig()->getDriver(); //todo: move getDriver to Reader
     }
     
     public function getName()

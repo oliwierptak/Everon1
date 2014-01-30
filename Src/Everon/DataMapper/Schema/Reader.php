@@ -47,11 +47,22 @@ abstract class Reader implements Interfaces\Schema\Reader
         $this->PdoAdapter = $PdoAdapter;
     }
 
+    /**
+     * @inheritdoc
+     */
+    public function getDriver()
+    {
+        return $this->getPdoAdapter()->getConnectionConfig()->getDriver();
+    }
+
     public function getName()
     {
         return $this->name;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function getTableList()
     {
         if ($this->table_list === null) {
@@ -62,6 +73,9 @@ abstract class Reader implements Interfaces\Schema\Reader
         return $this->table_list;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function getColumnList()
     {
         if ($this->column_list === null) {
@@ -72,6 +86,9 @@ abstract class Reader implements Interfaces\Schema\Reader
         return $this->column_list;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function getConstraintList()
     {
         if ($this->constraint_list === null) {
@@ -82,6 +99,9 @@ abstract class Reader implements Interfaces\Schema\Reader
         return $this->constraint_list;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function getForeignKeyList()
     {
         if ($this->foreign_key_list === null) {

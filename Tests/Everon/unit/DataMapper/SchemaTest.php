@@ -81,13 +81,24 @@ class SchemaTest extends \Everon\TestCase
     
     public function dataProvider()
     {
-        $SchemaReaderMock = $this->getMock('\Everon\DataMapper\Interfaces\Schema\Reader');
-        
         $tables = $this->arrayArrangeByKey('TABLE_NAME', $this->getFixtureData()['db_tables.php']);
         $columns = $this->arrayArrangeByKey('TABLE_NAME', $this->getFixtureData()['db_columns.php']);
         $constraints = $this->arrayArrangeByKey('TABLE_NAME', $this->getFixtureData()['db_constraints.php']);
         $foreign_keys = $this->arrayArrangeByKey('TABLE_NAME', $this->getFixtureData()['db_foreign_keys.php']);
 
+        $PdoStub = new \Everon\Test\MyPdo();
+
+        $ConnectionConfigMock = $this->getMock('Everon\DataMapper\Interfaces\ConnectionItem');
+        $ConnectionConfigMock->expects($this->exactly(3))
+            ->method('getDriver')
+            ->will($this->returnValue('MySql'));
+
+        $PdoAdapterMock = $this->getMock('\Everon\Interfaces\PdoAdapter');
+        $PdoAdapterMock->expects($this->exactly(3))
+            ->method('getConnectionConfig')
+            ->will($this->returnValue($ConnectionConfigMock));
+
+        $SchemaReaderMock = $this->getMock('\Everon\DataMapper\Interfaces\Schema\Reader');
         $SchemaReaderMock->expects($this->once())
             ->method('getTableList')
             ->will($this->returnValue($tables));
@@ -107,14 +118,16 @@ class SchemaTest extends \Everon\TestCase
         $SchemaReaderMock->expects($this->once())
             ->method('getName')
             ->will($this->returnValue('everon_test'));
+
+        $SchemaReaderMock->expects($this->exactly(3))
+            ->method('getPdoAdapter')
+            ->will($this->returnValue($PdoAdapterMock));
         
-        $Pdo = new \Everon\Test\MyPdo();
         $FactoryMock = $this->getMock('\Everon\Interfaces\Factory');
         $FactoryMock->expects($this->once())
             ->method('buildPdo')
-            ->will($this->returnValue($Pdo));
+            ->will($this->returnValue($PdoStub));
 
-        $PdoAdapterMock = $this->getMock('\Everon\Interfaces\PdoAdapter');
         $FactoryMock->expects($this->once())
             ->method('buildPdoAdapter')
             ->will($this->returnValue($PdoAdapterMock));

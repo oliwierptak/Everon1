@@ -24,6 +24,11 @@ interface Schema
      */
     function getConnectionManager();
 
+    /**
+     * @return string MySql
+     */
+    function getDriver();
+
     function getName();
     
     function getTables();

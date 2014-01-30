@@ -379,7 +379,8 @@ class Factory implements Interfaces\Factory
     {
         $name = $this->stringUnderscoreToCamel($Table->getName());
         try {
-            $class_name = $this->getFullClassName($namespace, 'MySql\\'.$name); //todo: should be driver
+            $driver = $Schema->getDriver();
+            $class_name = $this->getFullClassName($namespace, $driver.'\\'.$name);
             $DataMapper = new $class_name($Table, $Schema);
             $this->injectDependencies($class_name, $DataMapper);
             return $DataMapper;
@@ -490,13 +491,13 @@ class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildSchemaTable($name, array $columns, array $constraints, array $foreign_keys, $namespace='Everon\DataMapper')
+    public function buildSchemaTable($name, $driver, array $columns, array $constraints, array $foreign_keys, $namespace='Everon\DataMapper')
     {
         try {
             $column_list = [];
             foreach ($columns as $column_data) {
-                $class_name = $this->getFullClassName($namespace, 'Schema\MySql\Column');
-                $column_list[] = new $class_name($column_data); //todo: coupled to mysql
+                $class_name = $this->getFullClassName($namespace, "Schema\\${driver}\\Column");
+                $column_list[] = new $class_name($column_data);
             }
 
             $constraint_list = [];

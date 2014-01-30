@@ -60,7 +60,10 @@ abstract class Handler implements Interfaces\Handler
     public function getRepository($name)
     {
         if (isset($this->repositories[$name]) === false) {
-            $DataMapper = $this->getFactory()->buildDataMapper($name, $this->getSchema($name));
+            $Schema = $this->getSchema($name);
+            $DataMapper = $this->getFactory()->buildDataMapper(
+                $Schema->getTable($name), $Schema
+            );
             $this->repositories[$name] = $this->getFactory()->buildDomainRepository($name, $DataMapper);
         }
 

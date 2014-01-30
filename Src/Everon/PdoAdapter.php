@@ -11,6 +11,7 @@ namespace Everon;
 
 use Everon\Exception;
 use Everon\Dependency;
+use Everon\DataMapper\Interfaces\ConnectionItem;
 
 class PdoAdapter implements Interfaces\PdoAdapter 
 {
@@ -23,21 +24,37 @@ class PdoAdapter implements Interfaces\PdoAdapter
 
 
     /**
-     * @var DataMapper\Interfaces\ConnectionItem
+     * @var ConnectionItem
      */
     protected $ConnectionConfig = null;
-    
+
 
     /**
      * @param \PDO $Pdo
-     * @param DataMapper\Interfaces\ConnectionItem $Connection
+     * @param ConnectionItem $Connection
      */
-    public function __construct(\PDO $Pdo, DataMapper\Interfaces\ConnectionItem $Connection)
+    public function __construct(\PDO $Pdo, ConnectionItem $Connection)
     {
         $this->Pdo = $Pdo;
         $this->ConnectionConfig = $Connection;
     }
+    
+    /**
+     * @inheritdoc
+     */
+    public function setConnectionConfig(ConnectionItem $ConnectionConfig)
+    {
+        $this->ConnectionConfig = $ConnectionConfig;
+    }
 
+    /**
+     * @inheritdoc
+     */
+    public function getConnectionConfig()
+    {
+        return $this->ConnectionConfig;
+    }
+    
     /**
      * @inheritdoc
      */
@@ -53,7 +70,7 @@ class PdoAdapter implements Interfaces\PdoAdapter
     {
         return $this->Pdo;
     }
-
+    
     /**
      * @param $sql
      * @param array $parameters

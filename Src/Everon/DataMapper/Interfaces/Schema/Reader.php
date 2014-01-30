@@ -13,11 +13,37 @@ use Everon\Interfaces\PdoAdapter;
 
 interface Reader
 {
+    /**
+     * @return string Eg. MySql
+     */
+    function getDriver();
+    
     function getName();
+    
     function setPdoAdapter(PdoAdapter $PdoAdapter);
+
+    /**
+     * @return PdoAdapter
+     */
     function getPdoAdapter();
+
+    /**
+     * @return array Returns [['table-name' => [...]], ['2nd-table-name' => [...]]]
+     */
     function getTableList();
+
+    /**
+     * @return array Returns [['table-name' => [...]], ['2nd-table-name' => [...]]]
+     */
     function getColumnList();
+
+    /**
+     * @return array Returns [['table-name' => [...]], ['2nd-table-name' => [...]]]
+     */
     function getConstraintList();
+
+    /**
+     * @return array Returns [['table-name' => [...]], ['2nd-table-name' => [...]]]
+     */
     function getForeignKeyList();
 }
