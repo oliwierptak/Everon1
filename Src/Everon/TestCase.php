@@ -27,16 +27,27 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
     public function __construct($name = NULL, array $data=[], $dataName='')
     {
         parent::__construct($name, $data, $dataName);
-
         $nesting = implode('..', array_fill(0, 3, DIRECTORY_SEPARATOR));
         $root = realpath(dirname(__FILE__).$nesting).DIRECTORY_SEPARATOR;
-        
         $this->Environment = new Environment($root);
+        $this->includeDoubles($this->getDoublesDirectory());
+    }
+    
+    protected function includeDoubles($dir)
+    {
+        /**
+         * @var \SplFileInfo $IncludeItem
+         */
+        $It = new \RecursiveIteratorIterator(
+            new \RecursiveDirectoryIterator($dir, \FilesystemIterator::SKIP_DOTS),
+            \RecursiveIteratorIterator::CHILD_FIRST
+        );
         
-        $dir = $this->getDoublesDirectory();
-        $Doubles = new \GlobIterator($dir.'*.*');
-        foreach ($Doubles as $filename => $Include) {
-            include_once($Include->getPathname());
+        $includes = iterator_to_array($It);
+        foreach ($includes as $filename => $IncludeItem) {
+            if ($IncludeItem->isFile()) {
+                require_once($IncludeItem->getPathname());
+            }
         }
     }
 
@@ -48,7 +59,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
             $this->getConfigCacheDirectory(),
             $this->getLogDirectory(),
         ];
-        
+
         foreach ($directories as $dir) {
             $TmpFiles = new \GlobIterator($dir.'*.*');
             foreach ($TmpFiles as $filename => $File) {
@@ -135,6 +146,11 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
     protected function getConfigCacheDirectory()
     {
         return $this->getTmpDirectory().'config'.DIRECTORY_SEPARATOR;
+    }
+    
+    protected function getViewCacheDirectory()
+    {
+        return $this->getTmpDirectory().'view'.DIRECTORY_SEPARATOR;
     }
     
     public function getProtectedProperty($class_name, $name)

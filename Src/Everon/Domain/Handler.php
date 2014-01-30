@@ -12,7 +12,6 @@ namespace Everon\Domain;
 use Everon\DataMapper\Dependency;
 use Everon\DataMapper\Interfaces\ConnectionManager;
 use Everon\DataMapper\Interfaces\Schema;
-use Everon\Domain\Interfaces\Repository;
 use Everon\Dependency\Injection\Factory as FactoryInjection;
 
 abstract class Handler implements Interfaces\Handler

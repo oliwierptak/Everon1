@@ -14,13 +14,11 @@ use Everon\Domain\Interfaces;
 
 class DataMapperTest extends \Everon\TestCase
 {
-
     public function testConstructor()
     {
         $SchemaMock = $this->getMock('Everon\DataMapper\Interfaces\Schema');
-        $TableMock = $this->getMock('Everon\DataMapper\Interfaces\Schema\Table', [],[],'', false);
-        
-        $DataMapper = new DataMapper\User($TableMock, $SchemaMock);
+        $TableMock = $this->getMock('Everon\DataMapper\Interfaces\Schema\Table', [], [],'', false);
+        $DataMapper = new DataMapper\MySql\Example($TableMock, $SchemaMock);
         $this->assertInstanceOf('\Everon\Interfaces\DataMapper', $DataMapper);
     }
 
@@ -28,7 +26,7 @@ class DataMapperTest extends \Everon\TestCase
      * @dataProvider dataProvider
      */
     public function testAddShouldInsertEntity($Mapper, $PdoAdapterMock)
-    {
+    {        
 /*        $PdoAdapterMock->expects($this->once())
             ->method('exec')
             ->will($this->returnValue([
@@ -45,7 +43,7 @@ class DataMapperTest extends \Everon\TestCase
         $SchemaMock = $this->getMock('Everon\DataMapper\Interfaces\Schema', [], [], '', false);
         $SchemaMock->expects($this->once())
             ->method('getName')
-            ->will($this->returnValue('phpunit_db_test'));
+            ->will($this->returnValue('everon_test'));
 
         $SchemaMock->expects($this->once())
             ->method('getPdoAdapterByName')
@@ -54,9 +52,9 @@ class DataMapperTest extends \Everon\TestCase
         $TableMock = $this->getMock('Everon\DataMapper\Interfaces\Schema\Table', [],[], '', false);
         $TableMock->expects($this->once())
             ->method('getName')
-            ->will($this->returnValue('my_test_table'));
+            ->will($this->returnValue('everon_user'));
         
-        $Table = $this->getFactory()->buildSchemaTable('user', [], [], []);
+        $Table = $this->getFactory()->buildSchemaTable('example', [], [], []);
         $Mapper = $this->getFactory()->buildDataMapper($Table, $SchemaMock, 'Everon\Test\DataMapper');
         
         return [

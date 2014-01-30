@@ -115,8 +115,8 @@ class FactoryTest extends \Everon\TestCase
             return $RequestMock;
         });
         
-        $Model = $Factory->buildDomainModel('MyModel', '\Everon\Test');
-        $this->assertInstanceOf('\Everon\Test\MyModel\Model', $Model);
+        $Model = $Factory->buildDomainModel('Example', '\Everon\Test\Domain');
+        $this->assertInstanceOf('\Everon\Test\Domain\Example\Model', $Model);
     }
 
     /**

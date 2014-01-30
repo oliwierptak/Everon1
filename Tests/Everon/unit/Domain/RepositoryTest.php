@@ -9,7 +9,7 @@
  */
 namespace Everon\Test\Domain;
 
-use Everon\Test\MyRepository;
+use Everon\Test\Domain\Example\Repository;
 use Everon\Domain\Interfaces;
 
 class RepositoryTest extends \Everon\TestCase
@@ -20,16 +20,16 @@ class RepositoryTest extends \Everon\TestCase
     public function testConstructor()
     {
         $DataMapperMock = $this->getMock('Everon\Interfaces\DataMapper');
-        $Repository = new MyRepository\Repository('MyRepository', $DataMapperMock);
+        $Repository = new Repository('Example', $DataMapperMock);
         $this->assertInstanceOf('\Everon\Domain\Interfaces\Repository', $Repository);
     }
 
     /**
      * @dataProvider dataProvider
      */
-    public function testPersistShouldAddNewEntityAndMarkEntityAsPersisted(MyRepository\Repository $Repository, array $data)
+    public function testPersistShouldAddNewEntityAndMarkEntityAsPersisted(Repository $Repository, array $data)
     {
-        $Entity = $this->getFactory()->buildDomainEntity('MyEntity', null, $data, 'Everon\Test');
+        $Entity = $this->getFactory()->buildDomainEntity('Example', null, $data, 'Everon\Test\Domain');
         $Repository->persist($Entity);
         $this->assertTrue($Entity->isPersisted());
     }
@@ -37,9 +37,9 @@ class RepositoryTest extends \Everon\TestCase
     /**
      * @dataProvider dataProvider
      */
-    public function testPersistShouldUpdateEntityAndMarkEntityAsPersisted(MyRepository\Repository $Repository, array $data)
+    public function testPersistShouldUpdateEntityAndMarkEntityAsPersisted(Repository $Repository, array $data)
     {
-        $Entity = $this->getFactory()->buildDomainEntity('MyEntity', 1, $data, 'Everon\Test');
+        $Entity = $this->getFactory()->buildDomainEntity('Example', 1, $data, 'Everon\Test\Domain');
         $Repository->persist($Entity);
         $this->assertTrue($Entity->isPersisted());
     }
@@ -47,9 +47,9 @@ class RepositoryTest extends \Everon\TestCase
     /**
      * @dataProvider dataProvider
      */
-    public function testGetNameShouldReturnClassName(MyRepository\Repository $Repository, array $data)
+    public function testGetNameShouldReturnClassName(Repository $Repository, array $data)
     {
-        $this->assertEquals('MyRepository', $Repository->getName());
+        $this->assertEquals('Example', $Repository->getName());
     }
    
     public function dataProvider()
@@ -92,7 +92,7 @@ class RepositoryTest extends \Everon\TestCase
             'date_of_birth' => '1990-09-09',
         ];
                
-        $Repository = $this->getFactory()->buildDomainRepository('MyRepository', $DataMapperMock, 'Everon\Test');
+        $Repository = $this->getFactory()->buildDomainRepository('Example', $DataMapperMock, 'Everon\Test\Domain');
                     
         return [
             [$Repository, $entity_data]

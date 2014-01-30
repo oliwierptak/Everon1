@@ -32,3 +32,7 @@ list($Container, $Factory) = $Bootstrap->run();
 $Container->propose('Environment', function() use ($Environment) {
     return $Environment;
 });
+
+$Container->propose('Bootstrap', function() use ($Bootstrap) {
+    return $Bootstrap;
+});
