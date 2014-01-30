@@ -21,7 +21,6 @@ class SchemaTest extends \Everon\TestCase
     {
         $ConnectionManager = $this->getMock('\Everon\DataMapper\Interfaces\ConnectionManager');
         $Reader = $this->getMock('\Everon\DataMapper\Interfaces\Schema\Reader');
-        
         $Manager = new \Everon\DataMapper\Schema($Reader, $ConnectionManager);
         $this->assertInstanceOf('\Everon\DataMapper\Interfaces\Schema', $Manager);
     }
@@ -125,8 +124,7 @@ class SchemaTest extends \Everon\TestCase
             ->method('buildSchemaTable')
             ->will($this->returnValue($SchemaTableMock));
 
-
-        //$C = $this->getMock('\Everon\DataMapper\Interfaces\ConnectionManager'); //why the fuck does it return null
+        //$C = $this->getMock('\Everon\DataMapper\Interfaces\ConnectionManager'); //why the fuck does it return null?
         $DatabaseConfig = $this->getFactory()->getDependencyContainer()->resolve('ConfigManager')->getConfigByName('database');
         $ConnectionManager = $this->getFactory()->buildConnectionManager($DatabaseConfig);
         

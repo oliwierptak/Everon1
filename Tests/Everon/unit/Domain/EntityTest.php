@@ -9,7 +9,7 @@
  */
 namespace Everon\Test\Domain;
 
-use Everon\Test\MyEntity;
+use Everon\Test\Domain\Example\Entity;
 use Everon\Domain\Interfaces;
 
 class EntityTest extends \Everon\TestCase
@@ -17,7 +17,7 @@ class EntityTest extends \Everon\TestCase
     /**
      * @dataProvider dataProvider
      */    
-    public function testConstructor(MyEntity\Entity $Entity, array $data)
+    public function testConstructor(Entity $Entity, array $data)
     {
         $Entity = new \Everon\Domain\Entity(1, $data);
         $this->assertInstanceOf('\Everon\Domain\Interfaces\Entity', $Entity);
@@ -27,7 +27,7 @@ class EntityTest extends \Everon\TestCase
     /**
      * @dataProvider dataProvider
      */
-    public function testEntityStateShouldBeNewWhenIdNotSet(MyEntity\Entity $Entity, array $data)
+    public function testEntityStateShouldBeNewWhenIdNotSet(Entity $Entity, array $data)
     {
         $Entity = new \Everon\Domain\Entity(null, $data);
         $this->assertNull($Entity->getId());
@@ -40,7 +40,7 @@ class EntityTest extends \Everon\TestCase
     /**
      * @dataProvider dataProvider
      */
-    public function testEntityStateShouldBePersistedWhenIdIsSet(MyEntity\Entity $Entity, array $data)
+    public function testEntityStateShouldBePersistedWhenIdIsSet(Entity $Entity, array $data)
     {
         $this->assertNotNull($Entity->getId());
         $this->assertTrue($Entity->isPersisted());
@@ -52,7 +52,7 @@ class EntityTest extends \Everon\TestCase
     /**
      * @dataProvider dataProvider
      */
-    public function testEntityShouldReturnValueByGetter(MyEntity\Entity $Entity, array $data)
+    public function testEntityShouldReturnValueByGetter(Entity $Entity, array $data)
     {
         $this->assertEquals($data['first_name'], $Entity->getFirstName());
         $this->assertEquals($data['date_of_birth'], $Entity->getDateOfBirth());
@@ -61,7 +61,7 @@ class EntityTest extends \Everon\TestCase
     /**
      * @dataProvider dataProvider
      */
-    public function testEntityShouldMarkModifiedProperties(MyEntity\Entity $Entity, array $data)
+    public function testEntityShouldMarkModifiedProperties(Entity $Entity, array $data)
     {
         $this->assertEquals($data['first_name'], $Entity->getFirstName());
         $this->assertEquals($data['last_name'], $Entity->getLastName());
@@ -82,7 +82,7 @@ class EntityTest extends \Everon\TestCase
     /**
      * @dataProvider dataProvider
      */
-    public function testEntityGetValueByNameShouldReturnValue(MyEntity\Entity $Entity, array $data)
+    public function testEntityGetValueByNameShouldReturnValue(Entity $Entity, array $data)
     {
         $this->assertEquals($data['first_name'], $Entity->getValueByName('first_name'));
         $this->assertEquals($data['last_name'], $Entity->getValueByName('last_name'));
@@ -91,7 +91,7 @@ class EntityTest extends \Everon\TestCase
     /**
      * @dataProvider dataProvider
      */
-    public function testEntitySetValueByNameShouldSetValue(MyEntity\Entity $Entity, array $data)
+    public function testEntitySetValueByNameShouldSetValue(Entity $Entity, array $data)
     {
         $Entity->setValueByName('first_name', 'Tom');
         $Entity->setValueByName('last_name', 'Smith');
@@ -108,7 +108,7 @@ class EntityTest extends \Everon\TestCase
             'date_of_birth' => '1990-09-09',
         ];
         
-        $Entity = $this->getFactory()->buildDomainEntity('MyEntity', 1, $data, 'Everon\Test');
+        $Entity = $this->getFactory()->buildDomainEntity('Example', 1, $data, 'Everon\Test\Domain');
                     
         return [
             [$Entity, $data]

@@ -60,6 +60,7 @@ class Environment implements Interfaces\Environment
 
         $this->resources += [
             'cache_config' => $this->getCache().'config'.DIRECTORY_SEPARATOR,
+            'cache_view' => $this->getCache().'view'.DIRECTORY_SEPARATOR,
         ];
     }
 
@@ -212,6 +213,16 @@ class Environment implements Interfaces\Environment
     function setCacheConfig($cache_config)
     {
         $this->resources['cache_config'] = $cache_config;
+    }
+
+    function getCacheView()
+    {
+        return $this->resources['cache_view'];
+    }
+
+    function setViewCache($view_cache)
+    {
+        $this->resources['cache_view'] = $view_cache;
     }
 
     function getLog()

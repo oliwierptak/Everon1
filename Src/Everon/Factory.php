@@ -379,7 +379,7 @@ class Factory implements Interfaces\Factory
     {
         $name = $this->stringUnderscoreToCamel($Table->getName());
         try {
-            $class_name = $this->getFullClassName($namespace, $name);
+            $class_name = $this->getFullClassName($namespace, 'MySql\\'.$name); //todo: should be driver
             $DataMapper = new $class_name($Table, $Schema);
             $this->injectDependencies($class_name, $DataMapper);
             return $DataMapper;
@@ -472,7 +472,7 @@ class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildSchemaReader(DataMapper\Interfaces\ConnectionItem $ConnectionItem, Interfaces\PdoAdapter $PdoAdapter, $namespace='Everon\dataMapper\Schema')
+    public function buildSchemaReader(DataMapper\Interfaces\ConnectionItem $ConnectionItem, Interfaces\PdoAdapter $PdoAdapter, $namespace='Everon\DataMapper\Schema')
     {
         try {
             $class_name = $ConnectionItem->getAdapterName().'\Reader';

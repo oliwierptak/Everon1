@@ -7,8 +7,12 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon\Test\MyRepository;
+namespace Everon\Test\Domain;
 
-class Repository extends \Everon\Domain\Repository
+class Manager extends \Everon\Domain\Handler
 {
+    public function getUserRepository()
+    {
+        return $this->getRepository('Example');
+    }
 }

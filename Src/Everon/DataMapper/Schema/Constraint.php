@@ -43,4 +43,8 @@ class Constraint implements Schema\Constraint
         return get_object_vars($this);
     }
 
+    public function __toString()
+    {
+        return (string) $this->name;
+    }
 }

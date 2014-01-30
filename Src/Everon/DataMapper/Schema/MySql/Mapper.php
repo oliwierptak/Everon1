@@ -23,7 +23,7 @@ abstract class Mapper extends DataMapper
         return [$sql, $this->getValuesForQuery($Entity)];
     }
 
-    public function getUpdateSql(Entity $Entity)
+    protected function getUpdateSql(Entity $Entity)
     {
         $pk_name = $this->getSchemaTable()->getPk();
         $values = $this->getValuesForQuery($Entity);
@@ -34,7 +34,7 @@ abstract class Mapper extends DataMapper
         return [$sql, $params];
     }
 
-    public function getDeleteSql(Entity $Entity)
+    protected function getDeleteSql(Entity $Entity)
     {
         $pk_name = $this->getSchemaTable()->getPk();
         $sql = sprintf('DELETE FROM `%s.%s` WHERE %s = :id LIMIT 1', $this->getSchema()->getName(), $this->getSchemaTable()->getName(), $pk_name);
@@ -43,7 +43,7 @@ abstract class Mapper extends DataMapper
         return [$sql, $params];
     }
 
-    public function getFetchOneSql($id)
+    protected function getFetchOneSql($id)
     {
         $pk_name = $this->getSchemaTable()->getPk();
         $sql = 'SELECT * FROM `%s.%s` WHERE %s = :id';
@@ -51,8 +51,7 @@ abstract class Mapper extends DataMapper
         return [$sql, [":${pk_name}" => $id]];
     }
 
-    public function getFetchAllSql(array $criteria)
+    protected function getFetchAllSql(array $criteria)
     {
-
     }
 }

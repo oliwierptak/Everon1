@@ -107,4 +107,9 @@ class Table implements Schema\Table
     {
         return $this->pk;
     }
+    
+    public function __toString()
+    {
+        return (string) $this->name;
+    }
 }

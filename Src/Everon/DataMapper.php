@@ -38,7 +38,7 @@ abstract class DataMapper implements Interfaces\DataMapper
     public function add(Entity $Entity)
     {
         list($sql, $parameters) = $this->getInsertSql($Entity);
-        return $this->getSchema()->getPdoAdapterByName($this->write_connection_name)->execute($sql, $parameters);  //todo: fixD law of demeter violation
+        return $this->getSchema()->getPdoAdapterByName($this->write_connection_name)->execute($sql, $parameters);
     }
     
     public function save(Entity $Entity)
@@ -91,11 +91,15 @@ abstract class DataMapper implements Interfaces\DataMapper
         return $values;
     }
 
-    public function getPlaceholderForQuery($delimeter=':')
+    /**
+     * @param string $delimiter
+     * @return array
+     */
+    public function getPlaceholderForQuery($delimiter=':')
     {
         $placeholders = [];
         foreach ($this->getSchemaTable()->getColumns() as $column_name) {
-            $placeholders[] = $delimeter.$column_name;
+            $placeholders[] = $delimiter.$column_name;
         }
 
         return $placeholders;

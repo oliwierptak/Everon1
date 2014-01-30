@@ -175,7 +175,7 @@ interface Factory
      * @return DataMapper\Interfaces\Schema\Reader
      * @throws Exception\Factory
      */
-    function buildSchemaReader(DataMapper\Interfaces\ConnectionItem $ConnectionItem, Interfaces\PdoAdapter $PdoAdapter, $ns='Everon\dataMapper\Schema');
+    function buildSchemaReader(DataMapper\Interfaces\ConnectionItem $ConnectionItem, Interfaces\PdoAdapter $PdoAdapter, $ns='Everon\DataMapper\Schema');
     
     /**
      * @param array $data

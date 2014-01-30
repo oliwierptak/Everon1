@@ -92,7 +92,7 @@ class Schema implements Interfaces\Schema
      */
     public function getTable($name)
     {
-        if (isset($this->tables[$name]) === false) {
+        if ($this->tables === null) {
             $this->initTables();
         }
         
