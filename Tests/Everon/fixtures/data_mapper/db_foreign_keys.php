@@ -3,7 +3,7 @@
   array (
     'TABLE_NAME' => 'user_group_rel',
     'COLUMN_NAME' => 'group_id',
-    'CONSTRAINT_NAME' => 'groupd_id_fk',
+    'CONSTRAINT_NAME' => 'group_id_fk',
     'REFERENCED_TABLE_NAME' => 'user_group',
     'REFERENCED_COLUMN_NAME' => 'id',
   ),

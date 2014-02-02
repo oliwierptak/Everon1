@@ -16,16 +16,34 @@ use Everon\DataMapper\Interfaces\Schema\Table;
 
 interface DataMapper
 {
+    /**
+     * @param Entity $Entity
+     * @return int Return last inserted ID
+     */
     function add(Entity $Entity);
+
+    /**
+     * @param Entity $Entity
+     * @return bool
+     */
     function save(Entity $Entity);
+
+    /**
+     * @param Entity $Entity
+     * @return bool
+     */
     function delete(Entity $Entity);
 
     /**
      * @param int $id
-     * @return Entity
+     * @return array
      */
     function fetchOne($id);
-    
+
+    /**
+     * @param Criteria $Criteria
+     * @return array
+     */
     function fetchAll(Criteria $Criteria);
 
     function getName();
@@ -45,16 +63,4 @@ interface DataMapper
      * @return Table
      */
     function setSchemaTable(Table $Table);
-
-
-    /**
-     * @param Entity $Entity
-     * @return array
-     */
-    function getValuesForQuery(Entity $Entity);
-
-    /**
-     * @return array
-     */
-    function getPlaceholderForQuery();
 }

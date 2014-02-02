@@ -190,12 +190,13 @@ interface Factory
      * @param string $driver eg. MySql
      * @param array $columns
      * @param array $primary_keys
+     * @param array $unique_keys
      * @param array $foreign_keys
      * @param $ns
      * @return DataMapper\Interfaces\Schema\Table
      * @throws Exception\Factory
      */
-    function buildSchemaTable($name, $driver, array $columns, array $primary_keys, array $foreign_keys, $ns='Everon\DataMapper\Schema');
+    function buildSchemaTable($name, $driver, array $columns, array $primary_keys, array $unique_keys, array $foreign_keys, $ns='Everon\DataMapper\Schema');
 
     /**
      * @param $name

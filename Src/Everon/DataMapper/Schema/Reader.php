@@ -28,12 +28,15 @@ abstract class Reader implements Interfaces\Schema\Reader
     
     protected $foreign_key_list = null;
     
+    protected $unique_key_list = null;
+    
     protected $table_list = null;
     
     
     abstract protected function getTablesSql();
     abstract protected function getColumnsSql();
     abstract protected function getPrimaryKeysSql();
+    abstract protected function getUniqueKeysSql();
     abstract protected function getForeignKeysSql();
 
 
@@ -110,6 +113,19 @@ abstract class Reader implements Interfaces\Schema\Reader
             );
         }
         return $this->foreign_key_list;
+    }
+    
+    /**
+     * @inheritdoc
+     */
+    public function getUniqueKeysList()
+    {
+        if ($this->unique_key_list === null) {
+            $this->unique_key_list = $this->arrayArrangeByKey('TABLE_NAME',
+                $this->getPdoAdapter()->execute($this->getUniqueKeysSql(), ['schema'=>$this->getName()], \PDO::FETCH_ASSOC)->fetchAll()
+            );
+        }
+        return $this->unique_key_list;
     }
     
     public function dumpDataBaseSchema($dir)

@@ -496,7 +496,7 @@ class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildSchemaTable($name, $driver, array $columns, array $primary_keys, array $foreign_keys, $namespace='Everon\DataMapper')
+    public function buildSchemaTable($name, $driver, array $columns, array $primary_keys,  array $unique_keys, array $foreign_keys, $namespace='Everon\DataMapper')
     {
         try {
             $column_list = [];

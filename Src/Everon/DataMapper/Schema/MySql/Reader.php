@@ -31,6 +31,19 @@ class Reader extends Schema\Reader implements Interfaces\Schema\Reader
         ";
     }
 
+    protected function getUniqueKeysSql()
+    {
+        return "
+            SELECT *
+                FROM information_schema.TABLE_CONSTRAINTS 
+            WHERE 
+                information_schema.TABLE_CONSTRAINTS.CONSTRAINT_SCHEMA = :schema 
+                AND information_schema.TABLE_CONSTRAINTS.CONSTRAINT_TYPE = 'UNIQUE'
+            ORDER BY 
+                information_schema.TABLE_CONSTRAINTS.CONSTRAINT_NAME ASC;
+        ";
+    }
+    
     protected function getPrimaryKeysSql()
     {
         return "
@@ -39,8 +52,8 @@ class Reader extends Schema\Reader implements Interfaces\Schema\Reader
             FROM
                 information_schema.KEY_COLUMN_USAGE
             WHERE 
-                information_schema.KEY_COLUMN_USAGE.CONSTRAINT_SCHEMA = :schema AND
-                information_schema.KEY_COLUMN_USAGE.CONSTRAINT_NAME = 'PRIMARY'
+                information_schema.KEY_COLUMN_USAGE.CONSTRAINT_SCHEMA = :schema
+                AND information_schema.KEY_COLUMN_USAGE.CONSTRAINT_NAME = 'PRIMARY'
             ORDER BY 
                 information_schema.KEY_COLUMN_USAGE.COLUMN_NAME
         ";
@@ -54,8 +67,8 @@ class Reader extends Schema\Reader implements Interfaces\Schema\Reader
             FROM
                 information_schema.KEY_COLUMN_USAGE
             WHERE 
-                information_schema.KEY_COLUMN_USAGE.CONSTRAINT_SCHEMA = :schema AND
-                information_schema.KEY_COLUMN_USAGE.REFERENCED_TABLE_NAME IS NOT NULL
+                information_schema.KEY_COLUMN_USAGE.CONSTRAINT_SCHEMA = :schema
+                AND information_schema.KEY_COLUMN_USAGE.REFERENCED_TABLE_NAME IS NOT NULL
             ORDER BY 
                 information_schema.KEY_COLUMN_USAGE.TABLE_NAME
         ";

@@ -28,20 +28,24 @@ class Table implements Schema\Table
     protected $primary_keys = [];
 
     protected $foreign_keys = [];
-
+    
+    protected $unique_keys = [];
 
     /**
      * @param $name
+     * @param $driver
      * @param array $columns
      * @param array $primary_keys
+     * @param array $unique_keys
      * @param array $foreign_keys
      */
-    public function __construct($name, array $columns, array $primary_keys, array $foreign_keys) //todo: the arrays should be collections
+    public function __construct($name, $driver, array $columns, array $primary_keys,  array $unique_keys, array $foreign_keys)
     {        
         $this->name = $name;
         $this->columns = $columns;
         $this->primary_keys = $primary_keys;
         $this->foreign_keys = $foreign_keys;
+        $this->unique_keys = $unique_keys;
         
         $this->init();
         $this->lock();
@@ -59,30 +63,6 @@ class Table implements Schema\Table
         }
     }
     
-    public function getPlaceholderForQuery($delimeter=':')
-    {
-        $placeholders = [];
-        foreach ($this->columns as $column_name) {
-            $placeholders[] = $delimeter.$column_name;
-        }
-        
-        return $placeholders;
-    }
-
-    /**
-     * @param Entity $Entity
-     * @return array
-     */
-    public function getValuesForQuery(Entity $Entity)
-    {
-        $values = [];
-        foreach ($this->columns as $column_name) {//eg. column_name=user_data, Entity->getUserData(), $Entity->data['user_data']
-            $values[] = $Entity->getValueByName($column_name);
-        }
-        
-        return $values;
-    }
-    
     public function getName()
     {
         return $this->name;
@@ -96,6 +76,11 @@ class Table implements Schema\Table
     public function getPrimaryKeys()
     {
         return $this->primary_keys;
+    }
+    
+    public function getUniqueKeys()
+    {
+        return $this->unique_keys;
     }
     
     public function toArray()

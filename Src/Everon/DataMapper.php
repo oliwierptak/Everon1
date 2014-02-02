@@ -89,7 +89,7 @@ abstract class DataMapper implements Interfaces\DataMapper
      * @param string $placeholder
      * @return array
      */
-    public function getPlaceholderForQuery($placeholder=':')
+    protected function getPlaceholderForQuery($placeholder=':')
     {
         $placeholders = [];
         $columns = $this->getSchemaTable()->getColumns();
@@ -108,7 +108,7 @@ abstract class DataMapper implements Interfaces\DataMapper
      * @param string $delimiter
      * @return array
      */
-    public function getValuesForQuery(Entity $Entity, $delimiter='')
+    protected function getValuesForQuery(Entity $Entity, $delimiter='')
     {
         $values = [];
         $columns = $this->getSchemaTable()->getColumns();

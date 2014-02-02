@@ -46,4 +46,9 @@ interface Reader
      * @return array Returns [['table-name' => [...]], ['2nd-table-name' => [...]]]
      */
     function getForeignKeyList();
+
+    /**
+     * @return array Returns [['table-name' => [...]], ['2nd-table-name' => [...]]]
+     */
+    function getUniqueKeysList();
 }

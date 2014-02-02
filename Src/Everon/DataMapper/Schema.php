@@ -51,6 +51,7 @@ class Schema implements Interfaces\Schema
         $column_list = $this->getSchemaReader()->getColumnList();
         $primary_key_list = $this->getSchemaReader()->getPrimaryKeysList();
         $foreign_key_list = $this->getSchemaReader()->getForeignKeyList();
+        $unique_key_list = $this->getSchemaReader()->getUniqueKeysList();
         
         $castToEmptyArrayWhenNull = function($name, $item) {
             return isset($item[$name]) ? $item[$name] : [];
@@ -62,6 +63,7 @@ class Schema implements Interfaces\Schema
                 $this->getDriver(),
                 $castToEmptyArrayWhenNull($name, $column_list), 
                 $castToEmptyArrayWhenNull($name, $primary_key_list), 
+                $castToEmptyArrayWhenNull($name, $unique_key_list), 
                 $castToEmptyArrayWhenNull($name, $foreign_key_list)
             );
         }

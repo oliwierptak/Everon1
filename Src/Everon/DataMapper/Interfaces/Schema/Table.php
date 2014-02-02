@@ -26,6 +26,11 @@ interface Table extends Arrayable, Immutable
      */
     function getPrimaryKeys();
 
+    /**
+     * @return array
+     */
+    function getUniqueKeys();
+
     function getPk();
 
     /**
