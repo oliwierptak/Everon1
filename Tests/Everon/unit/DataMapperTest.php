@@ -55,15 +55,16 @@ class DataMapperTest extends \Everon\TestCase
         $id = $Mapper->add($Entity);
         $this->assertInstanceOf('\Everon\Test\Domain\User\Entity', $Entity);
         
-        
         $data = $Entity->toArray();
         $Entity->reload($id, $data);
         $Mapper->save($Entity);
         
-        $FetchedEntity = $Mapper->fetchOne($id);
-        $this->assertInternalType('array', $FetchedEntity);
+        $fetched_data = $Mapper->fetchOne($id);
+        $this->assertInternalType('array', $fetched_data);
 
         $Mapper->delete($Entity);
+        $this->assertInstanceOf('\Everon\Domain\Interfaces\Entity', $Entity);
+        $this->assertNull($Entity->getId());
         
         $Criteria = new \Everon\DataMapper\Criteria();
         $all = $Mapper->fetchAll($Criteria);
