@@ -17,6 +17,10 @@ class Criteria implements Interfaces\Criteria
 {
     use Helper\ToArray;
     
+    public function __construct(array $data)
+    {
+        $this->data = $data;
+    }
     
 
 }

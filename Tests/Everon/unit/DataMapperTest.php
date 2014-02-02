@@ -186,6 +186,10 @@ class DataMapperTest extends \Everon\TestCase
             ->will($this->returnValue($PdoStatementMock));
 
         $Criteria = $this->getMock('Everon\DataMapper\Interfaces\Criteria');
+        $Criteria->expects($this->once())
+            ->method('toArray')
+            ->will($this->returnValue([]));
+        
         $result = $Mapper->fetchAll($Criteria);
         
         $this->assertInternalType('array', $result);

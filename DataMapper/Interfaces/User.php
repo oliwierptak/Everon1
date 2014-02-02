@@ -2,7 +2,7 @@
 namespace Everon\DataMapper\Interfaces;
 
 
-interface User
+interface User extends \Everon\Interfaces\DataMapper
 {
     function fetchOneByLogin($login);
 }

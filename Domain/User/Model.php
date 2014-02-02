@@ -19,7 +19,8 @@ class Model
      */
     public function authenticate($username, $password)
     {
-        $User = $this->getDomainManager()->getUserRepository()->getUserByUsername($username);
+        $User = $this->getDomainManager()->getUserRepository()->getByLogin($username);
+        sd($User);
         if ($User->getPassword() === $password) {
             $this->getLogger()->auth('Authentication successful for user: "%s"', [$username]);
             return $User;

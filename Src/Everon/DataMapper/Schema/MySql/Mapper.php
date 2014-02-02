@@ -64,15 +64,28 @@ abstract class Mapper extends DataMapper
     protected function getFetchAllSql(Interfaces\Criteria $Criteria)
     {
         $pk_name = $this->getSchemaTable()->getPk();
+        $where_str = '1=1';
+        $parameters = [];
+
+        if (empty($Criteria) === false) {
+            $where_tokens = $Criteria->toArray();
+            foreach ($where_tokens as $field => $value) {
+                $where_str .= ' AND '.$field.' = :'.$field.'';
+                $parameters[$field] = $value;
+            }
+        }
+
         $sql = '
             SELECT 
                 * 
             FROM `%s`.`%s`
+            WHERE '.$where_str.'
             ORDER BY %s
             LIMIT %d
             OFFSET %d
         ';
+        
         $sql = sprintf($sql, $this->getSchema()->getName(), $this->getSchemaTable()->getName(), $pk_name, 10, 0);
-        return [$sql, []];
+        return [$sql, $parameters];
     }
 }

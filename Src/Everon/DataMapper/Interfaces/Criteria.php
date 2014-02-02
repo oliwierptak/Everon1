@@ -9,7 +9,7 @@
  */
 namespace Everon\DataMapper\Interfaces;
 
-interface Criteria
+interface Criteria extends \Everon\Interfaces\Arrayable
 {
 
 }

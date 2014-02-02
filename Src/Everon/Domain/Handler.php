@@ -48,7 +48,7 @@ abstract class Handler implements Interfaces\Handler
      */
     public function getEntity($name, $id, array $data)
     {
-        $this->models[$name] = $this->getFactory()->buildDomainEntity($name, $id, $data);
+        return $this->getFactory()->buildDomainEntity($name, $id, $data);
     }
 
     /**
