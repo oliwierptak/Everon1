@@ -117,7 +117,7 @@ class Table implements Schema\Table
     public function validateId($id)
     {
         $PrimaryKey = current($this->getPrimaryKeys()); //todo: make fix for composite keys
-        /**
+        /**
          * @var Column $Column
          */
         $Column = $this->getColumns()[$PrimaryKey->getName()];

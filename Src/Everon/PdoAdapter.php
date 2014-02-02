@@ -102,8 +102,11 @@ class PdoAdapter implements Interfaces\PdoAdapter
             $this->getLogger()->sql_error($sql."|".print_r($parameters, true));
             throw new Exception\Pdo($e);
         }
-    }    
-    
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function insert($sql, array $parameters=[], $fetch_mode=\PDO::FETCH_ASSOC)
     {
         try {
@@ -129,6 +132,9 @@ class PdoAdapter implements Interfaces\PdoAdapter
         }
     }
     
+    /**
+     * @inheritdoc
+     */
     public function update($sql, array $parameters=[], $fetch_mode=\PDO::FETCH_ASSOC)
     {
         try {
@@ -151,7 +157,10 @@ class PdoAdapter implements Interfaces\PdoAdapter
             throw new Exception\Pdo($e);
         }
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public function delete($sql, array $parameters=[], $fetch_mode=\PDO::FETCH_ASSOC)
     {
         try {

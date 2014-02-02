@@ -75,23 +75,10 @@ class DataMapperTest extends \Everon\TestCase
     /**
      * @dataProvider dataProvider
      */
-    public function AAtestAddShouldInsertEntity(\Everon\Interfaces\DataMapper $Mapper, $PdoAdapterMock)
+    public function testAddShouldInsertEntity(\Everon\Interfaces\DataMapper $Mapper, $PdoAdapterMock)
     {
-        $DatabaseConfig = $this->getFactory()->getDependencyContainer()->resolve('ConfigManager')->getConfigByName('database');
-        $ConnectionManager = $this->getFactory( )->buildConnectionManager($DatabaseConfig);
-
-        $Connection = $ConnectionManager->getConnectionByName('schema');
-        list($dsn, $username, $password, $options) = $Connection->toPdo();
-        $Pdo = $this->getFactory()->buildPdo($dsn, $username, $password, $options);
-        $PdoAdapter = $this->getFactory()->buildPdoAdapter($Pdo, $Connection);
-        $Reader = $this->getFactory()->buildSchemaReader($Connection, $PdoAdapter);
-        $Schema = $this->getFactory()->buildSchema($Reader, $ConnectionManager);
-        $Table = $Schema->getTable('user');
-        $Mapper = $this->getFactory()->buildDataMapper($Table, $Schema);
-        
-        //sd($Mapper);
-        
         $entity_data = [
+            'id' => null,
             'first_name' => 'John',
             'last_name' => 'Doe'
         ];
@@ -100,12 +87,17 @@ class DataMapperTest extends \Everon\TestCase
             ->method('exec')
             ->will($this->returnValue($entity_data));
         
+        $PdoAdapterMock->expects($this->once())
+            ->method('insert')
+            ->will($this->returnValue(1));
+        
         $Entity = new \Everon\Test\Domain\User\Entity(null, $entity_data);
-        $Mapper->add($Entity);
+        $id = $Mapper->add($Entity);
         
         $this->assertInstanceOf('\Everon\Test\Domain\User\Entity', $Entity);
-        $this->assertEquals(123, $Entity->getId());
-        $this->assertTrue($Entity->isPersisted());
+        $this->assertEquals(null, $Entity->getId());
+        $this->assertEquals(1, $id);
+        $this->assertTrue($Entity->isNew()); //repository should set the states
     }
     
     /**
@@ -134,6 +126,14 @@ class DataMapperTest extends \Everon\TestCase
     public function dataProvider()
     {
         $PdoAdapterMock = $this->getMock('Everon\Interfaces\PdoAdapter', [], [], '', false);
+        
+        $ColumnMock = $this->getMock('Everon\DataMapper\Interfaces\Schema\Table');
+        $ColumnMock->expects($this->any())
+            ->method('getName')
+            ->will($this->returnValue('id'));
+        
+        $columns = [];
+        $columns['user'] = $ColumnMock;
 
         $SchemaMock = $this->getMock('Everon\DataMapper\Interfaces\Schema', [], [], '', false);
         $SchemaMock->expects($this->once())
@@ -142,19 +142,42 @@ class DataMapperTest extends \Everon\TestCase
         $SchemaMock->expects($this->once())
             ->method('getDriver')
             ->will($this->returnValue('MySql'));
-
         $SchemaMock->expects($this->once())
             ->method('getPdoAdapterByName')
             ->will($this->returnValue($PdoAdapterMock));
-       
+        $SchemaMock->expects($this->once())
+            ->method('getTableList')
+            ->will($this->returnValue([$ColumnMock]));
+
         $TableMock = $this->getMock('Everon\DataMapper\Interfaces\Schema\Table', [],[], '', false);
-        $TableMock->expects($this->once())
+        $TableMock->expects($this->any())
             ->method('getName')
             ->will($this->returnValue('user'));
+        $TableMock->expects($this->once())
+            ->method('validateId')
+            ->will($this->returnValue(1));
+        $TableMock->expects($this->any())
+            ->method('getColumns')
+            ->will($this->returnValue([$ColumnMock]));
+/*
+        $PrimaryKeyMock = $this->getMock('Everon\DataMapper\Interfaces\Schema\PrimaryKey');
+        $PrimaryKeyMock->expects($this->once())
+            ->method('getName')
+            ->will($this->returnValue('id'));
+
+
         
-        $columns = $this->arrayArrangeByKey('TABLE_NAME', $this->getFixtureData()['db_columns.php']);
-        $Table = $this->getFactory()->buildSchemaTable('user', 'MySql', $columns['user'], [], []);
-        $Mapper = $this->getFactory()->buildDataMapper($Table, $SchemaMock, 'Everon\Test\DataMapper');
+
+        $TableMock->expects($this->once())
+            ->method('validateId')
+            ->will($this->returnValue(1));
+        $TableMock->expects($this->once())
+            ->method('getPrimaryKeys')
+            ->will($this->returnValue([$PrimaryKeyMock]));*/
+
+
+        //$Table = $this->getFactory()->buildSchemaTable('user', 'MySql', $columns['user'], [], []);
+        $Mapper = $this->getFactory()->buildDataMapper($TableMock, $SchemaMock, 'Everon\Test\DataMapper');
         
         return [
             [$Mapper, $PdoAdapterMock]

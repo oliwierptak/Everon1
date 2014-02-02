@@ -41,8 +41,7 @@ abstract class DataMapper implements Interfaces\DataMapper
         list($sql, $parameters) = $this->getInsertSql($Entity);
         $PdoAdapter = $this->getSchema()->getPdoAdapterByName($this->write_connection_name);
         $id = $PdoAdapter->insert($sql, $parameters);
-        $id = $this->getSchemaTable()->validateId($id);
-        return $id;
+        return $this->getSchemaTable()->validateId($id);
     }
     
     public function save(Entity $Entity)

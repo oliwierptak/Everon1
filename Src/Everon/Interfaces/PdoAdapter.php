@@ -25,6 +25,33 @@ interface PdoAdapter
     function execute($sql, array $parameters=null, $fetch_mode=\PDO::FETCH_ASSOC);
 
     /**
+     * @param $sql
+     * @param array $parameters
+     * @param int $fetch_mode
+     * @return string
+     * @throws Exception\Pdo
+     */
+    function insert($sql, array $parameters=[], $fetch_mode=\PDO::FETCH_ASSOC);
+
+    /**
+     * @param $sql
+     * @param array $parameters
+     * @param int $fetch_mode
+     * @return int
+     * @throws Exception\Pdo
+     */
+    function update($sql, array $parameters=[], $fetch_mode=\PDO::FETCH_ASSOC);
+
+    /**
+     * @param $sql
+     * @param array $parameters
+     * @param int $fetch_mode
+     * @return int
+     * @throws Exception\Pdo
+     */
+    function delete($sql, array $parameters=[], $fetch_mode=\PDO::FETCH_ASSOC);
+
+    /**
      * @param ConnectionItem $ConnectionConfig
      */
     function setConnectionConfig(ConnectionItem $ConnectionConfig);
