@@ -35,7 +35,7 @@ class SchemaReaderTest extends \Everon\TestCase
         die();
     }   
     
-    public function SKIPtestConstructor()
+    public function testConstructor()
     {
         $PdoAdapter = $this->getMock('\Everon\Interfaces\PdoAdapter');
         $Reader = new \Everon\DataMapper\Schema\MySql\Reader('everon_test', $PdoAdapter);
@@ -92,30 +92,30 @@ class SchemaReaderTest extends \Everon\TestCase
     /**
      * @dataProvider dataProvider
      */
-    public function testGetConstraintListShouldReturnArrayWithColumnsData(\Everon\DataMapper\Interfaces\Schema\Reader $Reader, \Everon\Interfaces\PdoAdapter $PdoAdapterMock)
+    public function testGetPrimaryKeysListShouldReturnArrayWithPrimaryKeys(\Everon\DataMapper\Interfaces\Schema\Reader $Reader, \Everon\Interfaces\PdoAdapter $PdoAdapterMock)
     {
         $PdoStatementMock = $this->getMock('\PDOStatement');
         $PdoStatementMock->expects($this->once())
             ->method('fetchAll')
-            ->will($this->returnValue($this->getFixtureData()['db_constraints.php']));
+            ->will($this->returnValue($this->getFixtureData()['db_primary_keys.php']));
 
         $PdoAdapterMock->expects($this->once())
             ->method('execute')
             ->will($this->returnValue($PdoStatementMock));
         
         $Reader->setPdoAdapter($PdoAdapterMock);
-        $constraints = $Reader->getColumnList();
-        $expected = $this->arrayArrangeByKey('TABLE_NAME', $this->getFixtureData()['db_constraints.php']);
+        $primary_keys = $Reader->getPrimaryKeysList();
+        $expected = $this->arrayArrangeByKey('TABLE_NAME', $this->getFixtureData()['db_primary_keys.php']);
         
-        $this->assertInternalType('array', $constraints);
-        $this->assertCount(3, $constraints);
-        $this->assertEquals($expected, $constraints);
+        $this->assertInternalType('array', $primary_keys);
+        $this->assertCount(3, $primary_keys);
+        $this->assertEquals($expected, $primary_keys);
     }
 
     /**
      * @dataProvider dataProvider
      */
-    public function testGetForeignKeyListListShouldReturnArrayWithColumnsData(\Everon\DataMapper\Interfaces\Schema\Reader $Reader, \Everon\Interfaces\PdoAdapter $PdoAdapterMock)
+    public function testGetForeignKeyListListShouldReturnArrayForeignKeys(\Everon\DataMapper\Interfaces\Schema\Reader $Reader, \Everon\Interfaces\PdoAdapter $PdoAdapterMock)
     {
         $PdoStatementMock = $this->getMock('\PDOStatement');
         $PdoStatementMock->expects($this->once())
@@ -127,7 +127,7 @@ class SchemaReaderTest extends \Everon\TestCase
             ->will($this->returnValue($PdoStatementMock));
 
         $Reader->setPdoAdapter($PdoAdapterMock);
-        $foreign_keys = $Reader->getColumnList();
+        $foreign_keys = $Reader->getForeignKeyList();
         $expected = $this->arrayArrangeByKey('TABLE_NAME', $this->getFixtureData()['db_foreign_keys.php']);
 
         $this->assertInternalType('array', $foreign_keys);

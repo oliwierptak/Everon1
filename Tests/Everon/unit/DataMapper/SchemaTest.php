@@ -83,7 +83,7 @@ class SchemaTest extends \Everon\TestCase
     {
         $tables = $this->arrayArrangeByKey('TABLE_NAME', $this->getFixtureData()['db_tables.php']);
         $columns = $this->arrayArrangeByKey('TABLE_NAME', $this->getFixtureData()['db_columns.php']);
-        $constraints = $this->arrayArrangeByKey('TABLE_NAME', $this->getFixtureData()['db_constraints.php']);
+        $primary_keys = $this->arrayArrangeByKey('TABLE_NAME', $this->getFixtureData()['db_primary_keys.php']);
         $foreign_keys = $this->arrayArrangeByKey('TABLE_NAME', $this->getFixtureData()['db_foreign_keys.php']);
 
         $PdoStub = new \Everon\Test\MyPdo();
@@ -109,7 +109,7 @@ class SchemaTest extends \Everon\TestCase
         
         $SchemaReaderMock->expects($this->once())
             ->method('getPrimaryKeysList')
-            ->will($this->returnValue($constraints));
+            ->will($this->returnValue($primary_keys));
         
         $SchemaReaderMock->expects($this->once())
             ->method('getForeignKeyList')

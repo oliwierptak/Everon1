@@ -115,8 +115,8 @@ abstract class Reader implements Interfaces\Schema\Reader
     public function dumpDataBaseSchema($dir)
     {
         $tables = $this->getPdoAdapter()->execute($this->getTablesSql(), ['schema'=>$this->getName()], \PDO::FETCH_ASSOC)->fetchAll();
-        $columns = $this->getPdoAdapter()->execute($this->getColumnsSql(), ['schema'=>$this->getName()], \PDO::FETCH_ASSOC);
-        $constraints = $this->getPdoAdapter()->execute($this->getPrimaryKeysSql(), ['schema'=>$this->getName()], \PDO::FETCH_ASSOC)->fetchAll();
+        $columns = $this->getPdoAdapter()->execute($this->getColumnsSql(), ['schema'=>$this->getName()], \PDO::FETCH_ASSOC)->fetchAll();
+        $primary_keys = $this->getPdoAdapter()->execute($this->getPrimaryKeysSql(), ['schema'=>$this->getName()], \PDO::FETCH_ASSOC)->fetchAll();
         $foreign_keys = $this->getPdoAdapter()->execute($this->getForeignKeysSql(), ['schema'=>$this->getName()], \PDO::FETCH_ASSOC)->fetchAll();
 
         $export = function($name, $data_to_export) use ($dir) {
@@ -130,7 +130,7 @@ abstract class Reader implements Interfaces\Schema\Reader
 
         $export('tables', $tables);
         $export('columns', $columns);
-        $export('primary_keys', $constraints);
+        $export('primary_keys', $primary_keys);
         $export('foreign_keys', $foreign_keys);
     }
 }
