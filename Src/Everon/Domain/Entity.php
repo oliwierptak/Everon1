@@ -167,18 +167,22 @@ class Entity extends Helper\Popo implements Interfaces\Entity
     public function delete()
     {
         $this->markDeleted();
+        $this->id = null;
+        $this->modified_properties = null;
+        $this->data = null;
     }
     
     public function persist()
     {
         $this->markPersisted();
+        $this->modified_properties = null;
     }
     
     public function reload($id, array $data)
     {
         $this->id = $id;
         $this->data = $data;
-        $this->state = static::STATE_PERSISTED;
+        $this->persist();
     }
     
     /**

@@ -96,8 +96,8 @@ abstract class DataMapper implements Interfaces\DataMapper
         /**
          * @var DataMapper\Interfaces\Schema\Column $Column
          */
-        foreach ($columns as $Column) {
-            $placeholders[] = $placeholder.$Column->getName();
+        foreach ($columns as $name => $Column) {
+            $placeholders[] = $placeholder.$name;
         }
 
         return $placeholders;
@@ -115,8 +115,8 @@ abstract class DataMapper implements Interfaces\DataMapper
         /**
          * @var DataMapper\Interfaces\Schema\Column $Column
          */
-        foreach ($columns as $Column) {
-            $values[$delimiter.$Column->getName()] = $this->getEntityValueAndRemapId($Column->getName(), $Entity);
+        foreach ($columns as $name => $Column) {
+            $values[$delimiter.$name] = $this->getEntityValueAndRemapId($name, $Entity);
         }
 
         return $values;

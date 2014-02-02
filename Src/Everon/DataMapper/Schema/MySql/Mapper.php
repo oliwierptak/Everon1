@@ -33,9 +33,9 @@ abstract class Mapper extends DataMapper
          * @var DataMapper\Interfaces\Schema\Column $Column
          */
         
-        foreach ($columns as $Column) {
+        foreach ($columns as $name => $Column) {
             if ($Column->isPk() === false) {
-                $values_str .= $Column->getName().' = :'.$Column->getName().',';
+                $values_str .= $name.' = :'.$name.',';
             }
         }
         
