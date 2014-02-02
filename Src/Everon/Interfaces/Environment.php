@@ -30,7 +30,7 @@ interface Environment
     function setTest($test);
     function getEveron();
     function setEveron($everon);
-    function getEveronLib();
+    function getEveronConfig();
     function setEveronLib($everon_lib);
     function getEveronInterface();
     function setEveronInterface($everon_interfaces);

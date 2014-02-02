@@ -3,7 +3,7 @@ namespace Everon;
 
 require_once(
 implode(DIRECTORY_SEPARATOR,
-    [dirname(__FILE__), '..', '..', 'Src', 'Everon', 'Lib', 'Bootstrap.php'])    
+    [dirname(__FILE__), '..', '..', 'Src', 'Everon', 'Config', 'Bootstrap.php'])    
 );
 
 /**

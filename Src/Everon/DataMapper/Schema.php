@@ -80,7 +80,7 @@ class Schema implements Interfaces\Schema
      */
     public function getDriver()
     {
-        return $this->getSchemaReader()->getPdoAdapter()->getConnectionConfig()->getDriver(); //todo: move getDriver to Reader
+        return $this->getSchemaReader()->getDriver();
     }
     
     public function getName()

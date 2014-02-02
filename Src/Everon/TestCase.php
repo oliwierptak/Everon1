@@ -191,7 +191,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         $TestEnvironment->setCacheConfig($this->getConfigCacheDirectory());
         $TestEnvironment->setTmp($this->getTmpDirectory());
 
-        require($this->Environment->getEveronLib().'Dependencies.php');
+        require($this->Environment->getEveronConfig().'Dependencies.php');
 
         $Container->register('Environment', function() use ($TestEnvironment) {
             return $TestEnvironment;

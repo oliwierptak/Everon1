@@ -36,7 +36,7 @@ class EnvironmentTest extends \Everon\TestCase
         $this->assertEquals($root.'Src'.DIRECTORY_SEPARATOR, $Environment->getSource());
         $this->assertEquals($root.'Src'.DIRECTORY_SEPARATOR.'Everon'.DIRECTORY_SEPARATOR, $Environment->getEveron());
         $this->assertEquals($root.'Src'.DIRECTORY_SEPARATOR.'Everon'.DIRECTORY_SEPARATOR.'Interfaces'.DIRECTORY_SEPARATOR, $Environment->getEveronInterface());
-        $this->assertEquals($root.'Src'.DIRECTORY_SEPARATOR.'Everon'.DIRECTORY_SEPARATOR.'Lib'.DIRECTORY_SEPARATOR, $Environment->getEveronLib());
+        $this->assertEquals($root.'Src'.DIRECTORY_SEPARATOR.'Everon'.DIRECTORY_SEPARATOR.'Config'.DIRECTORY_SEPARATOR, $Environment->getEveronConfig());
 
         $this->assertEquals($root.'Tmp'.DIRECTORY_SEPARATOR, $Environment->getTmp());
         $this->assertEquals($root.'Tmp'.DIRECTORY_SEPARATOR.'logs'.DIRECTORY_SEPARATOR, $Environment->getLog());
@@ -77,7 +77,7 @@ class EnvironmentTest extends \Everon\TestCase
         $this->assertEquals('test', $Environment->getEveronInterface());
         
         $Environment->setEveronLib('test');
-        $this->assertEquals('test', $Environment->getEveronLib());
+        $this->assertEquals('test', $Environment->getEveronConfig());
 
         $Environment->setTmp('test');
         $this->assertEquals('test', $Environment->getTmp());

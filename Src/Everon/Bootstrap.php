@@ -86,7 +86,7 @@ class Bootstrap
         require_once($this->getEnvironment()->getEveronHelper().'ToString.php');
         require_once($this->getEnvironment()->getEveron().'Exception.php');
 
-        require_once($this->getEnvironment()->getEveronLib().'Dependencies.php');
+        require_once($this->getEnvironment()->getEveronConfig().'Dependencies.php');
         
         return [$Container, $Factory];
     }
