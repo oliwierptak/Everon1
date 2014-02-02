@@ -108,7 +108,7 @@ class EntityTest extends \Everon\TestCase
             'date_of_birth' => '1990-09-09',
         ];
         
-        $Entity = $this->getFactory()->buildDomainEntity('Example', 1, $data, 'Everon\Test\Domain');
+        $Entity = $this->getFactory()->buildDomainEntity('User', 1, $data, 'Everon\Test\Domain');
                     
         return [
             [$Entity, $data]

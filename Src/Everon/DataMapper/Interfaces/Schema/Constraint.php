@@ -14,5 +14,23 @@ use Everon\Interfaces\Immutable;
 
 interface Constraint extends Arrayable, Immutable
 {
+    /**
+     * @param $name
+     */
+    function setName($name);
 
+    /**
+     * @return null
+     */
+    function getName();
+
+    /**
+     * @param null $table_name
+     */
+    function setTableName($table_name);
+
+    /**
+     * @return null
+     */
+    function getTableName();
 }

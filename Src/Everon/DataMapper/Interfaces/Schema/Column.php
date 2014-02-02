@@ -21,4 +21,10 @@ interface Column extends Arrayable, Immutable
     function getLength();
     function isNullable();
     function getDefault();
+    function getSchema();
+    
+    /**
+     * @return array
+     */
+    function getValidationRules();
 }

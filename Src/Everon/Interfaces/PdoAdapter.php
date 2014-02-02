@@ -18,10 +18,11 @@ interface PdoAdapter
     /**
      * @param $sql
      * @param array $parameters
+     * @param int $fetch_mode
      * @return \PDOStatement
      * @throws Exception\Pdo
      */
-    function execute($sql, $parameters=[]);
+    function execute($sql, array $parameters=null, $fetch_mode=\PDO::FETCH_ASSOC);
 
     /**
      * @param ConnectionItem $ConnectionConfig

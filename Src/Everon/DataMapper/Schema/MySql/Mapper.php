@@ -19,39 +19,60 @@ abstract class Mapper extends DataMapper
     protected function getInsertSql(Entity $Entity)
     {
         $values_str = rtrim(implode(',', $this->getPlaceholderForQuery()), ',');
-        $sql = sprintf('INSERT INTO `%s.%s` VALUES (%s)', $this->getSchema()->getName(), $this->getSchemaTable()->getName(), $values_str);
+        $columns_str = rtrim(implode(',', $this->getPlaceholderForQuery('')), ',');
+        $sql = sprintf('INSERT INTO `%s`.`%s` (%s) VALUES (%s)', $this->getSchema()->getName(), $this->getSchemaTable()->getName(), $columns_str, $values_str);
         return [$sql, $this->getValuesForQuery($Entity)];
     }
 
     protected function getUpdateSql(Entity $Entity)
     {
         $pk_name = $this->getSchemaTable()->getPk();
-        $values = $this->getValuesForQuery($Entity);
-        $values_str = rtrim(implode('=', $values), '=');
-        $sql = sprintf('UPDATE `%s.%s` SET '.$values_str.' WHERE %s = :id', $this->getSchema()->getName(), $this->getSchemaTable()->getName(), $pk_name);
-        $params = $this->getPlaceholderForQuery();
-        $params[":${pk_name}"] = $Entity->getId();
+        $values_str = '';
+        $columns = $this->getSchemaTable()->getColumns();
+        /**
+         * @var DataMapper\Interfaces\Schema\Column $Column
+         */
+        
+        foreach ($columns as $Column) {
+            if ($Column->isPk() === false) {
+                $values_str .= $Column->getName().' = :'.$Column->getName().',';
+            }
+        }
+        
+        $values_str = rtrim($values_str, ',');
+        $sql = sprintf('UPDATE `%s`.`%s` SET '.$values_str.' WHERE %s = :%s', $this->getSchema()->getName(), $this->getSchemaTable()->getName(), $pk_name, $pk_name);
+        $params = $this->getValuesForQuery($Entity);
         return [$sql, $params];
     }
 
     protected function getDeleteSql(Entity $Entity)
     {
         $pk_name = $this->getSchemaTable()->getPk();
-        $sql = sprintf('DELETE FROM `%s.%s` WHERE %s = :id LIMIT 1', $this->getSchema()->getName(), $this->getSchemaTable()->getName(), $pk_name);
-        $params = $this->getPlaceholderForQuery();
-        $params[":${pk_name}"] = $Entity->getId();
+        $sql = sprintf('DELETE FROM `%s`.`%s` WHERE %s = :%s LIMIT 1', $this->getSchema()->getName(), $this->getSchemaTable()->getName(), $pk_name, $pk_name);
+        $params = [$pk_name => $Entity->getId()];
         return [$sql, $params];
     }
 
     protected function getFetchOneSql($id)
     {
         $pk_name = $this->getSchemaTable()->getPk();
-        $sql = 'SELECT * FROM `%s.%s` WHERE %s = :id';
-        $sql = sprintf($sql, $this->getSchema()->getName(), $this->getSchemaTable()->getName(), $pk_name);
-        return [$sql, [":${pk_name}" => $id]];
+        $sql = 'SELECT * FROM `%s`.`%s` WHERE %s = :%s';
+        $sql = sprintf($sql, $this->getSchema()->getName(), $this->getSchemaTable()->getName(), $pk_name, $pk_name);
+        return [$sql, [$pk_name => $id]];
     }
 
-    protected function getFetchAllSql(array $criteria)
+    protected function getFetchAllSql(Interfaces\Criteria $Criteria)
     {
+        $pk_name = $this->getSchemaTable()->getPk();
+        $sql = '
+            SELECT 
+                * 
+            FROM `%s`.`%s`
+            ORDER BY %s
+            LIMIT %d
+            OFFSET %d
+        ';
+        $sql = sprintf($sql, $this->getSchema()->getName(), $this->getSchemaTable()->getName(), $pk_name, 10, 0);
+        return [$sql, []];
     }
 }

@@ -12,30 +12,56 @@ namespace Everon\DataMapper\Schema;
 use Everon\Helper;
 use Everon\DataMapper\Interfaces\Schema;
 
-class Constraint implements Schema\Constraint 
+abstract class Constraint implements Schema\Constraint 
 {
     use Helper\Immutable;
 
-    protected $catalog = null;
-    protected $schema = null;
     protected $name = null;
-    protected $table_schema = null;
+    protected $schema = null;
     protected $table_name = null;
-    protected $type = null;
-    
-    protected $ConstraintInfo = null;
     
     
     public function __construct(array $data)
     {
-        $this->ConstraintInfo = new Helper\PopoProps($data);
-       
-        $this->catalog = $this->ConstraintInfo->constraint_catalog;
-        $this->schema = $this->ConstraintInfo->constraint_schema;
-        $this->name = $this->ConstraintInfo->constraint_name;
-        $this->table_schema = $this->ConstraintInfo->table_schema;
-        $this->table_name = $this->ConstraintInfo->table_name;
-        $this->type = $this->ConstraintInfo->constraint_type;
+        $ConstraintInfo = new Helper\PopoProps($data);
+
+        $this->name = $ConstraintInfo->constraint_name;
+        $this->schema = $ConstraintInfo->constraint_schema;
+        $this->table_name = $ConstraintInfo->table_name;
+
+        $this->lock();
+    }
+    
+    /**
+     * @param null $name
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
+
+    /**
+     * @return null
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param null $table_name
+     */
+    public function setTableName($table_name)
+    {
+        $this->table_name = $table_name;
+    }
+
+    /**
+     * @return null
+     */
+    public function getTableName()
+    {
+        return $this->table_name;
     }
     
     public function toArray()

@@ -7,8 +7,16 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon\Domain;
+namespace Everon\DataMapper;
 
-use Everon\Exception as EveronException;
+use Everon\Helper;
+use Everon\DataMapper\Exception;
+use Everon\DataMapper\Interfaces;
 
-class Exception extends EveronException{};
+class Criteria implements Interfaces\Criteria 
+{
+    use Helper\ToArray;
+    
+    
+
+}

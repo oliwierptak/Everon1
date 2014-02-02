@@ -20,7 +20,7 @@ class RepositoryTest extends \Everon\TestCase
     public function testConstructor()
     {
         $DataMapperMock = $this->getMock('Everon\Interfaces\DataMapper');
-        $Repository = new Repository('Example', $DataMapperMock);
+        $Repository = new Repository('User', $DataMapperMock);
         $this->assertInstanceOf('\Everon\Domain\Interfaces\Repository', $Repository);
     }
 
@@ -29,7 +29,7 @@ class RepositoryTest extends \Everon\TestCase
      */
     public function testPersistShouldAddNewEntityAndMarkEntityAsPersisted(Repository $Repository, array $data)
     {
-        $Entity = $this->getFactory()->buildDomainEntity('Example', null, $data, 'Everon\Test\Domain');
+        $Entity = $this->getFactory()->buildDomainEntity('User', null, $data, 'Everon\Test\Domain');
         $Repository->persist($Entity);
         $this->assertTrue($Entity->isPersisted());
     }
@@ -39,7 +39,7 @@ class RepositoryTest extends \Everon\TestCase
      */
     public function testPersistShouldUpdateEntityAndMarkEntityAsPersisted(Repository $Repository, array $data)
     {
-        $Entity = $this->getFactory()->buildDomainEntity('Example', 1, $data, 'Everon\Test\Domain');
+        $Entity = $this->getFactory()->buildDomainEntity('User', 1, $data, 'Everon\Test\Domain');
         $Repository->persist($Entity);
         $this->assertTrue($Entity->isPersisted());
     }
@@ -49,7 +49,7 @@ class RepositoryTest extends \Everon\TestCase
      */
     public function testGetNameShouldReturnClassName(Repository $Repository, array $data)
     {
-        $this->assertEquals('Example', $Repository->getName());
+        $this->assertEquals('User', $Repository->getName());
     }
    
     public function dataProvider()
@@ -92,7 +92,7 @@ class RepositoryTest extends \Everon\TestCase
             'date_of_birth' => '1990-09-09',
         ];
                
-        $Repository = $this->getFactory()->buildDomainRepository('Example', $DataMapperMock, 'Everon\Test\Domain');
+        $Repository = $this->getFactory()->buildDomainRepository('User', $DataMapperMock, 'Everon\Test\Domain');
                     
         return [
             [$Repository, $entity_data]

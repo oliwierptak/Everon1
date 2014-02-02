@@ -23,4 +23,5 @@ interface Entity extends Interfaces\Arrayable
     function getValueByName($name);
     function setValueByName($name, $value);
     function persist();
+    function reload($id, array $data);
 }

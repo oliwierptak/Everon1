@@ -23,6 +23,11 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
      */
     protected $Environment = null;
 
+    /**
+     * @var \Everon\Guid
+     */
+    protected $Guid = null;
+
 
     public function __construct($name = NULL, array $data=[], $dataName='')
     {
@@ -31,6 +36,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         $root = realpath(dirname(__FILE__).$nesting).DIRECTORY_SEPARATOR;
         $this->Environment = new Environment($root);
         $this->includeDoubles($this->getDoublesDirectory());
+        $this->Guid = $GLOBALS['Guid']; //import from bootstrap
     }
     
     protected function includeDoubles($dir)
@@ -88,7 +94,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
     public function getFixtureData()
     {
         if ($this->data_fixtures === null) {
-            $dir = $this->getDataMapperFixtures();
+            $dir = $this->getDataMapperFixturesDirectory();
             $Doubles = new \GlobIterator($dir.'db_*.php');
             foreach ($Doubles as $filename => $Include) {
                 $this->data_fixtures[$Include->getBasename()] = require($Include->getPathname());
@@ -118,7 +124,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         return $this->Environment->getTest().$this->suite_name.DIRECTORY_SEPARATOR.'mocks'.DIRECTORY_SEPARATOR;
     }
     
-    public function getDataMapperFixtures()
+    public function getDataMapperFixturesDirectory()
     {
         return $this->getFixtureDirectory().'data_mapper'.DIRECTORY_SEPARATOR;
     }
@@ -190,6 +196,13 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         $Container->register('Environment', function() use ($TestEnvironment) {
             return $TestEnvironment;
         });
+
+        //register global unique (request) identifier with Logger
+        /**
+         * @var \Everon\Interfaces\Logger $Logger
+         */
+        $Logger = $Container->resolve('Logger');
+        $Logger->setGuid($this->Guid->getValue());
 
         $Container->register('Request', function() use ($Factory) {
             $server_data = $this->getServerDataForRequest([

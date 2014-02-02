@@ -75,7 +75,7 @@ class SchemaTest extends \Everon\TestCase
      */
     public function testGetTableShouldReturnSchemaTableInstance(DataMapper\Interfaces\Schema $Schema)
     {
-        $Table = $Schema->getTable('test_user');
+        $Table = $Schema->getTable('user');
         $this->assertInstanceOf('\Everon\DataMapper\Interfaces\Schema\Table', $Table);
     }
     
@@ -108,7 +108,7 @@ class SchemaTest extends \Everon\TestCase
             ->will($this->returnValue($columns));
         
         $SchemaReaderMock->expects($this->once())
-            ->method('getConstraintList')
+            ->method('getPrimaryKeysList')
             ->will($this->returnValue($constraints));
         
         $SchemaReaderMock->expects($this->once())

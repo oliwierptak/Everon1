@@ -16,6 +16,7 @@ use Everon\DataMapper\Interfaces\Schema;
 abstract class Column implements Schema\Column 
 {
     use Helper\Immutable;
+    use Helper\ToString;
     
     
     protected $is_pk = null;
@@ -38,10 +39,11 @@ abstract class Column implements Schema\Column
     
     protected $encoding = null;
     
-    protected $ColumnInfo = null;
-    
     protected $validation_rules = null;
-    
+
+    protected $schema = null;
+
+
     abstract protected function init(array $data);
     
 
@@ -86,12 +88,28 @@ abstract class Column implements Schema\Column
         return $this->default;
     }
 
+    /**
+     * @return null
+     */
+    public function getSchema()
+    {
+        return $this->schema;
+    }
+
+    /**
+     * @return array
+     */
+    public function getValidationRules()
+    {
+        return $this->validation_rules;
+    }
+    
     public function toArray()
     {
         return get_object_vars($this);
     }
     
-    public function __toString()
+    public function getToString()
     {
         return (string) $this->name;
     }

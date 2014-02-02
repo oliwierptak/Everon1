@@ -15,7 +15,7 @@ class RequestTest extends \Everon\TestCase
     
     public function setUp()
     {
-        ++self::$pass;
+        ++static::$pass;
     }
     
     public function testConstructor()
@@ -137,14 +137,14 @@ class RequestTest extends \Everon\TestCase
      */
     public function testGetSetParameters(\Everon\Interfaces\Request $Request, array $expected)
     {
-        if (self::$pass === 1) {
+        if (static::$pass === 1) {
             $this->assertEquals($expected['url'], $Request->getUrl());
             $this->assertEquals($expected['post'], $Request->getPostCollection());
             $this->assertEquals($expected['post']['login'], $Request->getPostParameter('login'));
             $this->assertEquals($expected['post']['password'], $Request->getPostParameter('password'));
         }
         
-        if (self::$pass === 2) {
+        if (static::$pass === 2) {
             $this->assertEquals($expected['url'], $Request->getUrl());
             $this->assertEquals($expected['get'], $Request->getGetCollection());
             $this->assertEquals($expected['get']['param1'], $Request->getQueryParameter('param1'));
