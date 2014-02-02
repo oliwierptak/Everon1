@@ -28,7 +28,7 @@ class DataMapperTest extends \Everon\TestCase
     /**
      * @22dataProvider dataProvider
      */
-    public function testWithRealDatabase()
+    public function SKIPtestWithRealDatabase()
     {
         $DatabaseConfig = $this->getFactory()->getDependencyContainer()->resolve('ConfigManager')->getConfigByName('database');
         $ConnectionManager = $this->getFactory( )->buildConnectionManager($DatabaseConfig);
