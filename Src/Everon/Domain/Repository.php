@@ -20,8 +20,12 @@ abstract class Repository implements Interfaces\Repository
     protected $Mapper = null;
     
     protected $name = null;
-    
-    
+
+
+    /**
+     * @param $name
+     * @param DataMapper $Mapper
+     */
     public function __construct($name, DataMapper $Mapper)
     {
         $this->name = $name;
@@ -57,21 +61,21 @@ abstract class Repository implements Interfaces\Repository
         if ($Entity->isNew()) {
             $id = $this->getMapper()->add($Entity);
             $data = $Entity->toArray();
-            $Entity->reload($id, $data);
+            $Entity->persist($id, $data);
         }
         else {
             $this->getMapper()->save($Entity);
             $data = $Entity->toArray();
-            $Entity->reload($Entity->getId(), $data);
+            $Entity->persist($Entity->getId(), $data);
         }
-        
-        $Entity->persist();
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public function remove(Interfaces\Entity $Entity)
     {
         $this->getMapper()->delete($Entity);
-        $Entity->reload(null, null);
         $Entity->delete();
     }
 }

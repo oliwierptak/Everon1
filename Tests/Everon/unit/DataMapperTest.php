@@ -56,7 +56,7 @@ class DataMapperTest extends \Everon\TestCase
         $this->assertInstanceOf('\Everon\Test\Domain\User\Entity', $Entity);
         
         $data = $Entity->toArray();
-        $Entity->reload($id, $data);
+        $Entity->persist($id, $data);
         $Mapper->save($Entity);
         
         $fetched_data = $Mapper->fetchOne($id);
@@ -113,7 +113,7 @@ class DataMapperTest extends \Everon\TestCase
         
         $Entity = new \Everon\Test\Domain\User\Entity(1, $entity_data);
         $result = $Mapper->save($Entity);
-        $Entity->persist(); //usually called in Repository
+        $Entity->persist($Entity->getId(), $entity_data); //usually called in Repository
         
         $this->assertInstanceOf('\Everon\Test\Domain\User\Entity', $Entity);
         $this->assertEquals(1, $Entity->getId());

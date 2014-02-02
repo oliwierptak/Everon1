@@ -19,6 +19,11 @@ interface Repository
     function persist(Entity $Entity);
 
     /**
+     * @param Entity $Entity
+     */
+    function remove(Entity $Entity);
+
+    /**
      * @return DataMapper
      */    
     function getMapper();

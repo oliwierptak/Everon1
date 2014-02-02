@@ -172,17 +172,12 @@ class Entity extends Helper\Popo implements Interfaces\Entity
         $this->data = null;
     }
     
-    public function persist()
+    public function persist($id, array $data)
     {
         $this->markPersisted();
-        $this->modified_properties = null;
-    }
-    
-    public function reload($id, array $data)
-    {
         $this->id = $id;
         $this->data = $data;
-        $this->persist();
+        $this->modified_properties = null;
     }
     
     /**

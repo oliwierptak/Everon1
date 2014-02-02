@@ -14,9 +14,6 @@ use Everon\Domain\Interfaces;
 
 class RepositoryTest extends \Everon\TestCase
 {
-    /**
-     * @dataProvider222 dataProvider22
-     */    
     public function testConstructor()
     {
         $DataMapperMock = $this->getMock('Everon\Interfaces\DataMapper');
@@ -42,6 +39,17 @@ class RepositoryTest extends \Everon\TestCase
         $Entity = $this->getFactory()->buildDomainEntity('User', 1, $data, 'Everon\Test\Domain');
         $Repository->persist($Entity);
         $this->assertTrue($Entity->isPersisted());
+    }
+    
+    /**
+     * @dataProvider dataProvider
+     */
+    public function testRemoveShouldDeleteEntityAndMarkEntityAsDeleted(Repository $Repository, array $data)
+    {
+        $Entity = $this->getFactory()->buildDomainEntity('User', 1, $data, 'Everon\Test\Domain');
+        $Repository->remove($Entity);
+        $this->assertNull($Entity->getId());
+        $this->assertTrue($Entity->isDeleted());
     }
 
     /**

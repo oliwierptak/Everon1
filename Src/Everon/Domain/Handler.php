@@ -35,14 +35,24 @@ abstract class Handler implements Interfaces\Handler
     protected $schemas = null;
 
 
+    /**
+     * @param ConnectionManager $ConnectionManager
+     */
     public function __construct(ConnectionManager $ConnectionManager)
     {
         $this->ConnectionManager = $ConnectionManager;
     }
 
     /**
-     * @param $name
-     * @return mixed
+     * @inheritdoc
+     */
+    public function getEntity($name, $id, array $data)
+    {
+        $this->models[$name] = $this->getFactory()->buildDomainEntity($name, $id, $data);
+    }
+
+    /**
+     * @inheritdoc
      */
     public function getModel($name)
     {
@@ -52,10 +62,9 @@ abstract class Handler implements Interfaces\Handler
 
         return $this->models[$name];
     }
-    
+
     /**
-     * @param $name
-     * @return Repository
+     * @inheritdoc
      */
     public function getRepository($name)
     {
@@ -71,8 +80,7 @@ abstract class Handler implements Interfaces\Handler
     }
 
     /**
-     * @param $name
-     * @return Schema
+     * @inheritdoc
      */
     public function getSchema($name)
     {

@@ -22,6 +22,6 @@ interface Entity extends Interfaces\Arrayable
     function getModifiedProperties();
     function getValueByName($name);
     function setValueByName($name, $value);
-    function persist();
-    function reload($id, array $data);
+    function persist($id, array $data);
+    function delete();
 }

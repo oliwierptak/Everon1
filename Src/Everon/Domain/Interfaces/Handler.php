@@ -27,6 +27,13 @@ interface Handler
 
     /**
      * @param $name
+     * @param $id
+     * @param array $data
+     */
+    function getEntity($name, $id, array $data);
+
+    /**
+     * @param $name
      * @return Schema
      */
     function getSchema($name);

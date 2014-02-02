@@ -398,7 +398,7 @@ class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildDomainEntity($class_name, $id, array $data, $namespace='Everon\Test')
+    public function buildDomainEntity($class_name, $id, array $data, $namespace='Everon\Domain')
     {
         try {
             $class_name = $this->getFullClassName($namespace, $class_name.'\Entity');
