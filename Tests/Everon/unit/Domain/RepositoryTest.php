@@ -9,7 +9,7 @@
  */
 namespace Everon\Test\Domain;
 
-use Everon\Test\Domain\Example\Repository;
+use Everon\Test\Domain\User\Repository;
 use Everon\Domain\Interfaces;
 
 class RepositoryTest extends \Everon\TestCase

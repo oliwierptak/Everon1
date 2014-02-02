@@ -9,7 +9,7 @@
  */
 namespace Everon\Test\Domain;
 
-use Everon\Test\Domain\Example\Entity;
+use Everon\Test\Domain\User\Entity;
 use Everon\Domain\Interfaces;
 
 class EntityTest extends \Everon\TestCase

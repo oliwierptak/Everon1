@@ -78,7 +78,6 @@ abstract class DataMapper implements Interfaces\DataMapper
     public function fetchAll(Criteria $Criteria)
     {
         list($sql, $parameters) = $this->getFetchAllSql($Criteria);
-        mpr($sql, $parameters);
         return $this->getSchema()->getPdoAdapterByName($this->read_connection_name)->execute($sql, $parameters)->fetchAll();
     }
 

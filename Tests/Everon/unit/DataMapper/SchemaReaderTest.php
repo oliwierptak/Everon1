@@ -47,10 +47,15 @@ class SchemaReaderTest extends \Everon\TestCase
      */
     public function testGetTableListShouldReturnArrayWithTablesData(\Everon\DataMapper\Interfaces\Schema\Reader $Reader, \Everon\Interfaces\PdoAdapter $PdoAdapterMock)
     {
-        $PdoAdapterMock->expects($this->once())
-            ->method('execute')
+        $PdoStatementMock = $this->getMock('\PDOStatement');
+        $PdoStatementMock->expects($this->once())
+            ->method('fetchAll')
             ->will($this->returnValue($this->getFixtureData()['db_tables.php']));
 
+        $PdoAdapterMock->expects($this->once())
+            ->method('execute')
+            ->will($this->returnValue($PdoStatementMock));
+        
         $Reader->setPdoAdapter($PdoAdapterMock);
         $tables = $Reader->getTableList();
 
@@ -66,9 +71,14 @@ class SchemaReaderTest extends \Everon\TestCase
      */
     public function testGetColumnListShouldReturnArrayWithColumnsData(\Everon\DataMapper\Interfaces\Schema\Reader $Reader, \Everon\Interfaces\PdoAdapter $PdoAdapterMock)
     {
+        $PdoStatementMock = $this->getMock('\PDOStatement');
+        $PdoStatementMock->expects($this->once())
+            ->method('fetchAll')
+            ->will($this->returnValue($this->getFixtureData()['db_columns.php']));
+
         $PdoAdapterMock->expects($this->once())
             ->method('execute')
-            ->will($this->returnValue($this->getFixtureData()['db_columns.php']));
+            ->will($this->returnValue($PdoStatementMock));
         
         $Reader->setPdoAdapter($PdoAdapterMock);
         $columns = $Reader->getColumnList();
@@ -84,9 +94,14 @@ class SchemaReaderTest extends \Everon\TestCase
      */
     public function testGetConstraintListShouldReturnArrayWithColumnsData(\Everon\DataMapper\Interfaces\Schema\Reader $Reader, \Everon\Interfaces\PdoAdapter $PdoAdapterMock)
     {
+        $PdoStatementMock = $this->getMock('\PDOStatement');
+        $PdoStatementMock->expects($this->once())
+            ->method('fetchAll')
+            ->will($this->returnValue($this->getFixtureData()['db_constraints.php']));
+
         $PdoAdapterMock->expects($this->once())
             ->method('execute')
-            ->will($this->returnValue($this->getFixtureData()['db_constraints.php']));
+            ->will($this->returnValue($PdoStatementMock));
         
         $Reader->setPdoAdapter($PdoAdapterMock);
         $constraints = $Reader->getColumnList();
@@ -102,9 +117,14 @@ class SchemaReaderTest extends \Everon\TestCase
      */
     public function testGetForeignKeyListListShouldReturnArrayWithColumnsData(\Everon\DataMapper\Interfaces\Schema\Reader $Reader, \Everon\Interfaces\PdoAdapter $PdoAdapterMock)
     {
+        $PdoStatementMock = $this->getMock('\PDOStatement');
+        $PdoStatementMock->expects($this->once())
+            ->method('fetchAll')
+            ->will($this->returnValue($this->getFixtureData()['db_foreign_keys.php']));
+
         $PdoAdapterMock->expects($this->once())
             ->method('execute')
-            ->will($this->returnValue($this->getFixtureData()['db_foreign_keys.php']));
+            ->will($this->returnValue($PdoStatementMock));
 
         $Reader->setPdoAdapter($PdoAdapterMock);
         $foreign_keys = $Reader->getColumnList();
