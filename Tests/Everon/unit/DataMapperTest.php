@@ -146,17 +146,70 @@ class DataMapperTest extends \Everon\TestCase
         $this->assertTrue($Entity->isDeleted());
     }
 
+    /**
+     * @dataProvider dataProvider
+     */
+    public function testFetchOneShouldReturnArray(\Everon\Interfaces\DataMapper $Mapper, $PdoAdapterMock)
+    {
+        $entity_data = [
+            'id' => 1,
+            'first_name' => 'John',
+            'last_name' => 'Doe'
+        ];
+        
+        $PdoStatementMock = $this->getMock('\PDOStatement');
+        $PdoStatementMock->expects($this->once())
+            ->method('fetch')
+            ->will($this->returnValue($entity_data));
+
+        $PdoAdapterMock->expects($this->once())
+            ->method('execute')
+            ->will($this->returnValue($PdoStatementMock));
+
+        $result = $Mapper->fetchOne(1);
+
+        $this->assertInternalType('array', $result);
+    }
+
+    /**
+     * @dataProvider dataProvider
+     */
+    public function testFetchAllShouldReturnArray(\Everon\Interfaces\DataMapper $Mapper, $PdoAdapterMock)
+    {
+        $PdoStatementMock = $this->getMock('\PDOStatement');
+        $PdoStatementMock->expects($this->once())
+            ->method('fetchAll')
+            ->will($this->returnValue([]));
+
+        $PdoAdapterMock->expects($this->once())
+            ->method('execute')
+            ->will($this->returnValue($PdoStatementMock));
+
+        $Criteria = $this->getMock('Everon\DataMapper\Interfaces\Criteria');
+        $result = $Mapper->fetchAll($Criteria);
+        
+        $this->assertInternalType('array', $result);
+    }
+
     public function dataProvider()
     {
         $PdoAdapterMock = $this->getMock('Everon\Interfaces\PdoAdapter', [], [], '', false);
         
-        $ColumnMock = $this->getMock('Everon\DataMapper\Interfaces\Schema\Column');
-        $ColumnMock->expects($this->any())
+        $IdColumnMock = $this->getMock('Everon\DataMapper\Interfaces\Schema\Column');
+        $IdColumnMock->expects($this->any())
             ->method('getName')
             ->will($this->returnValue('id'));
-        $ColumnMock->expects($this->any())
+        $IdColumnMock->expects($this->any())
             ->method('isPk')
             ->will($this->returnValue(true));
+
+        $NameColumnMock = $this->getMock('Everon\DataMapper\Interfaces\Schema\Column');
+        $NameColumnMock->expects($this->any())
+            ->method('getName')
+            ->will($this->returnValue('name'));
+        $NameColumnMock->expects($this->any())
+            ->method('isPk')
+            ->will($this->returnValue(false));
         
         $SchemaMock = $this->getMock('Everon\DataMapper\Interfaces\Schema', [], [], '', false);
         $SchemaMock->expects($this->once())
@@ -178,7 +231,7 @@ class DataMapperTest extends \Everon\TestCase
             ->will($this->returnValue(1));
         $TableMock->expects($this->any())
             ->method('getColumns')
-            ->will($this->returnValue(['id'=>$ColumnMock]));
+            ->will($this->returnValue(['id'=>$IdColumnMock, 'first_name' => $NameColumnMock]));
         $TableMock->expects($this->any())
             ->method('getPk')
             ->will($this->returnValue('id'));
