@@ -512,6 +512,13 @@ class Factory implements Interfaces\Factory
                 $PrimaryKey = new $class_name($constraint_data);
                 $primary_key_list[$PrimaryKey->getName()] = $PrimaryKey;
             }
+
+            $unique_key_list = [];
+            foreach ($unique_keys as $constraint_data) {
+                $class_name = $this->getFullClassName($namespace, 'Schema\UniqueKey');
+                $UniqueKey = new $class_name($constraint_data);
+                $unique_key_list[$UniqueKey->getName()] = $UniqueKey;
+            }
             
             $foreign_key_list = [];
             foreach ($foreign_keys as $foreign_key_data) {
@@ -521,7 +528,7 @@ class Factory implements Interfaces\Factory
             }
 
             $class_name = $this->getFullClassName($namespace,'Schema\Table');
-            $Table = new $class_name($name, $column_list, $primary_key_list, $foreign_key_list);
+            $Table = new $class_name($name, $column_list, $primary_key_list, $unique_key_list, $foreign_key_list);
             return $Table;
         }
         catch (\Exception $e) {

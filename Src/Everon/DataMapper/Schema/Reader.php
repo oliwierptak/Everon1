@@ -134,6 +134,7 @@ abstract class Reader implements Interfaces\Schema\Reader
         $columns = $this->getPdoAdapter()->execute($this->getColumnsSql(), ['schema'=>$this->getName()], \PDO::FETCH_ASSOC)->fetchAll();
         $primary_keys = $this->getPdoAdapter()->execute($this->getPrimaryKeysSql(), ['schema'=>$this->getName()], \PDO::FETCH_ASSOC)->fetchAll();
         $foreign_keys = $this->getPdoAdapter()->execute($this->getForeignKeysSql(), ['schema'=>$this->getName()], \PDO::FETCH_ASSOC)->fetchAll();
+        $unique_keys = $this->getPdoAdapter()->execute($this->getUniqueKeysSql(), ['schema'=>$this->getName()], \PDO::FETCH_ASSOC)->fetchAll();
 
         $export = function($name, $data_to_export) use ($dir) {
             $data = var_export($data_to_export, 1);
@@ -148,5 +149,6 @@ abstract class Reader implements Interfaces\Schema\Reader
         $export('columns', $columns);
         $export('primary_keys', $primary_keys);
         $export('foreign_keys', $foreign_keys);
+        $export('unique_keys', $unique_keys);
     }
 }

@@ -15,7 +15,7 @@
     'INDEX_LENGTH' => '32768',
     'DATA_FREE' => '10485760',
     'AUTO_INCREMENT' => '2',
-    'CREATE_TIME' => '2014-02-02 21:40:00',
+    'CREATE_TIME' => '2014-02-02 22:45:25',
     'UPDATE_TIME' => NULL,
     'CHECK_TIME' => NULL,
     'TABLE_COLLATION' => 'utf8_general_ci',

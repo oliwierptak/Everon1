@@ -58,6 +58,7 @@ class Schema implements Interfaces\Schema
         };
         
         foreach ($table_list as $name => $table_data) {
+            $name = mb_strtolower($name);
             $this->tables[$name] = $this->getFactory()->buildSchemaTable(
                 $name,
                 $this->getDriver(),
@@ -109,6 +110,7 @@ class Schema implements Interfaces\Schema
      */
     public function getTable($name)
     {
+        $name = mb_strtolower($name);
         if ($this->tables === null) {
             $this->initTables();
         }
@@ -121,6 +123,7 @@ class Schema implements Interfaces\Schema
      */
     public function getPdoAdapterByName($name)
     {
+        $name = mb_strtolower($name);
         if (isset($this->pdo_adapters[$name]) === false) {
             $Connection = $this->getConnectionManager()->getConnectionByName($name);
             list($dsn, $username, $password, $options) = $Connection->toPdo();

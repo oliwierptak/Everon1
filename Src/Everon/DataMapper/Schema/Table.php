@@ -33,13 +33,12 @@ class Table implements Schema\Table
 
     /**
      * @param $name
-     * @param $driver
      * @param array $columns
      * @param array $primary_keys
      * @param array $unique_keys
      * @param array $foreign_keys
      */
-    public function __construct($name, $driver, array $columns, array $primary_keys,  array $unique_keys, array $foreign_keys)
+    public function __construct($name, array $columns, array $primary_keys,  array $unique_keys, array $foreign_keys)
     {        
         $this->name = $name;
         $this->columns = $columns;
