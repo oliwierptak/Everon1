@@ -55,12 +55,23 @@ abstract class Repository implements Interfaces\Repository
     public function persist(Interfaces\Entity $Entity)
     {
         if ($Entity->isNew()) {
-            $this->getMapper()->add($Entity);
+            $id = $this->getMapper()->add($Entity);
+            $data = $Entity->toArray();
+            $Entity->reload($id, $data);
         }
         else {
             $this->getMapper()->save($Entity);
+            $data = $Entity->toArray();
+            $Entity->reload($Entity->getId(), $data);
         }
-
+        
         $Entity->persist();
+    }
+    
+    public function remove(Interfaces\Entity $Entity)
+    {
+        $this->getMapper()->delete($Entity);
+        $Entity->reload(null, null);
+        $Entity->delete();
     }
 }

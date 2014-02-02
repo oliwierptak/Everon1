@@ -31,13 +31,18 @@ class Reader extends Schema\Reader implements Interfaces\Schema\Reader
         ";
     }
 
-    protected function getConstraintsSql()
+    protected function getPrimaryKeysSql()
     {
         return "
             SELECT
-                * FROM information_schema.TABLE_CONSTRAINTS 
-            WHERE  
-                information_schema.TABLE_CONSTRAINTS.TABLE_SCHEMA = :schema
+                TABLE_NAME,COLUMN_NAME,CONSTRAINT_NAME,REFERENCED_TABLE_NAME,REFERENCED_COLUMN_NAME 
+            FROM
+                information_schema.KEY_COLUMN_USAGE
+            WHERE 
+                information_schema.KEY_COLUMN_USAGE.CONSTRAINT_SCHEMA = :schema AND
+                information_schema.KEY_COLUMN_USAGE.CONSTRAINT_NAME = 'PRIMARY'
+            ORDER BY 
+                information_schema.KEY_COLUMN_USAGE.COLUMN_NAME
         ";
     }
 

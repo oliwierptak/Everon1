@@ -61,17 +61,17 @@ class Entity extends Helper\Popo implements Interfaces\Entity
 
     protected function markModified()
     {
-        $this->state = self::STATE_MODIFIED;
+        $this->state = static::STATE_MODIFIED;
     }
 
     protected function markPersisted()
     {
-        $this->state = self::STATE_PERSISTED;
+        $this->state = static::STATE_PERSISTED;
     }
 
     protected function markDeleted()
     {
-        $this->state = self::STATE_DELETED;
+        $this->state = static::STATE_DELETED;
     }
     
     /**
@@ -106,7 +106,7 @@ class Entity extends Helper\Popo implements Interfaces\Entity
      */
     public function isNew()
     {
-        return $this->state === self::STATE_NEW;
+        return $this->state === static::STATE_NEW;
     }
 
     /**
@@ -114,7 +114,7 @@ class Entity extends Helper\Popo implements Interfaces\Entity
      */
     public function isModified()
     {
-        return $this->state === self::STATE_MODIFIED;
+        return $this->state === static::STATE_MODIFIED;
     }
 
     /**
@@ -122,7 +122,7 @@ class Entity extends Helper\Popo implements Interfaces\Entity
      */
     public function isPersisted()
     {
-        return $this->state === self::STATE_PERSISTED;
+        return $this->state === static::STATE_PERSISTED;
     }
 
     /**
@@ -130,7 +130,7 @@ class Entity extends Helper\Popo implements Interfaces\Entity
      */
     public function isDeleted()
     {
-        return $this->state === self::STATE_DELETED;
+        return $this->state === static::STATE_DELETED;
     }
 
     /**
@@ -164,11 +164,23 @@ class Entity extends Helper\Popo implements Interfaces\Entity
         $this->data[$name] = $value;
     }
     
+    public function delete()
+    {
+        $this->markDeleted();
+    }
+    
     public function persist()
     {
         $this->markPersisted();
     }
-
+    
+    public function reload($id, array $data)
+    {
+        $this->id = $id;
+        $this->data = $data;
+        $this->state = static::STATE_PERSISTED;
+    }
+    
     /**
      * Does the usual call but also marks properties as modified when setter is used
      * 
@@ -179,7 +191,7 @@ class Entity extends Helper\Popo implements Interfaces\Entity
     public function __call($name, $arguments)
     {
         if ($this->isCallable($this, $name)) {
-            $this->call_type = self::CALL_TYPE_METHOD;
+            $this->call_type = static::CALL_TYPE_METHOD;
             $this->call_property = $name;
             return call_user_func_array([$this, $name], $arguments);
         }
@@ -187,7 +199,7 @@ class Entity extends Helper\Popo implements Interfaces\Entity
         $return = parent::__call($name, $arguments);
         
         switch ($this->call_type) {
-            case self::CALL_TYPE_SETTER:
+            case static::CALL_TYPE_SETTER:
                 $this->markPropertyAsModified($this->call_property);
                 break;
         }

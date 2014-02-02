@@ -25,11 +25,11 @@ class TemplateTest extends \Everon\TestCase
     public function tearDown()
     {
         parent::tearDown();
-        if (is_file(self::$template_filename1)) {
-            unlink(self::$template_filename1);
+        if (is_file(static::$template_filename1)) {
+            unlink(static::$template_filename1);
         }
-        if (is_file(self::$template_filename2)) {
-            unlink(self::$template_filename2);
+        if (is_file(static::$template_filename2)) {
+            unlink(static::$template_filename2);
         }
     }
 
@@ -63,19 +63,19 @@ class TemplateTest extends \Everon\TestCase
 
     public function dataProvider()
     {
-        self::$template_filename1 = $this->getTmpDirectory().'template_1_'.$this->dateAsTime(time()).'.htm';
-        self::$template_filename2 = $this->getTmpDirectory().'template_2_'.$this->dateAsTime(time()).'.htm';
+        static::$template_filename1 = $this->getTmpDirectory().'template_1_'.$this->dateAsTime(time()).'.htm';
+        static::$template_filename2 = $this->getTmpDirectory().'template_2_'.$this->dateAsTime(time()).'.htm';
 
         return [
-            [new \Everon\View\Template(self::$template_filename1, ['test.world' => 'World']),
+            [new \Everon\View\Template(static::$template_filename1, ['test.world' => 'World']),
                 'Hello {test.world}!',
                 'Hello World!',
-                self::$template_filename1
+                static::$template_filename1
             ],
-            [new \Everon\View\Template(self::$template_filename2, ['user.name' => 'John Doe']),
+            [new \Everon\View\Template(static::$template_filename2, ['user.name' => 'John Doe']),
                 'My name is <b>{user.name}</b>.',
                 'My name is <b>John Doe</b>.',
-                self::$template_filename2
+                static::$template_filename2
             ]
         ];
     }

@@ -40,7 +40,7 @@ interface Reader
     /**
      * @return array Returns [['table-name' => [...]], ['2nd-table-name' => [...]]]
      */
-    function getConstraintList();
+    function getPrimaryKeysList();
 
     /**
      * @return array Returns [['table-name' => [...]], ['2nd-table-name' => [...]]]

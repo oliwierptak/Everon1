@@ -72,31 +72,106 @@ class PdoAdapter implements Interfaces\PdoAdapter
     }
     
     /**
-     * @param $sql
-     * @param array $parameters
-     * @param int $fetch_mode
-     * @return array
-     * @throws Exception\Pdo
+     * @inheritdoc
      */
-    public function execute($sql, $parameters=[], $fetch_mode=\PDO::FETCH_ASSOC)
+    public function execute($sql, array $parameters=null, $fetch_mode=\PDO::FETCH_ASSOC)
     {
         try {
-            foreach ($parameters as $index => $value) {
-                $parameters[':'.$index] = $parameters[$index];
-                unset($parameters[$index]);
-            }
-        
             $this->getLogger()->sql($sql."|".print_r($parameters, true));
             /**
              * @var \PDOStatement $statement
              */
+            $this->getPdo()->setAttribute(\PDO::ATTR_AUTOCOMMIT, FALSE);
             $statement = $this->getPdo()->prepare($sql, [\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY]);
-            $statement->execute($parameters);
+            $this->getPdo()->beginTransaction();
+            
+            if ($parameters !== null) {
+                $result = $statement->execute($parameters);
+            }
+            else {
+                $result = $statement->execute();
+            }
 
-            return $statement->fetchAll();
+            $statement->setFetchMode($fetch_mode);
+            
+            $this->getPdo()->commit();
+            return $statement;
         }
         catch (\PDOException $e) {
+            $this->getPdo()->rollBack();
+            $this->getLogger()->sql_error($sql."|".print_r($parameters, true));
             throw new Exception\Pdo($e);
-        }        
+        }
+    }    
+    
+    public function insert($sql, array $parameters=[], $fetch_mode=\PDO::FETCH_ASSOC)
+    {
+        try {
+            $this->getLogger()->sql($sql."|".print_r($parameters, true));
+            /**
+             * @var \PDOStatement $statement
+             */
+            $this->getPdo()->setAttribute(\PDO::ATTR_AUTOCOMMIT, FALSE);
+            $statement = $this->getPdo()->prepare($sql, [\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY]);
+            
+            $this->getPdo()->beginTransaction();
+            $result = $statement->execute($parameters);  
+            $statement->setFetchMode($fetch_mode);
+            
+            $last_id = $this->getPdo()->lastInsertId();
+            $this->getPdo()->commit();
+            
+            return $last_id;
+        }
+        catch (\PDOException $e) {
+            $this->getPdo()->rollBack();
+            throw new Exception\Pdo($e);
+        }
+    }
+    
+    public function update($sql, array $parameters=[], $fetch_mode=\PDO::FETCH_ASSOC)
+    {
+        try {
+            $this->getLogger()->sql($sql."|".print_r($parameters, true));
+            /**
+             * @var \PDOStatement $statement
+             */
+            $this->getPdo()->setAttribute(\PDO::ATTR_AUTOCOMMIT, FALSE);
+            $statement = $this->getPdo()->prepare($sql, [\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY]);
+            
+            $this->getPdo()->beginTransaction();
+            $result = $statement->execute($parameters);  
+            $statement->setFetchMode($fetch_mode);
+            $this->getPdo()->commit();
+            
+            return $statement->rowCount();
+        }
+        catch (\PDOException $e) {
+            $this->getPdo()->rollBack();
+            throw new Exception\Pdo($e);
+        }
+    }
+    
+    public function delete($sql, array $parameters=[], $fetch_mode=\PDO::FETCH_ASSOC)
+    {
+        try {
+            $this->getLogger()->sql($sql."|".print_r($parameters, true));
+            /**
+             * @var \PDOStatement $statement
+             */
+            $this->getPdo()->setAttribute(\PDO::ATTR_AUTOCOMMIT, FALSE);
+            $statement = $this->getPdo()->prepare($sql, [\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY]);
+            
+            $this->getPdo()->beginTransaction();
+            $result = $statement->execute($parameters);  
+            $statement->setFetchMode($fetch_mode);
+            $this->getPdo()->commit();
+            
+            return $statement->rowCount();
+        }
+        catch (\PDOException $e) {
+            $this->getPdo()->rollBack();
+            throw new Exception\Pdo($e);
+        }
     }
 }

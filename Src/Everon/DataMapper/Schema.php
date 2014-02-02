@@ -49,7 +49,7 @@ class Schema implements Interfaces\Schema
     {
         $table_list = $this->getSchemaReader()->getTableList();
         $column_list = $this->getSchemaReader()->getColumnList();
-        $constraint_list = $this->getSchemaReader()->getConstraintList();
+        $primary_key_list = $this->getSchemaReader()->getPrimaryKeysList();
         $foreign_key_list = $this->getSchemaReader()->getForeignKeyList();
         
         $castToEmptyArrayWhenNull = function($name, $item) {
@@ -61,7 +61,7 @@ class Schema implements Interfaces\Schema
                 $name,
                 $this->getDriver(),
                 $castToEmptyArrayWhenNull($name, $column_list), 
-                $castToEmptyArrayWhenNull($name, $constraint_list), 
+                $castToEmptyArrayWhenNull($name, $primary_key_list), 
                 $castToEmptyArrayWhenNull($name, $foreign_key_list)
             );
         }

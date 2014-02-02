@@ -38,5 +38,4 @@ class ForeignKey extends Constraint implements Schema\ForeignKey
     {
         return $this->referenced_column_name;
     }
-    
 }

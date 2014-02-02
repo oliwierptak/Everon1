@@ -7,8 +7,8 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon\Domain;
+namespace Everon\Domain\Exception;
 
-use Everon\Exception as EveronException;
+use Everon\Exception;
 
-class Exception extends EveronException{};
+class Entity extends Exception{};

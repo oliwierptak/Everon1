@@ -10,6 +10,8 @@
 namespace Everon\DataMapper\Schema;
 
 use Everon\DataMapper\Interfaces\Schema;
+use Everon\DataMapper\Interfaces\Schema\Columnq;
+use Everon\DataMapper\Exception;
 use Everon\Domain\Interfaces\Entity;
 use Everon\Helper;
 
@@ -24,8 +26,6 @@ class Table implements Schema\Table
     protected $columns = [];
     
     protected $primary_keys = [];
-    
-    protected $constraints = [];
 
     protected $foreign_keys = [];
 
@@ -33,14 +33,14 @@ class Table implements Schema\Table
     /**
      * @param $name
      * @param array $columns
-     * @param array $constraints
+     * @param array $primary_keys
      * @param array $foreign_keys
      */
-    public function __construct($name, array $columns, array $constraints, array $foreign_keys) //todo: the arrays should be collections
+    public function __construct($name, array $columns, array $primary_keys, array $foreign_keys) //todo: the arrays should be collections
     {        
         $this->name = $name;
         $this->columns = $columns;
-        $this->constraints = $constraints;
+        $this->primary_keys = $primary_keys;
         $this->foreign_keys = $foreign_keys;
         
         $this->init();
@@ -93,9 +93,9 @@ class Table implements Schema\Table
         return $this->columns;
     }
 
-    public function getConstraints()
+    public function getPrimaryKeys()
     {
-        return $this->constraints;
+        return $this->primary_keys;
     }
     
     public function toArray()
@@ -105,7 +105,29 @@ class Table implements Schema\Table
     
     public function getPk()
     {
+        if (is_array($this->pk)) {
+            return $this->pk[0];
+        }
         return $this->pk;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function validateId($id)
+    {
+        $PrimaryKey = current($this->getPrimaryKeys()); //todo: make fix for composite keys
+        /**
+         * @var Column $Column
+         */
+        $Column = $this->getColumns()[$PrimaryKey->getName()];
+        $validation_result = filter_var_array([$PrimaryKey->getName() => $id], $Column->getValidationRules());
+        if (($validation_result === false || $validation_result === null) || 
+            ($Column->isNullable() === false && $id === null)) {
+            throw new Exception\Column('Column: "%s" failed to validate with value: "%s"',[$Column->getName(), $id]);
+        }
+
+        return $validation_result[$PrimaryKey->getName()];
     }
     
     public function __toString()

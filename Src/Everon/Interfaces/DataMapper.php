@@ -10,6 +10,7 @@
 namespace Everon\Interfaces;
 
 use Everon\Domain\Interfaces\Entity;
+use Everon\DataMapper\Interfaces\Criteria;
 use Everon\DataMapper\Interfaces\Schema;
 use Everon\DataMapper\Interfaces\Schema\Table;
 
@@ -25,7 +26,7 @@ interface DataMapper
      */
     function fetchOne($id);
     
-    function fetchAll(array $criteria);
+    function fetchAll(Criteria $Criteria);
 
     function getName();
 

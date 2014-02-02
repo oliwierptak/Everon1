@@ -7,10 +7,16 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon\Test\DataMapper\MySql;
+namespace Everon\Test\Domain\User;
 
-use Everon\DataMapper;
+use Everon\Dependency;
 
-class Example extends DataMapper\Schema\MySql\Mapper
+class Model
 {
+    use Dependency\Injection\Logger;
+
+    public function testOne()
+    {
+        $this->getLogger()->debug('some debug');
+    }
 }

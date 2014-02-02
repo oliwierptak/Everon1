@@ -20,6 +20,21 @@ class SchemaReaderTest extends \Everon\TestCase
     protected $fixtures = null;
     
     
+    protected function setUpDumpSchema()
+    {
+        $DatabaseConfig = $this->getFactory()->getDependencyContainer()->resolve('ConfigManager')->getConfigByName('database');
+        $ConnectionManager = $this->getFactory( )->buildConnectionManager($DatabaseConfig);
+
+        $Connection = $ConnectionManager->getConnectionByName('schema');
+        list($dsn, $username, $password, $options) = $Connection->toPdo();
+        $Pdo = $this->getFactory()->buildPdo($dsn, $username, $password, $options);
+        $PdoAdapter = $this->getFactory()->buildPdoAdapter($Pdo, $Connection);
+        $Reader = $this->getFactory()->buildSchemaReader($Connection, $PdoAdapter);
+        $this->assertInstanceOf('\Everon\DataMapper\Interfaces\Schema\Reader', $Reader);
+        $Reader->dumpDataBaseSchema($this->getDataMapperFixturesDirectory());
+        die();
+    }   
+    
     public function SKIPtestConstructor()
     {
         $PdoAdapter = $this->getMock('\Everon\Interfaces\PdoAdapter');
@@ -100,32 +115,6 @@ class SchemaReaderTest extends \Everon\TestCase
         $this->assertEquals($expected, $foreign_keys);
     }
     
-    protected function generateFixtureData()
-    {
-        $DatabaseConfig = $this->getFactory()->getDependencyContainer()->resolve('ConfigManager')->getConfigByName('database');
-        $ConnectionManager = $this->getFactory( )->buildConnectionManager($DatabaseConfig);
-        
-        $Connection = $ConnectionManager->getConnectionByName('schema');
-        list($dsn, $username, $password, $options) = $Connection->toPdo();
-        $Pdo = $this->getFactory()->buildPdo($dsn, $username, $password, $options);
-        $PdoAdapter = $this->getFactory()->buildPdoAdapter($Pdo, $Connection);
-        $Reader = $this->getFactory()->buildSchemaReader($Connection, $PdoAdapter);
-        $this->assertInstanceOf('\Everon\DataMapper\Interfaces\Schema\Reader', $Reader);
-
-        $export = function($name, $data_to_export) {
-            $data = var_export($data_to_export, 1);
-            $filename = '/var/www/Everon/Tests/Everon/fixtures/data/db_'.$name.'.php';
-            $h = fopen($filename, 'w+');
-            fwrite($h, "<?php return $data; ");
-            fclose($h);
-        };
-
-        $export('tables', $Reader->getTableList());
-        $export('columns', $Reader->getColumnList());
-        $export('constraints', $Reader->getConstraintList());
-        $export('foreign_keys', $Reader->getForeignKeyList());
-    }
-    
     public function dataProvider()
     {
         $ConnectionItem = $this->getMock('\Everon\DataMapper\Interfaces\ConnectionItem');
@@ -143,6 +132,5 @@ class SchemaReaderTest extends \Everon\TestCase
             [$Reader, $PdoAdapterMock]
         ];
     }
-
 }
   

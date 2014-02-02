@@ -66,7 +66,7 @@ abstract class Exception extends \Exception
      */
     protected function getToString()
     {
-        return self::getErrorMessageFromException($this);
+        return static::getErrorMessageFromException($this);
     }
 
 }

@@ -17,6 +17,7 @@ use Everon\Interfaces;
 class Factory implements Interfaces\Factory
 {
     use Helper\String\UnderscoreToCamel;
+    use Helper\Arrays;
 
     /**
      * @var Interfaces\DependencyContainer
@@ -310,6 +311,10 @@ class Factory implements Interfaces\Factory
     public function buildPdo($dsn, $username, $password, $options)
     {
         try {
+            $options = $this->arrayMergeDefault([
+                \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+                \PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''
+            ], $options);
             return new \PDO($dsn, $username, $password, $options);
         }
         catch (\Exception $e) {
@@ -491,29 +496,32 @@ class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildSchemaTable($name, $driver, array $columns, array $constraints, array $foreign_keys, $namespace='Everon\DataMapper')
+    public function buildSchemaTable($name, $driver, array $columns, array $primary_keys, array $foreign_keys, $namespace='Everon\DataMapper')
     {
         try {
             $column_list = [];
             foreach ($columns as $column_data) {
                 $class_name = $this->getFullClassName($namespace, "Schema\\${driver}\\Column");
-                $column_list[] = new $class_name($column_data);
+                $Column = new $class_name($column_data);
+                $column_list[$Column->getName()] = $Column;
             }
-
-            $constraint_list = [];
-            foreach ($constraints as $constraint_data) {
-                $class_name = $this->getFullClassName($namespace, 'Schema\Constraint');
-                $constraint_list[] = new $class_name($constraint_data);
+            
+            $primary_key_list = [];
+            foreach ($primary_keys as $constraint_data) {
+                $class_name = $this->getFullClassName($namespace, 'Schema\PrimaryKey');
+                $PrimaryKey = new $class_name($constraint_data);
+                $primary_key_list[$PrimaryKey->getName()] = $PrimaryKey;
             }
-
+            
             $foreign_key_list = [];
             foreach ($foreign_keys as $foreign_key_data) {
                 $class_name = $this->getFullClassName($namespace, 'Schema\ForeignKey');
-                $foreign_key_list[] = new $class_name($foreign_key_data);
+                $ForeignKey = new $class_name($foreign_key_data);
+                $foreign_key_list[$ForeignKey->getName()] = new $class_name($foreign_key_data);
             }
 
             $class_name = $this->getFullClassName($namespace,'Schema\Table');
-            $Table = new $class_name($name, $column_list, $constraint_list, $foreign_key_list);
+            $Table = new $class_name($name, $column_list, $primary_key_list, $foreign_key_list);
             return $Table;
         }
         catch (\Exception $e) {

@@ -32,7 +32,7 @@ class Item implements Interfaces\ConfigItem
     public function __construct(array $data, array $defaults=[])
     {
         $empty_defaults = [
-            self::DEFAULT_NAME => false,
+            static::DEFAULT_NAME => false,
         ];
 
         $empty_defaults = array_merge($empty_defaults, $defaults);
@@ -44,9 +44,9 @@ class Item implements Interfaces\ConfigItem
     protected function init()
     {
         $this->validateData($this->data);
-        $this->setName($this->data[self::PROPERTY_NAME]);
-        $this->setIsDefault($this->data[self::DEFAULT_NAME]);
-        unset($this->data[self::DEFAULT_NAME]);
+        $this->setName($this->data[static::PROPERTY_NAME]);
+        $this->setIsDefault($this->data[static::DEFAULT_NAME]);
+        unset($this->data[static::DEFAULT_NAME]);
     }
     
     /**
@@ -54,7 +54,7 @@ class Item implements Interfaces\ConfigItem
      */
     public function validateData(array $data)
     {
-        $this->assertIsStringAndNonEmpty($data[self::PROPERTY_NAME], 'Invalid item name: "%s"', 'ConfigItem');
+        $this->assertIsStringAndNonEmpty($data[static::PROPERTY_NAME], 'Invalid item name: "%s"', 'ConfigItem');
     }
     
     public function getName()

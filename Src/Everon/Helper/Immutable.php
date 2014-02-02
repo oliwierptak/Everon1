@@ -34,4 +34,12 @@ trait Immutable
     {
         $this->isStateLocked = true;
     }
+    
+    /**
+     * Enable property setting
+     */
+    protected function unlock()
+    {
+        $this->isStateLocked = false;
+    }
 }

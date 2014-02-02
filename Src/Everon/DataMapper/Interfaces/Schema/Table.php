@@ -24,7 +24,14 @@ interface Table extends Arrayable, Immutable
     /**
      * @return array
      */
-    function getConstraints();
+    function getPrimaryKeys();
 
     function getPk();
+
+    /**
+     * @param $id
+     * @return mixed
+     * @throws \Everon\DataMapper\Exception\Column
+     */
+    function validateId($id);
 }
