@@ -128,7 +128,7 @@ abstract class Reader implements Interfaces\Schema\Reader
         return $this->unique_key_list;
     }
     
-    public function dumpDataBaseSchema($dir)
+    public function TMPdumpDataBaseSchema($dir)
     {
         $tables = $this->getPdoAdapter()->execute($this->getTablesSql(), ['schema'=>$this->getName()], \PDO::FETCH_ASSOC)->fetchAll();
         $columns = $this->getPdoAdapter()->execute($this->getColumnsSql(), ['schema'=>$this->getName()], \PDO::FETCH_ASSOC)->fetchAll();

@@ -148,11 +148,12 @@ class Entity extends Helper\Popo implements Interfaces\Entity
      */
     public function getValueByName($name)
     {
-        if (array_key_exists($name, $this->data) === false) {
+        try {
+            return $this->data[$name];
+        }
+        catch (\Exception $e) {
             throw new Exception\Entity('Invalid property name: %s', $name);
         }
-
-        return $this->data[$name];
     }
 
     /**
@@ -218,7 +219,7 @@ class Entity extends Helper\Popo implements Interfaces\Entity
 
     public static function __set_state(array $array)
     {
-        $Entity = new self($array['id'], $array['data']);
+        $Entity = new static($array['id'], $array['data']);
         $Entity->modified_properties = $array['modified_properties'];
         $Entity->state = $array['state'];
         return $Entity;

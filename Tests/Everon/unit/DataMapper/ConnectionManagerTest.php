@@ -80,6 +80,21 @@ class ConnectionManagerTest extends \Everon\TestCase
         $this->assertInstanceOf('\Everon\DataMapper\Interfaces\ConnectionItem', $Item);
     }
 
+    /**
+     * @dataProvider dataProvider
+     * @param Connection\Manager $Manager
+     * @param Interfaces\Config $DataBaseConfig
+     * @expectedException \Everon\DataMapper\Exception\ConnectionManager
+     * @expectedExceptionMessage Invalid connection name: "i dont exist"
+     */
+    public function testGetConnectionByNameShouldThrowExceptionWhenWrongName(Connection\Manager $Manager, Interfaces\Config $DataBaseConfig)
+    {
+        $this->assertInternalType('array', $Manager->getConnections());
+        $this->assertCount(4, $Manager->getConnections());
+
+        $Item = $Manager->getConnectionByName('i dont exist');
+    }
+
     public function dataProvider()
     {
         /**

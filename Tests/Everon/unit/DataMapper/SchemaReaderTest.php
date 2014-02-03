@@ -134,6 +134,48 @@ class SchemaReaderTest extends \Everon\TestCase
         $this->assertCount(1, $foreign_keys);
         $this->assertEquals($expected, $foreign_keys);
     }
+
+    /**
+     * @dataProvider dataProvider
+     */
+    public function testUniqueKeyListShouldReturnArrayUniqueKeys(\Everon\DataMapper\Interfaces\Schema\Reader $Reader, \Everon\Interfaces\PdoAdapter $PdoAdapterMock)
+    {
+        $PdoStatementMock = $this->getMock('\PDOStatement');
+        $PdoStatementMock->expects($this->once())
+            ->method('fetchAll')
+            ->will($this->returnValue($this->getFixtureData()['db_unique_keys.php']));
+
+        $PdoAdapterMock->expects($this->once())
+            ->method('execute')
+            ->will($this->returnValue($PdoStatementMock));
+
+        $Reader->setPdoAdapter($PdoAdapterMock);
+        $foreign_keys = $Reader->getUniqueKeysList();
+        $expected = $this->arrayArrangeByKey('TABLE_NAME', $this->getFixtureData()['db_unique_keys.php']);
+
+        $this->assertInternalType('array', $foreign_keys);
+        $this->assertCount(1, $foreign_keys);
+        $this->assertEquals($expected, $foreign_keys);
+    }
+    
+    /**
+     * @dataProvider dataProvider
+     */
+    public function testGetDriverShouldReturnDriverName(\Everon\DataMapper\Interfaces\Schema\Reader $Reader, \Everon\Interfaces\PdoAdapter $PdoAdapterMock)
+    {
+        $ConnectionConfigMock = $this->getMock('Everon\DataMapper\Interfaces\ConnectionItem');
+        $ConnectionConfigMock->expects($this->once())
+            ->method('getDriver')
+            ->will($this->returnValue('MySql'));
+        
+        $PdoAdapterMock->expects($this->once())
+            ->method('getConnectionConfig')
+            ->will($this->returnValue($ConnectionConfigMock));
+
+        $Reader->setPdoAdapter($PdoAdapterMock);
+        
+        $this->assertEquals('MySql', $Reader->getDriver());
+    }
     
     public function dataProvider()
     {

@@ -17,7 +17,7 @@ class EntityTest extends \Everon\TestCase
     /**
      * @dataProvider dataProvider
      */    
-    public function testConstructor(Entity $Entity, array $data)
+    function testConstructor(Entity $Entity, array $data)
     {
         $Entity = new \Everon\Domain\Entity(1, $data);
         $this->assertInstanceOf('\Everon\Domain\Interfaces\Entity', $Entity);
@@ -27,7 +27,7 @@ class EntityTest extends \Everon\TestCase
     /**
      * @dataProvider dataProvider
      */
-    public function testEntityStateShouldBeNewWhenIdNotSet(Entity $Entity, array $data)
+    function testEntityStateShouldBeNewWhenIdNotSet(Entity $Entity, array $data)
     {
         $Entity = new \Everon\Domain\Entity(null, $data);
         $this->assertNull($Entity->getId());
@@ -40,7 +40,7 @@ class EntityTest extends \Everon\TestCase
     /**
      * @dataProvider dataProvider
      */
-    public function testEntityStateShouldBePersistedWhenIdIsSet(Entity $Entity, array $data)
+    function testStateShouldBePersistedWhenIdIsSet(Entity $Entity, array $data)
     {
         $this->assertNotNull($Entity->getId());
         $this->assertTrue($Entity->isPersisted());
@@ -52,7 +52,7 @@ class EntityTest extends \Everon\TestCase
     /**
      * @dataProvider dataProvider
      */
-    public function testEntityShouldReturnValueByGetter(Entity $Entity, array $data)
+    function testShouldReturnValueByGetter(Entity $Entity, array $data)
     {
         $this->assertEquals($data['first_name'], $Entity->getFirstName());
         $this->assertEquals($data['date_of_birth'], $Entity->getDateOfBirth());
@@ -61,7 +61,7 @@ class EntityTest extends \Everon\TestCase
     /**
      * @dataProvider dataProvider
      */
-    public function testEntityShouldMarkModifiedProperties(Entity $Entity, array $data)
+    function testShouldMarkModifiedProperties(Entity $Entity, array $data)
     {
         $this->assertEquals($data['first_name'], $Entity->getFirstName());
         $this->assertEquals($data['last_name'], $Entity->getLastName());
@@ -82,7 +82,7 @@ class EntityTest extends \Everon\TestCase
     /**
      * @dataProvider dataProvider
      */
-    public function testEntityGetValueByNameShouldReturnValue(Entity $Entity, array $data)
+    function testGetValueByNameShouldReturnValue(Entity $Entity, array $data)
     {
         $this->assertEquals($data['first_name'], $Entity->getValueByName('first_name'));
         $this->assertEquals($data['last_name'], $Entity->getValueByName('last_name'));
@@ -91,7 +91,7 @@ class EntityTest extends \Everon\TestCase
     /**
      * @dataProvider dataProvider
      */
-    public function testEntitySetValueByNameShouldSetValue(Entity $Entity, array $data)
+    function testSetValueByNameShouldSetValue(Entity $Entity, array $data)
     {
         $Entity->setValueByName('first_name', 'Tom');
         $Entity->setValueByName('last_name', 'Smith');
@@ -99,8 +99,76 @@ class EntityTest extends \Everon\TestCase
         $this->assertEquals('Tom', $Entity->getFirstName());
         $this->assertEquals('Smith', $Entity->getLastName());
     }
+    
+    /**
+     * @dataProvider dataProvider
+     */
+    function testDeleteShouldResetStateAndMarkAsDeleted(Entity $Entity, array $data)
+    {
+        $Entity->delete();
+        
+        $this->assertNull($Entity->getId());
+        $this->assertNull($Entity->getModifiedProperties());
+        $this->assertNull($Entity->getData());
+        $this->assertTrue($Entity->isDeleted());
+    }
 
-    public function dataProvider()
+    /**
+     * @dataProvider dataProvider
+     */
+    function testPersistShouldSetIdAndDataAndMarkAsPersisted(Entity $Entity, array $data)
+    {
+        $Entity->persist(12, $data);
+
+        $this->assertEquals(12, $Entity->getId());
+        $this->assertNull($Entity->getModifiedProperties());
+        $this->assertEquals($data, $Entity->getData());
+        $this->assertTrue($Entity->isPersisted());
+    }
+
+    /**
+     * @dataProvider dataProvider
+     * @expectedException \Everon\Domain\Exception\Entity
+     * @expectedExceptionMessage It is the database's job to maintain primary keys
+     */
+    function testSetIdShouldThrowException(Entity $Entity, array $data)
+    {
+        $Entity->setId(1);
+    }
+    
+    /**
+     * @dataProvider dataProvider
+     * @expectedException \Everon\Domain\Exception\Entity
+     * @expectedExceptionMessage Invalid property name: i dont exist
+     */
+    function testGetValueByNameShouldThrowExceptionWhenKeyDoesNotExist(Entity $Entity, array $data)
+    {
+        $Entity->getValueByName('i dont exist');
+    }
+    
+    /**
+     * @dataProvider dataProvider
+     */
+    function testSerializeUnserialize(Entity $Entity, array $data)
+    {
+        $serialized = serialize($Entity);
+        $UnserializedEntity = unserialize($serialized);
+        
+        $this->assertEquals(1, $UnserializedEntity->getId());
+        $this->assertTrue($UnserializedEntity->isPersisted());
+    }
+
+    /**
+     * @dataProvider dataProvider
+     */
+    function testVarExport(Entity $Entity, array $data)
+    {
+        $exported = var_export($Entity, 1);
+        $eval = eval('$ExportedEntity = '.$exported.';');
+        $this->assertEquals($Entity, $ExportedEntity);
+    }
+    
+    function dataProvider()
     {
         $data = [
             'first_name' => 'John',

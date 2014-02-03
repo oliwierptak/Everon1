@@ -51,6 +51,16 @@ class RepositoryTest extends \Everon\TestCase
         $this->assertNull($Entity->getId());
         $this->assertTrue($Entity->isDeleted());
     }
+    
+    /**
+     * @dataProvider dataProvider
+     */
+    public function testSetMapperShouldSetMapper(Repository $Repository, array $data)
+    {
+        $DataMapperMock = $this->getMock('Everon\Interfaces\DataMapper');
+        $Repository->setMapper($DataMapperMock);
+        $this->assertInstanceOf('Everon\Interfaces\DataMapper', $Repository->getMapper());
+    }
 
     /**
      * @dataProvider dataProvider

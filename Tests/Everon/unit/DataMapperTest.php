@@ -66,7 +66,7 @@ class DataMapperTest extends \Everon\TestCase
         $this->assertInstanceOf('\Everon\Domain\Interfaces\Entity', $Entity);
         $this->assertNull($Entity->getId());
         
-        $Criteria = new \Everon\DataMapper\Criteria();
+        $Criteria = new \Everon\DataMapper\Criteria([1=>1]);
         $all = $Mapper->fetchAll($Criteria);
         $this->assertInternalType('array', $all);
         $this->assertCount(10, $all);
@@ -188,7 +188,7 @@ class DataMapperTest extends \Everon\TestCase
         $Criteria = $this->getMock('Everon\DataMapper\Interfaces\Criteria');
         $Criteria->expects($this->once())
             ->method('toArray')
-            ->will($this->returnValue([]));
+            ->will($this->returnValue([1=>1]));
         
         $result = $Mapper->fetchAll($Criteria);
         

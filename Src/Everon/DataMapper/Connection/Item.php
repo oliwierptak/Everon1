@@ -16,6 +16,7 @@ use Everon\Helper;
 
 class Item implements Interfaces\ConnectionItem
 {
+    use Helper\Arrays;
     use Helper\Asserts;
     use Helper\Asserts\IsArrayKey;
     use Helper\Immutable;
@@ -64,11 +65,11 @@ class Item implements Interfaces\ConnectionItem
         $this->options = [\PDO::MYSQL_ATTR_INIT_COMMAND => sprintf('SET NAMES \'%s\'', $this->encoding)];
         
         if (isset($data['pdo_options'])) {
-            $this->options = array_merge($this->options, $data['pdo_options']);
+            $this->options = $this->arrayMergeDefault($this->options, $data['pdo_options']);
         }
         
-        if (isset($data['mapper'])) {
-            $this->adapter_name = $data['mapper'];
+        if (isset($data['adapter_name'])) {
+            $this->adapter_name = $data['adapter_name'];
         }
         
         $this->data = $data;
@@ -129,6 +130,10 @@ class Item implements Interfaces\ConnectionItem
                     $this->adapter_name = 'MySql';
                     break;
             }
+        }
+        
+        if ($this->adapter_name === null) {
+            throw new ConnectionItemException('Driver name not set');
         }
         
         return $this->adapter_name;
