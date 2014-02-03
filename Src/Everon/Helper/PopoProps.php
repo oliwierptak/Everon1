@@ -72,7 +72,7 @@ class PopoProps implements Interfaces\Arrayable
     
     public static function __set_state(array $array) 
     {
-        $S = new self($array['data']);
+        $S = new static($array['data']);
         $S->Strict = (bool) $array['strict'];
         return $S;
     }

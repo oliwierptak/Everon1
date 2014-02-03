@@ -115,7 +115,7 @@ class Popo implements Interfaces\Arrayable
 
     public static function __set_state(array $array)
     {
-        return new self($array['data']);
+        return new static($array['data']);
     }
     
 }

@@ -30,7 +30,7 @@ class Form extends \Everon\View\Element
 
     public static function __set_state(array $array)
     {
-        return new self($array);
+        return new static($array);
     }    
 
 }
