@@ -13,6 +13,7 @@ class Repository extends Domain\Repository
 {
     use Dependency\Injection\DomainManager;
     
+
     /**'
      * @param $username
      * @return mixed
@@ -24,17 +25,17 @@ class Repository extends Domain\Repository
             'login' => $username,
             'first_name' => 'John'
         ]);
-        
+
         $data = $this->getMapper()->fetchAll($Criteria);
         if (empty($data)) {
-            throw new Exception\Repository('Invalid username: "%s"', $username);
+            throw new Exception\Repository('Login failed for: "%s"', $username);
         }
-        
+
         $data = current($data);
         $pk_name = $this->getMapper()->getSchemaTable()->getPk();
         $id = $data[$pk_name];
         $id = $this->getMapper()->getSchemaTable()->validateId($id);
-        
+
         return $this->getDomainManager()->getEntity($this->getName(), $id, $data);
     }
 }

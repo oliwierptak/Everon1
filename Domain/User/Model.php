@@ -20,12 +20,12 @@ class Model
     public function authenticate($username, $password)
     {
         $User = $this->getDomainManager()->getUserRepository()->getByLogin($username);
-        sd($User);
         if ($User->getPassword() === $password) {
-            $this->getLogger()->auth('Authentication successful for user: "%s"', [$username]);
+            $this->getLogger()->auth('Authentication successful for: "%s"', [$username]);
             return $User;
         }
 
+        $this->getLogger()->auth_error('Authentication failed for: "%s"', [$username]);
         return null;
     }
  

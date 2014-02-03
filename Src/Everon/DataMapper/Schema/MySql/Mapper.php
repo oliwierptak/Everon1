@@ -66,9 +66,9 @@ abstract class Mapper extends DataMapper
         $pk_name = $this->getSchemaTable()->getPk();
         $where_str = '1=1';
         $parameters = [];
-
-        if (empty($Criteria) === false) {
-            $where_tokens = $Criteria->toArray();
+        $where_tokens = $Criteria->toArray();
+        
+        if (empty($where_tokens) === false) {
             foreach ($where_tokens as $field => $value) {
                 $where_str .= ' AND '.$field.' = :'.$field.'';
                 $parameters[$field] = $value;

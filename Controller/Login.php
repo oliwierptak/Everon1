@@ -10,7 +10,7 @@ class Login extends Controller implements Interfaces\Controller
 {
     public function form()
     {
-        $redirect_url = urlencode('/login/reset password');
+        $redirect_url = '/url encoded';
         $this->getViewManager()->getView('Login')->set('form_action_url', "login/submit/session/adf24ds34/redirect/${redirect_url}?token=something&pif=2457");
         $this->getView()->set('canShowInfo', true);
     }
@@ -27,7 +27,6 @@ class Login extends Controller implements Interfaces\Controller
 
         $User = $this->getDomainManager()->getModel('User')->authenticate($username, $password);
         if ($User === null) {
-            $this->getLogger()->auth('Login failed for: "%s"', [$username]);
             return false;
         }
 

@@ -1,4 +1,4 @@
-<form action="<?php echo urlencode($Form->action) ?>" method="<?php echo $Form->method ?>" enctype="<?php echo $Form->enctype ?>">
+<form action="<?php echo $Form->action ?>" method="<?php echo $Form->method ?>" enctype="<?php echo $Form->enctype ?>">
     <input type="hidden" name="token" value="3" />
     <?php
         if ($Login->canShowInfo) {
