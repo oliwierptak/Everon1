@@ -48,7 +48,7 @@ class SchemaTest extends \Everon\TestCase
      */
     public function testGetNameShouldReturnNameOfSchemaReader(DataMapper\Interfaces\Schema $Schema)
     {
-        $name = $Schema->getName();
+        $name = $Schema->getDatabase();
         $this->assertEquals('everon_test', $name);
     }
     

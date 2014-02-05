@@ -86,9 +86,9 @@ class Schema implements Interfaces\Schema
         return $this->getSchemaReader()->getDriver();
     }
     
-    public function getName()
+    public function getDatabase()
     {
-        return $this->getSchemaReader()->getName();
+        return $this->getSchemaReader()->getDatabase();
     }
 
     public function getTables()
