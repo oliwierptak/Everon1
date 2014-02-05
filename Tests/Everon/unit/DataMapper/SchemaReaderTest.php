@@ -22,14 +22,15 @@ class SchemaReaderTest extends \Everon\TestCase
     
     protected function setUpDumpSchema()
     {
-        $DatabaseConfig = $this->getFactory()->getDependencyContainer()->resolve('ConfigManager')->getConfigByName('database');
-        $ConnectionManager = $this->getFactory( )->buildConnectionManager($DatabaseConfig);
+        $Factory = $this->buildFactory();
+        $DatabaseConfig = $Factory->getDependencyContainer()->resolve('ConfigManager')->getConfigByName('database');
+        $ConnectionManager = $Factory->buildConnectionManager($DatabaseConfig);
 
         $Connection = $ConnectionManager->getConnectionByName('schema');
         list($dsn, $username, $password, $options) = $Connection->toPdo();
-        $Pdo = $this->getFactory()->buildPdo($dsn, $username, $password, $options);
-        $PdoAdapter = $this->getFactory()->buildPdoAdapter($Pdo, $Connection);
-        $Reader = $this->getFactory()->buildSchemaReader($Connection, $PdoAdapter);
+        $Pdo = $Factory->buildPdo($dsn, $username, $password, $options);
+        $PdoAdapter = $Factory->buildPdoAdapter($Pdo, $Connection);
+        $Reader = $Factory->buildSchemaReader($Connection, $PdoAdapter);
         $this->assertInstanceOf('\Everon\DataMapper\Interfaces\Schema\Reader', $Reader);
         $Reader->dumpDataBaseSchema($this->getDataMapperFixturesDirectory());
         die();
@@ -188,7 +189,7 @@ class SchemaReaderTest extends \Everon\TestCase
             ->will($this->returnValue('everon_test'));
         
         $PdoAdapterMock = $this->getMock('\Everon\Interfaces\PdoAdapter');
-        $Reader = $this->getFactory()->buildSchemaReader($ConnectionItem, $PdoAdapterMock);
+        $Reader = $this->buildFactory()->buildSchemaReader($ConnectionItem, $PdoAdapterMock);
         
         return [
             [$Reader, $PdoAdapterMock]

@@ -87,7 +87,7 @@ class RequestValidatorTest extends \Everon\TestCase
     
     public function dataProvider()
     {
-        $Factory = $this->getFactory();
+        $Factory = $this->buildFactory();
 
         $server_data = $this->getServerDataForRequest([
             'REQUEST_METHOD' => 'GET',

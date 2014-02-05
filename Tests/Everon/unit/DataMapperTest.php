@@ -30,17 +30,18 @@ class DataMapperTest extends \Everon\TestCase
      */
     public function SKIPtestWithRealDatabase()
     {
-        $DatabaseConfig = $this->getFactory()->getDependencyContainer()->resolve('ConfigManager')->getConfigByName('database');
-        $ConnectionManager = $this->getFactory( )->buildConnectionManager($DatabaseConfig);
+        $Factory = $this->buildFactory();
+        $DatabaseConfig = $Factory->getDependencyContainer()->resolve('ConfigManager')->getConfigByName('database');
+        $ConnectionManager = $Factory->buildConnectionManager($DatabaseConfig);
 
         $Connection = $ConnectionManager->getConnectionByName('schema');
         list($dsn, $username, $password, $options) = $Connection->toPdo();
-        $Pdo = $this->getFactory()->buildPdo($dsn, $username, $password, $options);
-        $PdoAdapter = $this->getFactory()->buildPdoAdapter($Pdo, $Connection);
-        $Reader = $this->getFactory()->buildSchemaReader($Connection, $PdoAdapter);
-        $Schema = $this->getFactory()->buildSchema($Reader, $ConnectionManager);
+        $Pdo = $Factory->buildPdo($dsn, $username, $password, $options);
+        $PdoAdapter = $Factory->buildPdoAdapter($Pdo, $Connection);
+        $Reader = $Factory->buildSchemaReader($Connection, $PdoAdapter);
+        $Schema = $Factory->buildSchema($Reader, $ConnectionManager);
         $Table = $Schema->getTable('user');
-        $Mapper = $this->getFactory()->buildDataMapper($Table, $Schema);
+        $Mapper = $Factory->buildDataMapper($Table, $Schema);
         
         //sd($Mapper);
         
@@ -187,8 +188,8 @@ class DataMapperTest extends \Everon\TestCase
 
         $Criteria = $this->getMock('Everon\DataMapper\Interfaces\Criteria');
         $Criteria->expects($this->once())
-            ->method('toArray')
-            ->will($this->returnValue([1=>1]));
+            ->method('getWhereSql')
+            ->will($this->returnValue(['sql', []]));
         
         $result = $Mapper->fetchAll($Criteria);
         
@@ -240,7 +241,7 @@ class DataMapperTest extends \Everon\TestCase
             ->method('getPk')
             ->will($this->returnValue('id'));
 
-        $Mapper = $this->getFactory()->buildDataMapper($TableMock, $SchemaMock, 'Everon\Test\DataMapper');
+        $Mapper = $this->buildFactory()->buildDataMapper($TableMock, $SchemaMock, 'Everon\Test\DataMapper');
         
         return [
             [$Mapper, $PdoAdapterMock]

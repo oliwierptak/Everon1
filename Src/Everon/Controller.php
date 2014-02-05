@@ -70,7 +70,7 @@ abstract class Controller implements Interfaces\Controller
         $result = $this->{$action}();
         $result = ($result !== false) ? true : $result;
         $this->getResponse()->setResult($result);
-
+        
         if ($result === false) {
             throw new Exception\InvalidControllerResponse(
                 'Invalid controller response for action: "%s:%s"', [$this->getName(),$action]

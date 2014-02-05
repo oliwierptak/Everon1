@@ -26,7 +26,7 @@ class RepositoryTest extends \Everon\TestCase
      */
     public function testPersistShouldAddNewEntityAndMarkEntityAsPersisted(Repository $Repository, array $data)
     {
-        $Entity = $this->getFactory()->buildDomainEntity('User', null, $data, 'Everon\Test\Domain');
+        $Entity = $this->buildFactory()->buildDomainEntity('User', null, $data, 'Everon\Test\Domain');
         $Repository->persist($Entity);
         $this->assertTrue($Entity->isPersisted());
     }
@@ -36,7 +36,7 @@ class RepositoryTest extends \Everon\TestCase
      */
     public function testPersistShouldUpdateEntityAndMarkEntityAsPersisted(Repository $Repository, array $data)
     {
-        $Entity = $this->getFactory()->buildDomainEntity('User', 1, $data, 'Everon\Test\Domain');
+        $Entity = $this->buildFactory()->buildDomainEntity('User', 1, $data, 'Everon\Test\Domain');
         $Repository->persist($Entity);
         $this->assertTrue($Entity->isPersisted());
     }
@@ -46,7 +46,7 @@ class RepositoryTest extends \Everon\TestCase
      */
     public function testRemoveShouldDeleteEntityAndMarkEntityAsDeleted(Repository $Repository, array $data)
     {
-        $Entity = $this->getFactory()->buildDomainEntity('User', 1, $data, 'Everon\Test\Domain');
+        $Entity = $this->buildFactory()->buildDomainEntity('User', 1, $data, 'Everon\Test\Domain');
         $Repository->remove($Entity);
         $this->assertNull($Entity->getId());
         $this->assertTrue($Entity->isDeleted());
@@ -60,6 +60,34 @@ class RepositoryTest extends \Everon\TestCase
         $DataMapperMock = $this->getMock('Everon\Interfaces\DataMapper');
         $Repository->setMapper($DataMapperMock);
         $this->assertInstanceOf('Everon\Interfaces\DataMapper', $Repository->getMapper());
+    }
+
+    /**
+     * @dataProvider dataProvider
+     */
+    public function testFetchEntityByIdShouldReturnEntity(Repository $Repository, array $data)
+    {
+        $DataMapperMock = $this->getMock('Everon\Interfaces\DataMapper');
+        $DataMapperMock->expects($this->once())
+            ->method('fetchAll')
+            ->will($this->returnValue([$data]));
+        $DataMapperMock->expects($this->once())
+            ->method('getAndValidateId')
+            ->will($this->returnValue(1));
+        $DataMapperMock->expects($this->once())
+            ->method('getAndValidateId')
+            ->will($this->returnValue(1));
+
+        $EntityMock = $this->getMock('Everon\Domain\Interfaces\Entity');
+        $DomainManagerMock = $Repository->getDomainManager();
+        $DomainManagerMock->expects($this->once())
+            ->method('getEntity')
+            ->will($this->returnValue($EntityMock));
+        
+        $Repository->setMapper($DataMapperMock);
+        $EntityMock = $Repository->fetchEntityById(1);
+        
+        $this->assertInstanceOf('Everon\Domain\Interfaces\Entity', $EntityMock);
     }
 
     /**
@@ -85,7 +113,6 @@ class RepositoryTest extends \Everon\TestCase
         $SchemaMock->expects($this->once())
             ->method('getName')
             ->will($this->returnValue('phpunit_db_test'));
-        
         $SchemaMock->expects($this->once())
             ->method('getPdoAdapterByName')
             ->will($this->returnValue($PdoAdapterMock));
@@ -99,10 +126,6 @@ class RepositoryTest extends \Everon\TestCase
         $DataMapperMock->expects($this->once())
             ->method('getSchemaTable')
             ->will($this->returnValue($TableMock));
-        
-        $DataMapperMock->expects($this->once())
-            ->method('getSchema')
-            ->will($this->returnValue($SchemaMock));
 
         $entity_data = [
             'first_name' => 'John',
@@ -110,8 +133,15 @@ class RepositoryTest extends \Everon\TestCase
             'date_of_birth' => '1990-09-09',
         ];
                
-        $Repository = $this->getFactory()->buildDomainRepository('User', $DataMapperMock, 'Everon\Test\Domain');
-                    
+        $Factory = $this->buildFactory();
+        $Container = $Factory->getDependencyContainer();
+        $DomainManagerMock = $this->getMock('Everon\Test\Domain\Interfaces\Manager', [], [], '', false);
+        $Container->register('DomainManager', function() use ($DomainManagerMock) {
+            return $DomainManagerMock;
+        });
+        
+        $Repository = $Factory->buildDomainRepository('User', $DataMapperMock, 'Everon\Test\Domain');
+        
         return [
             [$Repository, $entity_data]
         ];

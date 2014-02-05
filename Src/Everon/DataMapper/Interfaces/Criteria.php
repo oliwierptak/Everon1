@@ -11,5 +11,21 @@ namespace Everon\DataMapper\Interfaces;
 
 interface Criteria extends \Everon\Interfaces\Arrayable
 {
+    public function offset($offset);
 
+    public function getOrderBySortSql();
+
+    public function orderBy($order_by);
+
+    public function getOffsetLimitSql();
+
+    public function getWhereSql();
+
+    public function sortDesc();
+
+    public function where(array $where);
+
+    public function sortAsc();
+
+    public function limit($limit);
 }

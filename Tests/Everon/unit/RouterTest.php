@@ -66,7 +66,7 @@ class RouterTest extends \Everon\TestCase
         /**
          * @var \Everon\Interfaces\Factory $Factory
          */
-        $Factory = $this->getFactory();
+        $Factory = $this->buildFactory();
         $RouterConfig = $Factory->getDependencyContainer()->resolve('ConfigManager')->getConfigByName('router');
         
         return [

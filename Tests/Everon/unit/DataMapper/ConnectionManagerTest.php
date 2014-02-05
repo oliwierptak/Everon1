@@ -100,8 +100,10 @@ class ConnectionManagerTest extends \Everon\TestCase
         /**
          * @var Interfaces\Config $DatabaseConfig
          */
-        $DatabaseConfig = $this->getFactory()->getDependencyContainer()->resolve('ConfigManager')->getConfigByName('database');
-        $ConnectionManager = $this->getFactory()->buildConnectionManager($DatabaseConfig);
+
+        $Factory = $this->buildFactory();
+        $DatabaseConfig = $Factory->getDependencyContainer()->resolve('ConfigManager')->getConfigByName('database');
+        $ConnectionManager = $Factory->buildConnectionManager($DatabaseConfig);
         
         return [
             [$ConnectionManager, $DatabaseConfig]

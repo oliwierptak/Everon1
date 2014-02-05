@@ -12,7 +12,9 @@ namespace Everon\Dependency;
 
 trait DomainManager
 {
-
+    /**
+     * @var \Everon\Domain\Interfaces\Manager
+     */
     protected $DomainManager = null;
 
 

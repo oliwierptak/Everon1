@@ -57,7 +57,7 @@ class ResponseTest extends \Everon\TestCase
         /**
          * @var \Everon\Interfaces\Factory $Factory
          */
-        $Factory = $this->getFactory();
+        $Factory = $this->buildFactory();
         
         return [
             [$Factory]

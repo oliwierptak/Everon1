@@ -117,7 +117,7 @@ class ConnectionItemTest extends \Everon\TestCase
             'pdo_options' => [\PDO::ATTR_DRIVER_NAME => 'mysql_test']
         ];
         
-        $ConnectionItem = $this->getFactory()->buildConnectionItem($connections);
+        $ConnectionItem = $this->buildFactory()->buildConnectionItem($connections);
         
         return [
             [$ConnectionItem, $connections]

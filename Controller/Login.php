@@ -25,6 +25,8 @@ class Login extends Controller implements Interfaces\Controller
         $username = $this->getRequest()->getPostParameter('username');
         $password = $this->getRequest()->getPostParameter('password');
 
+        $this->getView()->set('Login', new \Everon\Helper\Popo([])); //tmp, for testing templates
+
         $User = $this->getDomainManager()->getModel('User')->authenticate($username, $password);
         if ($User === null) {
             return false;

@@ -11,16 +11,19 @@ namespace Everon\Domain;
 
 use Everon\Domain\Interfaces;
 use Everon\Interfaces\DataMapper;
+use Everon\Dependency;
 
 abstract class Repository implements Interfaces\Repository
 {
+    use Dependency\Injection\DomainManager;
+    
     /**
      * @var DataMapper
      */
     protected $Mapper = null;
     
     protected $name = null;
-
+    
 
     /**
      * @param $name
@@ -51,6 +54,28 @@ abstract class Repository implements Interfaces\Repository
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * @param $id
+     * @return Interfaces\Entity
+     * @throws Exception\Repository
+     */
+    public function fetchEntityById($id)
+    {
+        $Criteria = new \Everon\DataMapper\Criteria([
+            $this->getMapper()->getSchemaTable()->getPk() => $id
+        ]);
+
+        $data = $this->getMapper()->fetchAll($Criteria);
+        if (empty($data)) {
+            return null;
+        }
+
+        $data = current($data);
+        $id = $this->getMapper()->getAndValidateId($data);
+
+        return $this->getDomainManager()->getEntity($this->getName(), $id, $data);
     }
 
     /**

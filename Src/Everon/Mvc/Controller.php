@@ -27,6 +27,26 @@ abstract class Controller extends \Everon\Controller implements Interfaces\MvcCo
     
     protected $CacheLoader = null;
 
+
+    public function execute($action)
+    {
+        try {
+            parent::execute($action);
+        }
+        catch (\Exception $e) {
+            $action = $action.'OnError';
+            $View = $this->getView();
+            if ($this->isCallable($View, $action) === false) {
+                throw new Exception\InvalidControllerMethod($e->getMessage());
+            }
+            
+            $View->{$action}();
+            $this->prepareResponse($action);
+            $this->getLogger()->response('[%s] %s : %s', [$this->getResponse()->getStatus(), $this->getName(), $action]);
+            $this->response();
+        }
+    }
+
     /**
      * @return Interfaces\View
      */

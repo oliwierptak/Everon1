@@ -419,7 +419,7 @@ class FactoryTest extends \Everon\TestCase
     public function dataProvider()
     {
         return [
-            [$this->getFactory()]
+            [$this->buildFactory()]
         ];
     }
     

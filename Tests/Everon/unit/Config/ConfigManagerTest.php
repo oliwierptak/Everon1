@@ -143,7 +143,7 @@ class ManagerTest extends \Everon\TestCase
         /**
          * @var \Everon\Interfaces\Factory $Factory
          */
-        $Factory = $this->getFactory();
+        $Factory = $this->buildFactory();
 
         //$name, Interfaces\ConfigLoaderItem $ConfigLoaderItem, \Closure $Compiler
         $Compiler = function(&$data) {};

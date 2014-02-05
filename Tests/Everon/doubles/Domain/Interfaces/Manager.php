@@ -7,6 +7,12 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon\Exception;
+namespace Everon\Test\Domain\Interfaces;
 
-class TemplateEvaluationError extends \ErrorException{};
+interface Manager extends \Everon\Domain\Interfaces\Manager
+{
+    /**s
+     * @return \Everon\Domain\User\Repository;
+     */
+    function getUserRepository();
+}

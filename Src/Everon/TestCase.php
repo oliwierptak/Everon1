@@ -180,7 +180,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
     /**
      * @return Interfaces\Factory
      */
-    public function getFactory()
+    public function buildFactory()
     {
         $Factory = new Factory(new Dependency\Container());
         $Container = $Factory->getDependencyContainer();

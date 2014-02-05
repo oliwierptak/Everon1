@@ -53,39 +53,23 @@ abstract class Mapper extends DataMapper
         return [$sql, $params];
     }
 
-    protected function getFetchOneSql($id)
-    {
-        $pk_name = $this->getSchemaTable()->getPk();
-        $sql = 'SELECT * FROM `%s`.`%s` WHERE %s = :%s';
-        $sql = sprintf($sql, $this->getSchema()->getName(), $this->getSchemaTable()->getName(), $pk_name, $pk_name);
-        return [$sql, [$pk_name => $id]];
-    }
-
     protected function getFetchAllSql(Interfaces\Criteria $Criteria)
     {
         $pk_name = $this->getSchemaTable()->getPk();
-        $where_str = '1=1';
-        $parameters = [];
-        $where_tokens = $Criteria->toArray();
+        list($where_str, $parameters) = $Criteria->getWhereSql();
+        $where_str = $where_str === '' ?: 'WHERE '.$where_str;
+        $offset_limit_sql = $Criteria->getOffsetLimitSql();
+        $order_by_str = $Criteria->getOrderBySortSql();
         
-        if (empty($where_tokens) === false) {
-            foreach ($where_tokens as $field => $value) {
-                $where_str .= ' AND '.$field.' = :'.$field.'';
-                $parameters[$field] = $value;
-            }
-        }
-
         $sql = '
-            SELECT 
-                * 
+            SELECT * 
             FROM `%s`.`%s`
-            WHERE '.$where_str.'
-            ORDER BY %s
-            LIMIT %d
-            OFFSET %d
+            '.$where_str.'
+            '.$order_by_str.'
+             '.$offset_limit_sql.'
         ';
         
-        $sql = sprintf($sql, $this->getSchema()->getName(), $this->getSchemaTable()->getName(), $pk_name, 10, 0);
+        $sql = sprintf($sql, $this->getSchema()->getName(), $this->getSchemaTable()->getName(), $pk_name);
         return [$sql, $parameters];
     }
 }

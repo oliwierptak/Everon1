@@ -131,7 +131,7 @@ class IniLoaderTest extends \Everon\TestCase
         /**
          * @var \Everon\Interfaces\Factory $Factory
          */
-        $Factory = $this->getFactory();
+        $Factory = $this->buildFactory();
         $ConfigLoader = $Factory->buildConfigLoader($this->getConfigDirectory(), $this->getConfigCacheDirectory());
 
         return [

@@ -36,7 +36,7 @@ class ExpressionMatcherTest extends \Everon\TestCase
         /**
          * @var \Everon\Interfaces\Factory $Factory
          */
-        $Factory = $this->getFactory();        
+        $Factory = $this->buildFactory();        
         $data['application'] = parse_ini_file($this->Environment->getConfig().'application.ini', true);
         $Matcher = $Factory->buildConfigExpressionMatcher();
 

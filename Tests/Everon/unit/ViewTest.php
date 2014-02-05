@@ -184,7 +184,7 @@ EOF;
 
     public function dataProvider()
     {
-        $Factory = $this->getFactory();
+        $Factory = $this->buildFactory();
         $View = $Factory->buildView('MyView', $this->getTemplateDirectory(), [], 'Everon\Test');
         
         return [

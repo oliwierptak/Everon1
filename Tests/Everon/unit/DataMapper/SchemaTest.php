@@ -138,10 +138,11 @@ class SchemaTest extends \Everon\TestCase
             ->will($this->returnValue($SchemaTableMock));
 
         //$C = $this->getMock('\Everon\DataMapper\Interfaces\ConnectionManager'); //why the fuck does it return null?
-        $DatabaseConfig = $this->getFactory()->getDependencyContainer()->resolve('ConfigManager')->getConfigByName('database');
-        $ConnectionManager = $this->getFactory()->buildConnectionManager($DatabaseConfig);
+        $Factory = $this->buildFactory();
+        $DatabaseConfig = $Factory->getDependencyContainer()->resolve('ConfigManager')->getConfigByName('database');
+        $ConnectionManager = $Factory->buildConnectionManager($DatabaseConfig);
         
-        $Schema = $this->getFactory()->buildSchema($SchemaReaderMock, $ConnectionManager);
+        $Schema = $Factory->buildSchema($SchemaReaderMock, $ConnectionManager);
         $Schema->setFactory($FactoryMock);
         
         return [

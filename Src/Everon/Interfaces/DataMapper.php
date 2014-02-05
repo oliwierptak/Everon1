@@ -49,6 +49,12 @@ interface DataMapper
     function getName();
 
     /**
+     * @param $data
+     * @return mixed|null
+     */
+    function getAndValidateId($data);
+
+    /**
      * @return Schema
      */
     function getSchema();

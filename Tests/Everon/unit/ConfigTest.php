@@ -55,7 +55,7 @@ class ConfigTest extends \Everon\TestCase
         $ConfigLoaderItem = new \Everon\Config\Loader\Item($filename, parse_ini_file($filename, true));
         $Compiler = function(&$item) {};        
         $Config = new \Everon\Config('test', $ConfigLoaderItem, $Compiler);
-        $Config->setFactory($this->getFactory());
+        $Config->setFactory($this->buildFactory());
         
         return [
             [$Config]

@@ -27,7 +27,6 @@ abstract class DataMapper implements Interfaces\DataMapper
     abstract protected function getInsertSql(Entity $Entity);
     abstract protected function getUpdateSql(Entity $Entity);
     abstract protected function getDeleteSql(Entity $Entity);
-    abstract protected function getFetchOneSql($id);
     abstract protected function getFetchAllSql(Criteria $Criteria);
     
     public function __construct(Table $Table, Schema $Schema)
@@ -69,8 +68,11 @@ abstract class DataMapper implements Interfaces\DataMapper
      */
     public function fetchOne($id)
     {
+        $Criteria = new DataMapper\Criteria();
+        $Criteria->limit(1);
         $id = $this->getSchemaTable()->validateId($id);
-        list($sql, $parameters) = $this->getFetchOneSql($id);
+        $Criteria->where([$this->getSchemaTable()->getPk() => $id]);
+        list($sql, $parameters) = $this->getFetchAllSql($Criteria);
         return $this->getSchema()->getPdoAdapterByName($this->read_connection_name)->execute($sql, $parameters)->fetch();
     }
     
@@ -83,6 +85,17 @@ abstract class DataMapper implements Interfaces\DataMapper
     public function getName()
     {
         return $this->getSchemaTable()->getName();
+    }
+
+    /**
+     * @param $data
+     * @return mixed|null
+     */
+    public function getAndValidateId($data)
+    {
+        $pk_name = $this->getSchemaTable()->getPk();
+        $id =  @$data[$pk_name];
+        return $this->getSchemaTable()->validateId($id);
     }
 
     /**

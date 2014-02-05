@@ -144,7 +144,7 @@ class ManagerTest extends \Everon\TestCase
             ->with('schema')
             ->will($this->returnValue($ConnectionMock));
         
-        $DomainManager = $this->getFactory()->buildDomainManager($ConnectionManagerMock);
+        $DomainManager = $this->buildFactory()->buildDomainManager($ConnectionManagerMock);
         
         return [
             [$DomainManager, $ConnectionManagerMock]
