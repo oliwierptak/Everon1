@@ -23,12 +23,12 @@ class ConnectionItemTest extends \Everon\TestCase
             'driver' => 'mysql',
             'host' => 'localhost',
             'port' => '3306',
-            'name' => 'everon_test',
+            'database' => 'everon_test',
             'user' => 'everon',
             'password' => 'test',
             'encoding' => 'UTF8',
             'adapter_name' => 'MySql',
-            'pdo_options' => [\PDO::ATTR_DRIVER_NAME => 'mysql_test']
+            'options' => [\PDO::ATTR_DRIVER_NAME => 'mysql_test']
         ];
         $ConnectionItem = new \Everon\DataMapper\Connection\Item($connections);
         $this->assertInstanceOf('\Everon\DataMapper\Interfaces\ConnectionItem', $ConnectionItem);
@@ -54,7 +54,7 @@ class ConnectionItemTest extends \Everon\TestCase
     {
         $this->assertEquals('mysql', $ConnectionItem->getDriver());
         $this->assertEquals('localhost', $ConnectionItem->getHost());
-        $this->assertEquals('everon_test', $ConnectionItem->getName());
+        $this->assertEquals('everon_test', $ConnectionItem->getDatabase());
         $this->assertEquals('everon', $ConnectionItem->getUsername());
         $this->assertEquals('test', $ConnectionItem->getPassword());
         $this->assertEquals('UTF8', $ConnectionItem->getEncoding());
@@ -62,7 +62,7 @@ class ConnectionItemTest extends \Everon\TestCase
         $this->assertEquals('mysql:dbname=everon_test;host=localhost;port=3306', $ConnectionItem->getDsn());
         $this->assertEquals(
             $this->arrayMergeDefault(
-                [\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''], $expected['pdo_options']
+                [\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''], $expected['options']
             ),
             $ConnectionItem->getOptions()
         );
@@ -78,7 +78,7 @@ class ConnectionItemTest extends \Everon\TestCase
             'everon',
             'test',
             $this->arrayMergeDefault(
-                [\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''], $expected['pdo_options']
+                [\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''], $expected['options']
             )
         ], $ConnectionItem->toPdo());
     }
@@ -86,7 +86,7 @@ class ConnectionItemTest extends \Everon\TestCase
     /**
      * @dataProvider dataProvider
      * @expectedException \Everon\DataMapper\Exception\ConnectionItem
-     * @expectedExceptionMessage Driver name not set
+     * @expectedExceptionMessage Driver database not set
      */
     function testGetAdapterNameShouldThrowExceptionWhenAdapterNameNotSet(\Everon\DataMapper\Interfaces\ConnectionItem $ConnectionItem, array $expected)
     {
@@ -109,12 +109,12 @@ class ConnectionItemTest extends \Everon\TestCase
             'driver' => 'mysql',
             'host' => 'localhost',
             'port' => '3306',
-            'name' => 'everon_test',
+            'database' => 'everon_test',
             'user' => 'everon',
             'password' => 'test',
             'encoding' => 'UTF8',
             'adapter_name' => 'MYSQL',
-            'pdo_options' => [\PDO::ATTR_DRIVER_NAME => 'mysql_test']
+            'options' => [\PDO::ATTR_DRIVER_NAME => 'mysql_test']
         ];
         
         $ConnectionItem = $this->buildFactory()->buildConnectionItem($connections);

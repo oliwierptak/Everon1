@@ -7,7 +7,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon\Test\DataMapper;
+namespace Everon\Test\DataMapper\MySql;
 
 use Everon\DataMapper;
 use Everon\Interfaces;
@@ -185,7 +185,7 @@ class SchemaReaderTest extends \Everon\TestCase
             ->method('getAdapterName')
             ->will($this->returnValue('MySql'));
         $ConnectionItem->expects($this->once())
-            ->method('getName')
+            ->method('getDatabase')
             ->will($this->returnValue('everon_test'));
         
         $PdoAdapterMock = $this->getMock('\Everon\Interfaces\PdoAdapter');

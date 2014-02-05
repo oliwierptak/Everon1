@@ -95,7 +95,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
     {
         if ($this->data_fixtures === null) {
             $dir = $this->getDataMapperFixturesDirectory();
-            $Doubles = new \GlobIterator($dir.'db_*.php');
+            $Doubles = new \GlobIterator($dir.'*.php');
             foreach ($Doubles as $filename => $Include) {
                 $this->data_fixtures[$Include->getBasename()] = require($Include->getPathname());
             }

@@ -128,7 +128,7 @@ abstract class Reader implements Interfaces\Schema\Reader
         return $this->unique_key_list;
     }
     
-    public function TMPdumpDataBaseSchema($dir)
+    public function TMPdumpDataBaseSchema($dir, $prefix='mysql_')
     {
         $tables = $this->getPdoAdapter()->execute($this->getTablesSql(), ['schema'=>$this->getName()], \PDO::FETCH_ASSOC)->fetchAll();
         $columns = $this->getPdoAdapter()->execute($this->getColumnsSql(), ['schema'=>$this->getName()], \PDO::FETCH_ASSOC)->fetchAll();
@@ -136,9 +136,9 @@ abstract class Reader implements Interfaces\Schema\Reader
         $foreign_keys = $this->getPdoAdapter()->execute($this->getForeignKeysSql(), ['schema'=>$this->getName()], \PDO::FETCH_ASSOC)->fetchAll();
         $unique_keys = $this->getPdoAdapter()->execute($this->getUniqueKeysSql(), ['schema'=>$this->getName()], \PDO::FETCH_ASSOC)->fetchAll();
 
-        $export = function($name, $data_to_export) use ($dir) {
+        $export = function($name, $data_to_export) use ($dir, $prefix) {
             $data = var_export($data_to_export, 1);
-            $filename = $dir.'db_'.$name.'.php';
+            $filename = $dir.$prefix.'db_'.$name.'.php';
             @unlink($filename);
             $h = fopen($filename, 'w+');
             fwrite($h, "<?php return $data; ");

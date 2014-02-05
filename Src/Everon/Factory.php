@@ -484,7 +484,7 @@ class Factory implements Interfaces\Factory
             $class_name = $ConnectionItem->getAdapterName().'\Reader';
             $class_name = $this->getFullClassName($namespace, $class_name);
 
-            $SchemaReader = new $class_name($ConnectionItem->getName(), $PdoAdapter);
+            $SchemaReader = new $class_name($ConnectionItem->getDatabase(), $PdoAdapter);
             $this->injectDependencies($class_name, $SchemaReader);
             return $SchemaReader;
         }

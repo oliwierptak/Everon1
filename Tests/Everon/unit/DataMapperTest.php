@@ -218,7 +218,7 @@ class DataMapperTest extends \Everon\TestCase
         
         $SchemaMock = $this->getMock('Everon\DataMapper\Interfaces\Schema', [], [], '', false);
         $SchemaMock->expects($this->once())
-            ->method('getName')
+            ->method('getDatabase')
             ->will($this->returnValue('everon_test'));
         $SchemaMock->expects($this->once())
             ->method('getDriver')

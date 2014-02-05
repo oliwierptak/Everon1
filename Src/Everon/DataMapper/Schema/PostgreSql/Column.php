@@ -7,7 +7,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon\DataMapper\Schema\MySql;
+namespace Everon\DataMapper\Schema\PostgreSql;
 
 use Everon\Helper;
 use Everon\DataMapper\Exception;
@@ -17,6 +17,7 @@ class Column extends Schema\Column
 {
     use Helper\Arrays;
     
+
     protected function init(array $data)
     {
         $ColumnInfo = new Helper\PopoProps($data);
