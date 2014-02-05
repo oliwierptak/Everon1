@@ -169,13 +169,12 @@ interface Factory
     function buildSchema(DataMapper\Interfaces\Schema\Reader $Reader, DataMapper\Interfaces\ConnectionManager $ConnectionManager, $ns='Everon\DataMapper');
 
     /**
-     * @param DataMapper\Interfaces\ConnectionItem $ConnectionItem
      * @param Interfaces\PdoAdapter $PdoAdapter
      * @param string $ns
      * @return DataMapper\Interfaces\Schema\Reader
      * @throws Exception\Factory
      */
-    function buildSchemaReader(DataMapper\Interfaces\ConnectionItem $ConnectionItem, Interfaces\PdoAdapter $PdoAdapter, $ns='Everon\DataMapper\Schema');
+    function buildSchemaReader(Interfaces\PdoAdapter $PdoAdapter, $ns='Everon\DataMapper\Schema');
     
     /**
      * @param array $data

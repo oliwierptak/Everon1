@@ -41,12 +41,10 @@ abstract class Reader implements Interfaces\Schema\Reader
 
 
     /**
-     * @param $name
      * @param PdoAdapter $PdoAdapter
      */
-    public function __construct($name, PdoAdapter $PdoAdapter)
+    public function __construct(PdoAdapter $PdoAdapter)
     {
-        $this->database = $name;
         $this->PdoAdapter = $PdoAdapter;
     }
 
@@ -60,7 +58,7 @@ abstract class Reader implements Interfaces\Schema\Reader
 
     public function getDatabase()
     {
-        return $this->database;
+        return $this->getPdoAdapter()->getConnectionConfig()->getDatabase();
     }
 
     /**

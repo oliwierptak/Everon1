@@ -478,13 +478,14 @@ class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildSchemaReader(DataMapper\Interfaces\ConnectionItem $ConnectionItem, Interfaces\PdoAdapter $PdoAdapter, $namespace='Everon\DataMapper\Schema')
+    public function buildSchemaReader(Interfaces\PdoAdapter $PdoAdapter, $namespace='Everon\DataMapper\Schema')
     {
         try {
+            $ConnectionItem = $PdoAdapter->getConnectionConfig();
             $class_name = $ConnectionItem->getAdapterName().'\Reader';
             $class_name = $this->getFullClassName($namespace, $class_name);
 
-            $SchemaReader = new $class_name($ConnectionItem->getDatabase(), $PdoAdapter);
+            $SchemaReader = new $class_name($PdoAdapter);
             $this->injectDependencies($class_name, $SchemaReader);
             return $SchemaReader;
         }
