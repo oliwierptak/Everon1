@@ -30,12 +30,12 @@ class ConnectionManagerTest extends \Everon\TestCase
      */
     public function testAddShouldAddNewConnection(Connection\Manager $Manager, Interfaces\Config $DataBaseConfig)
     {
-        $this->assertCount(4, $Manager->getConnections());
+        $this->assertCount(5, $Manager->getConnections());
         
         $Item = $this->getMock('\Everon\DataMapper\Interfaces\ConnectionItem');
         $Manager->add('test', $Item);
         
-        $this->assertCount(5, $Manager->getConnections());
+        $this->assertCount(6, $Manager->getConnections());
         $this->assertInstanceOf('\Everon\DataMapper\Interfaces\ConnectionItem', $Manager->getConnectionByName('test'));
         $this->assertInstanceOf('\Everon\DataMapper\Interfaces\ConnectionItem', $Manager->getConnections()['test']);
     }
@@ -47,11 +47,11 @@ class ConnectionManagerTest extends \Everon\TestCase
      */
     public function testRemoveShouldRemoveExistingConnection(Connection\Manager $Manager, Interfaces\Config $DataBaseConfig)
     {
-        $this->assertCount(4, $Manager->getConnections());
+        $this->assertCount(5, $Manager->getConnections());
 
         $Manager->remove('schema');
 
-        $this->assertCount(3, $Manager->getConnections());
+        $this->assertCount(4, $Manager->getConnections());
     }
     
     /**
@@ -62,7 +62,7 @@ class ConnectionManagerTest extends \Everon\TestCase
     public function testGetConnectionsShouldReturnArrayWithConnections(Connection\Manager $Manager, Interfaces\Config $DataBaseConfig)
     {
         $this->assertInternalType('array', $Manager->getConnections());
-        $this->assertCount(4, $Manager->getConnections());
+        $this->assertCount(5, $Manager->getConnections());
     }
 
     /**
@@ -73,7 +73,7 @@ class ConnectionManagerTest extends \Everon\TestCase
     public function testGetConnectionByNameShouldReturnInstanceOfConnectionItem(Connection\Manager $Manager, Interfaces\Config $DataBaseConfig)
     {
         $this->assertInternalType('array', $Manager->getConnections());
-        $this->assertCount(4, $Manager->getConnections());
+        $this->assertCount(5, $Manager->getConnections());
         
         $Item = $Manager->getConnectionByName('schema');
         
@@ -90,7 +90,7 @@ class ConnectionManagerTest extends \Everon\TestCase
     public function testGetConnectionByNameShouldThrowExceptionWhenWrongName(Connection\Manager $Manager, Interfaces\Config $DataBaseConfig)
     {
         $this->assertInternalType('array', $Manager->getConnections());
-        $this->assertCount(4, $Manager->getConnections());
+        $this->assertCount(5, $Manager->getConnections());
 
         $Item = $Manager->getConnectionByName('i dont exist');
     }

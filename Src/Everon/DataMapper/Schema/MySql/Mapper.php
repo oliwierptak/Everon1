@@ -20,7 +20,7 @@ abstract class Mapper extends DataMapper
     {
         $values_str = rtrim(implode(',', $this->getPlaceholderForQuery()), ',');
         $columns_str = rtrim(implode(',', $this->getPlaceholderForQuery('')), ',');
-        $sql = sprintf('INSERT INTO `%s`.`%s` (%s) VALUES (%s)', $this->getSchema()->getName(), $this->getSchemaTable()->getName(), $columns_str, $values_str);
+        $sql = sprintf('INSERT INTO `%s`.`%s` (%s) VALUES (%s)', $this->getSchema()->getDatabase(), $this->getSchemaTable()->getName(), $columns_str, $values_str);
         return [$sql, $this->getValuesForQuery($Entity)];
     }
 
@@ -40,7 +40,7 @@ abstract class Mapper extends DataMapper
         }
         
         $values_str = rtrim($values_str, ',');
-        $sql = sprintf('UPDATE `%s`.`%s` SET '.$values_str.' WHERE %s = :%s', $this->getSchema()->getName(), $this->getSchemaTable()->getName(), $pk_name, $pk_name);
+        $sql = sprintf('UPDATE `%s`.`%s` SET '.$values_str.' WHERE %s = :%s', $this->getSchema()->getDatabase(), $this->getSchemaTable()->getName(), $pk_name, $pk_name);
         $params = $this->getValuesForQuery($Entity);
         return [$sql, $params];
     }
@@ -48,7 +48,7 @@ abstract class Mapper extends DataMapper
     protected function getDeleteSql(Entity $Entity)
     {
         $pk_name = $this->getSchemaTable()->getPk();
-        $sql = sprintf('DELETE FROM `%s`.`%s` WHERE %s = :%s LIMIT 1', $this->getSchema()->getName(), $this->getSchemaTable()->getName(), $pk_name, $pk_name);
+        $sql = sprintf('DELETE FROM `%s`.`%s` WHERE %s = :%s LIMIT 1', $this->getSchema()->getDatabase(), $this->getSchemaTable()->getName(), $pk_name, $pk_name);
         $params = [$pk_name => $Entity->getId()];
         return [$sql, $params];
     }
@@ -69,7 +69,7 @@ abstract class Mapper extends DataMapper
              '.$offset_limit_sql.'
         ';
         
-        $sql = sprintf($sql, $this->getSchema()->getName(), $this->getSchemaTable()->getName(), $pk_name);
+        $sql = sprintf($sql, $this->getSchema()->getDatabase(), $this->getSchemaTable()->getName(), $pk_name);
         return [$sql, $parameters];
     }
 }

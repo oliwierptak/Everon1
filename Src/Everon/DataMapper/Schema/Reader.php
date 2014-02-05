@@ -20,7 +20,7 @@ abstract class Reader implements Interfaces\Schema\Reader
     use Helper\Arrays;
     
     
-    protected $name = null;
+    protected $database = null;
     
     protected $column_list = null;
     
@@ -46,7 +46,7 @@ abstract class Reader implements Interfaces\Schema\Reader
      */
     public function __construct($name, PdoAdapter $PdoAdapter)
     {
-        $this->name = $name;
+        $this->database = $name;
         $this->PdoAdapter = $PdoAdapter;
     }
 
@@ -58,9 +58,9 @@ abstract class Reader implements Interfaces\Schema\Reader
         return $this->getPdoAdapter()->getConnectionConfig()->getDriver();
     }
 
-    public function getName()
+    public function getDatabase()
     {
-        return $this->name;
+        return $this->database;
     }
 
     /**
@@ -70,7 +70,7 @@ abstract class Reader implements Interfaces\Schema\Reader
     {
         if ($this->table_list === null) {
             $this->table_list = $this->arrayArrangeByKey('TABLE_NAME',
-                $this->getPdoAdapter()->execute($this->getTablesSql(), ['schema'=>$this->getName()], \PDO::FETCH_ASSOC)->fetchAll()
+                $this->getPdoAdapter()->execute($this->getTablesSql(), ['schema'=>$this->getDatabase()], \PDO::FETCH_ASSOC)->fetchAll()
             );
         }
         return $this->table_list;
@@ -83,7 +83,7 @@ abstract class Reader implements Interfaces\Schema\Reader
     {
         if ($this->column_list === null) {
             $this->column_list = $this->arrayArrangeByKey('TABLE_NAME',
-                $this->getPdoAdapter()->execute($this->getColumnsSql(), ['schema'=>$this->getName()], \PDO::FETCH_ASSOC)->fetchAll()
+                $this->getPdoAdapter()->execute($this->getColumnsSql(), ['schema'=>$this->getDatabase()], \PDO::FETCH_ASSOC)->fetchAll()
             );
         }
         return $this->column_list;
@@ -96,7 +96,7 @@ abstract class Reader implements Interfaces\Schema\Reader
     {
         if ($this->constraint_list === null) {
             $this->constraint_list = $this->arrayArrangeByKey('TABLE_NAME',
-                $this->getPdoAdapter()->execute($this->getPrimaryKeysSql(), ['schema'=>$this->getName()], \PDO::FETCH_ASSOC)->fetchAll()
+                $this->getPdoAdapter()->execute($this->getPrimaryKeysSql(), ['schema'=>$this->getDatabase()], \PDO::FETCH_ASSOC)->fetchAll()
             );
         }
         return $this->constraint_list;
@@ -109,7 +109,7 @@ abstract class Reader implements Interfaces\Schema\Reader
     {
         if ($this->foreign_key_list === null) {
             $this->foreign_key_list = $this->arrayArrangeByKey('TABLE_NAME',
-                $this->getPdoAdapter()->execute($this->getForeignKeysSql(), ['schema'=>$this->getName()], \PDO::FETCH_ASSOC)->fetchAll()
+                $this->getPdoAdapter()->execute($this->getForeignKeysSql(), ['schema'=>$this->getDatabase()], \PDO::FETCH_ASSOC)->fetchAll()
             );
         }
         return $this->foreign_key_list;
@@ -122,7 +122,7 @@ abstract class Reader implements Interfaces\Schema\Reader
     {
         if ($this->unique_key_list === null) {
             $this->unique_key_list = $this->arrayArrangeByKey('TABLE_NAME',
-                $this->getPdoAdapter()->execute($this->getUniqueKeysSql(), ['schema'=>$this->getName()], \PDO::FETCH_ASSOC)->fetchAll()
+                $this->getPdoAdapter()->execute($this->getUniqueKeysSql(), ['schema'=>$this->getDatabase()], \PDO::FETCH_ASSOC)->fetchAll()
             );
         }
         return $this->unique_key_list;
@@ -130,11 +130,11 @@ abstract class Reader implements Interfaces\Schema\Reader
     
     public function TMPdumpDataBaseSchema($dir, $prefix='mysql_')
     {
-        $tables = $this->getPdoAdapter()->execute($this->getTablesSql(), ['schema'=>$this->getName()], \PDO::FETCH_ASSOC)->fetchAll();
-        $columns = $this->getPdoAdapter()->execute($this->getColumnsSql(), ['schema'=>$this->getName()], \PDO::FETCH_ASSOC)->fetchAll();
-        $primary_keys = $this->getPdoAdapter()->execute($this->getPrimaryKeysSql(), ['schema'=>$this->getName()], \PDO::FETCH_ASSOC)->fetchAll();
-        $foreign_keys = $this->getPdoAdapter()->execute($this->getForeignKeysSql(), ['schema'=>$this->getName()], \PDO::FETCH_ASSOC)->fetchAll();
-        $unique_keys = $this->getPdoAdapter()->execute($this->getUniqueKeysSql(), ['schema'=>$this->getName()], \PDO::FETCH_ASSOC)->fetchAll();
+        $tables = $this->getPdoAdapter()->execute($this->getTablesSql(), ['schema'=>$this->getDatabase()], \PDO::FETCH_ASSOC)->fetchAll();
+        $columns = $this->getPdoAdapter()->execute($this->getColumnsSql(), ['schema'=>$this->getDatabase()], \PDO::FETCH_ASSOC)->fetchAll();
+        $primary_keys = $this->getPdoAdapter()->execute($this->getPrimaryKeysSql(), ['schema'=>$this->getDatabase()], \PDO::FETCH_ASSOC)->fetchAll();
+        $foreign_keys = $this->getPdoAdapter()->execute($this->getForeignKeysSql(), ['schema'=>$this->getDatabase()], \PDO::FETCH_ASSOC)->fetchAll();
+        $unique_keys = $this->getPdoAdapter()->execute($this->getUniqueKeysSql(), ['schema'=>$this->getDatabase()], \PDO::FETCH_ASSOC)->fetchAll();
 
         $export = function($name, $data_to_export) use ($dir, $prefix) {
             $data = var_export($data_to_export, 1);

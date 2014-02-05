@@ -29,7 +29,7 @@ interface Schema
      */
     function getDriver();
 
-    function getName();
+    function getDatabase();
     
     function getTables();
 

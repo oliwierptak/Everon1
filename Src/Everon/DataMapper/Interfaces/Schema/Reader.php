@@ -18,7 +18,7 @@ interface Reader
      */
     function getDriver();
     
-    function getName();
+    function getDatabase();
     
     function setPdoAdapter(PdoAdapter $PdoAdapter);
 
