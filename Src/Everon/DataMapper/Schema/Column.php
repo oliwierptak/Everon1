@@ -17,6 +17,11 @@ abstract class Column implements Schema\Column
 {
     use Helper\Immutable;
     use Helper\ToString;
+
+    const TYPE_STRING = 'string';
+    const TYPE_INTEGER = 'integer';
+    const TYPE_FLOAT = 'float';
+    const TYPE_TIMESTAMP = 'timestamp';
     
     
     protected $is_pk = null;

@@ -81,7 +81,12 @@ class PdoAdapter implements Interfaces\PdoAdapter
             /**
              * @var \PDOStatement $statement
              */
-            $this->getPdo()->setAttribute(\PDO::ATTR_AUTOCOMMIT, FALSE);
+            switch ($this->getConnectionConfig()->getDriver()) { //todo: xxx
+                case 'mysql':
+                    $this->getPdo()->setAttribute(\PDO::ATTR_AUTOCOMMIT, FALSE);
+                    break;
+            }
+            
             $statement = $this->getPdo()->prepare($sql, [\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY]);
             $this->getPdo()->beginTransaction();
             
@@ -92,14 +97,19 @@ class PdoAdapter implements Interfaces\PdoAdapter
                 $result = $statement->execute();
             }
 
+            if ($this->getPdo()->inTransaction()) {
+                $this->getPdo()->commit();
+            }
+            
             $statement->setFetchMode($fetch_mode);
             
-            $this->getPdo()->commit();
             return $statement;
         }
         catch (\PDOException $e) {
-            $this->getPdo()->rollBack();
-            $this->getLogger()->sql_error($sql."|".print_r($parameters, true));
+            if ($this->getPdo()->inTransaction()) {
+                $this->getPdo()->rollBack();
+            }
+            $this->getLogger()->sql_error($sql."|".print_r($parameters, true)); //todo: add logSql to logger to handle thot
             throw new Exception\Pdo($e);
         }
     }

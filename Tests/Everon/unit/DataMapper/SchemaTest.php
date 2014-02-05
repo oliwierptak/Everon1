@@ -116,7 +116,7 @@ class SchemaTest extends \Everon\TestCase
             ->will($this->returnValue($foreign_keys));
 
         $SchemaReaderMock->expects($this->once())
-            ->method('getName')
+            ->method('getDatabase')
             ->will($this->returnValue('everon_test'));
 
         $SchemaReaderMock->expects($this->exactly(3))

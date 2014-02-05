@@ -25,12 +25,14 @@ class Item implements Interfaces\ConnectionItem
     protected $driver = null;
     protected $host = null;
     protected $port = null;
-    protected $name = null;
+    protected $database = null;
     protected $user = null;
     protected $password = null;
     protected $encoding = null;
     protected $options = null;
     protected $adapter_name = null;
+    
+    protected $schema = '';
     
     protected $dsn = null;
 
@@ -43,7 +45,7 @@ class Item implements Interfaces\ConnectionItem
      * driver = mysql
      * host = localhost
      * port = 3306
-     * name = everon
+     * database = everon
      * user = root
      * password =
      * default = true
@@ -58,18 +60,22 @@ class Item implements Interfaces\ConnectionItem
         $this->driver = $data['driver'];
         $this->host = $data['host'];
         $this->port = $data['port'];
-        $this->name = $data['name'];
+        $this->database = $data['database'];
         $this->user = $data['user'];
         $this->password = $data['password'];
         $this->encoding = $data['encoding'];
         $this->options = [\PDO::MYSQL_ATTR_INIT_COMMAND => sprintf('SET NAMES \'%s\'', $this->encoding)];
         
-        if (isset($data['pdo_options'])) {
-            $this->options = $this->arrayMergeDefault($this->options, $data['pdo_options']);
+        if (isset($data['options'])) {
+            $this->options = $this->arrayMergeDefault($this->options, $data['options']);
         }
         
         if (isset($data['adapter_name'])) {
             $this->adapter_name = $data['adapter_name'];
+        }
+        
+        if (isset($data['schema'])) {
+            $this->schema = $data['schema'];
         }
         
         $this->data = $data;
@@ -82,7 +88,7 @@ class Item implements Interfaces\ConnectionItem
     {
         try {
             $properties = [
-                'driver', 'host', 'port', 'name', 'user', 'password', 'encoding'
+                'driver', 'host', 'port', 'database', 'user', 'password', 'encoding'
             ];
             
             foreach ($properties as $property_name) {
@@ -100,13 +106,30 @@ class Item implements Interfaces\ConnectionItem
     public function getDsn()
     {
         if ($this->dsn === null) {
-            $this->dsn = sprintf(
-                '%s:dbname=%s;host=%s;port=%s', //'mysql:dbname=testdb;host=127.0.0.1',
-                $this->driver,
-                $this->name,
-                $this->host,
-                $this->port
-            );
+            switch ($this->getDriver()) { //todo: xxx
+                case 'mysql':
+                    $this->dsn = sprintf(
+                        '%s:dbname=%s;host=%s;port=%s', //'mysql:dbname=testdb;host=127.0.0.1',
+                        $this->driver,
+                        $this->database,
+                        $this->host,
+                        $this->port
+                    );
+                    break;
+                
+                case 'pgsql':
+                    $this->dsn = sprintf(
+                        '%s:host=%s;port=%d;dbname=%s;user=%s;password=%s', //pgsql:host=localhost;port=5432;dbname=testdb;user=postgres;password=easy
+                        $this->driver,
+                        $this->host,
+                        $this->port,
+                        $this->database,
+                        $this->user,
+                        $this->password
+                    );
+                    break;
+            }
+
         }
         
         return $this->dsn;
@@ -129,19 +152,23 @@ class Item implements Interfaces\ConnectionItem
                 case 'mysql':
                     $this->adapter_name = 'MySql';
                     break;
+                
+                case 'pgsql':
+                    $this->adapter_name = 'PostgreSql';
+                    break;
             }
         }
         
         if ($this->adapter_name === null) {
-            throw new ConnectionItemException('Driver name not set');
+            throw new ConnectionItemException('Driver database not set');
         }
         
         return $this->adapter_name;
     }
     
-    public function getName()
+    public function getDatabase()
     {
-        return $this->name;
+        return $this->database;
     }
     
     public function getEncoding()

@@ -111,7 +111,7 @@ class RepositoryTest extends \Everon\TestCase
         
         $SchemaMock = $this->getMock('Everon\DataMapper\Interfaces\Schema');
         $SchemaMock->expects($this->once())
-            ->method('getName')
+            ->method('getDatabase')
             ->will($this->returnValue('phpunit_db_test'));
         $SchemaMock->expects($this->once())
             ->method('getPdoAdapterByName')
