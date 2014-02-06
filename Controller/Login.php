@@ -28,7 +28,6 @@ class Login extends Controller implements Interfaces\Controller
         $this->getView()->set('Login', new \Everon\Helper\Popo([])); //tmp, for testing templates
 
         $User = $this->getDomainManager()->getModel('User')->authenticate($email, $password);
-        die('wtf');
         if ($User === null) {
             return false;
         }

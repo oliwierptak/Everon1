@@ -29,6 +29,8 @@ class Logger implements Interfaces\Logger
     
     protected $enabled = false;
     
+    protected $write_count = 0;
+    
     
     public function __construct($directory, $enabled)
     {
@@ -78,31 +80,33 @@ class Logger implements Interfaces\Logger
             $message = $message->getMessage();
         }
         
-        $StarDate = (new \DateTime('@'.time()))->setTimezone($this->getLogDateTimeZone());
+        $LogDate = (new \DateTime('@'.time()))->setTimezone($this->getLogDateTimeZone());
         $Filename = $this->getFilenameByLevel($level);
         $Dir = new \SplFileInfo($Filename->getPath());
         
         if ($Dir->isWritable()) {
             if ($Filename->isFile() && $Filename->isWritable() === false) {
-                return $StarDate;
+                return $LogDate;
             }
             
             $this->logRotate($Filename);
             
+            $this->write_count++;
             $request_id = substr($this->log_guid, 0, 6);
             $trace_id =  substr(md5(uniqid()), 0, 6);
-            $id = "$request_id/$trace_id";
+            $write_count = $this->write_count;
+            $id = "$request_id/$trace_id ($write_count)";
             
             $message = empty($parameters) === false ? vsprintf($message, $parameters) : $message;
-            $message = $StarDate->format($this->getLogDateFormat())." ${id} ".$message;
+            $message = $LogDate->format($this->getLogDateFormat())." ${id} ".$message;
             error_log($message."\n", 3, $Filename->getPathname());
 
             if ($ExceptionToTrace instanceof \Exception) {
-                $this->logTrace($ExceptionToTrace, $StarDate, $id);
+                $this->logTrace($ExceptionToTrace, $LogDate, $id);
             }
         }
         
-        return $StarDate;
+        return $LogDate;
     }
     
     protected function logTrace(\Exception $Exception, \DateTime $StarDate, $id)

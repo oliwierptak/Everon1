@@ -20,7 +20,6 @@ class Model
     public function authenticate($email, $password)
     {
         $User = $this->getDomainManager()->getUserRepository()->getByEmail($email);
-        sd($User);
         if ($User === null) {
             return null;
         }
