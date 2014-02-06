@@ -10,9 +10,8 @@
 namespace Everon\DataMapper\Schema;
 
 use Everon\DataMapper\Interfaces\Schema;
-use Everon\DataMapper\Interfaces\Schema\Columnq;
+use Everon\DataMapper\Interfaces\Schema\Column;
 use Everon\DataMapper\Exception;
-use Everon\Domain\Interfaces\Entity;
 use Everon\Helper;
 
 class Table implements Schema\Table

@@ -17,7 +17,7 @@ class Column extends Schema\Column
 {
     use Helper\Arrays;
     
-    protected function init(array $data)
+    protected function init(array $data, array $primary_key_list, array $unique_key_list, array $foreign_key_list)
     {
         $ColumnInfo = new Helper\PopoProps($data);
         $this->is_pk = ($ColumnInfo->column_key ==  'PRI');

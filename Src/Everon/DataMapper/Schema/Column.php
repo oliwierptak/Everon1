@@ -47,12 +47,12 @@ abstract class Column implements Schema\Column
     protected $schema = null;
 
 
-    abstract protected function init(array $data);
+    abstract protected function init(array $data, array $primary_key_list, array $unique_key_list, array $foreign_key_list);
     
 
-    public function __construct(array $data)
+    public function __construct(array $data, array $primary_key_list, array $unique_key_list, array $foreign_key_list)
     {
-        $this->init($data);
+        $this->init($data, $primary_key_list, $unique_key_list, $foreign_key_list);
         $this->lock();
     }
     
@@ -110,5 +110,10 @@ abstract class Column implements Schema\Column
     public function getToString()
     {
         return (string) $this->name;
+    }
+    
+    protected function hasInfo($name, $data)
+    {
+        return isset($data[$name]);
     }
 }

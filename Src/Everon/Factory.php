@@ -500,16 +500,6 @@ class Factory implements Interfaces\Factory
     public function buildSchemaTable($name, $schema, $adapter_name, array $columns, array $primary_keys,  array $unique_keys, array $foreign_keys, $namespace='Everon\DataMapper')
     {
         try {
-            $column_list = [];
-            foreach ($columns as $column_data) {
-                $class_name = $this->getFullClassName($namespace, "Schema\\${adapter_name}\\Column");
-                /**
-                 * @var DataMapper\Schema\Column $Column
-                 */
-                $Column = new $class_name($column_data);
-                $column_list[$Column->getName()] = $Column;
-            }
-            
             $primary_key_list = [];
             foreach ($primary_keys as $constraint_data) {
                 $class_name = $this->getFullClassName($namespace, 'Schema\PrimaryKey');
@@ -529,6 +519,16 @@ class Factory implements Interfaces\Factory
                 $class_name = $this->getFullClassName($namespace, 'Schema\ForeignKey');
                 $ForeignKey = new $class_name($foreign_key_data);
                 $foreign_key_list[$ForeignKey->getName()] = new $class_name($foreign_key_data);
+            }
+
+            $column_list = [];
+            foreach ($columns as $column_data) {
+                $class_name = $this->getFullClassName($namespace, "Schema\\${adapter_name}\\Column");
+                /**
+                 * @var DataMapper\Schema\Column $Column
+                 */
+                $Column = new $class_name($column_data, $primary_key_list, $unique_key_list, $foreign_key_list);
+                $column_list[$Column->getName()] = $Column;
             }
 
             $class_name = $this->getFullClassName($namespace,'Schema\Table');

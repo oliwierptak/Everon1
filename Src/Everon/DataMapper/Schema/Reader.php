@@ -17,6 +17,7 @@ use Everon\Helper;
 abstract class Reader implements Interfaces\Schema\Reader
 {
     use Dependency\PdoAdapter;
+    use Dependency\Injection\Factory;
     use Helper\Arrays;
     
     

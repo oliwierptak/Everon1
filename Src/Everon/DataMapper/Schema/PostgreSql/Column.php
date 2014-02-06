@@ -18,12 +18,12 @@ class Column extends Schema\Column
     use Helper\Arrays;
     
 
-    protected function init(array $data)
+    protected function init(array $data, array $primary_key_list, array $unique_key_list, array $foreign_key_list)
     {
         $ColumnInfo = new Helper\PopoProps($data);
-        $this->is_pk = ($ColumnInfo->constraint_type ==  'PRIMARY KEY');
-        $this->is_unique = ($ColumnInfo->column_key ==  'UNIQUE KEY');
         $this->name = $ColumnInfo->column_name;
+        $this->is_pk = $this->hasInfo($this->name, $primary_key_list);
+        $this->is_unique = $this->hasInfo($this->name, $unique_key_list);
         $this->is_nullable = ($ColumnInfo->is_nullable == 'YES');
         $this->default = $ColumnInfo->column_default;
         $this->schema = $ColumnInfo->table_schema;
