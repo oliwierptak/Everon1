@@ -9,18 +9,24 @@
  */
 namespace Everon;
 
+use Everon\Dependency;
+
 class Response implements Interfaces\Response
 {
+    use Dependency\Logger;
+    
     protected $data = null;
     protected $HeaderCollection = null;
     protected $content_type = 'text/html';
     protected $charset = 'utf-8';
     protected $status = 200;
     protected $result = false;
+    protected $guid = null;
 
     
-    public function __construct(Interfaces\Collection $Headers)
+    public function __construct($guid, Interfaces\Collection $Headers)
     {
+        $this->guid = $guid;
         $this->HeaderCollection = $Headers;
     }
     
@@ -91,7 +97,9 @@ class Response implements Interfaces\Response
                     break;
             }
         }
-
+        
+        header('HTTP/1.1 '.$this->status);
+        header('EVRID:'. $this->guid);
         foreach ($this->HeaderCollection as $name => $value) {
             header($name.': '.$value, false);
         }

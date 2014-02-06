@@ -11,11 +11,11 @@ namespace Everon\Test;
 
 class ResponseTest extends \Everon\TestCase
 {
-
+    
     public function testConstructor()
     {
         $HeadersMock = $this->getMock('Everon\Http\HeaderCollection');
-        $Response = new \Everon\Response($HeadersMock);
+        $Response = new \Everon\Response('Guid', $HeadersMock);
         $this->assertInstanceOf('\Everon\Interfaces\Response', $Response);
     }
 

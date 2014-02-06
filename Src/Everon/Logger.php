@@ -42,6 +42,11 @@ class Logger implements Interfaces\Logger
     {
         $this->log_guid = $guid;
     }
+    
+    public function getGuid()
+    {
+        return $this->log_guid;
+    }    
 
     /**
      * @param $level

@@ -12,6 +12,7 @@ namespace Everon;
 use Everon\Interfaces;
 use Everon\Exception;
 use Everon\Http;
+use Everon\Http\HeaderCollection;
 
 class Mvc extends Core implements Interfaces\Core
 {
@@ -29,13 +30,25 @@ class Mvc extends Core implements Interfaces\Core
         try {
             parent::run($Guid);
         }
-        catch (Http\Exception\NotFound $e) {
+        catch (Http\Exception\NotFound $e) { //todo: dry
             $this->getLogger()->notFound($e);
-            echo $e->getMessage()."\n";
+            $Response = $this->getFactory()->buildResponse(
+                $this->getLogger()->getGuid(), new HeaderCollection()
+            );
+            $Response->setData($e);
+            $Response->setStatus(400);
+            $Response->send();
+            echo $Response->toHtml();
         }
         catch (Exception $e) {
             $this->getLogger()->error($e);
-            echo "Error: ".$e->getMessage()."\n";
+            $Response = $this->getFactory()->buildResponse(
+                $this->getLogger()->getGuid(), new HeaderCollection()
+            );
+            $Response->setData($e);
+            $Response->setStatus(400);
+            $Response->send();
+            echo $Response->toHtml();
         }        
     }
 

@@ -9,6 +9,8 @@
  */
 namespace Everon;
 
+use Everon\Exception;
+
 abstract class Core implements Interfaces\Core
 {
     use Dependency\Injection\Logger;
@@ -65,8 +67,7 @@ abstract class Core implements Interfaces\Core
             $this->Controller = $this->createController($CurrentRoute->getController());
             $this->Controller->execute($CurrentRoute->getAction());
         }
-        catch (Exception\InvalidRouterParameter $e) {
-            //todo: raise event for form validation
+        catch (Exception\InvalidRoute $e) {
             $this->getLogger()->warn($e);
             echo $e->getMessage()."\n";
         }

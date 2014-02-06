@@ -28,4 +28,5 @@ interface Logger
     function debug($message, array $parameters=[]);
     function trace($message, array $parameters=[]);
     function setGuid($guid);
+    function getGuid();
 }

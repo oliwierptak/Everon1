@@ -28,8 +28,9 @@ $Container->propose('Logger', function() use ($Factory) {
 });
 
 $Container->propose('Response', function() use ($Factory) {
+    $Logger = $Factory->getDependencyContainer()->resolve('Logger');
     $Headers = $Factory->buildHttpHeaderCollection();
-    return $Factory->buildResponse($Headers);
+    return $Factory->buildResponse($Logger->getGuid(), $Headers);
 });
 
 $Container->propose('ConfigManager', function() use ($Factory) {

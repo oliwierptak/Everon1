@@ -316,11 +316,12 @@ interface Factory
     function buildHttpHeaderCollection(array $headers=[]);
 
     /**
+     * @param string Unique ID
      * @param Interfaces\Collection $Headers
      * @return Interfaces\Response
      * @throws Exception\Factory
      */
-    function buildResponse(Interfaces\Collection $Headers);
+    function buildResponse($guid, Interfaces\Collection $Headers);
 
     /**
      * @param array $server

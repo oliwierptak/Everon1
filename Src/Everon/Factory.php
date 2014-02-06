@@ -557,14 +557,15 @@ class Factory implements Interfaces\Factory
     }
 
     /**
+     * @param string Unique ID
      * @param Interfaces\Collection $Headers
      * @return Interfaces\Response
      * @throws Exception\Factory
      */
-    public function buildResponse(Interfaces\Collection $Headers)
+    public function buildResponse($guid, Interfaces\Collection $Headers)
     {
         try {
-            $Response = new Response($Headers);
+            $Response = new Response($guid, $Headers);
             $this->injectDependencies('Everon\Response', $Response);
             return $Response;
         }

@@ -103,7 +103,7 @@ class Bootstrap
             error_log($message, 3, $log_filename);
             
             if (php_sapi_name() !== 'cli' || headers_sent() === false) {
-                header("HTTP/1.1 500 Internal Server Error. Request ID: $guid_value"); //xxx
+                header("HTTP/1.1 500 Internal Server Error. EVRID: $guid_value"); //xxx
             }
         });
     }
