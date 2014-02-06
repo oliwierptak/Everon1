@@ -5,7 +5,7 @@ use Everon\DataMapper\Schema\MySql\Mapper;
 
 class User extends Mapper implements \Everon\DataMapper\Interfaces\User
 {
-    public function fetchOneByLogin($login)
+    public function fetchOneByEmail($login)
     {
         $sql = 'SELECT * FROM `%s`.`%s` WHERE login = :%s';
         $sql = sprintf($sql, $this->getSchema()->getDatabase(), $this->getSchemaTable()->getName(), 'login');

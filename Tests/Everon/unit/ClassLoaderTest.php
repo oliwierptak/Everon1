@@ -21,7 +21,7 @@ class ClassLoaderTest extends \Everon\TestCase
     {
         $ClassMap = new \Everon\ClassMap('');
         $Loader = new \Everon\ClassLoader($ClassMap);
-        $this->assertInstanceOf('\Everon\Interfaces\ClassLoader', $Loader);
+        $this->assertInstanceOf('Everon\Interfaces\ClassLoader', $Loader);
     }
 
     /**

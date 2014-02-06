@@ -19,10 +19,10 @@ class SchemaTest extends \Everon\TestCase
     
     public function testConstructor()
     {
-        $ConnectionManager = $this->getMock('\Everon\DataMapper\Interfaces\ConnectionManager');
-        $Reader = $this->getMock('\Everon\DataMapper\Interfaces\Schema\Reader');
+        $ConnectionManager = $this->getMock('Everon\DataMapper\Interfaces\ConnectionManager');
+        $Reader = $this->getMock('Everon\DataMapper\Interfaces\Schema\Reader');
         $Manager = new \Everon\DataMapper\Schema($Reader, $ConnectionManager);
-        $this->assertInstanceOf('\Everon\DataMapper\Interfaces\Schema', $Manager);
+        $this->assertInstanceOf('Everon\DataMapper\Interfaces\Schema', $Manager);
     }
 
     /**
@@ -31,7 +31,7 @@ class SchemaTest extends \Everon\TestCase
     public function testGetConnectionManagerShouldReturnInstanceOfConnectionManager(DataMapper\Interfaces\Schema $Schema)
     {
         $ConnectionManager = $Schema->getConnectionManager();
-        $this->assertInstanceOf('\Everon\DataMapper\Interfaces\ConnectionManager', $ConnectionManager);
+        $this->assertInstanceOf('Everon\DataMapper\Interfaces\ConnectionManager', $ConnectionManager);
     }
     
     /**
@@ -40,7 +40,7 @@ class SchemaTest extends \Everon\TestCase
     public function testGetPdoAdapterShouldReturnPdoAdapter(DataMapper\Interfaces\Schema $Schema)
     {
         $PdoAdapter = $Schema->getPdoAdapterByName('schema');
-        $this->assertInstanceOf('\Everon\Interfaces\PdoAdapter', $PdoAdapter);
+        $this->assertInstanceOf('Everon\Interfaces\PdoAdapter', $PdoAdapter);
     }
     
     /**
@@ -76,7 +76,7 @@ class SchemaTest extends \Everon\TestCase
     public function testGetTableShouldReturnSchemaTableInstance(DataMapper\Interfaces\Schema $Schema)
     {
         $Table = $Schema->getTable('user');
-        $this->assertInstanceOf('\Everon\DataMapper\Interfaces\Schema\Table', $Table);
+        $this->assertInstanceOf('Everon\DataMapper\Interfaces\Schema\Table', $Table);
     }
     
     public function dataProvider()
@@ -93,12 +93,12 @@ class SchemaTest extends \Everon\TestCase
             ->method('getDriver')
             ->will($this->returnValue('MySql'));
 
-        $PdoAdapterMock = $this->getMock('\Everon\Interfaces\PdoAdapter');
+        $PdoAdapterMock = $this->getMock('Everon\Interfaces\PdoAdapter');
         $PdoAdapterMock->expects($this->exactly(3))
             ->method('getConnectionConfig')
             ->will($this->returnValue($ConnectionConfigMock));
 
-        $SchemaReaderMock = $this->getMock('\Everon\DataMapper\Interfaces\Schema\Reader');
+        $SchemaReaderMock = $this->getMock('Everon\DataMapper\Interfaces\Schema\Reader');
         $SchemaReaderMock->expects($this->once())
             ->method('getTableList')
             ->will($this->returnValue($tables));
@@ -123,7 +123,7 @@ class SchemaTest extends \Everon\TestCase
             ->method('getPdoAdapter')
             ->will($this->returnValue($PdoAdapterMock));
         
-        $FactoryMock = $this->getMock('\Everon\Interfaces\Factory');
+        $FactoryMock = $this->getMock('Everon\Interfaces\Factory');
         $FactoryMock->expects($this->once())
             ->method('buildPdo')
             ->will($this->returnValue($PdoStub));
@@ -132,12 +132,12 @@ class SchemaTest extends \Everon\TestCase
             ->method('buildPdoAdapter')
             ->will($this->returnValue($PdoAdapterMock));
 
-        $SchemaTableMock = $this->getMock('\Everon\DataMapper\Interfaces\Schema\Table');
+        $SchemaTableMock = $this->getMock('Everon\DataMapper\Interfaces\Schema\Table');
         $FactoryMock->expects($this->exactly(3))
             ->method('buildSchemaTable')
             ->will($this->returnValue($SchemaTableMock));
 
-        //$C = $this->getMock('\Everon\DataMapper\Interfaces\ConnectionManager'); //why the fuck does it return null?
+        //$C = $this->getMock('Everon\DataMapper\Interfaces\ConnectionManager'); //why the fuck does it return null?
         $Factory = $this->buildFactory();
         $DatabaseConfig = $Factory->getDependencyContainer()->resolve('ConfigManager')->getDatabaseConfig();
         $ConnectionManager = $Factory->buildConnectionManager($DatabaseConfig);

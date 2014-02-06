@@ -18,7 +18,7 @@ class ManagerTest extends \Everon\TestCase
         $Matcher = $this->getMock('Everon\Interfaces\ConfigExpressionMatcher');
         $Loader = $this->getMock('Everon\Interfaces\ConfigLoader');
         $Manager = new \Everon\Config\Manager($Loader, $Matcher);
-        $this->assertInstanceOf('\Everon\Interfaces\ConfigManager', $Manager);
+        $this->assertInstanceOf('Everon\Interfaces\ConfigManager', $Manager);
     }
 
     /**
@@ -62,13 +62,13 @@ class ManagerTest extends \Everon\TestCase
     public function testLoadAndRegisterConfigs(\Everon\Interfaces\ConfigManager $ConfigManager, \Everon\Interfaces\Config $Expected)
     {
         $Config = $ConfigManager->getConfigByName('application');
-        $this->assertInstanceOf('\Everon\Config', $Config);
+        $this->assertInstanceOf('Everon\Config', $Config);
 
         $Config = $ConfigManager->getConfigByName('router');
-        $this->assertInstanceOf('\Everon\Config\Router', $Config);
+        $this->assertInstanceOf('Everon\Config\Router', $Config);
 
         $Config = $ConfigManager->getConfigByName('test');
-        $this->assertInstanceOf('\Everon\Interfaces\Config', $Config);
+        $this->assertInstanceOf('Everon\Interfaces\Config', $Config);
         $this->assertEquals($Expected->toArray(), $Config->toArray());
     }
 

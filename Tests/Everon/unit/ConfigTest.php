@@ -19,7 +19,7 @@ class ConfigTest extends \Everon\TestCase
 
         $Compiler = function(&$item) {};
         $Config = new \Everon\Config('test', $ConfigLoaderItem, $Compiler);
-        $this->assertInstanceOf('\Everon\Interfaces\Config', $Config);
+        $this->assertInstanceOf('Everon\Interfaces\Config', $Config);
     }
 
     /**

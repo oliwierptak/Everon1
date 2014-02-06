@@ -16,7 +16,7 @@ class ExpressionMatcherTest extends \Everon\TestCase
     public function testConstructor()
     {
         $Matcher = new \Everon\Config\ExpressionMatcher();
-        $this->assertInstanceOf('\Everon\Interfaces\ConfigExpressionMatcher', $Matcher);
+        $this->assertInstanceOf('Everon\Interfaces\ConfigExpressionMatcher', $Matcher);
     }
 
     /**

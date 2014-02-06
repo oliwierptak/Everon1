@@ -20,7 +20,7 @@ class ConnectionManagerTest extends \Everon\TestCase
             'test' => []
         ];
         $Manager = new \Everon\DataMapper\Connection\Manager($connections);
-        $this->assertInstanceOf('\Everon\DataMapper\Interfaces\ConnectionManager', $Manager);
+        $this->assertInstanceOf('Everon\DataMapper\Interfaces\ConnectionManager', $Manager);
     }
 
     /**
@@ -32,12 +32,12 @@ class ConnectionManagerTest extends \Everon\TestCase
     {
         $this->assertCount(4, $Manager->getConnections());
         
-        $Item = $this->getMock('\Everon\DataMapper\Interfaces\ConnectionItem');
+        $Item = $this->getMock('Everon\DataMapper\Interfaces\ConnectionItem');
         $Manager->add('test', $Item);
         
         $this->assertCount(5, $Manager->getConnections());
-        $this->assertInstanceOf('\Everon\DataMapper\Interfaces\ConnectionItem', $Manager->getConnectionByName('test'));
-        $this->assertInstanceOf('\Everon\DataMapper\Interfaces\ConnectionItem', $Manager->getConnections()['test']);
+        $this->assertInstanceOf('Everon\DataMapper\Interfaces\ConnectionItem', $Manager->getConnectionByName('test'));
+        $this->assertInstanceOf('Everon\DataMapper\Interfaces\ConnectionItem', $Manager->getConnections()['test']);
     }
 
     /**
@@ -77,7 +77,7 @@ class ConnectionManagerTest extends \Everon\TestCase
         
         $Item = $Manager->getConnectionByName('schema');
         
-        $this->assertInstanceOf('\Everon\DataMapper\Interfaces\ConnectionItem', $Item);
+        $this->assertInstanceOf('Everon\DataMapper\Interfaces\ConnectionItem', $Item);
     }
 
     /**

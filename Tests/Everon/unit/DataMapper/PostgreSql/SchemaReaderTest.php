@@ -32,16 +32,16 @@ class SchemaReaderTest extends \Everon\TestCase
         $Pdo = $Factory->buildPdo($dsn, $username, $password, $options);
         $PdoAdapter = $Factory->buildPdoAdapter($Pdo, $Connection);
         $Reader = $Factory->buildSchemaReader($PdoAdapter);
-        $this->assertInstanceOf('\Everon\DataMapper\Interfaces\Schema\Reader', $Reader);
+        $this->assertInstanceOf('Everon\DataMapper\Interfaces\Schema\Reader', $Reader);
         $Reader->TMPdumpDataBaseSchema($this->getDataMapperFixturesDirectory(), $driver);
         die();
     }   
     
     public function testConstructor()
     {
-        $PdoAdapter = $this->getMock('\Everon\Interfaces\PdoAdapter');
+        $PdoAdapter = $this->getMock('Everon\Interfaces\PdoAdapter');
         $Reader = new \Everon\DataMapper\Schema\PostgreSql\Reader($PdoAdapter);
-        $this->assertInstanceOf('\Everon\DataMapper\Interfaces\Schema\Reader', $Reader);
+        $this->assertInstanceOf('Everon\DataMapper\Interfaces\Schema\Reader', $Reader);
     }
 
     /**
@@ -178,7 +178,7 @@ class SchemaReaderTest extends \Everon\TestCase
 
     public function dataProvider()
     {
-        $ConnectionItemMock = $this->getMock('\Everon\DataMapper\Interfaces\ConnectionItem');
+        $ConnectionItemMock = $this->getMock('Everon\DataMapper\Interfaces\ConnectionItem');
         $ConnectionItemMock->expects($this->any())
             ->method('getAdapterName')
             ->will($this->returnValue('MySql'));
@@ -189,7 +189,7 @@ class SchemaReaderTest extends \Everon\TestCase
             ->method('getDriver')
             ->will($this->returnValue('pgsql'));
         
-        $PdoAdapterMock = $this->getMock('\Everon\Interfaces\PdoAdapter');
+        $PdoAdapterMock = $this->getMock('Everon\Interfaces\PdoAdapter');
         $PdoAdapterMock->expects($this->any())
             ->method('getConnectionConfig')
             ->will($this->returnValue($ConnectionItemMock));

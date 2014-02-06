@@ -15,7 +15,7 @@ class ViewTest extends \Everon\TestCase
     public function testConstructor()
     {
         $View = new \Everon\Test\MyView($this->getTemplateDirectory(), []);
-        $this->assertInstanceOf('\Everon\View', $View);
+        $this->assertInstanceOf('Everon\View', $View);
     }
 
     public function setupTemplateFile($filename, $content)
@@ -138,9 +138,9 @@ EOF;
 
         $actual = (string) $Output;
 
-        $this->assertInstanceOf('\Everon\Interfaces\TemplateContainer', $Output);
+        $this->assertInstanceOf('Everon\Interfaces\TemplateContainer', $Output);
         $this->assertEquals($expected, $actual);
-        $this->assertInstanceOf('\Everon\Interfaces\TemplateContainer', $Template);
+        $this->assertInstanceOf('Everon\Interfaces\TemplateContainer', $Template);
         $this->assertEquals($this->getTemplateDirectory().'ViewTest_form.htm', $Template->getTemplateFile());
     }
 
@@ -150,13 +150,13 @@ EOF;
     public function testSetOutput(\Everon\Interfaces\View $View)
     {
         $View->setContainer('');
-        $this->assertInstanceOf('\Everon\Interfaces\TemplateContainer', $View->getContainer());
+        $this->assertInstanceOf('Everon\Interfaces\TemplateContainer', $View->getContainer());
 
         $View->setContainer([]);
-        $this->assertInstanceOf('\Everon\Interfaces\TemplateContainer', $View->getContainer());
+        $this->assertInstanceOf('Everon\Interfaces\TemplateContainer', $View->getContainer());
         
         $View->setContainer(new \Everon\View\Template\Container('', []));
-        $this->assertInstanceOf('\Everon\Interfaces\TemplateContainer', $View->getContainer());
+        $this->assertInstanceOf('Everon\Interfaces\TemplateContainer', $View->getContainer());
     }
 
     /**
@@ -167,7 +167,7 @@ EOF;
     public function testSetOutputShouldThrowExceptionWhenWrongInputIsSet(\Everon\Interfaces\View $View)
     {
         $View->setContainer(null);
-        $this->assertInstanceOf('\Everon\Interfaces\TemplateContainer', $View->getContainer());
+        $this->assertInstanceOf('Everon\Interfaces\TemplateContainer', $View->getContainer());
     }
     
     /**
@@ -175,7 +175,7 @@ EOF;
      */
     public function testGetOutputShouldSetOutputToEmptyStringWhenNull(\Everon\Interfaces\View $View)
     {
-        $PropertyOutput = $this->getProtectedProperty('\Everon\View', 'Container');
+        $PropertyOutput = $this->getProtectedProperty('Everon\View', 'Container');
         $PropertyOutput->setValue($View, null);
         
         $Output = $View->getContainer();

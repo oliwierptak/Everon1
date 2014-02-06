@@ -18,7 +18,7 @@ class RepositoryTest extends \Everon\TestCase
     {
         $DataMapperMock = $this->getMock('Everon\Interfaces\DataMapper');
         $Repository = new Repository('User', $DataMapperMock);
-        $this->assertInstanceOf('\Everon\Domain\Interfaces\Repository', $Repository);
+        $this->assertInstanceOf('Everon\Domain\Interfaces\Repository', $Repository);
     }
 
     /**

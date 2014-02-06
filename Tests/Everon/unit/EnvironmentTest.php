@@ -15,7 +15,7 @@ class EnvironmentTest extends \Everon\TestCase
     public function testConstructor()
     {
         $Environment = new \Everon\Environment('testing');
-        $this->assertInstanceOf('\Everon\Interfaces\Environment', $Environment);
+        $this->assertInstanceOf('Everon\Interfaces\Environment', $Environment);
     }
 
     public function testGetters()

@@ -20,7 +20,7 @@ class EntityTest extends \Everon\TestCase
     function testConstructor(Entity $Entity, array $data)
     {
         $Entity = new \Everon\Domain\Entity(1, $data);
-        $this->assertInstanceOf('\Everon\Domain\Interfaces\Entity', $Entity);
+        $this->assertInstanceOf('Everon\Domain\Interfaces\Entity', $Entity);
         $this->assertEquals(1, $Entity->getId());
     }
 

@@ -22,7 +22,7 @@ class DataMapperTest extends \Everon\TestCase
         $SchemaMock = $this->getMock('Everon\DataMapper\Interfaces\Schema');
         $TableMock = $this->getMock('Everon\DataMapper\Interfaces\Schema\Table', [], [],'', false);
         $DataMapper = new DataMapper\MySql\User($TableMock, $SchemaMock);
-        $this->assertInstanceOf('\Everon\Interfaces\DataMapper', $DataMapper);
+        $this->assertInstanceOf('Everon\Interfaces\DataMapper', $DataMapper);
     }
 
     /**
@@ -54,7 +54,7 @@ class DataMapperTest extends \Everon\TestCase
         $this->assertTrue($Entity->isNew());
         
         $id = $Mapper->add($Entity);
-        $this->assertInstanceOf('\Everon\Test\Domain\User\Entity', $Entity);
+        $this->assertInstanceOf('Everon\Test\Domain\User\Entity', $Entity);
         
         $data = $Entity->toArray();
         $Entity->persist($id, $data);
@@ -64,7 +64,7 @@ class DataMapperTest extends \Everon\TestCase
         $this->assertInternalType('array', $fetched_data);
 
         $Mapper->delete($Entity);
-        $this->assertInstanceOf('\Everon\Domain\Interfaces\Entity', $Entity);
+        $this->assertInstanceOf('Everon\Domain\Interfaces\Entity', $Entity);
         $this->assertNull($Entity->getId());
         
         $Criteria = new \Everon\DataMapper\Criteria([1=>1]);
@@ -91,7 +91,7 @@ class DataMapperTest extends \Everon\TestCase
         $Entity = new \Everon\Test\Domain\User\Entity(null, $entity_data);
         $id = $Mapper->add($Entity);
         
-        $this->assertInstanceOf('\Everon\Test\Domain\User\Entity', $Entity);
+        $this->assertInstanceOf('Everon\Test\Domain\User\Entity', $Entity);
         $this->assertEquals(null, $Entity->getId());
         $this->assertEquals(1, $id);
         $this->assertTrue($Entity->isNew()); //repository should maintain that
@@ -116,7 +116,7 @@ class DataMapperTest extends \Everon\TestCase
         $result = $Mapper->save($Entity);
         $Entity->persist($Entity->getId(), $entity_data); //usually called in Repository
         
-        $this->assertInstanceOf('\Everon\Test\Domain\User\Entity', $Entity);
+        $this->assertInstanceOf('Everon\Test\Domain\User\Entity', $Entity);
         $this->assertEquals(1, $Entity->getId());
         $this->assertEquals(1, $result);
         $this->assertTrue($Entity->isPersisted());
@@ -141,7 +141,7 @@ class DataMapperTest extends \Everon\TestCase
         $result = $Mapper->delete($Entity);
         $Entity->delete(); //usually called in Repository
         
-        $this->assertInstanceOf('\Everon\Test\Domain\User\Entity', $Entity);
+        $this->assertInstanceOf('Everon\Test\Domain\User\Entity', $Entity);
         $this->assertNull($Entity->getId());
         $this->assertEquals(1, $result);
         $this->assertTrue($Entity->isDeleted());

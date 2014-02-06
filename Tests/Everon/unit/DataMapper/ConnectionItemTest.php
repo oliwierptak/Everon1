@@ -31,7 +31,7 @@ class ConnectionItemTest extends \Everon\TestCase
             'options' => [\PDO::ATTR_DRIVER_NAME => 'mysql_test']
         ];
         $ConnectionItem = new \Everon\DataMapper\Connection\Item($connections);
-        $this->assertInstanceOf('\Everon\DataMapper\Interfaces\ConnectionItem', $ConnectionItem);
+        $this->assertInstanceOf('Everon\DataMapper\Interfaces\ConnectionItem', $ConnectionItem);
         $this->assertEquals('mysql', $ConnectionItem->getDriver());
         $this->assertEquals('MySql', $ConnectionItem->getAdapterName());
     }
@@ -44,7 +44,7 @@ class ConnectionItemTest extends \Everon\TestCase
     {
         $connections = [];
         $ConnectionItem = new \Everon\DataMapper\Connection\Item($connections);
-        $this->assertInstanceOf('\Everon\DataMapper\Interfaces\ConnectionItem', $ConnectionItem);
+        $this->assertInstanceOf('Everon\DataMapper\Interfaces\ConnectionItem', $ConnectionItem);
     }
 
     /**
@@ -92,11 +92,11 @@ class ConnectionItemTest extends \Everon\TestCase
     {
         $this->assertEquals('MYSQL', $ConnectionItem->getAdapterName());
         
-        $AdapterName = $this->getProtectedProperty('\Everon\DataMapper\Connection\Item', 'adapter_name');
+        $AdapterName = $this->getProtectedProperty('Everon\DataMapper\Connection\Item', 'adapter_name');
         $AdapterName->setAccessible(true);
         $AdapterName->setValue($ConnectionItem, null);
 
-        $DriverName = $this->getProtectedProperty('\Everon\DataMapper\Connection\Item', 'driver');
+        $DriverName = $this->getProtectedProperty('Everon\DataMapper\Connection\Item', 'driver');
         $DriverName->setAccessible(true);
         $DriverName->setValue($ConnectionItem, null);
         $this->assertEquals(null, $ConnectionItem->getAdapterName());

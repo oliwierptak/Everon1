@@ -20,7 +20,7 @@ class CriteriaTest extends \Everon\TestCase
     function testConstructor()
     {
         $Criteria = new \Everon\DataMapper\Criteria();
-        $this->assertInstanceOf('\Everon\DataMapper\Interfaces\Criteria', $Criteria);
+        $this->assertInstanceOf('Everon\DataMapper\Interfaces\Criteria', $Criteria);
     }
 
     /**

@@ -386,7 +386,6 @@ class Factory implements Interfaces\Factory
         try {
             $adapter_name = $Schema->getAdapterName();
             $class_name = $this->getFullClassName($namespace, $adapter_name.'\\'.$name);
-            s($class_name);
             $DataMapper = new $class_name($Table, $Schema);
             $this->injectDependencies($class_name, $DataMapper);
             return $DataMapper;
