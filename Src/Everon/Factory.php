@@ -384,8 +384,9 @@ class Factory implements Interfaces\Factory
     {
         $name = $this->stringUnderscoreToCamel($Table->getName());
         try {
-            $driver = $Schema->getDriver();
-            $class_name = $this->getFullClassName($namespace, $driver.'\\'.$name);
+            $adapter_name = $Schema->getAdapterName();
+            $class_name = $this->getFullClassName($namespace, $adapter_name.'\\'.$name);
+            s($class_name);
             $DataMapper = new $class_name($Table, $Schema);
             $this->injectDependencies($class_name, $DataMapper);
             return $DataMapper;
@@ -497,12 +498,15 @@ class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildSchemaTable($name, $driver, array $columns, array $primary_keys,  array $unique_keys, array $foreign_keys, $namespace='Everon\DataMapper')
+    public function buildSchemaTable($name, $schema, $adapter_name, array $columns, array $primary_keys,  array $unique_keys, array $foreign_keys, $namespace='Everon\DataMapper')
     {
         try {
             $column_list = [];
             foreach ($columns as $column_data) {
-                $class_name = $this->getFullClassName($namespace, "Schema\\${driver}\\Column");
+                $class_name = $this->getFullClassName($namespace, "Schema\\${adapter_name}\\Column");
+                /**
+                 * @var DataMapper\Schema\Column $Column
+                 */
                 $Column = new $class_name($column_data);
                 $column_list[$Column->getName()] = $Column;
             }
@@ -529,7 +533,7 @@ class Factory implements Interfaces\Factory
             }
 
             $class_name = $this->getFullClassName($namespace,'Schema\Table');
-            $Table = new $class_name($name, $column_list, $primary_key_list, $unique_key_list, $foreign_key_list);
+            $Table = new $class_name($name, $schema, $column_list, $primary_key_list, $unique_key_list, $foreign_key_list);
             return $Table;
         }
         catch (\Exception $e) {

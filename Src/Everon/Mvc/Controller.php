@@ -28,7 +28,7 @@ abstract class Controller extends \Everon\Controller implements Interfaces\MvcCo
     protected $CacheLoader = null;
 
 
-    public function execute($action)
+    public function execute22($action)
     {
         try {
             parent::execute($action);

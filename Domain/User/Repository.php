@@ -11,13 +11,13 @@ class Repository extends Domain\Repository
 {
     
     /**'
-     * @param $username
+     * @param $email
      * @return mixed
      */
-    public function getByLogin($username)
+    public function getByEmail($email)
     {
         $Criteria = new \Everon\DataMapper\Criteria();  
-        $Criteria->where(['login' => $username]);
+        $Criteria->where(['email' => $email]);
 
         $data = $this->getMapper()->fetchAll($Criteria);
         if (empty($data)) {

@@ -33,7 +33,7 @@ $Container->register('Request', function() use ($Factory) {
 });
 
 $Container->register('ConnectionManager', function() use ($Factory) {
-    $DatabaseConfig = $Factory->getDependencyContainer()->resolve('ConfigManager')->getConfigByName('database');
+    $DatabaseConfig = $Factory->getDependencyContainer()->resolve('ConfigManager')->getDatabaseConfig();
     return $Factory->buildConnectionManager($DatabaseConfig);
 });
 

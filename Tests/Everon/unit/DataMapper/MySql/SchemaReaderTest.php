@@ -22,8 +22,9 @@ class SchemaReaderTest extends \Everon\TestCase
     
     protected function setUpDumpSchema()
     {
+        $driver = 'mysql';
         $Factory = $this->buildFactory();
-        $DatabaseConfig = $Factory->getDependencyContainer()->resolve('ConfigManager')->getConfigByName('database');
+        $DatabaseConfig = $Factory->getDependencyContainer()->resolve('ConfigManager')->getConfigByName('database_'.$driver);
         $ConnectionManager = $Factory->buildConnectionManager($DatabaseConfig);
 
         $Connection = $ConnectionManager->getConnectionByName('schema');
@@ -32,7 +33,7 @@ class SchemaReaderTest extends \Everon\TestCase
         $PdoAdapter = $Factory->buildPdoAdapter($Pdo, $Connection);
         $Reader = $Factory->buildSchemaReader($PdoAdapter);
         $this->assertInstanceOf('\Everon\DataMapper\Interfaces\Schema\Reader', $Reader);
-        $Reader->dumpDataBaseSchema($this->getDataMapperFixturesDirectory());
+        $Reader->TMPdumpDataBaseSchema($this->getDataMapperFixturesDirectory(), $driver);
         die();
     }   
     
@@ -51,7 +52,7 @@ class SchemaReaderTest extends \Everon\TestCase
         $PdoStatementMock = $this->getMock('\PDOStatement');
         $PdoStatementMock->expects($this->once())
             ->method('fetchAll')
-            ->will($this->returnValue($this->getFixtureData()['db_tables.php']));
+            ->will($this->returnValue($this->getFixtureData()['mysql_db_tables.php']));
 
         $PdoAdapterMock->expects($this->once())
             ->method('execute')
@@ -60,7 +61,7 @@ class SchemaReaderTest extends \Everon\TestCase
         $Reader->setPdoAdapter($PdoAdapterMock);
         $tables = $Reader->getTableList();
 
-        $expected = $this->arrayArrangeByKey('TABLE_NAME', $this->getFixtureData()['db_tables.php']);
+        $expected = $this->arrayArrangeByKeySingle('TABLE_NAME', $this->getFixtureData()['mysql_db_tables.php']);
         
         $this->assertInternalType('array', $tables);
         $this->assertCount(3, $tables);
@@ -75,7 +76,7 @@ class SchemaReaderTest extends \Everon\TestCase
         $PdoStatementMock = $this->getMock('\PDOStatement');
         $PdoStatementMock->expects($this->once())
             ->method('fetchAll')
-            ->will($this->returnValue($this->getFixtureData()['db_columns.php']));
+            ->will($this->returnValue($this->getFixtureData()['mysql_db_columns.php']));
 
         $PdoAdapterMock->expects($this->once())
             ->method('execute')
@@ -83,7 +84,7 @@ class SchemaReaderTest extends \Everon\TestCase
         
         $Reader->setPdoAdapter($PdoAdapterMock);
         $columns = $Reader->getColumnList();
-        $expected = $this->arrayArrangeByKey('TABLE_NAME', $this->getFixtureData()['db_columns.php']);
+        $expected = $this->arrayArrangeByKey('TABLE_NAME', $this->getFixtureData()['mysql_db_columns.php']);
         
         $this->assertInternalType('array', $columns);
         $this->assertCount(3, $columns);
@@ -98,7 +99,7 @@ class SchemaReaderTest extends \Everon\TestCase
         $PdoStatementMock = $this->getMock('\PDOStatement');
         $PdoStatementMock->expects($this->once())
             ->method('fetchAll')
-            ->will($this->returnValue($this->getFixtureData()['db_primary_keys.php']));
+            ->will($this->returnValue($this->getFixtureData()['mysql_db_primary_keys.php']));
 
         $PdoAdapterMock->expects($this->once())
             ->method('execute')
@@ -106,7 +107,7 @@ class SchemaReaderTest extends \Everon\TestCase
         
         $Reader->setPdoAdapter($PdoAdapterMock);
         $primary_keys = $Reader->getPrimaryKeysList();
-        $expected = $this->arrayArrangeByKey('TABLE_NAME', $this->getFixtureData()['db_primary_keys.php']);
+        $expected = $this->arrayArrangeByKey('TABLE_NAME', $this->getFixtureData()['mysql_db_primary_keys.php']);
         
         $this->assertInternalType('array', $primary_keys);
         $this->assertCount(3, $primary_keys);
@@ -121,7 +122,7 @@ class SchemaReaderTest extends \Everon\TestCase
         $PdoStatementMock = $this->getMock('\PDOStatement');
         $PdoStatementMock->expects($this->once())
             ->method('fetchAll')
-            ->will($this->returnValue($this->getFixtureData()['db_foreign_keys.php']));
+            ->will($this->returnValue($this->getFixtureData()['mysql_db_foreign_keys.php']));
 
         $PdoAdapterMock->expects($this->once())
             ->method('execute')
@@ -129,7 +130,7 @@ class SchemaReaderTest extends \Everon\TestCase
 
         $Reader->setPdoAdapter($PdoAdapterMock);
         $foreign_keys = $Reader->getForeignKeyList();
-        $expected = $this->arrayArrangeByKey('TABLE_NAME', $this->getFixtureData()['db_foreign_keys.php']);
+        $expected = $this->arrayArrangeByKey('TABLE_NAME', $this->getFixtureData()['mysql_db_foreign_keys.php']);
 
         $this->assertInternalType('array', $foreign_keys);
         $this->assertCount(1, $foreign_keys);
@@ -144,7 +145,7 @@ class SchemaReaderTest extends \Everon\TestCase
         $PdoStatementMock = $this->getMock('\PDOStatement');
         $PdoStatementMock->expects($this->once())
             ->method('fetchAll')
-            ->will($this->returnValue($this->getFixtureData()['db_unique_keys.php']));
+            ->will($this->returnValue($this->getFixtureData()['mysql_db_unique_keys.php']));
 
         $PdoAdapterMock->expects($this->once())
             ->method('execute')
@@ -152,7 +153,7 @@ class SchemaReaderTest extends \Everon\TestCase
 
         $Reader->setPdoAdapter($PdoAdapterMock);
         $foreign_keys = $Reader->getUniqueKeysList();
-        $expected = $this->arrayArrangeByKey('TABLE_NAME', $this->getFixtureData()['db_unique_keys.php']);
+        $expected = $this->arrayArrangeByKey('TABLE_NAME', $this->getFixtureData()['mysql_db_unique_keys.php']);
 
         $this->assertInternalType('array', $foreign_keys);
         $this->assertCount(1, $foreign_keys);

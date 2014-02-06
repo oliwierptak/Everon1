@@ -60,6 +60,11 @@ abstract class Reader implements Interfaces\Schema\Reader
     {
         return $this->getPdoAdapter()->getConnectionConfig()->getDatabase();
     }
+    
+    public function getAdapterName()
+    {
+        return $this->getPdoAdapter()->getConnectionConfig()->getAdapterName();
+    }
 
     /**
      * @inheritdoc
@@ -67,7 +72,7 @@ abstract class Reader implements Interfaces\Schema\Reader
     public function getTableList()
     {
         if ($this->table_list === null) {
-            $this->table_list = $this->arrayArrangeByKey('TABLE_NAME',
+            $this->table_list = $this->arrayArrangeByKeySingle('TABLE_NAME',
                 $this->getPdoAdapter()->execute($this->getTablesSql(), ['schema'=>$this->getDatabase()], \PDO::FETCH_ASSOC)->fetchAll()
             );
         }
@@ -126,7 +131,7 @@ abstract class Reader implements Interfaces\Schema\Reader
         return $this->unique_key_list;
     }
     
-    public function TMPdumpDataBaseSchema($dir, $prefix='mysql_')
+    public function TMPdumpDataBaseSchema($dir, $prefix='mysql')
     {
         $tables = $this->getPdoAdapter()->execute($this->getTablesSql(), ['schema'=>$this->getDatabase()], \PDO::FETCH_ASSOC)->fetchAll();
         $columns = $this->getPdoAdapter()->execute($this->getColumnsSql(), ['schema'=>$this->getDatabase()], \PDO::FETCH_ASSOC)->fetchAll();
@@ -136,7 +141,7 @@ abstract class Reader implements Interfaces\Schema\Reader
 
         $export = function($name, $data_to_export) use ($dir, $prefix) {
             $data = var_export($data_to_export, 1);
-            $filename = $dir.$prefix.'db_'.$name.'.php';
+            $filename = $dir.$prefix.'_db_'.$name.'.php';
             @unlink($filename);
             $h = fopen($filename, 'w+');
             fwrite($h, "<?php return $data; ");

@@ -32,8 +32,6 @@ abstract class Column implements Schema\Column
 
     protected $type = null;
     
-    protected $is_autoincremental = null;
-    
     protected $length = null;
     
     protected $precision = null;
@@ -61,11 +59,6 @@ abstract class Column implements Schema\Column
     public function isPk()
     {
         return $this->is_pk;
-    }
-    
-    public function isAutoIncremental()
-    {
-        return $this->is_autoincremental;
     }
     
     public function getName()

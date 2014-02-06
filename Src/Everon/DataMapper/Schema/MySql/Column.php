@@ -61,7 +61,7 @@ class Column extends Schema\Column
                 break;
 
             default:
-                throw new Exception\Column('Unsupported data type: %s', $type);
+                throw new Exception\Column('Unsupported data type: "%s"', $type);
                 break;
         }
     }

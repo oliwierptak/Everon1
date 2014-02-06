@@ -201,7 +201,22 @@ trait Arrays
         $result = [];
         for ($a=0; $a<count($data); $a++) {
             $item = $data[$a];
-            $result[$item[$key]][] = $data[$a];
+            $result[$item[$key]][] = $item;
+        }
+        return $result;
+    }
+    
+    /**
+     * @param $key
+     * @param $data
+     * @return array
+     */
+    protected function arrayArrangeByKeySingle($key, $data)
+    {
+        $result = [];
+        for ($a=0; $a<count($data); $a++) {
+            $item = $data[$a];
+            $result[$item[$key]] = $item;
         }
         return $result;
     }

@@ -81,10 +81,10 @@ class SchemaTest extends \Everon\TestCase
     
     public function dataProvider()
     {
-        $tables = $this->arrayArrangeByKey('TABLE_NAME', $this->getFixtureData()['db_tables.php']);
-        $columns = $this->arrayArrangeByKey('TABLE_NAME', $this->getFixtureData()['db_columns.php']);
-        $primary_keys = $this->arrayArrangeByKey('TABLE_NAME', $this->getFixtureData()['db_primary_keys.php']);
-        $foreign_keys = $this->arrayArrangeByKey('TABLE_NAME', $this->getFixtureData()['db_foreign_keys.php']);
+        $tables = $this->arrayArrangeByKey('TABLE_NAME', $this->getFixtureData()['mysql_db_tables.php']);
+        $columns = $this->arrayArrangeByKey('TABLE_NAME', $this->getFixtureData()['mysql_db_columns.php']);
+        $primary_keys = $this->arrayArrangeByKey('TABLE_NAME', $this->getFixtureData()['mysql_db_primary_keys.php']);
+        $foreign_keys = $this->arrayArrangeByKey('TABLE_NAME', $this->getFixtureData()['mysql_db_foreign_keys.php']);
 
         $PdoStub = new \Everon\Test\MyPdo();
 
@@ -139,7 +139,7 @@ class SchemaTest extends \Everon\TestCase
 
         //$C = $this->getMock('\Everon\DataMapper\Interfaces\ConnectionManager'); //why the fuck does it return null?
         $Factory = $this->buildFactory();
-        $DatabaseConfig = $Factory->getDependencyContainer()->resolve('ConfigManager')->getConfigByName('database');
+        $DatabaseConfig = $Factory->getDependencyContainer()->resolve('ConfigManager')->getDatabaseConfig();
         $ConnectionManager = $Factory->buildConnectionManager($DatabaseConfig);
         
         $Schema = $Factory->buildSchema($SchemaReaderMock, $ConnectionManager);

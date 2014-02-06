@@ -13,6 +13,8 @@ use Everon\Interfaces\PdoAdapter;
 
 interface Reader
 {
+    function getAdapterName();
+    
     /**
      * @return string Eg. MySql
      */

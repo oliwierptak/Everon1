@@ -15,7 +15,6 @@ use Everon\Interfaces\Immutable;
 interface Column extends Arrayable, Immutable
 {
     function isPk();
-    function isAutoIncremental();
     function getName();
     function getType();
     function getLength();

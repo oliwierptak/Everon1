@@ -22,8 +22,9 @@ class SchemaReaderTest extends \Everon\TestCase
     
     protected function setUpDumpSchema()
     {
+        $driver = 'pgsql';
         $Factory = $this->buildFactory();
-        $DatabaseConfig = $Factory->getDependencyContainer()->resolve('ConfigManager')->getConfigByName('database');
+        $DatabaseConfig = $Factory->getDependencyContainer()->resolve('ConfigManager')->getConfigByName('database_'.$driver);
         $ConnectionManager = $Factory->buildConnectionManager($DatabaseConfig);
 
         $Connection = $ConnectionManager->getConnectionByName('schema');
@@ -32,7 +33,7 @@ class SchemaReaderTest extends \Everon\TestCase
         $PdoAdapter = $Factory->buildPdoAdapter($Pdo, $Connection);
         $Reader = $Factory->buildSchemaReader($PdoAdapter);
         $this->assertInstanceOf('\Everon\DataMapper\Interfaces\Schema\Reader', $Reader);
-        $Reader->TMPdumpDataBaseSchema($this->getDataMapperFixturesDirectory(), 'pgsql_');
+        $Reader->TMPdumpDataBaseSchema($this->getDataMapperFixturesDirectory(), $driver);
         die();
     }   
     
@@ -60,7 +61,7 @@ class SchemaReaderTest extends \Everon\TestCase
         $Reader->setPdoAdapter($PdoAdapterMock);
         $tables = $Reader->getTableList();
 
-        $expected = $this->arrayArrangeByKey('TABLE_NAME', $this->getFixtureData()['pgsql_db_tables.php']);
+        $expected = $this->arrayArrangeByKeySingle('TABLE_NAME', $this->getFixtureData()['pgsql_db_tables.php']);
         
         $this->assertInternalType('array', $tables);
         $this->assertCount(3, $tables);

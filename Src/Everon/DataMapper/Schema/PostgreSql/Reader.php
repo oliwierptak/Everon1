@@ -20,7 +20,9 @@ class Reader extends Schema\Reader implements Interfaces\Schema\Reader
             SELECT *, table_name AS \"TABLE_NAME\" 
             FROM information_schema.tables
             WHERE 
-                table_schema <> 'information_schema' AND table_schema !~ E'^pg_'
+                table_type = 'BASE TABLE'
+                -- table_schema <> 'information_schema' AND table_schema !~ E'^pg_'
+                AND table_schema NOT IN ('pg_catalog', 'information_schema')
                 AND table_catalog = :schema
         ";
     }
@@ -28,13 +30,23 @@ class Reader extends Schema\Reader implements Interfaces\Schema\Reader
     protected function getColumnsSql()
     {
         return "
-            SELECT *, table_name AS \"TABLE_NAME\"
-            FROM information_schema.columns
-            WHERE
-                table_schema <> 'information_schema' AND table_schema !~ E'^pg_'
-                AND table_catalog = :schema
+            SELECT *, tab_columns.table_name AS \"TABLE_NAME\", tab_columns.column_name AS \"column_name\" 
+            FROM information_schema.columns AS tab_columns
+            LEFT OUTER JOIN
+                information_schema.constraint_column_usage AS col_constraints
+                ON tab_columns.table_name = col_constraints.table_name AND
+                tab_columns.column_name = col_constraints.column_name
+            LEFT OUTER JOIN
+                information_schema.table_constraints AS tab_constraints
+                ON tab_constraints.constraint_name = col_constraints.constraint_name
+            LEFT OUTER JOIN
+                information_schema.check_constraints AS col_check_constraints
+                ON col_check_constraints.constraint_name = tab_constraints.constraint_name
+            WHERE 1=1
+                AND tab_columns.table_schema NOT IN ('pg_catalog', 'information_schema')
+                AND tab_columns.table_catalog = :schema
             ORDER BY
-                table_schema, table_name, column_name
+                 tab_columns.table_name, ordinal_position
         ";
     }
 

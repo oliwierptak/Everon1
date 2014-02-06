@@ -52,7 +52,7 @@ class Schema implements Interfaces\Schema
         $primary_key_list = $this->getSchemaReader()->getPrimaryKeysList();
         $foreign_key_list = $this->getSchemaReader()->getForeignKeyList();
         $unique_key_list = $this->getSchemaReader()->getUniqueKeysList();
-        
+
         $castToEmptyArrayWhenNull = function($name, $item) {
             return isset($item[$name]) ? $item[$name] : [];
         };
@@ -61,7 +61,8 @@ class Schema implements Interfaces\Schema
             $name = mb_strtolower($name);
             $this->tables[$name] = $this->getFactory()->buildSchemaTable(
                 $name,
-                $this->getDriver(),
+                @$table_data['table_schema'],
+                $this->getAdapterName(),
                 $castToEmptyArrayWhenNull($name, $column_list), 
                 $castToEmptyArrayWhenNull($name, $primary_key_list), 
                 $castToEmptyArrayWhenNull($name, $unique_key_list), 
@@ -90,7 +91,12 @@ class Schema implements Interfaces\Schema
     {
         return $this->getSchemaReader()->getDatabase();
     }
-
+    
+    public function getAdapterName()
+    {
+        return $this->getSchemaReader()->getAdapterName();
+    }
+    
     public function getTables()
     {
         if ($this->tables === null) {

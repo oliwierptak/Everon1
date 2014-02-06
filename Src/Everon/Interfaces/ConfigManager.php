@@ -22,7 +22,10 @@ interface ConfigManager
      * @return Interfaces\Config
      */    
     function getConfigByName($name);
+    
     function getConfigs();
+
+    function getDatabaseConfig();
     
     /**
      * @param $expression

@@ -21,6 +21,8 @@ class Table implements Schema\Table
     
     protected $name = null;
     
+    protected $schema = null;
+    
     protected $pk = null;
     
     protected $columns = [];
@@ -33,14 +35,16 @@ class Table implements Schema\Table
 
     /**
      * @param $name
+     * @param $schema
      * @param array $columns
      * @param array $primary_keys
      * @param array $unique_keys
      * @param array $foreign_keys
      */
-    public function __construct($name, array $columns, array $primary_keys,  array $unique_keys, array $foreign_keys)
+    public function __construct($name, $schema, array $columns, array $primary_keys,  array $unique_keys, array $foreign_keys)
     {        
         $this->name = $name;
+        $this->schema = $schema;
         $this->columns = $columns;
         $this->primary_keys = $primary_keys;
         $this->foreign_keys = $foreign_keys;
@@ -65,6 +69,11 @@ class Table implements Schema\Table
     public function getName()
     {
         return $this->name;
+    }
+    
+    public function getSchema()
+    {
+        return $this->schema;
     }
 
     public function getColumns()

@@ -112,6 +112,9 @@ url = /
 url_statc = /assets/
 name = everon-dev
 
+[database]
+driver = mysql
+
 [assets]
 css = %application.env.url_statc%css/
 images = %application.env.url_statc%images/
@@ -234,6 +237,15 @@ EOF;
         }
         
         return $this->configs;
+    }
+
+    /**
+     * @return Interfaces\Config
+     */
+    public function getDatabaseConfig()
+    {
+        $driver = $this->getConfigValue('application.database.driver', 'mysql');
+        return $this->getConfigByName('database_'.$driver);
     }
 
 }

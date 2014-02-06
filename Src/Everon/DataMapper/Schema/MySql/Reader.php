@@ -16,7 +16,7 @@ class Reader extends Schema\Reader implements Interfaces\Schema\Reader
 {
     protected function getTablesSql()
     {
-        return "SELECT * FROM information_schema.TABLES WHERE table_schema = :schema";
+        return "SELECT *  FROM information_schema.TABLES WHERE table_schema = :schema";
     }
 
     protected function getColumnsSql()

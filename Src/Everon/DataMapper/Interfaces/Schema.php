@@ -24,8 +24,10 @@ interface Schema
      */
     function getConnectionManager();
 
+    function getAdapterName();
+
     /**
-     * @return string MySql
+     * @return string
      */
     function getDriver();
 

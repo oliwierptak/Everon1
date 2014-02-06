@@ -224,6 +224,9 @@ class DataMapperTest extends \Everon\TestCase
             ->method('getDriver')
             ->will($this->returnValue('MySql'));
         $SchemaMock->expects($this->once())
+            ->method('getAdapterName')
+            ->will($this->returnValue('MySql'));
+        $SchemaMock->expects($this->once())
             ->method('getPdoAdapterByName')
             ->will($this->returnValue($PdoAdapterMock));
 
