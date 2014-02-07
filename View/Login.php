@@ -27,7 +27,7 @@ class Login extends DefaultView
     public function submit()
     {
         //User was assigned to this view by Login controller
-        $this->set('View.body', 'Logged as: <b>{User.username}</b><br/><br/> Redirecting to <i>{View.redirect_url}</i>');
+        $this->set('View.body', 'Logged as: <b>{User.email}</b><br/><br/> Redirecting to <i>{View.redirect_url}</i>');
         
         $url = $this->url($this->get('View.redirect_url'));
         $this->getResponse()->addHeader('refresh', '3; url='.$url);
