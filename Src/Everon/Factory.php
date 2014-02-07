@@ -81,7 +81,7 @@ class Factory implements Interfaces\Factory
     {
         try {
             $Core = new Console();
-            $this->injectDependencies('Everon\Core', $Core);
+            $this->injectDependencies('Everon\Console', $Core);
             return $Core;
         }
         catch (\Exception $e) {
@@ -97,7 +97,7 @@ class Factory implements Interfaces\Factory
     {
         try {
             $Core = new Mvc();
-            $this->injectDependencies('Everon\Core', $Core);
+            $this->injectDependencies('Everon\Mvc', $Core);
             return $Core;
         }
         catch (\Exception $e) {

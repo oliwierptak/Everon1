@@ -27,15 +27,15 @@ class Login extends DefaultView
     public function submit()
     {
         //User was assigned to this view by Login controller
-        $this->set('View.Body', 'Logged as: <b>{User.username}</b><br/><br/> Redirecting to <i>{View.redirectUrl}</i>');
+        $this->set('View.body', 'Logged as: <b>{User.username}</b><br/><br/> Redirecting to <i>{View.redirect_url}</i>');
         
-        $url = $this->url($this->get('View.redirectUrl'));
+        $url = $this->url($this->get('View.redirect_url'));
         $this->getResponse()->addHeader('refresh', '3; url='.$url);
     }
     
     public function submitOnError()
     {
-        $this->set('View.Body', 'Invalid username or password.<br /><br /><small><u>Forgot your password?</u></small>');
+        $this->set('View.body', 'Invalid username or password.<br /><br /><small><u>Forgot your password?</u></small>');
     }
 
 }

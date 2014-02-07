@@ -20,9 +20,10 @@ interface View
     function setName($name);
 
     function getName();
-        
+
     /**
-     * @return Interfaces\TemplateContainer
+     * @return Interfaces\Template|Interfaces\TemplateContainer|null
+     * @throws \Everon\Exception\View
      */
     function getContainer();
 
@@ -95,11 +96,6 @@ interface View
     function setDefaultExtension($extension);
     
     function getDefaultExtension();
-
-    /**
-     * @return Interfaces\Template Loads 'index.htm' from template directory
-     */    
-    function getViewTemplate();
 
     /**
      * @return \SplFileInfo

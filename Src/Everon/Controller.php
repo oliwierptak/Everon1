@@ -20,17 +20,16 @@ abstract class Controller implements Interfaces\Controller
     use Helper\ToString;
     use Helper\String\LastTokenToName;
 
-    /**
-     * Controller's name
-     * @var string
-     */
     protected $name = null;
+    
+    protected $action = null;
 
     /**
      * @param $action
+     * @param $result
      * @return void
      */
-    protected abstract function prepareResponse($action);
+    protected abstract function prepareResponse($action, $result);
     
     protected abstract function response();
 
@@ -61,6 +60,7 @@ abstract class Controller implements Interfaces\Controller
      */
     public function execute($action)
     {
+        $this->action = $action;
         if ($this->isCallable($this, $action) === false) {
             throw new Exception\InvalidControllerMethod(
                 'Controller: "%s" has no action: "%s" defined', [$this->getName(), $action]
@@ -77,7 +77,7 @@ abstract class Controller implements Interfaces\Controller
             );
         }
         
-        $this->prepareResponse($action);
+        $this->prepareResponse($action, $result);
         $this->getLogger()->response('[%s] %s : %s', [$this->getResponse()->getStatus(), $this->getName(), $action]);
         $this->response();
     }

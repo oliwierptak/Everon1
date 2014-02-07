@@ -19,7 +19,13 @@
     <e>endforeach</e>
 </div>
 
-{View.Body}
+<h3>{View.title}</h3>
+
+{View.body}
+
+<e>if ((string) $View->error !== ''):</e>
+    <div id="errors">{View.error}</div>
+<e>endif</e>
 
 </body>
 </html>

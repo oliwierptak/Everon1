@@ -60,7 +60,7 @@ class Controller\Greet extends Mvc\Controller
     public function sayHello()
     {
         $greeting = $this->getModel()->helloWorld();
-        $this->getView()->set('View.Body', $greeting);
+        $this->getView()->set('View.body', $greeting);
     }
 }
 ```

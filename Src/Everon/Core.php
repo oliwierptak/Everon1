@@ -57,20 +57,14 @@ abstract class Core implements Interfaces\Core
      */
     public function run(Guid $Guid)
     {
-        try {
-            $this->runOnce($Guid);
-            /**
-             * @var \Everon\Interfaces\MvcController|\Everon\Interfaces\Controller $Controller
-             * @var \Everon\Interfaces\ConfigItemRouter $CurrentRoute
-             */
-            $CurrentRoute = $this->getRouter()->getRouteByRequest($this->getRequest());
-            $this->Controller = $this->createController($CurrentRoute->getController());
-            $this->Controller->execute($CurrentRoute->getAction());
-        }
-        catch (Exception\InvalidRoute $e) {
-            $this->getLogger()->warn($e);
-            echo $e->getMessage()."\n";
-        }
+        $this->runOnce($Guid);
+        /**
+         * @var \Everon\Interfaces\MvcController|\Everon\Interfaces\Controller $Controller
+         * @var \Everon\Interfaces\ConfigItemRouter $CurrentRoute
+         */
+        $CurrentRoute = $this->getRouter()->getRouteByRequest($this->getRequest());
+        $this->Controller = $this->createController($CurrentRoute->getController());
+        $this->Controller->execute($CurrentRoute->getAction());
     }
     
     //todo make events, add some kind of profiling class

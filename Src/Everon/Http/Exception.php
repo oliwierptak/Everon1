@@ -16,23 +16,14 @@ class Exception extends EveronException
 {
     protected $http_status = null;
     protected $http_message = null;
-    
-    /**
-     * @param string|\Exception $message
-     * @param null|array $params
-     * @param null|\Exception $Previous
-     */
-    public function __construct($message, $params=null, $Previous=null) 
+
+    public function getHttpMessage()
     {
-        $SendHttpHeaders = function(){
-            $this->send();
-        };
-        
-        parent::__construct($message, $params, $Previous, $SendHttpHeaders);
+        return $this->http_message;
     }
     
-    protected function send() //todo: use response
+    public function getHttpStatus()
     {
-        header(vsprintf("HTTP/1.1 %d %s", [$this->http_status, $this->http_message]));
+        return $this->http_status;
     }
 }

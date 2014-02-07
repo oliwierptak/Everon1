@@ -20,6 +20,8 @@ class Response implements Interfaces\Response
     protected $content_type = 'text/html';
     protected $charset = 'utf-8';
     protected $status = 200;
+    protected $status_message = 'OK';
+
     protected $result = false;
     protected $guid = null;
 
@@ -63,6 +65,19 @@ class Response implements Interfaces\Response
     public function getStatus()
     {
         return $this->status;
+    }
+    
+    public function getStatusMessage()
+    {
+        return $this->status_message;
+    }
+
+    /**
+     * @param string $status_message
+     */
+    public function setStatusMessage($status_message)
+    {
+        $this->status_message = $status_message;
     }
 
     public function setStatus($status)

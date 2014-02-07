@@ -23,4 +23,17 @@ interface MvcController extends Interfaces\Controller
      * @return mixed
      */
     function getModel();
+
+    /**
+     * @return Interfaces\ViewManager
+     */
+    function getViewManager();
+
+    /**
+     * Takes default view and sets exception message as body
+     *
+     * @param \Exception $Exception
+     * @param int $code Http status code. Default is 400.
+     */
+    function showException(\Exception $Exception, $code=400);
 }

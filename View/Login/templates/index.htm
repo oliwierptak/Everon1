@@ -9,18 +9,8 @@
     <meta name="description" content="{View.description}" />
 </head>
 <body bgcolor="#d3d3d3">
-    <e> $s = urlencode('url encoded');</e>
-    <h2>::{View.title} <e>$s</e></h2>
-    <e>
-        if ($Login->canShowInfo) {
-            echo 'showing info';
-        }
-        else {
-            echo 'not showing info';
-        }
-    </e>
-
+    <h2>::{View.title}</h2>
     <br />
-    {View.Body}
+    {View.body}
 </body>
 </html>

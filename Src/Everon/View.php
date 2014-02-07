@@ -9,12 +9,13 @@
  */
 namespace Everon;
 
-use Symfony\Component\Finder\SplFileInfo;
+use Everon\Exception;
 
 abstract class View implements Interfaces\View
 {
     use Dependency\Injection\Factory;
     use Dependency\Injection\Request;
+    use Dependency\Injection\ViewManager;
 
     use Helper\Arrays;
     use Helper\IsIterable;
@@ -101,7 +102,14 @@ abstract class View implements Interfaces\View
     public function getContainer()
     {
         if (is_null($this->Container)) {
-            $this->setContainer('');
+            $this->Container = $this->getTemplate('index', $this->vars);
+            if ($this->Container === null) {
+                $this->Container = $this->getViewManager()->getView('Index')->getContainer(); //xxx
+            }
+        }
+        
+        if (is_null($this->Container)) {
+            throw new Exception\View('Default view template: "index" not found');
         }
 
         return $this->Container;
@@ -123,20 +131,18 @@ abstract class View implements Interfaces\View
             throw new Exception\Template('Invalid Container type');
         }
         
-        $data = array_merge($this->Container->getData(), $this->vars);
-        $this->Container->setData($data);
+        //$data = array_merge($this->Container->getData(), $this->vars);
+        //$this->Container->setData($data);
     }
 
     /**
-     * @param $action
-     * @param Interfaces\Template $DefaultViewTemplate
-     * @return Interfaces\Template|Interfaces\TemplateContainer|null
+     * @inheritdoc
      */
     public function getViewTemplateByAction($action, Interfaces\Template $DefaultViewTemplate)
     {
         $data = $this->getData();
         $ActionTemplate = $this->getTemplate($action, $data);
-        $ViewTemplate = $this->getViewTemplate();
+        $ViewTemplate = $this->getContainer();
         
         if ($ViewTemplate === null) {
             $ViewTemplate = $DefaultViewTemplate; 
@@ -147,18 +153,10 @@ abstract class View implements Interfaces\View
         ));
 
         if ($ActionTemplate !== null) {
-            $ViewTemplate->set('View.Body', $ActionTemplate);
+            $ViewTemplate->set('View.body', $ActionTemplate);
         }
 
         return $ViewTemplate;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getViewTemplate()
-    {
-        return $this->getTemplate('index', $this->vars);
     }
 
     /**

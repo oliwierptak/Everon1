@@ -17,7 +17,7 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
     protected $lines = [];
     
 
-    protected function prepareResponse($action)
+    protected function prepareResponse($action, $result)
     {
         $this->getResponse()->setData(
             implode("\n", $this->lines)

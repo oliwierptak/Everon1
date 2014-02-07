@@ -9,13 +9,25 @@
  */
 namespace Everon;
 
+use Everon\Dependency;
 use Everon\Interfaces;
 use Everon\Exception;
 use Everon\Http;
-use Everon\Http\HeaderCollection;
+use Everon\Http\Exception as HttpException;
 
 class Mvc extends Core implements Interfaces\Core
 {
+    use Dependency\Injection\ViewManager;
+    
+    /**
+     * @var Interfaces\MvcController
+     */
+    protected $Controller = null;
+    
+    /**
+     * @param $name
+     * @return Interfaces\MvcController
+     */
     protected function createController($name)
     {
         return $this->getFactory()->buildController($name, 'Everon\Mvc\Controller');
@@ -30,26 +42,32 @@ class Mvc extends Core implements Interfaces\Core
         try {
             parent::run($Guid);
         }
-        catch (Http\Exception\NotFound $e) { //todo: dry
-            $this->getLogger()->notFound($e);
-            $Response = $this->getFactory()->buildResponse(
-                $this->getLogger()->getGuid(), new HeaderCollection()
-            );
-            $Response->setData($e);
-            $Response->setStatus(400);
-            $Response->send();
-            echo $Response->toHtml();
+        catch (Exception\InvalidRoute $Exception) {
+            $this->getLogger()->error($Exception);
+            $NotFound = new HttpException\NotFound('Page not found. '.$Exception->getMessage());
+            $this->showControllerException($NotFound->getHttpStatus(), $NotFound, $this->Controller);
         }
-        catch (Exception $e) {
-            $this->getLogger()->error($e);
-            $Response = $this->getFactory()->buildResponse(
-                $this->getLogger()->getGuid(), new HeaderCollection()
-            );
-            $Response->setData($e);
-            $Response->setStatus(400);
-            $Response->send();
-            echo $Response->toHtml();
-        }        
+        catch (Exception $Exception) {
+            $this->getLogger()->error($Exception);
+            $this->showControllerException(400, $Exception, $this->Controller);
+        }
+    }
+
+    /**
+     * @param $code
+     * @param \Exception $Exception
+     * @param Interfaces\MvcController|null $Controller
+     */
+    public function showControllerException($code, \Exception $Exception, $Controller)
+    {
+        /**
+         * @var Interfaces\MvcController $Controller
+         */
+        if (isset($Controller) === false) {
+            $Controller = $this->createController('Error');
+        }
+        
+        $Controller->showException($Exception, $code);
     }
 
     public function shutdown()
