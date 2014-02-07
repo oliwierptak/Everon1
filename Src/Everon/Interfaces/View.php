@@ -15,6 +15,16 @@ use Everon\Exception;
 interface View
 {
     /**
+     * @param Interfaces\Template $IndexContainer
+     */
+    function setIndexContainer(Interfaces\Template $IndexContainer);
+
+    /**
+     * @return Interfaces\Template
+     */
+    function getIndexContainer();
+        
+    /**
      * @param $name
      */
     function setName($name);

@@ -97,7 +97,8 @@ class FactoryTest extends \Everon\TestCase
      */
     public function testBuildView(Interfaces\Factory $Factory)
     {
-        $View = $Factory->buildView('MyView', $this->getTemplateDirectory(), [], 'Everon\Test');
+        $TemplateMock = $this->getMock('Everon\Interfaces\Template', [], [], '', false);
+        $View = $Factory->buildView('MyView', $this->getTemplateDirectory(), [], $TemplateMock, '.htm','Everon\Test');
         $this->assertInstanceOf('Everon\Interfaces\View', $View);
     }
 
@@ -294,7 +295,8 @@ class FactoryTest extends \Everon\TestCase
      */
     public function testBuildViewShouldThrowExceptionWhenWrongClass(Interfaces\Factory $Factory)
     {
-        $Factory->buildView('Wrong', $this->getTemplateDirectory(), [], 'Everon\Test');
+        $TemplateMock = $this->getMock('Everon\Interfaces\Template', [], [], '', false);
+        $Factory->buildView('Wrong', $this->getTemplateDirectory(), [], $TemplateMock, '.htm', 'Everon\Test');
     }
     
     /**
@@ -418,8 +420,15 @@ class FactoryTest extends \Everon\TestCase
 
     public function dataProvider()
     {
+        $Factory = $this->buildFactory();
+        $Container = $Factory->getDependencyContainer();
+        $ViewManager = $Factory->buildViewManager(['e' => '.htm'], $this->Environment->getView());
+        $Container->register('ViewManager', function() use ($ViewManager) {
+            return $ViewManager;
+        });
+        
         return [
-            [$this->buildFactory()]
+            [$Factory]
         ];
     }
     

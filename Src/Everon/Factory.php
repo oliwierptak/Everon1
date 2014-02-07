@@ -224,20 +224,17 @@ class Factory implements Interfaces\Factory
         }
     }
 
-
     /**
-     * @param $class_name
-     * @param k
-     * @param array $variables
-     * @param string $namespace
-     * @return Interfaces\View
-     * @throws Exception\Factory
+     * @inheritdoc
      */
-    public function buildView($class_name, $template_directory, array $variables, $namespace='Everon\View')
+    public function buildView($class_name, $template_directory, array $variables, Interfaces\Template $IndexTemplate, $default_extension, $namespace='Everon\View')
     {
         try {
             $class_name = $this->getFullClassName($namespace, $class_name);
-            $View = new $class_name($template_directory, $variables);
+            /**
+             * @var Interfaces\View $View
+             */
+            $View = new $class_name($template_directory, $variables, $IndexTemplate, $default_extension);
             $this->injectDependencies($class_name, $View);
             return $View;
         }
@@ -649,10 +646,7 @@ class Factory implements Interfaces\Factory
     }
 
     /**
-     * @param $filename
-     * @param array $template_data
-     * @return Interfaces\TemplateContainer
-     * @throws Exception\Factory
+     * @inheritdoc
      */
     public function buildTemplate($filename, array $template_data)
     {

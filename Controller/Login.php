@@ -14,11 +14,6 @@ class Login extends Controller implements Interfaces\Controller
         $this->getViewManager()->getView('Login')->set('form_action_url', "login/submit/session/adf24ds34/redirect/${redirect_url}?token=something&pif=2457");
         $this->getView()->set('canShowInfo', true);
     }
-    
-    public function account()
-    {
-        
-    }
 
     public function submit()
     {

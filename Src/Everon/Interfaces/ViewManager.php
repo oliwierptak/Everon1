@@ -26,10 +26,12 @@ interface ViewManager
      * @param Interfaces\View $View
      */
     function compileView($action, Interfaces\View $View);
-        
+
     /**
      * @param $name
      * @return mixed
+     * @throws \Everon\Exception\View
+     * @throws \Everon\Exception\ViewManager
      */
     function getView($name);
 

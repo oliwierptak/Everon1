@@ -26,6 +26,7 @@ class Login extends DefaultView
 
     public function submit()
     {
+        $this->set('View.title', 'Login successful');
         //User was assigned to this view by Login controller
         $this->set('View.body', 'Logged as: <b>{User.email}</b><br/><br/> Redirecting to <i>{View.redirect_url}</i>');
         
@@ -35,7 +36,9 @@ class Login extends DefaultView
     
     public function submitOnError()
     {
-        $this->set('View.body', 'Invalid username or password.<br /><br /><small><u>Forgot your password?</u></small>');
+        $this->set('View.body', ''); //xxx
+        $this->set('View.title', 'Login failed');
+        $this->set('View.error', 'Invalid username or password.<br /><br /><small><a href="#">Forgot your password?</a></small>');
     }
 
 }

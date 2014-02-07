@@ -5,5 +5,6 @@ body {
 }
 
 #errors {
-    color: red;
+    color: maroon;
+    font-weight: bold;
 }

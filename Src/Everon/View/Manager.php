@@ -19,6 +19,7 @@ class Manager implements Interfaces\ViewManager
     use Dependency\Injection\Factory;
     use Dependency\Injection\ConfigManager;
 
+    use Helper\Arrays;
     use Helper\String\LastTokenToName;
     use Helper\String\EndsWith;
 
@@ -158,9 +159,7 @@ class Manager implements Interfaces\ViewManager
     }
 
     /**
-     * @param $name
-     * @return mixed
-     * @throws Exception\ViewManager
+     * @inheritdoc
      */
     public function getView($name)
     {
@@ -171,9 +170,16 @@ class Manager implements Interfaces\ViewManager
             }
 
             $default_extension = $this->getConfigManager()->getConfigValue('application.view.default_extension');
-            $ViewVariables = $this->getConfigManager()->getConfigValue("view.$name");
-            $View = $this->getFactory()->buildView($name, $template_directory, $ViewVariables);
-            $View->setDefaultExtension($default_extension);
+            $IndexViewTemplateFilename = new \SplFileInfo($this->view_directory.'index'.DIRECTORY_SEPARATOR.'templates'.DIRECTORY_SEPARATOR.'index'.$default_extension);
+            if ($IndexViewTemplateFilename->isFile() === false) {
+                throw new Exception\View('Default "index" template not found');
+            }
+            
+            $view_variables = $this->getConfigManager()->getConfigValue("view.$name");
+            $view_variables = $this->arrayDotKeysToScope($view_variables, 'View');
+            $IndexTemplate = $this->getFactory()->buildTemplate($IndexViewTemplateFilename, $view_variables);
+            
+            $View = $this->getFactory()->buildView($name, $template_directory, $view_variables, $IndexTemplate, $default_extension);
             $this->ViewCollection->set($name, $View);
         }
 

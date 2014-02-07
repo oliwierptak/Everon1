@@ -9,12 +9,10 @@ class Account extends Controller implements Interfaces\Controller
 {
     public function index()
     {
-        $this->getView()->set('title', 'Account');
     }
     
     public function settings()
     {
-        $this->getView()->set('title', 'Settings');
     }
     
 }

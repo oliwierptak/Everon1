@@ -10,12 +10,12 @@
 namespace Everon;
 
 use Everon\Exception;
+use Everon\Interfaces;
 
 abstract class View implements Interfaces\View
 {
     use Dependency\Injection\Factory;
     use Dependency\Injection\Request;
-    use Dependency\Injection\ViewManager;
 
     use Helper\Arrays;
     use Helper\IsIterable;
@@ -24,32 +24,68 @@ abstract class View implements Interfaces\View
     use Helper\String\StartsWith;
 
     protected $name = null;
-    
+
     protected $template_directory = null;
 
     /**
-     * @var Interfaces\TemplateContainer
+     * @var Interfaces\Template
      */
     protected $Container = null;
-    
+
     protected $default_extension = '.htm';
+
+    /**
+     * @var Interfaces\Template
+     */
+    protected $IndexTemplate = null;
 
     /**
      * @var array
      */
     protected $vars = [];
-    
-    
+
 
     /**
      * @param $template_directory
      * @param array $vars
+     * @param Interfaces\Template $IndexTemplate
+     * @param $default_extension
      */
-    public function __construct($template_directory, array $vars)
+    public function __construct($template_directory, array $vars, Interfaces\Template $IndexTemplate, $default_extension)
     {
         $this->name = $this->stringLastTokenToName(get_class($this));
         $this->template_directory = $template_directory;
         $this->vars = $this->arrayDotKeysToScope($vars);
+        $this->default_extension = $default_extension;
+        $this->IndexTemplate = $IndexTemplate;
+    }
+
+    protected function getIndexTemplate()
+    {
+        $Container = $this->getTemplate('index', $this->vars);
+        if ($Container === null) {
+            //merge data set in custom views
+            $data = $this->arrayMergeDefault($this->vars, $this->IndexTemplate->getData());
+            $Container = $this->IndexTemplate;
+            $Container->setData($data);
+        }
+        return $Container;
+    }
+
+    /**
+     * @param Interfaces\Template $IndexContainer
+     */
+    public function setIndexContainer(Interfaces\Template $IndexContainer)
+    {
+        $this->IndexTemplate = $IndexContainer;
+    }
+
+    /**
+     * @return Interfaces\Template
+     */
+    public function getIndexContainer()
+    {
+        return $this->IndexTemplate;
     }
 
     /**
@@ -75,8 +111,8 @@ abstract class View implements Interfaces\View
     {
         if ($this->stringEndsWith($name, $this->default_extension) === false) {
             $name .= $this->default_extension;
-        } 
-        
+        }
+
         return new \SplFileInfo($this->getTemplateDirectory().$name);
     }
 
@@ -102,12 +138,9 @@ abstract class View implements Interfaces\View
     public function getContainer()
     {
         if (is_null($this->Container)) {
-            $this->Container = $this->getTemplate('index', $this->vars);
-            if ($this->Container === null) {
-                $this->Container = $this->getViewManager()->getView('Index')->getContainer(); //xxx
-            }
+            $this->Container = $this->getIndexTemplate();
         }
-        
+
         if (is_null($this->Container)) {
             throw new Exception\View('Default view template: "index" not found');
         }
@@ -124,15 +157,12 @@ abstract class View implements Interfaces\View
             $this->Container = $Container;
         }
         else if (is_string($Container)) {
-            $this->Container = $this->getFactory()->buildTemplateContainer($Container, []);
+            $this->Container = $this->getIndexTemplate();
         }
-     
+
         if (is_null($this->Container)) {
             throw new Exception\Template('Invalid Container type');
         }
-        
-        //$data = array_merge($this->Container->getData(), $this->vars);
-        //$this->Container->setData($data);
     }
 
     /**
@@ -143,9 +173,9 @@ abstract class View implements Interfaces\View
         $data = $this->getData();
         $ActionTemplate = $this->getTemplate($action, $data);
         $ViewTemplate = $this->getContainer();
-        
+
         if ($ViewTemplate === null) {
-            $ViewTemplate = $DefaultViewTemplate; 
+            $ViewTemplate = $DefaultViewTemplate;
         }
 
         $ViewTemplate->setData(array_merge(
@@ -168,7 +198,7 @@ abstract class View implements Interfaces\View
         if ($Filename->isFile() === false) {
             return null;
         }
-        
+
         return $this->getFactory()->buildTemplate($Filename, $data);
     }
 
@@ -211,7 +241,7 @@ abstract class View implements Interfaces\View
     {
         return $this->getContainer()->getData();
     }
-    
+
     protected function getToString()
     {
         return (string) $this->getContainer();
