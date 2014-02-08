@@ -31,10 +31,10 @@ class Reader extends Schema\Reader implements Interfaces\Schema\Reader
     {
         return "
             SELECT
-                tc.constraint_type, tc.constraint_name, tc.table_name, kcu.column_name,
-                ccu.table_name AS foreign_table_name,
-                ccu.column_name AS foreign_column_name,
-                tc.table_name AS \"TABLE_NAME\"
+            tc.constraint_type, tc.constraint_name, tc.table_name, kcu.column_name,
+            ccu.table_name AS foreign_table_name,
+            ccu.column_name AS foreign_column_name,
+            tc.table_name AS \"TABLE_NAME\"
             FROM 
                 information_schema.table_constraints AS tc 
             JOIN information_schema.key_column_usage AS kcu
@@ -94,17 +94,24 @@ class Reader extends Schema\Reader implements Interfaces\Schema\Reader
     protected function getForeignKeysSql()
     {
         return "
-            SELECT *, tc.table_name AS \"TABLE_NAME\"
-            FROM
-                information_schema.table_constraints tc,  
-                information_schema.key_column_usage kcu  
-            WHERE
-                tc.constraint_type = 'FOREIGN KEY'
-                AND kcu.table_name = kcu.table_name
-                AND kcu.table_schema = tc.table_schema
-                AND kcu.constraint_name = tc.constraint_name
-                AND kcu.table_catalog = :schema
-            ORDER BY tc.table_schema, tc.table_name
+            SELECT
+            tc.constraint_type, tc.constraint_name, tc.table_name, kcu.column_name,
+            ccu.table_name AS foreign_table_name,
+            ccu.column_name AS foreign_column_name,
+            ccu.constraint_schema,
+            tc.constraint_catalog, 
+            tc.table_name AS \"TABLE_NAME\"
+            FROM 
+                information_schema.table_constraints AS tc 
+            JOIN information_schema.key_column_usage AS kcu
+                ON tc.constraint_name = kcu.constraint_name
+            JOIN information_schema.constraint_column_usage AS ccu
+                ON ccu.constraint_name = tc.constraint_name
+            WHERE 1=1
+                AND tc.constraint_type = 'FOREIGN KEY'
+                AND tc.constraint_catalog = :schema
+            ORDER BY
+                tc.constraint_type
         ";
     }
 }

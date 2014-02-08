@@ -17,6 +17,17 @@ class ForeignKey extends Constraint implements Schema\ForeignKey
     protected $referenced_table_name = null;
     
     protected $referenced_column_name = null;
+
+    public function __construct(array $data)
+    {
+        parent::__construct($data);
+        $this->unlock();
+
+        $PrimaryKeyInfo = new Helper\PopoProps($data);
+        $this->referenced_table_name = $PrimaryKeyInfo->foreign_table_name;
+        $this->referenced_column_name = $PrimaryKeyInfo->foreign_column_name;
+        $this->lock();
+    }
     
 
     public function setReferencedTableName($referenced_table_name)

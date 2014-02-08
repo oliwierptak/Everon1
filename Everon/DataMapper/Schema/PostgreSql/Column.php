@@ -29,14 +29,16 @@ class Column extends Schema\Column
         $this->schema = $ColumnInfo->table_schema;
         
         switch ($type = $ColumnInfo->data_type) {
-            case 'text':
+            case 'char':
             case 'character varying':
+            case 'text':
                 $this->length = (int) $ColumnInfo->character_maximum_length;
                 $this->encoding = $ColumnInfo->character_set_name;
                 $this->validation_rules = [$this->name => \FILTER_SANITIZE_STRING];
                 $this->type = static::TYPE_STRING;
                 break;
 
+            case 'bigint':
             case 'integer':
             case 'smallint':
                 $this->length = (int) $ColumnInfo->numeric_precision;
@@ -53,6 +55,8 @@ class Column extends Schema\Column
                 break;
 
             case 'timestamp':
+            case 'timestamp without time zone':
+            case 'timestamp with time zone':
                 $this->length = 19;
                 $this->validation_rules = [$this->name => \FILTER_SANITIZE_STRING];
                 $this->type = static::TYPE_TIMESTAMP;
