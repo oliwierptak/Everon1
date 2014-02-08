@@ -82,12 +82,7 @@ abstract class Controller extends \Everon\Controller implements Interfaces\MvcCo
         if ($PageTemplate === null) {
             throw new Http\Exception\NotFound('Page template: "%s/%s" not found', [$this->getName(),$action]);
         }
-        /*
-        $filename = basename($PageTemplate->getTemplateFile());
-        $this->CacheLoader = new \SplFileInfo($this->getEnvironment()->getCache().'view'.DIRECTORY_SEPARATOR.''.$filename);
-        $this->CacheLoaderData = new \SplFileInfo($this->getEnvironment()->getCache().'view'.DIRECTORY_SEPARATOR.''.$filename.'.json');
-        */
-        
+
         $this->getView()->setContainer($PageTemplate);
         $this->getViewManager()->compileView($action, $this->getView());
         
