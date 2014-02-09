@@ -343,12 +343,13 @@ interface Factory
      * @return Interfaces\Request
      * @throws Exception\Factory
      */
-    function buildConsoleRequest(array $server, array $get, array $post, array $files);    
+    function buildConsoleRequest(array $server, array $get, array $post, array $files);
 
     /**
-     * @param $root
+     * @param $app_root
+     * @param $source_root
      * @return Interfaces\Environment
      * @throws Exception\Factory
      */
-    function buildEnvironment($root);    
+    function buildEnvironment($app_root, $source_root);    
 }

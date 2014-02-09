@@ -775,14 +775,12 @@ class Factory implements Interfaces\Factory
     }
 
     /**
-     * @param $root
-     * @return Interfaces\Environment
-     * @throws Exception\Factory
+     * @inheritdoc
      */
-    public function buildEnvironment($root)
+    public function buildEnvironment($app_root, $source_root)
     {
         try {
-            $Environment = new Environment($root);
+            $Environment = new Environment($app_root, $source_root);
             $this->injectDependencies('Everon\Environment', $Environment);
             return $Environment;
         }

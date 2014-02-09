@@ -33,8 +33,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
     {
         parent::__construct($name, $data, $dataName);
         $nesting = implode('..', array_fill(0, 3, DIRECTORY_SEPARATOR));
-        $root = realpath(dirname(__FILE__).$nesting).DIRECTORY_SEPARATOR;
-        $this->Environment = new Environment($root);
+        $this->Environment = new Environment($GLOBALS['EVERON_ROOT'], $GLOBALS['EVERON_SOURCE_ROOT']);
         $this->includeDoubles($this->getDoublesDirectory());
         $this->Guid = $GLOBALS['Guid']; //import from bootstrap
     }
@@ -185,7 +184,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         $Factory = new Factory(new Dependency\Container());
         $Container = $Factory->getDependencyContainer();
 
-        $TestEnvironment = new \Everon\Environment($this->Environment->getRoot());
+        $TestEnvironment = new \Everon\Environment($this->Environment->getRoot(), $this->Environment->getEveronRoot());
         $TestEnvironment->setLog($this->getLogDirectory());
         $TestEnvironment->setConfig($this->getConfigDirectory());
         $TestEnvironment->setCacheConfig($this->getConfigCacheDirectory());
