@@ -9,21 +9,21 @@
  */
 namespace Everon;
 
-require_once(implode(DIRECTORY_SEPARATOR, [$everon_source_root, 'Bootstrap.php']));
-require_once(implode(DIRECTORY_SEPARATOR, [$everon_source_root, 'Guid.php']));
+require_once(implode(DIRECTORY_SEPARATOR, [$EVERON_SOURCE_ROOT, 'Bootstrap.php']));
+require_once(implode(DIRECTORY_SEPARATOR, [$EVERON_SOURCE_ROOT, 'Guid.php']));
 
 $Guid = new Guid();
 if (isset($CustomSetup)) {
     $CustomSetup();
 }
 else {
-    Bootstrap::setup($Guid->getValue(), $everon_root, '500.log');
+    Bootstrap::setup($Guid->getValue(), $EVERON_ROOT, '500.log');
 }
 
-require_once(implode(DIRECTORY_SEPARATOR, [$everon_source_root, 'Interfaces', 'Environment.php']));
-require_once(implode(DIRECTORY_SEPARATOR, [$everon_source_root, 'Environment.php']));
+require_once(implode(DIRECTORY_SEPARATOR, [$EVERON_SOURCE_ROOT, 'Interfaces', 'Environment.php']));
+require_once(implode(DIRECTORY_SEPARATOR, [$EVERON_SOURCE_ROOT, 'Environment.php']));
 
-$Environment = new Environment($everon_root, $everon_source_root);
+$Environment = new Environment($EVERON_ROOT, $EVERON_SOURCE_ROOT);
 $Bootstrap = new Bootstrap($Environment);
 list($Container, $Factory) = $Bootstrap->run();
 
