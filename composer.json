@@ -2,6 +2,6 @@
 	"name": "oliwierptak/Everon",
 	"version": "0.2.0",
     "require": {
-        
+		"php": ">=5.5.*"
     }
 }
