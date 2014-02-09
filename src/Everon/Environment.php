@@ -17,10 +17,11 @@ class Environment implements Interfaces\Environment
     protected $resources = [];
 
 
-    function __construct($root)
+    function __construct($root, $everon_source_root)
     {
         $this->resources = [
-            'root' => $root
+            'root' => $root,
+            'everon_source_root' => $everon_source_root
         ];
 
         $this->resources += [
@@ -29,14 +30,9 @@ class Environment implements Interfaces\Environment
             'data_mapper' => $this->getRoot().'DataMapper'.DIRECTORY_SEPARATOR,
             'view' => $this->getRoot().'View'.DIRECTORY_SEPARATOR,
             'controller' => $this->getRoot().'Controller'.DIRECTORY_SEPARATOR,
-            'source' => $this->getRoot().'Src'.DIRECTORY_SEPARATOR,
             'tests' => $this->getRoot().'Tests'.DIRECTORY_SEPARATOR,
             'tmp' => $this->getRoot().'Tmp'.DIRECTORY_SEPARATOR,
             'web' => $this->getRoot().'Web'.DIRECTORY_SEPARATOR,
-        ];
-
-        $this->resources += [
-            'everon' => $this->getSource().'Everon'.DIRECTORY_SEPARATOR,
         ];
 
         $this->resources += [
@@ -48,9 +44,9 @@ class Environment implements Interfaces\Environment
         ];
 
         $this->resources += [
-            'everon_config' => $this->getEveron().'Config'.DIRECTORY_SEPARATOR,
-            'everon_interface' => $this->getEveron().'Interfaces'.DIRECTORY_SEPARATOR,
-            'everon_helper' => $this->getEveron().'Helper'.DIRECTORY_SEPARATOR,
+            'everon_config' => $this->getEveronRoot().'Config'.DIRECTORY_SEPARATOR,
+            'everon_interface' => $this->getEveronRoot().'Interfaces'.DIRECTORY_SEPARATOR,
+            'everon_helper' => $this->getEveronRoot().'Helper'.DIRECTORY_SEPARATOR,
         ];
 
         $this->resources += [
@@ -75,6 +71,16 @@ class Environment implements Interfaces\Environment
         $this->resources['root'] = $root;
     }
 
+    function getEveronRoot()
+    {
+        return $this->resources['everon_source_root'];
+    }
+
+    function setEveronRoot($everon_root)
+    {
+        $this->resources['everon_source_root'] = $everon_root;
+    }
+    
     function getConfig()
     {
         return $this->resources['config'];
@@ -125,16 +131,6 @@ class Environment implements Interfaces\Environment
         $this->resources['controller'] = $controller;
     }
 
-    function getSource()
-    {
-        return $this->resources['source'];
-    }
-    
-    function setSource($source)
-    {
-        $this->resources['source'] = $source;
-    }
-
     function getTest()
     {
         return $this->resources['tests'];
@@ -143,16 +139,6 @@ class Environment implements Interfaces\Environment
     function setTest($test)
     {
         $this->resources['tests'] = $test;
-    }
-
-    function getEveron()
-    {
-        return $this->resources['everon'];
-    }
-    
-    function setEveron($everon)
-    {
-        $this->resources['everon'] = $everon;
     }
 
     function getEveronConfig()

@@ -49,16 +49,16 @@ class Bootstrap
     protected function setupClassLoader()
     {
         require_once($this->Environment->getEveronInterface().'ClassLoader.php');
-        require_once($this->Environment->getEveron().'ClassLoader.php');
+        require_once($this->Environment->getEveronRoot().'ClassLoader.php');
 
         $ini = @parse_ini_file($this->Environment->getConfig().'application.ini', true);
         $use_cache = (bool) @$ini['cache']['autoloader'];
 
         $ClassMap = null;
         if ($use_cache) {
-            require_once($this->Environment->getEveron().'ClassLoaderCache.php');
+            require_once($this->Environment->getEveronRoot().'ClassLoaderCache.php');
             require_once($this->Environment->getEveronInterface().'ClassMap.php');
-            require_once($this->Environment->getEveron().'ClassMap.php');
+            require_once($this->Environment->getEveronRoot().'ClassMap.php');
 
             $classmap_filename = $this->Environment->getCache().'everon_classmap_'.$this->getOsName().'.php';
             $ClassMap = new ClassMap($classmap_filename);
@@ -75,7 +75,7 @@ class Bootstrap
     {
         $this->setupClassLoader();
         
-        $this->getClassLoader()->add('Everon', $this->getEnvironment()->getSource());
+        $this->getClassLoader()->add('Everon', $this->getEnvironment()->getEveronRoot());
         $this->getClassLoader()->register();
     }
     
@@ -84,16 +84,16 @@ class Bootstrap
         $this->registerClassLoader();
         
         require_once($this->getEnvironment()->getEveronHelper().'ToString.php');
-        require_once($this->getEnvironment()->getEveron().'Exception.php');
+        require_once($this->getEnvironment()->getEveronRoot().'Exception.php');
 
         require_once($this->getEnvironment()->getEveronConfig().'Dependencies.php');
         
         return [$Container, $Factory];
     }
 
-    public static function setup($guid_value, $root, $log_filename)
+    public static function setup($guid_value, $app_root, $log_filename)
     {
-        $log_directory = implode(DIRECTORY_SEPARATOR, [$root, 'Tmp', 'logs']);
+        $log_directory = implode(DIRECTORY_SEPARATOR, [$app_root, 'Tmp', 'logs']);
         $log_filename = $log_directory.DIRECTORY_SEPARATOR.$log_filename;
 
         set_exception_handler(function ($Exception) use ($log_filename, $guid_value) {

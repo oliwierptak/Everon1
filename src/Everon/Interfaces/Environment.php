@@ -14,6 +14,8 @@ interface Environment
 {
     function getRoot();
     function setRoot($root);
+    function getEveronRoot();
+    function setEveronRoot($everon_root);
     function getConfig();
     function setConfig($config);
     function getDomain();
@@ -24,12 +26,8 @@ interface Environment
     function setView($view);
     function getController();
     function setController($controller);
-    function getSource();
-    function setSource($source);
     function getTest();
     function setTest($test);
-    function getEveron();
-    function setEveron($everon);
     function getEveronConfig();
     function setEveronLib($everon_lib);
     function getEveronInterface();
