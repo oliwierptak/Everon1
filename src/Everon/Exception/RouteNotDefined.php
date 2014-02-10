@@ -7,16 +7,8 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon\Mvc;
+namespace Everon\Exception;
 
-use Everon\Dependency;
-use Everon\Helper;
-use Everon\Exception;
-use Everon\Interfaces;
-use Everon\Http;
-use Everon\Router as EveronRouter;
+use Everon\Exception as EveronException;
 
-class Router extends EveronRouter implements Interfaces\Router
-{
-
-}
+class RouteNotDefined extends EveronException{};

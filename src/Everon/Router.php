@@ -61,14 +61,14 @@ class Router implements Interfaces\Router
         if ($Request->isEmptyUrl() && $Item === null) {
             $DefaultItem = $this->getConfig()->getDefaultItem() ?: $DefaultItem;
             if ($DefaultItem === null) {
-                throw new Exception\InvalidRoute('Default route does not exist');
+                throw new Exception\RouteNotDefined('Default route does not exist');
             }
             
             $Item = $DefaultItem;
         }
 
         if ($Item === null) {
-            throw new Exception\InvalidRoute($Request->getPath());
+            throw new Exception\RouteNotDefined($Request->getPath());
         }
         
         $this->validateAndUpdateRequest($Item, $Request);

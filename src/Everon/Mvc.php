@@ -42,9 +42,9 @@ class Mvc extends Core implements Interfaces\Core
         try {
             parent::run($Guid);
         }
-        catch (Exception\InvalidRoute $Exception) {
+        catch (Exception\RouteNotDefined $Exception) {
             $this->getLogger()->error($Exception);
-            $NotFound = new HttpException\NotFound('Page not found. '.$Exception->getMessage());
+            $NotFound = new HttpException\NotFound('Page not found: '.$Exception->getMessage());
             $this->showControllerException($NotFound->getHttpStatus(), $NotFound, $this->Controller);
         }
         catch (Exception $Exception) {

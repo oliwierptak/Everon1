@@ -28,7 +28,7 @@ class Console extends Core implements Interfaces\Core
         try {
             parent::run($Guid);
         }
-        catch (Exception\InvalidRoute $e) {
+        catch (Exception\RouteNotDefined $e) {
             $this->getLogger()->notFound($e);
             echo "Unknown command: ".$e->getMessage()."\n";
         }
