@@ -13,6 +13,11 @@ use Everon\Interfaces;
 
 interface ConfigManager
 {
+    /**
+     * @return Interfaces\ConfigExpressionMatcher
+     */
+    function getExpressionMatcher();
+        
     function register(Interfaces\Config $Config);
     function unRegister($name);
     function isRegistered($name);

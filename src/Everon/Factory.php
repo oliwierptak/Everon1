@@ -788,4 +788,35 @@ class Factory implements Interfaces\Factory
             throw new Exception\Factory('Environment initialization error', null, $e);
         }
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildModule($name, Interfaces\Config $Config, Interfaces\Config $RouterConfig)
+    {
+        try {
+            $Module = new Module($name, $Config, $RouterConfig);
+            $this->injectDependencies('Everon\Module', $Module);
+            return $Module;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('Module initialization error', null, $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildModuleManager()
+    {
+        try {
+            $ModuleManager = new Module\Manager();
+            $this->injectDependencies('Everon\Module\Manager', $ModuleManager);
+            return $ModuleManager;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('ModuleManager initialization error', null, $e);
+        }
+    }
+    
 }

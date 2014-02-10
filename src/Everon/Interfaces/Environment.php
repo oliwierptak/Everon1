@@ -46,5 +46,7 @@ interface Environment
     function setLog($log);
     function getWeb();
     function setWeb($web);
+    function getModule();
+    function setModule($module);
     function toArray();
 }

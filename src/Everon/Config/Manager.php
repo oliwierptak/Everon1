@@ -49,32 +49,57 @@ class Manager implements Interfaces\ConfigManager
     {
         $this->ConfigLoader = $Loader;
     }
-
-    protected function loadAndRegisterConfigs()
+    
+    /**
+     * @param Interfaces\ConfigLoader $Loader
+     * @return array
+     */
+    public function getConfigDataFromLoader(Interfaces\ConfigLoader $Loader)
     {
         $default_config_data = $this->getDefaultConfigData();
-        $configs_data = $this->getConfigLoader()->load((bool) $default_config_data['cache']['config_manager']);
+        return $Loader->load((bool) $default_config_data['cache']['config_manager']);
+    }
+    
+    public function getAllConfigsDataAndCompiler($configs_data)
+    {
         /**
          * @var Interfaces\ConfigLoaderItem $ConfigLoaderItem
          */
-        $d = [];
+        $config_items_data = [];
         foreach ($configs_data as $name => $ConfigLoaderItem) {
-            $d[$name] = $ConfigLoaderItem->toArray();
+            $config_items_data[$name] = $ConfigLoaderItem->toArray();
         }
-        
-        $Compiler = $this->getExpressionMatcher()->getCompiler($d, $this->getEnvironmentExpressions());
-        $Compiler($d);
-        
+
+        //compile expressions in one go
+        $Compiler = $this->getExpressionMatcher()->getCompiler($config_items_data, $this->getEnvironmentExpressions());
+        $Compiler($config_items_data);
+
+        return [$Compiler, $config_items_data];
+    }
+    
+    protected function loadAndRegisterConfigs()
+    {
+        $configs_data = $this->getConfigDataFromLoader($this->getConfigLoader());
+        list($Compiler, $config_items_data) = $this->getAllConfigsDataAndCompiler($configs_data);
+
         foreach ($configs_data as $name => $ConfigLoaderItem) {
-            $ConfigLoaderItem->setData($d[$name]);
-            if ($this->isRegistered($name) === false) {
-                $Config = $this->getFactory()->buildConfig($name, $ConfigLoaderItem, $Compiler);
-                $this->register($Config);
-            }
+            $ConfigLoaderItem->setData($config_items_data[$name]);
+            $this->loadAndRegisterOneConfig($name, $ConfigLoaderItem, $Compiler);
         }
     }
     
-    protected function getEnvironmentExpressions()
+    public function loadAndRegisterOneConfig($name, $ConfigLoaderItem, $Compiler) //xxx
+    {
+        if ($this->isRegistered($name) === false) {
+            $Config = $this->getFactory()->buildConfig($name, $ConfigLoaderItem, $Compiler);
+            $this->register($Config);
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public function getEnvironmentExpressions()
     {
         $data = $this->getEnvironment()->toArray();
         foreach ($data as $key => $value) {
@@ -144,7 +169,7 @@ EOF;
     /**
      * @return Interfaces\ConfigExpressionMatcher
      */
-    protected function getExpressionMatcher()
+    public function getExpressionMatcher()
     {
         if ($this->ExpressionMatcher === null) {
             $this->ExpressionMatcher = $this->getFactory()->buildConfigExpressionMatcher();

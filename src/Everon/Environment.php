@@ -26,13 +26,14 @@ class Environment implements Interfaces\Environment
 
         $this->resources += [
             'config' => $this->getRoot().'Config'.DIRECTORY_SEPARATOR,
-            'domain' => $this->getRoot().'Domain'.DIRECTORY_SEPARATOR,
-            'data_mapper' => $this->getRoot().'DataMapper'.DIRECTORY_SEPARATOR,
-            'view' => $this->getRoot().'View'.DIRECTORY_SEPARATOR,
             'controller' => $this->getRoot().'Controller'.DIRECTORY_SEPARATOR,
+            'data_mapper' => $this->getRoot().'DataMapper'.DIRECTORY_SEPARATOR,
+            'domain' => $this->getRoot().'Domain'.DIRECTORY_SEPARATOR,
+            'module' => $this->getRoot().'Module'.DIRECTORY_SEPARATOR,
             'tests' => $this->getRoot().'Tests'.DIRECTORY_SEPARATOR,
             'tmp' => $this->getRoot().'Tmp'.DIRECTORY_SEPARATOR,
             'web' => $this->getRoot().'Web'.DIRECTORY_SEPARATOR,
+            'view' => $this->getRoot().'View'.DIRECTORY_SEPARATOR,
         ];
 
         $this->resources += [
@@ -239,6 +240,16 @@ class Environment implements Interfaces\Environment
     function setAssets($assets)
     {
         $this->resources['assets'] = $assets;
+    }
+    
+    function getModule()
+    {
+        return $this->resources['module'];
+    }
+    
+    function setModule($module)
+    {
+        $this->resources['module'] = $module;
     }
     
     function toArray()

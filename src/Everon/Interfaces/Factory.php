@@ -11,9 +11,10 @@ namespace Everon\Interfaces;
 
 use Everon\Config;
 use Everon\Domain;
-use Everon\Exception;
 use Everon\DataMapper;
+use Everon\Exception;
 use Everon\Interfaces;
+use Everon\Module;
 use Everon\View;
 
 interface Factory
@@ -351,5 +352,20 @@ interface Factory
      * @return Interfaces\Environment
      * @throws Exception\Factory
      */
-    function buildEnvironment($app_root, $source_root);    
+    function buildEnvironment($app_root, $source_root);
+
+    /**
+     * @param $name
+     * @param Interfaces\Config $Config
+     * @param Interfaces\Config $RouterConfig
+     * @return Module
+     * @throws Exception\Factory
+     */
+    function buildModule($name, Interfaces\Config $Config, Interfaces\Config $RouterConfig);
+
+    /**
+     * @return Module\Manager
+     * @throws Exception\Factory
+     */
+    function buildModuleManager();
 }
