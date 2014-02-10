@@ -14,8 +14,8 @@ use Everon\Interfaces;
 
 class Item implements Interfaces\ConfigItem
 {
+    const PROPERTY_DEFAULT = '_default';
     const PROPERTY_NAME = '____name';
-    const DEFAULT_NAME = '_default';
 
     use Helper\Asserts;
     use Helper\Asserts\IsStringAndNonEmpty;
@@ -32,7 +32,8 @@ class Item implements Interfaces\ConfigItem
     public function __construct(array $data, array $defaults=[])
     {
         $empty_defaults = [
-            static::DEFAULT_NAME => false,
+            static::PROPERTY_DEFAULT => false,
+            static::PROPERTY_NAME => null,
         ];
 
         $empty_defaults = array_merge($empty_defaults, $defaults);
@@ -45,8 +46,9 @@ class Item implements Interfaces\ConfigItem
     {
         $this->validateData($this->data);
         $this->setName($this->data[static::PROPERTY_NAME]);
-        $this->setIsDefault($this->data[static::DEFAULT_NAME]);
-        unset($this->data[static::DEFAULT_NAME]);
+        
+        $this->setIsDefault($this->data[static::PROPERTY_DEFAULT]);
+        unset($this->data[static::PROPERTY_DEFAULT]);
     }
     
     /**
@@ -55,6 +57,22 @@ class Item implements Interfaces\ConfigItem
     public function validateData(array $data)
     {
         $this->assertIsStringAndNonEmpty($data[static::PROPERTY_NAME], 'Invalid item name: "%s"', 'ConfigItem');
+    }
+
+    /**
+     * @param null $module
+     */
+    public function setModule($module)
+    {
+        $this->module = $module;
+    }
+
+    /**
+     * @return null
+     */
+    public function getModule()
+    {
+        return $this->module;
     }
     
     public function getName()

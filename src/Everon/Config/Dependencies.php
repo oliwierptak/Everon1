@@ -27,6 +27,11 @@ $Container->propose('Logger', function() use ($Factory) {
     return $Factory->buildLogger($log_directory, $enabled);
 });
 
+$Container->propose('FileSystem', function() use ($Factory) {
+    $root_directory = $Factory->getDependencyContainer()->resolve('Environment')->getRoot();
+    return $Factory->buildFileSystem($root_directory);
+});
+
 $Container->propose('Response', function() use ($Factory) {
     $Logger = $Factory->getDependencyContainer()->resolve('Logger');
     $Headers = $Factory->buildHttpHeaderCollection();
@@ -51,4 +56,8 @@ $Container->propose('Router', function() use ($Factory) {
     $RouteConfig = $Factory->getDependencyContainer()->resolve('ConfigManager')->getConfigByName('console');
     $RequestValidator = $Factory->buildRequestValidator();
     return $Factory->buildRouter($RouteConfig, $RequestValidator);
+});
+
+$Container->propose('ModuleManager', function() use ($Factory) {
+    return $Factory->buildModuleManager();
 });

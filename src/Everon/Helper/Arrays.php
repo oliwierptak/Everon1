@@ -49,7 +49,6 @@ trait Arrays
                 }
             }
         }
-
         return $data;
     }
 
@@ -66,7 +65,6 @@ trait Arrays
                 unset($data[$name]);
             }
         }
-
         return $data;
     }
 
@@ -123,7 +121,6 @@ trait Arrays
                 $data[$key] = $value;
             }
         }
-        
         return $data;
     }
 
@@ -156,7 +153,6 @@ trait Arrays
             $result[$scope_name][$property] = $value;
             unset($result[$key]);
         }
-        
         return $result;
     }
 
@@ -187,7 +183,6 @@ trait Arrays
                 unset($data[$name]);
             }
         }
-        
         return $data;
     }
 
@@ -196,7 +191,7 @@ trait Arrays
      * @param $data
      * @return array
      */
-    protected function arrayArrangeByKey($key, $data)
+    protected function arrayArrangeByKey($key, array $data)
     {
         $result = [];
         for ($a=0; $a<count($data); $a++) {
@@ -211,7 +206,7 @@ trait Arrays
      * @param $data
      * @return array
      */
-    protected function arrayArrangeByKeySingle($key, $data)
+    protected function arrayArrangeByKeySingle($key, array $data)
     {
         $result = [];
         for ($a=0; $a<count($data); $a++) {
@@ -219,5 +214,14 @@ trait Arrays
             $result[$item[$key]] = $item;
         }
         return $result;
+    }
+    
+    protected function arrayPrefixKey($prefix, array $data)
+    {
+        foreach ($data as $index => $value) {
+            $data[$prefix.$index] = $value;
+            unset($data[$index]);
+        }
+        return $data;
     }
 }

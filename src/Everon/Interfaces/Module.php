@@ -25,14 +25,14 @@ interface Module
     function setName($name);
 
     /**
-     * @return Interfaces\ConfigItem
+     * @return Interfaces\Config
      */
-    function getModuleConfig();
+    function getConfig();
 
     /**
-     * @param Interfaces\ConfigItem $ModuleConfig
+     * @param Interfaces\Config $Config
      */
-    function setModuleConfig(Interfaces\ConfigItem $ModuleConfig);
+    function setConfig(Interfaces\Config $Config);
 
     /**
      * @return Interfaces\ConfigItemRouter

@@ -17,6 +17,8 @@ use Everon\Interfaces;
 class Loader implements Interfaces\ConfigLoader
 {
     use Dependency\Injection\Factory;
+    use Dependency\Injection\FileSystem;
+    use Helper\Arrays;
     
     protected $config_directory = null;
     protected $cache_directory = null;
@@ -86,6 +88,21 @@ class Loader implements Interfaces\ConfigLoader
 
             $list[$name] = $this->getFactory()->buildConfigLoaderItem($config_filename, $ini_config_data);
         }
+
+        //gather router data from modules
+        $ini_config_data = [];
+        $module_list = $this->getFileSystem()->listPathDir('//Module');
+        /**
+         * @var \DirectoryIterator $Dir
+         */
+        foreach ($module_list as $Dir) {
+            $module_name = $Dir->getBasename();
+            $config_filename = $this->getFileSystem()->getRealPath('//Module/'.$module_name.'/Config/router.ini');
+            $module_config_data = $this->arrayPrefixKey($module_name.'@', parse_ini_file($config_filename, true));
+            $ini_config_data = $this->arrayMergeDefault($ini_config_data, $module_config_data);
+        }
+
+        $list['router'] = $this->getFactory()->buildConfigLoaderItem('router.ini', $ini_config_data);
         
         return $list;
     }

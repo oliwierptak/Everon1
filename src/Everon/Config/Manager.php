@@ -18,6 +18,7 @@ class Manager implements Interfaces\ConfigManager
 {
     use Dependency\Injection\Environment;
     use Dependency\Injection\Factory;
+    use Dependency\Injection\FileSystem;
     use Dependency\ConfigLoader;
 
     use Helper\Arrays;
@@ -77,7 +78,7 @@ class Manager implements Interfaces\ConfigManager
         return [$Compiler, $config_items_data];
     }
     
-    protected function loadAndRegisterConfigs()
+    protected function loadAndRegister()
     {
         $configs_data = $this->getConfigDataFromLoader($this->getConfigLoader());
         list($Compiler, $config_items_data) = $this->getAllConfigsDataAndCompiler($configs_data);
@@ -217,7 +218,7 @@ EOF;
     public function getConfigByName($name)
     {
         if (is_null($this->configs)) {
-            $this->loadAndRegisterConfigs();
+            $this->loadAndRegister();
         }
 
         $this->assertIsArrayKey($name, $this->configs, 'Invalid config name: %s', 'Everon\Exception\Config');
@@ -258,7 +259,7 @@ EOF;
     public function getConfigs()
     {
         if (is_null($this->configs)) {
-            $this->loadAndRegisterConfigs();
+            $this->loadAndRegister();
         }
         
         return $this->configs;

@@ -14,6 +14,15 @@ namespace Everon\Interfaces;
  */
 interface ConfigItemRouter
 {
+    /**
+     * @param null $module
+     */
+    function setModule($module);
+
+    /**
+     * @return null
+     */
+    function getModule();
     function getUrl();
     function setUrl($url);
     function getController();

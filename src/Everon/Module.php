@@ -11,16 +11,12 @@ namespace Everon;
 
 use Everon\Exception;
 use Everon\Dependency;
-use Everon\Interfaces\Module2;
 
 class Module implements Interfaces\Module
 {
+    use Dependency\Config;
+    
     protected $name = null;
-
-    /**
-     * @var Interfaces\ConfigItem
-     */
-    protected $ModuleConfig = null;
 
     /**
      * @var Interfaces\ConfigItemRouter
@@ -31,25 +27,8 @@ class Module implements Interfaces\Module
     public function __construct($name, Interfaces\Config $Config, Interfaces\Config $RouterConfig)
     {
         $this->name = $name;
-        
-        $this->ModuleConfig = $Config;
+        $this->Config = $Config;
         $this->RouteConfig = $RouterConfig;
-    }
-
-    /**
-     * @param \Everon\Interfaces\ConfigItem $ModuleConfig
-     */
-    public function setModuleConfig(Interfaces\ConfigItem $ModuleConfig)
-    {
-        $this->ModuleConfig = $ModuleConfig;
-    }
-
-    /**
-     * @return \Everon\Interfaces\ConfigItem
-     */
-    public function getModuleConfig()
-    {
-        return $this->ModuleConfig;
     }
 
     /**

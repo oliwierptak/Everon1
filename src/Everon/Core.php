@@ -17,6 +17,7 @@ abstract class Core implements Interfaces\Core
     use Dependency\Injection\Factory;
     use Dependency\Injection\Router;
     use Dependency\Injection\Request;
+    use Dependency\Injection\ModuleManager;
 
     /**
      * @var Interfaces\Controller
@@ -57,11 +58,13 @@ abstract class Core implements Interfaces\Core
      */
     public function run(Guid $Guid)
     {
+        die('run');
         $this->runOnce($Guid);
         /**
          * @var \Everon\Interfaces\MvcController|\Everon\Interfaces\Controller $Controller
          * @var \Everon\Interfaces\ConfigItemRouter $CurrentRoute
          */
+        
         $CurrentRoute = $this->getRouter()->getRouteByRequest($this->getRequest());
         $this->Controller = $this->createController($CurrentRoute->getController());
         $this->Controller->execute($CurrentRoute->getAction());
