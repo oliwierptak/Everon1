@@ -18,8 +18,8 @@ class Router extends \Everon\Config implements Interfaces\Config
     {
         /*$data['url'] = '%application.e4nv.url%'.$data['url'];
         $data = $this->recompile($data);*/
-        $data[Item\Router::PROPERTY_MODULE] = '_Core';
         
         return $this->getFactory()->buildConfigItemRouter($name, $data);
     }
 }
+

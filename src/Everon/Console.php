@@ -14,7 +14,12 @@ use Everon\Interfaces;
 
 class Console extends Core implements Interfaces\Core
 {
-    protected function createController($name)
+    /**
+     * @param $name
+     * @param $module
+     * @return Interfaces\Controller
+     */
+    protected function createController($name, $module)
     {
         return $this->getFactory()->buildController($name, 'Everon\Console\Controller');
     }

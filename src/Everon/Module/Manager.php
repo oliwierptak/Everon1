@@ -92,7 +92,6 @@ class Manager implements Interfaces\ModuleManager
 
             $ModuleRouteConfig = $this->getModuleConfig($module_name, 'router');
             $module_router_data = $ModuleRouteConfig->getItems();
-            sd($module_router_data);
         }
     }
     

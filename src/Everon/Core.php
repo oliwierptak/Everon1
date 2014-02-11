@@ -33,9 +33,10 @@ abstract class Core implements Interfaces\Core
 
     /**
      * @param $name
+     * @param $module
      * @return Interfaces\Controller
      */
-    protected abstract function createController($name);
+    protected abstract function createController($name, $module);
     
     
     protected function runOnce(Guid $Guid)
@@ -58,15 +59,14 @@ abstract class Core implements Interfaces\Core
      */
     public function run(Guid $Guid)
     {
-        die('run');
         $this->runOnce($Guid);
         /**
          * @var \Everon\Interfaces\MvcController|\Everon\Interfaces\Controller $Controller
          * @var \Everon\Interfaces\ConfigItemRouter $CurrentRoute
          */
-        
+
         $CurrentRoute = $this->getRouter()->getRouteByRequest($this->getRequest());
-        $this->Controller = $this->createController($CurrentRoute->getController());
+        $this->Controller = $this->createController($CurrentRoute->getController(), $CurrentRoute->getModule());
         $this->Controller->execute($CurrentRoute->getAction());
     }
     

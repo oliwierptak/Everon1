@@ -36,8 +36,7 @@ class Router implements Interfaces\Router
     /**
      * @param Interfaces\Request $Request
      * @return Interfaces\ConfigItemRouter
-     * @throws Exception\InvalidRoute
-     * @throws Exception\Router
+     * @throws Exception\RouteNotDefined
      */
     public function getRouteByRequest(Interfaces\Request $Request)
     {

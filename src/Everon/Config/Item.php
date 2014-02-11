@@ -46,7 +46,7 @@ class Item implements Interfaces\ConfigItem
     {
         $this->validateData($this->data);
         $this->setName($this->data[static::PROPERTY_NAME]);
-        
+        unset($this->data[static::PROPERTY_NAME]);
         $this->setIsDefault($this->data[static::PROPERTY_DEFAULT]);
         unset($this->data[static::PROPERTY_DEFAULT]);
     }

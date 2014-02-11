@@ -44,7 +44,6 @@ class Router extends \Everon\Config\Item implements Interfaces\ConfigItemRouter
     {
         parent::__construct($data, [
             'url' => null,
-            'module' => null,
             'controller' => null,
             'action' => null,
             'get' => [],

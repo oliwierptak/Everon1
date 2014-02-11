@@ -23,14 +23,15 @@ class Mvc extends Core implements Interfaces\Core
      * @var Interfaces\MvcController
      */
     protected $Controller = null;
-    
+
     /**
      * @param $name
-     * @return Interfaces\MvcController
+     * @param $module
+     * @return Interfaces\Controller
      */
-    protected function createController($name)
+    protected function createController($name, $module)
     {
-        return $this->getFactory()->buildController($name, 'Everon\Mvc\Controller');
+        return $this->getFactory()->buildController($name, 'Everon\Module\\'.$module.'\Controller');
     }
 
     /**
@@ -64,7 +65,7 @@ class Mvc extends Core implements Interfaces\Core
          * @var Interfaces\MvcController $Controller
          */
         if (isset($Controller) === false) {
-            $Controller = $this->createController('Error');
+            $Controller = $this->createController('Error', '_Core');
         }
         
         $Controller->showException($Exception, $code);

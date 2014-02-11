@@ -99,11 +99,15 @@ class Loader implements Interfaces\ConfigLoader
             $module_name = $Dir->getBasename();
             $config_filename = $this->getFileSystem()->getRealPath('//Module/'.$module_name.'/Config/router.ini');
             $module_config_data = $this->arrayPrefixKey($module_name.'@', parse_ini_file($config_filename, true));
+            
+            foreach ($module_config_data as $section => $data) {
+                $module_config_data[$section][Item\Router::PROPERTY_MODULE] = $module_name;
+            }
+            
             $ini_config_data = $this->arrayMergeDefault($ini_config_data, $module_config_data);
         }
 
         $list['router'] = $this->getFactory()->buildConfigLoaderItem('router.ini', $ini_config_data);
-        
         return $list;
     }
     
