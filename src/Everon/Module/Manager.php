@@ -31,12 +31,12 @@ class Manager implements Interfaces\ModuleManager
      */
     protected $modules = null;
     
-    protected $configs_registered = false;
+    protected $configs_were_registered = false;
     
     
     protected function initConfigs()
     {
-        if ($this->configs_registered) {
+        if ($this->configs_were_registered) {
             return;
         }
         
@@ -49,7 +49,7 @@ class Manager implements Interfaces\ModuleManager
             $this->registerModuleConfigs($module_name);
         }
         
-        $this->configs_registered = true;
+        $this->configs_were_registered = true;
     }
 
     protected function registerModuleConfigs($module_name)
@@ -63,7 +63,7 @@ class Manager implements Interfaces\ModuleManager
 
     protected function initModules()
     {
-        $module_list = $this->getFileSystem()->listPathDir('//Module');
+        $module_list = $this->getFileSystem()->listPathDir($this->getEnvironment()->getModule());
         /**
          * @var \DirectoryIterator $Dir
          */
@@ -76,7 +76,7 @@ class Manager implements Interfaces\ModuleManager
             
             $Config = $this->getModuleConfig($module_name, 'module');
             $ConfigRouter = $this->getModuleConfig($module_name, 'router');
-            $this->modules[$module_name] = $this->getFactory()->buildModule($module_name, $Dir->getPathname(), $Config, $ConfigRouter);
+            $this->modules[$module_name] = $this->getFactory()->buildModule($module_name, $Dir->getPathname().DIRECTORY_SEPARATOR, $Config, $ConfigRouter);
         }
     }
     
@@ -94,11 +94,6 @@ class Manager implements Interfaces\ModuleManager
         }
         
         return $this->modules[$name];
-    }
-    
-    public function getModuleByRequest()
-    {
-        
     }
 
 }

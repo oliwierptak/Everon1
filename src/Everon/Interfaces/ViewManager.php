@@ -42,17 +42,24 @@ interface ViewManager
     function getCompilers();
 
     /**
+     * @param string $view_name
      * @return Interfaces\View
      */
-    function getDefaultTheme();
+    function getDefaultTheme($view_name='Index');
 
     /**
-     * @param $name
-     * @return mixed
-     * @throws \Everon\Exception\View
+     * @param string $view_name
+     * @return Interfaces\View
+     */
+    function getCurrentTheme($view_name='Index');
+
+    /**
+     * @param $theme_name
+     * @param $view_name
+     * @return Interfaces\View
      * @throws \Everon\Exception\ViewManager
      */
-    function getTheme($name);
+    function getTheme($theme_name, $view_name);
 
     /**
      * @param $name

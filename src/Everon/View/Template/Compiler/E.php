@@ -15,7 +15,7 @@ use Everon\View\Template\Compiler;
 
 class E extends Compiler
 {
-    use Dependency\FileSystem;
+    use Dependency\Injection\FileSystem;
     
     use Helper\String\Compiler;
     use Helper\String\EndsWith;
@@ -28,8 +28,8 @@ class E extends Compiler
     {
         try {
             $this->scope_name = $scope_name;
-            $curly_data = $this->arrayToValues($data);
-            $curly_data = $this->arrayDotKeysFlattern($curly_data);
+            //$curly_data = $this->arrayToValues($data);
+            $curly_data = $this->arrayDotKeysToScope($data, $scope_name);
             $php_content = $this->stringCompilerRun($template_content, $curly_data);
 
             $data = $this->arrayDotKeysToArray(

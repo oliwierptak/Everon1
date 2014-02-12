@@ -31,6 +31,11 @@ abstract class Module implements Interfaces\Module
      * @var Interfaces\Collection
      */
     protected $ViewCollection = null;
+    
+    /**
+     * @var Interfaces\Collection
+     */
+    protected $ControllerCollection = null;
 
     
     public function __construct($name, $module_directory, Interfaces\Config $Config, Interfaces\Config $RouterConfig)
@@ -40,22 +45,34 @@ abstract class Module implements Interfaces\Module
         $this->Config = $Config;
         $this->RouteConfig = $RouterConfig;
         $this->ViewCollection = new Helper\Collection([]);
+        $this->ControllerCollection = new Helper\Collection([]);
     }
 
     /**
      * @param $name
      * @return Interfaces\Controller
      */
-    public function createController($name)
+    protected function createController($name)
     {
         return $this->getFactory()->buildController($name, $this, 'Everon\Module\\'.$this->getName().'\Controller');
     }
     
-    public function createView($name)
+    protected function createView($name)
     {
-        return $this->getViewManager()->createView($name, $this->getDirectory(), 'Everon\Module\\'.$this->getName().'\View');
+        $template_directory = $this->getDirectory().'View'.DIRECTORY_SEPARATOR.$name.DIRECTORY_SEPARATOR.'templates'.DIRECTORY_SEPARATOR;
+        return $this->getViewManager()->createView($name, $template_directory, 'Everon\Module\\'.$this->getName().'\View');
     }
-    
+
+    public function getController($name)
+    {
+        if ($this->ControllerCollection->has($name) === false) {
+            $View = $this->createController($name);
+            $this->ControllerCollection->set($name, $View);
+        }
+
+        return $this->ControllerCollection->get($name);
+    }
+
     public function getView($name)
     {
         if ($this->ViewCollection->has($name) === false) {

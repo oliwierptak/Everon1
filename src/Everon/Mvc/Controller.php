@@ -73,19 +73,19 @@ abstract class Controller extends \Everon\Controller implements Interfaces\MvcCo
             $this->getView()->{$action}();
         }
 
-        die('fuck page template');
-        $PageTemplate = $this->getView()->getViewTemplateByAction(
-            $action, $this->getViewManager()->getDefaultView()->getContainer()
-        );
-        
-        if ($PageTemplate === null) {
-            throw new Http\Exception\NotFound('Page template: "%s/%s" not found', [$this->getName(),$action]);
+        $ActionTemplate = $this->getView()->getTemplate($action, $this->getView()->getData());
+        if ($ActionTemplate === null) {
+            throw new Http\Exception\NotFound('Action template: "%s/%s" not found', [$this->getName(),$action]);
         }
 
-        $this->getView()->setContainer($PageTemplate);
+        $Theme = $this->getViewManager()->getCurrentTheme();
+        $Theme->set('View.body', $ActionTemplate);
+        $data = $this->arrayMergeDefault($Theme->getData(), $ActionTemplate->getData());
+        $Theme->setData($data);
+        $this->getView()->setContainer($Theme->getContainer());
         $this->getViewManager()->compileView($action, $this->getView());
-        
-        $content = (string) $PageTemplate;
+
+        $content = (string) $this->getView()->getContainer();
         $this->getResponse()->setData($content);
     }
 
