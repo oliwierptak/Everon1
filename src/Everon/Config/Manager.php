@@ -83,14 +83,38 @@ class Manager implements Interfaces\ConfigManager
      */
     protected function getConfigDataFromLoader(Interfaces\ConfigLoader $Loader)
     {
-        return $Loader->load((bool) $this->isCachingEnabled());
+        //load configs from application
+        $data = $Loader->load((bool) $this->isCachingEnabled());
+        
+        //load router.ini data from all modules
+        $data['router'] = [];
+        $data_router = $this->getRouterDataFromAllModules();
+        foreach ($data_router as $module_name => $module_router_data) {
+            list($filename, $loader_data) = $module_router_data;
+            $data[$module_name.'@router'] = $this->getFactory()->buildConfigLoaderItem($filename, $loader_data);
+            $data['router'] = $this->arrayMergeDefault($data['router'], $this->arrayPrefixKey($module_name.'@', $loader_data)); 
+        }
+        $data['router'] = $this->getFactory()->buildConfigLoaderItem('//router.ini', $data['router']);
+        
+        //load module.ini data from all modules
+        $module_list = $this->getFileSystem()->listPathDir($this->getEnvironment()->getModule());
+        /**
+         * @var \DirectoryIterator $Dir
+         */
+        foreach ($module_list as $Dir) {
+            $module_name = $Dir->getBasename();
+            $Filename = new \SplFileInfo($this->getFileSystem()->getRealPath('//Module/'.$module_name.'/Config/module.ini'));
+            $data[$module_name.'@module'] = $this->getFactory()->buildConfigLoaderItem($Filename->getPathname(), parse_ini_file($Filename, true));
+        }
+
+        return $data;
     }
 
     /**
-     * @param $configs_data
+     * @param array $configs_data
      * @return array
      */
-    protected function getAllConfigsDataAndCompiler($configs_data)
+    protected function getAllConfigsDataAndCompiler(array $configs_data)
     {
         /**
          * @var Interfaces\ConfigLoaderItem $ConfigLoaderItem
@@ -112,21 +136,16 @@ class Manager implements Interfaces\ConfigManager
         $configs_data = $this->getConfigDataFromLoader($this->getConfigLoader());
         list($Compiler, $config_items_data) = $this->getAllConfigsDataAndCompiler($configs_data);
 
-        $ini_config_data = $this->getRouterDataFromModules();
-        $RouterLoaderItem = $this->getFactory()->buildConfigLoaderItem('//router.ini', $ini_config_data);
-
         foreach ($configs_data as $name => $ConfigLoaderItem) {
             $ConfigLoaderItem->setData($config_items_data[$name]);
             $this->loadAndRegisterOneConfig($name, $ConfigLoaderItem, $Compiler);
         }
-
-        $this->loadAndRegisterOneConfig('router', $RouterLoaderItem, $Compiler);
     }
 
-    public function getRouterDataFromModules()
+    public function getRouterDataFromAllModules()
     {
         //gather router data from modules xxx
-        $ini_config_data = [];
+        $router_config_data = [];
         $module_list = $this->getFileSystem()->listPathDir('//Module');
         /**
          * @var \DirectoryIterator $Dir
@@ -134,15 +153,15 @@ class Manager implements Interfaces\ConfigManager
         foreach ($module_list as $Dir) {
             $module_name = $Dir->getBasename();
             $config_filename = $this->getFileSystem()->getRealPath('//Module/'.$module_name.'/Config/router.ini');
-            $module_config_data = $this->arrayPrefixKey($module_name.'@', parse_ini_file($config_filename, true));
+            $module_config_data = parse_ini_file($config_filename, true);
 
             foreach ($module_config_data as $section => $data) {
                 $module_config_data[$section][Item\Router::PROPERTY_MODULE] = $module_name;
             }
-            $ini_config_data = $this->arrayMergeDefault($ini_config_data, $module_config_data);
+            $router_config_data[$module_name] = [$config_filename, $this->arrayMergeDefault($router_config_data, $module_config_data)];
         }
 
-        return $ini_config_data;
+        return $router_config_data;
     }
 
     /**
@@ -227,10 +246,11 @@ EOF;
     public function registerByFilename($config_name, $filename)
     {
         $default_data = [];
+        $config_data = $this->getConfigs();
         /**
          * @var Interfaces\Config $Config
          */
-        foreach ($this->getConfigs() as $name => $Config) {
+        foreach ($config_data as $name => $Config) {
             $default_data[$name] = $Config->toArray();
         }
 

@@ -34,6 +34,11 @@ interface Config extends Arrayable
     function getItems();
 
     /**
+     * @param array $items
+     */
+    function setItems(array $items);
+
+    /**
      * @param string $name
      * @return \Everon\Config\Item\Router
      */

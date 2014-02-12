@@ -84,6 +84,11 @@ interface ConfigManager
     function getConfigByName($name);
 
     /**
+     * @param Interfaces\Config $Config
+     */
+    function setConfigByName(Interfaces\Config $Config);
+
+    /**
      * @param $expression
      * @param mixed $default
      * @return mixed|null Returns $default in case nothing was found

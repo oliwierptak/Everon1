@@ -213,6 +213,14 @@ class Config implements Interfaces\Config
     }
 
     /**
+     * @inheritdoc
+     */
+    public function setItems(array $items)
+    {
+        $this->items = $items;
+    }
+
+    /**
      * @param string $name
      * @return Interfaces\ConfigItem
      */
@@ -271,7 +279,7 @@ class Config implements Interfaces\Config
         return $this;
     }
     
-    public function recompile($data)
+    public function recompile($data) //todo: meh, use setItems(), decouple compiler
     {
         $this->Compiler->__invoke($data);
         return $data;

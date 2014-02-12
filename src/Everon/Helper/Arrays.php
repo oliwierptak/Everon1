@@ -142,13 +142,14 @@ trait Arrays
      * ]
      * 
      * @param array $data
+     * @param string $dot
      * @return array
      */
-    protected function arrayDotKeysToArray(array $data)
+    protected function arrayDotKeysToArray(array $data, $dot='.')
     {
         $result = [];
         foreach($data as $key => $value) {
-            $tokens = explode('.', $key);
+            $tokens = explode($dot, $key);
             list($scope_name, $property) = $tokens;
             $result[$scope_name][$property] = $value;
             unset($result[$key]);
@@ -216,10 +217,10 @@ trait Arrays
         return $result;
     }
     
-    protected function arrayPrefixKey($prefix, array $data)
+    protected function arrayPrefixKey($prefix, array $data, $postfix='')
     {
         foreach ($data as $index => $value) {
-            $data[$prefix.$index] = $value;
+            $data[$prefix.$index.$postfix] = $value;
             unset($data[$index]);
         }
         return $data;

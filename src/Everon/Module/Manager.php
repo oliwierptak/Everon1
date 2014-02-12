@@ -34,36 +34,6 @@ class Manager implements Interfaces\ModuleManager
     protected $configs_were_registered = false;
     
     
-    protected function initConfigs()
-    {
-        if ($this->configs_were_registered) {
-            return;
-        }
-        
-        $module_list = $this->getFileSystem()->listPathDir($this->getEnvironment()->getModule());
-        /**
-         * @var \DirectoryIterator $Dir
-         */
-        foreach ($module_list as $Dir) {
-            $module_name = $Dir->getBasename();
-            $this->registerModuleConfigs($module_name);
-        }
-        
-        $this->configs_were_registered = true;
-    }
-
-    /**
-     * @param $module_name
-     */
-    protected function registerModuleConfigs($module_name)
-    {
-        $filename = $this->getFileSystem()->getRealPath('//Module/'.$module_name.'/Config/module.ini');
-        $this->getConfigManager()->registerByFilename($module_name.'@'.'module', $filename);
-        
-        $filename = $this->getFileSystem()->getRealPath('//Module/'.$module_name.'/Config/router.ini');
-        $this->getConfigManager()->registerByFilename($module_name.'@'.'router', $filename);
-    }
-
     protected function initModules()
     {
         $module_list = $this->getFileSystem()->listPathDir($this->getEnvironment()->getModule());
@@ -95,7 +65,6 @@ class Manager implements Interfaces\ModuleManager
      */
     protected function getModuleConfig($module_name, $config_name)
     {
-        $this->initConfigs();
         $name = $module_name.'@'.$config_name;
         return $this->getConfigManager()->getConfigByName($name);
     }

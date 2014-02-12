@@ -106,6 +106,9 @@ class Factory implements Interfaces\Factory
     }
 
     /**
+     * Class name is based on filename from ConfigLoaderItem, eg. /var/www/.../Module/UserLogin/Config/router.ini
+     * will become Everon\Config\Router
+     * 
      * @param $name
      * @param Interfaces\ConfigLoaderItem $ConfigLoaderItem
      * @param callable $Compiler
@@ -115,9 +118,11 @@ class Factory implements Interfaces\Factory
     public function buildConfig($name, Interfaces\ConfigLoaderItem $ConfigLoaderItem, \Closure $Compiler)
     {
         try {
-            $class_name = ucfirst($this->stringUnderscoreToCamel($name));
+            $ConfigFile = new \SplFileInfo($ConfigLoaderItem->getFilename());
+            $class_name = $ConfigFile->getBasename('.ini');
+            $class_name = ucfirst($this->stringUnderscoreToCamel($class_name));
             $class_name = $this->getFullClassName('Everon\Config', $class_name);
-
+            
             try {
                 if (class_exists($class_name, true) == false) {
                     $class_name = 'Everon\Config';
