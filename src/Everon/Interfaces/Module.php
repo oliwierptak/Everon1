@@ -15,16 +15,6 @@ use Everon\Exception;
 interface Module
 {
     /**
-     * @return null
-     */
-    function getName();
-
-    /**
-     * @param null $name
-     */
-    function setName($name);
-
-    /**
      * @return Interfaces\Config
      */
     function getConfig();
@@ -35,6 +25,26 @@ interface Module
     function setConfig(Interfaces\Config $Config);
 
     /**
+     * @param $name
+     * @return Interfaces\Controller
+     */
+    function getController($name);
+
+    function getDirectory();
+
+    /**
+     * @param $directory
+     */
+    function setDirectory($directory);
+
+    function getName();
+
+    /**
+     * @param $name
+     */
+    function setName($name);
+
+    /**
      * @return Interfaces\ConfigItemRouter
      */
     function getRouteConfig();
@@ -43,4 +53,10 @@ interface Module
      * @param Interfaces\ConfigItemRouter $RouteConfig
      */
     function setRouteConfig(Interfaces\ConfigItemRouter $RouteConfig);
+
+    /**
+     * @param $name
+     * @return Interfaces\View
+     */
+    function getView($name);
 }

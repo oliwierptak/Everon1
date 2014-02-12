@@ -38,6 +38,12 @@ abstract class Module implements Interfaces\Module
     protected $ControllerCollection = null;
 
     
+    /**
+     * @param $name
+     * @param $module_directory
+     * @param Interfaces\Config $Config
+     * @param Interfaces\Config $RouterConfig
+     */
     public function __construct($name, $module_directory, Interfaces\Config $Config, Interfaces\Config $RouterConfig)
     {
         $this->name = $name;
@@ -56,13 +62,20 @@ abstract class Module implements Interfaces\Module
     {
         return $this->getFactory()->buildController($name, $this, 'Everon\Module\\'.$this->getName().'\Controller');
     }
-    
+
+    /**
+     * @param $name
+     * @return Interfaces\View
+     */
     protected function createView($name)
     {
         $template_directory = $this->getDirectory().'View'.DIRECTORY_SEPARATOR.$name.DIRECTORY_SEPARATOR.'templates'.DIRECTORY_SEPARATOR;
         return $this->getViewManager()->createView($name, $template_directory, 'Everon\Module\\'.$this->getName().'\View');
     }
 
+    /**
+     * @inheritdoc
+     */
     public function getController($name)
     {
         if ($this->ControllerCollection->has($name) === false) {
@@ -73,6 +86,9 @@ abstract class Module implements Interfaces\Module
         return $this->ControllerCollection->get($name);
     }
 
+    /**
+     * @inheritdoc
+     */
     public function getView($name)
     {
         if ($this->ViewCollection->has($name) === false) {
@@ -84,23 +100,23 @@ abstract class Module implements Interfaces\Module
     }
 
     /**
-     * @param null $directory
+     * @inheritdoc
      */
     public function setDirectory($directory)
     {
         $this->directory = $directory;
     }
-
+    
     /**
-     * @return null
+     * @inheritdoc
      */
     public function getDirectory()
     {
         return $this->directory;
     }
-    
+
     /**
-     * @param \Everon\Interfaces\ConfigItemRouter $RouteConfig
+     * @inheritdoc
      */
     public function setRouteConfig(Interfaces\ConfigItemRouter $RouteConfig)
     {
@@ -108,7 +124,7 @@ abstract class Module implements Interfaces\Module
     }
 
     /**
-     * @return \Everon\Interfaces\ConfigItemRouter
+     * @inheritdoc
      */
     public function getRouteConfig()
     {
@@ -116,7 +132,7 @@ abstract class Module implements Interfaces\Module
     }
 
     /**
-     * @param null $name
+     * @inheritdoc
      */
     public function setName($name)
     {
@@ -124,7 +140,7 @@ abstract class Module implements Interfaces\Module
     }
 
     /**
-     * @return null
+     * @inheritdoc
      */
     public function getName()
     {

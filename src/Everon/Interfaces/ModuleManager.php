@@ -13,5 +13,9 @@ use Everon\Interfaces;
 
 interface ModuleManager
 {
-
+    /**
+     * @param $name
+     * @return mixed
+     */
+    function getModule($name);
 }

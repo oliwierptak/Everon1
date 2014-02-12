@@ -57,7 +57,7 @@ class Environment implements Interfaces\Environment
 
         $this->resources += [
             'cache_config' => $this->getCache().'config'.DIRECTORY_SEPARATOR,
-            'cache_view' => $this->getCache().'theme'.DIRECTORY_SEPARATOR,
+            'cache_view' => $this->getCache().'view'.DIRECTORY_SEPARATOR,
         ];
     }
 

@@ -40,7 +40,7 @@ class Manager implements Interfaces\ModuleManager
             return;
         }
         
-        $module_list = $this->getFileSystem()->listPathDir('//Module');
+        $module_list = $this->getFileSystem()->listPathDir($this->getEnvironment()->getModule());
         /**
          * @var \DirectoryIterator $Dir
          */
@@ -52,6 +52,9 @@ class Manager implements Interfaces\ModuleManager
         $this->configs_were_registered = true;
     }
 
+    /**
+     * @param $module_name
+     */
     protected function registerModuleConfigs($module_name)
     {
         $filename = $this->getFileSystem()->getRealPath('//Module/'.$module_name.'/Config/module.ini');
@@ -79,7 +82,12 @@ class Manager implements Interfaces\ModuleManager
             $this->modules[$module_name] = $this->getFactory()->buildModule($module_name, $Dir->getPathname().DIRECTORY_SEPARATOR, $Config, $ConfigRouter);
         }
     }
-    
+
+    /**
+     * @param $module_name
+     * @param $config_name
+     * @return Interfaces\Config
+     */
     protected function getModuleConfig($module_name, $config_name)
     {
         $this->initConfigs();
@@ -87,6 +95,9 @@ class Manager implements Interfaces\ModuleManager
         return $this->getConfigManager()->getConfigByName($name);
     }
 
+    /**
+     * @inheritdoc
+     */
     public function getModule($name)
     {
         if ($this->modules === null) {
