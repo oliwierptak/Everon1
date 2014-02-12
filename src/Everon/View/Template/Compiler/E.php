@@ -46,7 +46,7 @@ class E extends Compiler
             $Scope = new Scope();
             $Scope->setName($scope_name);
             $Scope->setPhp($php_content);
-            $Scope->setCompiled($this->runPhp($php_content, $scope_data));
+            $Scope->setCompiled($this->runPhp($php_content, $scope_data, $this->getFileSystem()));
             $Scope->setData($scope_data);
             
             return $Scope;

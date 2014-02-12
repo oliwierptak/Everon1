@@ -13,17 +13,7 @@ use Everon\Interfaces;
 use Everon\Exception;
 
 interface View
-{
-    /**
-     * @param Interfaces\Template $IndexContainer
-     */
-    function setIndexContainer(Interfaces\Template $IndexContainer);
-
-    /**
-     * @return Interfaces\Template
-     */
-    function getIndexContainer();
-        
+{        
     /**
      * @param $name
      */
@@ -90,15 +80,6 @@ interface View
      * @param array $data
      */    
     function setData(array $data);
-
-    /**
-     * @param $action
-     * @param Interfaces\Template $DefaultViewTemplate
-     * @return Interfaces\Template|Interfaces\TemplateContainer|null
-     */
-    function getViewTemplateByAction($action, Interfaces\Template $DefaultViewTemplate);
-    
-    function url($url);
 
     /**
      * @param $extension

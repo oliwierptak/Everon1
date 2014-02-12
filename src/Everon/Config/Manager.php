@@ -42,6 +42,8 @@ class Manager implements Interfaces\ConfigManager
      * @var array
      */
     protected $default_config_data = null;
+    
+    protected $use_cache = null;
 
     /**
      * @param Interfaces\ConfigLoader $Loader
@@ -51,14 +53,25 @@ class Manager implements Interfaces\ConfigManager
         $this->ConfigLoader = $Loader;
     }
     
+    public function isCachingEnabled()
+    {
+        if ($this->use_cache === null) {
+            $default_config_data = $this->getDefaultConfigData();
+            $this->use_cache = (bool) $default_config_data['cache']['config_manager'];
+            if ($this->use_cache === null) {
+                $this->use_cache = false;
+            }
+        }
+        return $this->use_cache;
+    }
+    
     /**
      * @param Interfaces\ConfigLoader $Loader
      * @return array
      */
     public function getConfigDataFromLoader(Interfaces\ConfigLoader $Loader)
     {
-        $default_config_data = $this->getDefaultConfigData();
-        return $Loader->load((bool) $default_config_data['cache']['config_manager']);
+        return $Loader->load((bool) $this->isCachingEnabled());
     }
     
     public function getAllConfigsDataAndCompiler($configs_data)
@@ -95,6 +108,26 @@ class Manager implements Interfaces\ConfigManager
             $Config = $this->getFactory()->buildConfig($name, $ConfigLoaderItem, $Compiler);
             $this->register($Config);
         }
+    }
+    
+    public function registerByFilename($config_name, $filename)
+    {
+        $default_data = [];
+        /**
+         * @var Interfaces\Config $Config
+         */
+        foreach ($this->getConfigs() as $name => $Config) {
+            $default_data[$name] = $Config->toArray();
+        }
+
+        $default_data[$config_name] = parse_ini_file($filename, true);
+        $Compiler = $this->getExpressionMatcher()->getCompiler($default_data, $this->getEnvironmentExpressions());
+        $Compiler($default_data);
+        
+        $data = $default_data[$config_name];
+        $ConfigLoaderItem = $this->getFactory()->buildConfigLoaderItem($filename, $data);
+        $ConfigLoaderItem->setData($data);
+        $this->loadAndRegisterOneConfig($config_name, $ConfigLoaderItem, $Compiler);
     }
 
     /**
@@ -190,7 +223,9 @@ EOF;
         }
 
         $this->configs[$Config->getName()] = $Config;
-        $this->getConfigLoader()->saveConfigToCache($Config);
+        if ($this->isCachingEnabled()) {
+            $this->getConfigLoader()->saveConfigToCache($Config);
+        }
     }
 
     /**

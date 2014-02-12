@@ -4,7 +4,7 @@
  *
  * (c) Oliwier Ptak <oliwierptak@gmail.com>
  *
- * For the full copyright and license information, please view the LICENSE
+ * For the full copyright and license information, please theme the LICENSE
  * file that was distributed with this source code.
  */
 namespace Everon;
@@ -33,7 +33,7 @@ class Environment implements Interfaces\Environment
             'tests' => $this->getRoot().'Tests'.DIRECTORY_SEPARATOR,
             'tmp' => $this->getRoot().'Tmp'.DIRECTORY_SEPARATOR,
             'web' => $this->getRoot().'Web'.DIRECTORY_SEPARATOR,
-            'view' => $this->getRoot().'View'.DIRECTORY_SEPARATOR,
+            'theme' => $this->getRoot().'Theme'.DIRECTORY_SEPARATOR,
         ];
 
         $this->resources += [
@@ -57,7 +57,7 @@ class Environment implements Interfaces\Environment
 
         $this->resources += [
             'cache_config' => $this->getCache().'config'.DIRECTORY_SEPARATOR,
-            'cache_view' => $this->getCache().'view'.DIRECTORY_SEPARATOR,
+            'cache_view' => $this->getCache().'theme'.DIRECTORY_SEPARATOR,
         ];
     }
 
@@ -112,14 +112,14 @@ class Environment implements Interfaces\Environment
         $this->resources['data_mapper'] = $data_mapper;
     }
     
-    function getView()
+    function getTheme()
     {
-        return $this->resources['view'];
+        return $this->resources['theme'];
     }
     
-    function setView($view)
+    function setTheme($theme)
     {
-        $this->resources['view'] = $view;
+        $this->resources['theme'] = $theme;
     }
 
     function getController()

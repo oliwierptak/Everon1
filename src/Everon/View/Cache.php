@@ -61,7 +61,7 @@ class Cache
 
             $Template->setTemplateContent($CacheFile);
             $Template->setData($cache);
-            $Template->setCompiledContent($this->runPhp($CacheFile, $cache));
+            $Template->setCompiledContent($this->runPhp($CacheFile, $cache, $this->getFileSystem())); //todo: add try/catch remove e_error from runPhp 
             
             $TmpDataFile->close();
             

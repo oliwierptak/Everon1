@@ -25,14 +25,41 @@ abstract class Controller implements Interfaces\Controller
     protected $action = null;
 
     /**
+     * @var Interfaces\Module
+     */
+    protected $Module = null;
+
+
+    /**
      * @param $action
      * @param $result
      * @return void
      */
     protected abstract function prepareResponse($action, $result);
-    
-    protected abstract function response();
 
+    protected abstract function response();
+    
+    
+    public function __construct(Interfaces\Module $Module)
+    {
+        $this->Module = $Module;
+    }
+
+    /**
+     * @param \Everon\Interfaces\Module $Module
+     */
+    public function setModule($Module)
+    {
+        $this->Module = $Module;
+    }
+
+    /**
+     * @return \Everon\Interfaces\Module
+     */
+    public function getModule()
+    {
+        return $this->Module;
+    }
 
     /**
      * @param $name

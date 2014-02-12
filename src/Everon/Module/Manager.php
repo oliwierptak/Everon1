@@ -31,50 +31,39 @@ class Manager implements Interfaces\ModuleManager
      */
     protected $modules = null;
     
+    protected $configs_registered = false;
+    
     
     protected function initConfigs()
     {
+        if ($this->configs_registered) {
+            return;
+        }
+        
         $module_list = $this->getFileSystem()->listPathDir('//Module');
         /**
          * @var \DirectoryIterator $Dir
          */
         foreach ($module_list as $Dir) {
-            $name = $Dir->getBasename();
-            $this->registerModuleConfigs($name);
+            $module_name = $Dir->getBasename();
+            $this->registerModuleConfigs($module_name);
         }
+        
+        $this->configs_registered = true;
     }
 
     protected function registerModuleConfigs($module_name)
     {
-        //todo: don't ini files from the files system, load Config files from manager and gather their data which
-        //is already compiled
-        $config_directory = $this->getFileSystem()->getRealPath('//Module/'.$module_name.'/Config/');
-        $default_data = $this->getConfigManager()->getConfigDataFromLoader($this->getConfigManager()->getConfigLoader());
-        $ConfigLoader = $this->getFactory()->buildConfigLoader($config_directory, $this->getEnvironment()->getCacheConfig());
-
-        //merge module config data with application configs data for expressions to be compiled
-        $module_config_data = $this->getConfigManager()->getConfigDataFromLoader($ConfigLoader);
-        foreach ($module_config_data as $name => $data) {
-            $default_data[$module_name.'_'.$name] = $data;
-        }
-
-        //compile
-        list($Compiler, $default_config_items_data) = $this->getConfigManager()->getAllConfigsDataAndCompiler($default_data);
-
-        //register
-        foreach ($module_config_data as $name => $ConfigLoaderItem) {
-            $config_name = $module_name.'_'.$name;
-            $data = $default_config_items_data[$config_name];
-            $ConfigLoaderItem->setData($data);
-            $this->getConfigManager()->loadAndRegisterOneConfig($config_name, $ConfigLoaderItem, $Compiler);
-        }
+        $filename = $this->getFileSystem()->getRealPath('//Module/'.$module_name.'/Config/module.ini');
+        $this->getConfigManager()->registerByFilename($module_name.'@'.'module', $filename);
+        
+        $filename = $this->getFileSystem()->getRealPath('//Module/'.$module_name.'/Config/router.ini');
+        $this->getConfigManager()->registerByFilename($module_name.'@'.'router', $filename);
     }
 
     protected function initModules()
     {
-        die('why init modules why?');
         $module_list = $this->getFileSystem()->listPathDir('//Module');
-        //$AppRouterConfig = $this->getConfigManager()->getConfigByName('router');
         /**
          * @var \DirectoryIterator $Dir
          */
@@ -87,47 +76,14 @@ class Manager implements Interfaces\ModuleManager
             
             $Config = $this->getModuleConfig($module_name, 'module');
             $ConfigRouter = $this->getModuleConfig($module_name, 'router');
-            $this->modules[$module_name] = $this->getFactory()->buildModule($module_name, $Config, $ConfigRouter);
-
-
-            $ModuleRouteConfig = $this->getModuleConfig($module_name, 'router');
-            $module_router_data = $ModuleRouteConfig->getItems();
-        }
-    }
-    
-    protected function createAndInjectRouterConfig()
-    {
-        //todo: don't ini files from the files system, load Config files from manager and gather their data which
-        //is already compiled
-        $config_directory = $this->getFileSystem()->getRealPath('//Module/'.$module_name.'/Config/');
-        $default_data = $this->getConfigManager()->getConfigDataFromLoader($this->getConfigManager()->getConfigLoader());
-        $ConfigLoader = $this->getFactory()->buildConfigLoader($config_directory, $this->getEnvironment()->getCacheConfig());
-
-        //merge module config data with application configs data for expressions to be compiled
-        $module_config_data = $this->getConfigManager()->getConfigDataFromLoader($ConfigLoader);
-        foreach ($module_config_data as $name => $data) {
-            $default_data[$module_name.'_'.$name] = $data;
-        }
-
-        //compile
-        list($Compiler, $default_config_items_data) = $this->getConfigManager()->getAllConfigsDataAndCompiler($default_data);
-
-        //register
-        foreach ($module_config_data as $name => $ConfigLoaderItem) {
-            $config_name = $module_name.'_'.$name;
-            $data = $default_config_items_data[$config_name];
-            $ConfigLoaderItem->setData($data);
-            $this->getConfigManager()->loadAndRegisterOneConfig($config_name, $ConfigLoaderItem, $Compiler);
+            $this->modules[$module_name] = $this->getFactory()->buildModule($module_name, $Dir->getPathname(), $Config, $ConfigRouter);
         }
     }
     
     protected function getModuleConfig($module_name, $config_name)
     {
-        if ($this->modules === null) {
-            $this->initConfigs();
-        }
-        
-        $name = $module_name.'_'.$config_name;
+        $this->initConfigs();
+        $name = $module_name.'@'.$config_name;
         return $this->getConfigManager()->getConfigByName($name);
     }
 
@@ -144,12 +100,5 @@ class Manager implements Interfaces\ModuleManager
     {
         
     }
-    
-    public function start()
-    {
-        $this->createAndInjectRouterConfig();
-        die('wtf');
-        $this->initModules();
-    }
-    
+
 }

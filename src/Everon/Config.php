@@ -126,16 +126,17 @@ class Config implements Interfaces\Config
         
         $DefaultOrFirstItem = null;
         foreach ($this->data as $item_name => $config_data) {
-            $RouteItem = $this->buildItem($item_name, $config_data); 
-            $this->items[$item_name] = $RouteItem;
+            $Item = $this->buildItem($item_name, $config_data); 
+            $this->items[$item_name] = $Item;
 
-            $DefaultOrFirstItem = (is_null($DefaultOrFirstItem)) ? $RouteItem : $DefaultOrFirstItem;
-            if ($RouteItem->isDefault()) {
-                $this->setDefaultItem($RouteItem);
+            $DefaultOrFirstItem = (is_null($DefaultOrFirstItem)) ? $Item : $DefaultOrFirstItem;
+            if ($Item->isDefault()) {
+                $this->setDefaultItem($Item);
             }
         }
         
         if (is_null($this->DefaultItem)) {
+            $DefaultOrFirstItem->setIsDefault(true);
             $this->setDefaultItem($DefaultOrFirstItem);
         }
     }

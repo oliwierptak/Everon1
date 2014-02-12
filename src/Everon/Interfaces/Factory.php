@@ -94,11 +94,12 @@ interface Factory
 
     /**
      * @param $class_name
+     * @param Interfaces\Module $Module
      * @param string $namespace
      * @return Interfaces\Controller
      * @throws Exception\Factory
      */
-    function buildController($class_name, $namespace='Everon\Controller');
+    function buildController($class_name, Interfaces\Module $Module, $namespace='Everon\Controller');
 
     /**
      * @param array $data
@@ -280,13 +281,12 @@ interface Factory
      * @param $class_name
      * @param $template_directory
      * @param array $variables
-     * @param Interfaces\Template $IndexTemplate
      * @param $default_extension
      * @param string $namespace
      * @return Interfaces\View
      * @throws Exception\Factory
      */
-    function buildView($class_name, $template_directory, array $variables, Interfaces\Template $IndexTemplate, $default_extension, $namespace='Everon\View');
+    function buildView($class_name, $template_directory, array $variables, $default_extension, $namespace='Everon\View');
 
     /**
      * @param Interfaces\FileSystem $FileSystem
@@ -297,11 +297,12 @@ interface Factory
 
     /**
      * @param array $compilers_to_init
-     * @param $view_directory
+     * @param $theme_directory
+     * @param $cache_directory
      * @return Interfaces\ViewManager
      * @throws Exception\Factory
      */
-    function buildViewManager(array $compilers_to_init, $view_directory);
+    function buildViewManager(array $compilers_to_init, $theme_directory, $cache_directory);
 
     /**
      * @param $directory
@@ -356,12 +357,13 @@ interface Factory
 
     /**
      * @param $name
+     * @param Interfaces\Config $module_directory
      * @param Interfaces\Config $Config
      * @param Interfaces\Config $RouterConfig
      * @return Module
      * @throws Exception\Factory
      */
-    function buildModule($name, Interfaces\Config $Config, Interfaces\Config $RouterConfig);
+    function buildModule($name, $module_directory, Interfaces\Config $Config, Interfaces\Config $RouterConfig);
 
     /**
      * @return Module\Manager

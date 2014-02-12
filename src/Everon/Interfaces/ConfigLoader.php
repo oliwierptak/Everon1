@@ -11,6 +11,7 @@ namespace Everon\Interfaces;
 
 use Everon\Exception;
 use Everon\Interfaces;
+use Everon\Config\Loader;
 
 interface ConfigLoader
 {
@@ -24,6 +25,13 @@ interface ConfigLoader
     function load($use_cache);
 
     /**
+     * @param \SplFileInfo $ConfigFile
+     * @param $use_cache
+     * @return Loader\Item
+     */
+    function loadByFile(\SplFileInfo $ConfigFile, $use_cache);
+
+    /**
      * @param $filename
      * @return array|null
      */
@@ -34,7 +42,4 @@ interface ConfigLoader
      * @throws Exception\Config
      */
     function saveConfigToCache(Interfaces\Config $Config);
-
-    function enableCache();
-    function disableCache();
 }

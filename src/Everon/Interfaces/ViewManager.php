@@ -29,17 +29,12 @@ interface ViewManager
 
     /**
      * @param $name
-     * @return mixed
-     * @throws \Everon\Exception\View
+     * @param $template_directory
+     * @param $namespace
+     * @return Interfaces\View
      * @throws \Everon\Exception\ViewManager
      */
-    function getView($name);
-
-    /**
-     * @param $name
-     * @param Interfaces\View $View
-     */
-    public function setView($name, Interfaces\View $View);
+    function createView($name, $template_directory, $namespace);    
 
     /**
      * @return array
@@ -49,5 +44,26 @@ interface ViewManager
     /**
      * @return Interfaces\View
      */
-    function getDefaultView();
+    function getDefaultTheme();
+
+    /**
+     * @param $name
+     * @return mixed
+     * @throws \Everon\Exception\View
+     * @throws \Everon\Exception\ViewManager
+     */
+    function getTheme($name);
+
+    /**
+     * @param $name
+     * @param Interfaces\View $View
+     */
+    function setTheme($name, Interfaces\View $View);
+
+    /**
+     * @param string $theme
+     */
+    function setThemeName($theme);
+        
+    function getThemeName();
 }

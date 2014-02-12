@@ -35,11 +35,6 @@ abstract class View implements Interfaces\View
     protected $default_extension = '.htm';
 
     /**
-     * @var Interfaces\Template
-     */
-    protected $IndexTemplate = null;
-
-    /**
      * @var array
      */
     protected $vars = [];
@@ -48,44 +43,14 @@ abstract class View implements Interfaces\View
     /**
      * @param $template_directory
      * @param array $vars
-     * @param Interfaces\Template $IndexTemplate
      * @param $default_extension
      */
-    public function __construct($template_directory, array $vars, Interfaces\Template $IndexTemplate, $default_extension)
+    public function __construct($template_directory, array $vars, $default_extension)
     {
         $this->name = $this->stringLastTokenToName(get_class($this));
         $this->template_directory = $template_directory;
         $this->vars = $this->arrayDotKeysToScope($vars);
         $this->default_extension = $default_extension;
-        $this->IndexTemplate = $IndexTemplate;
-    }
-
-    protected function getIndexTemplate()
-    {
-        $Container = $this->getTemplate('index', $this->vars);
-        if ($Container === null) {
-            //merge data set in custom views
-            $data = $this->arrayMergeDefault($this->vars, $this->IndexTemplate->getData());
-            $Container = $this->IndexTemplate;
-            $Container->setData($data);
-        }
-        return $Container;
-    }
-
-    /**
-     * @param Interfaces\Template $IndexContainer
-     */
-    public function setIndexContainer(Interfaces\Template $IndexContainer)
-    {
-        $this->IndexTemplate = $IndexContainer;
-    }
-
-    /**
-     * @return Interfaces\Template
-     */
-    public function getIndexContainer()
-    {
-        return $this->IndexTemplate;
     }
 
     /**
@@ -137,12 +102,12 @@ abstract class View implements Interfaces\View
      */
     public function getContainer()
     {
-        if (is_null($this->Container)) {
-            $this->Container = $this->getIndexTemplate();
+        if ($this->Container === null) {
+            $this->setContainer('');
         }
 
-        if (is_null($this->Container)) {
-            throw new Exception\View('Default view template: "index" not found');
+        if ($this->Container === null) {
+            throw new Exception\View('View container not set');
         }
 
         return $this->Container;
@@ -154,39 +119,23 @@ abstract class View implements Interfaces\View
     public function setContainer($Container)
     {
         if ($Container instanceof Interfaces\TemplateContainer) {
+            if ($this->Container !== null) {
+                $data = $this->arrayMergeDefault($this->Container->getData(), $Container->getData());
+                $Container->setData($data);
+            }
             $this->Container = $Container;
         }
         else if (is_string($Container)) {
-            $this->Container = $this->getIndexTemplate();
+            $data = $this->vars;
+            if ($this->Container !== null) {
+                $data = $this->arrayMergeDefault($data, $this->Container->getData());
+            }
+            $this->Container = $this->getFactory()->buildTemplateContainer($Container, $data);
+        } 
+
+        if ($this->Container === null) {
+            throw new Exception\Template('Invalid container type');
         }
-
-        if (is_null($this->Container)) {
-            throw new Exception\Template('Invalid Container type');
-        }
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getViewTemplateByAction($action, Interfaces\Template $DefaultViewTemplate)
-    {
-        $data = $this->getData();
-        $ActionTemplate = $this->getTemplate($action, $data);
-        $ViewTemplate = $this->getContainer();
-
-        if ($ViewTemplate === null) {
-            $ViewTemplate = $DefaultViewTemplate;
-        }
-
-        $ViewTemplate->setData(array_merge(
-            $data, $ViewTemplate->getData()
-        ));
-
-        if ($ActionTemplate !== null) {
-            $ViewTemplate->set('View.body', $ActionTemplate);
-        }
-
-        return $ViewTemplate;
     }
 
     /**
@@ -245,11 +194,6 @@ abstract class View implements Interfaces\View
     protected function getToString()
     {
         return (string) $this->getContainer();
-    }
-
-    public function url($url)
-    {
-        return $this->getRequest()->getLocation().$url;
     }
 
     /**

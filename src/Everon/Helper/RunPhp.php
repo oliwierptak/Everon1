@@ -14,9 +14,10 @@ trait RunPhp
     /**
      * @param $php
      * @param array $scope
+     * @param \Everon\Interfaces\FileSystem $FileSystem
      * @return string
      */
-    protected function runPhp($php, array $scope)
+    protected function runPhp($php, array $scope, \Everon\Interfaces\FileSystem $FileSystem)
     {
         $handleError = function($errno, $errstr, $errfile, $errline, array $errcontext) {
             // error was suppressed with the @-operator
@@ -29,7 +30,7 @@ trait RunPhp
 
         $old_error_handler = set_error_handler($handleError);
 
-        $TmpPhpFile = $this->getFileSystem()->createTmpFile();
+        $TmpPhpFile = $FileSystem->createTmpFile();
         $content = '';
         try {
             $TmpPhpFile->write($php);
@@ -41,7 +42,7 @@ trait RunPhp
             $content = ob_get_contents();
         }
         catch (\Exception $e) {
-            $this->getLogger()->e_error($e."\n".$php);
+            $this->getLogger()->e_error($e."\n".$php); //todo: this shouldn't be needed here cause the exception should be caught and error logged there
             $content = '';
         }
         finally {

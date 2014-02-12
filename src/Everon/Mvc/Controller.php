@@ -20,14 +20,12 @@ abstract class Controller extends \Everon\Controller implements Interfaces\MvcCo
     use Dependency\Injection\DomainManager;
     use Dependency\Injection\Environment;
     use Dependency\Injection\Factory;
+    use Dependency\Injection\ModuleManager;
     use Dependency\Injection\ViewManager;
     
     use Helper\Arrays;
     use Helper\IsIterable;
     use Helper\String\StartsWith;
-    
-    protected $CacheLoader = null;
-
 
     /**
      * @param $action
@@ -58,9 +56,9 @@ abstract class Controller extends \Everon\Controller implements Interfaces\MvcCo
      */
     public function getView()
     {
-        return $this->getViewManager()->getView($this->getName());
+        return $this->getModule()->getView($this->getName());
     }
-
+    
     /**
      * @return mixed
      */
@@ -75,6 +73,7 @@ abstract class Controller extends \Everon\Controller implements Interfaces\MvcCo
             $this->getView()->{$action}();
         }
 
+        die('fuck page template');
         $PageTemplate = $this->getView()->getViewTemplateByAction(
             $action, $this->getViewManager()->getDefaultView()->getContainer()
         );
@@ -93,28 +92,5 @@ abstract class Controller extends \Everon\Controller implements Interfaces\MvcCo
     protected function response()
     {
         echo $this->getResponse()->toHtml();
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function showException(\Exception $Exception, $code=400)
-    {
-        $ViewManager = $this->getViewManager();
-        $View = $ViewManager->getView('Index');
-        $View->set('View.error', $Exception->getMessage());
-        $Template = $View->getContainer();
-        $ViewManager->compileTemplate('View', $Template);
-        $this->getResponse()->setData($Template);
-
-        $message = '';
-        if ($Exception instanceof Http\Exception) {
-            $message = $Exception->getHttpMessage();
-            $code = $Exception->getHttpStatus();
-        }
-        
-        $this->getResponse()->setStatus($code);
-        $this->getResponse()->setStatusMessage($message);
-        $this->response();
     }
 }
