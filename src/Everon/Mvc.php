@@ -17,21 +17,10 @@ use Everon\Http\Exception as HttpException;
 
 class Mvc extends Core implements Interfaces\Core
 {
-    use Dependency\Injection\ViewManager;
-    
     /**
      * @var Interfaces\MvcController
      */
     protected $Controller = null;
-    
-    /**
-     * @param $name
-     * @return Interfaces\MvcController
-     */
-    protected function createController($name)
-    {
-        return $this->getFactory()->buildController($name, 'Everon\Mvc\Controller');
-    }
 
     /**
      * @param Guid $Guid
@@ -60,14 +49,8 @@ class Mvc extends Core implements Interfaces\Core
      */
     public function showControllerException($code, \Exception $Exception, $Controller)
     {
-        /**
-         * @var Interfaces\MvcController $Controller
-         */
-        if (isset($Controller) === false) {
-            $Controller = $this->createController('Error');
-        }
-        
-        $Controller->showException($Exception, $code);
+        echo $Exception;
+        die("\n\n<br><br>".'fucking showControllerException');
     }
 
     public function shutdown()

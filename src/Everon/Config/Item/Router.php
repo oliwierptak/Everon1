@@ -17,6 +17,8 @@ use Everon\Helper;
 
 class Router extends \Everon\Config\Item implements Interfaces\ConfigItemRouter
 {
+    const PROPERTY_MODULE = '____module';
+    
     use Helper\Arrays;
     use Helper\Asserts;
     use Helper\Asserts\IsStringAndNonEmpty;
@@ -24,6 +26,8 @@ class Router extends \Everon\Config\Item implements Interfaces\ConfigItemRouter
     use Helper\Regex;
 
     protected $url = null;
+    
+    protected $module = null;
 
     protected $controller = null;
 
@@ -51,6 +55,9 @@ class Router extends \Everon\Config\Item implements Interfaces\ConfigItemRouter
     protected function init()
     {
         parent::init();
+        $this->setModule($this->data[static::PROPERTY_MODULE]);
+        unset($this->data[static::PROPERTY_MODULE]);
+        
         $this->setUrl($this->data['url']);
         $this->setController($this->data['controller']);
         $this->setAction($this->data['action']);
@@ -159,9 +166,26 @@ class Router extends \Everon\Config\Item implements Interfaces\ConfigItemRouter
     {
         parent::validateData($data);
         $this->assertIsStringAndNonEmpty($data['url'], 'Invalid url: "%s"', 'ConfigItem');
+        $this->assertIsStringAndNonEmpty($data[static::PROPERTY_MODULE], 'Invalid item module name: "%s"', 'ConfigItem');
         $this->assertIsStringAndNonEmpty($data['controller'], 'Invalid controller: "%s"', 'ConfigItem');
         $this->assertIsStringAndNonEmpty($data['action'], 'Invalid action: "%s"', 'ConfigItem');
-    }    
+    }
+
+    /**
+     * @param null $module
+     */
+    public function setModule($module)
+    {
+        $this->module = $module;
+    }
+
+    /**
+     * @return null
+     */
+    public function getModule()
+    {
+        return $this->module;
+    }
 
     public function getUrl()
     {

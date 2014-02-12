@@ -22,3 +22,4 @@ class Router extends \Everon\Config implements Interfaces\Config
         return $this->getFactory()->buildConfigItemRouter($name, $data);
     }
 }
+

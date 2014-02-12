@@ -206,16 +206,13 @@ class Factory implements Interfaces\Factory
     }
 
     /**
-     * @param $class_name
-     * @param string $namespace
-     * @return Interfaces\Controller
-     * @throws Exception\Factory
+     * @inheritdoc
      */
-    public function buildController($class_name, $namespace='Everon\Controller')
+    public function buildController($class_name, Interfaces\Module $Module, $namespace='Everon\Controller')
     {
         try {
             $class_name = $this->getFullClassName($namespace, $class_name);
-            $Controller = new $class_name();
+            $Controller = new $class_name($Module);
             $this->injectDependencies($class_name, $Controller);
             return $Controller;
         }
@@ -227,14 +224,14 @@ class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildView($class_name, $template_directory, array $variables, Interfaces\Template $IndexTemplate, $default_extension, $namespace='Everon\View')
+    public function buildView($class_name, $template_directory, array $variables, $default_extension, $namespace='Everon\View')
     {
         try {
             $class_name = $this->getFullClassName($namespace, $class_name);
             /**
              * @var Interfaces\View $View
              */
-            $View = new $class_name($template_directory, $variables, $IndexTemplate, $default_extension);
+            $View = new $class_name($template_directory, $variables, $default_extension);
             $this->injectDependencies($class_name, $View);
             return $View;
         }
@@ -261,12 +258,9 @@ class Factory implements Interfaces\Factory
     }
 
     /**
-     * @param array $compilers_to_init
-     * @param $view_directory
-     * @return Interfaces\ViewManager
-     * @throws Exception\Factory
+     * @inheritdoc
      */
-    public function buildViewManager(array $compilers_to_init, $view_directory)
+    public function buildViewManager(array $compilers_to_init, $theme_directory, $cache_directory)
     {
         try {
             $compilers = [];
@@ -274,7 +268,7 @@ class Factory implements Interfaces\Factory
                 $compilers[$extension][] = $this->buildTemplateCompiler($this->stringUnderscoreToCamel($name));
             }
 
-            $Manager = new View\Manager($compilers, $view_directory);
+            $Manager = new View\Manager($compilers, $theme_directory, $cache_directory);
             $this->injectDependencies('Everon\View\Manager', $Manager);
             return $Manager;
         }
@@ -788,4 +782,36 @@ class Factory implements Interfaces\Factory
             throw new Exception\Factory('Environment initialization error', null, $e);
         }
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildModule($name, $module_directory, Interfaces\Config $Config, Interfaces\Config $RouterConfig)
+    {
+        try {
+            $class_name = $this->getFullClassName('Everon\Module\\'.$name, 'Module');
+            $Module = new $class_name($name, $module_directory, $Config, $RouterConfig);
+            $this->injectDependencies($class_name, $Module);
+            return $Module;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('Module initialization error', null, $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildModuleManager()
+    {
+        try {
+            $ModuleManager = new Module\Manager();
+            $this->injectDependencies('Everon\Module\Manager', $ModuleManager);
+            return $ModuleManager;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('ModuleManager initialization error', null, $e);
+        }
+    }
+    
 }

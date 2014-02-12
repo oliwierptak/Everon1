@@ -11,21 +11,7 @@ namespace Everon\Interfaces;
 
 use Everon\Interfaces;
 
-interface MvcController extends Interfaces\Controller
+interface ModuleManager
 {
 
-    /**
-     * @return Interfaces\View
-     */
-    function getView();
-
-    /**
-     * @return mixed
-     */
-    function getModel();
-
-    /**
-     * @return Interfaces\ViewManager
-     */
-    function getViewManager();
 }

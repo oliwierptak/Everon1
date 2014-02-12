@@ -34,7 +34,7 @@ class FileSystem implements Interfaces\FileSystem
     protected function getRelativePath($path)
     {
         $is_absolute = mb_strtolower($this->root) === mb_strtolower(mb_substr($path, 0, mb_strlen($this->root)));
-        if ($path[0] === DIRECTORY_SEPARATOR && $path[1] === DIRECTORY_SEPARATOR) { //eg. '//Tests/Everon/tmp/'
+        if ($path[0] === '/' && $path[1] === '/') { //eg. '//Tests/Everon/tmp/'
             //strip virtual root
             $path = mb_substr($path, 2, mb_strlen($path));
         }
@@ -45,6 +45,11 @@ class FileSystem implements Interfaces\FileSystem
         
         $path = $this->root.$path;
         return $path;
+    }
+    
+    public function getRealPath($path)
+    {
+        return $this->getRelativePath($path);
     }
 
     public function getRoot()
@@ -98,10 +103,36 @@ class FileSystem implements Interfaces\FileSystem
         try {
             $result = [];
             $path = $this->getRelativePath($path);
-            $Files = new \GlobIterator($path.DIRECTORY_SEPARATOR.'*.*');
+            $files = new \GlobIterator($path.DIRECTORY_SEPARATOR.'*.*');
             
-            foreach ($Files as $filename => $File) {
+            foreach ($files as $File) {
                 $result[] = $File;
+            }
+            
+            return $result;
+        }
+        catch (\Exception $e) {
+            throw new Exception\FileSystem($e);
+        }            
+    }
+    
+    /**
+     * @inheritdoc
+     */
+    public function listPathDir($path)
+    {
+        try {
+            $result = [];
+            $path = $this->getRelativePath($path);
+            $directories = new \DirectoryIterator($path.DIRECTORY_SEPARATOR);
+
+            /**
+             * @var \DirectoryIterator $Dir
+             */
+            foreach ($directories as $Dir) {
+                if ($Dir->isDot() === false) {
+                    $result[] = clone $Dir;
+                }
             }
             
             return $result;

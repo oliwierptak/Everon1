@@ -17,11 +17,17 @@ abstract class Core implements Interfaces\Core
     use Dependency\Injection\Factory;
     use Dependency\Injection\Router;
     use Dependency\Injection\Request;
+    use Dependency\Injection\ModuleManager;
 
     /**
      * @var Interfaces\Controller
      */
     protected $Controller = null;
+
+    /**
+     * @var Interfaces\Module
+     */
+    protected $Module = null;
 
     /**
      * @var Guid
@@ -30,13 +36,6 @@ abstract class Core implements Interfaces\Core
     
     protected $previous_exception_handler = null;
 
-    /**
-     * @param $name
-     * @return Interfaces\Controller
-     */
-    protected abstract function createController($name);
-    
-    
     protected function runOnce(Guid $Guid)
     {
         if ($this->Guid !== null) {
@@ -63,7 +62,9 @@ abstract class Core implements Interfaces\Core
          * @var \Everon\Interfaces\ConfigItemRouter $CurrentRoute
          */
         $CurrentRoute = $this->getRouter()->getRouteByRequest($this->getRequest());
-        $this->Controller = $this->createController($CurrentRoute->getController());
+        
+        $this->Module = $this->getModuleManager()->getModule($CurrentRoute->getModule());
+        $this->Controller = $this->Module->getController($CurrentRoute->getController());
         $this->Controller->execute($CurrentRoute->getAction());
     }
     

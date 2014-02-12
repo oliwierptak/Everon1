@@ -18,6 +18,7 @@ class Manager implements Interfaces\ConfigManager
 {
     use Dependency\Injection\Environment;
     use Dependency\Injection\Factory;
+    use Dependency\Injection\FileSystem;
     use Dependency\ConfigLoader;
 
     use Helper\Arrays;
@@ -41,6 +42,8 @@ class Manager implements Interfaces\ConfigManager
      * @var array
      */
     protected $default_config_data = null;
+    
+    protected $use_cache = null;
 
     /**
      * @param Interfaces\ConfigLoader $Loader
@@ -49,32 +52,88 @@ class Manager implements Interfaces\ConfigManager
     {
         $this->ConfigLoader = $Loader;
     }
-
-    protected function loadAndRegisterConfigs()
+    
+    public function isCachingEnabled()
     {
-        $default_config_data = $this->getDefaultConfigData();
-        $configs_data = $this->getConfigLoader()->load((bool) $default_config_data['cache']['config_manager']);
+        if ($this->use_cache === null) {
+            $default_config_data = $this->getDefaultConfigData();
+            $this->use_cache = (bool) $default_config_data['cache']['config_manager'];
+            if ($this->use_cache === null) {
+                $this->use_cache = false;
+            }
+        }
+        return $this->use_cache;
+    }
+    
+    /**
+     * @param Interfaces\ConfigLoader $Loader
+     * @return array
+     */
+    public function getConfigDataFromLoader(Interfaces\ConfigLoader $Loader)
+    {
+        return $Loader->load((bool) $this->isCachingEnabled());
+    }
+    
+    public function getAllConfigsDataAndCompiler($configs_data)
+    {
         /**
          * @var Interfaces\ConfigLoaderItem $ConfigLoaderItem
          */
-        $d = [];
+        $config_items_data = [];
         foreach ($configs_data as $name => $ConfigLoaderItem) {
-            $d[$name] = $ConfigLoaderItem->toArray();
+            $config_items_data[$name] = $ConfigLoaderItem->toArray();
         }
-        
-        $Compiler = $this->getExpressionMatcher()->getCompiler($d, $this->getEnvironmentExpressions());
-        $Compiler($d);
-        
+
+        //compile expressions in one go
+        $Compiler = $this->getExpressionMatcher()->getCompiler($config_items_data, $this->getEnvironmentExpressions());
+        $Compiler($config_items_data);
+
+        return [$Compiler, $config_items_data];
+    }
+    
+    protected function loadAndRegister()
+    {
+        $configs_data = $this->getConfigDataFromLoader($this->getConfigLoader());
+        list($Compiler, $config_items_data) = $this->getAllConfigsDataAndCompiler($configs_data);
+
         foreach ($configs_data as $name => $ConfigLoaderItem) {
-            $ConfigLoaderItem->setData($d[$name]);
-            if ($this->isRegistered($name) === false) {
-                $Config = $this->getFactory()->buildConfig($name, $ConfigLoaderItem, $Compiler);
-                $this->register($Config);
-            }
+            $ConfigLoaderItem->setData($config_items_data[$name]);
+            $this->loadAndRegisterOneConfig($name, $ConfigLoaderItem, $Compiler);
         }
     }
     
-    protected function getEnvironmentExpressions()
+    public function loadAndRegisterOneConfig($name, $ConfigLoaderItem, $Compiler) //xxx
+    {
+        if ($this->isRegistered($name) === false) {
+            $Config = $this->getFactory()->buildConfig($name, $ConfigLoaderItem, $Compiler);
+            $this->register($Config);
+        }
+    }
+    
+    public function registerByFilename($config_name, $filename)
+    {
+        $default_data = [];
+        /**
+         * @var Interfaces\Config $Config
+         */
+        foreach ($this->getConfigs() as $name => $Config) {
+            $default_data[$name] = $Config->toArray();
+        }
+
+        $default_data[$config_name] = parse_ini_file($filename, true);
+        $Compiler = $this->getExpressionMatcher()->getCompiler($default_data, $this->getEnvironmentExpressions());
+        $Compiler($default_data);
+        
+        $data = $default_data[$config_name];
+        $ConfigLoaderItem = $this->getFactory()->buildConfigLoaderItem($filename, $data);
+        $ConfigLoaderItem->setData($data);
+        $this->loadAndRegisterOneConfig($config_name, $ConfigLoaderItem, $Compiler);
+    }
+
+    /**
+     * @return array
+     */
+    public function getEnvironmentExpressions()
     {
         $data = $this->getEnvironment()->toArray();
         foreach ($data as $key => $value) {
@@ -144,7 +203,7 @@ EOF;
     /**
      * @return Interfaces\ConfigExpressionMatcher
      */
-    protected function getExpressionMatcher()
+    public function getExpressionMatcher()
     {
         if ($this->ExpressionMatcher === null) {
             $this->ExpressionMatcher = $this->getFactory()->buildConfigExpressionMatcher();
@@ -164,7 +223,9 @@ EOF;
         }
 
         $this->configs[$Config->getName()] = $Config;
-        $this->getConfigLoader()->saveConfigToCache($Config);
+        if ($this->isCachingEnabled()) {
+            $this->getConfigLoader()->saveConfigToCache($Config);
+        }
     }
 
     /**
@@ -192,7 +253,7 @@ EOF;
     public function getConfigByName($name)
     {
         if (is_null($this->configs)) {
-            $this->loadAndRegisterConfigs();
+            $this->loadAndRegister();
         }
 
         $this->assertIsArrayKey($name, $this->configs, 'Invalid config name: %s', 'Everon\Exception\Config');
@@ -233,7 +294,7 @@ EOF;
     public function getConfigs()
     {
         if (is_null($this->configs)) {
-            $this->loadAndRegisterConfigs();
+            $this->loadAndRegister();
         }
         
         return $this->configs;

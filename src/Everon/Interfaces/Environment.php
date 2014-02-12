@@ -4,7 +4,7 @@
  *
  * (c) Oliwier Ptak <oliwierptak@gmail.com>
  *
- * For the full copyright and license information, please view the LICENSE
+ * For the full copyright and license information, please theme the LICENSE
  * file that was distributed with this source code.
  */
 namespace Everon\Interfaces;
@@ -22,8 +22,8 @@ interface Environment
     function setDomain($domain);
     function getDataMapper();
     function setDataMapper($data_mapper);
-    function getView();
-    function setView($view);
+    function getTheme();
+    function setTheme($theme);
     function getController();
     function setController($controller);
     function getTest();
@@ -46,5 +46,7 @@ interface Environment
     function setLog($log);
     function getWeb();
     function setWeb($web);
+    function getModule();
+    function setModule($module);
     function toArray();
 }

@@ -44,7 +44,7 @@ class ClassLoader implements Interfaces\ClassLoader
     {
         $included = false;
         $filename = '';
-        foreach ($this->resources as $namespace => $path) {
+        foreach ($this->resources as  $namespace => $path) {
             $filename = $path.str_replace('\\', DIRECTORY_SEPARATOR, $class_name).'.php';
             $included = $this->includeWhenExists($filename);
             if ($included) {
