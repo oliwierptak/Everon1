@@ -70,39 +70,9 @@ class Loader implements Interfaces\ConfigLoader
             $list[$name] = $this->loadByFile($ConfigFile, $use_cache);
         }
 
-        //generate router data
-        if ($use_cache) {
-            $CacheFile = new \SplFileInfo($this->getCacheDirectory().$ConfigFile->getBasename().'.php');
-            $config_cached = $use_cache && $CacheFile->isFile();
-            if ($config_cached) {
-                $ini_config_data = $this->loadFromCache($CacheFile);
-                $list['router'] = $this->getFactory()->buildConfigLoaderItem('router.ini', $ini_config_data);
-            }
-        }
-        else {
-            //gather router data from modules xxx
-            $ini_config_data = [];
-            $module_list = $this->getFileSystem()->listPathDir('//Module');
-            /**
-             * @var \DirectoryIterator $Dir
-             */
-            foreach ($module_list as $Dir) {
-                $module_name = $Dir->getBasename();
-                $config_filename = $this->getFileSystem()->getRealPath('//Module/'.$module_name.'/Config/router.ini');
-                $module_config_data = $this->arrayPrefixKey($module_name.'@', parse_ini_file($config_filename, true));
-
-                foreach ($module_config_data as $section => $data) {
-                    $module_config_data[$section][Item\Router::PROPERTY_MODULE] = $module_name;
-                }
-                $ini_config_data = $this->arrayMergeDefault($ini_config_data, $module_config_data);
-            }
-
-            $list['router'] = $this->getFactory()->buildConfigLoaderItem('router.ini', $ini_config_data);
-        }
-        
         return $list;
     }
-
+    
     /**
      * @param \SplFileInfo $ConfigFile
      * @param $use_cache

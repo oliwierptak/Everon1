@@ -112,10 +112,37 @@ class Manager implements Interfaces\ConfigManager
         $configs_data = $this->getConfigDataFromLoader($this->getConfigLoader());
         list($Compiler, $config_items_data) = $this->getAllConfigsDataAndCompiler($configs_data);
 
+        $ini_config_data = $this->getRouterDataFromModules();
+        $RouterLoaderItem = $this->getFactory()->buildConfigLoaderItem('//router.ini', $ini_config_data);
+
         foreach ($configs_data as $name => $ConfigLoaderItem) {
             $ConfigLoaderItem->setData($config_items_data[$name]);
             $this->loadAndRegisterOneConfig($name, $ConfigLoaderItem, $Compiler);
         }
+
+        $this->loadAndRegisterOneConfig('router', $RouterLoaderItem, $Compiler);
+    }
+
+    public function getRouterDataFromModules()
+    {
+        //gather router data from modules xxx
+        $ini_config_data = [];
+        $module_list = $this->getFileSystem()->listPathDir('//Module');
+        /**
+         * @var \DirectoryIterator $Dir
+         */
+        foreach ($module_list as $Dir) {
+            $module_name = $Dir->getBasename();
+            $config_filename = $this->getFileSystem()->getRealPath('//Module/'.$module_name.'/Config/router.ini');
+            $module_config_data = $this->arrayPrefixKey($module_name.'@', parse_ini_file($config_filename, true));
+
+            foreach ($module_config_data as $section => $data) {
+                $module_config_data[$section][Item\Router::PROPERTY_MODULE] = $module_name;
+            }
+            $ini_config_data = $this->arrayMergeDefault($ini_config_data, $module_config_data);
+        }
+
+        return $ini_config_data;
     }
 
     /**
@@ -286,6 +313,14 @@ EOF;
 
         $this->assertIsArrayKey($name, $this->configs, 'Invalid config name: %s', 'Everon\Exception\Config');
         return $this->configs[$name];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setConfigByName(Interfaces\Config $Config)
+    {
+        $this->configs[$Config->getName()] = $Config;
     }
 
     /**
