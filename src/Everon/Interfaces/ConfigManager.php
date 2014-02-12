@@ -85,7 +85,8 @@ interface ConfigManager
 
     /**
      * @param $expression
-     * @return mixed|null
+     * @param mixed $default
+     * @return mixed|null Returns $default in case nothing was found
      */
-    function getConfigValue($expression);    
+    function getConfigValue($expression, $default=null);
 }

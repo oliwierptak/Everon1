@@ -118,7 +118,7 @@ abstract class Module implements Interfaces\Module
     /**
      * @inheritdoc
      */
-    public function setRouteConfig(Interfaces\ConfigItemRouter $RouteConfig)
+    public function setRouteConfig(Interfaces\Config $RouteConfig)
     {
         $this->RouteConfig = $RouteConfig;
     }

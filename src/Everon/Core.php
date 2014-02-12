@@ -57,13 +57,16 @@ abstract class Core implements Interfaces\Core
     public function run(Guid $Guid)
     {
         $this->runOnce($Guid);
-        /**
-         * @var \Everon\Interfaces\MvcController|\Everon\Interfaces\Controller $Controller
-         * @var \Everon\Interfaces\ConfigItemRouter $CurrentRoute
-         */
-        $CurrentRoute = $this->getRouter()->getRouteByRequest($this->getRequest());
         
-        $this->Module = $this->getModuleManager()->getModule($CurrentRoute->getModule());
+        if ($this->getRequest()->isEmptyUrl()) {
+            $this->Module = $this->getModuleManager()->getDefaultModule();
+            $CurrentRoute = $this->getRouter()->getRouteByRequest($this->getRequest());
+        }
+        else {
+            $CurrentRoute = $this->getRouter()->getRouteByRequest($this->getRequest());
+            $this->Module = $this->getModuleManager()->getModule($CurrentRoute->getModule());
+        }
+
         $this->Controller = $this->Module->getController($CurrentRoute->getController());
         $this->Controller->execute($CurrentRoute->getAction());
     }

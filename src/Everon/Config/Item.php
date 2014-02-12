@@ -59,22 +59,6 @@ class Item implements Interfaces\ConfigItem
         $this->assertIsStringAndNonEmpty($data[static::PROPERTY_NAME], 'Invalid item name: "%s"', 'ConfigItem');
     }
 
-    /**
-     * @param null $module
-     */
-    public function setModule($module)
-    {
-        $this->module = $module;
-    }
-
-    /**
-     * @return null
-     */
-    public function getModule()
-    {
-        return $this->module;
-    }
-    
     public function getName()
     {
         return $this->name;

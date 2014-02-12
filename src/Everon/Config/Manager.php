@@ -291,7 +291,7 @@ EOF;
     /**
      * @inheritdoc
      */
-    public function getConfigValue($expression)
+    public function getConfigValue($expression, $default=null)
     {
         $tokens = explode('.', $expression);
         $token_count = count($tokens);
@@ -299,7 +299,7 @@ EOF;
             return null;
         }
         
-        if (count($tokens) == 2) { //view.compilers or application.env.url
+        if (count($tokens) == 2) { //application.env.url
             array_push($tokens, null);  
         }
         
@@ -307,10 +307,10 @@ EOF;
         $Config = $this->getConfigByName($name);
         if ($item !== null) {
             $Config->go($section);
-            return $Config->get($item, null);
+            return $Config->get($item, $default);
         }
         
-        return $Config->get($section);
+        return $Config->get($section, $default);
     }
     
     /**
@@ -330,7 +330,7 @@ EOF;
      */
     public function getDatabaseConfig()
     {
-        $driver = $this->getConfigValue('application.database.driver', 'mysql');
+        $driver = $this->getConfigValue('application.database.driver', 'pgsql');
         return $this->getConfigByName('database_'.$driver);
     }
 

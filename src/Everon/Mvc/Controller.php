@@ -74,8 +74,8 @@ abstract class Controller extends \Everon\Controller implements Interfaces\MvcCo
         }
 
         $ActionTemplate = $this->getView()->getTemplate($action, $this->getView()->getData());
-        if ($ActionTemplate === null) {
-            throw new Http\Exception\NotFound('Action template: "%s/%s" not found', [$this->getName(),$action]);
+        if ($ActionTemplate === null) { //apparently no template was used, fall back to string
+            $ActionTemplate = $this->getView()->getContainer();
         }
 
         $Theme = $this->getViewManager()->getCurrentTheme();

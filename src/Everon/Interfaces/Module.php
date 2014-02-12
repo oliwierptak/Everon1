@@ -45,14 +45,14 @@ interface Module
     function setName($name);
 
     /**
-     * @return Interfaces\ConfigItemRouter
+     * @return Interfaces\Config
      */
     function getRouteConfig();
 
     /**
-     * @param Interfaces\ConfigItemRouter $RouteConfig
+     * @param Interfaces\Config $RouteConfig
      */
-    function setRouteConfig(Interfaces\ConfigItemRouter $RouteConfig);
+    function setRouteConfig(Interfaces\Config $RouteConfig);
 
     /**
      * @param $name

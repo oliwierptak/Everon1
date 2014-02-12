@@ -67,11 +67,16 @@ class Manager implements Interfaces\ModuleManager
     protected function initModules()
     {
         $module_list = $this->getFileSystem()->listPathDir($this->getEnvironment()->getModule());
+        $active_modules = $this->getConfigManager()->getConfigValue('application.modules.active', ['_Core']);
+        
         /**
          * @var \DirectoryIterator $Dir
          */
         foreach ($module_list as $Dir) {
             $module_name = $Dir->getBasename();
+            if (in_array($module_name, $active_modules) === false) {
+                continue;
+            }
 
             if (isset($this->modules[$module_name])) {
                 throw new Exception\Module('Module: "%s" is already registered');
@@ -105,6 +110,15 @@ class Manager implements Interfaces\ModuleManager
         }
         
         return $this->modules[$name];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getDefaultModule()
+    {
+        $default_module = $this->getConfigManager()->getConfigValue('application.modules.default', '_Core');
+        return $this->getModule($default_module);
     }
 
 }

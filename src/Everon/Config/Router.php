@@ -12,7 +12,7 @@ namespace Everon\Config;
 use Everon\Dependency;
 use Everon\Interfaces;
 
-class Router extends \Everon\Config implements Interfaces\Config
+class Router extends \Everon\Config
 {      
     protected function buildItem($name, array $data)
     {

@@ -172,7 +172,7 @@ class Router extends \Everon\Config\Item implements Interfaces\ConfigItemRouter
     }
 
     /**
-     * @param null $module
+     * @inheritdoc
      */
     public function setModule($module)
     {
@@ -180,7 +180,7 @@ class Router extends \Everon\Config\Item implements Interfaces\ConfigItemRouter
     }
 
     /**
-     * @return null
+     * @inheritdoc
      */
     public function getModule()
     {
