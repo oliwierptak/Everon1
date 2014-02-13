@@ -86,9 +86,12 @@ class Bootstrap
         require_once($this->getEnvironment()->getEveronHelper().'ToString.php');
         require_once($this->getEnvironment()->getEveronRoot().'Exception.php');
 
-        require_once($this->getEnvironment()->getEveronConfig().'Dependencies.php');
-        
-        return [$Container, $Factory];
+        /**
+         * @var Interfaces\DependencyContainer $Container
+         * @var Interfaces\Factory $Factory
+         */
+        $Container = new Dependency\Container();
+        return new Factory($Container);
     }
 
     public static function setup($guid_value, $app_root, $log_filename)

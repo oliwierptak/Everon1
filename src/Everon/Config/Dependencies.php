@@ -13,32 +13,29 @@ namespace Everon;
  * @var Interfaces\DependencyContainer $Container
  * @var Interfaces\Factory $Factory
  */
-if (isset($Container) === false) {
-    $Container = new Dependency\Container();
-}
-
-if (isset($Factory) === false) {
-    $Factory = new Factory($Container);
-}
 
 $Container->propose('Logger', function() use ($Factory) {
+    $Factory->getDependencyContainer()->track('Logger', ['Everon\Config\Manager']);
     $enabled = $Factory->getDependencyContainer()->resolve('ConfigManager')->getConfigValue('application.logger.enabled');
     $log_directory = $Factory->getDependencyContainer()->resolve('Environment')->getLog();
     return $Factory->buildLogger($log_directory, $enabled);
 });
 
 $Container->propose('FileSystem', function() use ($Factory) {
+    $Factory->getDependencyContainer()->track('FileSystem', ['Everon\Environment']);
     $root_directory = $Factory->getDependencyContainer()->resolve('Environment')->getRoot();
     return $Factory->buildFileSystem($root_directory);
 });
 
 $Container->propose('Response', function() use ($Factory) {
+    $Factory->getDependencyContainer()->track('Response', ['Everon\Logger', 'Everon\Http\HeaderCollection']);
     $Logger = $Factory->getDependencyContainer()->resolve('Logger');
     $Headers = $Factory->buildHttpHeaderCollection();
     return $Factory->buildResponse($Logger->getGuid(), $Headers);
 });
 
 $Container->propose('ConfigManager', function() use ($Factory) {
+    $Factory->getDependencyContainer()->track('ConfigManager', ['Everon\Environment', 'Everon\Config\Loader']);
     /**
      * @var \Everon\Interfaces\Environment $Environment
      */
@@ -53,6 +50,7 @@ $Container->propose('Request', function() use ($Factory) {
 });
 
 $Container->propose('Router', function() use ($Factory) {
+    $Factory->getDependencyContainer()->track('Router', ['Everon\Config\Manager', 'Everon\RequestValidator']);
     $RouteConfig = $Factory->getDependencyContainer()->resolve('ConfigManager')->getConfigByName('console');
     $RequestValidator = $Factory->buildRequestValidator();
     return $Factory->buildRouter($RouteConfig, $RequestValidator);
@@ -61,3 +59,7 @@ $Container->propose('Router', function() use ($Factory) {
 $Container->propose('ModuleManager', function() use ($Factory) {
     return $Factory->buildModuleManager();
 });
+
+//avoid circular dependencies
+$ConfigManager = $Container->resolve('ConfigManager');
+$ConfigManager->setLogger($Container->resolve('Logger'));

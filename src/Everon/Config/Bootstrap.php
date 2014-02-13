@@ -25,7 +25,8 @@ require_once(implode(DIRECTORY_SEPARATOR, [$EVERON_SOURCE_ROOT, 'Environment.php
 
 $Environment = new Environment($EVERON_ROOT, $EVERON_SOURCE_ROOT);
 $Bootstrap = new Bootstrap($Environment);
-list($Container, $Factory) = $Bootstrap->run();
+$Factory = $Bootstrap->run();
+$Container = $Factory->getDependencyContainer();
 
 $Container->propose('Environment', function() use ($Environment) {
     return $Environment;
@@ -34,3 +35,5 @@ $Container->propose('Environment', function() use ($Environment) {
 $Container->propose('Bootstrap', function() use ($Bootstrap) {
     return $Bootstrap;
 });
+
+require_once($Environment->getEveronConfig().'Dependencies.php');

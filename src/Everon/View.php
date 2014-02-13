@@ -219,4 +219,5 @@ abstract class View implements Interfaces\View
     {
         return new \SplFileInfo($this->template_directory.$this->name.$this->default_extension);
     }
+    
 }

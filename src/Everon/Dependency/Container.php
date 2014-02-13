@@ -23,6 +23,15 @@ class Container implements Interfaces\DependencyContainer
     protected $class_dependencies_to_inject = [];
     
     protected $wants_factory = [];
+    
+    protected $tracker = [];
+    
+    
+    
+    public function track($class, $deps)
+    {
+        $this->tracker[$class] = $deps;
+    }
 
 
     /**
@@ -96,17 +105,17 @@ class Container implements Interfaces\DependencyContainer
      * @param $class_name
      * @param $Receiver
      * @return mixed
-     * @throws Exception\Factory
+     * @throws \Everon\Exception\DependencyContainer
      */
     public function inject($class_name, $Receiver)
     {
         try {
             if (class_exists($class_name, true) === false) {
-                throw new Exception\Factory('Dependency file could not be found for: "%s"', $class_name);
+                throw new Exception\DependencyContainer('Dependency file could not be found for: "%s"', $class_name);
             }
         }
         catch (\Exception $e) {
-            throw new Exception\Factory('Error injecting dependency: "%s"', $class_name);
+            throw new Exception\DependencyContainer('Error injecting dependency: "%s"', $class_name);
         }
 
         if (isset($this->class_dependencies_to_inject[$class_name]) === false) {
@@ -125,6 +134,12 @@ class Container implements Interfaces\DependencyContainer
                 $this->wants_factory[$class_name] = true;
             }
             else {
+                $dep_name = $this->getContainerNameFromDependencyToInject($name);
+                if (isset($this->tracker[$dep_name])) {
+                    if (in_array($class_name, $this->tracker[$dep_name])) {
+                        throw new Exception\DependencyContainer('Circular dependency injection: "%s" detected in class: "%s"', [$dep_name, $class_name]);
+                    }
+                }
                 $this->dependencyToObject($name, $Receiver);
             }
         }

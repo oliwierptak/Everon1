@@ -231,7 +231,7 @@ class Config implements Interfaces\Config
             $this->initItems();
         }
         
-        $this->assertIsArrayKey($name, $this->items, 'Invalid config item name: "%s"');
+        $this->assertIsArrayKey($name, $this->items, 'Invalid config item name: "%s"', 'Config');
         return $this->items[$name];
     }
 

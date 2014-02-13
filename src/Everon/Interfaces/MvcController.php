@@ -13,7 +13,11 @@ use Everon\Interfaces;
 
 interface MvcController extends Interfaces\Controller
 {
-
+    /**
+     * @return Interfaces\TemplateContainer
+     */
+    function getActionTemplate();
+        
     /**
      * @return Interfaces\View
      */

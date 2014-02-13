@@ -214,11 +214,11 @@ class Manager implements Interfaces\ViewManager
     {
         $TemplateDirectory = new \SplFileInfo($template_directory);
         if  ($TemplateDirectory->isDir() === false) {
-            throw new Exception\ViewManager('Theme template directory: "%s" does not exist', $template_directory);
+            throw new Exception\ViewManager('View template directory: "%s" does not exist', $template_directory);
         }
 
         $default_extension = $this->getConfigManager()->getConfigValue('application.view.default_extension');
-        $view_variables = $this->getConfigManager()->getConfigValue("view.$name");
+        $view_variables = $this->getConfigManager()->getConfigValue("view.$name", []);
         $view_variables = $this->arrayDotKeysToScope($view_variables, 'View');
         return $this->getFactory()->buildView($name, $TemplateDirectory->getPathname().DIRECTORY_SEPARATOR, $view_variables, $default_extension, $namespace);
     }

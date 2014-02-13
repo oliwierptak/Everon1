@@ -67,6 +67,14 @@ abstract class Controller extends \Everon\Controller implements Interfaces\MvcCo
         return $this->getDomainManager()->getModel($this->getName());
     }
 
+    /**
+     * @return Interfaces\TemplateContainer
+     */
+    public function getActionTemplate()
+    {
+        return $this->getView()->getTemplate($this->action, $this->getView()->getData());
+    }
+
     protected function prepareResponse($action, $result)
     {
         if ($result && $this->isCallable($this->getView(), $action)) {

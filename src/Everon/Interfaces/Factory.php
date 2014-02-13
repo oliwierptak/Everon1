@@ -257,7 +257,7 @@ interface Factory
     /**
      * @param $filename
      * @param array $template_data
-     * @return Interfaces\TemplateContainer
+     * @return Interfaces\Template
      * @throws Exception\Factory
      */
     function buildTemplate($filename, array $template_data);

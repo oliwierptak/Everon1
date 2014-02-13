@@ -19,6 +19,7 @@ class Manager implements Interfaces\ConfigManager
     use Dependency\Injection\Environment;
     use Dependency\Injection\Factory;
     use Dependency\Injection\FileSystem;
+    use Dependency\Logger;
     use Dependency\ConfigLoader;
 
     use Helper\Arrays;
@@ -334,7 +335,7 @@ EOF;
             $this->loadAndRegisterAllConfigs();
         }
 
-        $this->assertIsArrayKey($name, $this->configs, 'Invalid config name: %s', 'Everon\Exception\Config');
+        $this->assertIsArrayKey($name, $this->configs, 'Invalid config name: %s', 'Config');
         return $this->configs[$name];
     }
 
@@ -351,24 +352,30 @@ EOF;
      */
     public function getConfigValue($expression, $default=null)
     {
-        $tokens = explode('.', $expression);
-        $token_count = count($tokens);
-        if ($token_count < 2) {
-            return null;
+        try {
+            $tokens = explode('.', $expression);
+            $token_count = count($tokens);
+            if ($token_count < 2) {
+                return null;
+            }
+
+            if (count($tokens) == 2) { //application.env.url
+                array_push($tokens, null);
+            }
+
+            list($name, $section, $item) = $tokens;
+            $Config = $this->getConfigByName($name);
+            if ($item !== null) {
+                $Config->go($section);
+                return $Config->get($item, $default);
+            }
+
+            return $Config->get($section, $default);
         }
-        
-        if (count($tokens) == 2) { //application.env.url
-            array_push($tokens, null);  
+        catch (Exception\Config $e) {
+            //$this->getLogger()->error($e->getMessage());
+            return $default;
         }
-        
-        list($name, $section, $item) = $tokens;
-        $Config = $this->getConfigByName($name);
-        if ($item !== null) {
-            $Config->go($section);
-            return $Config->get($item, $default);
-        }
-        
-        return $Config->get($section, $default);
     }
     
     /**
