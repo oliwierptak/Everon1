@@ -104,7 +104,7 @@ class Manager implements Interfaces\ConfigManager
         foreach ($module_list as $Dir) {
             $module_name = $Dir->getBasename();
             $Filename = new \SplFileInfo($this->getFileSystem()->getRealPath('//Module/'.$module_name.'/Config/module.ini'));
-            $data[$module_name.'@module'] = $this->getFactory()->buildConfigLoaderItem($Filename->getPathname(), parse_ini_file($Filename, true));
+            $data[$module_name.'@module'] = $this->getConfigLoader()->loadByFile($Filename, $this->isCachingEnabled());
         }
 
         return $data;
@@ -152,13 +152,14 @@ class Manager implements Interfaces\ConfigManager
          */
         foreach ($module_list as $Dir) {
             $module_name = $Dir->getBasename();
-            $config_filename = $this->getFileSystem()->getRealPath('//Module/'.$module_name.'/Config/router.ini');
-            $module_config_data = parse_ini_file($config_filename, true);
-
+            $RouterFilename = new \SplFileInfo($this->getFileSystem()->getRealPath('//Module/'.$module_name.'/Config/router.ini'));
+            $RouterFilename = $this->getConfigLoader()->loadByFile($RouterFilename, $this->isCachingEnabled());
+            $module_config_data = $RouterFilename->getData();
+            
             foreach ($module_config_data as $section => $data) {
                 $module_config_data[$section][Item\Router::PROPERTY_MODULE] = $module_name;
             }
-            $router_config_data[$module_name] = [$config_filename, $this->arrayMergeDefault($router_config_data, $module_config_data)];
+            $router_config_data[$module_name] = [$RouterFilename->getFilename(), $this->arrayMergeDefault($router_config_data, $module_config_data)];
         }
 
         return $router_config_data;
@@ -254,7 +255,9 @@ EOF;
             $default_data[$name] = $Config->toArray();
         }
 
-        $default_data[$config_name] = parse_ini_file($filename, true);
+        $Filename = new \SplFileInfo($filename);
+        $Filename = $this->getConfigLoader()->loadByFile($Filename, $this->isCachingEnabled());
+        $default_data[$config_name] = $Filename->getData();
         $Compiler = $this->getExpressionMatcher()->getCompiler($default_data, $this->getEnvironmentExpressions());
         $Compiler($default_data);
 
