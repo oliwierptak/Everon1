@@ -101,4 +101,28 @@ abstract class Controller extends \Everon\Controller implements Interfaces\MvcCo
     {
         echo $this->getResponse()->toHtml();
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function showException(\Exception $Exception, $code=400)
+    {
+        $Theme = $this->getViewManager()->getCurrentTheme();
+        $Theme->set('View.error', $Exception->getMessage());
+        $data = $this->arrayMergeDefault($Theme->getData(), $this->getView()->getData());
+        $Theme->setData($data);
+        $this->getView()->setContainer($Theme->getContainer());
+        $this->getViewManager()->compileView(null, $this->getView());
+        $this->getResponse()->setData((string) $this->getView()->getContainer());
+
+        $message = '';
+        if ($Exception instanceof Http\Exception) {
+            $message = $Exception->getHttpMessage();
+            $code = $Exception->getHttpStatus();
+        }
+
+        $this->getResponse()->setStatus($code);
+        $this->getResponse()->setStatusMessage($message);
+        $this->response();
+    }
 }

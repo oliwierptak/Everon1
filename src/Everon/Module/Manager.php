@@ -89,5 +89,12 @@ class Manager implements Interfaces\ModuleManager
         $default_module = $this->getConfigManager()->getConfigValue('application.modules.default', '_Core');
         return $this->getModule($default_module);
     }
-
+    
+    /**
+     * @inheritdoc
+     */
+    public function getCoreModule()
+    {
+        return $this->getModule('_Core');
+    }
 }

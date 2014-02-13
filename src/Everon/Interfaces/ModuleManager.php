@@ -16,8 +16,13 @@ interface ModuleManager
     /**
      * @return Interfaces\module
      */
+    public function getCoreModule();
+    
+    /**
+     * @return Interfaces\module
+     */
     function getDefaultModule();
-        
+
     /**
      * @param $name
      * @return Interfaces\module

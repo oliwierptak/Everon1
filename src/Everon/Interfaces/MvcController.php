@@ -32,4 +32,10 @@ interface MvcController extends Interfaces\Controller
      * @return Interfaces\ViewManager
      */
     function getViewManager();
+
+    /**
+     * @param \Exception $Exception
+     * @param int $code
+     */
+    function showException(\Exception $Exception, $code=400);
 }

@@ -49,8 +49,14 @@ class Mvc extends Core implements Interfaces\Core
      */
     public function showControllerException($code, \Exception $Exception, $Controller)
     {
-        echo $Exception;
-        die("\n\n<br><br>".'fucking showControllerException');
+        /**
+         * @var Interfaces\MvcController $Controller
+         */
+        if ($Controller === null) {
+            $Controller = $this->getModuleManager()->getCoreModule()->getController('Error');
+        }
+        
+        $Controller->showException($Exception, $code);
     }
 
     public function shutdown()

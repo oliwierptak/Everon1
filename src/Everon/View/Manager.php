@@ -89,30 +89,47 @@ class Manager implements Interfaces\ViewManager
     /**
      * @inheritdoc
      */
-    public function compileTemplate($scope_name, Interfaces\Template $Template)
+    public function compileTemplate($scope_name, Interfaces\TemplateContainer $Template)
     {
         try {
             $Scope = new Template\Compiler\Scope();
             $Scope->setName($scope_name);
             
-            /**
-             * @var Interfaces\TemplateCompiler $Compiler
-             */
-            foreach ($this->compilers as $extension => $compiler_list) {
-                foreach ($compiler_list as $Compiler) {
-                    //$Compiler->setFileSystem($this->getCache()->getFileSystem());
-                    if ($this->stringEndsWith($Template->getTemplateFile()->getFilename(), $extension)) {
-                        $this->compileTemplateRecursive($Compiler, $Template, $Scope);
+            if ($Template instanceof Interfaces\Template) {
+                /**
+                 * @var Interfaces\TemplateCompiler $Compiler
+                 */
+                foreach ($this->compilers as $extension => $compiler_list) {
+                    foreach ($compiler_list as $Compiler) {
+                        if ($this->stringEndsWith($Template->getTemplateFile()->getFilename(), $extension)) {
+                            $this->compileTemplateRecursive($Compiler, $Template, $Scope);
+                        }
                     }
                 }
             }
-            
+            else {
+                $compiler_list = $this->getDefaultCompilers();
+                foreach ($compiler_list as $Compiler) {
+                    $this->compileTemplateRecursive($Compiler, $Template, $Scope);
+                }
+            }
+
             $Template->setCompiledContent($Scope->getCompiled());
             $Template->setScope($Scope);
         }
         catch (Exception $e) {
             throw new Exception\ViewManager($e);
         }
+    }
+    
+    protected function getDefaultCompilers()
+    {
+        $default_extension = $this->getConfigManager()->getConfigValue('application.view.default_extension');
+        if (isset($this->compilers[$default_extension]) === false) {
+            throw new Exception\ViewManager('Default template compiler not set');
+        }
+        
+        return $this->compilers[$default_extension];
     }
 
     /**

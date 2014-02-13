@@ -16,10 +16,10 @@ interface ViewManager
 {
     /**
      * @param Interfaces\Template $scope_name
-     * @param Interfaces\Template $Template
+     * @param Interfaces\TemplateContainer $Template
      * @throws \Everon\Exception\ViewManager
      */
-    function compileTemplate($scope_name, Interfaces\Template $Template);
+    function compileTemplate($scope_name, Interfaces\TemplateContainer $Template);
 
     /**
      * @param $action

@@ -160,9 +160,9 @@ class Manager implements Interfaces\ConfigManager
             foreach ($module_config_data as $section => $data) {
                 $module_config_data[$section][Item\Router::PROPERTY_MODULE] = $module_name;
             }
-            $router_config_data[$module_name] = [$RouterFilename->getFilename(), $this->arrayMergeDefault($router_config_data, $module_config_data)];
+            $router_config_data[$module_name] = [$RouterFilename->getFilename(), $module_config_data];
         }
-
+        
         return $router_config_data;
     }
 
