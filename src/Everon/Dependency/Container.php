@@ -137,7 +137,7 @@ class Container implements Interfaces\DependencyContainer
                 $dep_name = $this->getContainerNameFromDependencyToInject($name);
                 if (isset($this->tracker[$dep_name])) {
                     if (in_array($class_name, $this->tracker[$dep_name])) {
-                        throw new Exception\DependencyContainer('Circular dependency injection: "%s" detected in class: "%s"', [$dep_name, $class_name]);
+                        throw new Exception\DependencyContainer('Circular dependency injection: "%s" in class: "%s"', [$dep_name, $class_name]);
                     }
                 }
                 $this->dependencyToObject($name, $Receiver);
