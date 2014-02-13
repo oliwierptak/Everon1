@@ -28,12 +28,12 @@ $Bootstrap = new Bootstrap($Environment);
 $Factory = $Bootstrap->run();
 $Container = $Factory->getDependencyContainer();
 
-$Container->propose('Environment', function() use ($Environment) {
-    return $Environment;
-});
-
 $Container->propose('Bootstrap', function() use ($Bootstrap) {
     return $Bootstrap;
+});
+
+$Container->propose('Environment', function() use ($Environment) {
+    return $Environment;
 });
 
 require_once($Environment->getEveronConfig().'Dependencies.php');

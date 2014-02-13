@@ -24,13 +24,16 @@ class Container implements Interfaces\DependencyContainer
     
     protected $wants_factory = [];
     
-    protected $tracker = [];
-    
-    
-    
-    public function track($class, $deps)
+    protected $circular_dependencies = [];
+
+
+    /**
+     * @param $class
+     * @param $dependencies
+     */
+    public function monitor($class, $dependencies)
     {
-        $this->tracker[$class] = $deps;
+        $this->circular_dependencies[$class] = $dependencies;
     }
 
 
@@ -135,8 +138,8 @@ class Container implements Interfaces\DependencyContainer
             }
             else {
                 $dep_name = $this->getContainerNameFromDependencyToInject($name);
-                if (isset($this->tracker[$dep_name])) {
-                    if (in_array($class_name, $this->tracker[$dep_name])) {
+                if (isset($this->circular_dependencies[$dep_name])) {
+                    if (in_array($class_name, $this->circular_dependencies[$dep_name])) {
                         throw new Exception\DependencyContainer('Circular dependency injection: "%s" in class: "%s"', [$dep_name, $class_name]);
                     }
                 }

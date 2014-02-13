@@ -12,6 +12,7 @@ namespace Everon\Interfaces;
 
 interface DependencyContainer
 {
+    function monitor($class, $dependencies);
     function wantsFactory($class_name);
     function register($name, \Closure $ServiceClosure);
     function propose($name, \Closure $ServiceClosure);

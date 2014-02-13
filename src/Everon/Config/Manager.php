@@ -373,7 +373,7 @@ EOF;
             return $Config->get($section, $default);
         }
         catch (Exception\Config $e) {
-            //$this->getLogger()->error($e->getMessage());
+            $this->getLogger()->error($e);
             return $default;
         }
     }

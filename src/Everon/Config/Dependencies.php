@@ -15,27 +15,27 @@ namespace Everon;
  */
 
 $Container->propose('Logger', function() use ($Factory) {
-    $Factory->getDependencyContainer()->track('Logger', ['Everon\Config\Manager']);
+    $Factory->getDependencyContainer()->monitor('Logger', ['Everon\Config\Manager', 'Everon\Environment']);
     $enabled = $Factory->getDependencyContainer()->resolve('ConfigManager')->getConfigValue('application.logger.enabled');
     $log_directory = $Factory->getDependencyContainer()->resolve('Environment')->getLog();
     return $Factory->buildLogger($log_directory, $enabled);
 });
 
 $Container->propose('FileSystem', function() use ($Factory) {
-    $Factory->getDependencyContainer()->track('FileSystem', ['Everon\Environment']);
+    $Factory->getDependencyContainer()->monitor('FileSystem', ['Everon\Environment']);
     $root_directory = $Factory->getDependencyContainer()->resolve('Environment')->getRoot();
     return $Factory->buildFileSystem($root_directory);
 });
 
 $Container->propose('Response', function() use ($Factory) {
-    $Factory->getDependencyContainer()->track('Response', ['Everon\Logger', 'Everon\Http\HeaderCollection']);
+    $Factory->getDependencyContainer()->monitor('Response', ['Everon\Logger', 'Everon\Http\HeaderCollection']);
     $Logger = $Factory->getDependencyContainer()->resolve('Logger');
     $Headers = $Factory->buildHttpHeaderCollection();
     return $Factory->buildResponse($Logger->getGuid(), $Headers);
 });
 
 $Container->propose('ConfigManager', function() use ($Factory) {
-    $Factory->getDependencyContainer()->track('ConfigManager', ['Everon\Environment', 'Everon\Config\Loader']);
+    $Factory->getDependencyContainer()->monitor('ConfigManager', ['Everon\Environment', 'Everon\Config\Loader']);
     /**
      * @var \Everon\Interfaces\Environment $Environment
      */
@@ -50,7 +50,7 @@ $Container->propose('Request', function() use ($Factory) {
 });
 
 $Container->propose('Router', function() use ($Factory) {
-    $Factory->getDependencyContainer()->track('Router', ['Everon\Config\Manager', 'Everon\RequestValidator']);
+    $Factory->getDependencyContainer()->monitor('Router', ['Everon\Config\Manager', 'Everon\RequestValidator']);
     $RouteConfig = $Factory->getDependencyContainer()->resolve('ConfigManager')->getConfigByName('console');
     $RequestValidator = $Factory->buildRequestValidator();
     return $Factory->buildRouter($RouteConfig, $RequestValidator);
@@ -61,5 +61,6 @@ $Container->propose('ModuleManager', function() use ($Factory) {
 });
 
 //avoid circular dependencies
+//the logger needs ConfigManager in order to be instantiated, therefore Logger can't be injected into ConfigManger
 $ConfigManager = $Container->resolve('ConfigManager');
 $ConfigManager->setLogger($Container->resolve('Logger'));
