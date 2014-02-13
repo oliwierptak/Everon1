@@ -32,7 +32,6 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
     public function __construct($name = NULL, array $data=[], $dataName='')
     {
         parent::__construct($name, $data, $dataName);
-        $nesting = implode('..', array_fill(0, 3, DIRECTORY_SEPARATOR));
         $this->FrameworkEnvironment = new Environment($GLOBALS['EVERON_ROOT'], $GLOBALS['EVERON_SOURCE_ROOT']);
         $this->includeDoubles($this->getDoublesDirectory());
         $this->Guid = $GLOBALS['Guid']; //import from bootstrap
@@ -189,17 +188,17 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         $TestEnvironment->setConfig($this->getConfigDirectory());
         $TestEnvironment->setCacheConfig($this->getConfigCacheDirectory());
         $TestEnvironment->setTmp($this->getTmpDirectory());
-        $FileSystem = $Factory->buildFileSystem($TestEnvironment->getRoot());
-
-        require($this->FrameworkEnvironment->getEveronConfig().'Dependencies.php');
 
         $Container->register('Environment', function() use ($TestEnvironment) {
             return $TestEnvironment;
         });
-        
+
+        $FileSystem = $Factory->buildFileSystem($TestEnvironment->getRoot());
         $Container->register('FileSystem', function() use ($FileSystem) {
             return $FileSystem;
         });
+
+        require($this->FrameworkEnvironment->getEveronConfig().'Dependencies.php');
 
         //register global unique (request) identifier with Logger
         /**

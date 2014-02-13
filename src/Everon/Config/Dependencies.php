@@ -60,7 +60,10 @@ $Container->propose('ModuleManager', function() use ($Factory) {
     return $Factory->buildModuleManager();
 });
 
+
 //avoid circular dependencies
-//the logger needs ConfigManager in order to be instantiated, therefore Logger can't be injected into ConfigManger
-$ConfigManager = $Container->resolve('ConfigManager');
-$ConfigManager->setLogger($Container->resolve('Logger'));
+//the logger needs ConfigManager in order to be instantiated, therefore Logger can't be auto injected into ConfigManger
+$Container->afterSetup(function($Container){
+    $ConfigManager = $Container->resolve('ConfigManager');
+    $ConfigManager->setLogger($Container->resolve('Logger'));
+});

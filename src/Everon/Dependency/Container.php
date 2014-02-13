@@ -25,17 +25,23 @@ class Container implements Interfaces\DependencyContainer
     protected $wants_factory = [];
     
     protected $circular_dependencies = [];
-
+    
 
     /**
-     * @param $class
-     * @param $dependencies
+     * @inheritdoc
      */
     public function monitor($class, $dependencies)
     {
         $this->circular_dependencies[$class] = $dependencies;
     }
 
+    /**
+     * @inheritdoc
+     */
+    public function afterSetup(\Closure $Setup)
+    {
+        $Setup($this);
+    }
 
     /**
      * @param $dependency_name

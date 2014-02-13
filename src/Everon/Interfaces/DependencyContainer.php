@@ -12,6 +12,15 @@ namespace Everon\Interfaces;
 
 interface DependencyContainer
 {
+    /**
+     * @param callable $Setup
+     */
+    function afterSetup(\Closure $Setup);
+
+    /**
+     * @param $class
+     * @param $dependencies
+     */
     function monitor($class, $dependencies);
     function wantsFactory($class_name);
     function register($name, \Closure $ServiceClosure);
