@@ -30,6 +30,7 @@ class Popo implements Interfaces\Arrayable
     
     protected $call_property = null;
 
+
     /**
      * @param array $data
      */
@@ -79,7 +80,7 @@ class Popo implements Interfaces\Arrayable
 
         $camelized = preg_split('/(?<=\\w)(?=[A-Z])/', $name);
         array_shift($camelized);
-        $property = strtolower(implode('_', $camelized));
+        $property = mb_strtolower(implode('_', $camelized));
         $this->call_property = $property;
 
         if (array_key_exists($property, $this->data) === false) {
@@ -110,11 +111,13 @@ class Popo implements Interfaces\Arrayable
 
     public function __sleep()
     {
+        //todo: test me xxx
         return ['data'];
     }
 
     public static function __set_state(array $array)
     {
+        //todo: test me xxx
         return new static($array['data']);
     }
     

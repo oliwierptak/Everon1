@@ -34,11 +34,7 @@ class PopoProps implements Interfaces\Arrayable
      */
     public function __construct(array $data)
     {
-        $keys = array_keys($data);
-        array_walk($keys, function(&$item) {
-            $item = mb_strtolower($item);
-        });
-        $this->data = array_combine($keys, array_values($data));    
+        $this->data = array_change_key_case($data, \CASE_LOWER); 
     }
     
     public function __get($property)
@@ -67,13 +63,15 @@ class PopoProps implements Interfaces\Arrayable
     
     public function __sleep()
     {
+        //todo: test me xxx
         return ['data', 'strict'];
     }
     
     public static function __set_state(array $array) 
     {
+        //todo: test me
         $S = new static($array['data']);
-        $S->Strict = (bool) $array['strict'];
+        $S->strict = (bool) $array['strict'];
         return $S;
     }
         

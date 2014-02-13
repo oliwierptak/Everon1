@@ -28,11 +28,15 @@ class Entity extends Helper\Popo implements Interfaces\Entity
     
     protected $state = self::STATE_NEW;
 
+    protected $methods = null;
+
 
     public function __construct($id, array $data=[])
     {
         $this->id = $id;
         $this->data = $data;
+        $this->methods = array_flip(get_class_methods(get_class($this))); //faster lookup then using isCallable()
+        
         
         if ($this->isIdSet()) {
             $this->markPersisted();
@@ -190,7 +194,8 @@ class Entity extends Helper\Popo implements Interfaces\Entity
      */
     public function __call($name, $arguments)
     {
-        if ($this->isCallable($this, $name)) {
+        //if ($this->isCallable($this, $name)) {
+        if (isset($this->methods[$name])) {
             $this->call_type = static::CALL_TYPE_METHOD;
             $this->call_property = $name;
             return call_user_func_array([$this, $name], $arguments);
@@ -209,19 +214,27 @@ class Entity extends Helper\Popo implements Interfaces\Entity
 
     public function __sleep()
     {
+        //todo: test me xxx
         return [
             'id', 
             'data',
             'modified_properties',
             'state',
+            'methods',
+            'call_type',
+            'call_property',
         ];
     }
 
     public static function __set_state(array $array)
     {
+        //todo: test me xxx
         $Entity = new static($array['id'], $array['data']);
         $Entity->modified_properties = $array['modified_properties'];
         $Entity->state = $array['state'];
+        $Entity->methods = $array['methods'];
+        $Entity->call_type = $array['call_type'];
+        $Entity->call_property = $array['call_property'];
         return $Entity;
     }
 }
