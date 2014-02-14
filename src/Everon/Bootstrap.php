@@ -94,7 +94,7 @@ class Bootstrap
         return new Factory($Container);
     }
 
-    public static function setup($guid_value, $app_root, $log_filename)
+    public static function setupExceptionHandler($guid_value, $app_root, $log_filename)
     {
         $log_directory = implode(DIRECTORY_SEPARATOR, [$app_root, 'Tmp', 'logs']);
         $log_filename = $log_directory.DIRECTORY_SEPARATOR.$log_filename;
@@ -109,21 +109,5 @@ class Bootstrap
                 header("HTTP/1.1 500 Internal Server Error. EVRID: $guid_value"); //xxx
             }
         });
-    }
-
-    /**
-     * cleanup global state after bootstrap, 
-     * xxx why doesn't this fucking work??
-     */
-    public function cleanup()
-    {
-        global $GLOBALS;
-
-        unset($GLOBALS['nesting']);
-        unset($GLOBALS['Bootstrap']);
-        unset($GLOBALS['CustomSetup']);
-        unset($GLOBALS['Factory']);
-        unset($GLOBALS['Container']);
-        unset($GLOBALS['Environment']);
     }
 }   

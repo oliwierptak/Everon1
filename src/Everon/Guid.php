@@ -47,4 +47,22 @@ class Guid
     {
         return $this->guid;
     }
+
+    public function __sleep()
+    {
+        //todo: test me xxx
+        return [
+            'guid',
+            'system_memory_at_start',
+        ];
+    }
+
+    public static function __set_state(array $array)
+    {
+        //todo: test me xxx
+        $Guid = new static($array);
+        $Guid->guid = $array['guid'];
+        $Guid->system_memory_at_start = $array['system_memory_at_start'];
+    }
+    
 }

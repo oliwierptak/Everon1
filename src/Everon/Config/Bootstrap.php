@@ -13,11 +13,11 @@ require_once(implode(DIRECTORY_SEPARATOR, [$EVERON_SOURCE_ROOT, 'Bootstrap.php']
 require_once(implode(DIRECTORY_SEPARATOR, [$EVERON_SOURCE_ROOT, 'Guid.php']));
 
 $Guid = new Guid();
-if (isset($CustomSetup)) {
-    $CustomSetup();
+if (isset($CustomExceptionHandler)) {
+    $CustomExceptionHandler();
 }
 else {
-    Bootstrap::setup($Guid->getValue(), $EVERON_ROOT, '500.log');
+    Bootstrap::setupExceptionHandler($Guid->getValue(), $EVERON_ROOT, '500.log');
 }
 
 require_once(implode(DIRECTORY_SEPARATOR, [$EVERON_SOURCE_ROOT, 'Interfaces', 'Environment.php']));

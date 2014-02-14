@@ -14,8 +14,6 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
     
     protected $suite_name = 'Everon';
 
-    protected $backupGlobalsBlacklist = array('Container', 'Factory');
-    
     protected $data_fixtures = null;
 
     /**
@@ -220,5 +218,4 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         return $Factory;
     }
 
-    
 }
