@@ -321,19 +321,18 @@ interface Factory
 
     /**
      * @param string Unique ID
-     * @param Interfaces\Collection $Headers
      * @return Interfaces\Response
      * @throws Exception\Factory
      */
-    function buildResponse($guid, Interfaces\Collection $Headers);
+    function buildResponse($guid);
 
     /**
      * @param string Unique ID
-     * @param Interfaces\Collection $Headers
+     * @param \Everon\Http\Interfaces\HeaderCollection $Headers
      * @return \Everon\Http\Interfaces\Response
      * @throws Exception\Factory
      */
-    function buildHttpResponse($guid, Interfaces\Collection $Headers);
+    function buildHttpResponse($guid, \Everon\Http\Interfaces\HeaderCollection $Headers);
 
     /**
      * @param array $server

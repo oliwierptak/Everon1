@@ -639,10 +639,10 @@ class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildResponse($guid, Interfaces\Collection $Headers)
+    public function buildResponse($guid)
     {
         try {
-            $Response = new Response($guid, $Headers);
+            $Response = new Response($guid);
             $this->injectDependencies('Everon\Response', $Response);
             return $Response;
         }
@@ -654,7 +654,7 @@ class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildHttpResponse($guid, Interfaces\Collection $Headers)
+    public function buildHttpResponse($guid, Http\Interfaces\HeaderCollection $Headers)
     {
         try {
             $Response = new Http\Response($guid, $Headers);
@@ -662,7 +662,7 @@ class Factory implements Interfaces\Factory
             return $Response;
         }
         catch (\Exception $e) {
-            throw new Exception\Factory('Http Response initialization error', null, $e);
+            throw new Exception\Factory('HttpResponse initialization error', null, $e);
         }
     }
 

@@ -15,6 +15,13 @@ use Everon\Response as BasicResponse;
 
 class Response extends BasicResponse implements Interfaces\Response
 {
+
+    public function __construct($guid, Interfaces\HeaderCollection $Headers)
+    {
+        parent::__construct($guid);
+        $this->HeaderCollection = $Headers;
+    }
+    
     protected function sendHeaders()
     {
         header('HTTP/1.1 '.$this->status);

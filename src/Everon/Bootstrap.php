@@ -110,4 +110,20 @@ class Bootstrap
             }
         });
     }
+
+    /**
+     * cleanup global state after bootstrap, 
+     * xxx why doesn't this fucking work??
+     */
+    public function cleanup()
+    {
+        global $GLOBALS;
+
+        unset($GLOBALS['nesting']);
+        unset($GLOBALS['Bootstrap']);
+        unset($GLOBALS['CustomSetup']);
+        unset($GLOBALS['Factory']);
+        unset($GLOBALS['Container']);
+        unset($GLOBALS['Environment']);
+    }
 }   

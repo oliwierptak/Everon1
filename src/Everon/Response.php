@@ -26,10 +26,9 @@ class Response implements Interfaces\Response
     protected $guid = null;
 
     
-    public function __construct($guid, Interfaces\Collection $Headers)
+    public function __construct($guid)
     {
         $this->guid = $guid;
-        $this->HeaderCollection = $Headers;
     }
     
     public function setData($data)

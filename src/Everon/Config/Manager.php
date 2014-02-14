@@ -210,7 +210,7 @@ url_statc = /assets/
 name = everon-dev
 
 [modules]
-default = UserLogin
+default = Auth
 active[] = UserManagement
 
 [theme]
