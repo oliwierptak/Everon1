@@ -328,6 +328,14 @@ interface Factory
     function buildResponse($guid, Interfaces\Collection $Headers);
 
     /**
+     * @param string Unique ID
+     * @param Interfaces\Collection $Headers
+     * @return \Everon\Http\Interfaces\Response
+     * @throws Exception\Factory
+     */
+    function buildHttpResponse($guid, Interfaces\Collection $Headers);
+
+    /**
      * @param array $server
      * @param array $get
      * @param array $post

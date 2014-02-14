@@ -7,10 +7,11 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon\Http;
+namespace Everon\Http\Interfaces;
 
-use Everon\Helper;
+use Everon\Interfaces;
 
-class HeaderCollection extends Helper\Collection implements Interfaces\HeaderCollection
+interface HeaderCollection extends Interfaces\Collection
 {
+
 }

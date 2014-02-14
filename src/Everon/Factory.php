@@ -24,10 +24,62 @@ class Factory implements Interfaces\Factory
      */
     protected $DependencyContainer = null;
 
+    /**
+     * @var Interfaces\Collection
+     */
+    protected $WorkerCollection = null;
 
+    /**
+     * @var Interfaces\Collection
+     */
+    protected $MethodCollection = null;
+
+
+    /**
+     * @param Interfaces\DependencyContainer $Container
+     */
     public function __construct(Interfaces\DependencyContainer $Container)
     {
         $this->DependencyContainer = $Container;
+        $this->WorkerCollection = new Helper\Collection([]);
+        $this->MethodCollection = new Helper\Collection(
+            array_flip(
+                get_class_methods(
+                    get_class($this)
+                )
+            )
+        );
+    }
+
+    /**
+     * @param $name
+     * @param $arguments
+     * @return mixed
+     * @throws Exception\Factory
+     */
+    public function __call($name, $arguments)
+    {
+        if ($this->MethodCollection->has($name)) {
+            return call_user_func_array([$this, $name], $arguments);
+        }
+
+        foreach ($this->WorkerCollection as $worker_name => $Worker) {
+            /**
+             * @var Interfaces\FactoryWorker $Worker
+             */
+            if ($Worker->getMethods()->has($name)) {
+                return call_user_func_array([$Worker, $name], $arguments);
+            }
+        }
+        
+        throw new Exception\Factory('Invalid factory method: "%s"', $name);
+    }
+
+    public function registerWorker(Interfaces\FactoryWorker $Worker)
+    {
+        $name = get_class($Worker);
+        $this->WorkerCollection->set($name, $Worker);
+        $Worker->register();
     }
 
     /**
@@ -72,7 +124,7 @@ class Factory implements Interfaces\Factory
         $class = $namespace.'\\'.$class_name;
         return $class;
     }
-
+    
     /**
      * @return Interfaces\Core
      * @throws Exception\Factory
@@ -104,9 +156,41 @@ class Factory implements Interfaces\Factory
             throw new Exception\Factory('Mvc initialization error', null, $e);
         }
     }
+    
+    /**
+     * @return Interfaces\Core
+     * @throws Exception\Factory
+     */
+    public function buildClient()
+    {
+        try {
+            $Client = new Rest\Client();
+            $this->injectDependencies('Everon\Rest\Client', $Client);
+            return $Client;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('Rest client initialization error', null, $e);
+        }
+    }
+    
+    /**
+     * @return Interfaces\Core
+     * @throws Exception\Factory
+     */
+    public function buildRestServer()
+    {
+        try {
+            $Server = new Rest\Server();
+            $this->injectDependencies('Everon\Rest\Server', $Server);
+            return $Server;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('Rest server initialization error', null, $e);
+        }
+    }
 
     /**
-     * Class name is based on filename from ConfigLoaderItem, eg. /var/www/.../Module/UserLogin/Config/router.ini
+     * Class name is based on filename from ConfigLoaderItem, eg. /var/www/.../Module/_Core/Config/router.ini
      * will become Everon\Config\Router
      * 
      * @param $name
@@ -553,10 +637,7 @@ class Factory implements Interfaces\Factory
     }
 
     /**
-     * @param string Unique ID
-     * @param Interfaces\Collection $Headers
-     * @return Interfaces\Response
-     * @throws Exception\Factory
+     * @inheritdoc
      */
     public function buildResponse($guid, Interfaces\Collection $Headers)
     {
@@ -567,6 +648,21 @@ class Factory implements Interfaces\Factory
         }
         catch (\Exception $e) {
             throw new Exception\Factory('Response initialization error', null, $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildHttpResponse($guid, Interfaces\Collection $Headers)
+    {
+        try {
+            $Response = new Http\Response($guid, $Headers);
+            $this->injectDependencies('Everon\Http\Response', $Response);
+            return $Response;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('Http Response initialization error', null, $e);
         }
     }
 

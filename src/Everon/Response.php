@@ -17,7 +17,7 @@ class Response implements Interfaces\Response
     
     protected $data = null;
     protected $HeaderCollection = null;
-    protected $content_type = 'text/html';
+    protected $content_type = 'text/plain';
     protected $charset = 'utf-8';
     protected $status = 200;
     protected $status_message = 'OK';
@@ -49,7 +49,7 @@ class Response implements Interfaces\Response
 
     public function setContentType($content_type)
     {
-        $this->content_type = strtolower($content_type);
+        $this->content_type = $content_type;
     }
     
     public function getCharset()
@@ -94,76 +94,16 @@ class Response implements Interfaces\Response
     {
         $this->result = (bool) $result;
     }
-    
-    protected function sendHeaders()
-    {
-        if ($this->HeaderCollection->has('content-type') === false) {
-            switch ($this->getContentType()) {
-                case 'application/json':
-                    $this->HeaderCollection->set('content-type', 'application/json');
-                    break;
-
-                case 'text/html':
-                    $this->HeaderCollection->set('content-type', 'text/html; charset="'.$this->getCharset().'"');
-                    break;
-                
-                case 'text/plain':
-                    $this->HeaderCollection->set('content-type', 'text/plain; charset="'.$this->getCharset().'"');
-                    break;
-            }
-        }
-        
-        header('HTTP/1.1 '.$this->status);
-        header('EVRID:'. $this->guid);
-        foreach ($this->HeaderCollection as $name => $value) {
-            header($name.': '.$value, false);
-        }
-    }
-    
-    /**
-     * @return Http\HeaderCollection
-     */
-    public function getHeaderCollection()
-    {
-        return $this->HeaderCollection;
-    }
-
-    public function toHtml()
-    {
-        $this->setContentType('text/html');
-        $this->send();
-        return (string) $this->data;
-    }
 
     public function toJson($root='data')
     {
         $this->setContentType('application/json');
-        $this->send();
         return json_encode([$root=>$this->data]);
     }
     
     public function toText()
     {
         $this->setContentType('text/plain');
-        $this->send();
         return (string) $this->data;
     }
-    
-    public function send()
-    {
-        if (headers_sent() === false) {
-            $this->sendHeaders();
-        }
-    }
-
-    public function addHeader($name, $value)
-    {
-        $this->HeaderCollection->set($name, $value);
-    }
-    
-    public function getHeader($name)
-    {
-        $this->HeaderCollection->get($name);
-    }
-
 }
