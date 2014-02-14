@@ -9,7 +9,7 @@
  */
 namespace Everon\Http;
 
-class Session
+class Session implements Interfaces\Session
 {
     
 }

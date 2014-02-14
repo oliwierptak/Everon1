@@ -7,11 +7,8 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon\Http;
+namespace Everon\Http\Interfaces;
 
-use Everon\Helper;
-
-class CookieCollection extends Helper\Collection implements Interfaces\CookieCollection
+interface Session
 {
-    
 }
