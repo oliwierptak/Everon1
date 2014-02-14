@@ -24,16 +24,6 @@ class Factory implements Interfaces\Factory
      */
     protected $DependencyContainer = null;
 
-    /**
-     * @var Interfaces\Collection
-     */
-    protected $WorkerCollection = null;
-
-    /**
-     * @var Interfaces\Collection
-     */
-    protected $MethodCollection = null;
-
 
     /**
      * @param Interfaces\DependencyContainer $Container
@@ -41,45 +31,6 @@ class Factory implements Interfaces\Factory
     public function __construct(Interfaces\DependencyContainer $Container)
     {
         $this->DependencyContainer = $Container;
-        $this->WorkerCollection = new Helper\Collection([]);
-        $this->MethodCollection = new Helper\Collection(
-            array_flip(
-                get_class_methods(
-                    get_class($this)
-                )
-            )
-        );
-    }
-
-    /**
-     * @param $name
-     * @param $arguments
-     * @return mixed
-     * @throws Exception\Factory
-     */
-    public function __call($name, $arguments)
-    {
-        if ($this->MethodCollection->has($name)) {
-            return call_user_func_array([$this, $name], $arguments);
-        }
-
-        foreach ($this->WorkerCollection as $worker_name => $Worker) {
-            /**
-             * @var Interfaces\FactoryWorker $Worker
-             */
-            if ($Worker->getMethods()->has($name)) {
-                return call_user_func_array([$Worker, $name], $arguments);
-            }
-        }
-        
-        throw new Exception\Factory('Invalid factory method: "%s"', $name);
-    }
-
-    public function registerWorker(Interfaces\FactoryWorker $Worker)
-    {
-        $name = get_class($Worker);
-        $this->WorkerCollection->set($name, $Worker);
-        $Worker->register();
     }
 
     /**
@@ -680,6 +631,21 @@ class Factory implements Interfaces\Factory
             throw new Exception\Factory('HttpResponse initialization error', null, $e);
         }
     }
+    
+    /**
+     * @inheritdoc
+     */
+    public function buildHttpSession()
+    {
+        try {
+            $Session = new Http\Session();
+            $this->injectDependencies('Everon\Http\Session', $Session);
+            return $Session;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('HttpSession initialization error', null, $e);
+        }
+    }
 
     /**
      * @param Interfaces\Config $Config
@@ -929,5 +895,20 @@ class Factory implements Interfaces\Factory
             throw new Exception\Factory('ModuleManager initialization error', null, $e);
         }
     }
-    
+
+    /**
+     * @inheritdoc
+     */
+    public function buildFactoryWorker($name, Interfaces\DependencyContainer $DependencyContainer, $namespace='Everon\Module')
+    {
+        try {
+            $class_name = $this->getFullClassName($namespace, $name.'\Factory');
+            $Worker = new $class_name($DependencyContainer);
+            $this->injectDependencies($class_name, $Worker);
+            return $Worker;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('FactoryWorker: "$%s" initialization error', $name, $e);
+        }
+    }
 }

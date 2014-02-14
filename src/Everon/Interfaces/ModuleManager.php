@@ -28,4 +28,9 @@ interface ModuleManager
      * @return Interfaces\module
      */
     function getModule($name);
+
+    /**
+     * @return array
+     */
+    function getPathsOfActiveModules();
 }

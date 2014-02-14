@@ -21,11 +21,6 @@ class Manager implements Interfaces\ModuleManager
     use Dependency\Injection\Factory;
     use Dependency\Injection\FileSystem;
 
-    use Helper\Arrays;
-    use Helper\Asserts;
-    use Helper\Asserts\IsArrayKey;
-    use Helper\IsIterable;
-
     /**
      * @var array
      */
@@ -36,26 +31,31 @@ class Manager implements Interfaces\ModuleManager
     
     protected function initModules()
     {
-        $module_list = $this->getFileSystem()->listPathDir($this->getEnvironment()->getModule());
-        $active_modules = $this->getConfigManager()->getConfigValue('application.modules.active', ['_Core']);
-        
+        $module_list = $this->getPathsOfActiveModules();
         /**
          * @var \DirectoryIterator $Dir
          */
         foreach ($module_list as $Dir) {
             $module_name = $Dir->getBasename();
-            if (in_array($module_name, $active_modules) === false) {
-                continue;
-            }
-
             if (isset($this->modules[$module_name])) {
                 throw new Exception\Module('Module: "%s" is already registered');
             }
             
             $Config = $this->getModuleConfig($module_name, 'module');
             $ConfigRouter = $this->getModuleConfig($module_name, 'router');
-            $this->modules[$module_name] = $this->getFactory()->buildModule($module_name, $Dir->getPathname().DIRECTORY_SEPARATOR, $Config, $ConfigRouter);
+            $Module = $this->getFactory()->buildModule($module_name, $Dir->getPathname().DIRECTORY_SEPARATOR, $Config, $ConfigRouter);
+            
+            //has worker? register it
+            if ((new \SplFileInfo($Dir->getPathname().DIRECTORY_SEPARATOR.'Factory.php'))->isFile()) {
+                $Worker = $this->getFactory()->buildFactoryWorker($module_name, $this->getFactory()->getDependencyContainer());
+                $this->setFactory($Worker);
+            }
+            
+            $this->modules[$module_name] = $Module;
         }
+        
+        $Session = $this->getFactory()->buildHttpSession();
+        sd($Session);
     }
 
     /**
@@ -67,6 +67,27 @@ class Manager implements Interfaces\ModuleManager
     {
         $name = $module_name.'@'.$config_name;
         return $this->getConfigManager()->getConfigByName($name);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getPathsOfActiveModules()
+    {
+        $module_list = $this->getFileSystem()->listPathDir($this->getEnvironment()->getModule());
+        $active_modules = $this->getConfigManager()->getConfigValue('application.modules.active', ['_Core']);
+
+        /**
+         * @var \DirectoryIterator $Dir
+         */
+        foreach ($module_list as $Dir) {
+            $module_name = $Dir->getBasename();
+            if (in_array($module_name, $active_modules) === false) {
+                unset($module_list[$module_name]);
+            }
+        }
+
+        return $module_list;
     }
 
     /**

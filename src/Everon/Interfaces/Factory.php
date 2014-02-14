@@ -41,7 +41,7 @@ interface Factory
      * @param $class_name
      * @return string
      */
-    function getFullClassName($namespace, $class_name);    
+    function getFullClassName($namespace, $class_name);
 
     /**
      * @return Interfaces\Core
@@ -343,6 +343,12 @@ interface Factory
     function buildHttpResponse($guid, Http\Interfaces\HeaderCollection $Headers);
 
     /**
+     * @return Http\Session
+     * @throws Exception\Factory
+     */
+    function buildHttpSession();
+
+    /**
      * @param array $server
      * @param array $get
      * @param array $post
@@ -385,4 +391,13 @@ interface Factory
      * @throws Exception\Factory
      */
     function buildModuleManager();
+
+    /**
+     * @param $name
+     * @param Interfaces\DependencyContainer $DependencyContainer
+     * @param string $namespace
+     * @return Interfaces\Factory
+     * @throws Exception\Factory
+     */
+    function buildFactoryWorker($name, Interfaces\DependencyContainer $DependencyContainer, $namespace='Everon\Module');
 }
