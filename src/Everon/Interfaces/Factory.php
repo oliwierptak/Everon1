@@ -16,6 +16,7 @@ use Everon\Exception;
 use Everon\Interfaces;
 use Everon\Module;
 use Everon\View;
+use Everon\Http;
 
 interface Factory
 {
@@ -327,12 +328,19 @@ interface Factory
     function buildResponse($guid);
 
     /**
-     * @param string Unique ID
-     * @param \Everon\Http\Interfaces\HeaderCollection $Headers
-     * @return \Everon\Http\Interfaces\Response
+     * @param array $data
+     * @return Http\HeaderCollection
      * @throws Exception\Factory
      */
-    function buildHttpResponse($guid, \Everon\Http\Interfaces\HeaderCollection $Headers);
+    function buildHttpHeaders(array $data);
+
+    /**
+     * @param string Unique ID
+     * @param Http\Interfaces\HeaderCollection $Headers
+     * @return Http\Interfaces\Response
+     * @throws Exception\Factory
+     */
+    function buildHttpResponse($guid, Http\Interfaces\HeaderCollection $Headers);
 
     /**
      * @param array $server

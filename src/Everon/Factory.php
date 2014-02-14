@@ -654,6 +654,21 @@ class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
+    public function buildHttpHeaders(array $data)
+    {
+        try {
+            $Response = new Http\HeaderCollection($data);
+            $this->injectDependencies('Everon\Http\HeaderCollection', $Response);
+            return $Response;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('HttpHeaderCollection initialization error', null, $e);
+        }
+    }
+    
+    /**
+     * @inheritdoc
+     */
     public function buildHttpResponse($guid, Http\Interfaces\HeaderCollection $Headers)
     {
         try {

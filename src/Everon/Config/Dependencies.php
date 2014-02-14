@@ -28,10 +28,9 @@ $Container->propose('FileSystem', function() use ($Factory) {
 });
 
 $Container->propose('Response', function() use ($Factory) {
-    $Factory->getDependencyContainer()->monitor('Response', ['Everon\Logger', 'Everon\Http\HeaderCollection']);
+    $Factory->getDependencyContainer()->monitor('Response', ['Everon\Logger']);
     $Logger = $Factory->getDependencyContainer()->resolve('Logger');
-    $Headers = $Factory->buildHttpHeaderCollection();
-    return $Factory->buildResponse($Logger->getGuid(), $Headers);
+    return $Factory->buildResponse($Logger->getGuid());
 });
 
 $Container->propose('ConfigManager', function() use ($Factory) {
