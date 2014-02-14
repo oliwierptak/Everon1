@@ -13,15 +13,7 @@ use Everon\Dependency;
 
 class Response implements Interfaces\Response
 {
-    use Dependency\Logger;
-    
     protected $data = null;
-    protected $HeaderCollection = null;
-    protected $content_type = 'text/plain';
-    protected $charset = 'utf-8';
-    protected $status = 200;
-    protected $status_message = 'OK';
-
     protected $result = false;
     protected $guid = null;
 
@@ -41,49 +33,6 @@ class Response implements Interfaces\Response
         return $this->data;
     }
 
-    public function getContentType()
-    {
-        return $this->content_type;
-    }
-
-    public function setContentType($content_type)
-    {
-        $this->content_type = $content_type;
-    }
-    
-    public function getCharset()
-    {
-        return $this->charset;
-    }
-
-    public function setCharset($charset)
-    {
-        $this->charset = $charset;
-    }
-
-    public function getStatus()
-    {
-        return $this->status;
-    }
-    
-    public function getStatusMessage()
-    {
-        return $this->status_message;
-    }
-
-    /**
-     * @param string $status_message
-     */
-    public function setStatusMessage($status_message)
-    {
-        $this->status_message = $status_message;
-    }
-
-    public function setStatus($status)
-    {
-        $this->status = (int) $status;
-    }
-    
     public function getResult()
     {
         return $this->result;
@@ -96,13 +45,11 @@ class Response implements Interfaces\Response
 
     public function toJson($root='data')
     {
-        $this->setContentType('application/json');
-        return json_encode([$root=>$this->data]);
+        return json_encode([$root => $this->data]);
     }
     
     public function toText()
     {
-        $this->setContentType('text/plain');
         return (string) $this->data;
     }
 }

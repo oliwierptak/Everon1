@@ -15,7 +15,14 @@ use Everon\Response as BasicResponse;
 
 class Response extends BasicResponse implements Interfaces\Response
 {
+    protected $HeaderCollection = null;
+    protected $content_type = 'text/plain';
+    protected $content_length = 0;
+    protected $charset = 'utf-8';
+    protected $status_code = 200;
+    protected $status_message = 'OK';
 
+    
     public function __construct($guid, Interfaces\HeaderCollection $Headers)
     {
         parent::__construct($guid);
@@ -24,11 +31,42 @@ class Response extends BasicResponse implements Interfaces\Response
     
     protected function sendHeaders()
     {
-        header('HTTP/1.1 '.$this->status);
+        header('HTTP/1.1 '.$this->status_code);
         header('EVRID:'. $this->guid);
         foreach ($this->HeaderCollection as $name => $value) {
             header($name.': '.$value, false);
         }
+    }
+
+    public function getContentType()
+    {
+        return $this->content_type;
+    }
+
+    public function setContentType($content_type)
+    {
+        $this->content_type = $content_type;
+    }
+
+    public function getCharset()
+    {
+        return $this->charset;
+    }
+
+    public function setCharset($charset)
+    {
+        $this->charset = $charset;
+    }
+
+
+    public function addHeader($name, $value)
+    {
+        $this->HeaderCollection->set($name, $value);
+    }
+
+    public function getHeader($name)
+    {
+        $this->HeaderCollection->get($name);
     }
 
     /**
@@ -47,6 +85,29 @@ class Response extends BasicResponse implements Interfaces\Response
         $this->HeaderCollection = $Collection;
     }
 
+    public function getStatusCode()
+    {
+        return $this->status_code;
+    }
+
+    public function setStatusCode($status)
+    {
+        $this->status_code = (int) $status;
+    }
+
+    public function getStatusMessage()
+    {
+        return $this->status_message;
+    }
+
+    /**
+     * @param string $status_message
+     */
+    public function setStatusMessage($status_message)
+    {
+        $this->status_message = $status_message;
+    }
+
     public function toHtml()
     {
         $this->setContentType('text/html');
@@ -57,6 +118,7 @@ class Response extends BasicResponse implements Interfaces\Response
 
     public function toJson($root='data')
     {
+        $this->setContentType('application/json');
         $json = parent::toJson($root);
         $this->addHeader('content-type', 'application/json');
         $this->send();
@@ -65,26 +127,16 @@ class Response extends BasicResponse implements Interfaces\Response
 
     public function toText()
     {
+        $this->setContentType('text/plain');
         $this->addHeader('content-type', 'text/plain; charset="'.$this->getCharset().'"');
         $text = parent::toText();
         $this->send();
         return (string) $text;
     }
-
     public function send()
     {
         if (headers_sent() === false) {
             $this->sendHeaders();
         }
-    }
-
-    public function addHeader($name, $value)
-    {
-        $this->HeaderCollection->set($name, $value);
-    }
-
-    public function getHeader($name)
-    {
-        $this->HeaderCollection->get($name);
     }
 }

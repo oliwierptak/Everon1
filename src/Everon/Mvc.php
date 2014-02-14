@@ -36,7 +36,7 @@ class Mvc extends Core implements Interfaces\Core
             $NotFound = new HttpException\NotFound('Page not found: '.$Exception->getMessage());
             $this->showControllerException($NotFound->getHttpStatus(), $NotFound, $this->Controller);
         }
-        catch (Exception $Exception) {
+        catch (\Exception $Exception) {
             $this->getLogger()->error($Exception);
             $this->showControllerException(400, $Exception, $this->Controller);
         }

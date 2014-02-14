@@ -11,18 +11,10 @@ namespace Everon\Interfaces;
 
 interface Response
 {
-    function getContentType();
-    function setContentType($content_type);
-    function getCharset();
-    function setCharset($charset);
-    function toJson();
-    function toText();
     function setData($data);
     function getData();
     function setResult($result);
     function getResult();
-    function setStatus($status);
-    function getStatus();
-    function getStatusMessage();
-    function setStatusMessage($message);
+    function toJson();
+    function toText();
 }

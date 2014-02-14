@@ -10,6 +10,7 @@
 namespace Everon\Interfaces;
 
 use Everon\Interfaces;
+use Everon\Http;
 
 interface MvcController extends Interfaces\Controller
 {

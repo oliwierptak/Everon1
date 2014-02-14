@@ -15,6 +15,9 @@ use Everon\Exception;
 use Everon\Helper;
 use Everon\Http;
 
+/**
+ * @method Http\Interfaces\Response getResponse()
+ */
 abstract class Controller extends \Everon\Controller implements Interfaces\MvcController
 {
     use Dependency\Injection\DomainManager;
@@ -22,6 +25,7 @@ abstract class Controller extends \Everon\Controller implements Interfaces\MvcCo
     use Dependency\Injection\Factory;
     use Dependency\Injection\ModuleManager;
     use Dependency\Injection\ViewManager;
+
     
     use Helper\Arrays;
     use Helper\IsIterable;
@@ -47,7 +51,7 @@ abstract class Controller extends \Everon\Controller implements Interfaces\MvcCo
         $this->getResponse()->setResult($result);
 
         $this->prepareResponse($action, $result);
-        $this->getLogger()->response('[%s] %s : %s', [$this->getResponse()->getStatus(), $this->getName(), $action]);
+        $this->getLogger()->response('[%s] %s : %s', [$this->getResponse()->getStatusCode(), $this->getName(), $action]);
         $this->response();
     }
     
@@ -121,7 +125,7 @@ abstract class Controller extends \Everon\Controller implements Interfaces\MvcCo
             $code = $Exception->getHttpStatus();
         }
 
-        $this->getResponse()->setStatus($code);
+        $this->getResponse()->setStatusCode($code);
         $this->getResponse()->setStatusMessage($message);
         $this->response();
     }

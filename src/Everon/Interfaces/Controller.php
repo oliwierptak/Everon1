@@ -11,7 +11,12 @@ namespace Everon\Interfaces;
 
 use Everon\Exception;
 use Everon\Interfaces;
+use Everon\Http;
 
+/**
+ * @method Interfaces\Response getResponse()
+ * @method void setResponse(Interfaces\Response $Response)
+ */
 interface Controller
 {
     function getName();
@@ -30,13 +35,4 @@ interface Controller
      */
     function execute($action);
 
-    /**
-     * @return Interfaces\Response
-     */
-    function getResponse();
-
-    /**
-     * @param Interfaces\Response $Response
-     */
-    function setResponse(Interfaces\Response $Response);
 }
