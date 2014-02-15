@@ -107,7 +107,7 @@ class Manager implements Interfaces\ConfigManager
             $Filename = new \SplFileInfo($this->getFileSystem()->getRealPath('//Module/'.$module_name.'/Config/module.ini'));
             $data[$module_name.'@module'] = $this->getConfigLoader()->loadByFile($Filename, $this->isCachingEnabled());
         }
-
+        
         return $data;
     }
 

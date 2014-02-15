@@ -16,9 +16,8 @@ class Router extends \Everon\Config
 {      
     protected function buildItem($name, array $data)
     {
-        /*$data['url'] = '%application.e4nv.url%'.$data['url'];
-        $data = $this->recompile($data);*/
-        
+        $data['url'] = '%application.env.url%'.$data['url']; //auto append application url
+        $data = $this->recompile($data);
         return $this->getFactory()->buildConfigItemRouter($name, $data);
     }
 }

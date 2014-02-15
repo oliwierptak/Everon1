@@ -394,10 +394,13 @@ interface Factory
 
     /**
      * @param $name
-     * @param Interfaces\DependencyContainer $DependencyContainer
      * @param string $namespace
      * @return Interfaces\Factory
      * @throws Exception\Factory
      */
-    function buildFactoryWorker($name, Interfaces\DependencyContainer $DependencyContainer, $namespace='Everon\Module');
+    function buildFactoryWorker($name, $namespace='Everon\Module');
+
+    function registerWorker(Interfaces\FactoryWorker $Worker);
+
+    function unRegisterWorker(Interfaces\FactoryWorker $Worker);
 }

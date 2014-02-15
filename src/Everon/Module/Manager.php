@@ -46,16 +46,13 @@ class Manager implements Interfaces\ModuleManager
             $Module = $this->getFactory()->buildModule($module_name, $Dir->getPathname().DIRECTORY_SEPARATOR, $Config, $ConfigRouter);
             
             //has worker? register it
-            if ((new \SplFileInfo($Dir->getPathname().DIRECTORY_SEPARATOR.'Factory.php'))->isFile()) {
-                $Worker = $this->getFactory()->buildFactoryWorker($module_name, $this->getFactory()->getDependencyContainer());
-                $this->setFactory($Worker);
+            if ((new \SplFileInfo($Dir->getPathname().DIRECTORY_SEPARATOR.'FactoryWorker.php'))->isFile()) {
+                $Worker = $this->getFactory()->buildFactoryWorker($module_name);
+                $this->getFactory()->registerWorker($Worker);
             }
             
             $this->modules[$module_name] = $Module;
         }
-        
-        $Session = $this->getFactory()->buildHttpSession();
-        sd($Session);
     }
 
     /**

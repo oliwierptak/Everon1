@@ -115,7 +115,14 @@ trait Arrays
             $tokens = explode('.', $key);
             @list($name, $property) = $tokens;
             if ($property === null) {
-                $data["$default_name.$name"] = $value;
+                if ($this->isIterable($value) && empty($value) === false) {
+                    foreach ($value as $value_name => $value_value) {
+                        $data["$name.$value_name"] = $value_value;
+                    }
+                }
+                else {
+                    $data["$default_name.$name"] = $value;
+                }
             }
             else {
                 $data[$key] = $value;

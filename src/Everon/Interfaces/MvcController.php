@@ -39,4 +39,10 @@ interface MvcController extends Interfaces\Controller
      * @param int $code
      */
     function showException(\Exception $Exception, $code=400);
+
+    /**
+     * @param $name
+     * @return null
+     */
+    function getUrl($name);
 }

@@ -21,6 +21,7 @@ class Manager implements Interfaces\ViewManager
     use Dependency\Injection\Environment;
 
     use Helper\Arrays;
+    use Helper\IsIterable;
     use Helper\String\LastTokenToName;
     use Helper\String\EndsWith;
 

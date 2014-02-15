@@ -26,13 +26,55 @@ class Factory implements Interfaces\Factory
 
 
     /**
+     * @var Interfaces\Collection
+     */
+    protected $WorkerCollection = null;
+
+
+    /**
      * @param Interfaces\DependencyContainer $Container
      */
     public function __construct(Interfaces\DependencyContainer $Container)
     {
         $this->DependencyContainer = $Container;
+        $this->WorkerCollection = new Helper\Collection([]);
     }
 
+    /**
+     * @param $name
+     * @param $arguments
+     * @return mixed
+     * @throws Exception\Factory
+     */
+    public function __call($name, $arguments)
+    {
+        foreach ($this->WorkerCollection as $worker_name => $Worker) {
+            d($worker_name, $Worker);
+            /**
+             * @var Interfaces\FactoryWorker $Worker
+             */
+            if ($Worker->getMethods()->has($name)) {
+                return call_user_func_array([$Worker, $name], $arguments);
+            }
+        }
+
+        throw new Exception\Factory('Invalid factory method: "%s"', $name);
+    }
+
+    public function registerWorker(Interfaces\FactoryWorker $Worker)
+    {
+        $name = get_class($Worker);
+        $this->WorkerCollection->set($name, $Worker);
+        $Worker->register($this);
+    }
+    
+    public function unRegisterWorker(Interfaces\FactoryWorker $Worker)
+    {
+        $name = get_class($Worker);
+        $this->WorkerCollection->set($name, $Worker);
+        $Worker->unRegister();
+    }
+    
     /**
      * @return Interfaces\DependencyContainer
      */
@@ -899,11 +941,11 @@ class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildFactoryWorker($name, Interfaces\DependencyContainer $DependencyContainer, $namespace='Everon\Module')
+    public function buildFactoryWorker($name, $namespace='Everon\Module')
     {
         try {
-            $class_name = $this->getFullClassName($namespace, $name.'\Factory');
-            $Worker = new $class_name($DependencyContainer);
+            $class_name = $this->getFullClassName($namespace, $name.'\FactoryWorker');
+            $Worker = new $class_name($this);
             $this->injectDependencies($class_name, $Worker);
             return $Worker;
         }
