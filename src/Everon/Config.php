@@ -140,6 +140,8 @@ class Config implements \Everon\Interfaces\Config
             $DefaultOrFirstItem->setIsDefault(true);
             $this->setDefaultItem($DefaultOrFirstItem);
         }
+        
+        $this->data = null; //only getItems() from now on
     }
 
     protected function buildItem($name, array $data)

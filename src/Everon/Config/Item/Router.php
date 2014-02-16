@@ -199,6 +199,7 @@ class Router extends \Everon\Config\Item implements Config\Interfaces\ItemRouter
     public function setUrl($url)
     {
         $this->url = $url;
+        $this->data['url'] = $url;
     }
 
     public function getController()
@@ -212,6 +213,7 @@ class Router extends \Everon\Config\Item implements Config\Interfaces\ItemRouter
     public function setController($controller)
     {
         $this->controller = $controller;
+        $this->data['controller'] = $controller;
     }
 
     public function getAction()
@@ -225,6 +227,7 @@ class Router extends \Everon\Config\Item implements Config\Interfaces\ItemRouter
     public function setAction($action)
     {
         $this->action = $action;
+        $this->data['action'] = $action;
     }
 
     /**

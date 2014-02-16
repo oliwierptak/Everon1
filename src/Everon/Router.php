@@ -9,6 +9,8 @@
  */
 namespace Everon;
 
+use Everon\Config\Interfaces\ItemRouter;
+
 class Router implements Interfaces\Router
 {
     use Dependency\Config;
@@ -18,7 +20,7 @@ class Router implements Interfaces\Router
     use Helper\Regex;
 
     /**
-     * @var Config\Interfaces\ItemRouter
+     * @var ItemRouter
      */
     protected $CurrentRoute = null;
 
@@ -35,7 +37,7 @@ class Router implements Interfaces\Router
 
     /**
      * @param Interfaces\Request $Request
-     * @return Config\Interfaces\ItemRouter
+     * @return ItemRouter
      * @throws Exception\RouteNotDefined
      */
     public function getRouteByRequest(Interfaces\Request $Request)
@@ -45,7 +47,7 @@ class Router implements Interfaces\Router
 
         foreach ($this->getConfig()->getItems() as $RouteItem) {
             /**
-             * @var Config\Interfaces\ItemRouter $RouteItem
+             * @var ItemRouter $RouteItem
              */
             if ($RouteItem->matchesByPath($Request->getPath())) {
                 $Item = $RouteItem;
@@ -76,10 +78,10 @@ class Router implements Interfaces\Router
     }
 
     /**
-     * @param Config\Interfaces\ItemRouter $RouteItem
+     * @param ItemRouter $RouteItem
      * @param Interfaces\Request $Request
      */
-    public function validateAndUpdateRequest(Config\Interfaces\ItemRouter $RouteItem, Interfaces\Request $Request)
+    public function validateAndUpdateRequest(ItemRouter $RouteItem, Interfaces\Request $Request)
     {
         list($query, $get, $post) = $this->getRequestValidator()->validate($RouteItem, $Request);
 
@@ -98,12 +100,12 @@ class Router implements Interfaces\Router
     
     /**
      * @param $url
-     * @return Config\Interfaces\ItemRouter |null
+     * @return ItemRouter |null
      */
     public function getRouteByUrl($url)
     {
         /**
-         * @var $RouteItem Config\Interfaces\ItemRouter
+         * @var $RouteItem ItemRouter
          */
         foreach ($this->getConfig()->getItems() as $RouteItem) {
             if (strcasecmp($RouteItem->getUrl(), $url) === 0) {
@@ -116,7 +118,7 @@ class Router implements Interfaces\Router
 
     /**
      * @param $route_name
-     * @return Config\Interfaces\ItemRouter
+     * @return ItemRouter
      * @throws Exception\Router
      */
     public function getRouteByName($route_name)

@@ -9,10 +9,10 @@
  */
 namespace Everon\Interfaces;
 
-use Everon\Config;
-use Everon\Interfaces;
+use Everon\Config\Interfaces\ItemRouter;
+use Everon\Interfaces\Reques;
 
 interface RequestValidator
 {
-    function validate(Config\Interfaces\ItemRouter $RouteItem, Interfaces\Request $Request);
+    function validate(ItemRouter $RouteItem, Request $Request);
 }
