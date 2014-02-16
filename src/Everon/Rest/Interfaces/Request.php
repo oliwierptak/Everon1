@@ -9,7 +9,7 @@
  */
 namespace Everon\Rest\Interfaces;
 
-interface Response
+interface Request
 {
 
 }

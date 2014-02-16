@@ -10,7 +10,6 @@
 namespace Everon\Rest;
 
 use Everon\Exception;
-use Everon\Rest\Interfaces;
 
 class Request implements Interfaces\Request
 {
