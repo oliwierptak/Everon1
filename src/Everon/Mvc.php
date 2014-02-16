@@ -18,7 +18,7 @@ use Everon\Http\Exception as HttpException;
 class Mvc extends Core implements Interfaces\Core
 {
     /**
-     * @var Interfaces\MvcController
+     * @var Mvc\Interfaces\Controller
      */
     protected $Controller = null;
 
@@ -45,12 +45,12 @@ class Mvc extends Core implements Interfaces\Core
     /**
      * @param $code
      * @param \Exception $Exception
-     * @param Interfaces\MvcController|null $Controller
+     * @param Mvc\Interfaces\Controller|null $Controller
      */
     public function showControllerException($code, \Exception $Exception, $Controller)
     {
         /**
-         * @var Interfaces\MvcController $Controller
+         * @var Mvc\Interfaces\Controller $Controller
          */
         if ($Controller === null) {
             $Controller = $this->getModuleManager()->getCoreModule()->getController('Error');

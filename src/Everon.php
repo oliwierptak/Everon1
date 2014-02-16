@@ -15,7 +15,7 @@ namespace Everon;
  * @var Interfaces\Core $Console
  */
 require_once(
-    implode(DIRECTORY_SEPARATOR, [dirname(__FILE__), 'Config', 'Bootstrap', 'console.php'])
+    implode(DIRECTORY_SEPARATOR, [dirname(__FILE__), '..', '..','..','..', 'Config', 'Bootstrap', 'console.php'])
 );
 
 $Console = $Factory->buildConsole();

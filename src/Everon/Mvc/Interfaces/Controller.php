@@ -7,12 +7,12 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon\Interfaces;
+namespace Everon\Mvc\Interfaces;
 
 use Everon\Interfaces;
 use Everon\Http;
 
-interface MvcController extends Interfaces\Controller
+interface Controller extends Interfaces\Controller
 {
     /**
      * @return Interfaces\TemplateContainer

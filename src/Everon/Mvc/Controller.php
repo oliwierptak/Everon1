@@ -9,7 +9,8 @@
  */
 namespace Everon\Mvc;
 
-use Everon\Interfaces;
+use Everon\Interfaces\TemplateContainer;
+use Everon\Interfaces\View;
 use Everon\Dependency;
 use Everon\Exception;
 use Everon\Helper;
@@ -18,7 +19,7 @@ use Everon\Http;
 /**
  * @method Http\Interfaces\Response getResponse()
  */
-abstract class Controller extends \Everon\Controller implements Interfaces\MvcController
+abstract class Controller extends \Everon\Controller implements Interfaces\Controller
 {
     use Dependency\Injection\DomainManager;
     use Dependency\Injection\Environment;
@@ -42,7 +43,7 @@ abstract class Controller extends \Everon\Controller implements Interfaces\MvcCo
         $this->action = $action;
         if ($this->isCallable($this, $action) === false) {
             throw new Exception\InvalidControllerMethod(
-                'Controller: "%s" has no action: "%s" defined', [$this->getName(), $action]
+                'Controller: "%s@%s" has no action: "%s" defined', [$this->getModule()->getName(), $this->getName(), $action]
             );
         }
 
@@ -56,7 +57,7 @@ abstract class Controller extends \Everon\Controller implements Interfaces\MvcCo
     }
     
     /**
-     * @return Interfaces\View
+     * @return View
      */
     public function getView()
     {
@@ -72,7 +73,7 @@ abstract class Controller extends \Everon\Controller implements Interfaces\MvcCo
     }
 
     /**
-     * @return Interfaces\TemplateContainer
+     * @return TemplateContainer
      */
     public function getActionTemplate()
     {

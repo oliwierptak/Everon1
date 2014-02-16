@@ -90,7 +90,7 @@ abstract class Controller implements Interfaces\Controller
         $this->action = $action;
         if ($this->isCallable($this, $action) === false) {
             throw new Exception\InvalidControllerMethod(
-                'Controller: "%s" has no action: "%s" defined', [$this->getName(), $action]
+                'Controller: "%s@%s" has no action: "%s" defined', [$this->getModule()->getName(), $this->getName(), $action]
             );
         }
         
