@@ -7,11 +7,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon;
+namespace Everon\Rest\Interfaces;
 
-use Everon\Exception;
-
-class Rest extends Core implements Interfaces\Rest
+interface Response
 {
-    
+
 }

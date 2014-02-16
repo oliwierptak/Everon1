@@ -7,31 +7,16 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon\Mvc\Interfaces;
+namespace Everon\Rest\Interfaces;
 
 use Everon\Interfaces;
 
 interface Controller extends Interfaces\Controller
 {
     /**
-     * @return Interfaces\TemplateContainer
-     */
-    function getActionTemplate();
-        
-    /**
-     * @return Interfaces\View
-     */
-    function getView();
-
-    /**
      * @return mixed
      */
     function getModel();
-
-    /**
-     * @return Interfaces\ViewManager
-     */
-    function getViewManager();
 
     /**
      * @param \Exception $Exception

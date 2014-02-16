@@ -7,18 +7,19 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon\Mvc;
+namespace Everon\Rest;
 
 use Everon\Interfaces;
 use Everon\Dependency;
 use Everon\Exception;
 use Everon\Helper;
 use Everon\Http;
+use Everon\Rest;
 
 /**
  * @method Http\Interfaces\Response getResponse()
  */
-abstract class Controller extends \Everon\Controller implements Interfaces\RestController
+abstract class Controller extends \Everon\Controller implements Rest\Interfaces\Controller
 {
     use Dependency\Injection\DomainManager;
     use Dependency\Injection\Environment;
@@ -69,14 +70,6 @@ abstract class Controller extends \Everon\Controller implements Interfaces\RestC
     public function getModel()
     {
         return $this->getDomainManager()->getModel($this->getName());
-    }
-
-    /**
-     * @return Interfaces\TemplateContainer
-     */
-    public function getActionTemplate()
-    {
-        return $this->getView()->getTemplate($this->action, $this->getView()->getData());
     }
 
     protected function prepareResponse($action, $result)
