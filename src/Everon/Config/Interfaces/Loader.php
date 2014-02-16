@@ -7,13 +7,12 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon\Interfaces;
+namespace Everon\Config\Interfaces;
 
 use Everon\Exception;
 use Everon\Interfaces;
-use Everon\Config\Loader;
 
-interface ConfigLoader
+interface Loader
 {
     function getConfigDirectory();
     function getCacheDirectory();
@@ -27,7 +26,7 @@ interface ConfigLoader
     /**
      * @param \SplFileInfo $ConfigFile
      * @param $use_cache
-     * @return Loader\Item
+     * @return LoaderItem
      */
     function loadByFile(\SplFileInfo $ConfigFile, $use_cache);
 

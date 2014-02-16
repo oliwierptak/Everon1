@@ -10,9 +10,8 @@
 namespace Everon\Config;
 
 use Everon\Helper;
-use Everon\Interfaces;
 
-class Item implements Interfaces\ConfigItem
+class Item implements Interfaces\Item
 {
     const PROPERTY_DEFAULT = '_default';
     const PROPERTY_NAME = '____name';

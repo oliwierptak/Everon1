@@ -18,7 +18,7 @@ trait ConfigManager
     protected $ConfigManger = null;
 
     /**
-     * @return \Everon\Interfaces\ConfigManager
+     * @return \Everon\Config\Interfaces\Manager
      */
     public function getConfigManager()
     {
@@ -26,9 +26,9 @@ trait ConfigManager
     }
 
     /**
-     * @param \Everon\Interfaces\ConfigManager $ConfigManager
+     * @param \Everon\Config\Interfaces\Manager $ConfigManager
      */
-    public function setConfigManager(\Everon\Interfaces\ConfigManager $ConfigManager)
+    public function setConfigManager(\Everon\Config\Interfaces\Manager $ConfigManager)
     {
         $this->ConfigManger = $ConfigManager;
     }

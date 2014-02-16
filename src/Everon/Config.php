@@ -9,11 +9,12 @@
  */
 namespace Everon;
 
+use Everon\Config\Interfaces;
 use Everon\Helper;
 use Everon\Exception;
 
 //todo: no class should rely on concrete classes, either make it abstract or remove config\router
-class Config implements Interfaces\Config
+class Config implements \Everon\Interfaces\Config
 {
     use Dependency\Injection\Factory;
 
@@ -53,10 +54,10 @@ class Config implements Interfaces\Config
 
     /**
      * @param $name
-     * @param Interfaces\ConfigLoaderItem $ConfigLoaderItem
+     * @param Config\Interfaces\LoaderItem $ConfigLoaderItem
      * @param callable $Compiler
      */
-    public function __construct($name, Interfaces\ConfigLoaderItem $ConfigLoaderItem, \Closure $Compiler)
+    public function __construct($name, Config\Interfaces\LoaderItem $ConfigLoaderItem, \Closure $Compiler)
     {
         $filename = $ConfigLoaderItem->getFilename();
         $data = $ConfigLoaderItem->getData();
@@ -222,7 +223,7 @@ class Config implements Interfaces\Config
 
     /**
      * @param string $name
-     * @return Interfaces\ConfigItem
+     * @return Config\Interfaces\Item
      */
     public function getItemByName($name)
     {
@@ -289,7 +290,7 @@ class Config implements Interfaces\Config
     }
 
     /**
-     * @return callable|null  Wrapped Interfaces\ConfigExpressionMatcher
+     * @return callable|null  Wrapped Config\Interfaces\ExpressionMatcher
      */
     public function getCompiler()
     {
@@ -297,7 +298,7 @@ class Config implements Interfaces\Config
     }
 
     /**
-     * @param \Closure $Compiler Wrapped Interfaces\ConfigExpressionMatcher
+     * @param \Closure $Compiler Wrapped Config\Interfaces\ExpressionMatcher
      */
     public function setCompiler(\Closure $Compiler)
     {

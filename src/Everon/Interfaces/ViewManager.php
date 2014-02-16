@@ -12,7 +12,7 @@ namespace Everon\Interfaces;
 use Everon\Exception;
 use Everon\Interfaces;
 
-interface ViewManager
+interface ViewManager extends Dependency\ConfigManager
 {
     /**
      * @param Interfaces\Template $scope_name

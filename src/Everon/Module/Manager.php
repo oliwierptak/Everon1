@@ -12,9 +12,8 @@ namespace Everon\Module;
 use Everon\Dependency;
 use Everon\Exception;
 use Everon\Helper;
-use Everon\Interfaces;
 
-class Manager implements Interfaces\ModuleManager
+class Manager implements Interfaces\Manager
 {
     use Dependency\Injection\ConfigManager;
     use Dependency\Injection\Environment;

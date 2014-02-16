@@ -7,25 +7,24 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon\Interfaces;
+namespace Everon\Config\Interfaces;
 
 use Everon\Exception;
-use Everon\Interfaces;
 
-interface ConfigManager
+interface Manager
 {
     /**
-     * @return Interfaces\ConfigLoader
+     * @return Loader
      */
     function getConfigLoader();
 
     /**
-     * @param Interfaces\ConfigLoader $ConfigLoader
+     * @param Loader $ConfigLoader
      */
-    function setConfigLoader(Interfaces\ConfigLoader $ConfigLoader);
+    function setConfigLoader(Loader $ConfigLoader);
         
     /**
-     * @return Interfaces\Config
+     * @return \Everon\Interfaces\Config
      */
     function getDatabaseConfig();
 
@@ -35,7 +34,7 @@ interface ConfigManager
     function getEnvironmentExpressions();
 
     /**
-     * @return Interfaces\ConfigExpressionMatcher
+     * @return ExpressionMatcher
      */
     function getExpressionMatcher();
 
@@ -50,10 +49,10 @@ interface ConfigManager
     function setIsCachingEnabled($caching_enabled);
 
     /**
-     * @param Interfaces\Config $Config
+     * @param \Everon\Interfaces\Config $Config
      * @throws Exception\Config
      */
-    function register(Interfaces\Config $Config);
+    function register(\Everon\Interfaces\Config $Config);
 
     /**
      * @param $config_name
@@ -79,14 +78,14 @@ interface ConfigManager
 
     /**
      * @param $name
-     * @return Interfaces\Config
+     * @return \Everon\Interfaces\Config
      */
     function getConfigByName($name);
 
     /**
-     * @param Interfaces\Config $Config
+     * @param \Everon\Interfaces\Config $Config
      */
-    function setConfigByName(Interfaces\Config $Config);
+    function setConfigByName(\Everon\Interfaces\Config $Config);
 
     /**
      * @param $expression

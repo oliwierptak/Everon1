@@ -9,10 +9,10 @@
  */
 namespace Everon\Config\Loader;
 
-use Everon\Interfaces;
+use Everon\Config\Interfaces;
 use Everon\Helper;
 
-class Item implements Interfaces\ConfigLoaderItem
+class Item implements Interfaces\LoaderItem
 {
     use Helper\ToArray;
     

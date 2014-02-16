@@ -16,7 +16,7 @@ trait ConfigLoader
 
 
     /**
-     * @return \Everon\Interfaces\ConfigLoader
+     * @return \Everon\Config\Interfaces\Loader
      */
     public function getConfigLoader()
     {
@@ -24,9 +24,9 @@ trait ConfigLoader
     }
 
     /**
-     * @param \Everon\Interfaces\ConfigLoader $ConfigLoader
+     * @param \Everon\Config\Interfaces\Loader $ConfigLoader
      */
-    public function setConfigLoader(\Everon\Interfaces\ConfigLoader $ConfigLoader)
+    public function setConfigLoader(\Everon\Config\Interfaces\Loader $ConfigLoader)
     {
         $this->ConfigLoader = $ConfigLoader;
     }

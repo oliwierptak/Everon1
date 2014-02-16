@@ -7,9 +7,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon\Interfaces;
+namespace Everon\Config\Interfaces;
 
-interface ConfigItem extends Arrayable
+interface Item extends \Everon\Interfaces\Arrayable
 {
     function getName();
     function setName($name);

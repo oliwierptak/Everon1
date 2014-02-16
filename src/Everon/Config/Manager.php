@@ -12,9 +12,8 @@ namespace Everon\Config;
 use Everon\Dependency;
 use Everon\Exception;
 use Everon\Helper;
-use Everon\Interfaces;
 
-class Manager implements Interfaces\ConfigManager
+class Manager implements \Everon\Config\Interfaces\Manager
 {
     use Dependency\Injection\Environment;
     use Dependency\Injection\Factory;
@@ -48,9 +47,9 @@ class Manager implements Interfaces\ConfigManager
 
 
     /**
-     * @param Interfaces\ConfigLoader $Loader
+     * @param Interfaces\Loader $Loader
      */
-    public function __construct(Interfaces\ConfigLoader $Loader)
+    public function __construct(Interfaces\Loader $Loader)
     {
         $this->ConfigLoader = $Loader;
     }
@@ -79,10 +78,10 @@ class Manager implements Interfaces\ConfigManager
     }
     
     /**
-     * @param Interfaces\ConfigLoader $Loader
+     * @param Interfaces\Loader $Loader
      * @return array
      */
-    protected function getConfigDataFromLoader(Interfaces\ConfigLoader $Loader)
+    protected function getConfigDataFromLoader(Interfaces\Loader $Loader)
     {
         //load configs from application
         $data = $Loader->load((bool) $this->isCachingEnabled());
@@ -118,7 +117,7 @@ class Manager implements Interfaces\ConfigManager
     protected function getAllConfigsDataAndCompiler(array $configs_data)
     {
         /**
-         * @var Interfaces\ConfigLoaderItem $ConfigLoaderItem
+         * @var Interfaces\LoaderItem $ConfigLoaderItem
          */
         $config_items_data = [];
         foreach ($configs_data as $name => $ConfigLoaderItem) {
@@ -137,6 +136,9 @@ class Manager implements Interfaces\ConfigManager
         $configs_data = $this->getConfigDataFromLoader($this->getConfigLoader());
         list($Compiler, $config_items_data) = $this->getAllConfigsDataAndCompiler($configs_data);
 
+        /**
+         * @var Interfaces\LoaderItem $ConfigLoaderItem
+         */
         foreach ($configs_data as $name => $ConfigLoaderItem) {
             $ConfigLoaderItem->setData($config_items_data[$name]);
             $this->loadAndRegisterOneConfig($name, $ConfigLoaderItem, $Compiler);
@@ -297,7 +299,7 @@ EOF;
     /**
      * @inheritdoc
      */
-    public function register(Interfaces\Config $Config)
+    public function register(\Everon\Interfaces\Config $Config)
     {
         if (isset($this->configs[$Config->getName()])) {
             throw new Exception\Config('Config with name: "%s" already registered', $Config->getName());
@@ -342,7 +344,7 @@ EOF;
     /**
      * @inheritdoc
      */
-    public function setConfigByName(Interfaces\Config $Config)
+    public function setConfigByName(\Everon\Interfaces\Config $Config)
     {
         $this->configs[$Config->getName()] = $Config;
     }

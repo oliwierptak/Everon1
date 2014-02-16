@@ -18,7 +18,7 @@ class Router implements Interfaces\Router
     use Helper\Regex;
 
     /**
-     * @var Interfaces\ConfigItemRouter
+     * @var Config\Interfaces\ItemRouter
      */
     protected $CurrentRoute = null;
 
@@ -35,7 +35,7 @@ class Router implements Interfaces\Router
 
     /**
      * @param Interfaces\Request $Request
-     * @return Interfaces\ConfigItemRouter
+     * @return Config\Interfaces\ItemRouter
      * @throws Exception\RouteNotDefined
      */
     public function getRouteByRequest(Interfaces\Request $Request)
@@ -45,7 +45,7 @@ class Router implements Interfaces\Router
 
         foreach ($this->getConfig()->getItems() as $RouteItem) {
             /**
-             * @var Interfaces\ConfigItemRouter $RouteItem
+             * @var Config\Interfaces\ItemRouter $RouteItem
              */
             if ($RouteItem->matchesByPath($Request->getPath())) {
                 $Item = $RouteItem;
@@ -76,10 +76,10 @@ class Router implements Interfaces\Router
     }
 
     /**
-     * @param Interfaces\ConfigItemRouter $RouteItem
+     * @param Config\Interfaces\ItemRouter $RouteItem
      * @param Interfaces\Request $Request
      */
-    public function validateAndUpdateRequest(Interfaces\ConfigItemRouter $RouteItem, Interfaces\Request $Request)
+    public function validateAndUpdateRequest(Config\Interfaces\ItemRouter $RouteItem, Interfaces\Request $Request)
     {
         list($query, $get, $post) = $this->getRequestValidator()->validate($RouteItem, $Request);
 
@@ -98,12 +98,12 @@ class Router implements Interfaces\Router
     
     /**
      * @param $url
-     * @return Interfaces\ConfigItemRouter|null
+     * @return Config\Interfaces\ItemRouter |null
      */
     public function getRouteByUrl($url)
     {
         /**
-         * @var $RouteItem Interfaces\ConfigItemRouter
+         * @var $RouteItem Config\Interfaces\ItemRouter
          */
         foreach ($this->getConfig()->getItems() as $RouteItem) {
             if (strcasecmp($RouteItem->getUrl(), $url) === 0) {
@@ -116,7 +116,7 @@ class Router implements Interfaces\Router
 
     /**
      * @param $route_name
-     * @return Interfaces\ConfigItemRouter
+     * @return Config\Interfaces\ItemRouter
      * @throws Exception\Router
      */
     public function getRouteByName($route_name)

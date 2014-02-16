@@ -13,13 +13,13 @@ namespace Everon\Dependency;
 trait ModuleManager
 {
     /**
-     * @var \Everon\Interfaces\ModuleManager
+     * @var \Everon\Module\Interfaces\Manager
      */
     protected $ModuleManager = null;
 
 
     /**
-     * @return \Everon\Interfaces\ModuleManager
+     * @return \Everon\Module\Interfaces\Manager
      */
     public function getModuleManager()
     {
@@ -27,9 +27,9 @@ trait ModuleManager
     }
 
     /**
-     * @param \Everon\Interfaces\ModuleManager
+     * @param \Everon\Module\Interfaces\Manager $Manager
      */
-    public function setModuleManager(\Everon\Interfaces\ModuleManager $Manager)
+    public function setModuleManager(\Everon\Module\Interfaces\Manager $Manager)
     {
         $this->ModuleManager = $Manager;
     }

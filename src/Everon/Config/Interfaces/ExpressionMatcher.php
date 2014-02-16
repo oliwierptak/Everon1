@@ -7,11 +7,10 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon\Interfaces;
+namespace Everon\Config\Interfaces;
 
-use Everon\Interfaces;
 
-interface ConfigExpressionMatcher
+interface ExpressionMatcher
 {
     /**
      * @param array $configs_data

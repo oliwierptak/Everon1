@@ -9,37 +9,46 @@
  */
 namespace Everon\Interfaces;
 
+use Everon\Config\Interfaces\ItemRouter;
+use Everon\Interfaces;
+use Everon\Exception;
 
 interface Router
 {
     /**
-     * @param \Everon\Interfaces\Request $Request
-     * @return \Everon\Interfaces\ConfigItemRouter
-     * @throws \Everon\Exception\InvalidRoute
+     * @param ItemRouter $RouteItem
+     * @param Interfaces\Request $Request
+     */
+    function validateAndUpdateRequest(ItemRouter $RouteItem, Interfaces\Request $Request);
+        
+    /**
+     * @param Interfaces\Request $Request
+     * @return ItemRouter
+     * @throws Exception\InvalidRoute
      */
     function getRouteByRequest(Request $Request);
 
     /**
      * @param $route_name
-     * @return \Everon\Interfaces\ConfigItemRouter
-     * @throws \Everon\Exception\Router
+     * @return ItemRouter
+     * @throws Exception\Router
      */
     function getRouteByName($route_name);
 
     /**
      * @param $url
-     * @return \Everon\Interfaces\ConfigItemRouter|null
+     * @return ItemRouter
      */
     function getRouteByUrl($url);
 
     /**
-     * @param \Everon\Interfaces\Config $Config
+     * @param Interfaces\Config $Config
      * @return void
      */
-    function setConfig(Config $Config);
+    function setConfig(Interfaces\Config $Config);
 
     /**
-     * @return \Everon\Interfaces\Config
+     * @return Interfaces\Config
      */
     function getConfig();
 }

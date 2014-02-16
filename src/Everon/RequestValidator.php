@@ -19,11 +19,11 @@ class RequestValidator implements Interfaces\RequestValidator
      * Validates $_GET, $_POST and $QUERY_STRING.
      * Returns array of validated query, get and post otherwise, or throws an exception
      * 
-     * @param Interfaces\ConfigItemRouter $RouteItem
+     * @param Config\Interfaces\ItemRouter$RouteItem
      * @param Interfaces\Request $Request
      * @return array
      */
-    public function validate(Interfaces\ConfigItemRouter $RouteItem, Interfaces\Request $Request)
+    public function validate(Config\Interfaces\ItemRouter $RouteItem, Interfaces\Request $Request)
     {
         $parsed_query_parameters = $this->validateQuery($RouteItem, $Request->getPath(), $Request->getQueryCollection());
         $this->validateRoute(
@@ -66,13 +66,13 @@ class RequestValidator implements Interfaces\RequestValidator
     }
 
     /**
-     * @param Interfaces\ConfigItemRouter $RouteItem
+     * @param Config\Interfaces\ItemRouter $RouteItem
      * @param $request_url
      * @param array $get_data
      * @return array
      * @throws Exception\RequestValidator
      */
-    protected function validateQuery(Interfaces\ConfigItemRouter $RouteItem, $request_url, array $get_data)
+    protected function validateQuery(Config\Interfaces\ItemRouter $RouteItem, $request_url, array $get_data)
     {
         try {
             $request_url = $RouteItem->getCleanUrl($request_url);
@@ -100,12 +100,12 @@ class RequestValidator implements Interfaces\RequestValidator
     }
 
     /**
-     * @param Interfaces\ConfigItemRouter $RouteItem
+     * @param Config\Interfaces\ItemRouter $RouteItem
      * @param array $get_data
      * @return array
      * @throws Exception\RequestValidator
      */
-    protected function validateGet(Interfaces\ConfigItemRouter $RouteItem, array $get_data)
+    protected function validateGet(Config\Interfaces\ItemRouter $RouteItem, array $get_data)
     {
         try {
             $parsed_get = [];
@@ -128,12 +128,12 @@ class RequestValidator implements Interfaces\RequestValidator
     }
 
     /**
-     * @param Interfaces\ConfigItemRouter $RouteItem
+     * @param Config\Interfaces\ItemRouter $RouteItem
      * @param array $post_data
      * @return array
      * @throws Exception\RequestValidator
      */
-    protected function validatePost(Interfaces\ConfigItemRouter $RouteItem, array $post_data)
+    protected function validatePost(Config\Interfaces\ItemRouter $RouteItem, array $post_data)
     {
         try {
             foreach ($post_data as $param_name => $pvalue) {

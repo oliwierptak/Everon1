@@ -12,9 +12,8 @@ namespace Everon\Config;
 use Everon\Dependency;
 use Everon\Exception;
 use Everon\Helper;
-use Everon\Interfaces;
 
-class ExpressionMatcher implements Interfaces\ConfigExpressionMatcher
+class ExpressionMatcher implements Interfaces\ExpressionMatcher
 {
     protected $expressions = [];
     protected $values = [];

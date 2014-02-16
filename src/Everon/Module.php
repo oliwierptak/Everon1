@@ -9,8 +9,6 @@
  */
 namespace Everon;
 
-use Everon\Exception;
-use Everon\Dependency;
 
 abstract class Module implements Interfaces\Module
 {
@@ -23,7 +21,7 @@ abstract class Module implements Interfaces\Module
     protected $directory = null;
 
     /**
-     * @var Interfaces\ConfigItemRouter
+     * @var \Everon\Config\Interfaces\ItemRouter
      */
     protected $RouteConfig = null;
 

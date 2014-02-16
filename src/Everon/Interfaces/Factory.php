@@ -57,22 +57,22 @@ interface Factory
 
     /**
      * @param $name
-     * @param Interfaces\ConfigLoaderItem $ConfigLoaderItem
+     * @param Config\Interfaces\LoaderItem $ConfigLoaderItem
      * @param callable $Compiler
      * @return Interfaces\Config
      * @throws Exception\Factory
      */
-    function buildConfig($name, Interfaces\ConfigLoaderItem $ConfigLoaderItem, \Closure $Compiler);
+    function buildConfig($name, Config\Interfaces\LoaderItem $ConfigLoaderItem, \Closure $Compiler);
 
     /**
-     * @param Interfaces\ConfigLoader $Loader
+     * @param Config\Interfaces\Loader $Loader
      * @return Config\Manager|mixed
      * @throws Exception\Factory
      */
-    function buildConfigManager(Interfaces\ConfigLoader $Loader);
+    function buildConfigManager(Config\Interfaces\Loader $Loader);
 
     /**
-     * @return Interfaces\ConfigExpressionMatcher
+     * @return Config\Interfaces\ExpressionMatcher
      * @throws Exception\Factory
      */
     function buildConfigExpressionMatcher();
@@ -203,7 +203,7 @@ interface Factory
     /**
      * @param $name
      * @param array $data
-     * @return Interfaces\ConfigItem
+     * @return Config\Interfaces\Item
      * @throws Exception\Factory
      */
     function buildConfigItem($name, array $data);
@@ -211,7 +211,7 @@ interface Factory
     /**
      * @param $name
      * @param array $data
-     * @return Interfaces\ConfigItemRouter
+     * @return Config\Interfaces\ItemRouter
      * @throws Exception\Factory
      */
     function buildConfigItemRouter($name, array $data);

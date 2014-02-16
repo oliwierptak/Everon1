@@ -12,9 +12,8 @@ namespace Everon\Config;
 use Everon\Dependency;
 use Everon\Exception;
 use Everon\Helper;
-use Everon\Interfaces;
 
-class Loader implements Interfaces\ConfigLoader
+class Loader implements Interfaces\Loader
 {
     use Dependency\Injection\Environment;
     use Dependency\Injection\Factory;
@@ -76,7 +75,7 @@ class Loader implements Interfaces\ConfigLoader
     /**
      * @param \SplFileInfo $ConfigFile
      * @param $use_cache
-     * @return Loader\Item
+     * @return Interfaces\LoaderItem
      */
     public function loadByFile(\SplFileInfo $ConfigFile, $use_cache)
     {
@@ -102,10 +101,10 @@ class Loader implements Interfaces\ConfigLoader
     }
     
     /**
-     * @param Interfaces\Config $Config
+     * @param \Everon\Interfaces\Config $Config
      * @throws Exception\Config
      */
-    public function saveConfigToCache(Interfaces\Config $Config)
+    public function saveConfigToCache(\Everon\Interfaces\Config $Config)
     {
         try {
             $cache_filename = $this->cache_directory.pathinfo($Config->getFilename(), PATHINFO_BASENAME).'.php';

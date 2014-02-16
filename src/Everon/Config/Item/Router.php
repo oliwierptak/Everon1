@@ -11,11 +11,12 @@ namespace Everon\Config\Item;
 
 //todo: move it to Router\Item or Router]Route ...
 
+use Everon\Config;
 use Everon\Exception;
 use Everon\Interfaces;
 use Everon\Helper;
 
-class Router extends \Everon\Config\Item implements Interfaces\ConfigItemRouter
+class Router extends \Everon\Config\Item implements Config\Interfaces\ItemRouter
 {
     const PROPERTY_MODULE = '____module';
     

@@ -188,12 +188,12 @@ class Factory implements Interfaces\Factory
      * will become Everon\Config\Router
      * 
      * @param $name
-     * @param Interfaces\ConfigLoaderItem $ConfigLoaderItem
+     * @param Config\Interfaces\LoaderItem $ConfigLoaderItem
      * @param callable $Compiler
      * @return Interfaces\Config
      * @throws Exception\Factory
      */
-    public function buildConfig($name, Interfaces\ConfigLoaderItem $ConfigLoaderItem, \Closure $Compiler)
+    public function buildConfig($name, Config\Interfaces\LoaderItem $ConfigLoaderItem, \Closure $Compiler)
     {
         try {
             $ConfigFile = new \SplFileInfo($ConfigLoaderItem->getFilename());
@@ -220,11 +220,11 @@ class Factory implements Interfaces\Factory
     }
 
     /**
-     * @param Interfaces\ConfigLoader $Loader
-     * @return Interfaces\ConfigManager
+     * @param Config\Interfaces\Loader $Loader
+     * @return Config\Interfaces\Manager
      * @throws Exception\Factory
      */
-    public function buildConfigManager(Interfaces\ConfigLoader $Loader)
+    public function buildConfigManager(Config\Interfaces\Loader $Loader)
     {
         try {
             $Manager = new Config\Manager($Loader);
@@ -237,7 +237,7 @@ class Factory implements Interfaces\Factory
     }
 
     /**
-     * @return Interfaces\ConfigExpressionMatcher
+     * @return Config\Interfaces\ExpressionMatcher
      * @throws Exception\Factory
      */
     public function buildConfigExpressionMatcher()
@@ -273,7 +273,7 @@ class Factory implements Interfaces\Factory
     /**
      * @param $filename
      * @param array $data
-     * @return Config\Loader\Item
+     * @return Config\Interfaces\LoaderItem
      * @throws Exception\Factory
      */
     public function buildConfigLoaderItem($filename, array $data)
@@ -729,7 +729,7 @@ class Factory implements Interfaces\Factory
     /**
      * @param $name
      * @param array $data
-     * @return Interfaces\ConfigItem
+     * @return Config\Interfaces\Item
      * @throws Exception\Factory
      */
     public function buildConfigItem($name, array $data)
@@ -741,14 +741,14 @@ class Factory implements Interfaces\Factory
             return $ConfigItem;
         }
         catch (\Exception $e) {
-            throw new Exception\Factory('ConfigItemRouter: "%s" initialization error', $name, $e);
+            throw new Exception\Factory('ConfigItem: "%s" initialization error', $name, $e);
         }
     }
 
     /**
      * @param $name
      * @param array $data
-     * @return Interfaces\ConfigItemRouter
+     * @return Config\Interfaces\ItemRouter
      * @throws Exception\Factory
      */
     public function buildConfigItemRouter($name, array $data)
