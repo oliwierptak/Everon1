@@ -9,7 +9,7 @@
  */
 namespace Everon\Rest\Interfaces;
 
-interface Request
+interface Request extends \Everon\Interfaces\Request
 {
 
 }

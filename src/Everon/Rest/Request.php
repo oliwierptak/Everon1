@@ -11,7 +11,7 @@ namespace Everon\Rest;
 
 use Everon\Exception;
 
-class Request implements Interfaces\Request
+class Request extends \Everon\Request implements Interfaces\Request
 {
     const METHOD_DELETE = 'DELETE';
     const METHOD_GET = 'GET';

@@ -13,20 +13,27 @@ use Everon\Exception;
 use Everon\Helper;
 use Everon\Rest\Interfaces;
 
-//todo: wny not merge with the Response?
-//todo Response should kinda become Http\Response
-class Response extends \Everon\Response implements Interfaces\Response
+class Response extends \Everon\Http\Response implements Interfaces\Response
 {
+    /**
+     * @return bool
+     */
     public function isError()
     {
         return $this->isClientError() || $this->isServerError();
     }
 
+    /**
+     * @return bool
+     */
     public function isClientError()
     {
         return $this->status_code >= 400 && $this->status_code < 500;
-    }    
-    
+    }
+
+    /**
+     * @return bool
+     */
     public function isServerError()
     {
         return $this->status_code >= 500 && $this->status_code < 600;
