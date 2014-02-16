@@ -28,7 +28,7 @@ class Factory implements Interfaces\Factory
     /**
      * @var Interfaces\Collection
      */
-    protected $WorkerCollection = null;
+    //protected $WorkerCollection = null;
 
 
     /**
@@ -37,7 +37,7 @@ class Factory implements Interfaces\Factory
     public function __construct(Interfaces\DependencyContainer $Container)
     {
         $this->DependencyContainer = $Container;
-        $this->WorkerCollection = new Helper\Collection([]);
+        //$this->WorkerCollection = new Helper\Collection([]);
     }
 
     /**
@@ -46,13 +46,14 @@ class Factory implements Interfaces\Factory
      * @return mixed
      * @throws Exception\Factory
      */
+    /*
     public function __call($name, $arguments)
     {
         foreach ($this->WorkerCollection as $worker_name => $Worker) {
             d($worker_name, $Worker);
-            /**
+            / **
              * @var Interfaces\FactoryWorker $Worker
-             */
+             * /
             if ($Worker->getMethods()->has($name)) {
                 return call_user_func_array([$Worker, $name], $arguments);
             }
@@ -73,7 +74,7 @@ class Factory implements Interfaces\Factory
         $name = get_class($Worker);
         $this->WorkerCollection->set($name, $Worker);
         $Worker->unRegister();
-    }
+    }*/
     
     /**
      * @return Interfaces\DependencyContainer
@@ -677,10 +678,10 @@ class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildHttpSession()
+    public function buildHttpSession($evrid, array $data)
     {
         try {
-            $Session = new Http\Session();
+            $Session = new Http\Session($evrid, $data);
             $this->injectDependencies('Everon\Http\Session', $Session);
             return $Session;
         }
@@ -950,7 +951,7 @@ class Factory implements Interfaces\Factory
             return $Worker;
         }
         catch (\Exception $e) {
-            throw new Exception\Factory('FactoryWorker: "$%s" initialization error', $name, $e);
+            throw new Exception\Factory('FactoryWorker: "%s" initialization error', $name, $e);
         }
     }
 }

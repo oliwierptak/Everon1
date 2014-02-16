@@ -37,13 +37,23 @@ interface Module
      */
     function setDirectory($directory);
 
+    /**
+     * @param Interfaces\FactoryWorker $FactoryWorker
+     */
+    function setFactoryWorker(Interfaces\FactoryWorker $FactoryWorker);
+
+    /**
+     * @return Interfaces\FactoryWorker
+     */
+    function getFactoryWorker();
+
     function getName();
 
     /**
      * @param $name
      */
     function setName($name);
-
+    
     /**
      * @return Interfaces\Config
      */

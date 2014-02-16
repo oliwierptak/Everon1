@@ -37,6 +37,11 @@ abstract class Module implements Interfaces\Module
      */
     protected $ControllerCollection = null;
 
+    /**
+     * @var Interfaces\FactoryWorker
+     */
+    protected $FactoryWorker = null;
+
     
     /**
      * @param $name
@@ -84,6 +89,22 @@ abstract class Module implements Interfaces\Module
         }
 
         return $this->ControllerCollection->get($name);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setFactoryWorker(Interfaces\FactoryWorker $FactoryWorker)
+    {
+        $this->FactoryWorker = $FactoryWorker;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getFactoryWorker()
+    {
+        return $this->FactoryWorker;
     }
 
     /**

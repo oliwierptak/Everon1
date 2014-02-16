@@ -343,10 +343,12 @@ interface Factory
     function buildHttpResponse($guid, Http\Interfaces\HeaderCollection $Headers);
 
     /**
+     * @param $evrid
+     * @param array $data
      * @return Http\Session
      * @throws Exception\Factory
      */
-    function buildHttpSession();
+    function buildHttpSession($evrid, array $data);
 
     /**
      * @param array $server
@@ -400,7 +402,7 @@ interface Factory
      */
     function buildFactoryWorker($name, $namespace='Everon\Module');
 
-    function registerWorker(Interfaces\FactoryWorker $Worker);
+/*    function registerWorker(Interfaces\FactoryWorker $Worker);
 
-    function unRegisterWorker(Interfaces\FactoryWorker $Worker);
+    function unRegisterWorker(Interfaces\FactoryWorker $Worker);*/
 }

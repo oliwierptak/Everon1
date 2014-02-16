@@ -31,11 +31,11 @@ class Manager implements Interfaces\ModuleManager
     
     protected function initModules()
     {
-        $module_list = $this->getPathsOfActiveModules();
+        $path_list = $this->getPathsOfActiveModules();
         /**
          * @var \DirectoryIterator $Dir
          */
-        foreach ($module_list as $Dir) {
+        foreach ($path_list as $Dir) {
             $module_name = $Dir->getBasename();
             if (isset($this->modules[$module_name])) {
                 throw new Exception\Module('Module: "%s" is already registered');
@@ -48,7 +48,7 @@ class Manager implements Interfaces\ModuleManager
             //has worker? register it
             if ((new \SplFileInfo($Dir->getPathname().DIRECTORY_SEPARATOR.'FactoryWorker.php'))->isFile()) {
                 $Worker = $this->getFactory()->buildFactoryWorker($module_name);
-                $this->getFactory()->registerWorker($Worker);
+                $Module->setFactoryWorker($Worker);
             }
             
             $this->modules[$module_name] = $Module;
@@ -77,14 +77,15 @@ class Manager implements Interfaces\ModuleManager
         /**
          * @var \DirectoryIterator $Dir
          */
+        $result = [];
         foreach ($module_list as $Dir) {
             $module_name = $Dir->getBasename();
-            if (in_array($module_name, $active_modules) === false) {
-                unset($module_list[$module_name]);
+            if (in_array($module_name, $active_modules)) {
+                $result[$module_name] = $Dir;
             }
         }
 
-        return $module_list;
+        return $result;
     }
 
     /**

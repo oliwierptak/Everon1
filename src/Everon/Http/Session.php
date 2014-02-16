@@ -9,7 +9,24 @@
  */
 namespace Everon\Http;
 
+use Everon\Helper;
+use Everon\Interfaces\Collection;
+
 class Session implements Interfaces\Session
 {
+    /**
+     * @var Collection
+     */
+    protected $Data = null;
     
+    /**
+     * @param $evrid
+     * @param array $data
+     */
+    public function __construct($evrid, array $data)
+    {
+        $data['evrid'] = $evrid;
+        $data['start_time'] = time();
+        $this->Data = new Helper\Collection($data);
+    }
 }
