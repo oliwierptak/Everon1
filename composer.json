@@ -1,5 +1,5 @@
 {
-	"name": "everon/everon",
+    "name": "everon/everon",
     "type": "library",
     "description": "Everon - PHP application framework",
     "keywords": ["framework"],
@@ -8,7 +8,7 @@
         "name": "Oliwier Ptak",
         "email": "oliwierptak@gmail.com"
     }],
-	"version": "0.2.0",
+    "version": "0.2.0",
     "require": {
         "php": "~5.5"
     }
