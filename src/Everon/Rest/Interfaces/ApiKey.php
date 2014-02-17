@@ -11,5 +11,23 @@ namespace Everon\Rest\Interfaces;
 
 interface ApiKey
 {
+    /**
+     * @param string $secret
+     */
+    function setSecret($secret);
 
+    /**
+     * @return string
+     */
+    function getSecret();
+
+    /**
+     * @param string $id
+     */
+    function setId($id);
+
+    /**
+     * @return string
+     */
+    function getId();
 }

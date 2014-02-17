@@ -17,6 +17,7 @@ use Everon\Interfaces;
 use Everon\Module;
 use Everon\View;
 use Everon\Http;
+use Everon\Rest;
 
 interface Factory
 {
@@ -66,6 +67,14 @@ interface Factory
      * @throws Exception\Factory
      */
     function buildRestServer();
+
+    /**
+     * @param $id
+     * @param $secret
+     * @return Rest\ApiKey
+     * @throws Exception\Factory
+     */
+    function buildRestApiKey($id, $secret);
 
     /**
      * @param $name

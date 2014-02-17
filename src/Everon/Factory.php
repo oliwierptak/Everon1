@@ -162,7 +162,7 @@ class Factory implements Interfaces\Factory
             return $Client;
         }
         catch (\Exception $e) {
-            throw new Exception\Factory('Rest client initialization error', null, $e);
+            throw new Exception\Factory('RestClient initialization error', null, $e);
         }
     }
     
@@ -177,7 +177,22 @@ class Factory implements Interfaces\Factory
             return $Server;
         }
         catch (\Exception $e) {
-            throw new Exception\Factory('Rest server initialization error', null, $e);
+            throw new Exception\Factory('RestServer initialization error', null, $e);
+        }
+    }
+    
+    /**
+     * @inheritdoc
+     */
+    public function buildRestApiKey($id, $secret)
+    {
+        try {
+            $ApiKey = new Rest\ApiKey($id, $secret);
+            $this->injectDependencies('Everon\Rest\ApiKey', $ApiKey);
+            return $ApiKey;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('RestApiKey initialization error', null, $e);
         }
     }
 

@@ -78,7 +78,16 @@ abstract class Controller extends \Everon\Controller implements Rest\Interfaces\
      */
     public function showException(\Exception $Exception, $code=400)
     {
-        die('exception');
+        $message = $Exception->getMessage();
+        $this->getResponse()->setData(['error' => $message]);
+        if ($Exception instanceof Http\Exception) {
+            $message = $Exception->getHttpMessage();
+            $code = $Exception->getHttpStatus();
+        }
+
+        $this->getResponse()->setStatusCode($code);
+        $this->getResponse()->setStatusMessage($message);
+        $this->response();
     }
 
 }

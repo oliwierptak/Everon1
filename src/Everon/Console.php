@@ -37,7 +37,7 @@ class Console extends Core implements Interfaces\Core
             $this->getLogger()->notFound($e);
             echo "Unknown command: ".$e->getMessage()."\n";
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
             $this->getLogger()->error($e);
             echo "Error: ".$e->getMessage()."\n";
         }

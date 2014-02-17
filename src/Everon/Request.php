@@ -49,7 +49,7 @@ class Request implements Interfaces\Request
     protected $method = null;
 
     /**
-     * @var string REQUEST_URI location + path, eg. eg. http://dev.localhost:80/login/submit?foo=bar
+     * @var string REQUEST_URI location + path, eg. eg. http://everon.nova:80/login/submit?foo=bar
      */
     protected $url = null;
 
@@ -99,7 +99,7 @@ class Request implements Interfaces\Request
     /**
      * @return array
      */
-    public function getDataFromGlobals()
+    protected function getDataFromGlobals()
     {
         return [
             'location' => $this->getServerLocationFromGlobals(),
@@ -267,7 +267,7 @@ class Request implements Interfaces\Request
     }
 
     /**
-     * @return bool
+     * @inheritdoc
      */
     public function isSecure()
     {
@@ -278,16 +278,17 @@ class Request implements Interfaces\Request
     {
         return $this->location;
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public function setLocation($location)
     {
         $this->location = $location;
     }
 
     /**
-     * @param $name
-     * @param mixed $default
-     * @return mixed
+     * @inheritdoc
      */
     public function getPostParameter($name, $default=null)
     {
@@ -299,8 +300,7 @@ class Request implements Interfaces\Request
     }
 
     /**
-     * @param $name
-     * @param $value
+     * @inheritdoc
      */
     public function setPostParameter($name, $value)
     {
@@ -309,9 +309,7 @@ class Request implements Interfaces\Request
     }
 
     /**
-     * @param $name
-     * @param mixed $default
-     * @return mixed
+     * @inheritdoc
      */
     public function getGetParameter($name, $default=null)
     {
@@ -323,19 +321,16 @@ class Request implements Interfaces\Request
     }
 
     /**
-     * @param $name
-     * @param $value
+     * @inheritdoc
      */
     public function setGetParameter($name, $value)
     {
         $value = $this->sanitizeInput($value);
         $this->GetCollection->set($name, $value);
     }
-    
+
     /**
-     * @param $name
-     * @param mixed $default
-     * @return mixed
+     * @inheritdoc
      */
     public function getQueryParameter($name, $default=null)
     {
@@ -347,8 +342,7 @@ class Request implements Interfaces\Request
     }
 
     /**
-     * @param $name
-     * @param $value
+     * @inheritdoc
      */
     public function setQueryParameter($name, $value)
     {
@@ -357,7 +351,7 @@ class Request implements Interfaces\Request
     }
 
     /**
-     * @param $method
+     * @inheritdoc
      */
     public function setMethod($method)
     {
@@ -370,7 +364,7 @@ class Request implements Interfaces\Request
     }
 
     /**
-     * @param $url
+     * @inheritdoc
      */
     public function setUrl($url)
     {
@@ -383,7 +377,7 @@ class Request implements Interfaces\Request
     }
 
     /**
-     * @param $query_string
+     * @inheritdoc
      */
     public function setQueryString($query_string)
     {
@@ -396,7 +390,7 @@ class Request implements Interfaces\Request
     }
 
     /**
-     * @param $path
+     * @inheritdoc
      */
     public function setPath($path)
     {
@@ -409,7 +403,7 @@ class Request implements Interfaces\Request
     }
 
     /**
-     * @param array $data
+     * @inheritdoc
      */
     public function setGetCollection(array $data)
     {
@@ -417,15 +411,15 @@ class Request implements Interfaces\Request
     }
 
     /**
-     * @return array
+     * @inheritdoc
      */
     public function getGetCollection()
     {
-        return $this->GetCollection->toArray();
+        return $this->GetCollection;
     }
-    
+
     /**
-     * @param array $data
+     * @inheritdoc
      */
     public function setQueryCollection(array $data)
     {
@@ -433,15 +427,15 @@ class Request implements Interfaces\Request
     }
 
     /**
-     * @return array
+     * @inheritdoc
      */
     public function getQueryCollection()
     {
-        return $this->QueryCollection->toArray();
+        return $this->QueryCollection;
     }
 
     /**
-     * @param array $data
+     * @inheritdoc
      */
     public function setPostCollection(array $data)
     {
@@ -449,15 +443,15 @@ class Request implements Interfaces\Request
     }
 
     /**
-     * @return array
+     * @inheritdoc
      */
     public function getPostCollection()
     {
-        return $this->PostCollection->toArray();
+        return $this->PostCollection;
     }
 
     /**
-     * @param array $data
+     * @inheritdoc
      */
     public function setServerCollection(array $data)
     {
@@ -466,15 +460,15 @@ class Request implements Interfaces\Request
     }
 
     /**
-     * @return array
+     * @inheritdoc
      */
     public function getServerCollection()
     {
-        return $this->ServerCollection->toArray();
+        return $this->ServerCollection;
     }
 
     /**
-     * @param array $files
+     * @inheritdoc
      */
     public function setFileCollection(array $files)
     {
@@ -482,11 +476,11 @@ class Request implements Interfaces\Request
     }
 
     /**
-     * @return array
+     * @inheritdoc
      */
     public function getFileCollection()
     {
-        return $this->FileCollection->toArray();
+        return $this->FileCollection;
     }
     
     public function getProtocol()
@@ -495,7 +489,7 @@ class Request implements Interfaces\Request
     }
 
     /**
-     * @param $protocol
+     * @inheritdoc
      */
     public function setProtocol($protocol)
     {
@@ -508,7 +502,7 @@ class Request implements Interfaces\Request
     }
 
     /**
-     * @param $port
+     * @inheritdoc
      */
     public function setPort($port)
     {
@@ -516,7 +510,7 @@ class Request implements Interfaces\Request
     }
 
     /**
-     * @return bool
+     * @inheritdoc
      */
     public function isEmptyUrl()
     {

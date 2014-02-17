@@ -11,8 +11,8 @@ namespace Everon\Http\Exception;
 
 use Everon\Interfaces;
 
-class NotFound extends \Everon\Http\Exception 
+class Unauthorized extends \Everon\Http\Exception 
 {
-    protected $http_status = 404;
-    protected $http_message = 'NOT FOUND';
+    protected $http_status = 401;
+    protected $http_message = 'UNAUTHORIZED';
 }

@@ -45,7 +45,7 @@ class Request extends \Everon\Request
         //[REQUEST_URI] => /?help&id=12&foo=bar
         parse_str($query_string, $get);
 
-        $current_get = $this->getGetCollection();
+        $current_get = $this->getGetCollection()->toArray();
         
         $this->setGetCollection(array_merge(
             $current_get, $get

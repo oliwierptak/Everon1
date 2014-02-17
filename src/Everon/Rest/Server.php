@@ -34,7 +34,7 @@ class Server extends \Everon\Core implements Rest\Interfaces\Server
         }
         catch (Exception\RouteNotDefined $Exception) {
             $this->getLogger()->error($Exception);
-            $NotFound = new Http\Exception\NotFound('Page not found: '.$Exception->getMessage());
+            $NotFound = new Http\Exception\NotFound('Resource not found: '.$Exception->getMessage());
             $this->showControllerException($NotFound->getHttpStatus(), $NotFound, $this->Controller);
         }
         catch (\Exception $Exception) {
@@ -42,7 +42,7 @@ class Server extends \Everon\Core implements Rest\Interfaces\Server
             $this->showControllerException(400, $Exception, $this->Controller);
         }
     }
-
+    
     /**
      * @param $code
      * @param \Exception $Exception
@@ -50,12 +50,17 @@ class Server extends \Everon\Core implements Rest\Interfaces\Server
      */
     public function showControllerException($code, \Exception $Exception, $Controller)
     {
-        die($Exception);
+        /**
+         * @var Rest\Interfaces\Controller $Controller
+         */
+        if ($Controller === null) {
+            $Controller = $this->getModuleManager()->getDefaultModule()->getController('Error');
+        }
+
+        $Controller->showException($Exception, $code);
     }
 
     public function shutdown()
     {
-        $s = parent::shutdown();
-        echo "<hr><pre>$s</pre>";
     }
 }

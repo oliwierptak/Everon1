@@ -25,21 +25,21 @@ class RequestValidator implements Interfaces\RequestValidator
      */
     public function validate(Config\Interfaces\ItemRouter $RouteItem, Interfaces\Request $Request)
     {
-        $parsed_query_parameters = $this->validateQuery($RouteItem, $Request->getPath(), $Request->getQueryCollection());
+        $parsed_query_parameters = $this->validateQuery($RouteItem, $Request->getPath(), $Request->getQueryCollection()->toArray());
         $this->validateRoute(
             $RouteItem->getName(),
             (array) $RouteItem->getQueryRegex(),
             $parsed_query_parameters
         );
 
-        $parsed_get_parameters = $this->validateGet($RouteItem, $Request->getGetCollection());
+        $parsed_get_parameters = $this->validateGet($RouteItem, $Request->getGetCollection()->toArray());
         $this->validateRoute(
             $RouteItem->getName(),
             (array) $RouteItem->getGetRegex(),
             $parsed_get_parameters
         );
 
-        $parsed_post_parameters = $this->validatePost($RouteItem, $Request->getPostCollection());
+        $parsed_post_parameters = $this->validatePost($RouteItem, $Request->getPostCollection()->toArray());
         $this->validateRoute(
             $RouteItem->getName(),
             (array) $RouteItem->getPostRegex(),

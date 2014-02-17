@@ -141,4 +141,9 @@ abstract class Module implements Interfaces\Module
     {
         return $this->name;
     }
+    
+    public function init()
+    {
+        
+    }
 }
