@@ -79,6 +79,10 @@ class Manager implements Interfaces\Manager
          */
         $result = [];
         foreach ($module_list as $Dir) {
+            if ($Dir->isDot()) {
+                continue;
+            }
+            
             $module_name = $Dir->getBasename();
             if (in_array($module_name, $active_modules)) {
                 $result[$module_name] = $Dir;

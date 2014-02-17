@@ -103,6 +103,9 @@ class Manager implements \Everon\Config\Interfaces\Manager
          */
         foreach ($module_list as $Dir) {
             $module_name = $Dir->getBasename();
+            if ($Dir->isDot()) {
+                continue;
+            }
             $Filename = new \SplFileInfo($this->getFileSystem()->getRealPath('//Module/'.$module_name.'/Config/module.ini'));
             $data[$module_name.'@module'] = $this->getConfigLoader()->loadByFile($Filename, $this->isCachingEnabled());
         }
@@ -154,6 +157,10 @@ class Manager implements \Everon\Config\Interfaces\Manager
          * @var \DirectoryIterator $Dir
          */
         foreach ($module_list as $Dir) {
+            if ($Dir->isDot()) {
+                continue;
+            }
+            
             $module_name = $Dir->getBasename();
             $RouterFilename = new \SplFileInfo($this->getFileSystem()->getRealPath('//Module/'.$module_name.'/Config/router.ini'));
             $RouterFilename = $this->getConfigLoader()->loadByFile($RouterFilename, $this->isCachingEnabled());
