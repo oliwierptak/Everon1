@@ -109,4 +109,13 @@ abstract class Controller implements Interfaces\Controller
         $this->response();
     }
 
+    /**
+     * @param $name
+     * @return null
+     */
+    public function getUrl($name)
+    {
+        $Config = $this->getModule()->getRouteConfig()->getItemByName($name);
+        return $Config->getUrl();
+    }
 }

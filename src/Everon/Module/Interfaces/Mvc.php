@@ -10,22 +10,14 @@
 namespace Everon\Module\Interfaces;
 
 use Everon\Interfaces\Dependency;
+use Everon\Interfaces\Module;
+use Everon\Interfaces\View;
 
-interface Manager extends Dependency\ConfigManager
+interface Mvc extends Module, Dependency\ViewManager
 {
     /**
-     * @return \Everon\Interfaces\Module
-     */
-    function getDefaultModule();
-
-    /**
      * @param $name
-     * @return \Everon\Interfaces\Module
+     * @return View
      */
-    function getModule($name);
-
-    /**
-     * @return array
-     */
-    function getPathsOfActiveModules();
+    function getView($name);
 }

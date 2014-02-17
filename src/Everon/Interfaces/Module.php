@@ -63,10 +63,4 @@ interface Module
      * @param Interfaces\Config $RouteConfig
      */
     function setRouteConfig(Interfaces\Config $RouteConfig);
-
-    /**
-     * @param $name
-     * @return Interfaces\View
-     */
-    function getView($name);
 }

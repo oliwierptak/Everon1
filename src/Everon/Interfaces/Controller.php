@@ -35,4 +35,11 @@ interface Controller
      */
     function execute($action);
 
+
+    /**
+     * @param $name
+     * @return null
+     */
+    function getUrl($name);
+
 }

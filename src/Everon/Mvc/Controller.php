@@ -130,14 +130,4 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
         $this->getResponse()->setStatusMessage($message);
         $this->response();
     }
-
-    /**
-     * @param $name
-     * @return null
-     */
-    public function getUrl($name)
-    {
-        $Config = $this->getModule()->getRouteConfig()->getItemByName($name);
-        return $Config->getUrl();
-    }
 }

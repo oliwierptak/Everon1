@@ -52,7 +52,7 @@ class Mvc extends Core implements Interfaces\Core
          * @var Mvc\Interfaces\Controller $Controller
          */
         if ($Controller === null) {
-            $Controller = $this->getModuleManager()->getCoreModule()->getController('Error');
+            $Controller = $this->getModuleManager()->getDefaultModule()->getController('Error');
         }
         
         $Controller->showException($Exception, $code);
