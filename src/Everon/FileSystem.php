@@ -109,7 +109,8 @@ class FileSystem implements Interfaces\FileSystem
              * @var \DirectoryIterator $File
              */
             foreach ($files as $File) {
-                if ($File->isDot() === false && $File->isFile()) {
+                $name = $File->getBasename();
+                if ($File->isDot() === false && $File->isFile() && $name[0] != '.') {
                     $result[] = $File;
                 }
             }
@@ -135,7 +136,8 @@ class FileSystem implements Interfaces\FileSystem
              * @var \DirectoryIterator $Dir
              */
             foreach ($directories as $Dir) {
-                if ($Dir->isDot() === false && $Dir->isDir()) {
+                $name = $Dir->getBasename();
+                if ($Dir->isDot() === false && $Dir->isDir() && $name[0] != '.') {
                     $result[] = clone $Dir;
                 }
             }
