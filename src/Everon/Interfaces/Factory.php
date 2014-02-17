@@ -56,6 +56,18 @@ interface Factory
     function buildMvc();
 
     /**
+     * @return Interfaces\Core
+     * @throws Exception\Factory
+     */
+    function buildRestClient();
+
+    /**
+     * @return Interfaces\Core
+     * @throws Exception\Factory
+     */
+    function buildRestServer();
+
+    /**
      * @param $name
      * @param Config\Interfaces\LoaderItem $ConfigLoaderItem
      * @param callable $Compiler

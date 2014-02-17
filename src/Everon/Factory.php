@@ -152,10 +152,9 @@ class Factory implements Interfaces\Factory
     }
     
     /**
-     * @return Interfaces\Core
-     * @throws Exception\Factory
+     * @inheritdoc
      */
-    public function buildClient()
+    public function buildRestClient()
     {
         try {
             $Client = new Rest\Client();
@@ -168,8 +167,7 @@ class Factory implements Interfaces\Factory
     }
     
     /**
-     * @return Interfaces\Core
-     * @throws Exception\Factory
+     * @inheritdoc
      */
     public function buildRestServer()
     {

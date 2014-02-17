@@ -50,14 +50,7 @@ class Server extends \Everon\Core implements Rest\Interfaces\Server
      */
     public function showControllerException($code, \Exception $Exception, $Controller)
     {
-        /**
-         * @var Rest\Interfaces\Controller $Controller
-         */
-        if ($Controller === null) {
-            $Controller = $this->getModuleManager()->getCoreModule()->getController('Error');
-        }
-
-        $Controller->showException($Exception, $code);
+        die($Exception);
     }
 
     public function shutdown()
