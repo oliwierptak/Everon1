@@ -63,4 +63,6 @@ interface Module
      * @param Interfaces\Config $RouteConfig
      */
     function setRouteConfig(Interfaces\Config $RouteConfig);
+
+    function setup();
 }

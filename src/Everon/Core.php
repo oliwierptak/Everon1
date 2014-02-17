@@ -60,14 +60,14 @@ abstract class Core implements Interfaces\Core
         
         if ($this->getRequest()->isEmptyUrl()) {
             $this->Module = $this->getModuleManager()->getDefaultModule();
-            $this->Module->init();
+            $this->Module->setup();
             $CurrentRoute = $this->Module->getRouteConfig()->getDefaultItem();
             $this->getRouter()->validateAndUpdateRequest($CurrentRoute, $this->getRequest());
         }
         else {
             $CurrentRoute = $this->getRouter()->getRouteByRequest($this->getRequest());
             $this->Module = $this->getModuleManager()->getModule($CurrentRoute->getModule());
-            $this->Module->init();
+            $this->Module->setup();
         }
 
         $this->Controller = $this->Module->getController($CurrentRoute->getController());
