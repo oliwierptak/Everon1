@@ -72,8 +72,12 @@ class Collection implements \Countable, \ArrayAccess, \IteratorAggregate, Interf
         $this->data[$name] = $value;
     }
 
-    public function get($name)
+    public function get($name, $default=null)
     {
+        if ($this->has($name) === false) {
+            return $default;
+        }
+        
         return $this->data[$name];
     }
     
