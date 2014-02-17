@@ -104,9 +104,14 @@ class FileSystem implements Interfaces\FileSystem
             $result = [];
             $path = $this->getRelativePath($path);
             $files = new \GlobIterator($path.DIRECTORY_SEPARATOR.'*.*');
-            
+
+            /**
+             * @var \DirectoryIterator $File
+             */
             foreach ($files as $File) {
-                $result[] = $File;
+                if ($File->isDot() === false && $File->isFile()) {
+                    $result[] = $File;
+                }
             }
             
             return $result;
@@ -130,7 +135,7 @@ class FileSystem implements Interfaces\FileSystem
              * @var \DirectoryIterator $Dir
              */
             foreach ($directories as $Dir) {
-                if ($Dir->isDot() === false) {
+                if ($Dir->isDot() === false && $Dir->isDir()) {
                     $result[] = clone $Dir;
                 }
             }

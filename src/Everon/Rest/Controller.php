@@ -25,7 +25,6 @@ abstract class Controller extends \Everon\Controller implements Rest\Interfaces\
     use Dependency\Injection\Environment;
     use Dependency\Injection\Factory;
     use Dependency\Injection\ModuleManager;
-    use Dependency\Injection\ViewManager;
 
     
     use Helper\Arrays;
@@ -57,14 +56,6 @@ abstract class Controller extends \Everon\Controller implements Rest\Interfaces\
     }
     
     /**
-     * @return Interfaces\View
-     */
-    public function getView()
-    {
-        return $this->getModule()->getView($this->getName());
-    }
-    
-    /**
      * @return mixed
      */
     public function getModel()
@@ -74,29 +65,12 @@ abstract class Controller extends \Everon\Controller implements Rest\Interfaces\
 
     protected function prepareResponse($action, $result)
     {
-        if ($result && $this->isCallable($this->getView(), $action)) {
-            $this->getView()->{$action}();
-        }
-
-        $ActionTemplate = $this->getView()->getTemplate($action, $this->getView()->getData());
-        if ($ActionTemplate === null) { //apparently no template was used, fall back to string
-            $ActionTemplate = $this->getView()->getContainer();
-        }
-
-        $Theme = $this->getViewManager()->getCurrentTheme();
-        $Theme->set('View.body', $ActionTemplate);
-        $data = $this->arrayMergeDefault($Theme->getData(), $ActionTemplate->getData());
-        $Theme->setData($data);
-        $this->getView()->setContainer($Theme->getContainer());
-        $this->getViewManager()->compileView($action, $this->getView());
-
-        $content = (string) $this->getView()->getContainer();
-        $this->getResponse()->setData($content);
+        die('prepare response');
     }
 
     protected function response()
     {
-        echo $this->getResponse()->toHtml();
+        echo $this->getResponse()->toJson();
     }
 
     /**
@@ -104,32 +78,7 @@ abstract class Controller extends \Everon\Controller implements Rest\Interfaces\
      */
     public function showException(\Exception $Exception, $code=400)
     {
-        $Theme = $this->getViewManager()->getCurrentTheme();
-        $Theme->set('View.error', $Exception->getMessage());
-        $data = $this->arrayMergeDefault($Theme->getData(), $this->getView()->getData());
-        $Theme->setData($data);
-        $this->getView()->setContainer($Theme->getContainer());
-        $this->getViewManager()->compileView(null, $this->getView());
-        $this->getResponse()->setData((string) $this->getView()->getContainer());
-
-        $message = '';
-        if ($Exception instanceof Http\Exception) {
-            $message = $Exception->getHttpMessage();
-            $code = $Exception->getHttpStatus();
-        }
-
-        $this->getResponse()->setStatusCode($code);
-        $this->getResponse()->setStatusMessage($message);
-        $this->response();
+        die('exception');
     }
 
-    /**
-     * @param $name
-     * @return null
-     */
-    public function getUrl($name)
-    {
-        $Config = $this->getModule()->getRouteConfig()->getItemByName($name);
-        return $Config->getUrl();
-    }
 }

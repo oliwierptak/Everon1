@@ -852,42 +852,18 @@ class Factory implements Interfaces\Factory
     }
 
     /**
-     * @param array $server
-     * @param array $get
-     * @param array $post
-     * @param array $files
-     * @return Interfaces\Request
-     * @throws Exception\Factory
+     * @inheritdoc
      */
-    public function buildRequest(array $server, array $get, array $post, array $files)
+    public function buildRequest(array $server, array $get, array $post, array $files, $namespace='Everon')
     {
         try {
-            $Request = new Request($server, $get, $post, $files);
-            $this->injectDependencies('Everon\Request', $Request);
+            $class_name = $this->getFullClassName($namespace, 'Request');
+            $Request = new $class_name($server, $get, $post, $files);
+            $this->injectDependencies($class_name, $Request);
             return $Request;
         }
         catch (\Exception $e) {
             throw new Exception\Factory('Request initialization error', null, $e);
-        }
-    }
-
-    /**
-     * @param array $server
-     * @param array $get
-     * @param array $post
-     * @param array $files
-     * @return Interfaces\Request
-     * @throws Exception\Factory
-     */
-    public function buildConsoleRequest(array $server, array $get, array $post, array $files)
-    {
-        try {
-            $Request = new Console\Request($server, $get, $post, $files);
-            $this->injectDependencies('Everon\Console\Request', $Request);
-            return $Request;
-        }
-        catch (\Exception $e) {
-            throw new Exception\Factory('Console Request initialization error', null, $e);
         }
     }
 
