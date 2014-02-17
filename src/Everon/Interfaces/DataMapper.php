@@ -38,7 +38,13 @@ interface DataMapper
      * @param int $id
      * @return array
      */
-    function fetchOne($id);
+    function fetchOneId($id);
+
+    /**
+     * @param Criteria $Criteria
+     * @return mixed
+     */
+    function fetchOneByCriteria(Criteria $Criteria);
 
     /**
      * @param Criteria $Criteria

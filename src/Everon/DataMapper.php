@@ -66,7 +66,7 @@ abstract class DataMapper implements Interfaces\DataMapper
     /**
      * @inheritdoc
      */
-    public function fetchOne($id)
+    public function fetchOneId($id)
     {
         $Criteria = new DataMapper\Criteria();
         $Criteria->limit(1);
@@ -75,7 +75,19 @@ abstract class DataMapper implements Interfaces\DataMapper
         list($sql, $parameters) = $this->getFetchAllSql($Criteria);
         return $this->getSchema()->getPdoAdapterByName($this->read_connection_name)->execute($sql, $parameters)->fetch();
     }
-    
+
+    /**
+     * @inheritdoc
+     */
+    public function fetchOneByCriteria(Criteria $Criteria)
+    {
+        list($sql, $parameters) = $this->getFetchAllSql($Criteria);
+        return $this->getSchema()->getPdoAdapterByName($this->read_connection_name)->execute($sql, $parameters)->fetch();
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function fetchAll(Criteria $Criteria)
     {
         list($sql, $parameters) = $this->getFetchAllSql($Criteria);
