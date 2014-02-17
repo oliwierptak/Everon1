@@ -14,7 +14,7 @@ abstract class Module implements Interfaces\Module
 {
     use Dependency\Config;
     use Dependency\Injection\Factory;
-    use Dependency\Injection\ViewManager;
+    
     
     protected $name = null;
     
@@ -53,7 +53,6 @@ abstract class Module implements Interfaces\Module
         $this->directory = $module_directory;
         $this->Config = $Config;
         $this->RouteConfig = $RouterConfig;
-        $this->ViewCollection = new Helper\Collection([]);
         $this->ControllerCollection = new Helper\Collection([]);
     }
 
@@ -64,16 +63,6 @@ abstract class Module implements Interfaces\Module
     protected function createController($name)
     {
         return $this->getFactory()->buildController($name, $this, 'Everon\Module\\'.$this->getName().'\Controller');
-    }
-
-    /**
-     * @param $name
-     * @return Interfaces\View
-     */
-    protected function createView($name)
-    {
-        $template_directory = $this->getDirectory().'View'.DIRECTORY_SEPARATOR.$name.DIRECTORY_SEPARATOR.'templates'.DIRECTORY_SEPARATOR;
-        return $this->getViewManager()->createView($name, $template_directory, 'Everon\Module\\'.$this->getName().'\View');
     }
 
     /**
@@ -103,19 +92,6 @@ abstract class Module implements Interfaces\Module
     public function getFactoryWorker()
     {
         return $this->FactoryWorker;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getView($name)
-    {
-        if ($this->ViewCollection->has($name) === false) {
-            $View = $this->createView($name);
-            $this->ViewCollection->set($name, $View);
-        }
-        
-        return $this->ViewCollection->get($name);
     }
 
     /**

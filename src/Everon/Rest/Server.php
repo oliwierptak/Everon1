@@ -7,17 +7,19 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon;
+namespace Everon\Rest;
 
 use Everon\Dependency;
 use Everon\Interfaces;
 use Everon\Exception;
+use Everon\Guid;
 use Everon\Http;
+use Everon\Rest;
 
-class Mvc extends Core implements Interfaces\Core
+class Server extends \Everon\Core implements Rest\Interfaces\Server
 {
     /**
-     * @var Mvc\Interfaces\Controller
+     * @var Rest\Interfaces\Controller
      */
     protected $Controller = null;
 
@@ -44,18 +46,11 @@ class Mvc extends Core implements Interfaces\Core
     /**
      * @param $code
      * @param \Exception $Exception
-     * @param Mvc\Interfaces\Controller|null $Controller
+     * @param Rest\Interfaces\Controller|null $Controller
      */
     public function showControllerException($code, \Exception $Exception, $Controller)
     {
-        /**
-         * @var Mvc\Interfaces\Controller $Controller
-         */
-        if ($Controller === null) {
-            $Controller = $this->getModuleManager()->getDefaultModule()->getController('Error');
-        }
-        
-        $Controller->showException($Exception, $code);
+        die($Exception);
     }
 
     public function shutdown()

@@ -27,6 +27,17 @@ $Container->propose('FileSystem', function() use ($Factory) {
     return $Factory->buildFileSystem($root_directory);
 });
 
+$Container->propose('Request', function() use ($Factory) {
+    return $Factory->buildConsoleRequest($_SERVER, $_GET, $_POST, $_FILES);
+});
+
+$Container->propose('Router', function() use ($Factory) {
+    $Factory->getDependencyContainer()->monitor('Router', ['Everon\Config\Manager', 'Everon\RequestValidator']);
+    $RouteConfig = $Factory->getDependencyContainer()->resolve('ConfigManager')->getConfigByName('console');
+    $RequestValidator = $Factory->buildRequestValidator();
+    return $Factory->buildRouter($RouteConfig, $RequestValidator);
+});
+
 $Container->propose('Response', function() use ($Factory) {
     $Factory->getDependencyContainer()->monitor('Response', ['Everon\Logger']);
     $Logger = $Factory->getDependencyContainer()->resolve('Logger');
@@ -42,17 +53,6 @@ $Container->propose('ConfigManager', function() use ($Factory) {
     $config_cache_directory = $Environment->getCacheConfig();
     $Loader = $Factory->buildConfigLoader($Environment->getConfig(), $config_cache_directory);
     return $Factory->buildConfigManager($Loader);
-});
-
-$Container->propose('Request', function() use ($Factory) {
-    return $Factory->buildConsoleRequest($_SERVER, $_GET, $_POST, $_FILES);
-});
-
-$Container->propose('Router', function() use ($Factory) {
-    $Factory->getDependencyContainer()->monitor('Router', ['Everon\Config\Manager', 'Everon\RequestValidator']);
-    $RouteConfig = $Factory->getDependencyContainer()->resolve('ConfigManager')->getConfigByName('console');
-    $RequestValidator = $Factory->buildRequestValidator();
-    return $Factory->buildRouter($RouteConfig, $RequestValidator);
 });
 
 $Container->propose('ModuleManager', function() use ($Factory) {

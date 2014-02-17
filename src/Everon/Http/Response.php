@@ -15,12 +15,26 @@ use Everon\Response as BasicResponse;
 
 class Response extends BasicResponse implements Interfaces\Response
 {
+    /**
+     * @var Interfaces\HeaderCollection
+     */
     protected $HeaderCollection = null;
+    
     protected $content_type = 'text/plain';
+
+    /**
+     * @var int
+     */
     protected $content_length = 0;
+    
     protected $charset = 'utf-8';
+
+    /**
+     * @var int
+     */
     protected $status_code = 200;
-    protected $status_message = 'OK';
+    
+           protected $status_message = 'OK';
 
     
     public function __construct($guid, Interfaces\HeaderCollection $Headers)

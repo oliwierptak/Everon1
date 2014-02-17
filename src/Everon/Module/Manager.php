@@ -10,6 +10,7 @@
 namespace Everon\Module;
 
 use Everon\Dependency;
+use Everon\Interfaces\Config;
 use Everon\Exception;
 use Everon\Helper;
 
@@ -57,7 +58,7 @@ class Manager implements Interfaces\Manager
     /**
      * @param $module_name
      * @param $config_name
-     * @return Interfaces\Config
+     * @return Config
      */
     protected function getModuleConfig($module_name, $config_name)
     {
@@ -71,7 +72,7 @@ class Manager implements Interfaces\Manager
     public function getPathsOfActiveModules()
     {
         $module_list = $this->getFileSystem()->listPathDir($this->getEnvironment()->getModule());
-        $active_modules = $this->getConfigManager()->getConfigValue('application.modules.active', ['_Core']);
+        $active_modules = $this->getConfigManager()->getConfigValue('application.modules.active');
 
         /**
          * @var \DirectoryIterator $Dir
@@ -104,15 +105,7 @@ class Manager implements Interfaces\Manager
      */
     public function getDefaultModule()
     {
-        $default_module = $this->getConfigManager()->getConfigValue('application.modules.default', '_Core');
+        $default_module = $this->getConfigManager()->getConfigValue('application.modules.default');
         return $this->getModule($default_module);
-    }
-    
-    /**
-     * @inheritdoc
-     */
-    public function getCoreModule()
-    {
-        return $this->getModule('_Core');
     }
 }
