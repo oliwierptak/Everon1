@@ -110,7 +110,7 @@ class FileSystem implements Interfaces\FileSystem
              */
             foreach ($files as $File) {
                 $name = $File->getBasename();
-                if ($File->isDot() === false && $File->isFile() && $name[0] != '.') {
+                if ($File->isFile() && $name[0] != '.') {
                     $result[] = $File;
                 }
             }

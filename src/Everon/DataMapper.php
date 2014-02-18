@@ -66,7 +66,7 @@ abstract class DataMapper implements Interfaces\DataMapper
     /**
      * @inheritdoc
      */
-    public function fetchOneId($id)
+    public function fetchOneById($id)
     {
         $Criteria = new DataMapper\Criteria();
         $Criteria->limit(1);
