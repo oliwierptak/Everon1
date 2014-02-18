@@ -16,6 +16,10 @@ use Everon\Domain\Interfaces\Entity;
 
 abstract class Mapper extends DataMapper 
 {
+    /**
+     * @param Entity $Entity
+     * @return array
+     */
     protected function getInsertSql(Entity $Entity)
     {
         $values_str = rtrim(implode(',', $this->getPlaceholderForQuery()), ',');
@@ -24,6 +28,10 @@ abstract class Mapper extends DataMapper
         return [$sql, $this->getValuesForQuery($Entity)];
     }
 
+    /**
+     * @param Entity $Entity
+     * @return array
+     */
     protected function getUpdateSql(Entity $Entity)
     {
         $pk_name = $this->getSchemaTable()->getPk();
@@ -45,6 +53,10 @@ abstract class Mapper extends DataMapper
         return [$sql, $params];
     }
 
+    /**
+     * @param Entity $Entity
+     * @return array
+     */
     protected function getDeleteSql(Entity $Entity)
     {
         $pk_name = $this->getSchemaTable()->getPk();
@@ -53,6 +65,10 @@ abstract class Mapper extends DataMapper
         return [$sql, $params];
     }
 
+    /**
+     * @param Interfaces\Criteria $Criteria
+     * @return array
+     */
     protected function getFetchAllSql(Interfaces\Criteria $Criteria)
     {
         $pk_name = $this->getSchemaTable()->getPk();
