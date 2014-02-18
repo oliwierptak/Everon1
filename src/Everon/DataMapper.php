@@ -28,13 +28,21 @@ abstract class DataMapper implements Interfaces\DataMapper
     abstract protected function getUpdateSql(Entity $Entity);
     abstract protected function getDeleteSql(Entity $Entity);
     abstract protected function getFetchAllSql(Criteria $Criteria);
-    
+
+
+    /**
+     * @param Table $Table
+     * @param Schema $Schema
+     */
     public function __construct(Table $Table, Schema $Schema)
     {
         $this->SchemaTable = $Table;
         $this->Schema = $Schema;
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public function add(Entity $Entity)
     {
         list($sql, $parameters) = $this->getInsertSql($Entity);
@@ -42,7 +50,10 @@ abstract class DataMapper implements Interfaces\DataMapper
         $id = $PdoAdapter->insert($sql, $parameters);
         return $this->getSchemaTable()->validateId($id);
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public function save(Entity $Entity)
     {
         $id = $Entity->getId();
@@ -52,8 +63,7 @@ abstract class DataMapper implements Interfaces\DataMapper
     }
 
     /**
-     * @param Entity $Entity
-     * @return \PDOStatement
+     * @inheritdoc
      */
     public function delete(Entity $Entity)
     {
@@ -81,6 +91,7 @@ abstract class DataMapper implements Interfaces\DataMapper
      */
     public function fetchOneByCriteria(Criteria $Criteria)
     {
+        $Criteria->limit(1);
         list($sql, $parameters) = $this->getFetchAllSql($Criteria);
         return $this->getSchema()->getPdoAdapterByName($this->read_connection_name)->execute($sql, $parameters)->fetch();
     }
@@ -94,14 +105,16 @@ abstract class DataMapper implements Interfaces\DataMapper
         return $this->getSchema()->getPdoAdapterByName($this->read_connection_name)->execute($sql, $parameters)->fetchAll();
     }
 
+    /**
+     * @inheritdoc
+     */
     public function getName()
     {
         return $this->getSchemaTable()->getName();
     }
 
     /**
-     * @param $data
-     * @return mixed|null
+     * @inheritdoc
      */
     public function getAndValidateId($data)
     {
@@ -147,6 +160,11 @@ abstract class DataMapper implements Interfaces\DataMapper
         return $values;
     }
 
+    /**
+     * @param $value_name
+     * @param Entity $Entity
+     * @return mixed
+     */
     protected function getEntityValueAndRemapId($value_name, Entity $Entity)
     {
         if (strcasecmp($value_name, $this->getSchemaTable()->getPk()) === 0) {
