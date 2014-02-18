@@ -15,8 +15,6 @@ use Everon\Helper;
 
 class Entity extends Helper\Popo implements Interfaces\Entity 
 {
-    use Helper\IsCallable;
-    
     const STATE_NEW = 1;
     const STATE_MODIFIED = 2;
     const STATE_PERSISTED = 3;
@@ -36,7 +34,6 @@ class Entity extends Helper\Popo implements Interfaces\Entity
         $this->id = $id;
         $this->data = $data;
         $this->methods = array_flip(get_class_methods(get_class($this))); //faster lookup then using isCallable()
-        
         
         if ($this->isIdSet()) {
             $this->markPersisted();
@@ -194,7 +191,6 @@ class Entity extends Helper\Popo implements Interfaces\Entity
      */
     public function __call($name, $arguments)
     {
-        //if ($this->isCallable($this, $name)) {
         if (isset($this->methods[$name])) {
             $this->call_type = static::CALL_TYPE_METHOD;
             $this->call_property = $name;
