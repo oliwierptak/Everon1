@@ -82,7 +82,7 @@ class Logger implements Interfaces\Logger
 
         $ExceptionToTrace = $message;
         if ($message instanceof \Exception) {
-            $message = $message->getMessage();
+            $message = (string) $message; //casting to string will append exception name
         }
         
         $LogDate = (new \DateTime('@'.time()))->setTimezone($this->getLogDateTimeZone());
