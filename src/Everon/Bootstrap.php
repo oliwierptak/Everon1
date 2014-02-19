@@ -75,8 +75,8 @@ class Bootstrap
     {
         $this->setupClassLoader();
         
-        $this->getClassLoader()->add('Everon', $this->getEnvironment()->getEveronRoot());
-        $this->getClassLoader()->register();
+       // $this->getClassLoader()->add('Everon', $this->getEnvironment()->getEveronRoot());
+        //$this->getClassLoader()->register();
     }
     
     public function run()
