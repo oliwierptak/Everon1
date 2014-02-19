@@ -15,6 +15,10 @@ class ClassLoader implements Interfaces\ClassLoader
 {
     protected $resources = [];
     
+    protected $invalid = [];
+    
+    protected $filename = null;
+    
 
     public function register()
     {
@@ -37,35 +41,42 @@ class ClassLoader implements Interfaces\ClassLoader
 
     /**
      * @param $class_name
-     * @return string
+     * @return Interfaces\ClassLoader
      * @throws \RuntimeException
      */
     public function load($class_name)
     {
-        $included = false;
-        $filename = '';
-        foreach ($this->resources as  $namespace => $path) {
-            $filename = $path.str_replace('\\', DIRECTORY_SEPARATOR, $class_name).'.php';
-            $included = $this->includeWhenExists($filename);
-            if ($included) {
-                break;
-            }
-
-            $filename = $path.trim(str_replace($namespace, '', $class_name), '\\').'.php';
-            $filename = str_replace('\\', DIRECTORY_SEPARATOR, $filename);
-            $included = $this->includeWhenExists($filename);
-            if ($included) {
-                break;
-            }
-        }
-
-        if ($included === false) {
-            throw new \RuntimeException(vsprintf(
-                'File for class: "%s" could not be found', [$class_name]
-            ));
+        $this->filename = null;
+        if (isset($this->invalid[$class_name])) {
+            return $this;
         }
         
-        return $filename;
+        foreach ($this->resources as  $namespace => $path) {
+            $this->filename = $path.str_replace('\\', DIRECTORY_SEPARATOR, $class_name).'.php';
+            $included = $this->includeWhenExists($this->filename);
+            if ($included) {
+                return $this;
+            }
+
+            $this->filename = $path.trim(str_replace($namespace, '', $class_name), '\\').'.php';
+            $this->filename = str_replace('\\', DIRECTORY_SEPARATOR, $this->filename);
+            $included = $this->includeWhenExists($this->filename);
+            if ($included) {
+                return $this;
+            }
+            
+            $this->invalid[$class_name] = true;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getFilename()
+    {
+        return $this->filename;
     }
 
     /**

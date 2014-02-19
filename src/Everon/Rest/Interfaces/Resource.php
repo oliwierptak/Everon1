@@ -9,6 +9,6 @@
  */
 namespace Everon\Rest\Interfaces;
 
-interface Resource
+interface Resource extends \Everon\Interfaces\Arrayable
 {
 }

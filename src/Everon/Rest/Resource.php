@@ -9,16 +9,17 @@
  */
 namespace Everon\Rest;
 
+use Everon\Helper;
+
 
 class Resource implements Interfaces\Resource
 {
-    protected $name = null;
-
-    /**
-     * @var array
-     */
-    protected $data = null;
+    use Helper\ToArray;
     
+    protected $name = null;
+    
+    protected $href = null;
+
     
     public function __construct($name, array $data)
     {

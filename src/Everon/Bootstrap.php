@@ -23,6 +23,8 @@ class Bootstrap
     
     protected $os_name = null;
     
+    protected $application_ini = null;
+    
     
     public function __construct($Environment, $os=PHP_OS)
     {
@@ -51,7 +53,7 @@ class Bootstrap
         require_once($this->Environment->getEveronInterface().'ClassLoader.php');
         require_once($this->Environment->getEveronRoot().'ClassLoader.php');
 
-        $ini = @parse_ini_file($this->Environment->getConfig().'application.ini', true);
+        $ini = $this->getApplicationIni();
         $use_cache = (bool) @$ini['cache']['autoloader'];
 
         $ClassMap = null;
@@ -71,12 +73,28 @@ class Bootstrap
         $this->ClassLoader = $ClassLoader;
     }
     
+    protected function getApplicationIni()
+    {
+        if ($this->application_ini === null) {
+            $this->application_ini = @parse_ini_file($this->Environment->getConfig().'application.ini', true);
+        }
+        return $this->application_ini;
+    }
+    
     protected function registerClassLoader()
     {
         $this->setupClassLoader();
         
-       // $this->getClassLoader()->add('Everon', $this->getEnvironment()->getEveronRoot());
-        //$this->getClassLoader()->register();
+        if ($this->useEveronAutoload()) {
+            $this->getClassLoader()->add('Everon', $this->getEnvironment()->getEveronRoot());
+            $this->getClassLoader()->register();
+        }
+    }
+    
+    public function useEveronAutoload()
+    {
+        $ini = $this->getApplicationIni();
+        return strcasecmp(@$ini['env']['autoload'], 'everon') === 0;
     }
     
     public function run()

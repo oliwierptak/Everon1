@@ -116,7 +116,7 @@ class Table implements Schema\Table
         $validation_result = filter_var_array([$PrimaryKey->getName() => $id], $Column->getValidationRules());
         if (($validation_result === false || $validation_result === null) || 
             ($Column->isNullable() === false && $id === null)) {
-            throw new Exception\Column('Column: "%s" failed to validate with value: "%s"',[$Column->getName(), $id]);
+            throw new Exception\Column('Column: "%s" failed to validate with value: "%s"', [$Column->getName(), $id]);
         }
 
         return $validation_result[$PrimaryKey->getName()];

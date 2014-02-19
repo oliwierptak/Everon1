@@ -217,22 +217,17 @@ class Manager implements \Everon\Config\Interfaces\Manager
 url = /
 url_statc = /assets/
 name = everon-dev
+autoload = everon     ;external, everon
 
 [modules]
-default = Auth
-active[] = UserManagement
+default = RestAuth
+active[] = RestAuth
 
 [theme]
 default = Main
 
 [database]
 driver = pgsql
-
-[assets]
-css = %application.env.url_statc%css/
-images = %application.env.url_statc%images/
-js = %application.env.url_statc%js/
-themes = %application.env.url_statc%themes/
 
 [cache]
 config_manager = false

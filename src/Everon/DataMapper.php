@@ -119,7 +119,7 @@ abstract class DataMapper implements Interfaces\DataMapper
     public function getAndValidateId($data)
     {
         $pk_name = $this->getSchemaTable()->getPk();
-        $id =  @$data[$pk_name];
+        $id = @$data[$pk_name];
         return $this->getSchemaTable()->validateId($id);
     }
 
