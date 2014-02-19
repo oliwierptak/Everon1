@@ -65,7 +65,7 @@ abstract class Controller extends \Everon\Controller implements Rest\Interfaces\
 
     protected function prepareResponse($action, $result)
     {
-        die('prepare response');
+        //
     }
 
     protected function response()

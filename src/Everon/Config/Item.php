@@ -16,7 +16,7 @@ class Item implements Interfaces\Item
     const PROPERTY_DEFAULT = '_default';
     const PROPERTY_NAME = '____name';
 
-    use Helper\Asserts;
+    use Helper\Exeptions;
     use Helper\Asserts\IsStringAndNonEmpty;
     use Helper\ToArray;
     

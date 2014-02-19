@@ -19,7 +19,7 @@ class Config implements \Everon\Interfaces\Config
     use Dependency\Injection\Factory;
 
     use Helper\Arrays;
-    use Helper\Asserts;
+    use Helper\Exeptions;
     use Helper\Asserts\IsArrayKey;
     use Helper\ToArray;
     

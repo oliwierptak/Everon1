@@ -22,7 +22,7 @@ class Manager implements \Everon\Config\Interfaces\Manager
     use Dependency\ConfigLoader;
 
     use Helper\Arrays;
-    use Helper\Asserts;
+    use Helper\Exeptions;
     use Helper\Asserts\IsArrayKey;
     use Helper\IsIterable;
 

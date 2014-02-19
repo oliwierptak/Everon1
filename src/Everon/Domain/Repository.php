@@ -85,14 +85,14 @@ abstract class Repository implements Interfaces\Repository
     {
         if ($Entity->isNew()) {
             $id = $this->getMapper()->add($Entity);
-            $data = $Entity->toArray();
-            $Entity->persist($id, $data);
         }
         else {
+            $id = $Entity->getId();
             $this->getMapper()->save($Entity);
-            $data = $Entity->toArray();
-            $Entity->persist($Entity->getId(), $data);
         }
+
+        $data = $Entity->toArray();
+        $Entity->persist($id, $data);
     }
 
     /**

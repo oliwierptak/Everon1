@@ -25,7 +25,7 @@ abstract class Rest extends \Everon\Module implements Interfaces\Rest
     use RestDependency\ApiKey;
 
 
-    public function setup()
+    public function setup2()
     {
         $this->authenticateRequest();
         

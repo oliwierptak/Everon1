@@ -11,7 +11,7 @@ namespace Everon;
 
 class RequestValidator implements Interfaces\RequestValidator
 {
-    use Helper\Asserts;
+    use Helper\Exeptions;
     use Helper\Asserts\IsArrayKey;    
     use Helper\Regex;
 
