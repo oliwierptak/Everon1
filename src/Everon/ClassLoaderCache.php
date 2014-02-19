@@ -38,14 +38,14 @@ class ClassLoaderCache extends ClassLoader implements Interfaces\ClassLoader
             include_once($this->filename);
             return $this;
         }
+
+        $this->filename = parent::load($class_name);
         
-        parent::load($class_name);
-        
-        if ($this->filename) {
+        if ($this->filename !== null) {
             $this->ClassMap->addToMap($class_name, $this->filename);
         }
         
-        return $this;
+        return $this->filename;
     }
 
 }

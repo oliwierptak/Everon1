@@ -9,8 +9,6 @@
  */
 namespace Everon;
 
-@require_once($EVERON_ROOT.'vendor/autoload.php');
-
 require_once(implode(DIRECTORY_SEPARATOR, [$EVERON_SOURCE_ROOT, 'Bootstrap.php']));
 require_once(implode(DIRECTORY_SEPARATOR, [$EVERON_SOURCE_ROOT, 'Guid.php']));
 

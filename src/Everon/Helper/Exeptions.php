@@ -38,16 +38,7 @@ trait Exeptions
     protected function throwException($exception_class, $message, $value)
     {
         try {
-            $class = $exception_class;
-            if (class_exists($class, true) === false) {
-                $class = 'Everon\Config\\'.$exception_class;
-                if (class_exists($class, true) === false) {
-                    $exception_class = 'Everon\Exception\Asserts';
-                }
-            }
-        }
-        catch (\Exception $e) {
-            try {
+            if (class_exists($exception_class, true) === false) {
                 $class = "Everon\\Exception\\${exception_class}";
                 if (class_exists($class, true) === false) {
                     $exception_class = 'Everon\Exception\Asserts';
@@ -56,10 +47,10 @@ trait Exeptions
                     $exception_class = $class;
                 }
             }
-            catch (\Exception $e) {
-                $exception_class = 'Everon\Exception\Asserts';
-            }
-        }    
+        }
+        catch (\Exception $e) {
+            $exception_class = 'Everon\Exception\Asserts';
+        }
 
         throw new $exception_class($message, $value);
     }

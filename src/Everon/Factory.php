@@ -119,6 +119,13 @@ class Factory implements Interfaces\Factory
         return $class;
     }
     
+    public function classExists($class)
+    {
+        if (class_exists($class, true) === false) {
+            throw new Exception\Factory('File for class: "%s" could not be found', $class);
+        }
+    }
+    
     /**
      * @return Interfaces\Core
      * @throws Exception\Factory
@@ -308,6 +315,7 @@ class Factory implements Interfaces\Factory
     {
         try {
             $class_name = $this->getFullClassName($namespace, $class_name);
+            $this->classExists($class_name);
             $Controller = new $class_name($Module);
             $this->injectDependencies($class_name, $Controller);
             return $Controller;
@@ -324,6 +332,7 @@ class Factory implements Interfaces\Factory
     {
         try {
             $class_name = $this->getFullClassName($namespace, $class_name);
+            $this->classExists($class_name);
             /**
              * @var Interfaces\View $View
              */
@@ -383,6 +392,7 @@ class Factory implements Interfaces\Factory
     {
         try {
             $class_name = $this->getFullClassName($namespace, $class_name);
+            $this->classExists($class_name);
             $Compiler = new $class_name();
             $this->injectDependencies($class_name, $Compiler);
             return $Compiler;
@@ -431,6 +441,7 @@ class Factory implements Interfaces\Factory
     {
         try {
             $class_name = $this->getFullClassName($namespace, 'Connection\Item');
+            $this->classExists($class_name);
             $Item = new $class_name($data);
             $this->injectDependencies($class_name, $Item);
             return $Item;
@@ -447,6 +458,7 @@ class Factory implements Interfaces\Factory
     {
         try {
             $class_name = $this->getFullClassName($namespace, 'Connection\Manager');
+            $this->classExists($class_name);
 
             $connections = [];
             $data = $DatabaseConfig->toArray();
@@ -473,6 +485,7 @@ class Factory implements Interfaces\Factory
         try {
             $adapter_name = $Schema->getAdapterName();
             $class_name = $this->getFullClassName($namespace, $adapter_name.'\\'.$name);
+            $this->classExists($class_name);
             $DataMapper = new $class_name($Table, $Schema);
             $this->injectDependencies($class_name, $DataMapper);
             return $DataMapper;
@@ -489,6 +502,7 @@ class Factory implements Interfaces\Factory
     {
         try {
             $class_name = $this->getFullClassName($namespace, $class_name.'\Entity');
+            $this->classExists($class_name);
             $Entity = new $class_name($id, $data);
             $this->injectDependencies($class_name, $Entity);
             return $Entity;
@@ -505,6 +519,7 @@ class Factory implements Interfaces\Factory
     {
         try {
             $class_name = $this->getFullClassName($namespace, $name.'\Repository');
+            $this->classExists($class_name);
             $Repository = new $class_name($name, $DataMapper);
             $this->injectDependencies($class_name, $Repository);
             return $Repository;
@@ -521,6 +536,7 @@ class Factory implements Interfaces\Factory
     {
         try {
             $class_name = $this->getFullClassName($namespace, $class_name.'\Model');
+            $this->classExists($class_name);
             $Model = new $class_name();
             $this->injectDependencies($class_name, $Model);
             return $Model;
@@ -537,6 +553,7 @@ class Factory implements Interfaces\Factory
     {
         try {
             $class_name = $this->getFullClassName($namespace, 'Manager');
+            $this->classExists($class_name);
             $DomainManager = new $class_name($ConnectionManager);
             $this->injectDependencies($class_name, $DomainManager);
             return $DomainManager;
@@ -553,6 +570,7 @@ class Factory implements Interfaces\Factory
     {
         try {
             $class_name = $this->getFullClassName($namespace, 'Schema');
+            $this->classExists($class_name);
             $Schema = new $class_name($Reader, $ConnectionManager);
             $this->injectDependencies($class_name, $Schema);
             return $Schema;
@@ -571,6 +589,7 @@ class Factory implements Interfaces\Factory
             $ConnectionItem = $PdoAdapter->getConnectionConfig();
             $class_name = $ConnectionItem->getAdapterName().'\Reader';
             $class_name = $this->getFullClassName($namespace, $class_name);
+            $this->classExists($class_name);
 
             $SchemaReader = new $class_name($PdoAdapter);
             $this->injectDependencies($class_name, $SchemaReader);
@@ -590,6 +609,7 @@ class Factory implements Interfaces\Factory
             $primary_key_list = [];
             foreach ($primary_keys as $constraint_data) {
                 $class_name = $this->getFullClassName($namespace, 'Schema\PrimaryKey');
+                $this->classExists($class_name);
                 $PrimaryKey = new $class_name($constraint_data);
                 $primary_key_list[$PrimaryKey->getName()] = $PrimaryKey;
             }
@@ -597,6 +617,7 @@ class Factory implements Interfaces\Factory
             $unique_key_list = [];
             foreach ($unique_keys as $constraint_data) {
                 $class_name = $this->getFullClassName($namespace, 'Schema\UniqueKey');
+                $this->classExists($class_name);
                 $UniqueKey = new $class_name($constraint_data);
                 $unique_key_list[$UniqueKey->getName()] = $UniqueKey;
             }
@@ -604,6 +625,7 @@ class Factory implements Interfaces\Factory
             $foreign_key_list = [];
             foreach ($foreign_keys as $foreign_key_data) {
                 $class_name = $this->getFullClassName($namespace, 'Schema\ForeignKey');
+                $this->classExists($class_name);
                 $ForeignKey = new $class_name($foreign_key_data);
                 $foreign_key_list[$ForeignKey->getName()] = new $class_name($foreign_key_data);
             }
@@ -611,6 +633,7 @@ class Factory implements Interfaces\Factory
             $column_list = [];
             foreach ($columns as $column_data) {
                 $class_name = $this->getFullClassName($namespace, "Schema\\${adapter_name}\\Column");
+                $this->classExists($class_name);
                 /**
                  * @var DataMapper\Schema\Column $Column
                  */
@@ -619,6 +642,7 @@ class Factory implements Interfaces\Factory
             }
 
             $class_name = $this->getFullClassName($namespace,'Schema\Table');
+            $this->classExists($class_name);
             $Table = new $class_name($name, $schema, $column_list, $primary_key_list, $unique_key_list, $foreign_key_list);
             return $Table;
         }
@@ -634,6 +658,7 @@ class Factory implements Interfaces\Factory
     {
         try {
             $class_name = $this->getFullClassName($namespace, 'Schema\Constraint');
+            $this->classExists($class_name);
             $constraint_list[] = $class_name($data);
             $Constraint = new $class_name($data);
             return $Constraint;
@@ -714,6 +739,7 @@ class Factory implements Interfaces\Factory
     {
         try {
             $class_name = $this->getFullClassName($namespace, 'Router');
+            $this->classExists($class_name);
             $RouteItem = new $class_name($Config, $Validator);
             $this->injectDependencies($class_name, $RouteItem);
             return $RouteItem;
@@ -873,6 +899,7 @@ class Factory implements Interfaces\Factory
     {
         try {
             $class_name = $this->getFullClassName($namespace, 'Request');
+            $this->classExists($class_name);
             $Request = new $class_name($server, $get, $post, $files);
             $this->injectDependencies($class_name, $Request);
             return $Request;
@@ -904,6 +931,7 @@ class Factory implements Interfaces\Factory
     {
         try {
             $class_name = $this->getFullClassName('Everon\Module\\'.$name, 'Module');
+            $this->classExists($class_name);
             $Module = new $class_name($name, $module_directory, $Config, $RouterConfig);
             $this->injectDependencies($class_name, $Module);
             return $Module;
@@ -935,6 +963,7 @@ class Factory implements Interfaces\Factory
     {
         try {
             $class_name = $this->getFullClassName($namespace, $name.'\FactoryWorker');
+            $this->classExists($class_name);
             $Worker = new $class_name($this);
             $this->injectDependencies($class_name, $Worker);
             return $Worker;

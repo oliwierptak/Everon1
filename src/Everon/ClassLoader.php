@@ -18,11 +18,14 @@ class ClassLoader implements Interfaces\ClassLoader
     protected $invalid = [];
     
     protected $filename = null;
-    
 
-    public function register()
+
+    /**
+     * @inheritdoc
+     */
+    public function register($prepend = false)
     {
-        spl_autoload_register([$this, 'load']);
+        spl_autoload_register([$this, 'load'], true, $prepend);
     }
     
     public function unRegister()
@@ -55,20 +58,20 @@ class ClassLoader implements Interfaces\ClassLoader
             $this->filename = $path.str_replace('\\', DIRECTORY_SEPARATOR, $class_name).'.php';
             $included = $this->includeWhenExists($this->filename);
             if ($included) {
-                return $this;
+                return $this->filename;
             }
 
             $this->filename = $path.trim(str_replace($namespace, '', $class_name), '\\').'.php';
             $this->filename = str_replace('\\', DIRECTORY_SEPARATOR, $this->filename);
             $included = $this->includeWhenExists($this->filename);
             if ($included) {
-                return $this;
+                return $this->filename;
             }
             
             $this->invalid[$class_name] = true;
         }
 
-        return $this;
+        return null;
     }
 
     /**

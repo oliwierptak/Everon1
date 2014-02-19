@@ -11,7 +11,10 @@ namespace Everon\Interfaces;
 
 interface ClassLoader
 {
-    function register();
+    /**
+     * @param bool $prepend
+     */
+    function register($prepend);
     function unRegister();
     function add($namespace, $directory);
     function load($class_name);

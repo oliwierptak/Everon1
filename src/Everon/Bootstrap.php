@@ -81,13 +81,13 @@ class Bootstrap
         return $this->application_ini;
     }
     
-    protected function registerClassLoader()
+    protected function registerClassLoader($prepend_autoloader)
     {
-        $this->setupClassLoader();
+        $this->setupClassLoader($prepend_autoloader);
         
         if ($this->useEveronAutoload()) {
             $this->getClassLoader()->add('Everon', $this->getEnvironment()->getEveronRoot());
-            $this->getClassLoader()->register();
+            $this->getClassLoader()->register($prepend_autoloader);
         }
     }
     
@@ -97,9 +97,9 @@ class Bootstrap
         return strcasecmp(@$ini['env']['autoload'], 'everon') === 0;
     }
     
-    public function run()
+    public function run($prepend_autoloader = true)
     {
-        $this->registerClassLoader();
+        $this->registerClassLoader($prepend_autoloader);
         
         require_once($this->getEnvironment()->getEveronHelper().'ToString.php');
         require_once($this->getEnvironment()->getEveronRoot().'Exception.php');
