@@ -60,5 +60,7 @@ class Mvc extends Core implements Interfaces\Core
 
     public function shutdown()
     {
+        $s = parent::shutdown();
+        echo "<hr><pre>$s</pre>";
     }
 }
