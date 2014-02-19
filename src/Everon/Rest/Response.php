@@ -11,10 +11,18 @@ namespace Everon\Rest;
 
 use Everon\Exception;
 use Everon\Helper;
+use Everon\Http\HeaderCollection;
 use Everon\Rest\Interfaces;
 
 class Response extends \Everon\Http\Response implements Interfaces\Response
 {
+
+    public function __construct($guid, HeaderCollection $Headers)
+    {
+        parent::__construct($guid, $Headers);
+        $this->HeaderCollection->set('X-Powered-By', 'Everon');
+    }
+    
     /**
      * @return bool
      */

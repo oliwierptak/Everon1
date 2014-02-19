@@ -9,7 +9,7 @@
  */
 namespace Everon\Helper;
 
-trait Exeptions
+trait Exceptions
 {
     /**
      * @param $message

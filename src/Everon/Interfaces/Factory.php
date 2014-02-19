@@ -69,6 +69,14 @@ interface Factory
     function buildRestServer();
 
     /**
+     * @param $guid
+     * @param Http\Interfaces\HeaderCollection $Headers
+     * @return Rest\Response
+     * @throws Exception\Factory
+     */
+    function buildRestResponse($guid, Http\Interfaces\HeaderCollection $Headers);
+
+    /**
      * @param $id
      * @param $secret
      * @return Rest\ApiKey

@@ -33,19 +33,19 @@ class ClassLoaderCache extends ClassLoader implements Interfaces\ClassLoader
      */
     public function load($class_name)
     {
-        $this->filename = $this->ClassMap->getFilenameFromMap($class_name);
-        if ($this->filename !== null) {
-            include_once($this->filename);
-            return $this;
+        $filename = $this->ClassMap->getFilenameFromMap($class_name);
+        if ($filename !== null) {
+            include_once($filename);
+            return $filename;
         }
 
-        $this->filename = parent::load($class_name);
+        $filename = parent::load($class_name);
         
-        if ($this->filename !== null) {
-            $this->ClassMap->addToMap($class_name, $this->filename);
+        if ($filename !== null) {
+            $this->ClassMap->addToMap($class_name, $filename);
         }
         
-        return $this->filename;
+        return $filename;
     }
 
 }

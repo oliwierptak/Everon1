@@ -17,7 +17,7 @@ use Everon\Helper;
 class Item implements Interfaces\ConnectionItem
 {
     use Helper\Arrays;
-    use Helper\Exeptions;
+    use Helper\Exceptions;
     use Helper\Asserts\IsArrayKey;
     use Helper\Immutable;
     use Helper\ToArray;

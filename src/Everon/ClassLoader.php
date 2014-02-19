@@ -17,8 +17,6 @@ class ClassLoader implements Interfaces\ClassLoader
     
     protected $invalid = [];
     
-    protected $filename = null;
-
 
     /**
      * @inheritdoc
@@ -49,37 +47,29 @@ class ClassLoader implements Interfaces\ClassLoader
      */
     public function load($class_name)
     {
-        $this->filename = null;
+        $filename = null;
         if (isset($this->invalid[$class_name])) {
-            return $this;
+            return null;
         }
         
         foreach ($this->resources as  $namespace => $path) {
-            $this->filename = $path.str_replace('\\', DIRECTORY_SEPARATOR, $class_name).'.php';
-            $included = $this->includeWhenExists($this->filename);
+            $filename = $path.str_replace('\\', DIRECTORY_SEPARATOR, $class_name).'.php';
+            $included = $this->includeWhenExists($filename);
             if ($included) {
-                return $this->filename;
+                return $filename;
             }
 
-            $this->filename = $path.trim(str_replace($namespace, '', $class_name), '\\').'.php';
-            $this->filename = str_replace('\\', DIRECTORY_SEPARATOR, $this->filename);
-            $included = $this->includeWhenExists($this->filename);
+            $filename = $path.trim(str_replace($namespace, '', $class_name), '\\').'.php';
+            $filename = str_replace('\\', DIRECTORY_SEPARATOR, $filename);
+            $included = $this->includeWhenExists($filename);
             if ($included) {
-                return $this->filename;
+                return $filename;
             }
             
             $this->invalid[$class_name] = true;
         }
 
         return null;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getFilename()
-    {
-        return $this->filename;
     }
 
     /**

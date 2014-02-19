@@ -21,7 +21,7 @@ class Router extends \Everon\Config\Item implements Config\Interfaces\ItemRouter
     const PROPERTY_MODULE = '____module';
     
     use Helper\Arrays;
-    use Helper\Exeptions;
+    use Helper\Exceptions;
     use Helper\Asserts\IsStringAndNonEmpty;
     use Helper\IsIterable;
     use Helper\Regex;

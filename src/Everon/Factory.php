@@ -187,6 +187,21 @@ class Factory implements Interfaces\Factory
             throw new Exception\Factory('RestServer initialization error', null, $e);
         }
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildRestResponse($guid, Http\Interfaces\HeaderCollection $Headers)
+    {
+        try {
+            $Response = new Rest\Response($guid, $Headers);
+            $this->injectDependencies('Everon\Rest\Response', $Response);
+            return $Response;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('RestResponse initialization error', null, $e);
+        }
+    }
     
     /**
      * @inheritdoc

@@ -12,7 +12,7 @@ namespace Everon;
 
 abstract class Exception extends \Exception
 {
-    use Helper\Exeptions;
+    use Helper\Exceptions;
     use Helper\ToString;
 
     protected $toString = null;
