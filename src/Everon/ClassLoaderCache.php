@@ -20,10 +20,12 @@ class ClassLoaderCache extends ClassLoader implements Interfaces\ClassLoader
 
 
     /**
+     * @param $throw_exceptions
      * @param Interfaces\ClassMap $ClassMap
      */
-    public function __construct(Interfaces\ClassMap $ClassMap)
+    public function __construct($throw_exceptions, Interfaces\ClassMap $ClassMap)
     {
+        $this->throw_exceptions = $throw_exceptions;
         $this->ClassMap = $ClassMap;
     }
 

@@ -17,6 +17,13 @@ class ClassLoader implements Interfaces\ClassLoader
     
     protected $invalid = [];
     
+    protected $throw_exceptions = false;
+    
+    
+    public function __construct($throw_exceptions)
+    {
+        $this->throw_exceptions = $throw_exceptions;
+    }
 
     /**
      * @inheritdoc
@@ -68,6 +75,12 @@ class ClassLoader implements Interfaces\ClassLoader
             
             $this->invalid[$class_name] = true;
         }
+        
+        if ($this->throw_exceptions) {
+            throw new \RuntimeException(vsprintf(
+                'File for class: "%s" could not be found', [$class_name]
+            ));
+        }
 
         return null;
     }
@@ -87,5 +100,4 @@ class ClassLoader implements Interfaces\ClassLoader
 
         return false;
     }
-
 }

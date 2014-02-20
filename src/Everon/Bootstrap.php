@@ -64,10 +64,10 @@ class Bootstrap
 
             $classmap_filename = $this->Environment->getCache().'everon_classmap_'.$this->getOsName().'.php';
             $ClassMap = new ClassMap($classmap_filename);
-            $ClassLoader = new ClassLoaderCache($ClassMap);
+            $ClassLoader = new ClassLoaderCache($this->useEveronAutoload(), $ClassMap);
         }
         else {
-            $ClassLoader = new ClassLoader();
+            $ClassLoader = new ClassLoader($this->useEveronAutoload());
         }
         
         $this->ClassLoader = $ClassLoader;
@@ -83,9 +83,8 @@ class Bootstrap
     
     protected function registerClassLoader($prepend_autoloader)
     {
-        $this->setupClassLoader($prepend_autoloader);
-        
         if ($this->useEveronAutoload()) {
+            $this->setupClassLoader();
             $this->getClassLoader()->add('Everon', $this->getEnvironment()->getEveronRoot());
             $this->getClassLoader()->register($prepend_autoloader);
         }
@@ -97,7 +96,7 @@ class Bootstrap
         return strcasecmp(@$ini['env']['autoload'], 'everon') === 0;
     }
     
-    public function run($prepend_autoloader = true)
+    public function run($prepend_autoloader = false)
     {
         $this->registerClassLoader($prepend_autoloader);
         
