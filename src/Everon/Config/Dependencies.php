@@ -40,8 +40,8 @@ $Container->propose('Router', function() use ($Factory) {
 
 $Container->propose('Response', function() use ($Factory) {
     $Factory->getDependencyContainer()->monitor('Response', ['Everon\Logger']);
-    $Logger = $Factory->getDependencyContainer()->resolve('Logger');
-    return $Factory->buildResponse($Logger->getGuid());
+    $RequestIdentifier = $Factory->getDependencyContainer()->resolve('RequestIdentifier');
+    return $Factory->buildResponse($RequestIdentifier->getValue());
 });
 
 $Container->propose('ConfigManager', function() use ($Factory) {

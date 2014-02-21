@@ -10,14 +10,14 @@
 namespace Everon;
 
 require_once(implode(DIRECTORY_SEPARATOR, [$EVERON_SOURCE_ROOT, 'Bootstrap.php']));
-require_once(implode(DIRECTORY_SEPARATOR, [$EVERON_SOURCE_ROOT, 'Guid.php']));
+require_once(implode(DIRECTORY_SEPARATOR, [$EVERON_SOURCE_ROOT, 'RequestIdentifier.php']));
 
-$Guid = new Guid();
+$REQUEST_IDENTIFIER = new RequestIdentifier();
 if (isset($CustomExceptionHandler)) {
     $CustomExceptionHandler();
 }
 else {
-    Bootstrap::setupExceptionHandler($Guid->getValue(), $EVERON_ROOT, '500.log');
+    Bootstrap::setupExceptionHandler($REQUEST_IDENTIFIER->getValue(), $EVERON_ROOT, '500.log');
 }
 
 require_once(implode(DIRECTORY_SEPARATOR, [$EVERON_SOURCE_ROOT, 'Interfaces', 'Environment.php']));
@@ -34,6 +34,10 @@ $Container->propose('Bootstrap', function() use ($Bootstrap) {
 
 $Container->propose('Environment', function() use ($Environment) {
     return $Environment;
+});
+
+$Container->propose('RequestIdentifier', function() use ($REQUEST_IDENTIFIER) {
+    return $REQUEST_IDENTIFIER;
 });
 
 require_once($Environment->getEveronConfig().'Dependencies.php');

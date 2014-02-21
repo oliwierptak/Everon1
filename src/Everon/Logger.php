@@ -25,7 +25,7 @@ class Logger implements Interfaces\Logger
     
     protected $log_directory = null;
     
-    protected $log_guid = null;
+    protected $log_request_identifier = null;
     
     protected $enabled = false;
     
@@ -38,14 +38,14 @@ class Logger implements Interfaces\Logger
         $this->enabled = (bool) $enabled;
     }
     
-    public function setGuid($guid)
+    public function setRequestIdentifier($request_identifier)
     {
-        $this->log_guid = $guid;
+        $this->log_request_identifier = $request_identifier;
     }
     
-    public function getGuid()
+    public function getRequestIdentifier()
     {
-        return $this->log_guid;
+        return $this->log_request_identifier;
     }    
 
     /**
@@ -76,8 +76,8 @@ class Logger implements Interfaces\Logger
             return null;
         }
         
-        if ($this->log_guid === null) {
-            $this->log_guid = "MISSING_REQUEST_ID";
+        if ($this->log_request_identifier === null) {
+            $this->log_request_identifier = "MISSING_REQUEST_ID";
         }
 
         $ExceptionToTrace = $message;
@@ -97,7 +97,7 @@ class Logger implements Interfaces\Logger
             $this->logRotate($Filename);
             
             $this->write_count++;
-            $request_id = substr($this->log_guid, 0, 6);
+            $request_id = substr($this->log_request_identifier, 0, 6);
             $trace_id =  substr(md5(uniqid()), 0, 6);
             $write_count = $this->write_count;
             $id = "$request_id/$trace_id ($write_count)";

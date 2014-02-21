@@ -12,52 +12,58 @@ namespace Everon\Rest;
 use Everon\Dependency;
 use Everon\Interfaces;
 use Everon\Exception;
-use Everon\Guid;
+use Everon\RequestIdentifier;
 use Everon\Http;
 use Everon\Rest;
 
+/**
+ * @method \Everon\Http\Interfaces\Response getResponse
+ */
 class Server extends \Everon\Core implements Rest\Interfaces\Server
 {
+    use Dependency\Injection\Response;
+    
     /**
      * @var Rest\Interfaces\Controller
      */
     protected $Controller = null;
 
     /**
-     * @param Guid $Guid
+     * @param RequestIdentifier $RequestIdentifier
      * @return void
      */
-    public function run(Guid $Guid)
+    public function run(RequestIdentifier $RequestIdentifier)
     {
         try {
-            parent::run($Guid);
+            parent::run($RequestIdentifier);
         }
         catch (Exception\RouteNotDefined $Exception) {
             $this->getLogger()->error($Exception);
             $NotFound = new Http\Exception\NotFound('Resource not found: '.$Exception->getMessage());
-            $this->showControllerException($NotFound->getHttpStatus(), $NotFound, $this->Controller);
+            $this->showException($NotFound->getHttpStatus(), $NotFound);
         }
         catch (\Exception $Exception) {
             $this->getLogger()->error($Exception);
-            $this->showControllerException(400, $Exception, $this->Controller);
+            $this->showException(500, $Exception);
         }
     }
     
     /**
      * @param $code
      * @param \Exception $Exception
-     * @param Rest\Interfaces\Controller|null $Controller
      */
-    public function showControllerException($code, \Exception $Exception, $Controller)
+    public function showException($code, \Exception $Exception)
     {
-        /**
-         * @var Rest\Interfaces\Controller $Controller
-         */
-        if ($Controller === null) {
-            $Controller = $this->getModuleManager()->getDefaultModule()->getController('Error');
+        $message = $Exception->getMessage();
+        $this->getResponse()->setData(['error' => $message]);
+        if ($Exception instanceof Http\Exception) {
+            $message = $Exception->getHttpMessage();
+            $code = $Exception->getHttpStatus();
         }
 
-        $Controller->showException($Exception, $code);
+        $this->getResponse()->setStatusCode($code);
+        $this->getResponse()->setStatusMessage($message);
+        echo $this->getResponse()->toJson();
     }
 
     public function shutdown()

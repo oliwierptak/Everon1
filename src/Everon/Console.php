@@ -25,13 +25,13 @@ class Console extends Core implements Interfaces\Core
     }
 
     /**
-     * @param Guid $Guid
+     * @param RequestIdentifier $RequestIdentifier
      * @return void
      */
-    public function run(Guid $Guid)
+    public function run(RequestIdentifier $RequestIdentifier)
     {
         try {
-            parent::run($Guid);
+            parent::run($RequestIdentifier);
         }
         catch (Exception\RouteNotDefined $e) {
             $this->getLogger()->notFound($e);

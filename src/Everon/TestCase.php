@@ -22,9 +22,9 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
     protected $FrameworkEnvironment = null;
 
     /**
-     * @var \Everon\Guid
+     * @var \Everon\RequestIdentifier
      */
-    protected $Guid = null;
+    protected $RequestIdentifier = null;
 
 
     public function __construct($name = NULL, array $data=[], $dataName='')
@@ -32,7 +32,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         parent::__construct($name, $data, $dataName);
         $this->FrameworkEnvironment = new Environment($GLOBALS['EVERON_ROOT'], $GLOBALS['EVERON_SOURCE_ROOT']);
         $this->includeDoubles($this->getDoublesDirectory());
-        $this->Guid = $GLOBALS['Guid']; //import from bootstrap
+        $this->RequestIdentifier = $GLOBALS['RequestIdentifier']; //import from bootstrap
     }
     
     protected function includeDoubles($dir)
@@ -203,7 +203,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
          * @var \Everon\Interfaces\Logger $Logger
          */
         $Logger = $Container->resolve('Logger');
-        $Logger->setGuid($this->Guid->getValue());
+        $Logger->setRequestIdentifier($this->RequestIdentifier->getValue());
 
         $Container->register('Request', function() use ($Factory) {
             $server_data = $this->getServerDataForRequest([

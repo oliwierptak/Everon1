@@ -9,7 +9,7 @@
  */
 namespace Everon;
 
-class Guid
+class RequestIdentifier
 {
     protected $guid;
     protected $system_memory_at_start = null;
@@ -60,9 +60,9 @@ class Guid
     public static function __set_state(array $array)
     {
         //todo: test me xxx
-        $Guid = new static($array);
-        $Guid->guid = $array['guid'];
-        $Guid->system_memory_at_start = $array['system_memory_at_start'];
+        $RequestIdentifier = new static($array);
+        $RequestIdentifier->guid = $array['guid'];
+        $RequestIdentifier->system_memory_at_start = $array['system_memory_at_start'];
     }
     
 }

@@ -10,7 +10,7 @@
 namespace Everon;
 
 /**
- * @var Guid $Guid
+ * @var RequestIdentifier $RequestIdentifier
  * @var Interfaces\Factory $Factory
  * @var Interfaces\Core $Console
  */
@@ -19,4 +19,4 @@ require_once(
 );
 
 $Console = $Factory->buildConsole();
-$Console->run($Guid);
+$Console->run($RequestIdentifier);

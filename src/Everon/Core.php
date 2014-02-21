@@ -30,36 +30,41 @@ abstract class Core implements Interfaces\Core
     protected $Module = null;
 
     /**
-     * @var Guid
+     * @var RequestIdentifier
      */
-    protected $Guid = null;
+    protected $RequestIdentifier = null;
     
     protected $previous_exception_handler = null;
 
-    protected function runOnce(Guid $Guid)
+    protected function runOnce(RequestIdentifier $RequestIdentifier)
     {
-        if ($this->Guid !== null) {
+        if ($this->RequestIdentifier !== null) {
             return;
         }
         
         register_shutdown_function([$this, 'shutdown']);
         
-        $this->Guid = $Guid;
-        $this->getLogger()->setGuid($this->Guid->getValue());
+        $this->RequestIdentifier = $RequestIdentifier;
+        $this->getLogger()->setRequestIdentifier($this->RequestIdentifier->getValue());
         
         $this->previous_exception_handler = set_exception_handler([$this, 'handleExceptions']);
     }
     
     /**
-     * @param Guid $Guid
+     * @param RequestIdentifier $RequestIdentifier
      * @return void
      */
-    public function run(Guid $Guid)
+    public function run(RequestIdentifier $RequestIdentifier)
     {
-        $this->runOnce($Guid);
+        $this->runOnce($RequestIdentifier);
         
         if ($this->getRequest()->isEmptyUrl()) {
             $this->Module = $this->getModuleManager()->getDefaultModule();
+            
+            if ($this->Module === null) {
+                throw new Exception\Core('Default module not defined');
+            }
+            
             $this->Module->setup();
             $CurrentRoute = $this->Module->getRouteConfig()->getDefaultItem();
             $this->getRouter()->validateAndUpdateRequest($CurrentRoute, $this->getRequest());
@@ -67,6 +72,11 @@ abstract class Core implements Interfaces\Core
         else {
             $CurrentRoute = $this->getRouter()->getRouteByRequest($this->getRequest());
             $this->Module = $this->getModuleManager()->getModule($CurrentRoute->getModule());
+
+            if ($this->Module === null) {
+                throw new Exception\Core('No module defined for this request');
+            }
+            
             $this->Module->setup();
         }
 
@@ -77,7 +87,7 @@ abstract class Core implements Interfaces\Core
     //todo make events, add some kind of profiling class
     public function shutdown()
     {
-        $data = $this->getGuid()->getStats();
+        $data = $this->getRequestIdentifier()->getStats();
         $sbs = vsprintf('%0dkb', $data['memory_at_start'] / 1024); 
         $sas = vsprintf('%0dkb', $data['memory_total'] / 1024);
         $mu = vsprintf('%0dkb', ($data['memory_total'] - $data['memory_at_start']) / 1024);
@@ -102,9 +112,9 @@ abstract class Core implements Interfaces\Core
         $this->getLogger()->critical($Exception);
     }
     
-    public function getGuid()
+    public function getRequestIdentifier()
     {
-        return $this->Guid;
+        return $this->RequestIdentifier;
     }
     
 }
