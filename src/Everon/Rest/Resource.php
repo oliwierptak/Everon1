@@ -12,18 +12,72 @@ namespace Everon\Rest;
 use Everon\Helper;
 
 
-class Resource implements Interfaces\Resource
+abstract class Resource implements Interfaces\Resource
 {
     use Helper\ToArray;
     
     protected $name = null;
-    
     protected $href = null;
+    protected $version = null;
 
-    
-    public function __construct($name, array $data)
+
+    public function __construct($name, $version, array $data)
     {
         $this->name = $name;
+        $this->version = $version;
         $this->data = $data;
+    }
+
+    /**
+     * @param $version
+     */
+    public function setVersion($version)
+    {
+        $this->version = $version;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getVersion()
+    {
+        return $this->version;
+    }
+
+    /**
+     * @param $href
+     */
+    public function setHref($href)
+    {
+        $this->href = $href;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getHref()
+    {
+        return $this->href;
+    }
+
+    /**
+     * @param $name
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+    
+    public function toJson()
+    {
+        return json_encode([$this->toArray()], \JSON_FORCE_OBJECT);
     }
 }

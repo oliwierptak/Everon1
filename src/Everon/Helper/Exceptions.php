@@ -38,18 +38,29 @@ trait Exceptions
     protected function throwException($exception_class, $message, $value)
     {
         try {
-            if (class_exists($exception_class, true) === false) {
-                $class = "Everon\\Exception\\${exception_class}";
-                if (class_exists($class, true) === false) {
-                    $exception_class = 'Everon\Exception\Asserts';
+            try {
+                if (class_exists($exception_class, true) === false) {
+                    $class = "Everon\\Exception\\${exception_class}";
+                    if (class_exists($class, true)) {
+                        $exception_class = $class;
+                    }
                 }
-                else {
+            }
+            catch (\RuntimeException $e) {
+                $class = "Everon\\Exception\\${exception_class}";
+                if (class_exists($class, true)) {
                     $exception_class = $class;
                 }
             }
         }
-        catch (\Exception $e) {
-            $exception_class = 'Everon\Exception\Asserts';
+        catch (\RuntimeException $e) {
+            $class = "Everon\\Exception\\${exception_class}";
+            if (class_exists($class, true) === false) {
+                $exception_class = 'Everon\Exception\Asserts';
+            }
+            else {
+                $exception_class = $class;
+            }
         }
 
         throw new $exception_class($message, $value);

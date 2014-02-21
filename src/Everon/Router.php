@@ -36,9 +36,7 @@ class Router implements Interfaces\Router
     }
 
     /**
-     * @param Interfaces\Request $Request
-     * @return ItemRouter
-     * @throws Exception\RouteNotDefined
+     * @inheritdoc
      */
     public function getRouteByRequest(Interfaces\Request $Request)
     {
@@ -78,8 +76,7 @@ class Router implements Interfaces\Router
     }
 
     /**
-     * @param ItemRouter $RouteItem
-     * @param Interfaces\Request $Request
+     * @inheritdoc
      */
     public function validateAndUpdateRequest(ItemRouter $RouteItem, Interfaces\Request $Request)
     {
@@ -99,8 +96,7 @@ class Router implements Interfaces\Router
     }
     
     /**
-     * @param $url
-     * @return ItemRouter |null
+     * @inheritdoc
      */
     public function getRouteByUrl($url)
     {
@@ -117,9 +113,7 @@ class Router implements Interfaces\Router
     }
 
     /**
-     * @param $route_name
-     * @return ItemRouter
-     * @throws Exception\Router
+     * @inheritdoc
      */
     public function getRouteByName($route_name)
     {

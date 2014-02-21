@@ -65,29 +65,13 @@ abstract class Controller extends \Everon\Controller implements Rest\Interfaces\
 
     protected function prepareResponse($action, $result)
     {
-        //
+        $Resource = $this->getResponse()->getData();
+        $this->getResponse()->setData($Resource->toArray());
     }
 
     protected function response()
     {
         echo $this->getResponse()->toJson();
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function showException(\Exception $Exception, $code=400)
-    {
-        $message = $Exception->getMessage();
-        $this->getResponse()->setData(['error' => $message]);
-        if ($Exception instanceof Http\Exception) {
-            $message = $Exception->getHttpMessage();
-            $code = $Exception->getHttpStatus();
-        }
-
-        $this->getResponse()->setStatusCode($code);
-        $this->getResponse()->setStatusMessage($message);
-        $this->response();
     }
 
 }

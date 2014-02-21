@@ -9,18 +9,6 @@
  */
 namespace Everon\Rest\Interfaces;
 
-use Everon\Interfaces;
-
-interface Controller extends Interfaces\Controller
+interface ResourceManager
 {
-    /**
-     * @return mixed
-     */
-    function getModel();
-
-    /**
-     * @param $name
-     * @return null
-     */
-    function getUrl($name);
 }

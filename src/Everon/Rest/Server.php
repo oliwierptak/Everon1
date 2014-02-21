@@ -42,6 +42,10 @@ class Server extends \Everon\Core implements Rest\Interfaces\Server
             $NotFound = new Http\Exception\NotFound('Resource not found: '.$Exception->getMessage());
             $this->showException($NotFound->getHttpStatus(), $NotFound);
         }
+        catch (Exception $Exception) {
+            $this->getLogger()->error($Exception);
+            $this->showException(400, $Exception);
+        }
         catch (\Exception $Exception) {
             $this->getLogger()->error($Exception);
             $this->showException(500, $Exception);

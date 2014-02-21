@@ -220,8 +220,8 @@ name = everon-dev
 autoload = everon     ;external, everon
 
 [modules]
-default = RestAuth
-active[] = RestAuth
+default = Test
+active[] = Test
 
 [theme]
 default = Main

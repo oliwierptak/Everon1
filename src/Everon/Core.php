@@ -53,6 +53,7 @@ abstract class Core implements Interfaces\Core
     /**
      * @param RequestIdentifier $RequestIdentifier
      * @return void
+     * @throws Exception\Core
      */
     public function run(RequestIdentifier $RequestIdentifier)
     {

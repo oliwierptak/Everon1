@@ -11,4 +11,38 @@ namespace Everon\Rest\Interfaces;
 
 interface Resource extends \Everon\Interfaces\Arrayable
 {
+    /**
+     * @param $version
+     */
+    function setVersion($version);
+
+    /**
+     * @inheritdoc
+     */
+    function getVersion();
+
+    /**
+     * @param $href
+     */
+    function setHref($href);
+
+    /**
+     * @inheritdoc
+     */
+    function getHref();
+
+    /**
+     * @param $name
+     */
+    function setName($name);
+
+    /**
+     * @inheritdoc
+     */
+    function getName();
+
+    /**
+     * @return string
+     */
+    function toJson();
 }

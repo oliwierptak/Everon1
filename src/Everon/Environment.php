@@ -32,6 +32,7 @@ class Environment implements Interfaces\Environment
             'module' => $this->getRoot().'Module'.DIRECTORY_SEPARATOR,
             'tests' => $this->getRoot().'Tests'.DIRECTORY_SEPARATOR,
             'tmp' => $this->getRoot().'Tmp'.DIRECTORY_SEPARATOR,
+            'rest' => $this->getRoot().'Rest'.DIRECTORY_SEPARATOR,
             'web' => $this->getRoot().'Web'.DIRECTORY_SEPARATOR,
             'theme' => $this->getRoot().'Theme'.DIRECTORY_SEPARATOR,
         ];
@@ -250,6 +251,16 @@ class Environment implements Interfaces\Environment
     function setModule($module)
     {
         $this->resources['module'] = $module;
+    }
+
+    function getRest()
+    {
+        return $this->resources['rest'];
+    }
+
+    function setRest($rest)
+    {
+        $this->resources['rest'] = $rest;
     }
     
     function toArray()

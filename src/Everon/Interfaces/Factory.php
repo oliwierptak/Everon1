@@ -77,6 +77,15 @@ interface Factory
     function buildRestResponse($guid, Http\Interfaces\HeaderCollection $Headers);
 
     /**
+     * @param $name
+     * @param $version
+     * @param $data
+     * @return mixed
+     * @throws Exception\Factory
+     */
+    function buildRestResource($name, $version, $data);
+
+    /**
      * @param $id
      * @param $secret
      * @return Rest\ApiKey

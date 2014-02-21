@@ -24,7 +24,7 @@ interface Router
     /**
      * @param Interfaces\Request $Request
      * @return ItemRouter
-     * @throws Exception\InvalidRoute
+     * @throws Exception\RouteNotDefined
      */
     function getRouteByRequest(Request $Request);
 
@@ -37,7 +37,7 @@ interface Router
 
     /**
      * @param $url
-     * @return ItemRouter
+     * @return ItemRouter|null
      */
     function getRouteByUrl($url);
 

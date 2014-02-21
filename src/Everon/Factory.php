@@ -202,6 +202,23 @@ class Factory implements Interfaces\Factory
             throw new Exception\Factory('RestResponse initialization error', null, $e);
         }
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildRestResource($name, $version, $data) //xxx
+    {
+        try {
+            $class_name = $this->getFullClassName('Everon\Rest\Resource\\'.$version, $name);
+            $this->classExists($class_name);
+            $Resource = new $class_name($name, $data);
+            $this->injectDependencies($class_name, $Resource);
+            return $Resource;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('RestResource initialization error', null, $e);
+        }
+    }
     
     /**
      * @inheritdoc
