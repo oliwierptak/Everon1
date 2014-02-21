@@ -40,6 +40,8 @@ class Router extends \Everon\Config\Item implements Config\Interfaces\ItemRouter
 
     protected $regex_post = [];
     
+    protected $method = null;
+
     
     public function __construct(array $data)
     {
@@ -47,6 +49,7 @@ class Router extends \Everon\Config\Item implements Config\Interfaces\ItemRouter
             'url' => null,
             'controller' => null,
             'action' => null,
+            'method' => null,
             'get' => [],
             'query' => [],
             'post' => []
@@ -65,6 +68,7 @@ class Router extends \Everon\Config\Item implements Config\Interfaces\ItemRouter
         $this->setGetRegex($this->data['get']);
         $this->setQueryRegex($this->data['query']);
         $this->setPostRegex($this->data['post']);
+        $this->setMethod($this->data['method']);
     }
 
     /**
@@ -278,4 +282,19 @@ class Router extends \Everon\Config\Item implements Config\Interfaces\ItemRouter
         $this->regex_post = $regex;
     }
     
+    /**
+     * @inheritdoc
+     */
+    public function setMethod($method)
+    {
+        $this->method = $method;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getMethod()
+    {
+        return $this->method;
+    }   
 }

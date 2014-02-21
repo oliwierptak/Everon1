@@ -14,6 +14,12 @@ class Request implements Interfaces\Request
 {
     use Helper\ToArray;
 
+    const METHOD_DELETE = 'DELETE';
+    const METHOD_GET = 'GET';
+    const METHOD_HEAD = 'HEAD';
+    const METHOD_POST = 'POST';
+    const METHOD_PUT = 'PUT';
+
     /**
      * @var Interfaces\Collection $_SERVER
      */
@@ -77,6 +83,14 @@ class Request implements Interfaces\Request
      * @var bool HTTPS
      */
     protected $secure = false;
+
+    /**
+     * @var array Array of accepted request methods
+     */
+    protected $accepted_methods = [
+        self::METHOD_GET,
+        self::METHOD_POST,
+    ];
 
 
     /**
@@ -258,10 +272,8 @@ class Request implements Interfaces\Request
             }
         }
 
-        $method = strtolower($data['method']);
-        $valid = ['post', 'get']; //todo: put into method or property
-
-        if (in_array($method, $valid) === false) {
+        $method = strtoupper($data['method']);
+        if (in_array($method, $this->accepted_methods) === false) {
             throw new Exception\Request('Unrecognized http method: "%s"', $method);
         }
     }

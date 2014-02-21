@@ -14,12 +14,12 @@ use Everon\Exception;
 
 class Request extends \Everon\Request implements Interfaces\Request
 {
-    const METHOD_DELETE = 'DELETE';
-    const METHOD_GET = 'GET';
-    const METHOD_POST = 'POST';
-    const METHOD_PUT = 'PUT';
-    const METHOD_HEAD = 'HEAD';
-    
-    
+    protected $accepted_methods = [
+        self::METHOD_DELETE,
+        self::METHOD_GET,
+        self::METHOD_HEAD,
+        self::METHOD_POST,
+        self::METHOD_PUT,
+    ];
 
 }

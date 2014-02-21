@@ -40,4 +40,11 @@ interface ItemRouter
     function filterQueryKeys($get_data);
     function filterGetKeys($get_data);
     function matchesByPath($request_path);
+
+    /**
+     * @param string $method
+     */
+    function setMethod($method);
+
+    function getMethod();
 }

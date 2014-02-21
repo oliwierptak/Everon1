@@ -25,6 +25,11 @@ class RequestValidator implements Interfaces\RequestValidator
      */
     public function validate(Config\Interfaces\ItemRouter $RouteItem, Interfaces\Request $Request)
     {
+        $method = $RouteItem->getMethod();
+        if ($method !== null && strcasecmp($method, $Request->getMethod()) !== 0) {
+            throw new Exception\RequestValidator('Invalid request method: "%s", expected: "%s"', [$Request->getMethod(), $method]);
+        }
+        
         $parsed_query_parameters = $this->validateQuery($RouteItem, $Request->getPath(), $Request->getQueryCollection()->toArray());
         $this->validateRoute(
             $RouteItem->getName(),
