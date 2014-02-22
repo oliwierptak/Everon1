@@ -17,5 +17,4 @@ use Everon\Router as EveronRouter;
 class Router extends EveronRouter implements Interfaces\Router
 {
 
-
 }

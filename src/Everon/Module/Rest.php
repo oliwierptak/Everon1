@@ -22,7 +22,7 @@ abstract class Rest extends \Everon\Module implements Interfaces\Rest
 {
     use Dependency\Injection\Request;
     use Dependency\Injection\Response;
-    use RestDependency\ApiKey;
+    use RestDependency\ApiKey; //todo: this should be request token
 
 
     public function setup()
