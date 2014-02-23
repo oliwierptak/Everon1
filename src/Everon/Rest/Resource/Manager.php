@@ -36,10 +36,6 @@ class Manager implements Interfaces\ResourceManager
     
     public function getResource($resource_id, $name)
     {
-        //$this->getFactory()->buildRestResource($name, $this->current_version, $data);
-        //entity = User
-        //resource = Users
-        //cut off plural
         $id = $this->generateEntityId($resource_id, $name);
         $name = substr($name, 0, strlen($name) - 1);
         $Repository = $this->getDomainManager()->getRepository($name);
