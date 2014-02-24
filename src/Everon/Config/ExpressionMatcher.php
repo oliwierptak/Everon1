@@ -15,6 +15,9 @@ use Everon\Helper;
 
 class ExpressionMatcher implements Interfaces\ExpressionMatcher
 {
+    use Helper\Arrays;
+    use Helper\IsIterable;
+    
     protected $expressions = [];
     protected $values = [];
     
@@ -63,6 +66,13 @@ class ExpressionMatcher implements Interfaces\ExpressionMatcher
             }
             
             $this->values[$item] = $data[$config_section][$config_section_variable];
+        }
+        
+        if (empty($this->values)) { //todo fix this madness
+            $this->values = $this->arrayDotKeysFlattern($configs_data);
+            $this->values = $this->arrayDotKeysFlattern($this->values);
+            $this->values = $this->arrayDotKeysFlattern($this->values);
+            $this->values = $this->arrayPrefixKey('%', $this->values, '%');
         }
 
         //compile to update self references, eg.
