@@ -431,6 +431,15 @@ interface Factory
      */
     function buildFactoryWorker($name, $namespace='Everon\Module');
 
+    /**
+     * @param $url
+     * @param $version
+     * @param string $namespace
+     * @return mixed
+     * @throws Exception\Factory
+     */
+    function buildRestResourceManager($url, $version, $namespace='Everon\Rest\Resource');
+
 /*    function registerWorker(Interfaces\FactoryWorker $Worker);
 
     function unRegisterWorker(Interfaces\FactoryWorker $Worker);*/

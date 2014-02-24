@@ -31,10 +31,15 @@ class Manager implements Interfaces\ResourceManager
     
     protected $current_version = 'v1';
     
-    protected $url = '/v1/api/';
+    protected $url = null;
+    
+    public function __construct($url, $version)
+    {
+        
+    }
     
     
-    public function getResource($resource_id, $name)
+    public function getResource($resource_id, $name, $version)
     {
         $id = $this->generateEntityId($resource_id, $name);
         $name = substr($name, 0, strlen($name) - 1);
@@ -52,6 +57,11 @@ class Manager implements Interfaces\ResourceManager
     public function generateResourceId($entity_id, $name)
     {
 
+    }
+    
+    public function generateHref($resource_id, $name)
+    {
+        
     }
     
 }
