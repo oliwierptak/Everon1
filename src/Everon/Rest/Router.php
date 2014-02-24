@@ -16,5 +16,28 @@ use Everon\Router as EveronRouter;
 
 class Router extends EveronRouter implements Interfaces\Router
 {
+    /**
+     * @inheritdoc
+     */
+    public function getRouteByRequest(Request $Request)
+    {
+        $DefaultItem = parent::getRouteByRequest($Request);
+        
+        foreach ($this->getConfig()->getItems() as $RouteItem) {
+            /**
+             * @var ItemRouter $RouteItem
+             */
+            if ($RouteItem->matchesByPath($Request->getPath())) {
+                if ($Request->getMethod() === $RouteItem->getMethod()) {
+                    return $RouteItem;
+                }
+            }
+        }
+        
+        if ($DefaultItem !== null) {
+            return $DefaultItem;
+        }
 
+        throw new Exception\RouteNotDefined($Request->getPath());
+    }
 }

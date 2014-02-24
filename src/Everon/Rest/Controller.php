@@ -65,8 +65,13 @@ abstract class Controller extends \Everon\Controller implements Rest\Interfaces\
 
     protected function prepareResponse($action, $result)
     {
+        $data = $this->getResponse()->getData();
         $Resource = $this->getResponse()->getData();
-        $this->getResponse()->setData($Resource->toArray());
+        if ($Resource instanceof Rest\Interfaces\Resource) {
+            $data = $Resource->toArray();
+        }
+        
+        $this->getResponse()->setData($data);
     }
 
     protected function response()
