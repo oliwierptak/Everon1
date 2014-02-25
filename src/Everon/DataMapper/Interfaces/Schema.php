@@ -16,6 +16,7 @@ interface Schema
     /**
      * @param $name
      * @return PdoAdapter
+     * @throws \Everon\DataMapper\Exception\Schema
      */    
     function getPdoAdapterByName($name);
     
@@ -39,7 +40,8 @@ interface Schema
 
     /**
      * @param $name
-     * @return Schema\Table
+     * @return \Everon\DataMapper\Interfaces\Schema\Table
+     * @throws \Everon\DataMapper\Exception\Schema
      */
     function getTable($name);
 }

@@ -63,10 +63,10 @@ abstract class Repository implements Interfaces\Repository
      */
     public function fetchEntityById($id)
     {
-        $Criteria = new \Everon\DataMapper\Criteria([
+        $Criteria = (new \Everon\DataMapper\Criteria())->where([
             $this->getMapper()->getSchemaTable()->getPk() => $id
         ]);
-
+        
         $data = $this->getMapper()->fetchAll($Criteria);
         if (empty($data)) {
             return null;

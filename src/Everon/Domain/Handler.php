@@ -12,7 +12,9 @@ namespace Everon\Domain;
 use Everon\DataMapper\Dependency;
 use Everon\DataMapper\Interfaces\ConnectionManager;
 use Everon\DataMapper\Interfaces\Schema;
+use Everon\DataMapper\Exception\Schema as SchemaException;
 use Everon\Dependency\Injection\Factory as FactoryInjection;
+use Everon\Exception;
 
 abstract class Handler implements Interfaces\Handler
 {
@@ -60,6 +62,10 @@ abstract class Handler implements Interfaces\Handler
             $this->models[$name] = $this->getFactory()->buildDomainModel($name);
         }
 
+        if (isset($this->models[$name]) === false) {
+            throw new SchemaException('Invalid model name: "%s"', $name);
+        }
+
         return $this->models[$name];
     }
 
@@ -74,6 +80,10 @@ abstract class Handler implements Interfaces\Handler
                 $Schema->getTable($name), $Schema
             );
             $this->repositories[$name] = $this->getFactory()->buildDomainRepository($name, $DataMapper);
+        }
+        
+        if (isset($this->repositories[$name]) === false) {
+            throw new SchemaException('Invalid repository name: "%s"', $name);
         }
 
         return $this->repositories[$name];
@@ -91,6 +101,10 @@ abstract class Handler implements Interfaces\Handler
             $PdoAdapter = $this->getFactory()->buildPdoAdapter($Pdo, $Connection);
             $SchemaReader = $this->getFactory()->buildSchemaReader($PdoAdapter);
             $this->schemas[$name] = $this->getFactory()->buildSchema($SchemaReader, $this->getConnectionManager());
+        }
+
+        if (isset($this->schemas[$name]) === false) {
+            throw new SchemaException('Invalid schema name: "%s"', $name);
         }
 
         return $this->schemas[$name];        

@@ -209,9 +209,9 @@ class Factory implements Interfaces\Factory
     public function buildRestResource($name, $version, $data) //xxx
     {
         try {
-            $class_name = $this->getFullClassName('Everon\Rest\Resource\\'.$version, $name);
+            $class_name = $this->getFullClassName('Everon\Rest\Resource\\'.$name, $version);
             $this->classExists($class_name);
-            $Resource = new $class_name($name, $data);
+            $Resource = new $class_name($data);
             $this->injectDependencies($class_name, $Resource);
             return $Resource;
         }

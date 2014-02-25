@@ -38,25 +38,22 @@ class Manager implements Interfaces\ResourceManager
         
     }
     
-    
     public function getResource($resource_id, $name, $version)
     {
         $id = $this->generateEntityId($resource_id, $name);
-        $name = substr($name, 0, strlen($name) - 1);
         $Repository = $this->getDomainManager()->getRepository($name);
-        $data = $Repository->fetchEntityById($id);
-        $this->getDomainManager()->getEntity($name, $id, $data);
-        
+        $Entity = $Repository->fetchEntityById($id);
+        return $this->getFactory()->buildRestResource($name, $version, $Entity);
     }
     
     public function generateEntityId($resource_id, $name)
     {
-
+        return 1;
     }
     
     public function generateResourceId($entity_id, $name)
     {
-
+        return 'aabbcc';
     }
     
     public function generateHref($resource_id, $name)

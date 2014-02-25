@@ -41,6 +41,7 @@ interface Handler
     /**
      * @param $name
      * @return Repository
+     * @throws \Everon\DataMapper\Exception\Schema
      */
     function getRepository($name);
 

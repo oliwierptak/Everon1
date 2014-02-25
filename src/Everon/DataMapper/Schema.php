@@ -111,14 +111,17 @@ class Schema implements Interfaces\Schema
     }
 
     /**
-     * @param $name
-     * @return Interfaces\Schema\Table
+     * @inheritdoc
      */
     public function getTable($name)
     {
         $name = mb_strtolower($name);
         if ($this->tables === null) {
             $this->initTables();
+        }
+
+        if (isset($this->tables[$name]) === false) {
+            throw new Exception\Schema('Invalid table name: "%s"', $name);
         }
         
         return $this->tables[$name];
@@ -136,6 +139,10 @@ class Schema implements Interfaces\Schema
             $Pdo = $this->getFactory()->buildPdo($dsn, $username, $password, $options);
             $PdoAdapter = $this->getFactory()->buildPdoAdapter($Pdo, $Connection);
             $this->pdo_adapters[$name] = $PdoAdapter;
+        }
+
+        if (isset($this->pdo_adapters[$name]) === false) {
+            throw new Exception\Schema('Invalid pdo adapter name: "%s"', $name);
         }
 
         return $this->pdo_adapters[$name];
