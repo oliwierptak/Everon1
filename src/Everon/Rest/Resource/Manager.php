@@ -12,15 +12,19 @@ namespace Everon\Rest\Resource;
 use Everon\Dependency;
 use Everon\Exception;
 use Everon\Interfaces\Collection;
+use Everon\Helper;
 use Everon\Rest\Interfaces;
 
 class Manager implements Interfaces\ResourceManager
 {
     use Dependency\Injection\Factory;
     use Dependency\Injection\DomainManager;
+    use Helper\AlphaId;
     
-    const RANDSALT = '#$@#$#FSFSDF22edfa';
+    const VERSIONING_URL = 'url';
+    const VERSIONING_HEADER = 'header';
     
+    const ALPHA_ID_SALT = 'Vhg656';
     
     /**
      * @var Collection
@@ -28,14 +32,22 @@ class Manager implements Interfaces\ResourceManager
     protected $ResourceCollection = null;
     
     protected $versions = ['v1'];
+
+    /**
+     * @var string Accepted values are: 'url' or 'header'
+     */
+    protected $versioning = 'url';
     
     protected $current_version = 'v1';
     
     protected $url = null;
     
-    public function __construct($url, $version)
+    
+    
+    public function __construct($url, $version, $versioning)
     {
-        
+        $this->url = $url;
+        $this->versions = $version;
     }
     
     public function getResource($resource_id, $name, $version)
@@ -48,17 +60,19 @@ class Manager implements Interfaces\ResourceManager
     
     public function generateEntityId($resource_id, $name)
     {
-        return 1;
+        $name .= static::ALPHA_ID_SALT;
+        return $this->alphaId($resource_id, true, 7, $name);
     }
     
     public function generateResourceId($entity_id, $name)
     {
-        return 'aabbcc';
+        $name .= static::ALPHA_ID_SALT;
+        return $this->alphaId($entity_id, false, 7, $name);
     }
     
     public function generateHref($resource_id, $name)
     {
-        
+        return $this->url.$name.'/'.$resource_id;
     }
     
 }
