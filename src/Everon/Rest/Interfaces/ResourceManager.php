@@ -14,8 +14,34 @@ interface ResourceManager
     /**
      * @param $resource_id
      * @param $name
-     * @param $version
+     * @param null $section
+     * @param null $version
+     * @return mixed
+     * @throws \Everon\Http\Exception\NotFound
+     */
+    function getResource($resource_id, $name, $section=null, $version=null);
+
+    /**
+     * @param $resource_id
+     * @param $name
      * @return mixed
      */
-    function getResource($resource_id, $name, $version);
+    function generateEntityId($resource_id, $name);
+
+    /**
+     * @param $entity_id
+     * @param $name
+     * @return mixed
+     */
+    function generateResourceId($entity_id, $name);
+
+    /**
+     * @param $resource_id
+     * @param $name
+     * @param null $section
+     * @return string
+     */
+    function getResourceUrl($resource_id, $name, $section=null);
+    
+    function getUrl();
 }

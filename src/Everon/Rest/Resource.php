@@ -19,13 +19,15 @@ abstract class Resource implements Interfaces\Resource
     protected $name = null;
     protected $href = null;
     protected $version = null;
+    
+    abstract protected function init();
 
 
-    public function __construct($name, $version, array $data)
+    public function __construct($name, $version)
     {
         $this->name = $name;
         $this->version = $version;
-        $this->data = $data;
+        $this->data = null;
     }
 
     /**
@@ -78,6 +80,13 @@ abstract class Resource implements Interfaces\Resource
     
     public function toJson()
     {
+        $this->init();
         return json_encode([$this->toArray()], \JSON_FORCE_OBJECT);
+    }
+    
+    public function getToArray()
+    {
+        $this->init();
+        return $this->data;
     }
 }

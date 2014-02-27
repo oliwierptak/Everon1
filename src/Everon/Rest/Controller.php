@@ -9,28 +9,30 @@
  */
 namespace Everon\Rest;
 
-use Everon\Interfaces;
 use Everon\Dependency;
+use Everon\Rest\Dependency as RestDependency;
 use Everon\Exception;
 use Everon\Helper;
 use Everon\Http;
-use Everon\Rest;
+use Everon\Module;
 
 /**
  * @method Http\Interfaces\Response getResponse()
+ * @method Interfaces\Request getRequest()
+ * @method Module\Interfaces\Rest getModule()
  */
-abstract class Controller extends \Everon\Controller implements Rest\Interfaces\Controller
+abstract class Controller extends \Everon\Controller implements Interfaces\Controller
 {
     use Dependency\Injection\DomainManager;
     use Dependency\Injection\Environment;
     use Dependency\Injection\Factory;
     use Dependency\Injection\ModuleManager;
+    use RestDependency\Injection\ResourceManager;
 
-    
     use Helper\Arrays;
     use Helper\IsIterable;
     use Helper\String\StartsWith;
-
+    
     /**
      * @param $action
      * @return void
@@ -67,7 +69,7 @@ abstract class Controller extends \Everon\Controller implements Rest\Interfaces\
     {
         $data = $this->getResponse()->getData();
         $Resource = $this->getResponse()->getData();
-        if ($Resource instanceof Rest\Interfaces\Resource) {
+        if ($Resource instanceof Interfaces\Resource) {
             $data = $Resource->toArray();
         }
         
@@ -77,6 +79,18 @@ abstract class Controller extends \Everon\Controller implements Rest\Interfaces\
     protected function response()
     {
         echo $this->getResponse()->toJson();
+    }
+
+    /**
+     * @return Interfaces\Resource
+     */
+    public function getResourceFromRequest()
+    {
+        $account_id = $this->getRequest()->getQueryParameter('account_id');
+        $version = $this->getRequest()->getVersion();
+        $section = $this->getRequest()->getQueryParameter('section', null);
+        
+        return $this->getResourceManager()->getResource($account_id, $this->getName(), $section, $version);
     }
 
 }
