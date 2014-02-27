@@ -24,11 +24,24 @@ class Request extends \Everon\Request implements Interfaces\Request
     
     protected $versioning = Resource\Manager::VERSIONING_URL;
     
-    protected $version = 'v1';
-    
+    protected $version = null;
+
+    /**
+     * @param array $server $_SERVER
+     * @param array $get $_GET
+     * @param array $post $_POST
+     * @param array $files $_FILES
+     * @param array $versioning
+     */
+    public function __construct(array $server, array $get, array $post, array $files, $versioning)
+    {
+        $this->versioning = $versioning;
+        parent::__construct($server, $get, $post, $files);
+    }
 
     protected function initRequest()
     {
+        $this->setupVersion();
         $this->overwriteEnvironment();
         parent::initRequest();
     }
@@ -40,18 +53,43 @@ class Request extends \Everon\Request implements Interfaces\Request
     {
         if ($this->versioning === Resource\Manager::VERSIONING_URL) { //remove version from url
             $query_string = $this->ServerCollection['QUERY_STRING'];
+            $this->ServerCollection['_QUERY_STRING'] = $query_string;
             $this->ServerCollection['QUERY_STRING'] = str_replace('param='.$this->version, '', $query_string);
             
             $query_string = $this->ServerCollection['REDIRECT_QUERY_STRING'];
+            $this->ServerCollection['_REDIRECT_QUERY_STRING'] = $query_string;
             $this->ServerCollection['REDIRECT_QUERY_STRING'] = str_replace('param='.$this->version, '', $query_string);
 
             $request_uri = $this->ServerCollection['REQUEST_URI'];
+            $this->ServerCollection['_REQUEST_URI'] = $request_uri;
             $this->ServerCollection['REQUEST_URI'] = str_replace('/'.$this->version, '', $request_uri);
             
             $request_uri = $this->ServerCollection['REDIRECT_URL'];
+            $this->ServerCollection['_  REDIRECT_URL'] = $request_uri;
             $this->ServerCollection['REDIRECT_URL'] = str_replace('/'.$this->version, '', $request_uri);
-            
-            return;
         }
+    }
+    
+    protected function setupVersion()
+    {
+        switch ($this->versioning) {
+            case Resource\Manager::VERSIONING_URL:
+                $url = $this->ServerCollection['REQUEST_URI']; //eg. http://api.localhost/v1/accounts/C22222C/settings
+                $tokens = explode('/', $url);
+                $this->version = $tokens[1];
+                break;
+
+            case Resource\Manager::VERSIONING_HEADER:
+                
+                break;
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getVersion()
+    {
+        return $this->version;
     }
 }

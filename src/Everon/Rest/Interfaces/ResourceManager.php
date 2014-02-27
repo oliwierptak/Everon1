@@ -11,4 +11,11 @@ namespace Everon\Rest\Interfaces;
 
 interface ResourceManager
 {
+    /**
+     * @param $resource_id
+     * @param $name
+     * @param $version
+     * @return mixed
+     */
+    function getResource($resource_id, $name, $version);
 }

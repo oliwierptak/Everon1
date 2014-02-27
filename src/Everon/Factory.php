@@ -191,6 +191,23 @@ class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
+    public function buildRestRequest(array $server, array $get, array $post, array $files, $versioning, $namespace='Everon\Rest')
+    {
+        try {
+            $class_name = $this->getFullClassName($namespace, 'Request');
+            $this->classExists($class_name);
+            $Request = new $class_name($server, $get, $post, $files, $versioning);
+            $this->injectDependencies($class_name, $Request);
+            return $Request;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('RestRequest initialization error', null, $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function buildRestResponse($guid, Http\Interfaces\HeaderCollection $Headers)
     {
         try {

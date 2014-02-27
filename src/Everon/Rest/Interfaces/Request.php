@@ -11,5 +11,5 @@ namespace Everon\Rest\Interfaces;
 
 interface Request extends \Everon\Interfaces\Request
 {
-
+    function getVersion();
 }

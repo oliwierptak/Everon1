@@ -13,6 +13,7 @@ use Everon\Dependency;
 use Everon\Exception;
 use Everon\Interfaces\Collection;
 use Everon\Helper;
+use Everon\Http;
 use Everon\Rest\Interfaces;
 
 class Manager implements Interfaces\ResourceManager
@@ -42,6 +43,8 @@ class Manager implements Interfaces\ResourceManager
     
     protected $url = null;
     
+    protected $generated_url = null;
+    
     
     
     public function __construct($url, $version, $versioning)
@@ -49,13 +52,21 @@ class Manager implements Interfaces\ResourceManager
         $this->url = $url;
         $this->versions = $version;
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public function getResource($resource_id, $name, $version)
     {
-        $id = $this->generateEntityId($resource_id, $name);
-        $Repository = $this->getDomainManager()->getRepository($name);
-        $Entity = $Repository->fetchEntityById($id);
-        return $this->getFactory()->buildRestResource($name, $version, $Entity);
+        try {
+            $id = $this->generateEntityId($resource_id, $name);
+            $Repository = $this->getDomainManager()->getRepository($name);
+            $Entity = $Repository->fetchEntityById($id);
+            return $this->getFactory()->buildRestResource($name, $version, $Entity);
+        }
+        catch (\Exception $e) {
+            throw new Http\Exception\NotFound('Resource: "%s" not found', $this->getResourceUrl($resource_id, $name));
+        }
     }
     
     public function generateEntityId($resource_id, $name)
@@ -70,9 +81,22 @@ class Manager implements Interfaces\ResourceManager
         return $this->alphaId($entity_id, false, 7, $name);
     }
     
-    public function generateHref($resource_id, $name)
+    public function getResourceUrl($resource_id, $name)
     {
-        return $this->url.$name.'/'.$resource_id;
+        return $this->getUrl().$name.'/'.$resource_id;
+    }
+    
+    public function getUrl()
+    {
+        switch ($this->versioning) {
+            case static::VERSIONING_URL:
+                return $this->url.$this->current_version;        
+                break;
+            
+            default:
+                return $this->url;
+                break;
+        }
     }
     
 }

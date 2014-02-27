@@ -69,6 +69,18 @@ interface Factory
     function buildRestServer();
 
     /**
+     * @param array $server
+     * @param array $get
+     * @param array $post
+     * @param array $files
+     * @param $versioning
+     * @param string $namespace
+     * @return mixed
+     * @throws Exception\Factory
+     */
+    function buildRestRequest(array $server, array $get, array $post, array $files, $versioning, $namespace='Everon\Rest');
+
+    /**
      * @param $guid
      * @param Http\Interfaces\HeaderCollection $Headers
      * @return Rest\Response
