@@ -92,10 +92,11 @@ interface Factory
      * @param $name
      * @param $version
      * @param $data
-     * @return mixed
+     * @param string $namespace
+     * @return Rest\Interfaces\Resource
      * @throws Exception\Factory
      */
-    function buildRestResource($name, $version, $data);
+    function buildRestResource($name, $version, $data, $namespace='Everon\Rest\Resource');
 
     /**
      * @param $id

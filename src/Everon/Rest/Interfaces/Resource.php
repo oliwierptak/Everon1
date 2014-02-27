@@ -14,32 +14,32 @@ interface Resource extends \Everon\Interfaces\Arrayable
     /**
      * @param $version
      */
-    function setVersion($version);
+    function setResourceVersion($version);
 
     /**
      * @inheritdoc
      */
-    function getVersion();
+    function getResourceVersion();
 
     /**
      * @param $href
      */
-    function setHref($href);
+    function setResourceHref($href);
 
     /**
      * @inheritdoc
      */
-    function getHref();
+    function getResourceHref();
 
     /**
      * @param $name
      */
-    function setName($name);
+    function setResourceName($name);
 
     /**
      * @inheritdoc
      */
-    function getName();
+    function getResourceName();
 
     /**
      * @return string

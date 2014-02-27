@@ -72,10 +72,25 @@ class Manager implements Interfaces\ResourceManager
             $this->assertIsNull($Entity, sprintf('Domain Entity: "%s" not found', $id), 'Domain');
             $this->assertIsInArray($version, $this->supported_versions, 'Unsupported version: "%s"', 'Domain');
             
-            return $this->getFactory()->buildRestResource($name, $version, $Entity);
+            $href = $this->getResourceUrl($resource_id, $name, $section);
+            $Resource = $this->getFactory()->buildRestResource($name, $version, $Entity, 'Everon\Rest\Resource\Domain');
+            $Resource->setResourceHref($href);
+            //$this->buildResourceRelations($Resource);
+            
+            return $Resource;
         }
         catch (\Exception $e) {
             throw new Http\Exception\NotFound('Resource: "%s" not found', [$this->getResourceUrl($resource_id, $name, $section)], $e);
+        }
+    }
+    
+    public function buildResourceRelations(Interfaces\Resource $Resource)
+    {
+        switch ($Resource->getResourceName()) { //xxx domain should handle relations
+            case 'Account':
+                $PermissionCollection = new Helper\Collection([]);
+                $Resource->setPermissionCollection($PermissionCollection);
+                break;
         }
     }
 

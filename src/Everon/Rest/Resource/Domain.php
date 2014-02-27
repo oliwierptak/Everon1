@@ -16,19 +16,19 @@ abstract class Domain extends \Everon\Rest\Resource
     /**
      * @var Entity
      */
-    protected $Entity = null;
-    
+    protected $ResourceEntity = null;
 
-    public function __construct(Entity $Entity)
+
+    public function __construct($name, $version, Entity $Entity)
     {
-        $this->Entity = $Entity;
-        parent::__construct($this->name, $this->version);
+        parent::__construct($name, $version);
+        $this->ResourceEntity = $Entity;
     }
     
     protected function init()
     {
         if ($this->data === null) {
-            $this->data = $this->Entity->toArray();
+            $this->data = $this->ResourceEntity->toArray();
         }
     }
 

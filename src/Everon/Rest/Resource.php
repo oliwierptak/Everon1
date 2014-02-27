@@ -16,66 +16,66 @@ abstract class Resource implements Interfaces\Resource
 {
     use Helper\ToArray;
     
-    protected $name = null;
-    protected $href = null;
-    protected $version = null;
+    protected $resource_name = null;
+    protected $resource_href = null;
+    protected $resource_version = null;
     
     abstract protected function init();
 
 
-    public function __construct($name, $version)
+    public function __construct($name, $version, $data=null)
     {
-        $this->name = $name;
-        $this->version = $version;
-        $this->data = null;
+        $this->resource_name = $name;
+        $this->resource_version = $version;
+        $this->data = $data;
     }
 
     /**
      * @param $version
      */
-    public function setVersion($version)
+    public function setResourceVersion($version)
     {
-        $this->version = $version;
+        $this->resource_version = $version;
     }
 
     /**
      * @inheritdoc
      */
-    public function getVersion()
+    public function getResourceVersion()
     {
-        return $this->version;
+        return $this->resource_version;
     }
 
     /**
      * @param $href
      */
-    public function setHref($href)
+    public function setResourceHref($href)
     {
-        $this->href = $href;
+        $this->resource_href = $href;
     }
 
     /**
      * @inheritdoc
      */
-    public function getHref()
+    public function getResourceHref()
     {
-        return $this->href;
+        return $this->resource_href;
     }
 
     /**
      * @param $name
      */
-    public function setName($name)
+    public function setResourceName($name)
     {
-        $this->name = $name;
+        $this->resource_name = $name;
     }
 
     /**
      * @inheritdoc
      */
-    public function getName()
+    public function getResourceName()
     {
-        return $this->name;
+        return $this->resource_name;
     }
     
     public function toJson()
