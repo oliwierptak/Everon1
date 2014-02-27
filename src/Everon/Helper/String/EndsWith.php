@@ -16,7 +16,7 @@ trait EndsWith
      * @param $end
      * @return bool
      */
-    public function stringEndsWith($string, $end)
+    protected function stringEndsWith($string, $end)
     {
         if ($end === null) {
             return false;

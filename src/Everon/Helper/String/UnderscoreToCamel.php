@@ -15,7 +15,7 @@ trait UnderscoreToCamel
      * @param $string
      * @return string
      */
-    public function stringUnderscoreToCamel($string)
+    protected function stringUnderscoreToCamel($string)
     {
         $camelized_string = '';
         $string_tokens = explode('_', strtolower($string));
