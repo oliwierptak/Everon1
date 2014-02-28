@@ -108,6 +108,8 @@ class Config implements \Everon\Interfaces\Config
 
         if (empty($inheritance_list) === false) {
             foreach ($inheritance_list as $for => $from) {
+                $this->assertIsArrayKey($for, $data_processed, 'Undefined config section: "%s"');
+                $this->assertIsArrayKey($from, $data_processed, 'Undefined config section: "%s"');
                 $data_processed[$for] = $this->arrayMergeDefault($data_processed[$from], $data_processed[$for]);
             }
 
