@@ -59,7 +59,7 @@ abstract class Mapper extends DataMapper
         list($where_str, $parameters) = $Criteria->getWhereSql();
         $where_str = $where_str === '' ?: 'WHERE '.$where_str;
         $offset_limit_sql = $Criteria->getOffsetLimitSql();
-        $order_by_str = $Criteria->getOrderBySortSql();
+        $order_by_str = $Criteria->getOrderByAndSortSql();
         
         $sql = '
             SELECT * 

@@ -11,12 +11,11 @@ namespace Everon\Rest\Resource;
 
 use Everon\Dependency;
 use Everon\Exception;
-use Everon\Interfaces\Collection;
 use Everon\Helper;
 use Everon\Http;
 use Everon\Rest\Interfaces;
 
-class Manager implements Interfaces\ResourceManager
+class Handler implements Interfaces\ResourceManager
 {
     use Dependency\Injection\Factory;
     use Dependency\Injection\DomainManager;
@@ -67,30 +66,19 @@ class Manager implements Interfaces\ResourceManager
             $id = $this->generateEntityId($resource_id, $name);
             $Repository = $this->getDomainManager()->getRepository($name);
             $version = $version ?: $this->current_version;
-            $Entity = $Repository->fetchEntityById($id);
+            $Entity = $Repository->getEntityById($id);
+            $href = $this->getResourceUrl($resource_id, $name, $section);
             
             $this->assertIsNull($Entity, sprintf('Domain Entity: "%s" not found', $id), 'Domain');
             $this->assertIsInArray($version, $this->supported_versions, 'Unsupported version: "%s"', 'Domain');
             
-            $href = $this->getResourceUrl($resource_id, $name, $section);
-            $Resource = $this->getFactory()->buildRestResource($name, $version, $Entity, 'Everon\Rest\Resource\Domain');
+            $Resource = $this->getFactory()->buildRestResource($name, $version, $Entity->toArray(), 'Everon\Rest\Resource');
             $Resource->setResourceHref($href);
-            //$this->buildResourceRelations($Resource);
             
             return $Resource;
         }
         catch (\Exception $e) {
             throw new Http\Exception\NotFound('Resource: "%s" not found', [$this->getResourceUrl($resource_id, $name, $section)], $e);
-        }
-    }
-    
-    public function buildResourceRelations(Interfaces\Resource $Resource)
-    {
-        switch ($Resource->getResourceName()) { //xxx domain should handle relations
-            case 'Account':
-                $PermissionCollection = new Helper\Collection([]);
-                $Resource->setPermissionCollection($PermissionCollection);
-                break;
         }
     }
 
@@ -99,6 +87,7 @@ class Manager implements Interfaces\ResourceManager
      */
     public function generateEntityId($resource_id, $name)
     {
+        return $resource_id;
         $name .= static::ALPHA_ID_SALT;
         return $this->alphaId($resource_id, true, 7, $name);
     }
@@ -108,6 +97,7 @@ class Manager implements Interfaces\ResourceManager
      */
     public function generateResourceId($entity_id, $name)
     {
+        return $entity_id;
         $name .= static::ALPHA_ID_SALT;
         return $this->alphaId($entity_id, false, 7, $name);
     }

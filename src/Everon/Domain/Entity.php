@@ -12,6 +12,7 @@ namespace Everon\Domain;
 use Everon\Domain\Exception;
 use Everon\Domain\Interfaces;
 use Everon\Helper;
+use Everon\Interfaces\Collection;
 
 class Entity extends Helper\Popo implements Interfaces\Entity 
 {
@@ -28,12 +29,18 @@ class Entity extends Helper\Popo implements Interfaces\Entity
 
     protected $methods = null;
 
+    /**
+     * @var Collection
+     */
+    protected $RelationCollection = null;
+
 
     public function __construct($id, array $data=[])
     {
         $this->id = $id;
         $this->data = $data;
         $this->methods = array_flip(get_class_methods(get_class($this))); //faster lookup then using isCallable()
+        $this->RelationCollection = new Helper\Collection([]);
         
         if ($this->isIdSet()) {
             $this->markPersisted();
@@ -180,6 +187,22 @@ class Entity extends Helper\Popo implements Interfaces\Entity
         $this->id = $id;
         $this->data = $data;
         $this->modified_properties = null;
+    }
+
+    /**
+     * @param Collection $RelationCollection
+     */
+    public function setRelationCollection(Collection $RelationCollection)
+    {
+        $this->RelationCollection = $RelationCollection;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getRelationCollection()
+    {
+        return $this->RelationCollection;
     }
     
     /**

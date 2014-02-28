@@ -13,7 +13,7 @@ interface Criteria extends \Everon\Interfaces\Arrayable
 {
     public function offset($offset);
 
-    public function getOrderBySortSql();
+    public function getOrderByAndSortSql();
 
     public function orderBy($order_by);
 

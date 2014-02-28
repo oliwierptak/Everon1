@@ -80,7 +80,7 @@ class Request extends \Everon\Request implements Interfaces\Request
                 break;
 
             case Resource\Manager::VERSIONING_HEADER:
-                
+                //todo finish me
                 break;
         }
     }

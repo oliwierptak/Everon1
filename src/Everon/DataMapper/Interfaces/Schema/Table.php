@@ -16,10 +16,17 @@ interface Table extends Arrayable, Immutable
 {
     function getName();
 
+    function getSchema();
+
     /**
      * @return array
      */
     function getColumns();
+    
+    /**
+     * @return array
+     */
+    function getForeignKeys();
     
     /**
      * @return array

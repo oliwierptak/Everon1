@@ -17,6 +17,9 @@ class ForeignKey extends Constraint implements Schema\ForeignKey
     protected $referenced_table_name = null;
     
     protected $referenced_column_name = null;
+    
+    protected $column_name = null;
+
 
     public function __construct(array $data)
     {
@@ -26,10 +29,26 @@ class ForeignKey extends Constraint implements Schema\ForeignKey
         $PrimaryKeyInfo = new Helper\PopoProps($data);
         $this->referenced_table_name = $PrimaryKeyInfo->foreign_table_name;
         $this->referenced_column_name = $PrimaryKeyInfo->foreign_column_name;
+        $this->column_name = $PrimaryKeyInfo->column_name;
         $this->lock();
     }
-    
 
+    /**
+     * @param null $column_name
+     */
+    public function setColumnName($column_name)
+    {
+        $this->column_name = $column_name;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getColumnName()
+    {
+        return $this->column_name;
+    }
+    
     public function setReferencedTableName($referenced_table_name)
     {
         $this->referenced_table_name = $referenced_table_name;

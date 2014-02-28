@@ -26,11 +26,11 @@ interface Handler
     function setConnectionManager(ConnectionManager $ConnectionManager);
 
     /**
-     * @param $name
+     * @param Repository $Repository
      * @param $id
      * @param array $data
      */
-    function getEntity($name, $id, array $data);
+    function getEntity(Repository $Repository, $id, array $data);
 
     /**
      * @param $name

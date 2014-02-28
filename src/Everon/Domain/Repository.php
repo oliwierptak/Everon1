@@ -61,7 +61,7 @@ abstract class Repository implements Interfaces\Repository
      * @return Interfaces\Entity
      * @throws Exception\Repository
      */
-    public function fetchEntityById($id)
+    public function getEntityById($id)
     {
         $Criteria = (new \Everon\DataMapper\Criteria())->where([
             $this->getMapper()->getSchemaTable()->getPk() => $id
@@ -75,9 +75,9 @@ abstract class Repository implements Interfaces\Repository
         $data = current($data);
         $id = $this->getMapper()->getAndValidateId($data);
 
-        return $this->getDomainManager()->getEntity($this->getName(), $id, $data);
+        return $this->getDomainManager()->getEntity($this, $id, $data);
     }
-
+    
     /**
      * @inheritdoc
      */

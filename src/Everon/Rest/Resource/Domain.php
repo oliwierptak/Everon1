@@ -11,7 +11,7 @@ namespace Everon\Rest\Resource;
 
 use Everon\Domain\Interfaces\Entity;
 
-abstract class Domain extends \Everon\Rest\Resource
+abstract class Domain extends \Everon\Rest\Resource implements \Everon\Rest\Interfaces\ResourceDomain
 {
     /**
      * @var Entity
@@ -32,4 +32,11 @@ abstract class Domain extends \Everon\Rest\Resource
         }
     }
 
+    /**
+     * @inheritdoc
+     */
+    public function getResourceEntity()
+    {
+        return $this->ResourceEntity;
+    }
 }

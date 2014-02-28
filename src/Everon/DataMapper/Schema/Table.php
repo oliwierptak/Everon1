@@ -9,12 +9,11 @@
  */
 namespace Everon\DataMapper\Schema;
 
-use Everon\DataMapper\Interfaces\Schema;
-use Everon\DataMapper\Interfaces\Schema\Column;
+use Everon\DataMapper\Interfaces;
 use Everon\DataMapper\Exception;
 use Everon\Helper;
 
-class Table implements Schema\Table
+class Table implements Interfaces\Schema\Table
 {
     use Helper\Immutable;
     
@@ -56,7 +55,7 @@ class Table implements Schema\Table
     protected function init()
     {
         /**
-         * @var Schema\Column $Column
+         * @var Interfaces\Schema\Column $Column
          */
         foreach ($this->columns as $Column) {
             if ($Column->isPk()) {
@@ -64,37 +63,66 @@ class Table implements Schema\Table
             }
         }
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public function getName()
     {
         return $this->name;
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public function getSchema()
     {
         return $this->schema;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function getColumns()
     {
         return $this->columns;
     }
 
+    /**
+     * @inheritdoc
+     */
+    public function getForeignKeys()
+    {
+        return $this->foreign_keys;
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function getPrimaryKeys()
     {
         return $this->primary_keys;
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public function getUniqueKeys()
     {
         return $this->unique_keys;
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public function toArray()
     {
         return get_object_vars($this);
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public function getPk()
     {
         if (is_array($this->pk)) {
@@ -110,7 +138,7 @@ class Table implements Schema\Table
     {
         $PrimaryKey = current($this->getPrimaryKeys()); //todo: make fix for composite keys
         /**
-         * @var Column $Column
+         * @var Interfaces\Schema\Column $Column
          */
         $Column = $this->getColumns()[$PrimaryKey->getName()];
         $validation_result = filter_var_array([$PrimaryKey->getName() => $id], $Column->getValidationRules());

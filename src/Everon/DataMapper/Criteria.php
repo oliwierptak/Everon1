@@ -95,7 +95,7 @@ class Criteria implements Interfaces\Criteria
         return 'LIMIT '.$this->limit. ' OFFSET '.$this->offset;
     }
 
-    public function getOrderBySortSql()
+    public function getOrderByAndSortSql()
     {
         if ($this->order_by === null) {
             return '';

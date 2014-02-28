@@ -11,6 +11,7 @@ namespace Everon\DataMapper\Interfaces\Schema;
 
 interface ForeignKey extends Constraint
 {
+    function getColumnName();
     function setReferencedTableName($referenced_table_name);
     function getReferencedTableName();
     function setReferencedColumnName($referenced_column_name);

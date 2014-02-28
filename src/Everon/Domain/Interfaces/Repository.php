@@ -10,6 +10,7 @@
 namespace Everon\Domain\Interfaces;
 
 use Everon\Interfaces\DataMapper;
+use Everon\Domain\Interfaces\Entity;
 use Everon\Domain\Exception;
 
 interface Repository
@@ -19,7 +20,7 @@ interface Repository
      * @return Entity
      * @throws Exception\Repository
      */
-    function fetchEntityById($id);
+    function getEntityById($id);
         
     /**
      * @param Entity $Entity

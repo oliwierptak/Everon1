@@ -81,16 +81,4 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
         echo $this->getResponse()->toJson();
     }
 
-    /**
-     * @return Interfaces\Resource
-     */
-    public function getResourceFromRequest()
-    {
-        $account_id = $this->getRequest()->getQueryParameter('account_id');
-        $version = $this->getRequest()->getVersion();
-        $section = $this->getRequest()->getQueryParameter('section', null);
-        
-        return $this->getResourceManager()->getResource($account_id, $this->getName(), $section, $version);
-    }
-
 }

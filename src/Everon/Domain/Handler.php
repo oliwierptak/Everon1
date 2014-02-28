@@ -15,11 +15,14 @@ use Everon\DataMapper\Interfaces\Schema;
 use Everon\DataMapper\Exception\Schema as SchemaException;
 use Everon\Dependency\Injection\Factory as FactoryInjection;
 use Everon\Exception;
+use Everon\Helper;
 
 abstract class Handler implements Interfaces\Handler
 {
     use Dependency\ConnectionManager;
     use FactoryInjection;
+    use Helper\IsCallable;
+    
 
     /**
      * @var array
@@ -48,9 +51,16 @@ abstract class Handler implements Interfaces\Handler
     /**
      * @inheritdoc
      */
-    public function getEntity($name, $id, array $data)
+    public function getEntity(Interfaces\Repository $Repository, $id, array $data)
     {
-        return $this->getFactory()->buildDomainEntity($name, $id, $data);
+        $Entity = $this->getFactory()->buildDomainEntity($Repository->getName(), $id, $data);
+
+        $method = 'build'.$Repository->getName().'Relations';
+        if ($this->isCallable($this, $method)) {
+            $this->$method($Entity);
+        }
+        
+        return $Entity;
     }
 
     /**
