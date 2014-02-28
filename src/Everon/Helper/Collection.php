@@ -69,7 +69,7 @@ class Collection implements \Countable, \ArrayAccess, \IteratorAggregate, Interf
 
     public function set($name, $value)
     {
-        $this->data[$name] = $value;
+        $this->offsetSet($name, $value);
     }
 
     public function get($name, $default=null)

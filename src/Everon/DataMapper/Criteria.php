@@ -17,13 +17,14 @@ class Criteria implements Interfaces\Criteria
 {
     use Helper\Arrays;
     use Helper\ToArray;
+    use Helper\ToString;
     
     protected $where = [];
     
     protected $offset = null;
     
     protected $limit = null;
-    
+
     protected $order_by = null;
     
     protected $sort = 'ASC';
@@ -75,7 +76,8 @@ class Criteria implements Interfaces\Criteria
         foreach ($this->where as $field => $value) {
             $where_str .= " AND ${field} = :${field}";
         }
-        return [$where_str, $this->where];
+        
+        return $where_str;
     }
     
     public function getOffsetLimitSql()
@@ -114,4 +116,56 @@ class Criteria implements Interfaces\Criteria
             'limit' => $this->limit,
         ];
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function getLimit()
+    {
+        return $this->limit;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getOffset()
+    {
+        return $this->offset;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getOrderBy()
+    {
+        return $this->order_by;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getSort()
+    {
+        return $this->sort;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getWhere()
+    {
+        return $this->where;
+    }
+    
+    public function getToString()
+    {
+        $where_str = $this->getWhereSql();
+        $order_by_str = $this->getOrderByAndSortSql();
+        $offset_limit_sql = $this->getOffsetLimitSql();
+        
+        return $where_str.'
+            '.$order_by_str.'
+            '.$offset_limit_sql;
+    }
+
 }
