@@ -12,5 +12,9 @@ namespace Everon\Interfaces;
 
 interface Arrayable
 {
-    function toArray();
+    /**
+     * @param bool $deep
+     * @return array
+     */
+    function toArray($deep=false);
 }

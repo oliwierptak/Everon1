@@ -73,9 +73,7 @@ abstract class Repository implements Interfaces\Repository
         }
 
         $data = current($data);
-        $id = $this->getMapper()->getAndValidateId($data);
-
-        return $this->getDomainManager()->getEntity($this, $id, $data);
+        return $this->getDomainManager()->buildEntity($this, $id, $data);
     }
     
     /**

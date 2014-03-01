@@ -256,4 +256,9 @@ class Entity extends Helper\Popo implements Interfaces\Entity
         $Entity->call_property = $array['call_property'];
         return $Entity;
     }
+    
+    public function toArray($deep=false)
+    {
+        throw new Exception\Entity('Use Repository in order to cast Entity to array');
+    }
 }

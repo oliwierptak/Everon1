@@ -80,7 +80,7 @@ abstract class Resource implements Interfaces\Resource
     
     public function toJson()
     {
-        return json_encode([$this->toArray()], \JSON_FORCE_OBJECT);
+        return json_encode([$this->toArray(true)], \JSON_FORCE_OBJECT);
     }
     
     public function getToArray()

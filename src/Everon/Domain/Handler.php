@@ -51,11 +51,14 @@ abstract class Handler implements Interfaces\Handler
     /**
      * @inheritdoc
      */
-    public function getEntity(Interfaces\Repository $Repository, $id, array $data)
+    public function buildEntity(Interfaces\Repository $Repository, $id, array $data)
     {
+        $id = $id ?: $Repository->getMapper()->getAndValidateId($data);
+        unset($data[$Repository->getMapper()->getSchemaTable()->getPk()]); //remove id from data
+        
         $Entity = $this->getFactory()->buildDomainEntity($Repository->getName(), $id, $data);
-
         $method = 'build'.$Repository->getName().'Relations';
+        
         if ($this->isCallable($this, $method)) {
             $this->$method($Entity);
         }

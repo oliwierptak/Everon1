@@ -19,11 +19,10 @@ trait ToArray
     protected $data = [];    
     
     /**
-     * array|stdClass $this->data is declared in class which uses this trait
-     *
+     * @param bool $deep
      * @return array
      */
-    public function toArray()
+    public function toArray($deep=false)
     {
         $data = (property_exists($this, 'data')) ? $this->data : [];
         
@@ -37,9 +36,11 @@ trait ToArray
             return [];
         }
         
-        foreach ($data as $key => $value) {
-            if (is_object($value) && method_exists($value, 'toArray')) {
-                $data[$key] = $value->toArray();
+        if ($deep) {
+            foreach ($data as $key => $value) {
+                if (is_object($value) && method_exists($value, 'toArray')) {
+                    $data[$key] = $value->toArray($deep);
+                }
             }
         }
         

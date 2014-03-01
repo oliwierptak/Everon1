@@ -102,7 +102,7 @@ abstract class Column implements Schema\Column
         return $this->validation_rules;
     }
     
-    public function toArray()
+    public function toArray($deep=false)
     {
         return get_object_vars($this);
     }

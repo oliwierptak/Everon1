@@ -64,7 +64,7 @@ abstract class Constraint implements Schema\Constraint
         return $this->table_name;
     }
     
-    public function toArray()
+    public function toArray($deep=false)
     {
         return get_object_vars($this);
     }

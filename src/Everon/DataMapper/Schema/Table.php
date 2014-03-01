@@ -115,7 +115,7 @@ class Table implements Interfaces\Schema\Table
     /**
      * @inheritdoc
      */
-    public function toArray()
+    public function toArray($deep=false)
     {
         return get_object_vars($this);
     }
@@ -136,18 +136,23 @@ class Table implements Interfaces\Schema\Table
      */
     public function validateId($id)
     {
-        $PrimaryKey = current($this->getPrimaryKeys()); //todo: make fix for composite keys
-        /**
-         * @var Interfaces\Schema\Column $Column
-         */
-        $Column = $this->getColumns()[$PrimaryKey->getName()];
-        $validation_result = filter_var_array([$PrimaryKey->getName() => $id], $Column->getValidationRules());
-        if (($validation_result === false || $validation_result === null) || 
-            ($Column->isNullable() === false && $id === null)) {
-            throw new Exception\Column('Column: "%s" failed to validate with value: "%s"', [$Column->getName(), $id]);
-        }
+        try {
+            $PrimaryKey = current($this->getPrimaryKeys()); //todo: make fix for composite keys
+            /**
+             * @var Interfaces\Schema\Column $Column
+             */
+            $Column = $this->getColumns()[$PrimaryKey->getName()];
+            $validation_result = filter_var_array([$PrimaryKey->getName() => $id], $Column->getValidationRules());
+            if (($validation_result === false || $validation_result === null) ||
+                ($Column->isNullable() === false && $id === null)) {
+                throw new Exception\Column('Column: "%s" failed to validate with value: "%s"', [$Column->getName(), $id]);
+            }
 
-        return $validation_result[$PrimaryKey->getName()];
+            return $validation_result[$PrimaryKey->getName()];
+        }
+        catch (\Exception $e) {
+            throw new Exception\Column($e->getMessage());
+        }
     }
     
     public function __toString()

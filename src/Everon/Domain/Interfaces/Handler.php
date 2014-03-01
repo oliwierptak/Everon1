@@ -29,8 +29,9 @@ interface Handler
      * @param Repository $Repository
      * @param $id
      * @param array $data
+     * 
      */
-    function getEntity(Repository $Repository, $id, array $data);
+    function buildEntity(Repository $Repository, $id, array $data);
 
     /**
      * @param $name

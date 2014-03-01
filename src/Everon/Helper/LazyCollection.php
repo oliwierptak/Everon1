@@ -96,4 +96,10 @@ class LazyCollection extends Collection
         return parent::get($name, $default);
     }
     
+    public function toArray($deep=false)
+    {
+        $this->init();
+        return parent::toArray($deep);
+    }
+    
 }
