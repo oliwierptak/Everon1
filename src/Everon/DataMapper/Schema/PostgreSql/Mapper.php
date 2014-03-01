@@ -76,7 +76,6 @@ abstract class Mapper extends DataMapper
         $sql = '
             SELECT * 
             FROM %s.%s
-            WHERE
             '.$Criteria;
         
         $sql = sprintf($sql, $this->getTable()->getSchema(), $this->getTable()->getName(), $pk_name);
@@ -88,7 +87,6 @@ abstract class Mapper extends DataMapper
         $sql = '
             SELECT %s FROM %s
             LEFT JOIN %s ON %s = %s 
-            WHERE
             '.$Criteria;
         
         $sql = sprintf($sql, $select, $a, $b, $on_a, $on_b);

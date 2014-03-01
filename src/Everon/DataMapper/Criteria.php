@@ -72,9 +72,10 @@ class Criteria implements Interfaces\Criteria
             return '';
         }
         
-        $where_str = '1=1';
+        $where_str = 'WHERE 1=1';
         foreach ($this->where as $field => $value) {
-            $where_str .= " AND ${field} = :${field}";
+            $field_ok = str_replace('.', '_', $field); //replace z.id with z_id
+            $where_str .= " AND ${field} = :${field_ok}";
         }
         
         return $where_str;
@@ -106,7 +107,7 @@ class Criteria implements Interfaces\Criteria
         return 'ORDER BY '.$this->order_by.' '.$this->sort;
     }
     
-    public function getToArray()
+    protected function getToArray()
     {
         return [
             'where' => $this->where,
@@ -154,10 +155,16 @@ class Criteria implements Interfaces\Criteria
      */
     public function getWhere()
     {
-        return $this->where;
+        $where = [];
+        foreach ($this->where as $field => $value) {
+            $field_ok = str_replace('.', '_', $field); //replace z.id with z_id
+            $where[$field_ok] = $value;
+        }
+        
+        return $where;
     }
     
-    public function getToString()
+    protected function getToString()
     {
         $where_str = $this->getWhereSql();
         $order_by_str = $this->getOrderByAndSortSql();

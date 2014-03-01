@@ -83,7 +83,7 @@ abstract class Resource implements Interfaces\Resource
         return json_encode([$this->toArray(true)], \JSON_FORCE_OBJECT);
     }
     
-    public function getToArray()
+    protected function getToArray()
     {
         $this->init();
         $this->data['href'] = $this->getResourceHref();

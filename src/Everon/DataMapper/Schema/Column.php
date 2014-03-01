@@ -107,7 +107,7 @@ abstract class Column implements Schema\Column
         return get_object_vars($this);
     }
     
-    public function getToString()
+    protected function getToString()
     {
         return (string) $this->name;
     }

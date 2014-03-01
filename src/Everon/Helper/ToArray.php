@@ -24,12 +24,11 @@ trait ToArray
      */
     public function toArray($deep=false)
     {
-        $data = (property_exists($this, 'data')) ? $this->data : [];
-        
-        if ($this->isIterable($data) === false) {
-            if (method_exists($this, 'getToArray')) {
-                $data = $this->getToArray();
-            }
+        if (method_exists($this, 'getToArray')) {
+            $data = $this->getToArray();
+        }
+        else {
+            $data = (property_exists($this, 'data')) ? $this->data : null;
         }
 
         if ($this->isIterable($data) === false) {
@@ -43,8 +42,7 @@ trait ToArray
                 }
             }
         }
-        
+
         return $data;
     }
-
 }

@@ -527,7 +527,7 @@ class Factory implements Interfaces\Factory
             $this->classExists($class_name);
 
             $connections = [];
-            $data = $DatabaseConfig->toArray();
+            $data = $DatabaseConfig->toArray(true);
             foreach ($data as $name => $item_data) {
                 $Item = $this->buildConnectionItem($item_data);
                 $connections[$name] = $Item;
