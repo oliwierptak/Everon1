@@ -10,18 +10,83 @@
 namespace Everon\Domain\Interfaces;
 
 use Everon\Interfaces;
+use Everon\Interfaces\Collection;
 
 interface Entity extends Interfaces\Arrayable
 {
+
+    /**
+     * @return bool
+     */
     function isNew();
+
+    /**
+     * @return bool
+     */
     function isModified();
+
+    /**
+     * @return bool
+     */
     function isPersisted();
+
+    /**
+     * @return bool
+     */
     function isDeleted();
+
+    /**
+     * @param $name
+     * @return bool
+     */
     function isPropertyModified($name);
+
+    /**
+     * @inheritdoc
+     */
     function getId();
+
+    /**
+     * @return array
+     */
     function getModifiedProperties();
+
+    /**
+     * @param $name
+     * @return mixed
+     * @throws \Everon\Domain\Exception\Entity
+     */
     function getValueByName($name);
+
+    /**
+     * @param $name
+     * @param mixed $value
+     */
     function setValueByName($name, $value);
+
+    /**
+     * @inheritdoc
+     */
     function persist($id, array $data);
+
+    /**
+     * @return void
+     */
     function delete();
+    
+    /**
+     * @return array
+     */
+    function getData();
+
+    /**
+     * @param Collection $RelationCollection
+     */
+    function setRelationCollection(Collection $RelationCollection);
+
+    /**
+     * @return Collection
+     */
+    function getRelationCollection();
+
 }

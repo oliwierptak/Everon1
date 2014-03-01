@@ -68,11 +68,11 @@ interface DataMapper
     /**
      * @return Table
      */
-    function getSchemaTable();
+    function getTable();
 
     /**
      * @param Table $Table
-     * @return Table
      */
-    function setSchemaTable(Table $Table);
+    function setTable(Table $Table);
+
 }

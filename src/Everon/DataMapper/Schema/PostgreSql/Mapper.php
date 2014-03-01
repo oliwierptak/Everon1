@@ -24,7 +24,7 @@ abstract class Mapper extends DataMapper
     {
         $values_str = rtrim(implode(',', $this->getPlaceholderForQuery()), ',');
         $columns_str = rtrim(implode(',', $this->getPlaceholderForQuery('')), ',');
-        $sql = sprintf('INSERT INTO %s.%s (%s) VALUES (%s)', $this->getSchemaTable()->getSchema(), $this->getSchemaTable()->getName(), $columns_str, $values_str);
+        $sql = sprintf('INSERT INTO %s.%s (%s) VALUES (%s)', $this->getTable()->getSchema(), $this->getTable()->getName(), $columns_str, $values_str);
         return [$sql, $this->getValuesForQuery($Entity)];
     }
 
@@ -34,9 +34,9 @@ abstract class Mapper extends DataMapper
      */
     protected function getUpdateSql(Entity $Entity)
     {
-        $pk_name = $this->getSchemaTable()->getPk();
+        $pk_name = $this->getTable()->getPk();
         $values_str = '';
-        $columns = $this->getSchemaTable()->getColumns();
+        $columns = $this->getTable()->getColumns();
         /**
          * @var DataMapper\Interfaces\Schema\Column $Column
          */
@@ -48,7 +48,7 @@ abstract class Mapper extends DataMapper
         }
         
         $values_str = rtrim($values_str, ',');
-        $sql = sprintf('UPDATE %s.%s SET '.$values_str.' WHERE %s = :%s', $this->getSchemaTable()->getSchema(), $this->getSchemaTable()->getName(), $pk_name, $pk_name);
+        $sql = sprintf('UPDATE %s.%s SET '.$values_str.' WHERE %s = :%s', $this->getTable()->getSchema(), $this->getTable()->getName(), $pk_name, $pk_name);
         $params = $this->getValuesForQuery($Entity);
         return [$sql, $params];
     }
@@ -59,8 +59,8 @@ abstract class Mapper extends DataMapper
      */
     protected function getDeleteSql(Entity $Entity)
     {
-        $pk_name = $this->getSchemaTable()->getPk();
-        $sql = sprintf('DELETE FROM %s.%s WHERE %s = :%s LIMIT 1', $this->getSchemaTable()->getSchema(), $this->getSchemaTable()->getName(), $pk_name, $pk_name);
+        $pk_name = $this->getTable()->getPk();
+        $sql = sprintf('DELETE FROM %s.%s WHERE %s = :%s LIMIT 1', $this->getTable()->getSchema(), $this->getTable()->getName(), $pk_name, $pk_name);
         $params = [$pk_name => $Entity->getId()];
         return [$sql, $params];
     }
@@ -71,7 +71,7 @@ abstract class Mapper extends DataMapper
      */
     protected function getFetchAllSql(Interfaces\Criteria $Criteria)
     {
-        $pk_name = $this->getSchemaTable()->getPk();
+        $pk_name = $this->getTable()->getPk();
 
         $sql = '
             SELECT * 
@@ -79,19 +79,19 @@ abstract class Mapper extends DataMapper
             WHERE
             '.$Criteria;
         
-        $sql = sprintf($sql, $this->getSchemaTable()->getSchema(), $this->getSchemaTable()->getName(), $pk_name);
+        $sql = sprintf($sql, $this->getTable()->getSchema(), $this->getTable()->getName(), $pk_name);
         return [$sql, $Criteria->getWhere()];
     }
 
-    protected function getLeftJoinSql($a, $b, $on_a, $on_b, Interfaces\Criteria $Criteria)
+    protected function getLeftJoinSql($select, $a, $b, $on_a, $on_b, Interfaces\Criteria $Criteria)
     {
         $sql = '
-            SELECT * FROM %s
+            SELECT %s FROM %s
             LEFT JOIN %s ON %s = %s 
             WHERE
             '.$Criteria;
         
-        $sql = sprintf($sql, $a, $b, $on_a, $on_b);
+        $sql = sprintf($sql, $select, $a, $b, $on_a, $on_b);
         return [$sql, $Criteria->getWhere()];
     }
 }

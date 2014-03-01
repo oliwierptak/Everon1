@@ -9,9 +9,11 @@
  */
 namespace Everon\Domain;
 
-use Everon\Domain\Interfaces;
-use Everon\Interfaces\DataMapper;
 use Everon\Dependency;
+use Everon\Domain\Interfaces;
+use Everon\Interfaces\Collection;
+use Everon\Interfaces\DataMapper;
+use Everon\Helper;
 
 abstract class Repository implements Interfaces\Repository
 {
@@ -23,7 +25,18 @@ abstract class Repository implements Interfaces\Repository
     protected $Mapper = null;
     
     protected $name = null;
-    
+
+    /**
+     * @var Collection
+     */
+    protected $RelationCollection = null;
+
+    /**
+     * @param Interfaces\Entity $Entity
+     * @return mixed
+     */
+    abstract public function buildEntityRelations(Interfaces\Entity $Entity);
+
 
     /**
      * @param $name
@@ -34,7 +47,10 @@ abstract class Repository implements Interfaces\Repository
         $this->name = $name;
         $this->Mapper = $Mapper;
     }
-
+    
+    /**
+     * @inheritdoc
+     */
     /**
      * @inheritdoc
      */
@@ -64,7 +80,7 @@ abstract class Repository implements Interfaces\Repository
     public function getEntityById($id)
     {
         $Criteria = (new \Everon\DataMapper\Criteria())->where([
-            $this->getMapper()->getSchemaTable()->getPk() => $id
+            $this->getMapper()->getTable()->getPk() => $id
         ]);
         
         $data = $this->getMapper()->fetchAll($Criteria);

@@ -33,7 +33,7 @@ class Entity extends Helper\Popo implements Interfaces\Entity
      * @var Collection
      */
     protected $RelationCollection = null;
-
+    
 
     public function __construct($id, array $data=[])
     {
@@ -46,7 +46,7 @@ class Entity extends Helper\Popo implements Interfaces\Entity
             $this->markPersisted();
         }
     }
-
+    
     protected function markPropertyAsModified($property)
     {
         $this->modified_properties[$property] = true;
@@ -93,7 +93,7 @@ class Entity extends Helper\Popo implements Interfaces\Entity
     }
 
     /**
-     * @return array
+     * @inheritdoc
      */
     public function getModifiedProperties() 
     {
@@ -101,8 +101,7 @@ class Entity extends Helper\Popo implements Interfaces\Entity
     }
 
     /**
-     * @param $name
-     * @return bool
+     * @inheritdoc
      */
     public function isPropertyModified($name) 
     {
@@ -110,7 +109,7 @@ class Entity extends Helper\Popo implements Interfaces\Entity
     }
 
     /**
-     * @return bool
+     * @inheritdoc
      */
     public function isNew()
     {
@@ -118,7 +117,7 @@ class Entity extends Helper\Popo implements Interfaces\Entity
     }
 
     /**
-     * @return bool
+     * @inheritdoc
      */
     public function isModified()
     {
@@ -126,7 +125,7 @@ class Entity extends Helper\Popo implements Interfaces\Entity
     }
 
     /**
-     * @return bool
+     * @inheritdoc
      */
     public function isPersisted()
     {
@@ -134,7 +133,7 @@ class Entity extends Helper\Popo implements Interfaces\Entity
     }
 
     /**
-     * @return bool
+     * @inheritdoc
      */
     public function isDeleted()
     {
@@ -142,7 +141,7 @@ class Entity extends Helper\Popo implements Interfaces\Entity
     }
 
     /**
-     * @return mixed
+     * @inheritdoc
      */
     public function getId()
     {
@@ -150,9 +149,7 @@ class Entity extends Helper\Popo implements Interfaces\Entity
     }
 
     /**
-     * @param $name
-     * @return mixed
-     * @throws Exception\Entity
+     * @inheritdoc
      */
     public function getValueByName($name)
     {
@@ -165,13 +162,13 @@ class Entity extends Helper\Popo implements Interfaces\Entity
     }
 
     /**
-     * @param $name
-     * @param mixed $value
+     * @inheritdoc
      */
     public function setValueByName($name, $value)
     {
         $this->data[$name] = $value;
     }
+    
     
     public function delete()
     {
@@ -180,13 +177,24 @@ class Entity extends Helper\Popo implements Interfaces\Entity
         $this->modified_properties = null;
         $this->data = null;
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public function persist($id, array $data)
     {
         $this->markPersisted();
         $this->id = $id;
         $this->data = $data;
         $this->modified_properties = null;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function toArray($deep=false)
+    {
+        return parent::toArray($deep);
     }
 
     /**
@@ -255,10 +263,5 @@ class Entity extends Helper\Popo implements Interfaces\Entity
         $Entity->call_type = $array['call_type'];
         $Entity->call_property = $array['call_property'];
         return $Entity;
-    }
-    
-    public function toArray($deep=false)
-    {
-        throw new Exception\Entity('Use Repository in order to cast Entity to array');
     }
 }

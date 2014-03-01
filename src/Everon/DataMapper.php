@@ -19,7 +19,11 @@ use Everon\Interfaces;
 abstract class DataMapper implements Interfaces\DataMapper
 {
     use Dependency\Schema;
-    use Dependency\SchemaTable;
+
+    /**
+     * @var Table
+     */
+    protected $Table = null;
     
     protected $write_connection_name = 'write';
     protected $read_connection_name = 'read';
@@ -36,8 +40,61 @@ abstract class DataMapper implements Interfaces\DataMapper
      */
     public function __construct(Table $Table, Schema $Schema)
     {
-        $this->SchemaTable = $Table;
+        $this->Table = $Table;
         $this->Schema = $Schema;
+    }
+
+    /**
+     * @param string $placeholder
+     * @return array
+     */
+    protected function getPlaceholderForQuery($placeholder=':')
+    {
+        $placeholders = [];
+        $columns = $this->getTable()->getColumns();
+        /**
+         * @var DataMapper\Interfaces\Schema\Column $Column
+         */
+        foreach ($columns as $name => $Column) {
+            $placeholders[] = $placeholder.$name;
+        }
+
+        return $placeholders;
+    }
+
+    /**
+     * @param Entity $Entity
+     * @param string $delimiter
+     * @return array
+     */
+    protected function getValuesForQuery(Entity $Entity, $delimiter='')
+    {
+        $values = [];
+        $columns = $this->getTable()->getColumns();
+        /**
+         * @var DataMapper\Interfaces\Schema\Column $Column
+         */
+        foreach ($columns as $name => $Column) {
+            $values[$delimiter.$name] = $this->getEntityValueAndRemapId($name, $Entity);
+        }
+
+        return $values;
+    }
+
+    /**
+     * @param $value_name
+     * @param Entity $Entity
+     * @return mixed
+     */
+    protected function getEntityValueAndRemapId($value_name, Entity $Entity)
+    {
+        if (strcasecmp($value_name, $this->getTable()->getPk()) === 0) {
+            $value = $Entity->getId();
+        }
+        else {
+            $value = $Entity->getValueByName($value_name);
+        }
+        return $value;
     }
 
     /**
@@ -48,7 +105,7 @@ abstract class DataMapper implements Interfaces\DataMapper
         list($sql, $parameters) = $this->getInsertSql($Entity);
         $PdoAdapter = $this->getSchema()->getPdoAdapterByName($this->write_connection_name);
         $id = $PdoAdapter->insert($sql, $parameters);
-        return $this->getSchemaTable()->validateId($id);
+        return $this->getTable()->validateId($id);
     }
 
     /**
@@ -56,8 +113,7 @@ abstract class DataMapper implements Interfaces\DataMapper
      */
     public function save(Entity $Entity)
     {
-        $id = $Entity->getId();
-        $id = $this->getSchemaTable()->validateId($id);
+        $this->getTable()->validateId($Entity->getId());
         list($sql, $parameters) = $this->getUpdateSql($Entity);
         return $this->getSchema()->getPdoAdapterByName($this->write_connection_name)->update($sql, $parameters);
     }
@@ -67,8 +123,7 @@ abstract class DataMapper implements Interfaces\DataMapper
      */
     public function delete(Entity $Entity)
     {
-        $id = $Entity->getId();
-        $id = $this->getSchemaTable()->validateId($id);
+        $this->getTable()->validateId($Entity->getId());
         list($sql, $parameters) = $this->getDeleteSql($Entity);
         return $this->getSchema()->getPdoAdapterByName($this->write_connection_name)->delete($sql, $parameters);
     }
@@ -80,8 +135,8 @@ abstract class DataMapper implements Interfaces\DataMapper
     {
         $Criteria = new DataMapper\Criteria();
         $Criteria->limit(1);
-        $id = $this->getSchemaTable()->validateId($id);
-        $Criteria->where([$this->getSchemaTable()->getPk() => $id]);
+        $id = $this->getTable()->validateId($id);
+        $Criteria->where([$this->getTable()->getPk() => $id]);
         list($sql, $parameters) = $this->getFetchAllSql($Criteria);
         return $this->getSchema()->getPdoAdapterByName($this->read_connection_name)->execute($sql, $parameters)->fetch();
     }
@@ -110,7 +165,7 @@ abstract class DataMapper implements Interfaces\DataMapper
      */
     public function getName()
     {
-        return $this->getSchemaTable()->getName();
+        return $this->getTable()->getName();
     }
 
     /**
@@ -118,61 +173,25 @@ abstract class DataMapper implements Interfaces\DataMapper
      */
     public function getAndValidateId($data)
     {
-        $pk_name = $this->getSchemaTable()->getPk();
+        $pk_name = $this->getTable()->getPk();
         $id = @$data[$pk_name];
-        return $this->getSchemaTable()->validateId($id);
+        return $this->getTable()->validateId($id);
     }
 
     /**
-     * @param string $placeholder
-     * @return array
+     * @return Table
      */
-    protected function getPlaceholderForQuery($placeholder=':')
+    public function getTable()
     {
-        $placeholders = [];
-        $columns = $this->getSchemaTable()->getColumns();
-        /**
-         * @var DataMapper\Interfaces\Schema\Column $Column
-         */
-        foreach ($columns as $name => $Column) {
-            $placeholders[] = $placeholder.$name;
-        }
-
-        return $placeholders;
+        return $this->Table;
     }
 
     /**
-     * @param Entity $Entity
-     * @param string $delimiter
-     * @return array
+     * @param Table $Table
      */
-    protected function getValuesForQuery(Entity $Entity, $delimiter='')
+    public function setTable(Table $Table)
     {
-        $values = [];
-        $columns = $this->getSchemaTable()->getColumns();
-        /**
-         * @var DataMapper\Interfaces\Schema\Column $Column
-         */
-        foreach ($columns as $name => $Column) {
-            $values[$delimiter.$name] = $this->getEntityValueAndRemapId($name, $Entity);
-        }
-
-        return $values;
+        $this->Table = $Table;
     }
 
-    /**
-     * @param $value_name
-     * @param Entity $Entity
-     * @return mixed
-     */
-    protected function getEntityValueAndRemapId($value_name, Entity $Entity)
-    {
-        if (strcasecmp($value_name, $this->getSchemaTable()->getPk()) === 0) {
-            $value = $Entity->getId();
-        }
-        else {
-            $value = $Entity->getValueByName($value_name);    
-        }
-        return $value;
-    }
 }
