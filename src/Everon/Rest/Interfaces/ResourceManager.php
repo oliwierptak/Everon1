@@ -14,12 +14,11 @@ interface ResourceManager
     /**
      * @param $resource_id
      * @param $name
-     * @param null $section
      * @param null $version
      * @return mixed
      * @throws \Everon\Http\Exception\NotFound
      */
-    function getResource($resource_id, $name, $section=null, $version=null);
+    function getResource($resource_id, $name, $version=null);
 
     /**
      * @param $resource_id
@@ -38,10 +37,9 @@ interface ResourceManager
     /**
      * @param $resource_id
      * @param $name
-     * @param null $section
      * @return string
      */
-    function getResourceUrl($resource_id, $name, $section=null);
+    function getResourceUrl($resource_id, $name);
     
     function getUrl();
 }

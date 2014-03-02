@@ -60,14 +60,14 @@ class Handler implements Interfaces\ResourceManager
     /**
      * @inheritdoc
      */
-    public function getResource($resource_id, $name, $section=null, $version=null)
+    public function getResource($resource_id, $name, $version=null)
     {
         try {
             $id = $this->generateEntityId($resource_id, $name);
             $Repository = $this->getDomainManager()->getRepository($name);
             $version = $version ?: $this->current_version;
             $Entity = $Repository->getEntityById($id);
-            $href = $this->getResourceUrl($resource_id, $name, $section);
+            $href = $this->getResourceUrl($resource_id, $name);
             
             $this->assertIsNull($Entity, sprintf('Domain Entity: "%s" not found', $id), 'Domain');
             $this->assertIsInArray($version, $this->supported_versions, 'Unsupported version: "%s"', 'Domain');
@@ -78,7 +78,7 @@ class Handler implements Interfaces\ResourceManager
             return $Resource;
         }
         catch (\Exception $e) {
-            throw new Http\Exception\NotFound('Resource: "%s" not found', [$this->getResourceUrl($resource_id, $name, $section)], $e);
+            throw new Http\Exception\NotFound('Resource: "%s" not found', [$this->getResourceUrl($resource_id, $name)], $e);
         }
     }
 
@@ -105,11 +105,10 @@ class Handler implements Interfaces\ResourceManager
     /**
      * @inheritdoc
      */
-    public function getResourceUrl($resource_id, $name, $section=null)
+    public function getResourceUrl($resource_id, $name)
     {
         $name = strtolower($name).'s';
-        $section =  $section !== null ? '/'.$section : '';
-        return $this->getUrl().$name.'/'.$resource_id.$section;
+        return $this->getUrl().$name.'/'.$resource_id;
     }
 
     /**
