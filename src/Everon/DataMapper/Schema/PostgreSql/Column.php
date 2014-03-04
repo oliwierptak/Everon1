@@ -23,7 +23,7 @@ class Column extends Schema\Column
         $ColumnInfo = new Helper\PopoProps($data);
         $this->name = $ColumnInfo->column_name;
         $this->is_pk = $this->hasInfo($this->name, $primary_key_list);
-        $this->is_unique = $this->hasInfo($this->name, $unique_key_list);
+        $this->is_unique = $this->hasInfo($this->name, $unique_key_list) || $this->is_pk;
         $this->is_nullable = ($ColumnInfo->is_nullable == 'YES');
         $this->default = $ColumnInfo->column_default;
         $this->schema = $ColumnInfo->table_schema;
