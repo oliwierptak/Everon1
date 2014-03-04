@@ -32,7 +32,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         parent::__construct($name, $data, $dataName);
         $this->FrameworkEnvironment = new Environment($GLOBALS['EVERON_ROOT'], $GLOBALS['EVERON_SOURCE_ROOT']);
         $this->includeDoubles($this->getDoublesDirectory());
-        $this->RequestIdentifier = $GLOBALS['RequestIdentifier']; //import from bootstrap
+        $this->RequestIdentifier = $GLOBALS['REQUEST_IDENTIFIER']; //import from bootstrap
     }
     
     protected function includeDoubles($dir)
