@@ -65,7 +65,7 @@ class Request extends \Everon\Request implements Interfaces\Request
             $this->ServerCollection['REQUEST_URI'] = str_replace('/'.$this->version, '', $request_uri);
             
             $request_uri = $this->ServerCollection['REDIRECT_URL'];
-            $this->ServerCollection['_  REDIRECT_URL'] = $request_uri;
+            $this->ServerCollection['_REDIRECT_URL'] = $request_uri;
             $this->ServerCollection['REDIRECT_URL'] = str_replace('/'.$this->version, '', $request_uri);
         }
     }
