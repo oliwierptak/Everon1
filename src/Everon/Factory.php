@@ -240,6 +240,23 @@ class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
+    public function buildRestCollectionResource($name, $version, Interfaces\Collection $Collection, $namespace='Everon\Rest\Resource')
+    {
+        try {
+            $class_name = 'Everon\Rest\Resource\Collection';
+            $this->classExists($class_name);
+            $CollectionResource = new $class_name($name, $version, $Collection);
+            $this->injectDependencies($class_name, $CollectionResource);
+            return $CollectionResource;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('RestCollectionResource initialization error', null, $e);
+        }
+    }
+    
+    /**
+     * @inheritdoc
+     */
     public function buildRestResourceManager($url, $version, $versioning, $namespace='Everon\Rest\Resource')
     {
         try {

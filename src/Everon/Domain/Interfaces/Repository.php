@@ -9,6 +9,7 @@
  */
 namespace Everon\Domain\Interfaces;
 
+use Everon\DataMapper\Interfaces\Criteria;
 use Everon\Interfaces\DataMapper;
 use Everon\Domain\Exception;
 
@@ -18,7 +19,7 @@ interface Repository
      * @param Entity $Entity
      * @return mixed
      */
-    function buildEntityRelations(Entity $Entity);
+    function buildEntityRelations(Entity $Entity, Criteria $Criteria);
     
     /**
      * @param $id

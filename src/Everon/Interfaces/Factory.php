@@ -99,6 +99,16 @@ interface Factory
     function buildRestResource($name, $version, $data, $namespace='Everon\Rest\Resource');
 
     /**
+     * @param $name
+     * @param $version
+     * @param Interfaces\Collection $Collection
+     * @param string $namespace
+     * @return Rest\Interfaces\ResourceCollection
+     * @throws Exception\Factory
+     */
+    function buildRestCollectionResource($name, $version, Interfaces\Collection $Collection, $namespace='Everon\Rest\Resource');
+
+    /**
      * @param $id
      * @param $secret
      * @return Rest\ApiKey

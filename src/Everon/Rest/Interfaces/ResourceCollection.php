@@ -9,10 +9,10 @@
  */
 namespace Everon\Rest\Interfaces;
 
-interface ResourceDomain extends Resource
+interface ResourceCollection extends Resource
 {
     /**
-     * @return \Everon\Domain\Interfaces\Entity
+     * @return \Everon\Interfaces\Collection
      */
-    function getDomainEntity();
+    function getCollection();
 }

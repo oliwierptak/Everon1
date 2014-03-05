@@ -9,16 +9,17 @@
  */
 namespace Everon\Rest\Interfaces;
 
-interface ResourceManager
+
+interface ResourceHandler
 {
     /**
      * @param $resource_id
      * @param $name
-     * @param null $version
-     * @return mixed
+     * @param $version
+     * @return Resource
      * @throws \Everon\Http\Exception\NotFound
      */
-    function getResource($resource_id, $name, $version=null);
+    function getResource($resource_id, $name, $version);
 
     /**
      * @param $resource_id

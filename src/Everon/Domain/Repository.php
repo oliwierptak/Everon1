@@ -9,6 +9,7 @@
  */
 namespace Everon\Domain;
 
+use Everon\DataMapper\Interfaces\Criteria;
 use Everon\Dependency;
 use Everon\Domain\Interfaces;
 use Everon\Interfaces\Collection;
@@ -33,9 +34,10 @@ abstract class Repository implements Interfaces\Repository
 
     /**
      * @param Interfaces\Entity $Entity
+     * @param Criteria $Criteria
      * @return mixed
      */
-    abstract public function buildEntityRelations(Interfaces\Entity $Entity);
+    abstract public function buildEntityRelations(Interfaces\Entity $Entity, Criteria $Criteria);
 
 
     /**
@@ -48,9 +50,6 @@ abstract class Repository implements Interfaces\Repository
         $this->Mapper = $Mapper;
     }
     
-    /**
-     * @inheritdoc
-     */
     /**
      * @inheritdoc
      */

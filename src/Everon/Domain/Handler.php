@@ -9,18 +9,22 @@
  */
 namespace Everon\Domain;
 
+use Everon\DataMapper\Criteria;
 use Everon\DataMapper\Dependency;
 use Everon\DataMapper\Interfaces\ConnectionManager;
 use Everon\DataMapper\Interfaces\Schema;
 use Everon\DataMapper\Exception\Schema as SchemaException;
 use Everon\Dependency\Injection\Factory as FactoryInjection;
+use Everon\Dependency\Injection\Request as RequestInjection; //todo Domain should have no clue about Request
 use Everon\Exception;
 use Everon\Helper;
 
 abstract class Handler implements Interfaces\Handler
 {
-    use Dependency\ConnectionManager;
     use FactoryInjection;
+    use RequestInjection;
+
+    use Dependency\ConnectionManager;
     use Helper\IsCallable;
     
 
@@ -56,8 +60,12 @@ abstract class Handler implements Interfaces\Handler
         $id = $id ?: $Repository->getMapper()->getAndValidateId($data);
         $data[$Repository->getMapper()->getTable()->getPk()] = $id;
         
+        $Criteria = new Criteria();
+        $Criteria->limit($this->getRequest()->getGetParameter('limit', 10));
+        $Criteria->offset($this->getRequest()->getGetParameter('offset', 0));
+
         $Entity = $this->getFactory()->buildDomainEntity($Repository->getName(), $id, $data);
-        $Repository->buildEntityRelations($Entity);
+        $Repository->buildEntityRelations($Entity, $Criteria);
         
         return $Entity;
     }

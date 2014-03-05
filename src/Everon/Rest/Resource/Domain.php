@@ -17,7 +17,7 @@ abstract class Domain extends \Everon\Rest\Resource implements \Everon\Rest\Inte
     /**
      * @var Entity
      */
-    protected $ResourceEntity = null;
+    protected $DomainEntity = null;
 
     /**
      * @var \Everon\Interfaces\Collection
@@ -30,24 +30,26 @@ abstract class Domain extends \Everon\Rest\Resource implements \Everon\Rest\Inte
     public function __construct($name, $version, Entity $Entity)
     {
         parent::__construct($name, $version);
-        $this->ResourceEntity = $Entity;
+        $this->DomainEntity = $Entity;
         $this->RelationCollection = new Helper\Collection([]);
     }
     
     protected function init()
     {
         if ($this->data === null) {
-            $this->data = $this->ResourceEntity->toArray();
+            $this->data = $this->DomainEntity->toArray();
+            if (empty($this->RelationCollection) === false) {
+                $this->data = array_merge($this->data, $this->RelationCollection->toArray());
+            }
         }
     }
     
-
     /**
      * @inheritdoc
      */
-    public function getResourceEntity()
+    public function getDomainEntity()
     {
-        return $this->ResourceEntity;
+        return $this->DomainEntity;
     }
 
     /**
@@ -59,11 +61,11 @@ abstract class Domain extends \Everon\Rest\Resource implements \Everon\Rest\Inte
     }
 
     /**
-     * @param \Everon\Interfaces\Collection $ResourceCollection
+     * @param \Everon\Interfaces\Collection $RelationCollection
      */
-    public function setRelationCollection(\Everon\Interfaces\Collection $ResourceCollection)
+    public function setRelationCollection(\Everon\Interfaces\Collection $RelationCollection)
     {
-        $this->RelationCollection = $ResourceCollection;
+        $this->RelationCollection = $RelationCollection;
     }
 
     /**

@@ -15,10 +15,11 @@ use Everon\Helper;
 use Everon\Http;
 use Everon\Rest\Interfaces;
 
-class Handler implements Interfaces\ResourceManager
+class Handler implements Interfaces\ResourceHandler
 {
     use Dependency\Injection\Factory;
     use Dependency\Injection\DomainManager;
+    use Dependency\Injection\Request; //todo meh
     use Helper\AlphaId;
     use Helper\Asserts\IsInArray;
     use Helper\Asserts\IsNull;
@@ -40,7 +41,7 @@ class Handler implements Interfaces\ResourceManager
      */
     protected $versioning = 'url';
     
-    protected $current_version = null;  //v1, v2, v3...
+    protected $current_version = null;  //v1, v2, v3... todo: remove this property, handler can be version agnostic
     
     protected $url = null;
     
@@ -60,7 +61,7 @@ class Handler implements Interfaces\ResourceManager
     /**
      * @inheritdoc
      */
-    public function getResource($resource_id, $name, $version=null)
+    public function getResource($resource_id, $name, $version)
     {
         try {
             $id = $this->generateEntityId($resource_id, $name);
@@ -80,6 +81,11 @@ class Handler implements Interfaces\ResourceManager
         catch (\Exception $e) {
             throw new Http\Exception\NotFound('Resource: "%s" not found', [$this->getResourceUrl($resource_id, $name)], $e);
         }
+    }
+
+    public function getCollectionResource($resource_id, $name, $version, $Collection)
+    {
+        return $this->getFactory()->buildRestCollectionResource($name, $version, $Collection);
     }
 
     /**
