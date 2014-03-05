@@ -67,13 +67,12 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
 
     protected function prepareResponse($action, $result)
     {
-        $data = $this->getResponse()->getData();
         $Resource = $this->getResponse()->getData();
-        if ($Resource instanceof Interfaces\Resource) {
-            $data = $Resource->toArray();
+        if ($Resource instanceof Interfaces\ResourceDomain) {
+            $Resource = $Resource->toArray($this->getRequest()->getGetParameter('expand') === 'all');
+            $this->getResponse()->setData($Resource);
         }
-        
-        $this->getResponse()->setData($data);
+
     }
 
     protected function response()

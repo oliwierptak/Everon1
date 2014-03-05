@@ -137,8 +137,8 @@ abstract class DataMapper implements Interfaces\DataMapper
         $Criteria->limit(1);
         $id = $this->getTable()->validateId($id);
         $Criteria->where([$this->getTable()->getPk() => $id]);
-        list($sql, $parameters) = $this->getFetchAllSql($Criteria);
-        return $this->getSchema()->getPdoAdapterByName($this->read_connection_name)->execute($sql, $parameters)->fetch();
+        $sql = $this->getFetchAllSql($Criteria);
+        return $this->getSchema()->getPdoAdapterByName($this->read_connection_name)->execute($sql, $Criteria->getWhere())->fetch();
     }
 
     /**
@@ -147,8 +147,8 @@ abstract class DataMapper implements Interfaces\DataMapper
     public function fetchOneByCriteria(Criteria $Criteria)
     {
         $Criteria->limit(1);
-        list($sql, $parameters) = $this->getFetchAllSql($Criteria);
-        return $this->getSchema()->getPdoAdapterByName($this->read_connection_name)->execute($sql, $parameters)->fetch();
+        $sql = $this->getFetchAllSql($Criteria);
+        return $this->getSchema()->getPdoAdapterByName($this->read_connection_name)->execute($sql, $Criteria->getWhere())->fetch();
     }
 
     /**
@@ -156,8 +156,8 @@ abstract class DataMapper implements Interfaces\DataMapper
      */
     public function fetchAll(Criteria $Criteria)
     {
-        list($sql, $parameters) = $this->getFetchAllSql($Criteria);
-        return $this->getSchema()->getPdoAdapterByName($this->read_connection_name)->execute($sql, $parameters)->fetchAll();
+        $sql = $this->getFetchAllSql($Criteria);
+        return $this->getSchema()->getPdoAdapterByName($this->read_connection_name)->execute($sql, $Criteria->getWhere())->fetchAll();
     }
 
     /**

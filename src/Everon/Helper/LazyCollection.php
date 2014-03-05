@@ -28,77 +28,76 @@ class LazyCollection extends Collection
         $this->LazyDataLoader = $LazyDataLoader;
     }
     
-    public function init()
+    protected function actuate()
     {
         if ($this->data === null) {
-            $this->data = $this->LazyDataLoader->__invoke();
-            $this->data = $this->data ?: [];
+            $this->data = $this->LazyDataLoader->__invoke() ?: [];
         }
     }
     
     public function count()
     {
-        $this->init();
+        $this->actuate();
         return parent::count();
     }
 
     public function offsetExists($offset)
     {
-        $this->init();
+        $this->actuate();
         return parent::offsetExists($offset);
     }
 
     public function offsetGet($offset)
     {
-        $this->init();
+        $this->actuate();
         return parent::offsetGet($offset);
     }
 
     public function offsetSet($offset, $value)
     {
-        $this->init();
+        $this->actuate();
         parent::offsetSet($offset, $value);
     }
 
     public function offsetUnset($offset)
     {
-        $this->init();
+        $this->actuate();
         parent::offsetUnset($offset);
     }
 
     public function getIterator()
     {
-        $this->init();
+        $this->actuate();
         return parent::getIterator();
     }
 
     public function has($name)
     {
-        $this->init();
+        $this->actuate();
         return parent::has($name);
     }
 
     public function remove($name)
     {
-        $this->init();
+        $this->actuate();
         parent::remove($name);
     }
 
     public function set($name, $value)
     {
-        $this->init();
+        $this->actuate();
         parent::set($name, $value);
     }
 
     public function get($name, $default=null)
     {
-        $this->init();
+        $this->actuate();
         return parent::get($name, $default);
     }
     
     public function toArray($deep=false)
     {
-        $this->init();
+        $this->actuate();
         return parent::toArray($deep);
     }
     

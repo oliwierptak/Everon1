@@ -16,6 +16,8 @@ use Everon\Interfaces\Collection;
 
 class Entity extends Helper\Popo implements Interfaces\Entity 
 {
+    use Helper\IsCallable;
+    
     const STATE_NEW = 1;
     const STATE_MODIFIED = 2;
     const STATE_PERSISTED = 3;
@@ -27,8 +29,6 @@ class Entity extends Helper\Popo implements Interfaces\Entity
     
     protected $state = self::STATE_NEW;
 
-    protected $methods = null;
-
     /**
      * @var Collection
      */
@@ -39,7 +39,6 @@ class Entity extends Helper\Popo implements Interfaces\Entity
     {
         $this->id = $id;
         $this->data = $data;
-        $this->methods = array_flip(get_class_methods(get_class($this))); //faster lookup then using isCallable()
         $this->RelationCollection = new Helper\Collection([]);
         
         if ($this->isIdSet()) {
@@ -222,7 +221,7 @@ class Entity extends Helper\Popo implements Interfaces\Entity
      */
     public function __call($name, $arguments)
     {
-        if (isset($this->methods[$name])) {
+        if ($this->isCallable($this, $name)) {
             $this->call_type = static::CALL_TYPE_METHOD;
             $this->call_property = $name;
             return call_user_func_array([$this, $name], $arguments);
@@ -230,10 +229,8 @@ class Entity extends Helper\Popo implements Interfaces\Entity
 
         $return = parent::__call($name, $arguments);
         
-        switch ($this->call_type) {
-            case static::CALL_TYPE_SETTER:
-                $this->markPropertyAsModified($this->call_property);
-                break;
+        if ($this->call_type === static::CALL_TYPE_SETTER) {
+            $this->markPropertyAsModified($this->call_property);
         }
         
         return $return;

@@ -79,7 +79,7 @@ abstract class Mapper extends DataMapper
             '.$Criteria;
         
         $sql = sprintf($sql, $this->getTable()->getSchema(), $this->getTable()->getName(), $pk_name);
-        return [$sql, $Criteria->getWhere()];
+        return $sql;
     }
 
     protected function getLeftJoinSql($select, $a, $b, $on_a, $on_b, Interfaces\Criteria $Criteria)
@@ -90,6 +90,6 @@ abstract class Mapper extends DataMapper
             '.$Criteria;
         
         $sql = sprintf($sql, $select, $a, $b, $on_a, $on_b);
-        return [$sql, $Criteria->getWhere()];
+        return $sql;
     }
 }
