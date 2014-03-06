@@ -29,9 +29,6 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
     use Dependency\Injection\ModuleManager;
     use RestDependency\Injection\ResourceManager;
 
-    use Helper\Arrays;
-    use Helper\IsIterable;
-    use Helper\String\StartsWith;
     
     /**
      * @param $action
@@ -64,7 +61,7 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
     {
         return $this->getDomainManager()->getModel($this->getName());
     }
-
+    
     protected function prepareResponse($action, $result)
     {
         $Resource = $this->getResponse()->getData();
@@ -72,12 +69,10 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
             $Resource = $Resource->toArray();
             $this->getResponse()->setData($Resource);
         }
-
     }
 
     protected function response()
     {
         echo $this->getResponse()->toJson();
     }
-
 }

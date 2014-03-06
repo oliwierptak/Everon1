@@ -67,7 +67,7 @@ abstract class Core implements Interfaces\Core
             }
             
             $this->Module->setup();
-            $CurrentRoute = $this->Module->getRouteConfig()->getDefaultItem();
+            $CurrentRoute = $this->Module->getRouterConfig()->getDefaultItem();
             $this->getRouter()->validateAndUpdateRequest($CurrentRoute, $this->getRequest());
         }
         else {

@@ -10,7 +10,7 @@
 namespace Everon\Rest\Resource;
 
 use Everon\Dependency;
-use Everon\Exception;
+use Everon\Rest\Exception;
 use Everon\Helper;
 use Everon\Http;
 use Everon\Rest\Interfaces;
@@ -21,6 +21,7 @@ class Handler implements Interfaces\ResourceHandler
     use Dependency\Injection\DomainManager;
     use Dependency\Injection\Request; //todo meh
     use Helper\AlphaId;
+    use Helper\Arrays;
     use Helper\Asserts\IsInArray;
     use Helper\Asserts\IsNull;
     use Helper\Exceptions;
@@ -44,6 +45,11 @@ class Handler implements Interfaces\ResourceHandler
     protected $current_version = null;  //v1, v2, v3... todo: remove this property, handler can be version agnostic
     
     protected $url = null;
+
+    /**
+     * @var \Everon\Interfaces\Collection
+     */
+    protected $MappingCollection = null;
     
 
     /**
@@ -51,41 +57,85 @@ class Handler implements Interfaces\ResourceHandler
      * @param $version
      * @param $versioning
      */
-    public function __construct($url, $version, $versioning)
+    public function __construct($url, $version, $versioning, array $mappings)
     {
         $this->url = $url;
         $this->current_version = $version;
         $this->versioning = $versioning;
+        $this->MappingCollection = new Helper\Collection($mappings);
     }
 
     /**
      * @inheritdoc
      */
-    public function getResource($resource_id, $name, $version)
+    public function getResource($resource_id, $resource_name, $version)
     {
         try {
-            $id = $this->generateEntityId($resource_id, $name);
-            $Repository = $this->getDomainManager()->getRepository($name);
+            $domain_name = $this->getDomainNameFromMapping($resource_name);
+            $id = $this->generateEntityId($resource_id, $domain_name);
+            $Repository = $this->getDomainManager()->getRepository($domain_name);
             $version = $version ?: $this->current_version;
             $Entity = $Repository->getEntityById($id);
-            $href = $this->getResourceUrl($resource_id, $name);
-            
+            $href = $this->getResourceUrl($resource_id, $resource_name);
+
             $this->assertIsNull($Entity, sprintf('Domain Entity: "%s" not found', $id), 'Domain');
             $this->assertIsInArray($version, $this->supported_versions, 'Unsupported version: "%s"', 'Domain');
-            
-            $Resource = $this->getFactory()->buildRestResource($name, $version, $Entity->toArray(), 'Everon\Rest\Resource');
+
+            $Resource = $this->getFactory()->buildRestResource($domain_name, $version, $Entity, 'Everon\Rest\Resource\Domain'); //todo: change version to href
             $Resource->setResourceHref($href);
-            
+
+            $this->buildResourceRelations($Resource);
+
             return $Resource;
         }
         catch (\Exception $e) {
-            throw new Http\Exception\NotFound('Resource: "%s" not found', [$this->getResourceUrl($resource_id, $name)], $e);
+            throw new Http\Exception\NotFound('Resource: "%s" not found', [$this->getResourceUrl($resource_id, $resource_name)], $e);
         }
     }
 
-    public function getCollectionResource($resource_id, $name, $version, $Collection)
+    /**
+     * @inheritdoc
+     */
+    public function getCollectionResource($resource_id, $resource_name, $version, $collection)
     {
-        return $this->getFactory()->buildRestCollectionResource($name, $version, $Collection);
+        $domain_name2 = $this->getDomainNameFromMapping($resource_name);
+        $Resource = $this->getResource($resource_id, $resource_name, $version);
+        $Entity = $Resource->getDomainEntity();
+        foreach ($Resource->getRelationDefinition() as $resource_name => $resource_domain_name) {
+            if ($resource_name === $collection) {
+                $Collection = $Entity->getRelationCollection()[$resource_domain_name];
+
+                $collection_list = $Collection->toArray();
+                $ResourceList = new Helper\Collection([]);
+                for ($a=0; $a<count($collection_list); $a++) {
+                    $CollectionEntity = $collection_list[$a];
+                    $entity_resource_id = $this->generateResourceId($CollectionEntity->getId(), $resource_name);
+                    $ResourceList->set($a, $this->getResource($entity_resource_id, $resource_name, $version));
+                }
+
+                $CollectionResource = $this->getFactory()->buildRestCollectionResource($resource_name, $version, $ResourceList); //todo: change version to href
+                $CollectionResource->setResourceHref($Resource->getResourceHref().'/'.$collection);
+                $CollectionResource->setLimit($this->getRequest()->getGetParameter('limit', 10));
+                $CollectionResource->setOffset($this->getRequest()->getGetParameter('offset', 0));
+                return $CollectionResource;
+            }
+        }
+
+        throw new Exception\Manager('RestCollectionResource not found');
+    }
+
+    public function buildResourceRelations(Interfaces\ResourceDomain $Resource)
+    {
+        /**
+         * @var \Everon\Domain\Interfaces\Zone\Entity $Entity
+         */
+        //$Entity = $Resource->getDomainEntity();
+        $RelationCollection = new Helper\Collection([]);
+        foreach ($Resource->getRelationDefinition() as $resource_name => $resource_domain_name) {
+            $RelationCollection->set($resource_domain_name, ['href' => $Resource->getResourceHref().'/'.$resource_name]);
+        }
+
+        $Resource->setRelationCollection($RelationCollection);
     }
 
     /**
@@ -113,7 +163,6 @@ class Handler implements Interfaces\ResourceHandler
      */
     public function getResourceUrl($resource_id, $name)
     {
-        $name = strtolower($name).'s';
         return $this->getUrl().$name.'/'.$resource_id;
     }
 
@@ -132,5 +181,18 @@ class Handler implements Interfaces\ResourceHandler
                 break;
         }
     }
-    
+    /**
+     * @inheritdoc
+     */
+    public function getDomainNameFromMapping($resource_name)
+    {
+        $domain_name = $this->MappingCollection->get($resource_name, null);
+        if ($domain_name === null) {
+            throw new Exception\Manager('Invalid rest mapping: "%s"', $resource_name);
+        }
+        
+        return $domain_name;
+    }    
+
+
 }

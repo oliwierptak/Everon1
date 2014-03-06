@@ -23,7 +23,7 @@ abstract class Module implements Interfaces\Module
     /**
      * @var \Everon\Config\Interfaces\ItemRouter
      */
-    protected $RouteConfig = null;
+    protected $RouterConfig = null;
 
     /**
      * @var Interfaces\Collection
@@ -52,7 +52,7 @@ abstract class Module implements Interfaces\Module
         $this->name = $name;
         $this->directory = $module_directory;
         $this->Config = $Config;
-        $this->RouteConfig = $RouterConfig;
+        $this->RouterConfig = $RouterConfig;
         $this->ControllerCollection = new Helper\Collection([]);
     }
 
@@ -113,17 +113,17 @@ abstract class Module implements Interfaces\Module
     /**
      * @inheritdoc
      */
-    public function setRouteConfig(Interfaces\Config $RouteConfig)
+    public function setRouterConfig(Interfaces\Config $RouteConfig)
     {
-        $this->RouteConfig = $RouteConfig;
+        $this->RouterConfig = $RouteConfig;
     }
 
     /**
      * @inheritdoc
      */
-    public function getRouteConfig()
+    public function getRouterConfig()
     {
-        return $this->RouteConfig;
+        return $this->RouterConfig;
     }
 
     /**

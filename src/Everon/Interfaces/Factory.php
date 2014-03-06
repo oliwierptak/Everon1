@@ -458,11 +458,12 @@ interface Factory
      * @param $url
      * @param $version
      * @param $versioning
+     * @param array $mappings
      * @param $namespace
      * @return mixed
      * @throws Exception\Factory
      */
-    function buildRestResourceManager($url, $version, $versioning, $namespace='Everon\Rest\Resource');
+    function buildRestResourceManager($url, $version, $versioning, array $mappings, $namespace='Everon\Rest\Resource');
 
 /*    function registerWorker(Interfaces\FactoryWorker $Worker);
 

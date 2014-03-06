@@ -57,12 +57,12 @@ interface Module
     /**
      * @return Interfaces\Config
      */
-    function getRouteConfig();
+    function getRouterConfig();
 
     /**
      * @param Interfaces\Config $RouteConfig
      */
-    function setRouteConfig(Interfaces\Config $RouteConfig);
+    function setRouterConfig(Interfaces\Config $RouteConfig);
 
     function setup();
 }

@@ -115,7 +115,7 @@ abstract class Controller implements Interfaces\Controller
      */
     public function getUrl($name)
     {
-        $Config = $this->getModule()->getRouteConfig()->getItemByName($name);
+        $Config = $this->getModule()->getRouterConfig()->getItemByName($name);
         return $Config->getUrl();
     }
 }

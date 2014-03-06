@@ -14,12 +14,22 @@ interface ResourceHandler
 {
     /**
      * @param $resource_id
-     * @param $name
+     * @param $resource_name
      * @param $version
-     * @return Resource
+     * @return ResourceDomain
      * @throws \Everon\Http\Exception\NotFound
      */
-    function getResource($resource_id, $name, $version);
+    function getResource($resource_id, $resource_name, $version);
+
+    /**
+     * @param $resource_id
+     * @param $name
+     * @param $version
+     * @param $collection
+     * @return ResourceCollection
+     * @throws \Exception
+     */
+    function getCollectionResource($resource_id, $name, $version, $collection);
 
     /**
      * @param $resource_id
@@ -43,4 +53,10 @@ interface ResourceHandler
     function getResourceUrl($resource_id, $name);
     
     function getUrl();
+
+    /**
+     * @param $resource_name
+     * @return string
+     */
+    function getDomainNameFromMapping($resource_name);
 }
