@@ -45,10 +45,16 @@ class Response extends BasicResponse implements Interfaces\Response
     
     protected function sendHeaders()
     {
-        header('HTTP/1.1 '.$this->status_code);
-        header('EVRID:'. $this->guid);
+        $this->HeaderCollection->set('HTTP/1.1 '.$this->status_code, '');
+        $this->HeaderCollection->set('EVRID', $this->guid);
+        
         foreach ($this->HeaderCollection as $name => $value) {
-            header($name.': '.$value, false);
+            if (trim($value) !== '') {
+                header($name.': '.$value, false);
+            }
+            else {
+                header($name, false);
+            }
         }
     }
 
