@@ -20,10 +20,8 @@ abstract class Resource implements Interfaces\Resource
     protected $resource_href = null;
     protected $resource_version = null;
     
-    abstract protected function init();
 
-
-    public function __construct($name, $version, $data=null)
+    public function __construct($name, $version, array $data)
     {
         $this->resource_name = $name;
         $this->resource_version = $version;
@@ -80,13 +78,13 @@ abstract class Resource implements Interfaces\Resource
     
     public function toJson()
     {
-        return json_encode([$this->toArray(true)], \JSON_FORCE_OBJECT);
+        return json_encode([$this->toArray()], \JSON_FORCE_OBJECT);
     }
     
     protected function getToArray()
     {
-        $this->init();
-        $this->data['href'] = $this->getResourceHref();
-        return $this->data;
+        $data = $this->data;
+        $data['href'] = $this->getResourceHref();
+        return $data;
     }
 }

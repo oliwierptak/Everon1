@@ -29,19 +29,20 @@ abstract class Domain extends \Everon\Rest\Resource implements \Everon\Rest\Inte
 
     public function __construct($name, $version, Entity $Entity)
     {
-        parent::__construct($name, $version);
+        parent::__construct($name, $version, $Entity->toArray());
         $this->DomainEntity = $Entity;
         $this->RelationCollection = new Helper\Collection([]);
     }
     
-    protected function init()
+    protected function getToArray()
     {
-        if ($this->data === null) {
-            $this->data = $this->DomainEntity->toArray();
-            if (empty($this->RelationCollection) === false) {
-                $this->data = array_merge($this->data, $this->RelationCollection->toArray());
-            }
+        $data = parent::getToArray();
+        //    $this->data = $this->DomainEntity->toArray();
+        if (empty($this->RelationCollection) === false) {
+            $data = array_merge($this->data, $this->RelationCollection->toArray());
         }
+        
+        return $data;
     }
     
     /**

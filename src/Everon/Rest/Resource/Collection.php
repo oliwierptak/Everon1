@@ -14,10 +14,15 @@ use Everon\Interfaces;
 
 class Collection extends Resource
 {
-    protected $collection_limit = null;
+    protected $limit = null;
 
-    protected $collection_offset = null;
+    protected $offset = null;
 
+    protected $first = null;
+    protected $prev = null;
+    protected $next = null;
+    protected $last = null;
+    
     /**
      * @var Interfaces\Collection
      */
@@ -25,15 +30,28 @@ class Collection extends Resource
 
     public function __construct($name, $version, Interfaces\Collection $ItemCollection)
     {
-        parent::__construct($name, $version);
+        parent::__construct($name, $version, []);
         $this->ItemCollection = $ItemCollection;
     }
 
-    protected function init()
+    protected function getToArray()
     {
-        $this->data['limit'] = $this->collection_limit;
-        $this->data['offset'] = $this->collection_offset;
-        $this->data['items'] = $this->ItemCollection->toArray(true);
+        $data = parent::getToArray();
+        $data['first'] = $this->first;
+        $data['prev'] = $this->prev;
+        $data['next'] = $this->next;
+        $data['last'] = $this->last;
+        $data['limit'] = $this->limit;
+        $data['offset'] = $this->offset;
+        
+        $items = [];
+        foreach ($this->ItemCollection as $Item) {
+            $items[] = $Item->toArray();
+        }
+
+        $data['items'] = $items;
+        
+        return $data;
     }
 
     /**
@@ -41,7 +59,7 @@ class Collection extends Resource
      */
     public function setOffset($collection_offset)
     {
-        $this->collection_offset = $collection_offset;
+        $this->offset = $collection_offset;
     }
 
     /**
@@ -49,7 +67,7 @@ class Collection extends Resource
      */
     public function getOffset()
     {
-        return $this->collection_offset;
+        return $this->offset;
     }
 
     /**
@@ -73,7 +91,7 @@ class Collection extends Resource
      */
     public function setLimit($collection_limit)
     {
-        $this->collection_limit = $collection_limit;
+        $this->limit = $collection_limit;
     }
 
     /**
@@ -81,7 +99,9 @@ class Collection extends Resource
      */
     public function getLimit()
     {
-        return $this->collection_limit;
+        return $this->limit;
     }
+    
+    
     
 }
