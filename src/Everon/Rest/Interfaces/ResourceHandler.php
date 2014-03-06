@@ -57,6 +57,14 @@ interface ResourceHandler
     /**
      * @param $resource_name
      * @return string
+     * @throws \Everon\Rest\Exception\Manager
      */
     function getDomainNameFromMapping($resource_name);
+    
+    /**
+     * @param $domain_name
+     * @return string
+     * @throws \Everon\Rest\Exception\Manager
+     */
+    function getResourceNameFromMapping($domain_name);
 }

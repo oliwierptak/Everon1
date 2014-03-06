@@ -62,7 +62,7 @@ abstract class Resource extends Resource\Basic implements Interfaces\Resource
     {
         $this->RelationCollection = $RelationCollection;
     }
-
+    
     /**
      * @inheritdoc
      */
@@ -71,15 +71,22 @@ abstract class Resource extends Resource\Basic implements Interfaces\Resource
         return $this->RelationCollection;
     }
     
+    public function setRelationResourceByName($name, Interfaces\ResourceCollection $CollectionResource)
+    {
+        $this->RelationCollection->set($name, $CollectionResource);
+    }
+    
     protected function getToArray()
     {
         $data = parent::getToArray();
         $data = array_merge($data, $this->DomainEntity->toArray());
         
-        if (empty($this->RelationCollection) === false) {
-            $data = array_merge($data, $this->RelationCollection->toArray());
+        $collections = $this->RelationCollection->toArray();
+        foreach ($collections as $name => $value) {
+            unset($data[$name]);
+            $data[$name]['href'] = $value->getHref();
         }
-
+        
         return $data;
     }
 }

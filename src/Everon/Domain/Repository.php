@@ -91,6 +91,22 @@ abstract class Repository implements Interfaces\Repository
         return $this->getDomainManager()->buildEntity($this, $id, $data);
     }
     
+    public function getList(Criteria $Criteria)
+    {
+        $data = $this->getMapper()->fetchAll($Criteria);
+        if (empty($data)) {
+            return null;
+        }
+        
+        $result = [];
+        foreach ($data as $item) {
+            $id = $this->getMapper()->getAndValidateId($item);
+            $result[] = $this->getDomainManager()->buildEntity($this, $id, $item);
+        }
+        
+        return $result;
+    }
+        
     /**
      * @inheritdoc
      */
