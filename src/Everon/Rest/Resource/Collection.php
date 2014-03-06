@@ -9,15 +9,15 @@
  */
 namespace Everon\Rest\Resource;
 
+use Everon\Rest\Interfaces\ResourceCollection;
 use Everon\Rest\Resource;
 use Everon\Interfaces;
 
-class Collection extends Resource
+
+class Collection extends Resource\Basic implements ResourceCollection
 {
     protected $limit = null;
-
     protected $offset = null;
-
     protected $first = null;
     protected $prev = null;
     protected $next = null;
@@ -27,10 +27,17 @@ class Collection extends Resource
      * @var Interfaces\Collection
      */
     protected $ItemCollection = null;
+    
 
-    public function __construct($name, $version, Interfaces\Collection $ItemCollection)
+    /**
+     * @param $name
+     * @param $version
+     * @param $href
+     * @param Interfaces\Collection $ItemCollection
+     */
+    public function __construct($name, $version, $href, Interfaces\Collection $ItemCollection)
     {
-        parent::__construct($name, $version, []);
+        parent::__construct($name, $version, $href);
         $this->ItemCollection = $ItemCollection;
     }
 
@@ -55,7 +62,7 @@ class Collection extends Resource
     }
 
     /**
-     * @param null $collection_offset
+     * @inheritdoc
      */
     public function setOffset($collection_offset)
     {
@@ -63,7 +70,7 @@ class Collection extends Resource
     }
 
     /**
-     * @return null
+     * @inheritdoc
      */
     public function getOffset()
     {
@@ -71,7 +78,7 @@ class Collection extends Resource
     }
 
     /**
-     * @param \Everon\Interfaces\Collection $ItemCollection
+     * @inheritdoc
      */
     public function setItemCollection($ItemCollection)
     {
@@ -79,7 +86,7 @@ class Collection extends Resource
     }
 
     /**
-     * @return \Everon\Interfaces\Collection
+     * @inheritdoc
      */
     public function getItemCollection()
     {
@@ -87,7 +94,7 @@ class Collection extends Resource
     }
 
     /**
-     * @param null $collection_limit
+     * @inheritdoc
      */
     public function setLimit($collection_limit)
     {
@@ -95,13 +102,10 @@ class Collection extends Resource
     }
 
     /**
-     * @return null
+     * @inheritdoc
      */
     public function getLimit()
     {
         return $this->limit;
     }
-    
-    
-    
 }

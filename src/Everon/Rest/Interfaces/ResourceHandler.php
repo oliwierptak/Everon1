@@ -16,7 +16,7 @@ interface ResourceHandler
      * @param $resource_id
      * @param $resource_name
      * @param $version
-     * @return ResourceDomain
+     * @return Resource
      * @throws \Everon\Http\Exception\NotFound
      */
     function getResource($resource_id, $resource_name, $version);

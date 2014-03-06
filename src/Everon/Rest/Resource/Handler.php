@@ -81,9 +81,7 @@ class Handler implements Interfaces\ResourceHandler
             $this->assertIsNull($Entity, sprintf('Domain Entity: "%s" not found', $id), 'Domain');
             $this->assertIsInArray($version, $this->supported_versions, 'Unsupported version: "%s"', 'Domain');
 
-            $Resource = $this->getFactory()->buildRestResource($domain_name, $version, $Entity, 'Everon\Rest\Resource\Domain'); //todo: change version to href
-            $Resource->setResourceHref($href);
-
+            $Resource = $this->getFactory()->buildRestResource($domain_name, $version, $href, $Entity); //todo: change version to href
             $this->buildResourceRelations($Resource);
 
             return $Resource;
@@ -98,8 +96,9 @@ class Handler implements Interfaces\ResourceHandler
      */
     public function getCollectionResource($resource_id, $resource_name, $version, $collection)
     {
-        $domain_name2 = $this->getDomainNameFromMapping($resource_name);
+        $domain_name = $this->getDomainNameFromMapping($resource_name);
         $Resource = $this->getResource($resource_id, $resource_name, $version);
+        $href = $Resource->getHref().'/'.$collection;
         $Entity = $Resource->getDomainEntity();
         foreach ($Resource->getRelationDefinition() as $resource_name => $resource_domain_name) {
             if ($resource_name === $collection) {
@@ -113,8 +112,7 @@ class Handler implements Interfaces\ResourceHandler
                     $ResourceList->set($a, $this->getResource($entity_resource_id, $resource_name, $version));
                 }
 
-                $CollectionResource = $this->getFactory()->buildRestCollectionResource($resource_name, $version, $ResourceList); //todo: change version to href
-                $CollectionResource->setResourceHref($Resource->getResourceHref().'/'.$collection);
+                $CollectionResource = $this->getFactory()->buildRestCollectionResource($domain_name, $version, $href, $ResourceList); //todo: change version to href
                 $CollectionResource->setLimit($this->getRequest()->getGetParameter('limit', 10));
                 $CollectionResource->setOffset($this->getRequest()->getGetParameter('offset', 0));
                 return $CollectionResource;
@@ -124,7 +122,7 @@ class Handler implements Interfaces\ResourceHandler
         throw new Exception\Manager('RestCollectionResource not found');
     }
 
-    public function buildResourceRelations(Interfaces\ResourceDomain $Resource)
+    public function buildResourceRelations(Interfaces\Resource $Resource)
     {
         /**
          * @var \Everon\Domain\Interfaces\Zone\Entity $Entity
@@ -132,7 +130,7 @@ class Handler implements Interfaces\ResourceHandler
         //$Entity = $Resource->getDomainEntity();
         $RelationCollection = new Helper\Collection([]);
         foreach ($Resource->getRelationDefinition() as $resource_name => $resource_domain_name) {
-            $RelationCollection->set($resource_domain_name, ['href' => $Resource->getResourceHref().'/'.$resource_name]);
+            $RelationCollection->set($resource_name, ['href' => $Resource->getHref().'/'.$resource_name]);
         }
 
         $Resource->setRelationCollection($RelationCollection);

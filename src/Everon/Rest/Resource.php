@@ -10,81 +10,76 @@
 namespace Everon\Rest;
 
 use Everon\Helper;
+use Everon\Domain\Interfaces\Entity;
+use Everon\Interfaces\Collection;
 
 
-abstract class Resource implements Interfaces\Resource
+abstract class Resource extends Resource\Basic implements Interfaces\Resource
 {
-    use Helper\ToArray;
-    
-    protected $resource_name = null;
-    protected $resource_href = null;
-    protected $resource_version = null;
-    
-
-    public function __construct($name, $version, array $data)
-    {
-        $this->resource_name = $name;
-        $this->resource_version = $version;
-        $this->data = $data;
-    }
+    /**
+     * @var Entity
+     */
+    protected $DomainEntity = null;
 
     /**
-     * @param $version
+     * @var Collection
      */
-    public function setResourceVersion($version)
+    protected $RelationCollection = null;
+
+    /**
+     * @var array
+     */
+    protected $relation_definition = [];
+    
+
+    public function __construct($name, $version, $href, Entity $Entity)
     {
-        $this->resource_version = $version;
+        parent::__construct($name, $version, $href);
+        $this->DomainEntity = $Entity;
+        $this->RelationCollection = new Helper\Collection([]);
     }
 
     /**
      * @inheritdoc
      */
-    public function getResourceVersion()
+    public function getDomainEntity()
     {
-        return $this->resource_version;
-    }
-
-    /**
-     * @param $href
-     */
-    public function setResourceHref($href)
-    {
-        $this->resource_href = $href;
+        return $this->DomainEntity;
     }
 
     /**
      * @inheritdoc
      */
-    public function getResourceHref()
+    public function getRelationDefinition()
     {
-        return $this->resource_href;
-    }
-
-    /**
-     * @param $name
-     */
-    public function setResourceName($name)
-    {
-        $this->resource_name = $name;
+        return $this->relation_definition;
     }
 
     /**
      * @inheritdoc
      */
-    public function getResourceName()
+    public function setRelationCollection(Collection $RelationCollection)
     {
-        return $this->resource_name;
+        $this->RelationCollection = $RelationCollection;
     }
-    
-    public function toJson()
+
+    /**
+     * @inheritdoc
+     */
+    public function getRelationCollection()
     {
-        return json_encode([$this->toArray()], \JSON_FORCE_OBJECT);
+        return $this->RelationCollection;
     }
     
     protected function getToArray()
     {
-        $data = $this->data;
-        $data['href'] = $this->getResourceHref();
+        $data = parent::getToArray();
+        $data = array_merge($data, $this->DomainEntity->toArray());
+        
+        if (empty($this->RelationCollection) === false) {
+            $data = array_merge($data, $this->RelationCollection->toArray());
+        }
+
         return $data;
     }
 }

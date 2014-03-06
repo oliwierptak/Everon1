@@ -9,40 +9,29 @@
  */
 namespace Everon\Rest\Interfaces;
 
-interface Resource extends \Everon\Interfaces\Arrayable
+use Everon\Domain\Interfaces\Entity;
+use Everon\Interfaces\Collection;
+
+
+interface Resource extends ResourceBasic
 {
     /**
-     * @param $version
+     * @return Entity
      */
-    function setResourceVersion($version);
+    function getDomainEntity();
 
     /**
-     * @inheritdoc
+     * @return array
      */
-    function getResourceVersion();
+    function getRelationDefinition();
 
     /**
-     * @param $href
+     * @param Collection $RelationCollection
      */
-    function setResourceHref($href);
+    function setRelationCollection(Collection $RelationCollection);
 
     /**
-     * @inheritdoc
+     * @return Collection
      */
-    function getResourceHref();
-
-    /**
-     * @param $name
-     */
-    function setResourceName($name);
-
-    /**
-     * @inheritdoc
-     */
-    function getResourceName();
-
-    /**
-     * @return string
-     */
-    function toJson();
+    function getRelationCollection();
 }

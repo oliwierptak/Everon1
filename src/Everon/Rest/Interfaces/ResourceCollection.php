@@ -9,10 +9,37 @@
  */
 namespace Everon\Rest\Interfaces;
 
-interface ResourceCollection extends Resource
+use Everon\Interfaces\Collection;
+
+interface ResourceCollection extends ResourceBasic
 {
     /**
-     * @return \Everon\Interfaces\Collection
+     * @param int $collection_offset
      */
-    function getCollection();
+    function setOffset($collection_offset);
+
+    /**
+     * @return int
+     */
+    function getOffset();
+
+    /**
+     * @param Collection $ItemCollection
+     */
+    function setItemCollection($ItemCollection);
+
+    /**
+     * @return Collection
+     */
+    function getItemCollection();
+
+    /**
+     * @param int $collection_limit
+     */
+    function setLimit($collection_limit);
+
+    /**
+     * @return int
+     */
+    function getLimit();
 }
