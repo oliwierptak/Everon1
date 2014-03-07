@@ -34,10 +34,9 @@ interface Handler
     function buildEntity(Repository $Repository, $id, array $data);
 
     /**
-     * @param $name
      * @return Schema
      */
-    function getSchema($name);
+    function getSchema();
 
     /**
      * @param $name

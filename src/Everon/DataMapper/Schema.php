@@ -47,6 +47,10 @@ class Schema implements Interfaces\Schema
     
     protected function initTables()
     {
+        if ($this->tables !== null) {
+            return;
+        }
+        
         $table_list = $this->getSchemaReader()->getTableList();
         $column_list = $this->getSchemaReader()->getColumnList();
         $primary_key_list = $this->getSchemaReader()->getPrimaryKeysList();
@@ -99,9 +103,7 @@ class Schema implements Interfaces\Schema
     
     public function getTables()
     {
-        if ($this->tables === null) {
-            $this->initTables();
-        }
+        $this->initTables();
         return $this->tables;
     }
     
@@ -115,10 +117,8 @@ class Schema implements Interfaces\Schema
      */
     public function getTable($name)
     {
+        $this->initTables();
         $name = mb_strtolower($name);
-        if ($this->tables === null) {
-            $this->initTables();
-        }
 
         if (isset($this->tables[$name]) === false) {
             throw new Exception\Schema('Invalid table name: "%s"', $name);

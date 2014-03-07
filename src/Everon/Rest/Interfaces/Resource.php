@@ -45,11 +45,11 @@ interface Resource extends ResourceBasic
      * @param $name
      * @param ResourceCollection $CollectionResource
      */
-    function setRelationResourceByName($name, ResourceCollection $CollectionResource);
+    function setRelationCollectionByName($name, ResourceCollection $CollectionResource);
 
     /**
      * @param $name
      * @return ResourceCollection
      */
-    function getRelationResourceByName($name);
+    function getRelationCollectionByName($name);
 }

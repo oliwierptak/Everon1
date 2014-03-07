@@ -50,13 +50,7 @@ class Collection extends Resource\Basic implements ResourceCollection
         $data['last'] = $this->last;
         $data['limit'] = $this->limit;
         $data['offset'] = $this->offset;
-        
-        $items = [];
-        foreach ($this->ItemCollection as $Item) {
-            $items[] = $Item->toArray();
-        }
-
-        $data['items'] = $items;
+        $data['items'] = $this->ItemCollection->toArray(true);
         
         return $data;
     }

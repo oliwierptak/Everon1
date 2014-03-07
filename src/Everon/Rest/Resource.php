@@ -87,7 +87,7 @@ abstract class Resource extends Resource\Basic implements Interfaces\Resource
      * @param $name
      * @param Interfaces\ResourceCollection $CollectionResource
      */
-    public function setRelationResourceByName($name, Interfaces\ResourceCollection $CollectionResource)
+    public function setRelationCollectionByName($name, Interfaces\ResourceCollection $CollectionResource)
     {
         $this->RelationCollection->set($name, $CollectionResource);
     }
@@ -96,7 +96,7 @@ abstract class Resource extends Resource\Basic implements Interfaces\Resource
      * @param $name
      * @return Interfaces\ResourceCollection
      */
-    public function getRelationResourceByName($name)
+    public function getRelationCollectionByName($name)
     {
         return $this->RelationCollection->get($name);
     }

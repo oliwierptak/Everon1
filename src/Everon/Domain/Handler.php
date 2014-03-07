@@ -39,9 +39,9 @@ abstract class Handler implements Interfaces\Handler
     protected $repositories = null;
 
     /**
-     * @var array
+     * @var Schema
      */
-    protected $schemas = null;
+    protected $Schema = null;
 
 
     /**
@@ -92,7 +92,7 @@ abstract class Handler implements Interfaces\Handler
     public function getRepository($name)
     {
         if (isset($this->repositories[$name]) === false) {
-            $Schema = $this->getSchema($name);
+            $Schema = $this->getSchema();
             $DataMapper = $this->getFactory()->buildDataMapper(
                 $Schema->getTable($name), $Schema
             );
@@ -109,21 +109,17 @@ abstract class Handler implements Interfaces\Handler
     /**
      * @inheritdoc
      */
-    public function getSchema($name)
+    public function getSchema()
     {
-        if (isset($this->schemas[$name]) === false) {
+        if ($this->Schema === null) {
             $Connection = $this->getConnectionManager()->getConnectionByName('schema');
             list($dsn, $username, $password, $options) = $Connection->toPdo();
             $Pdo = $this->getFactory()->buildPdo($dsn, $username, $password, $options);
             $PdoAdapter = $this->getFactory()->buildPdoAdapter($Pdo, $Connection);
             $SchemaReader = $this->getFactory()->buildSchemaReader($PdoAdapter);
-            $this->schemas[$name] = $this->getFactory()->buildSchema($SchemaReader, $this->getConnectionManager());
+            $this->Schema = $this->getFactory()->buildSchema($SchemaReader, $this->getConnectionManager());
         }
 
-        if (isset($this->schemas[$name]) === false) {
-            throw new SchemaException('Invalid schema name: "%s"', $name);
-        }
-
-        return $this->schemas[$name];        
+        return $this->Schema;
     }
 }

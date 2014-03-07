@@ -134,6 +134,7 @@ abstract class Reader implements Interfaces\Schema\Reader
     
     public function TMPdumpDataBaseSchema($dir, $prefix='mysql')
     {
+        return;
         $tables = $this->getPdoAdapter()->execute($this->getTablesSql(), ['schema'=>$this->getDatabase()], \PDO::FETCH_ASSOC)->fetchAll();
         $columns = $this->getPdoAdapter()->execute($this->getColumnsSql(), ['schema'=>$this->getDatabase()], \PDO::FETCH_ASSOC)->fetchAll();
         $primary_keys = $this->getPdoAdapter()->execute($this->getPrimaryKeysSql(), ['schema'=>$this->getDatabase()], \PDO::FETCH_ASSOC)->fetchAll();

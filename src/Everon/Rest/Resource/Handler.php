@@ -100,20 +100,20 @@ class Handler implements Interfaces\ResourceHandler
             if ($collection !== null) {
                 $domain_name = $Resource->getRelationDomainName($collection);
                 if ($domain_name !== null) {
-                    $Relation = $Resource->getDomainEntity()->getRelationCollection()[$domain_name];
-                    $r = $Relation->toArray();
+                    $RelationCollection = $Resource->getDomainEntity()->getRelationCollection()[$domain_name];
+                    $relation_list = $RelationCollection->toArray();
 
-                    $Relation = new Helper\Collection([]);
-                    for ($a=0 ;$a<count($r); $a++) {
-                        $CollectionEntity = $r[$a];
-                        $Relation->set($a, $this->buildResourceFromEntity($CollectionEntity, $collection, $version));
+                    $RelationCollection = new Helper\Collection([]);
+                    for ($a=0 ;$a<count($relation_list); $a++) {
+                        $CollectionEntity = $relation_list[$a];
+                        $RelationCollection->set($a, $this->buildResourceFromEntity($CollectionEntity, $collection, $version));
                     }
                     
-                    $CollectionResource = $this->getFactory()->buildRestCollectionResource($domain_name, $version, $Resource->getHref().'/'.$collection, $Relation); //todo: change version to href
+                    $CollectionResource = $this->getFactory()->buildRestCollectionResource($domain_name, $version, $Resource->getHref().'/'.$collection, $RelationCollection);
                     $CollectionResource->setLimit($this->getRequest()->getGetParameter('limit', 10));
                     $CollectionResource->setOffset($this->getRequest()->getGetParameter('offset', 0));
                     
-                    $Resource->setRelationResourceByName($collection, $CollectionResource);
+                    $Resource->setRelationCollectionByName($collection, $CollectionResource);
                 }
             }
             
@@ -122,37 +122,6 @@ class Handler implements Interfaces\ResourceHandler
         catch (\Exception $e) {
             throw new Http\Exception\NotFound('Resource: "%s" not found', [$this->getResourceUrl($resource_id, $resource_name)], $e);
         }
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getCollection22($resource_name, $version)
-    {
-        $domain_name = $this->getDomainNameFromMapping($resource_name);
-        $Resource = $this->getResource($resource_id, $resource_name, $version);
-        $href = $Resource->getHref().'/'.$collection;
-        $Entity = $Resource->getDomainEntity();
-        foreach ($Resource->getRelationDefinition() as $resource_name => $resource_domain_name) {
-            if ($resource_name === $collection) {
-                $Collection = $Entity->getRelationCollection()[$resource_domain_name];
-
-                $collection_list = $Collection->toArray();
-                $ResourceList = new Helper\Collection([]);
-                for ($a=0; $a<count($collection_list); $a++) {
-                    $CollectionEntity = $collection_list[$a];
-                    $entity_resource_id = $this->generateResourceId($CollectionEntity->getId(), $resource_name);
-                    $ResourceList->set($a, $this->getResource($entity_resource_id, $resource_name, $version));
-                }
-
-                $CollectionResource = $this->getFactory()->buildRestCollectionResource($domain_name, $version, $href, $Collection); //todo: change version to href
-                $CollectionResource->setLimit($this->getRequest()->getGetParameter('limit', 10));
-                $CollectionResource->setOffset($this->getRequest()->getGetParameter('offset', 0));
-                $Resource->setRelationResourceByName($resource_name, $CollectionResource);
-            }
-        }
-
-        return $Resource;
     }
 
     /**
@@ -194,8 +163,6 @@ class Handler implements Interfaces\ResourceHandler
         //$Entity = $Resource->getDomainEntity();
         $RelationCollection = new Helper\Collection([]);
         foreach ($Resource->getRelationDefinition() as $resource_name => $resource_domain_name) {
-            //$Collection = $this->getCollection($resource_name, $this->current_version);
-            //$RelationCollection->set($resource_name, $Collection);
             $RelationCollection->set($resource_name, ['href' => $Resource->getHref().'/'.$resource_name]);
         }
 
