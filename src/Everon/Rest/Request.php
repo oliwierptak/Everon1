@@ -22,7 +22,7 @@ class Request extends \Everon\Request implements Interfaces\Request
         self::METHOD_PUT,
     ];
     
-    protected $versioning = Resource\Manager::VERSIONING_URL;
+    protected $versioning = Resource\Handler::VERSIONING_URL;
     
     protected $version = null;
 
@@ -51,35 +51,39 @@ class Request extends \Everon\Request implements Interfaces\Request
      */
     protected function overwriteEnvironment()
     {
-        if ($this->versioning === Resource\Manager::VERSIONING_URL) { //remove version from url
+        if ($this->versioning === Resource\Handler::VERSIONING_URL) { //remove version from url
             $query_string = $this->ServerCollection['QUERY_STRING'];
             $this->ServerCollection['_QUERY_STRING'] = $query_string;
             $this->ServerCollection['QUERY_STRING'] = str_replace('param='.$this->version, '', $query_string);
             
-            $query_string = $this->ServerCollection['REDIRECT_QUERY_STRING'];
-            $this->ServerCollection['_REDIRECT_QUERY_STRING'] = $query_string;
-            $this->ServerCollection['REDIRECT_QUERY_STRING'] = str_replace('param='.$this->version, '', $query_string);
+            if ($this->ServerCollection->has('REDIRECT_QUERY_STRING')) {
+                $query_string = $this->ServerCollection['REDIRECT_QUERY_STRING'];
+                $this->ServerCollection['_REDIRECT_QUERY_STRING'] = $query_string;
+                $this->ServerCollection['REDIRECT_QUERY_STRING'] = str_replace('param='.$this->version, '', $query_string);
+            }
 
             $request_uri = $this->ServerCollection['REQUEST_URI'];
             $this->ServerCollection['_REQUEST_URI'] = $request_uri;
             $this->ServerCollection['REQUEST_URI'] = str_replace('/'.$this->version, '', $request_uri);
-            
-            $request_uri = $this->ServerCollection['REDIRECT_URL'];
-            $this->ServerCollection['_REDIRECT_URL'] = $request_uri;
-            $this->ServerCollection['REDIRECT_URL'] = str_replace('/'.$this->version, '', $request_uri);
+
+            if ($this->ServerCollection->has('REDIRECT_URL')) {
+                $request_uri = $this->ServerCollection['REDIRECT_URL'];
+                $this->ServerCollection['_REDIRECT_URL'] = $request_uri;
+                $this->ServerCollection['REDIRECT_URL'] = str_replace('/'.$this->version, '', $request_uri);
+            }
         }
     }
     
     protected function setupVersion()
     {
         switch ($this->versioning) {
-            case Resource\Manager::VERSIONING_URL:
+            case Resource\Handler::VERSIONING_URL:
                 $url = $this->ServerCollection['REQUEST_URI']; //eg. http://api.localhost/v1/accounts/C22222C/settings
                 $tokens = explode('/', $url);
                 $this->version = $tokens[1];
                 break;
 
-            case Resource\Manager::VERSIONING_HEADER:
+            case Resource\Handler::VERSIONING_HEADER:
                 //todo finish me
                 break;
         }

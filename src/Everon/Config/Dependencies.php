@@ -33,9 +33,9 @@ $Container->propose('Request', function() use ($Factory) {
 
 $Container->propose('Router', function() use ($Factory) {
     $Factory->getDependencyContainer()->monitor('Router', ['Everon\Config\Manager', 'Everon\RequestValidator']);
-    $RouteConfig = $Factory->getDependencyContainer()->resolve('ConfigManager')->getConfigByName('console');
+    $RouterConfig = $Factory->getDependencyContainer()->resolve('ConfigManager')->getConfigByName('router');
     $RequestValidator = $Factory->buildRequestValidator();
-    return $Factory->buildRouter($RouteConfig, $RequestValidator);
+    return $Factory->buildRouter($RouterConfig, $RequestValidator);
 });
 
 $Container->propose('Response', function() use ($Factory) {

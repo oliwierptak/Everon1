@@ -80,5 +80,12 @@ class Collection implements \Countable, \ArrayAccess, \IteratorAggregate, Interf
         
         return $this->data[$name];
     }
-    
+
+    public static function __set_state(array $array)
+    {
+        //todo: test me xxx
+        $Collection = new static($array['data']);
+        $Collection->position = 0;
+        return $Collection;
+    }
 }

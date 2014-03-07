@@ -97,7 +97,7 @@ class Manager implements \Everon\Config\Interfaces\Manager
         $data['router'] = $this->getFactory()->buildConfigLoaderItem('//router.ini', $data['router']);
         
         //load module.ini data from all modules
-        $module_list = $this->getFileSystem()->listPathDir($this->getEnvironment()->getModule());
+        $module_list = $this->getFileSystem()->listPathDir('//Module');
         /**
          * @var \DirectoryIterator $Dir
          */

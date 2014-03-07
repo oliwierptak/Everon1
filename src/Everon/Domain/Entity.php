@@ -244,7 +244,6 @@ class Entity extends Helper\Popo implements Interfaces\Entity
             'data',
             'modified_properties',
             'state',
-            'methods',
             'call_type',
             'call_property',
         ];
@@ -256,7 +255,6 @@ class Entity extends Helper\Popo implements Interfaces\Entity
         $Entity = new static($array['id'], $array['data']);
         $Entity->modified_properties = $array['modified_properties'];
         $Entity->state = $array['state'];
-        $Entity->methods = $array['methods'];
         $Entity->call_type = $array['call_type'];
         $Entity->call_property = $array['call_property'];
         return $Entity;

@@ -47,7 +47,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         
         $includes = iterator_to_array($It);
         foreach ($includes as $filename => $IncludeItem) {
-            if ($IncludeItem->isFile()) {
+            if ($IncludeItem->isFile() && $IncludeItem->getExtension() === 'php') {
                 require_once($IncludeItem->getPathname());
             }
         }
@@ -194,6 +194,10 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         $FileSystem = $Factory->buildFileSystem($TestEnvironment->getRoot());
         $Container->register('FileSystem', function() use ($FileSystem) {
             return $FileSystem;
+        });
+
+        $Container->register('RequestIdentifier', function()  {
+            return $this->RequestIdentifier;
         });
 
         require($this->FrameworkEnvironment->getEveronConfig().'Dependencies.php');
