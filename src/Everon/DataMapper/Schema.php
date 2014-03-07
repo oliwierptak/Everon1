@@ -62,7 +62,6 @@ class Schema implements Interfaces\Schema
         };
         
         foreach ($table_list as $name => $table_data) {
-            $name = mb_strtolower($name);
             $this->tables[$name] = $this->getFactory()->buildSchemaTable(
                 $name,
                 @$table_data['table_schema'],
@@ -73,6 +72,8 @@ class Schema implements Interfaces\Schema
                 $castToEmptyArrayWhenNull($name, $foreign_key_list)
             );
         }
+        
+        $this->tables = array_change_key_case($this->tables, \CASE_LOWER);
     }
     
     /**
@@ -119,9 +120,8 @@ class Schema implements Interfaces\Schema
     {
         $this->initTables();
         $name = mb_strtolower($name);
-
         if (isset($this->tables[$name]) === false) {
-            throw new Exception\Schema('Invalid table name: "%s"', $name);
+            throw new Exception\Schema('Invalid schema table name: "%s"', $name);
         }
         
         return $this->tables[$name];
@@ -132,7 +132,6 @@ class Schema implements Interfaces\Schema
      */
     public function getPdoAdapterByName($name)
     {
-        $name = mb_strtolower($name);
         if (isset($this->pdo_adapters[$name]) === false) {
             $Connection = $this->getConnectionManager()->getConnectionByName($name);
             list($dsn, $username, $password, $options) = $Connection->toPdo();
@@ -142,7 +141,7 @@ class Schema implements Interfaces\Schema
         }
 
         if (isset($this->pdo_adapters[$name]) === false) {
-            throw new Exception\Schema('Invalid pdo adapter name: "%s"', $name);
+            throw new Exception\Schema('Invalid PdoAsdapter name: "%s"', $name);
         }
 
         return $this->pdo_adapters[$name];
