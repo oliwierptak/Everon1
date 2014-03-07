@@ -262,12 +262,29 @@ class Factory implements Interfaces\Factory
         try {
             $class_name = $this->getFullClassName($namespace, 'Manager');
             $this->classExists($class_name);
-            $Worker = new $class_name($url, $version, $versioning, $mappings);
-            $this->injectDependencies($class_name, $Worker);
-            return $Worker;
+            $Manager = new $class_name($url, $version, $versioning, $mappings);
+            $this->injectDependencies($class_name, $Manager);
+            return $Manager;
         }
         catch (\Exception $e) {
             throw new Exception\Factory('RestResourceManager initialization error', null, $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildRestResourceNavigator(Rest\Interfaces\Request $Request, $namespace='Everon\Rest\Resource')
+    {
+        try {
+            $class_name = $this->getFullClassName($namespace, 'Navigator');
+            $this->classExists($class_name);
+            $Navigator = new $class_name($Request);
+            $this->injectDependencies($class_name, $Navigator);
+            return $Navigator;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('RestResourceNavigator initialization error', null, $e);
         }
     }
     

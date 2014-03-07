@@ -30,7 +30,6 @@ class Handler implements Interfaces\ResourceHandler
 
     const VERSIONING_URL = 'url';
     const VERSIONING_HEADER = 'header';
-    
     const ALPHA_ID_SALT = 'Vhg656';
 
 
@@ -44,7 +43,7 @@ class Handler implements Interfaces\ResourceHandler
      */
     protected $versioning = 'url';
     
-    protected $current_version = null;  //v1, v2, v3... todo: remove this property, handler can be version agnostic
+    protected $current_version = null;  //v1, v2, v3... todo: remove this property, handler can be current version agnostic
     
     protected $url = null;
 
@@ -85,20 +84,19 @@ class Handler implements Interfaces\ResourceHandler
     /**
      * @inheritdoc
      */
-    public function getResource($resource_id, $resource_name, $version, $collection)
+    public function getResource($resource_id, $resource_name, $version, Interfaces\ResourceNavigator $Navigator)
     {
         try {
             $domain_name = $this->getDomainNameFromMapping($resource_name);
             $id = $this->generateEntityId($resource_id, $domain_name);
             $Repository = $this->getDomainManager()->getRepository($domain_name);
             $Entity = $Repository->getEntityById($id);
-
             $this->assertIsNull($Entity, sprintf('Domain Entity: "%s" not found', $id), 'Domain');
-            
             $Resource =  $this->buildResourceFromEntity($Entity, $resource_name, $version);
 
-            if ($collection !== null) {
-                $domain_name = $Resource->getRelationDomainName($collection);
+            $resources_to_expand = $Navigator->getExpand();
+            foreach ($resources_to_expand as $collection_name) {
+                $domain_name = $Resource->getRelationDomainName($collection_name);
                 if ($domain_name !== null) {
                     $RelationCollection = $Resource->getDomainEntity()->getRelationCollection()[$domain_name];
                     $relation_list = $RelationCollection->toArray();
@@ -106,14 +104,14 @@ class Handler implements Interfaces\ResourceHandler
                     $RelationCollection = new Helper\Collection([]);
                     for ($a=0 ;$a<count($relation_list); $a++) {
                         $CollectionEntity = $relation_list[$a];
-                        $RelationCollection->set($a, $this->buildResourceFromEntity($CollectionEntity, $collection, $version));
+                        $RelationCollection->set($a, $this->buildResourceFromEntity($CollectionEntity, $collection_name, $version));
                     }
-                    
-                    $CollectionResource = $this->getFactory()->buildRestCollectionResource($domain_name, $version, $Resource->getHref().'/'.$collection, $RelationCollection);
+
+                    $CollectionResource = $this->getFactory()->buildRestCollectionResource($domain_name, $version, $Resource->getHref().'/'.$collection_name, $RelationCollection);
                     $CollectionResource->setLimit($this->getRequest()->getGetParameter('limit', 10));
                     $CollectionResource->setOffset($this->getRequest()->getGetParameter('offset', 0));
-                    
-                    $Resource->setRelationCollectionByName($collection, $CollectionResource);
+
+                    $Resource->setRelationCollectionByName($collection_name, $CollectionResource);
                 }
             }
             

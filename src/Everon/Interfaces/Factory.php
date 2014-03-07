@@ -111,6 +111,14 @@ interface Factory
     function buildRestCollectionResource($name, $version, $href, Interfaces\Collection $Collection, $namespace='Everon\Rest\Resource');
 
     /**
+     * @param Rest\Interfaces\Request $Request
+     * @param string $namespace
+     * @return mixed
+     * @throws Exception\Factory
+     */
+    function buildRestResourceNavigator(Rest\Interfaces\Request $Request, $namespace='Everon\Rest\Resource');
+
+    /**
      * @param $id
      * @param $secret
      * @return Rest\ApiKey

@@ -16,11 +16,11 @@ interface ResourceHandler
      * @param $resource_id
      * @param $resource_name
      * @param $version
-     * @param $collection
+     * @param ResourceNavigator $Navigator
      * @return Resource
      * @throws \Everon\Http\Exception\NotFound
      */
-    function getResource($resource_id, $resource_name, $version, $collection);
+    function getResource($resource_id, $resource_name, $version, ResourceNavigator $Navigator);
 
     /**
      * @param $name
