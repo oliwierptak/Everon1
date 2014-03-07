@@ -26,12 +26,6 @@ interface Resource extends ResourceBasic
     function getRelationDefinition();
 
     /**
-     * @param $definition
-     * @return string|null
-     */
-    function getRelationDomainName($definition);
-
-    /**
      * @param Collection $RelationCollection
      */
     function setRelationCollection(Collection $RelationCollection);

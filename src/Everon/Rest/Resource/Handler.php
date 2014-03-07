@@ -36,16 +36,16 @@ class Handler implements Interfaces\ResourceHandler
     /**
      * @var array
      */
-    protected $supported_versions = ['v1', 'v2']; //todo read from config
+    protected $supported_versions = null;
 
     /**
      * @var string Versioning type. Accepted values are: 'url' or 'header'
      */
-    protected $versioning = 'url';
+    protected $versioning = null;
     
-    protected $current_version = null;  //v1, v2, v3... todo: remove this property, handler can be current version agnostic
+    protected $current_version = null;  //v1, v2, v3...
     
-    protected $url = null;
+    protected $url = null;  //http://api.localhost:80/
 
     /**
      * @var \Everon\Interfaces\Collection
@@ -55,20 +55,20 @@ class Handler implements Interfaces\ResourceHandler
 
     /**
      * @param $url
-     * @param $version
+     * @param $supported_versions
      * @param $versioning
      */
-    public function __construct($url, $version, $versioning, array $mappings)
+    public function __construct($url, array $supported_versions, $versioning, array $mappings)
     {
         $this->url = $url;
-        $this->current_version = $version;
+        $this->supported_versions = $supported_versions;
+        $this->current_version = array_pop($this->supported_versions);
         $this->versioning = $versioning;
         $this->MappingCollection = new Helper\Collection($mappings);
     }
     
     protected function buildResourceFromEntity(Entity $Entity, $resource_name, $version)
     {
-        $version = $version ?: $this->current_version;
         $this->assertIsInArray($version, $this->supported_versions, 'Unsupported version: "%s"', 'Domain');
         
         $domain_name = $this->getDomainNameFromMapping($resource_name);
@@ -96,8 +96,11 @@ class Handler implements Interfaces\ResourceHandler
 
             $resources_to_expand = $Navigator->getExpand();
             foreach ($resources_to_expand as $collection_name) {
-                $domain_name = $Resource->getRelationDomainName($collection_name);
+                $domain_name = $this->getDomainNameFromMapping($collection_name);
                 if ($domain_name !== null) {
+                    /**
+                     * @var \Everon\Interfaces\Collection $RelationCollection
+                     */
                     $RelationCollection = $Resource->getDomainEntity()->getRelationCollection()[$domain_name];
                     $relation_list = $RelationCollection->toArray();
 
@@ -199,11 +202,12 @@ class Handler implements Interfaces\ResourceHandler
     /**
      * @inheritdoc
      */
-    public function getUrl()
+    public function getUrl($version=null)
     {
+        $version = $version ?: $this->current_version;
         switch ($this->versioning) {
             case static::VERSIONING_URL:
-                return $this->url.$this->current_version.'/';        
+                return $this->url.$version.'/';
                 break;
             
             default:

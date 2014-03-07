@@ -59,17 +59,6 @@ abstract class Resource extends Resource\Basic implements Interfaces\Resource
     /**
      * @inheritdoc
      */
-    public function getRelationDomainName($definition)
-    {
-        if (isset($this->relation_definition[$definition])) {
-            return $this->relation_definition[$definition];
-        }
-        return null;
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function setRelationCollection(Collection $RelationCollection)
     {
         $this->RelationCollection = $RelationCollection;
