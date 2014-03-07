@@ -32,12 +32,13 @@ abstract class Resource extends Resource\Basic implements Interfaces\Resource
     protected $relation_definition = [];
     
 
-    public function __construct($name, $version, $href, Entity $Entity)
+    public function __construct($href, $version, Entity $Entity)
     {
-        parent::__construct($name, $version, $href);
+        parent::__construct($href, $version);
         $this->DomainEntity = $Entity;
         $this->RelationCollection = new Helper\Collection([]);
     }
+
 
     /**
      * @inheritdoc
@@ -58,6 +59,17 @@ abstract class Resource extends Resource\Basic implements Interfaces\Resource
     /**
      * @inheritdoc
      */
+    public function getRelationDomainName($definition)
+    {
+        if (isset($this->relation_definition[$definition])) {
+            return $this->relation_definition[$definition];
+        }
+        return null;
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function setRelationCollection(Collection $RelationCollection)
     {
         $this->RelationCollection = $RelationCollection;
@@ -70,22 +82,30 @@ abstract class Resource extends Resource\Basic implements Interfaces\Resource
     {
         return $this->RelationCollection;
     }
-    
+
+    /**
+     * @param $name
+     * @param Interfaces\ResourceCollection $CollectionResource
+     */
     public function setRelationResourceByName($name, Interfaces\ResourceCollection $CollectionResource)
     {
         $this->RelationCollection->set($name, $CollectionResource);
+    }
+
+    /**
+     * @param $name
+     * @return Interfaces\ResourceCollection
+     */
+    public function getRelationResourceByName($name)
+    {
+        return $this->RelationCollection->get($name);
     }
     
     protected function getToArray()
     {
         $data = parent::getToArray();
         $data = array_merge($data, $this->DomainEntity->toArray());
-        
-        $collections = $this->RelationCollection->toArray();
-        foreach ($collections as $name => $value) {
-            unset($data[$name]);
-            $data[$name]['href'] = $value->getHref();
-        }
+        $data = array_merge($data, $this->RelationCollection->toArray(true));
         
         return $data;
     }

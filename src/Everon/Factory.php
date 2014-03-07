@@ -228,7 +228,7 @@ class Factory implements Interfaces\Factory
         try {
             $class_name = $this->getFullClassName('Everon\Rest\Resource\\'.$name, $version);
             $this->classExists($class_name);
-            $Resource = new $class_name($name, $version, $href, $Entity);
+            $Resource = new $class_name($href, $version, $Entity);
             $this->injectDependencies($class_name, $Resource);
             return $Resource;
         }
@@ -245,7 +245,7 @@ class Factory implements Interfaces\Factory
         try {
             $class_name = 'Everon\Rest\Resource\Collection';
             $this->classExists($class_name);
-            $CollectionResource = new $class_name($name, $version, $href, $Collection);
+            $CollectionResource = new $class_name($href, $version, $Collection);
             $this->injectDependencies($class_name, $CollectionResource);
             return $CollectionResource;
         }

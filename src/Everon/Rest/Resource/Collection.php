@@ -35,9 +35,9 @@ class Collection extends Resource\Basic implements ResourceCollection
      * @param $href
      * @param Interfaces\Collection $ItemCollection
      */
-    public function __construct($name, $version, $href, Interfaces\Collection $ItemCollection)
+    public function __construct($href, $version, Interfaces\Collection $ItemCollection)
     {
-        parent::__construct($name, $version, $href);
+        parent::__construct($href, $version);
         $this->ItemCollection = $ItemCollection;
     }
 

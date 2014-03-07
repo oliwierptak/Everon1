@@ -36,16 +36,6 @@ interface ResourceBasic extends \Everon\Interfaces\Arrayable
     function getHref();
 
     /**
-     * @param $name
-     */
-    function setName($name);
-
-    /**
-     * @inheritdoc
-     */
-    function getName();
-
-    /**
      * @return string
      */
     function toJson();
