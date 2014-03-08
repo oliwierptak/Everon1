@@ -91,10 +91,11 @@ class Manager implements \Everon\Config\Interfaces\Manager
         $data_router = $this->getRouterDataFromAllModules();
         foreach ($data_router as $module_name => $module_router_data) {
             list($filename, $loader_data) = $module_router_data;
+            $loader_data = $this->arrayPrefixKey($module_name.'@', $loader_data);
             $data[$module_name.'@router'] = $this->getFactory()->buildConfigLoaderItem($filename, $loader_data);
-            $data['router'] = $this->arrayMergeDefault($data['router'], $this->arrayPrefixKey($module_name.'@', $loader_data)); 
+            $data['router'] = $this->arrayMergeDefault($data['router'], $loader_data); 
         }
-        $data['router'] = $this->getFactory()->buildConfigLoaderItem('//router.ini', $data['router']);
+        $data['router'] = $this->getFactory()->buildConfigLoaderItem('//Config/router.ini', $data['router']);
         
         //load module.ini data from all modules
         $module_list = $this->getFileSystem()->listPathDir('//Module');
