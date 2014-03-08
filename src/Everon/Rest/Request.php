@@ -52,25 +52,22 @@ class Request extends \Everon\Request implements Interfaces\Request
     protected function overwriteEnvironment()
     {
         if ($this->versioning === Resource\Handler::VERSIONING_URL) { //remove version from url
-            $query_string = $this->ServerCollection['QUERY_STRING'];
-            $this->ServerCollection['_QUERY_STRING'] = $query_string;
-            $this->ServerCollection['QUERY_STRING'] = str_replace('param='.$this->version, '', $query_string);
-            
-            if ($this->ServerCollection->has('REDIRECT_QUERY_STRING')) {
-                $query_string = $this->ServerCollection['REDIRECT_QUERY_STRING'];
-                $this->ServerCollection['_REDIRECT_QUERY_STRING'] = $query_string;
-                $this->ServerCollection['REDIRECT_QUERY_STRING'] = str_replace('param='.$this->version, '', $query_string);
+            $this->ServerCollection['_QUERY_STRING'] = $this->ServerCollection['QUERY_STRING'];
+            $get = $this->GetCollection->toArray();
+            array_shift($get);
+            if (empty($get) === false) {
+                $query_string = urldecode(http_build_query($get));
             }
+            else {
+                $query_string = $this->ServerCollection['QUERY_STRING'];
+                $query_string = substr($query_string, strlen($this->version)+1, strlen($query_string));
+            }
+            $this->ServerCollection['QUERY_STRING'] = $query_string;
 
             $request_uri = $this->ServerCollection['REQUEST_URI'];
+            $request_uri_no_version = substr($request_uri, strlen($this->version)+1, strlen($request_uri));
             $this->ServerCollection['_REQUEST_URI'] = $request_uri;
-            $this->ServerCollection['REQUEST_URI'] = str_replace('/'.$this->version, '', $request_uri);
-
-            if ($this->ServerCollection->has('REDIRECT_URL')) {
-                $request_uri = $this->ServerCollection['REDIRECT_URL'];
-                $this->ServerCollection['_REDIRECT_URL'] = $request_uri;
-                $this->ServerCollection['REDIRECT_URL'] = str_replace('/'.$this->version, '', $request_uri);
-            }
+            $this->ServerCollection['REQUEST_URI'] = $request_uri_no_version;
         }
     }
     

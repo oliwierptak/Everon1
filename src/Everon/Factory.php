@@ -257,12 +257,12 @@ class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildRestResourceManager($url, array $supported_versions, $versioning, array $mappings, $namespace='Everon\Rest\Resource')
+    public function buildRestResourceManager($url, array $supported_versions, $versioning, array $mapping, $namespace='Everon\Rest\Resource')
     {
         try {
             $class_name = $this->getFullClassName($namespace, 'Manager');
             $this->classExists($class_name);
-            $Manager = new $class_name($url, $supported_versions, $versioning, $mappings);
+            $Manager = new $class_name($url, $supported_versions, $versioning, $mapping);
             $this->injectDependencies($class_name, $Manager);
             return $Manager;
         }

@@ -217,7 +217,12 @@ class Manager implements \Everon\Config\Interfaces\Manager
 url = /
 url_statc = /assets/
 name = everon-dev
-autoload = everon     ;external, everon
+autoload = everon       ;external, everon
+
+[cache]
+config_manager = false
+autoloader = false
+view = false
 
 [modules]
 default = Test
@@ -228,11 +233,6 @@ default = Main
 
 [database]
 driver = pgsql
-
-[cache]
-config_manager = false
-autoloader = false
-view = false
 
 [view]
 compilers[e] = '.htm'

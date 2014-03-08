@@ -45,13 +45,13 @@ interface ResourceHandler
     function generateResourceId($entity_id, $name);
 
     /**
+     * @param $resource_name
      * @param $resource_id
-     * @param $name
+     * @param $collection
+     * @param null $version
      * @return string
      */
-    function getResourceUrl($resource_id, $name);
-    
-    function getUrl();
+    function getResourceUrl($resource_name, $resource_id, $collection, $version=null);
 
     /**
      * @param $resource_name
