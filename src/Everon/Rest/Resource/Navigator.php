@@ -60,9 +60,9 @@ class Navigator implements Interfaces\ResourceNavigator
         $this->order_by = $this->getParameterValue('order_by', []);
         $this->sort = [];
         
-        $collection = $this->getRequest()->getQueryParameter('collection', []);
+        $collection = $this->getRequest()->getQueryParameter('collection', null);
         if ($collection !== null) {
-            $this->expand = array_merge($this->expand, $collection);
+            $this->expand = array_merge($this->expand, [$collection]);
         }
 
         for ($a=0; $a<count($this->order_by); $a++) { //eg. -date_added, user_name //show recently added users

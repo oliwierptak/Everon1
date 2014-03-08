@@ -52,15 +52,20 @@ class Request extends \Everon\Request implements Interfaces\Request
     protected function overwriteEnvironment()
     {
         if ($this->versioning === Resource\Handler::VERSIONING_URL) { //remove version from url
-            $this->ServerCollection['_QUERY_STRING'] = $this->ServerCollection['QUERY_STRING'];
+            $query_string = $this->ServerCollection['QUERY_STRING'];
+            $this->ServerCollection['_QUERY_STRING'] = $query_string;
             $get = $this->GetCollection->toArray();
             array_shift($get);
             if (empty($get) === false) {
                 $query_string = urldecode(http_build_query($get));
             }
             else {
-                $query_string = $this->ServerCollection['QUERY_STRING'];
-                $query_string = substr($query_string, strlen($this->version)+1, strlen($query_string));
+                if (strpos($query_string, '?') !== false) {
+                    $query_string = substr($query_string, strpos($query_string, '?'), strlen($query_string));
+                }
+                else {
+                    $query_string = '';
+                }
             }
             $this->ServerCollection['QUERY_STRING'] = $query_string;
 

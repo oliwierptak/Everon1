@@ -76,7 +76,7 @@ class Handler implements Interfaces\ResourceHandler
         $link = $this->getResourceUrl($resource_name, $resource_id);
 
         $Resource = $this->getFactory()->buildRestResource($domain_name, $version, $link, $Entity); //todo: change version to href
-        $this->buildResourceRelations($Resource);
+        $this->buildResourceRelations($Resource, $resource_id, $resource_name, $version);
 
         return $Resource;
     }
@@ -159,16 +159,16 @@ class Handler implements Interfaces\ResourceHandler
         }
     }
 
-    public function buildResourceRelations(Interfaces\Resource $Resource)
+    public function buildResourceRelations(Interfaces\Resource $Resource, $resource_id, $resource_name, $version)
     {
         /**
          * @var \Everon\Domain\Interfaces\Zone\Entity $Entity
          */
         //$Entity = $Resource->getDomainEntity();
         $RelationCollection = new Helper\Collection([]);
-        foreach ($Resource->getRelationDefinition() as $resource_name => $resource_domain_name) {
-            $link = $this->getResourceUrl($resource_name);
-            $RelationCollection->set($resource_name, ['href' => $link]);
+        foreach ($Resource->getRelationDefinition() as $name => $domain_name) {
+            $link = $this->getResourceUrl($resource_name, $resource_id, $name, '', $version);
+            $RelationCollection->set($name, ['href' => $link]);
         }
 
         $Resource->setRelationCollection($RelationCollection);
