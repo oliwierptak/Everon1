@@ -61,7 +61,7 @@ trait Arrays
     protected function arrayFilterKeys(array $filter, array $data, $keep)
     {
         foreach ($data as $name => $value) {
-            if (in_array($name, $filter) === $keep) {
+            if (in_array($name, $filter) === false && $keep === false) {
                 unset($data[$name]);
             }
         }
