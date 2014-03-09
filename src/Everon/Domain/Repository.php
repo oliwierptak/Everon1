@@ -90,7 +90,11 @@ abstract class Repository implements Interfaces\Repository
         $data = current($data);
         return $this->getDomainManager()->buildEntity($this, $id, $data);
     }
-    
+
+    /**
+     * @param Criteria $Criteria
+     * @return array|null
+     */
     public function getList(Criteria $Criteria)
     {
         $data = $this->getMapper()->fetchAll($Criteria);

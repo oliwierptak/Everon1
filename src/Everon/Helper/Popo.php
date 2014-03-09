@@ -90,11 +90,9 @@ class Popo implements Interfaces\Arrayable
         }
 
         if ($getter) {
-            $this->call_type = static::CALL_TYPE_GETTER;
             return $this->data[$property];
         }
         else if ($setter) {
-            $this->call_type = static::CALL_TYPE_SETTER;
             $this->data[$property] = $arguments[0];
         }
         

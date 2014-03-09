@@ -51,12 +51,13 @@ class Handler implements Interfaces\ResourceHandler
      * @var \Everon\Interfaces\Collection
      */
     protected $MappingCollection = null;
-    
+
 
     /**
      * @param $url
-     * @param $supported_versions
+     * @param array $supported_versions
      * @param $versioning
+     * @param array $mapping
      */
     public function __construct($url, array $supported_versions, $versioning, array $mapping)
     {
@@ -66,14 +67,20 @@ class Handler implements Interfaces\ResourceHandler
         $this->versioning = $versioning;
         $this->MappingCollection = new Helper\Collection($mapping);
     }
-    
+
+    /**
+     * @param Entity $Entity
+     * @param $resource_name
+     * @param $version
+     * @return Interfaces\Resource
+     */
     protected function buildResourceFromEntity(Entity $Entity, $resource_name, $version)
     {
         $this->assertIsInArray($version, $this->supported_versions, 'Unsupported version: "%s"', 'Domain');
         
         $domain_name = $this->getDomainNameFromMapping($resource_name);
         $resource_id = $this->generateResourceId($Entity->getId(), $resource_name);
-        $link = $this->getResourceUrl($resource_name, $resource_id);
+        $link = $this->getResourceUrl($version, $resource_name, $resource_id);
 
         $Resource = $this->getFactory()->buildRestResource($domain_name, $version, $link, $Entity); //todo: change version to href
         $this->buildResourceRelations($Resource, $resource_id, $resource_name, $version);
@@ -93,7 +100,7 @@ class Handler implements Interfaces\ResourceHandler
             $Entity = $Repository->getEntityById($id);
             $this->assertIsNull($Entity, sprintf('Domain Entity: "%s" not found', $domain_name), 'Domain');
             $Resource =  $this->buildResourceFromEntity($Entity, $resource_name, $version);
-            $link = $this->getResourceUrl($resource_name, $resource_id, '', $this->getRequest()->getQueryString(), $version);
+            $link = $this->getResourceUrl($version, $resource_name, $resource_id, $this->getRequest()->getQueryString());
             $Resource->setHref($link);
 
             $resources_to_expand = $Navigator->getExpand();
@@ -103,7 +110,7 @@ class Handler implements Interfaces\ResourceHandler
                     /**
                      * @var \Everon\Interfaces\Collection $RelationCollection
                      */
-                    $RelationCollection = $Resource->getDomainEntity()->getRelationCollection()[$domain_name];
+                    $RelationCollection = $Resource->getDomainEntity()->getRelationCollectionByName($domain_name);
                     $relation_list = $RelationCollection->toArray();
 
                     $RelationCollection = new Helper\Collection([]);
@@ -112,7 +119,7 @@ class Handler implements Interfaces\ResourceHandler
                         $RelationCollection->set($a, $this->buildResourceFromEntity($CollectionEntity, $collection_name, $version));
                     }
 
-                    $link = $this->getResourceUrl($resource_name, $resource_id, $collection_name);
+                    $link = $this->getResourceUrl($version, $resource_name, $resource_id, $collection_name);
                     $CollectionResource = $this->getFactory()->buildRestCollectionResource($domain_name, $version, $link, $RelationCollection);
                     $CollectionResource->setLimit($this->getRequest()->getGetParameter('limit', 10));
                     $CollectionResource->setOffset($this->getRequest()->getGetParameter('offset', 0));
@@ -124,7 +131,7 @@ class Handler implements Interfaces\ResourceHandler
             return $Resource;
         }
         catch (\Exception $e) {
-            throw new Http\Exception\NotFound('Resource: "%s" not found', [$this->getResourceUrl($resource_name, $resource_id)], $e);
+            throw new Http\Exception\NotFound('Resource: "%s" not found', [$this->getRequest()->getUrl()], $e);
         }
     }
 
@@ -135,7 +142,7 @@ class Handler implements Interfaces\ResourceHandler
     {
         try {
             $domain_name = $this->getDomainNameFromMapping($resource_name);
-            $link = $this->getResourceUrl($resource_name);
+            $link = $this->getResourceUrl($version, $resource_name);
             $Repository = $this->getDomainManager()->getRepository($domain_name);
             $Criteria = new Criteria();
             $Criteria->limit($this->getRequest()->getGetParameter('limit', 10));
@@ -155,7 +162,7 @@ class Handler implements Interfaces\ResourceHandler
             return $CollectionResource;
         }
         catch (\Exception $e) {
-            throw new Http\Exception\NotFound('CollectionResource: "%s" not found', [$this->getResourceUrl($resource_name)], $e);
+            throw new Http\Exception\NotFound('CollectionResource: "%s" not found', [$this->getResourceUrl($version, $resource_name)], $e);
         }
     }
 
@@ -164,10 +171,11 @@ class Handler implements Interfaces\ResourceHandler
         /**
          * @var \Everon\Domain\Interfaces\Zone\Entity $Entity
          */
-        //$Entity = $Resource->getDomainEntity();
+        $Entity = $Resource->getDomainEntity();
         $RelationCollection = new Helper\Collection([]);
-        foreach ($Resource->getRelationDefinition() as $name => $domain_name) {
-            $link = $this->getResourceUrl($resource_name, $resource_id, $name, '', $version);
+        foreach ($Entity->getRelationCollection() as $domain_name => $Collection) {
+            $name = $this->getResourceNameFromMapping($domain_name);
+            $link = $this->getResourceUrl($version, $resource_name, $resource_id, $name);
             $RelationCollection->set($name, ['href' => $link]);
         }
 
@@ -197,7 +205,7 @@ class Handler implements Interfaces\ResourceHandler
     /**
      * @inheritdoc
      */
-    public function getResourceUrl($resource_name, $resource_id=null, $collection=null, $request_path=null, $version=null)
+    public function getResourceUrl($version, $resource_name, $resource_id=null, $collection=null, $request_path=null)
     {
         $version = $version ?: $this->current_version;
         $Href = new Href($this->url, $version, $this->versioning);
@@ -223,11 +231,11 @@ class Handler implements Interfaces\ResourceHandler
      */
     public function getResourceNameFromMapping($domain_name)
     {
-        $resource_name = $this->MappingCollection->get($domain_name, null);
-        if ($resource_name === null) {
-            throw new Exception\Manager('Invalid rest mapping resource: "%s"', $domain_name);
+        foreach ($this->MappingCollection as $name => $value) {
+            if ($domain_name === $value) {
+                return $name;
+            }
         }
-
-        return $resource_name;
+        throw new Exception\Manager('Invalid rest mapping resource: "%s"', $domain_name);
     }
 }

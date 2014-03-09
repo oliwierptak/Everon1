@@ -26,11 +26,6 @@ abstract class Resource extends Resource\Basic implements Interfaces\Resource
      */
     protected $RelationCollection = null;
 
-    /**
-     * @var array
-     */
-    protected $relation_definition = [];
-    
 
     public function __construct($href, $version, Entity $Entity)
     {
@@ -46,14 +41,6 @@ abstract class Resource extends Resource\Basic implements Interfaces\Resource
     public function getDomainEntity()
     {
         return $this->DomainEntity;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getRelationDefinition()
-    {
-        return $this->relation_definition;
     }
 
     /**

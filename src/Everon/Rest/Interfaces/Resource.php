@@ -21,11 +21,6 @@ interface Resource extends ResourceBasic
     function getDomainEntity();
 
     /**
-     * @return array
-     */
-    function getRelationDefinition();
-
-    /**
      * @param Collection $RelationCollection
      */
     function setRelationCollection(Collection $RelationCollection);

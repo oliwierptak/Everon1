@@ -61,7 +61,7 @@ abstract class Handler implements Interfaces\Handler
         $data[$Repository->getMapper()->getTable()->getPk()] = $id;
         
         $Criteria = new Criteria();
-        $Criteria->limit($this->getRequest()->getGetParameter('limit', 10));
+        $Criteria->limit($this->getRequest()->getGetParameter('limit', 10)); //todo remove request dependency from domain
         $Criteria->offset($this->getRequest()->getGetParameter('offset', 0));
 
         $Entity = $this->getFactory()->buildDomainEntity($Repository->getName(), $id, $data);

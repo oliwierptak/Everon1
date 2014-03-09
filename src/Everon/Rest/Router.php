@@ -21,7 +21,12 @@ class Router extends EveronRouter implements Interfaces\Router
      */
     public function getRouteByRequest(Request $Request)
     {
-        $DefaultItem = parent::getRouteByRequest($Request);
+        try {
+            $DefaultItem = parent::getRouteByRequest($Request);
+        }
+        catch (\Exception $e) {
+            $DefaultItem = null;
+        }
         
         foreach ($this->getConfig()->getItems() as $RouteItem) {
             /**
@@ -29,6 +34,7 @@ class Router extends EveronRouter implements Interfaces\Router
              */
             if ($RouteItem->matchesByPath($Request->getPath())) {
                 if ($Request->getMethod() === $RouteItem->getMethod()) {
+                    $this->validateAndUpdateRequest($RouteItem, $Request);
                     return $RouteItem;
                 }
             }

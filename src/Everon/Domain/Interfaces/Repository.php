@@ -27,6 +27,12 @@ interface Repository
      * @throws Exception\Repository
      */
     function getEntityById($id);
+
+    /**
+     * @param Criteria $Criteria
+     * @return array|null
+     */
+    function getList(Criteria $Criteria);
         
     /**
      * @param Entity $Entity

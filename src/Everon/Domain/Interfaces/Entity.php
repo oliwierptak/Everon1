@@ -89,4 +89,15 @@ interface Entity extends Interfaces\Arrayable
      */
     function getRelationCollection();
 
+    /**
+     * @param $name
+     * @param Collection $CollectionResource
+     */
+    function setRelationCollectionByName($name, Collection $CollectionResource);
+
+    /**
+     * @param $name
+     * @return Collection
+     */
+    function getRelationCollectionByName($name);
 }

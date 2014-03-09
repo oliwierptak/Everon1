@@ -211,6 +211,24 @@ class Entity extends Helper\Popo implements Interfaces\Entity
     {
         return $this->RelationCollection;
     }
+
+    /**
+     * @param $name
+     * @param Collection $CollectionResource
+     */
+    public function setRelationCollectionByName($name, Collection $CollectionResource)
+    {
+        $this->RelationCollection->set($name, $CollectionResource);
+    }
+
+    /**
+     * @param $name
+     * @return Collection
+     */
+    public function getRelationCollectionByName($name)
+    {
+        return $this->RelationCollection->get($name);
+    }
     
     /**
      * Does the usual call but also marks properties as modified when setter is used
