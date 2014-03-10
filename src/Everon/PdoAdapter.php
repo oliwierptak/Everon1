@@ -124,7 +124,14 @@ class PdoAdapter implements Interfaces\PdoAdapter
             /**
              * @var \PDOStatement $statement
              */
-            $this->getPdo()->setAttribute(\PDO::ATTR_AUTOCOMMIT, FALSE);
+            /**
+             * @var \PDOStatement $statement
+             */
+            switch ($this->getConnectionConfig()->getDriver()) { //todo: xxx
+                case 'mysql':
+                    $this->getPdo()->setAttribute(\PDO::ATTR_AUTOCOMMIT, FALSE);
+                    break;
+            }
             $statement = $this->getPdo()->prepare($sql, [\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY]);
             
             $this->getPdo()->beginTransaction();
@@ -152,7 +159,14 @@ class PdoAdapter implements Interfaces\PdoAdapter
             /**
              * @var \PDOStatement $statement
              */
-            $this->getPdo()->setAttribute(\PDO::ATTR_AUTOCOMMIT, FALSE);
+            /**
+             * @var \PDOStatement $statement
+             */
+            switch ($this->getConnectionConfig()->getDriver()) { //todo: xxx
+                case 'mysql':
+                    $this->getPdo()->setAttribute(\PDO::ATTR_AUTOCOMMIT, FALSE);
+                    break;
+            }
             $statement = $this->getPdo()->prepare($sql, [\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY]);
             
             $this->getPdo()->beginTransaction();
@@ -178,7 +192,14 @@ class PdoAdapter implements Interfaces\PdoAdapter
             /**
              * @var \PDOStatement $statement
              */
-            $this->getPdo()->setAttribute(\PDO::ATTR_AUTOCOMMIT, FALSE);
+            /**
+             * @var \PDOStatement $statement
+             */
+            switch ($this->getConnectionConfig()->getDriver()) { //todo: xxx
+                case 'mysql':
+                    $this->getPdo()->setAttribute(\PDO::ATTR_AUTOCOMMIT, FALSE);
+                    break;
+            }
             $statement = $this->getPdo()->prepare($sql, [\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY]);
             
             $this->getPdo()->beginTransaction();
