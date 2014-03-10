@@ -54,6 +54,8 @@ class Reader extends Schema\Reader implements Interfaces\Schema\Reader
             WHERE 1=1
                 AND table_schema NOT IN ('pg_catalog', 'information_schema')
                 AND table_catalog = :schema
+            ORDER BY
+                table_schema, table_name, ordinal_position
         ";
     }
 

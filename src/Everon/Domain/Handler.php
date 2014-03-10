@@ -51,7 +51,7 @@ abstract class Handler implements Interfaces\Handler
     {
         $this->ConnectionManager = $ConnectionManager;
     }
-
+    
     /**
      * @inheritdoc
      */

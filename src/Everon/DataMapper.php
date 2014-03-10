@@ -48,7 +48,7 @@ abstract class DataMapper implements Interfaces\DataMapper
      * @param string $placeholder
      * @return array
      */
-    protected function getPlaceholderForQuery($placeholder=':')
+    protected function getPlaceholderForQuery($placeholder=':', $skip_pk=false)
     {
         $placeholders = [];
         $columns = $this->getTable()->getColumns();
@@ -56,6 +56,9 @@ abstract class DataMapper implements Interfaces\DataMapper
          * @var DataMapper\Interfaces\Schema\Column $Column
          */
         foreach ($columns as $name => $Column) {
+            if ($skip_pk === true && $Column->isPk()) {
+                continue;
+            }
             $placeholders[] = $placeholder.$name;
         }
 
@@ -67,7 +70,7 @@ abstract class DataMapper implements Interfaces\DataMapper
      * @param string $delimiter
      * @return array
      */
-    protected function getValuesForQuery(Entity $Entity, $delimiter='')
+    protected function getValuesForQuery(Entity $Entity, $delimiter='', $skip_pk=false)
     {
         $values = [];
         $columns = $this->getTable()->getColumns();
@@ -75,6 +78,9 @@ abstract class DataMapper implements Interfaces\DataMapper
          * @var DataMapper\Interfaces\Schema\Column $Column
          */
         foreach ($columns as $name => $Column) {
+            if ($skip_pk === true && $Column->isPk()) {
+                continue;
+            }
             $values[$delimiter.$name] = $this->getEntityValueAndRemapId($name, $Entity);
         }
 

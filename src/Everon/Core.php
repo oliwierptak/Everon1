@@ -59,6 +59,8 @@ abstract class Core implements Interfaces\Core
     {
         $this->runOnce($RequestIdentifier);
         
+        //todo move request logic into runOnce
+        
         if ($this->getRequest()->isEmptyUrl()) {
             $this->Module = $this->getModuleManager()->getDefaultModule();
             
@@ -85,7 +87,6 @@ abstract class Core implements Interfaces\Core
         $this->Controller->execute($CurrentRoute->getAction());
     }
     
-    //todo make events, add some kind of profiling class
     public function shutdown()
     {
         $data = $this->getRequestIdentifier()->getStats();

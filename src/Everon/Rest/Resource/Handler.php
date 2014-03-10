@@ -88,6 +88,16 @@ class Handler implements Interfaces\ResourceHandler
         return $Resource;
     }
 
+
+    public function add($version, $resource_name, array $data)
+    {
+        $domain_name = $this->getDomainNameFromMapping($resource_name);
+        $Repository = $this->getDomainManager()->getRepository($domain_name);
+        $Entity = $Repository->add($data);
+        //$Entity = $this->getDomainManager()->buildEntity($Repository, null, $data);
+        sd($Entity, $version, $resource_name, $data);
+    }
+
     /**
      * @inheritdoc
      */
@@ -238,4 +248,5 @@ class Handler implements Interfaces\ResourceHandler
         }
         throw new Exception\Manager('Invalid rest mapping resource: "%s"', $domain_name);
     }
+
 }

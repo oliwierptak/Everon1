@@ -22,10 +22,10 @@ abstract class Mapper extends DataMapper
      */
     protected function getInsertSql(Entity $Entity)
     {
-        $values_str = rtrim(implode(',', $this->getPlaceholderForQuery()), ',');
-        $columns_str = rtrim(implode(',', $this->getPlaceholderForQuery('')), ',');
+        $values_str = rtrim(implode(',', $this->getPlaceholderForQuery(':',true)), ',');
+        $columns_str = rtrim(implode(',', $this->getPlaceholderForQuery('', true)), ',');
         $sql = sprintf('INSERT INTO %s.%s (%s) VALUES (%s)', $this->getTable()->getSchema(), $this->getTable()->getName(), $columns_str, $values_str);
-        return [$sql, $this->getValuesForQuery($Entity)];
+        return [$sql, $this->getValuesForQuery($Entity, ':', true)];
     }
 
     /**

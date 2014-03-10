@@ -19,6 +19,7 @@ use Everon\Helper;
 abstract class Repository implements Interfaces\Repository
 {
     use Dependency\Injection\DomainManager;
+    use Dependency\Injection\Factory;
     
     /**
      * @var DataMapper
@@ -69,6 +70,23 @@ abstract class Repository implements Interfaces\Repository
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function add(array $data)
+    {
+        $Criteria = new \Everon\DataMapper\Criteria();
+        $Criteria->limit(10);
+        $Criteria->offset(0);
+        
+        $data[$this->getMapper()->getTable()->getPk()] = null;
+        $Entity = $this->getFactory()->buildDomainEntity($this->getName(), null, $data);
+        $id = $this->getMapper()->add($Entity);
+        $Entity = $this->getFactory()->buildDomainEntity($this->getName(), $id, $Entity->toArray(true));
+        $this->buildEntityRelations($Entity, $Criteria);
+        return $Entity;
     }
 
     /**

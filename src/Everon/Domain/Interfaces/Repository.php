@@ -29,6 +29,12 @@ interface Repository
     function getEntityById($id);
 
     /**
+     * @param array $data
+     * @return mixed
+     */
+    function add(array $data);
+
+    /**
      * @param Criteria $Criteria
      * @return array|null
      */
