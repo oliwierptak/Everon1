@@ -51,4 +51,24 @@ interface ResourceNavigator extends Dependency\Request
      * @return array
      */
     function getSort();
+
+    /**
+     * @param int $offset
+     */
+    function setOffset($offset);
+
+    /**
+     * @return int
+     */
+    function getOffset();
+        
+    /**
+     * @param int $limit
+     */
+    function setLimit($limit);
+
+    /**
+     * @return int
+     */
+    function getLimit();
 }

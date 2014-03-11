@@ -26,9 +26,10 @@ interface ResourceHandler
      * @param $name
      * @param $version
      * @return ResourceCollection
+     * @param ResourceNavigator $Navigator
      * @throws \Exception
      */
-    function getCollectionResource($name, $version);
+    function getCollectionResource($name, $version, ResourceNavigator $Navigator);
 
     /**
      * @param $resource_id

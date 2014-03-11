@@ -51,6 +51,12 @@ abstract class Repository implements Interfaces\Repository
         $this->Mapper = $Mapper;
     }
     
+    protected function buildRelations(Interfaces\Entity $Entity, Criteria $RelationCriteria=null)
+    {
+        $RelationCriteria = $RelationCriteria ?: (new \Everon\DataMapper\Criteria())->limit(10)->offset(0);
+        $this->buildEntityRelations($Entity, $RelationCriteria);
+    }
+    
     /**
      * @inheritdoc
      */
@@ -75,26 +81,43 @@ abstract class Repository implements Interfaces\Repository
     /**
      * @inheritdoc
      */
-    public function add(array $data)
+    public function addFromArray(array $data, Criteria $RelationCriteria=null)
     {
-        $Criteria = new \Everon\DataMapper\Criteria();
-        $Criteria->limit(10);
-        $Criteria->offset(0);
-        
-        $data[$this->getMapper()->getTable()->getPk()] = null;
-        $Entity = $this->getFactory()->buildDomainEntity($this->getName(), null, $data);
-        $id = $this->getMapper()->add($Entity);
-        $Entity = $this->getFactory()->buildDomainEntity($this->getName(), $id, $Entity->toArray(true));
-        $this->buildEntityRelations($Entity, $Criteria);
+        $Entity = $this->buildEntity($data, $RelationCriteria, true);
+        $this->persist($Entity);
         return $Entity;
     }
+    
+    /**
+     * @inheritdoc
+     */
+    public function saveFromArray(array $data, Criteria $RelationCriteria=null)
+    {
+        $Entity = $this->buildEntity($data, $RelationCriteria);
+        $this->persist($Entity);
+        return $Entity;
+    }
+    
+    /**
+     * @inheritdoc
+     */
+    public function buildEntity(array $data, Criteria $RelationCriteria=null, $is_new=false)
+    {
+        $id = ($is_new === false) ? $this->getMapper()->getAndValidateId($data) : null;
+        $data[$this->getMapper()->getTable()->getPk()] = $id;
 
+        $Entity = $this->getFactory()->buildDomainEntity($this->getName(), $id, $data);
+        $this->buildRelations($Entity, $RelationCriteria);
+
+        return $Entity;
+    }
+    
     /**
      * @param $id
-     * @return Interfaces\Entity
-     * @throws Exception\Repository
+     * @param Criteria $RelationCriteria
+     * @return Interfaces\Entity|null
      */
-    public function getEntityById($id)
+    public function getEntityById($id, Criteria $RelationCriteria=null)
     {
         $Criteria = (new \Everon\DataMapper\Criteria())->where([
             $this->getMapper()->getTable()->getPk() => $id
@@ -106,14 +129,15 @@ abstract class Repository implements Interfaces\Repository
         }
 
         $data = current($data);
-        return $this->getDomainManager()->buildEntity($this, $id, $data);
+        return $this->buildEntity($data, $RelationCriteria);
     }
 
     /**
      * @param Criteria $Criteria
+     * @param Criteria $RelationCriteria
      * @return array|null
      */
-    public function getList(Criteria $Criteria)
+    public function getList(Criteria $Criteria, Criteria $RelationCriteria=null)
     {
         $data = $this->getMapper()->fetchAll($Criteria);
         if (empty($data)) {
@@ -122,8 +146,7 @@ abstract class Repository implements Interfaces\Repository
         
         $result = [];
         foreach ($data as $item) {
-            $id = $this->getMapper()->getAndValidateId($item);
-            $result[] = $this->getDomainManager()->buildEntity($this, $id, $item);
+            $result[] = $this->buildEntity($item, $RelationCriteria);
         }
         
         return $result;

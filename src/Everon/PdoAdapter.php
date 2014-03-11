@@ -109,7 +109,7 @@ class PdoAdapter implements Interfaces\PdoAdapter
             if ($this->getPdo()->inTransaction()) {
                 $this->getPdo()->rollBack();
             }
-            $this->getLogger()->sql_error($sql."|".print_r($parameters, true)); //todo: add logSql to logger to handle thot
+            $this->getLogger()->sql_error($sql."|".print_r($parameters, true)); //todo: addFromArray logSql to logger to handle thot
             throw new Exception\Pdo($e);
         }
     }

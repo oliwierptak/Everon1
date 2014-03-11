@@ -24,6 +24,8 @@ class Navigator implements Interfaces\ResourceNavigator
     protected $fields = null;
     protected $order_by = null;
     protected $sort = null;
+    protected $offset = null;
+    protected $limit = null;
     
 
     /**
@@ -44,9 +46,14 @@ class Navigator implements Interfaces\ResourceNavigator
     {
         $value = $this->getRequest()->getQueryParameter($name, null);
         if ($value !== null) {
-            $value = explode(static::PARAM_SEPARATOR, trim($value, static::PARAM_SEPARATOR)); //eg. date_added,user_name
-            if (is_array($value)) {
-                return $value;
+            if (strpos($value, static::PARAM_SEPARATOR) !== false) {
+                $value = explode(static::PARAM_SEPARATOR, trim($value, static::PARAM_SEPARATOR)); //eg. date_added,user_name
+                if (is_array($value)) {
+                    return $value;
+                }
+            }
+            else {
+                return $this->getRequest()->getQueryParameter($name, $default);
             }
         }
         
@@ -58,6 +65,8 @@ class Navigator implements Interfaces\ResourceNavigator
         $this->fields = $this->getParameterValue('fields', []);
         $this->expand = $this->getParameterValue('expand', []);
         $this->order_by = $this->getParameterValue('order_by', []);
+        $this->limit = $this->getParameterValue('limit', 10);
+        $this->offset = $this->getParameterValue('offset', 0);
         $this->sort = [];
         
         $collection = $this->getRequest()->getQueryParameter('collection', null);
@@ -140,4 +149,37 @@ class Navigator implements Interfaces\ResourceNavigator
     {
         return $this->sort;
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function setOffset($offset)
+    {
+        $this->offset = $offset;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getOffset()
+    {
+        return $this->offset;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setLimit($limit)
+    {
+        $this->limit = $limit;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getLimit()
+    {
+        return $this->limit;
+    }
+    
 }

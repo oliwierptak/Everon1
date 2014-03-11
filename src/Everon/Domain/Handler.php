@@ -51,24 +51,6 @@ abstract class Handler implements Interfaces\Handler
     {
         $this->ConnectionManager = $ConnectionManager;
     }
-    
-    /**
-     * @inheritdoc
-     */
-    public function buildEntity(Interfaces\Repository $Repository, $id, array $data)
-    {
-        $id = $id ?: $Repository->getMapper()->getAndValidateId($data);
-        $data[$Repository->getMapper()->getTable()->getPk()] = $id;
-        
-        $Criteria = new Criteria();
-        $Criteria->limit($this->getRequest()->getGetParameter('limit', 10)); //todo remove request dependency from domain
-        $Criteria->offset($this->getRequest()->getGetParameter('offset', 0));
-
-        $Entity = $this->getFactory()->buildDomainEntity($Repository->getName(), $id, $data);
-        $Repository->buildEntityRelations($Entity, $Criteria);
-        
-        return $Entity;
-    }
 
     /**
      * @inheritdoc

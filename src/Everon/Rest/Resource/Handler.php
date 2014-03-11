@@ -93,7 +93,7 @@ class Handler implements Interfaces\ResourceHandler
     {
         $domain_name = $this->getDomainNameFromMapping($resource_name);
         $Repository = $this->getDomainManager()->getRepository($domain_name);
-        $Entity = $Repository->add($data);
+        $Entity = $Repository->addFromArray($data);
         //$Entity = $this->getDomainManager()->buildEntity($Repository, null, $data);
         sd($Entity, $version, $resource_name, $data);
     }
@@ -104,13 +104,17 @@ class Handler implements Interfaces\ResourceHandler
     public function getResource($resource_id, $resource_name, $version, Interfaces\ResourceNavigator $Navigator)
     {
         try {
+            $EntityRelationCriteria = new Criteria();
+            $EntityRelationCriteria->limit($Navigator->getLimit());
+            $EntityRelationCriteria->offset($Navigator->getOffset());
+            
             $domain_name = $this->getDomainNameFromMapping($resource_name);
             $id = $this->generateEntityId($resource_id, $domain_name);
             $Repository = $this->getDomainManager()->getRepository($domain_name);
-            $Entity = $Repository->getEntityById($id);
+            $Entity = $Repository->getEntityById($id, $EntityRelationCriteria);
             $this->assertIsNull($Entity, sprintf('Domain Entity: "%s" not found', $domain_name), 'Domain');
             $Resource =  $this->buildResourceFromEntity($Entity, $resource_name, $version);
-            $link = $this->getResourceUrl($version, $resource_name, $resource_id, $this->getRequest()->getQueryString());
+            $link = $this->getResourceUrl($version, $resource_name, $resource_id, null, $this->getRequest()->getQueryString());
             $Resource->setHref($link);
 
             $resources_to_expand = $Navigator->getExpand();
@@ -130,6 +134,7 @@ class Handler implements Interfaces\ResourceHandler
                     }
 
                     $link = $this->getResourceUrl($version, $resource_name, $resource_id, $collection_name);
+                    $link = $this->getResourceUrl($version, $resource_name, $resource_id, $collection_name, $this->getRequest()->getQueryString());
                     $CollectionResource = $this->getFactory()->buildRestCollectionResource($domain_name, $version, $link, $RelationCollection);
                     $CollectionResource->setLimit($this->getRequest()->getGetParameter('limit', 10));
                     $CollectionResource->setOffset($this->getRequest()->getGetParameter('offset', 0));
@@ -148,17 +153,17 @@ class Handler implements Interfaces\ResourceHandler
     /**
      * @inheritdoc
      */
-    public function getCollectionResource($resource_name, $version)
+    public function getCollectionResource($resource_name, $version, Interfaces\ResourceNavigator $Navigator)
     {
         try {
             $domain_name = $this->getDomainNameFromMapping($resource_name);
             $link = $this->getResourceUrl($version, $resource_name);
             $Repository = $this->getDomainManager()->getRepository($domain_name);
-            $Criteria = new Criteria();
-            $Criteria->limit($this->getRequest()->getGetParameter('limit', 10));
-            $Criteria->offset($this->getRequest()->getGetParameter('offset', 0));
+            $EntityRelationCriteria = new Criteria();
+            $EntityRelationCriteria->limit($Navigator->getLimit());
+            $EntityRelationCriteria->offset($Navigator->getOffset());
             
-            $entity_list = $Repository->getList($Criteria);
+            $entity_list = $Repository->getList($EntityRelationCriteria);
     
             $ResourceList = new Helper\Collection([]);
             for ($a=0; $a<count($entity_list); $a++) {
@@ -167,8 +172,8 @@ class Handler implements Interfaces\ResourceHandler
             }
             
             $CollectionResource = $this->getFactory()->buildRestCollectionResource($domain_name, $version, $link, $ResourceList); //todo: change version to href
-            $CollectionResource->setLimit($this->getRequest()->getGetParameter('limit', 10));
-            $CollectionResource->setOffset($this->getRequest()->getGetParameter('offset', 0));
+            $CollectionResource->setLimit($EntityRelationCriteria->getLimit());
+            $CollectionResource->setOffset($EntityRelationCriteria->getOffset());
             return $CollectionResource;
         }
         catch (\Exception $e) {

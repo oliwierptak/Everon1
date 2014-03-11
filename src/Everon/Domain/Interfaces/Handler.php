@@ -26,14 +26,6 @@ interface Handler
     function setConnectionManager(ConnectionManager $ConnectionManager);
 
     /**
-     * @param Repository $Repository
-     * @param $id
-     * @param array $data
-     * 
-     */
-    function buildEntity(Repository $Repository, $id, array $data);
-
-    /**
      * @return Schema
      */
     function getSchema();
