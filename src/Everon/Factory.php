@@ -707,6 +707,9 @@ class Factory implements Interfaces\Factory
         try {
             $primary_key_list = [];
             foreach ($primary_keys as $constraint_data) {
+                /**
+                 * @var \Everon\DataMapper\Interfaces\Schema\PrimaryKey $PrimaryKey
+                 */
                 $class_name = $this->getFullClassName($namespace, 'Schema\PrimaryKey');
                 $this->classExists($class_name);
                 $PrimaryKey = new $class_name($constraint_data);
@@ -715,6 +718,9 @@ class Factory implements Interfaces\Factory
 
             $unique_key_list = [];
             foreach ($unique_keys as $constraint_data) {
+                /**
+                 * @var \Everon\DataMapper\Interfaces\Schema\UniqueKey $UniqueKey
+                 */
                 $class_name = $this->getFullClassName($namespace, 'Schema\UniqueKey');
                 $this->classExists($class_name);
                 $UniqueKey = new $class_name($constraint_data);
@@ -723,6 +729,9 @@ class Factory implements Interfaces\Factory
             
             $foreign_key_list = [];
             foreach ($foreign_keys as $foreign_key_data) {
+                /**
+                 * @var \Everon\DataMapper\Interfaces\Schema\ForeignKey $ForeignKey
+                 */
                 $class_name = $this->getFullClassName($namespace, 'Schema\ForeignKey');
                 $this->classExists($class_name);
                 $ForeignKey = new $class_name($foreign_key_data);
@@ -746,7 +755,7 @@ class Factory implements Interfaces\Factory
             return $Table;
         }
         catch (\Exception $e) {
-            throw new Exception\Factory('SchemaTable: "%" initialization error', $name, $e);
+            throw new Exception\Factory('SchemaTable: "%s.%s" initialization error', [$schema,$name], $e);
         }
     } 
     

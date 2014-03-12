@@ -183,7 +183,7 @@ class Handler implements Interfaces\ResourceHandler
     public function buildResourceRelations(Interfaces\Resource $Resource, $resource_id, $resource_name, $version)
     {
         /**
-         * @var \Everon\Domain\Interfaces\Zone\Entity $Entity
+         * @var \Everon\Domain\Interfaces\RestZone\Entity $Entity
          */
         $Entity = $Resource->getDomainEntity();
         $RelationCollection = new Helper\Collection([]);
