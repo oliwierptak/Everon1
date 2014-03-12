@@ -190,13 +190,14 @@ interface Factory
     function buildConnectionManager(Interfaces\Config $DatabaseConfig , $namespace='Everon\DataMapper');
 
     /**
+     * @param string $name
      * @param DataMapper\Interfaces\Schema\Table $Table
      * @param DataMapper\Interfaces\Schema $Schema
      * @param string $namespace
      * @return Interfaces\DataMapper
      * @throws Exception\Factory
      */
-    function buildDataMapper(DataMapper\Interfaces\Schema\Table $Table, DataMapper\Interfaces\Schema $Schema, $namespace='Everon\DataMapper');
+    function buildDataMapper($name, DataMapper\Interfaces\Schema\Table $Table, DataMapper\Interfaces\Schema $Schema, $namespace='Everon\DataMapper');
 
     /**
      * @param $name

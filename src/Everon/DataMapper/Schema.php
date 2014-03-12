@@ -74,8 +74,6 @@ class Schema implements Interfaces\Schema
                 $castToEmptyArrayWhenNull($name, $foreign_key_list)
             );
         }
-        
-        $this->tables = array_change_key_case($this->tables, \CASE_LOWER);
     }
     
     /**

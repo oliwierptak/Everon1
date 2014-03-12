@@ -86,9 +86,7 @@ abstract class Handler implements Interfaces\Handler
             $this->assertIsNull($data_mapper_name, 'Invalid data mapper relation for: "%s"', 'Domain');
 
             $Schema = $this->getSchema();
-            $DataMapper = $this->getFactory()->buildDataMapper(
-                $Schema->getTable($data_mapper_name), $Schema
-            );
+            $DataMapper = $this->getFactory()->buildDataMapper($domain_name, $Schema->getTable($data_mapper_name), $Schema);
             $this->repositories[$domain_name] = $this->getFactory()->buildDomainRepository($domain_name, $DataMapper);
         }
         

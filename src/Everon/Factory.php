@@ -579,9 +579,8 @@ class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildDataMapper(DataMapper\Interfaces\Schema\Table $Table, DataMapper\Interfaces\Schema $Schema, $namespace='Everon\DataMapper')
+    public function buildDataMapper($name, DataMapper\Interfaces\Schema\Table $Table, DataMapper\Interfaces\Schema $Schema, $namespace='Everon\DataMapper')
     {
-        $name = $this->stringUnderscoreToCamel($Table->getName());
         try {
             $adapter_name = $Schema->getAdapterName();
             $class_name = $this->getFullClassName($namespace, $adapter_name.'\\'.$name);
