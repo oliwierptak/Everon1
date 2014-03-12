@@ -31,17 +31,17 @@ interface Handler
     function getSchema();
 
     /**
-     * @param $name
+     * @param $domain_name
      * @return Repository
      * @throws \Everon\DataMapper\Exception\Schema
      */
-    function getRepository($name);
+    function getRepository($domain_name);
 
     /**
-     * @param $name
+     * @param $domain_name
      * @return mixed
      */
-    function getModel($name);
+    function getModel($domain_name);
 
     /**
      * @param Factory $Factory

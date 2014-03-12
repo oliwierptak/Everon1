@@ -62,9 +62,11 @@ class Schema implements Interfaces\Schema
         };
         
         foreach ($table_list as $name => $table_data) {
-            $this->tables[$name] = $this->getFactory()->buildSchemaTable(
+            $table_schema_name = trim($table_data['table_schema']);
+            $table_id = strtolower($table_schema_name ? $table_data['table_schema'].'.'.$name : $name); 
+            $this->tables[$table_id] = $this->getFactory()->buildSchemaTable(
                 $name,
-                @$table_data['table_schema'],
+                $table_data['table_schema'],
                 $this->getAdapterName(),
                 $castToEmptyArrayWhenNull($name, $column_list), 
                 $castToEmptyArrayWhenNull($name, $primary_key_list), 
@@ -120,10 +122,10 @@ class Schema implements Interfaces\Schema
     {
         $this->initTables();
         $name = mb_strtolower($name);
+        
         if (isset($this->tables[$name]) === false) {
             throw new Exception\Schema('Invalid schema table name: "%s"', $name);
         }
-        
         return $this->tables[$name];
     }
 
@@ -141,7 +143,7 @@ class Schema implements Interfaces\Schema
         }
 
         if (isset($this->pdo_adapters[$name]) === false) {
-            throw new Exception\Schema('Invalid PdoAsdapter name: "%s"', $name);
+            throw new Exception\Schema('Invalid PdoAdapter name: "%s"', $name);
         }
 
         return $this->pdo_adapters[$name];

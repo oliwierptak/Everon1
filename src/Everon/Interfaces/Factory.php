@@ -227,11 +227,12 @@ interface Factory
 
     /**
      * @param DataMapper\Interfaces\ConnectionManager $ConnectionManager
+     * @param array $mappings
      * @param string $namespace
      * @return Domain\Interfaces\Manager
      * @throws Exception\Factory
      */
-    function buildDomainManager(DataMapper\Interfaces\ConnectionManager $ConnectionManager, $namespace='Everon\Domain');
+    function buildDomainManager(DataMapper\Interfaces\ConnectionManager $ConnectionManager, array $mappings, $namespace='Everon\Domain');
 
     /**
      * @param DataMapper\Interfaces\Schema\Reader $Reader

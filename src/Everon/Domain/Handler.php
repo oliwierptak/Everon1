@@ -9,7 +9,6 @@
  */
 namespace Everon\Domain;
 
-use Everon\DataMapper\Criteria;
 use Everon\DataMapper\Dependency;
 use Everon\DataMapper\Interfaces\ConnectionManager;
 use Everon\DataMapper\Interfaces\Schema;
@@ -26,6 +25,8 @@ abstract class Handler implements Interfaces\Handler
 
     use Dependency\ConnectionManager;
     use Helper\IsCallable;
+    use Helper\Asserts\IsNull;
+    use Helper\Exceptions;
     
 
     /**
@@ -43,49 +44,59 @@ abstract class Handler implements Interfaces\Handler
      */
     protected $Schema = null;
 
+    /**
+     * @var \Everon\Interfaces\Collection
+     */
+    protected $MappingCollection = null;
+
 
     /**
      * @param ConnectionManager $ConnectionManager
+     * @param array $mapping
      */
-    public function __construct(ConnectionManager $ConnectionManager)
+    public function __construct(ConnectionManager $ConnectionManager, array $mapping)
     {
         $this->ConnectionManager = $ConnectionManager;
+        $this->MappingCollection = new Helper\Collection($mapping);
     }
 
     /**
      * @inheritdoc
      */
-    public function getModel($name)
+    public function getModel($domain_name)
     {
-        if (isset($this->models[$name]) === false) {
-            $this->models[$name] = $this->getFactory()->buildDomainModel($name);
+        if (isset($this->models[$domain_name]) === false) {
+            $this->models[$domain_name] = $this->getFactory()->buildDomainModel($domain_name);
         }
 
-        if (isset($this->models[$name]) === false) {
-            throw new SchemaException('Invalid model name: "%s"', $name);
+        if (isset($this->models[$domain_name]) === false) {
+            throw new SchemaException('Invalid model name: "%s"', $domain_name);
         }
 
-        return $this->models[$name];
+        return $this->models[$domain_name];
     }
 
     /**
      * @inheritdoc
      */
-    public function getRepository($name)
+    public function getRepository($domain_name)
     {
-        if (isset($this->repositories[$name]) === false) {
+        if (isset($this->repositories[$domain_name]) === false) {
+            $data_mapper_name = $this->getDataMapperNameFromDomain($domain_name);
+            $this->assertIsNull($data_mapper_name, 'Invalid data mapper relation for: "%s"', 'Domain');
+
             $Schema = $this->getSchema();
             $DataMapper = $this->getFactory()->buildDataMapper(
-                $Schema->getTable($name), $Schema
+                $Schema->getTable($data_mapper_name), $Schema
             );
-            $this->repositories[$name] = $this->getFactory()->buildDomainRepository($name, $DataMapper);
+            $this->repositories[$domain_name] = $this->getFactory()->buildDomainRepository($domain_name, $DataMapper);
         }
         
-        if (isset($this->repositories[$name]) === false) {
-            throw new SchemaException('Invalid repository name: "%s"', $name);
+        if (isset($this->repositories[$domain_name]) === false) {
+            throw new SchemaException('Invalid repository name: "%s"', $domain_name);
         }
 
-        return $this->repositories[$name];
+        return $this->repositories[$domain_name];
     }
 
     /**
@@ -103,5 +114,15 @@ abstract class Handler implements Interfaces\Handler
         }
 
         return $this->Schema;
+    }
+    
+    public function getDataMapperNameFromDomain($domain_name)
+    {
+        $key = array_search($domain_name, $this->MappingCollection->toArray());
+        if ($key === false) {
+            return null;
+        }
+        
+        return $key;
     }
 }

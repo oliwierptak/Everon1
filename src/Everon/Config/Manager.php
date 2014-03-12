@@ -400,8 +400,7 @@ EOF;
      */
     public function getDatabaseConfig()
     {
-        $driver = $this->getConfigValue('application.database.driver', 'pgsql');
-        return $this->getConfigByName('database_'.$driver);
+        return $this->getConfigByName('database');
     }
 
 }
