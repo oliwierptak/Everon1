@@ -114,7 +114,7 @@ class Handler implements Interfaces\ResourceHandler
             $Entity = $Repository->getEntityById($id, $EntityRelationCriteria);
             $this->assertIsNull($Entity, sprintf('Domain Entity: "%s" not found', $domain_name), 'Domain');
             $Resource =  $this->buildResourceFromEntity($Entity, $resource_name, $version);
-            $link = $this->getResourceUrl($version, $resource_name, $resource_id, null, $this->getRequest()->getQueryString());
+            $link = $this->getResourceUrl($version, $resource_name, $resource_id);
             $Resource->setHref($link);
 
             $resources_to_expand = $Navigator->getExpand();
@@ -134,7 +134,6 @@ class Handler implements Interfaces\ResourceHandler
                     }
 
                     $link = $this->getResourceUrl($version, $resource_name, $resource_id, $collection_name);
-                    $link = $this->getResourceUrl($version, $resource_name, $resource_id, $collection_name, $this->getRequest()->getQueryString());
                     $CollectionResource = $this->getFactory()->buildRestCollectionResource($domain_name, $version, $link, $RelationCollection);
                     $CollectionResource->setLimit($this->getRequest()->getGetParameter('limit', 10));
                     $CollectionResource->setOffset($this->getRequest()->getGetParameter('offset', 0));

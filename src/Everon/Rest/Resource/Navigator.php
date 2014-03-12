@@ -44,9 +44,10 @@ class Navigator implements Interfaces\ResourceNavigator
      */
     protected function getParameterValue($name, $default=null)
     {
+        $as_array = is_array($default);
         $value = $this->getRequest()->getQueryParameter($name, null);
         if ($value !== null) {
-            if (strpos($value, static::PARAM_SEPARATOR) !== false) {
+            if ($as_array || strpos($value, static::PARAM_SEPARATOR) !== false) {
                 $value = explode(static::PARAM_SEPARATOR, trim($value, static::PARAM_SEPARATOR)); //eg. date_added,user_name
                 if (is_array($value)) {
                     return $value;
