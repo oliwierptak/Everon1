@@ -110,36 +110,34 @@ class Handler implements Interfaces\ResourceHandler
             
             $domain_name = $this->getDomainNameFromMapping($resource_name);
             $id = $this->generateEntityId($resource_id, $domain_name);
-            $Repository = $this->getDomainManager()->getRepository($domain_name);
-            $Entity = $Repository->getEntityById($id, $EntityRelationCriteria);
+            $Entity = $this->getDomainManager()->getRepository($domain_name)->getEntityById($id, $EntityRelationCriteria);
             $this->assertIsNull($Entity, sprintf('Domain Entity: "%s" not found', $domain_name), 'Domain');
-            $Resource =  $this->buildResourceFromEntity($Entity, $resource_name, $version);
+            
+            $Resource = $this->buildResourceFromEntity($Entity, $resource_name, $version);
             $link = $this->getResourceUrl($version, $resource_name, $resource_id);
             $Resource->setHref($link);
 
             $resources_to_expand = $Navigator->getExpand();
             foreach ($resources_to_expand as $collection_name) {
                 $domain_name = $this->getDomainNameFromMapping($collection_name);
-                if ($domain_name !== null) {
-                    /**
-                     * @var \Everon\Interfaces\Collection $RelationCollection
-                     */
-                    $RelationCollection = $Resource->getDomainEntity()->getRelationCollectionByName($domain_name);
-                    $relation_list = $RelationCollection->toArray();
+                /**
+                 * @var \Everon\Interfaces\Collection $RelationCollection
+                 */
+                $RelationCollection = $Resource->getDomainEntity()->getRelationCollectionByName($domain_name);
+                $relation_list = $RelationCollection->toArray();
 
-                    $RelationCollection = new Helper\Collection([]);
-                    for ($a=0 ;$a<count($relation_list); $a++) {
-                        $CollectionEntity = $relation_list[$a];
-                        $RelationCollection->set($a, $this->buildResourceFromEntity($CollectionEntity, $collection_name, $version));
-                    }
-
-                    $link = $this->getResourceUrl($version, $resource_name, $resource_id, $collection_name);
-                    $CollectionResource = $this->getFactory()->buildRestCollectionResource($domain_name, $version, $link, $RelationCollection);
-                    $CollectionResource->setLimit($this->getRequest()->getGetParameter('limit', 10));
-                    $CollectionResource->setOffset($this->getRequest()->getGetParameter('offset', 0));
-
-                    $Resource->setRelationCollectionByName($collection_name, $CollectionResource);
+                $RelationCollection = new Helper\Collection([]);
+                for ($a=0 ;$a<count($relation_list); $a++) {
+                    $CollectionEntity = $relation_list[$a];
+                    $RelationCollection->set($a, $this->buildResourceFromEntity($CollectionEntity, $collection_name, $version));
                 }
+
+                $link = $this->getResourceUrl($version, $resource_name, $resource_id, $collection_name);
+                $CollectionResource = $this->getFactory()->buildRestCollectionResource($domain_name, $version, $link, $RelationCollection);
+                $CollectionResource->setLimit($this->getRequest()->getGetParameter('limit', 10));
+                $CollectionResource->setOffset($this->getRequest()->getGetParameter('offset', 0));
+
+                $Resource->setRelationCollectionByName($collection_name, $CollectionResource);
             }
             
             return $Resource;
