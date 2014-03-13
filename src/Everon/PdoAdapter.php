@@ -87,7 +87,7 @@ class PdoAdapter implements Interfaces\PdoAdapter
                     break;
             }
             
-            $statement = $this->getPdo()->prepare($sql, [\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY]);
+            $statement = $this->getPdo()->prepare($sql);
             $this->getPdo()->beginTransaction();
             
             if ($parameters !== null) {
@@ -132,7 +132,7 @@ class PdoAdapter implements Interfaces\PdoAdapter
                     $this->getPdo()->setAttribute(\PDO::ATTR_AUTOCOMMIT, FALSE);
                     break;
             }
-            $statement = $this->getPdo()->prepare($sql, [\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY]);
+            $statement = $this->getPdo()->prepare($sql);
             
             $this->getPdo()->beginTransaction();
             $result = $statement->execute($parameters);  
@@ -167,7 +167,7 @@ class PdoAdapter implements Interfaces\PdoAdapter
                     $this->getPdo()->setAttribute(\PDO::ATTR_AUTOCOMMIT, FALSE);
                     break;
             }
-            $statement = $this->getPdo()->prepare($sql, [\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY]);
+            $statement = $this->getPdo()->prepare($sql);
             
             $this->getPdo()->beginTransaction();
             $result = $statement->execute($parameters);  
@@ -200,7 +200,7 @@ class PdoAdapter implements Interfaces\PdoAdapter
                     $this->getPdo()->setAttribute(\PDO::ATTR_AUTOCOMMIT, FALSE);
                     break;
             }
-            $statement = $this->getPdo()->prepare($sql, [\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY]);
+            $statement = $this->getPdo()->prepare($sql);
             
             $this->getPdo()->beginTransaction();
             $result = $statement->execute($parameters);  
