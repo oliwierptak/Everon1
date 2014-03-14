@@ -59,7 +59,21 @@ $Container->propose('ModuleManager', function() use ($Factory) {
     return $Factory->buildModuleManager();
 });
 
+$Container->propose('DomainManager', function() use ($Factory) {
+    $Factory->getDependencyContainer()->monitor('DomainManager', ['Everon\DataMapper\Connection\Manager', 'Everon\Config\Manager']);
+    $ConfigManager = $Factory->getDependencyContainer()->resolve('ConfigManager');
+    $ConnectionManager = $Factory->getDependencyContainer()->resolve('ConnectionManager');
+    $mapping = $ConfigManager->getConfigValue('domain.mapping', []);
+    return $Factory->buildDomainManager($ConnectionManager, $mapping);
+});
 
+$Container->propose('ConnectionManager', function() use ($Factory) {
+    $Factory->getDependencyContainer()->monitor('ConnectionManager', ['Everon\Config\Manager']);
+    $DatabaseConfig = $Factory->getDependencyContainer()->resolve('ConfigManager')->getDatabaseConfig();
+    return $Factory->buildConnectionManager($DatabaseConfig);
+});
+
+//xxx
 //avoid circular dependencies
 //the logger needs ConfigManager in order to be instantiated, therefore Logger can't be auto injected into ConfigManger
 $Container->afterSetup(function($Container){
