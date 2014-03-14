@@ -102,22 +102,22 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
 
     public function getTmpDirectory()
     {
-        return $this->FrameworkEnvironment->getTest().$this->suite_name.DIRECTORY_SEPARATOR.'Tests'.DIRECTORY_SEPARATOR.'tmp'.DIRECTORY_SEPARATOR;
+        return $this->FrameworkEnvironment->getTest().$this->suite_name.DIRECTORY_SEPARATOR.'tmp'.DIRECTORY_SEPARATOR;
     }
 
     public function getFixtureDirectory()
     {
-        return $this->FrameworkEnvironment->getTest().$this->suite_name.DIRECTORY_SEPARATOR.'Tests'.DIRECTORY_SEPARATOR.'fixtures'.DIRECTORY_SEPARATOR;
+        return $this->FrameworkEnvironment->getTest().$this->suite_name.DIRECTORY_SEPARATOR.'fixtures'.DIRECTORY_SEPARATOR;
     }
 
     public function getStubDirectory()
     {
-        return $this->FrameworkEnvironment->getTest().$this->suite_name.DIRECTORY_SEPARATOR.'Tests'.DIRECTORY_SEPARATOR.'stubs'.DIRECTORY_SEPARATOR;
+        return $this->FrameworkEnvironment->getTest().$this->suite_name.DIRECTORY_SEPARATOR.'stubs'.DIRECTORY_SEPARATOR;
     }
 
     public function getMockDirectory()
     {
-        return $this->FrameworkEnvironment->getTest().$this->suite_name.DIRECTORY_SEPARATOR.'Tests'.DIRECTORY_SEPARATOR.'mocks'.DIRECTORY_SEPARATOR;
+        return $this->FrameworkEnvironment->getTest().$this->suite_name.DIRECTORY_SEPARATOR.'mocks'.DIRECTORY_SEPARATOR;
     }
     
     public function getDataMapperFixturesDirectory()
@@ -127,7 +127,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
     
     public function getDoublesDirectory()
     {
-        return $this->FrameworkEnvironment->getTest().$this->suite_name.DIRECTORY_SEPARATOR.'Tests'.DIRECTORY_SEPARATOR.'doubles'.DIRECTORY_SEPARATOR;
+        return $this->FrameworkEnvironment->getTest().$this->suite_name.DIRECTORY_SEPARATOR.'doubles'.DIRECTORY_SEPARATOR;
     }
 
     public function getLogDirectory()
