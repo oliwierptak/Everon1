@@ -12,9 +12,10 @@ namespace Everon\Rest\Resource;
 use Everon\DataMapper\Criteria;
 use Everon\Dependency;
 use Everon\Domain\Interfaces\Entity;
-use Everon\Rest\Exception;
+use Everon\Exception as EveronException;
 use Everon\Helper;
 use Everon\Http;
+use Everon\Rest\Exception;
 use Everon\Rest\Interfaces;
 
 class Handler implements Interfaces\ResourceHandler
@@ -142,8 +143,11 @@ class Handler implements Interfaces\ResourceHandler
             
             return $Resource;
         }
-        catch (\Exception $e) {
-            throw new Http\Exception\NotFound('Resource: "%s" not found', [$this->getRequest()->getUrl()], $e);
+        catch (EveronException\Domain $e) {
+            throw new Http\Exception\NotFound('Resource: "%s" not found', [$this->getResourceUrl($version, $resource_name)], $e);
+        }
+        catch (Exception\Resource $e) {
+            throw new Http\Exception\NotFound('Resource: "%s" not found', [$this->getResourceUrl($version, $resource_name)], $e);
         }
     }
 
@@ -173,7 +177,10 @@ class Handler implements Interfaces\ResourceHandler
             $CollectionResource->setOffset($EntityRelationCriteria->getOffset());
             return $CollectionResource;
         }
-        catch (\Exception $e) {
+        catch (EveronException\Domain $e) {
+            throw new Http\Exception\NotFound('CollectionResource: "%s" not found', [$this->getResourceUrl($version, $resource_name)], $e);
+        }
+        catch (Exception\Resource $e) {
             throw new Http\Exception\NotFound('CollectionResource: "%s" not found', [$this->getResourceUrl($version, $resource_name)], $e);
         }
     }
@@ -232,7 +239,7 @@ class Handler implements Interfaces\ResourceHandler
     {
         $domain_name = $this->MappingCollection->get($resource_name, null);
         if ($domain_name === null) {
-            throw new Exception\Manager('Invalid rest mapping domain: "%s"', $resource_name);
+            throw new Exception\Resource('Invalid rest mapping domain: "%s"', $resource_name);
         }
         
         return $domain_name;
@@ -248,7 +255,7 @@ class Handler implements Interfaces\ResourceHandler
                 return $name;
             }
         }
-        throw new Exception\Manager('Invalid rest mapping resource: "%s"', $domain_name);
+        throw new Exception\Resource('Invalid rest mapping resource: "%s"', $domain_name);
     }
 
 }
