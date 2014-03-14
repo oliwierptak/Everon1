@@ -530,8 +530,12 @@ class Request implements Interfaces\Request
         return $url_path === '/';
     }
 
-    //http://stackoverflow.com/questions/6038236/http-accept-language
-    function getPreferredLanguageList()  
+
+    /**
+     * http://stackoverflow.com/questions/6038236/http-accept-language
+     * @return array
+     */
+    protected function getPreferredLanguageList()  
     {
         $acceptedLanguages = $this->getServerCollection()->get('HTTP_ACCEPT_LANGUAGE');
 
@@ -564,6 +568,19 @@ class Request implements Interfaces\Request
         uksort($lang2pref, $cmpLangs);
 
         return array_keys($lang2pref);
+    }
+    
+    /**
+     * @inheritdoc
+     */
+    public function getPreferredLanguageCode($default='nl-NL')  
+    {
+        $code_list = $this->getPreferredLanguageList();
+        $current = array_shift($code_list);
+        if (strlen($current) !== 5) {
+            return $default;
+        }
+        return $current;
     }
 
 }

@@ -32,7 +32,7 @@ interface Repository
      * @param array $data
      * @return mixed
      */
-    function addFromArray(array $data);
+    function persistFromArray(array $data);
 
     /**
      * @param Criteria $Criteria

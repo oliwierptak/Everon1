@@ -93,7 +93,7 @@ class Handler implements Interfaces\ResourceHandler
     {
         $domain_name = $this->getDomainNameFromMapping($resource_name);
         $Repository = $this->getDomainManager()->getRepository($domain_name);
-        $Entity = $Repository->addFromArray($data);
+        $Entity = $Repository->persistFromArray($data);
         //$Entity = $this->getDomainManager()->buildEntity($Repository, null, $data);
         sd($Entity, $version, $resource_name, $data);
     }

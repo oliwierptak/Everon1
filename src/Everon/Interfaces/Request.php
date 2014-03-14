@@ -152,5 +152,11 @@ interface Request extends Arrayable
     /**
      * @return bool
      */
-    function isEmptyUrl();   
+    function isEmptyUrl();
+
+    /**
+     * http://stackoverflow.com/questions/6038236/http-accept-language
+     * @return array
+     */
+    function getPreferredLanguageCode();
 }

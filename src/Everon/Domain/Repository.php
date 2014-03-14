@@ -81,7 +81,7 @@ abstract class Repository implements Interfaces\Repository
     /**
      * @inheritdoc
      */
-    public function addFromArray(array $data, Criteria $RelationCriteria=null)
+    public function persistFromArray(array $data, Criteria $RelationCriteria=null)
     {
         $Entity = $this->buildEntity($data, $RelationCriteria, true);
         $this->persist($Entity);
@@ -91,17 +91,7 @@ abstract class Repository implements Interfaces\Repository
     /**
      * @inheritdoc
      */
-    public function saveFromArray(array $data, Criteria $RelationCriteria=null)
-    {
-        $Entity = $this->buildEntity($data, $RelationCriteria);
-        $this->persist($Entity);
-        return $Entity;
-    }
-    
-    /**
-     * @inheritdoc
-     */
-    public function buildEntity(array $data, Criteria $RelationCriteria=null, $is_new=false)
+    protected function buildEntity(array $data, Criteria $RelationCriteria=null, $is_new=false)
     {
         $id = ($is_new === false) ? $this->getMapper()->getAndValidateId($data) : null;
         $data[$this->getMapper()->getTable()->getPk()] = $id;
