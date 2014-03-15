@@ -36,14 +36,12 @@ abstract class Rest extends \Everon\Module implements Interfaces\Rest
 
     protected function authenticateRequest()
     {
-        $user = $this->getRequest()->getServerCollection()->has('PHP_AUTH_USER') ? $this->getRequest()->getServerCollection()->get('PHP_AUTH_USER') : '';
-        $secret = $this->getRequest()->getServerCollection()->has('PHP_AUTH_PW') ? $this->getRequest()->getServerCollection()->get('PHP_AUTH_PW') : '';
+        $user = $this->getRequest()->getServerCollection()->get('PHP_AUTH_USER', null);
+        $secret = $this->getRequest()->getServerCollection()->get('PHP_AUTH_PW', null);
 
         if (trim($user) === '' || trim($secret) === '') {
-            //header('WWW-Authenticate: Basic realm="REST API"');
-            //header('HTTP/1.1 401 Unauthorized');
-            $this->getResponse()->addHeader('WWW-Authenticate', 'Basic realm="REST API"');
-            throw new Http\Exception\Unauthorized('Invalid username or password');
+            $this->getResponse()->addHeader('WWW-Authenticate', 'Basic realm="Grofas REST API"');
+            throw new Http\Exception\Unauthorized('Invalid credentials');
         }
 
         //find user+pass in database 

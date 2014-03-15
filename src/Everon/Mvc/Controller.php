@@ -27,34 +27,10 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
     use Dependency\Injection\ModuleManager;
     use Dependency\Injection\ViewManager;
 
-    
     use Helper\Arrays;
     use Helper\IsIterable;
     use Helper\String\StartsWith;
-
-    /**
-     * @param $action
-     * @return void
-     * @throws Exception\InvalidControllerMethod
-     * @throws Exception\InvalidControllerResponse
-     */
-    public function execute($action)
-    {
-        $this->action = $action;
-        if ($this->isCallable($this, $action) === false) {
-            throw new Exception\InvalidControllerMethod(
-                'Controller: "%s@%s" has no action: "%s" defined', [$this->getModule()->getName(), $this->getName(), $action]
-            );
-        }
-
-        $result = $this->{$action}();
-        $result = ($result !== false) ? true : $result;
-        $this->getResponse()->setResult($result);
-
-        $this->prepareResponse($action, $result);
-        $this->getLogger()->response('[%s] %s : %s', [$this->getResponse()->getStatusCode(), $this->getName(), $action]);
-        $this->response();
-    }
+    
     
     /**
      * @return View

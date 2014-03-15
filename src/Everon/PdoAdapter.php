@@ -39,6 +39,25 @@ class PdoAdapter implements Interfaces\PdoAdapter
         $this->ConnectionConfig = $Connection;
     }
     
+    protected function beginTransaction($sql, $parameters, $fetch_mode)
+    {
+        $this->getLogger()->sql($sql."|".print_r($parameters, true));
+        /**
+         * @var \PDOStatement $statement
+         */
+        switch ($this->getConnectionConfig()->getDriver()) { //todo: xxx
+            case 'mysql':
+                $this->getPdo()->setAttribute(\PDO::ATTR_AUTOCOMMIT, FALSE);
+                break;
+        }
+        $statement = $this->getPdo()->prepare($sql);
+
+        $this->getPdo()->beginTransaction();
+        $result = $statement->execute($parameters);
+        $statement->setFetchMode($fetch_mode);
+        return $statement;
+    }
+    
     /**
      * @inheritdoc
      */
@@ -77,32 +96,8 @@ class PdoAdapter implements Interfaces\PdoAdapter
     public function execute($sql, array $parameters=null, $fetch_mode=\PDO::FETCH_ASSOC)
     {
         try {
-            $this->getLogger()->sql($sql."|".print_r($parameters, true));
-            /**
-             * @var \PDOStatement $statement
-             */
-            switch ($this->getConnectionConfig()->getDriver()) { //todo: xxx
-                case 'mysql':
-                    $this->getPdo()->setAttribute(\PDO::ATTR_AUTOCOMMIT, FALSE);
-                    break;
-            }
-            
-            $statement = $this->getPdo()->prepare($sql);
-            $this->getPdo()->beginTransaction();
-            
-            if ($parameters !== null) {
-                $result = $statement->execute($parameters);
-            }
-            else {
-                $result = $statement->execute();
-            }
-
-            if ($this->getPdo()->inTransaction()) {
-                $this->getPdo()->commit();
-            }
-            
-            $statement->setFetchMode($fetch_mode);
-            
+            $statement = $this->beginTransaction($sql, $parameters, $fetch_mode);
+            $this->getPdo()->commit();
             return $statement;
         }
         catch (\PDOException $e) {
@@ -120,27 +115,9 @@ class PdoAdapter implements Interfaces\PdoAdapter
     public function insert($sql, array $parameters=[], $fetch_mode=\PDO::FETCH_ASSOC)
     {
         try {
-            $this->getLogger()->sql($sql."|".print_r($parameters, true));
-            /**
-             * @var \PDOStatement $statement
-             */
-            /**
-             * @var \PDOStatement $statement
-             */
-            switch ($this->getConnectionConfig()->getDriver()) { //todo: xxx
-                case 'mysql':
-                    $this->getPdo()->setAttribute(\PDO::ATTR_AUTOCOMMIT, FALSE);
-                    break;
-            }
-            $statement = $this->getPdo()->prepare($sql);
-            
-            $this->getPdo()->beginTransaction();
-            $result = $statement->execute($parameters);  
-            $statement->setFetchMode($fetch_mode);
-            
+            $statement = $this->beginTransaction($sql, $parameters, $fetch_mode);
             $last_id = $this->getPdo()->lastInsertId();
             $this->getPdo()->commit();
-            
             return $last_id;
         }
         catch (\PDOException $e) {
@@ -155,25 +132,8 @@ class PdoAdapter implements Interfaces\PdoAdapter
     public function update($sql, array $parameters=[], $fetch_mode=\PDO::FETCH_ASSOC)
     {
         try {
-            $this->getLogger()->sql($sql."|".print_r($parameters, true));
-            /**
-             * @var \PDOStatement $statement
-             */
-            /**
-             * @var \PDOStatement $statement
-             */
-            switch ($this->getConnectionConfig()->getDriver()) { //todo: xxx
-                case 'mysql':
-                    $this->getPdo()->setAttribute(\PDO::ATTR_AUTOCOMMIT, FALSE);
-                    break;
-            }
-            $statement = $this->getPdo()->prepare($sql);
-            
-            $this->getPdo()->beginTransaction();
-            $result = $statement->execute($parameters);  
-            $statement->setFetchMode($fetch_mode);
+            $statement = $this->beginTransaction($sql, $parameters, $fetch_mode);
             $this->getPdo()->commit();
-            
             return $statement->rowCount();
         }
         catch (\PDOException $e) {
@@ -187,31 +147,6 @@ class PdoAdapter implements Interfaces\PdoAdapter
      */
     public function delete($sql, array $parameters=[], $fetch_mode=\PDO::FETCH_ASSOC)
     {
-        try {
-            $this->getLogger()->sql($sql."|".print_r($parameters, true));
-            /**
-             * @var \PDOStatement $statement
-             */
-            /**
-             * @var \PDOStatement $statement
-             */
-            switch ($this->getConnectionConfig()->getDriver()) { //todo: xxx
-                case 'mysql':
-                    $this->getPdo()->setAttribute(\PDO::ATTR_AUTOCOMMIT, FALSE);
-                    break;
-            }
-            $statement = $this->getPdo()->prepare($sql);
-            
-            $this->getPdo()->beginTransaction();
-            $result = $statement->execute($parameters);  
-            $statement->setFetchMode($fetch_mode);
-            $this->getPdo()->commit();
-            
-            return $statement->rowCount();
-        }
-        catch (\PDOException $e) {
-            $this->getPdo()->rollBack();
-            throw new Exception\Pdo($e);
-        }
+        return $this->update($sql, $parameters, $fetch_mode);
     }
 }
