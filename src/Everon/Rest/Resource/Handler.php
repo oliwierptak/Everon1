@@ -92,11 +92,16 @@ class Handler implements Interfaces\ResourceHandler
 
     public function add($version, $resource_name, array $data)
     {
-        $domain_name = $this->getDomainNameFromMapping($resource_name);
-        $Repository = $this->getDomainManager()->getRepository($domain_name);
-        $Entity = $Repository->persistFromArray($data);
-        //$Entity = $this->getDomainManager()->buildEntity($Repository, null, $data);
-        sd($Entity, $version, $resource_name, $data);
+        try {
+            $domain_name = $this->getDomainNameFromMapping($resource_name);
+            $Repository = $this->getDomainManager()->getRepository($domain_name);
+            $Entity = $Repository->persistFromArray($data);
+            //$Entity = $this->getDomainManager()->buildEntity($Repository, null, $data);
+            sd($Entity, $version, $resource_name, $data);            
+        }
+        catch (EveronException\Domain $e) {
+            throw new Exception\Resource($e->getMessage(), null, $e);
+        }
     }
 
     /**
@@ -144,10 +149,7 @@ class Handler implements Interfaces\ResourceHandler
             return $Resource;
         }
         catch (EveronException\Domain $e) {
-            throw new Http\Exception\NotFound('Resource: "%s" not found', [$this->getResourceUrl($version, $resource_name)], $e);
-        }
-        catch (Exception\Resource $e) {
-            throw new Http\Exception\NotFound('Resource: "%s" not found', [$this->getResourceUrl($version, $resource_name)], $e);
+            throw new Exception\Resource($e->getMessage(), null, $e);
         }
     }
 
@@ -163,7 +165,6 @@ class Handler implements Interfaces\ResourceHandler
             $EntityRelationCriteria = new Criteria();
             $EntityRelationCriteria->limit($Navigator->getLimit());
             $EntityRelationCriteria->offset($Navigator->getOffset());
-            
             $entity_list = $Repository->getList($EntityRelationCriteria);
     
             $ResourceList = new Helper\Collection([]);
@@ -172,16 +173,13 @@ class Handler implements Interfaces\ResourceHandler
                 $ResourceList->set($a, $this->buildResourceFromEntity($CollectionEntity, $resource_name, $version));
             }
             
-            $CollectionResource = $this->getFactory()->buildRestCollectionResource($domain_name, $version, $link, $ResourceList); //todo: change version to href
+            $CollectionResource = $this->getFactory()->buildRestCollectionResource($domain_name, $version, $link, $ResourceList);
             $CollectionResource->setLimit($EntityRelationCriteria->getLimit());
             $CollectionResource->setOffset($EntityRelationCriteria->getOffset());
             return $CollectionResource;
         }
         catch (EveronException\Domain $e) {
-            throw new Http\Exception\NotFound('CollectionResource: "%s" not found', [$this->getResourceUrl($version, $resource_name)], $e);
-        }
-        catch (Exception\Resource $e) {
-            throw new Http\Exception\NotFound('CollectionResource: "%s" not found', [$this->getResourceUrl($version, $resource_name)], $e);
+            throw new Exception\Resource($e->getMessage(), null, $e);
         }
     }
 
@@ -197,7 +195,6 @@ class Handler implements Interfaces\ResourceHandler
             $link = $this->getResourceUrl($version, $resource_name, $resource_id, $name);
             $RelationCollection->set($name, ['href' => $link]);
         }
-
         $Resource->setRelationCollection($RelationCollection);
     }
 
@@ -241,7 +238,6 @@ class Handler implements Interfaces\ResourceHandler
         if ($domain_name === null) {
             throw new Exception\Resource('Invalid rest mapping domain: "%s"', $resource_name);
         }
-        
         return $domain_name;
     }
 

@@ -401,13 +401,6 @@ interface Factory
     function buildResponse($guid);
 
     /**
-     * @param array $data
-     * @return Http\HeaderCollection
-     * @throws Exception\Factory
-     */
-    function buildHttpHeaders(array $data);
-
-    /**
      * @param string Unique ID
      * @param Http\Interfaces\HeaderCollection $Headers
      * @return Http\Interfaces\Response
