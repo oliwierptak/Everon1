@@ -79,7 +79,7 @@ class Response extends BasicResponse implements Interfaces\Response
     }
 
 
-    public function addHeader($name, $value)
+    public function setHeader($name, $value)
     {
         $this->HeaderCollection->set($name, $value);
     }
@@ -131,7 +131,7 @@ class Response extends BasicResponse implements Interfaces\Response
     public function toHtml()
     {
         $this->setContentType('text/html');
-        $this->addHeader('content-type', 'text/html; charset="'.$this->getCharset().'"');
+        $this->setHeader('content-type', 'text/html; charset="'.$this->getCharset().'"');
         $this->send();
         return (string) $this->data;
     }
@@ -140,7 +140,7 @@ class Response extends BasicResponse implements Interfaces\Response
     {
         $this->setContentType('application/json');
         $json = parent::toJson($root);
-        $this->addHeader('content-type', 'application/json');
+        $this->setHeader('content-type', 'application/json');
         $this->send();
         return $json;
     }
@@ -148,7 +148,7 @@ class Response extends BasicResponse implements Interfaces\Response
     public function toText()
     {
         $this->setContentType('text/plain');
-        $this->addHeader('content-type', 'text/plain; charset="'.$this->getCharset().'"');
+        $this->setHeader('content-type', 'text/plain; charset="'.$this->getCharset().'"');
         $text = parent::toText();
         $this->send();
         return (string) $text;

@@ -17,7 +17,7 @@ interface Response extends Interfaces\Response
     function setContentType($content_type);
     function getCharset();
     function setCharset($charset);
-    function addHeader($name, $value);
+    function setHeader($name, $value);
     function getHeader($name);
     function getHeaderCollection();
     function setHeaderCollection(HeaderCollection $Collection);

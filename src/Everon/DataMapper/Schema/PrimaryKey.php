@@ -19,6 +19,8 @@ class PrimaryKey extends Constraint implements Schema\PrimaryKey
 
     protected $table_name = null;
     
+    protected $sequence_name = null;
+    
     
     public function __construct(array $data)
     {
@@ -27,6 +29,15 @@ class PrimaryKey extends Constraint implements Schema\PrimaryKey
         
         $PrimaryKeyInfo = new Helper\PopoProps($data);
         $this->name = $PrimaryKeyInfo->column_name;
+        $this->sequence_name = $PrimaryKeyInfo->sequence_name;
         $this->lock();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getSequenceName()
+    {
+        return $this->sequence_name;
     }
 }

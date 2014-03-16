@@ -11,5 +11,8 @@ namespace Everon\DataMapper\Interfaces\Schema;
 
 interface PrimaryKey extends Constraint
 {
-
+    /**
+     * @return string
+     */
+    function getSequenceName();
 }

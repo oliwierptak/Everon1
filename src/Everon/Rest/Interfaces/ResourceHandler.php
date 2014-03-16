@@ -9,15 +9,26 @@
  */
 namespace Everon\Rest\Interfaces;
 
+use Everon\Rest\Interfaces\Resource as ResourceInterface;
 
 interface ResourceHandler
 {
+
+    /**
+     * @param $version
+     * @param $resource_name
+     * @param array $data
+     * @return ResourceInterface
+     * @throws \Everon\Rest\Exception\Resource
+     */
+    function add($version, $resource_name, array $data);
+        
     /**
      * @param $resource_id
      * @param $resource_name
      * @param $version
      * @param ResourceNavigator $Navigator
-     * @return Resource
+     * @return ResourceInterface
      * @throws \Everon\Http\Exception\NotFound
      */
     function getResource($resource_id, $resource_name, $version, ResourceNavigator $Navigator);
@@ -41,7 +52,7 @@ interface ResourceHandler
     /**
      * @param $entity_id
      * @param $name
-     * @return mixed
+     * @return string
      */
     function generateResourceId($entity_id, $name);
 

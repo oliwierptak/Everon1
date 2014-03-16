@@ -27,11 +27,12 @@ interface PdoAdapter
     /**
      * @param $sql
      * @param array $parameters
+     * @param $sequence_name
      * @param int $fetch_mode
      * @return string
      * @throws Exception\Pdo
      */
-    function insert($sql, array $parameters=[], $fetch_mode=\PDO::FETCH_ASSOC);
+    function insert($sql, array $parameters=[], $sequence_name=null, $fetch_mode=\PDO::FETCH_ASSOC);
 
     /**
      * @param $sql

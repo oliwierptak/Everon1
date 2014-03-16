@@ -80,6 +80,7 @@ class Reader extends Schema\Reader implements Interfaces\Schema\Reader
     {
         return "
             SELECT *, tc.table_name AS \"TABLE_NAME\"
+            ,(SELECT pg_get_serial_sequence(tc.table_schema || '.' || kcu.table_name, kcu.column_name)) AS sequence_name
             FROM
                 information_schema.table_constraints tc,  
                 information_schema.key_column_usage kcu  

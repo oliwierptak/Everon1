@@ -89,15 +89,16 @@ class Handler implements Interfaces\ResourceHandler
         return $Resource;
     }
 
-
+    /**
+     * @inheritdoc
+     */
     public function add($version, $resource_name, array $data)
     {
         try {
             $domain_name = $this->getDomainNameFromMapping($resource_name);
             $Repository = $this->getDomainManager()->getRepository($domain_name);
             $Entity = $Repository->persistFromArray($data);
-            //$Entity = $this->getDomainManager()->buildEntity($Repository, null, $data);
-            sd($Entity, $version, $resource_name, $data);            
+            return $this->buildResourceFromEntity($Entity, $resource_name, $version);
         }
         catch (EveronException\Domain $e) {
             throw new Exception\Resource($e->getMessage(), null, $e);

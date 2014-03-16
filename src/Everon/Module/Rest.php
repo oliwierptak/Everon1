@@ -40,7 +40,7 @@ abstract class Rest extends \Everon\Module implements Interfaces\Rest
         $secret = $this->getRequest()->getServerCollection()->get('PHP_AUTH_PW', null);
 
         if (trim($user) === '' || trim($secret) === '') {
-            $this->getResponse()->addHeader('WWW-Authenticate', 'Basic realm="Grofas REST API"');
+            $this->getResponse()->setHeader('WWW-Authenticate', 'Basic realm="Grofas REST API"');
             throw new Http\Exception\Unauthorized('Invalid credentials');
         }
 

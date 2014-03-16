@@ -50,10 +50,16 @@ class PdoAdapter implements Interfaces\PdoAdapter
                 $this->getPdo()->setAttribute(\PDO::ATTR_AUTOCOMMIT, FALSE);
                 break;
         }
-        $statement = $this->getPdo()->prepare($sql);
-
+        $statement = $this->getPdo()->prepare($sql, [\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY]);
         $this->getPdo()->beginTransaction();
-        $result = $statement->execute($parameters);
+
+        if ($parameters !== null) {
+            $result = $statement->execute($parameters);
+        }
+        else {
+            $result = $statement->execute();
+        }
+
         $statement->setFetchMode($fetch_mode);
         return $statement;
     }
@@ -112,14 +118,14 @@ class PdoAdapter implements Interfaces\PdoAdapter
     /**
      * @inheritdoc
      */
-    public function insert($sql, array $parameters=[], $fetch_mode=\PDO::FETCH_ASSOC)
+    public function insert($sql, array $parameters=[], $sequence_name=null, $fetch_mode=\PDO::FETCH_ASSOC)
     {
         try {
             $statement = $this->beginTransaction($sql, $parameters, $fetch_mode);
-            $last_id = $this->getPdo()->lastInsertId();
+            $last_id = $this->getPdo()->lastInsertId($sequence_name);
             $this->getPdo()->commit();
             return $last_id;
-        }
+        }   
         catch (\PDOException $e) {
             $this->getPdo()->rollBack();
             throw new Exception\Pdo($e);

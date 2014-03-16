@@ -110,7 +110,12 @@ abstract class DataMapper implements Interfaces\DataMapper
     {
         list($sql, $parameters) = $this->getInsertSql($Entity);
         $PdoAdapter = $this->getSchema()->getPdoAdapterByName($this->write_connection_name);
-        $id = $PdoAdapter->insert($sql, $parameters);
+        $primary_keys = $this->getTable()->getPrimaryKeys();
+        /**
+         * @var DataMapper\Interfaces\Schema\PrimaryKey $PrimaryKey
+         */
+        $PrimaryKey = $primary_keys[$this->getTable()->getPk()];
+        $id = $PdoAdapter->insert($sql, $parameters, $PrimaryKey->getSequenceName());
         return $this->getTable()->validateId($id);
     }
 
