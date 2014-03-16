@@ -61,6 +61,12 @@ interface DataMapper
     function getAndValidateId($data);
 
     /**
+     * @param $id
+     * @return bool
+     */
+    function validateId($id);
+
+    /**
      * @return Schema
      */
     function getSchema();

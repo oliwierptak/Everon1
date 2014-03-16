@@ -109,6 +109,7 @@ abstract class Repository implements Interfaces\Repository
      */
     public function getEntityById($id, Criteria $RelationCriteria=null)
     {
+        $id = $this->getMapper()->getTable()->validateId($id);
         $Criteria = (new \Everon\DataMapper\Criteria())->where([
             $this->getMapper()->getTable()->getPk() => $id
         ]);

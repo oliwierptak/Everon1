@@ -181,6 +181,15 @@ abstract class DataMapper implements Interfaces\DataMapper
     {
         $pk_name = $this->getTable()->getPk();
         $id = @$data[$pk_name];
+        return $this->validateId($id);
+    }
+
+    /**
+     * @param $id
+     * @return bool
+     */
+    public function validateId($id)
+    {
         return $this->getTable()->validateId($id);
     }
 

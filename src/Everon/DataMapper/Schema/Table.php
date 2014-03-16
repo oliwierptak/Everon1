@@ -143,12 +143,16 @@ class Table implements Interfaces\Schema\Table
              */
             $Column = $this->getColumns()[$PrimaryKey->getName()];
             $validation_result = filter_var_array([$PrimaryKey->getName() => $id], $Column->getValidationRules());
+            $id_value = $id === null ? 'NULL' : $id;
             if (($validation_result === false || $validation_result === null) ||
                 ($Column->isNullable() === false && $id === null)) {
-                throw new Exception\Column('Column: "%s" failed to validate with value: "%s"', [$Column->getName(), $id]);
+                throw new Exception\Column('Column: "%s" failed to validate with value: "%s"', [$Column->getName(), $id_value]);
             }
-
-            return $validation_result[$PrimaryKey->getName()];
+            $id = $validation_result[$PrimaryKey->getName()];
+            if ($id === false) {
+                throw new Exception\Column('Column: "%s" failed to validate with value: "%s"', [$Column->getName(), $id_value]);
+            }
+            return $id;
         }
         catch (\Exception $e) {
             throw new Exception\Column($e->getMessage());
