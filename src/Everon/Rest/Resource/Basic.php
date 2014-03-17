@@ -16,17 +16,16 @@ use Everon\Rest\Interfaces;
 abstract class Basic implements Interfaces\ResourceBasic
 {
     use Helper\ToArray;
-    use Helper\String\LastTokenToName;
     
-    protected $name = null;
+    protected $resource_name = null;
     protected $href = null;
     protected $version = null;
 
-    public function __construct($href, $version)
+    public function __construct($href, $version, $resource_name)
     {
-        $this->name = $this->stringLastTokenToName(get_class($this));
-        $this->version = $version;
         $this->href = $href;
+        $this->version = $version;
+        $this->resource_name = $resource_name;
         $this->data = null;
     }
 
@@ -62,6 +61,21 @@ abstract class Basic implements Interfaces\ResourceBasic
         return $this->href;
     }
 
+    /**
+     * @inheritdoc
+     */
+    public function setName($resource_name)
+    {
+        $this->resource_name = $resource_name;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getName()
+    {
+        return $this->resource_name;
+    }
     /**
      * @inheritdoc
      */

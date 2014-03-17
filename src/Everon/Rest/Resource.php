@@ -16,6 +16,8 @@ use Everon\Interfaces\Collection;
 
 abstract class Resource extends Resource\Basic implements Interfaces\Resource
 {
+    use Helper\String\LastTokenToName;
+    
     /**
      * @var Entity
      */
@@ -25,15 +27,17 @@ abstract class Resource extends Resource\Basic implements Interfaces\Resource
      * @var Collection
      */
     protected $RelationCollection = null;
+    
+    protected $domain_name = null;
 
 
-    public function __construct($href, $version, Entity $Entity)
+    public function __construct($href, $version, $resource_name, $domain_name, Entity $Entity)
     {
-        parent::__construct($href, $version);
+        parent::__construct($href, $version, $resource_name);
         $this->DomainEntity = $Entity;
         $this->RelationCollection = new Helper\Collection([]);
+        $this->domain_name = $domain_name;
     }
-
 
     /**
      * @inheritdoc
@@ -41,6 +45,11 @@ abstract class Resource extends Resource\Basic implements Interfaces\Resource
     public function getDomainEntity()
     {
         return $this->DomainEntity;
+    }
+    
+    public function getDomainName()
+    {
+        return $this->domain_name;
     }
 
     /**
