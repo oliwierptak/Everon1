@@ -30,6 +30,7 @@ class Table implements Interfaces\Schema\Table
     protected $foreign_keys = [];
     
     protected $unique_keys = [];
+    
 
     /**
      * @param $name
@@ -136,23 +137,33 @@ class Table implements Interfaces\Schema\Table
      */
     public function validateId($id)
     {
+        $PrimaryKey = current($this->getPrimaryKeys()); //todo: make fix for composite keys
+        return $this->validateColumnValue($PrimaryKey->getName(), $id);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function validateColumnValue($name, $value)
+    {
         try {
-            $PrimaryKey = current($this->getPrimaryKeys()); //todo: make fix for composite keys
             /**
              * @var Interfaces\Schema\Column $Column
              */
-            $Column = $this->getColumns()[$PrimaryKey->getName()];
-            $validation_result = filter_var_array([$PrimaryKey->getName() => $id], $Column->getValidationRules());
-            $id_value = $id === null ? 'NULL' : $id;
-            if (($validation_result === false || $validation_result === null) ||
-                ($Column->isNullable() === false && $id === null)) {
-                throw new Exception\Column('Column: "%s" failed to validate with value: "%s"', [$Column->getName(), $id_value]);
+            $Column = $this->getColumns()[$name];
+            $validation_result = filter_var_array([$name => $value], $Column->getValidationRules());
+            $display_value = $value === null ? 'NULL' : $value;
+            
+            if (($validation_result === false || $validation_result === null) || ($Column->isNullable() === false && $value === null)) {
+                throw new Exception\Column('Column: "%s" failed to validate with value: "%s"', [$Column->getName(), $display_value]);
             }
-            $id = $validation_result[$PrimaryKey->getName()];
-            if ($id === false) {
-                throw new Exception\Column('Column: "%s" failed to validate with value: "%s"', [$Column->getName(), $id_value]);
+
+            $value = $validation_result[$name];
+            if ($value === false) {
+                throw new Exception\Column('Column: "%s" failed to validate with value: "%s"', [$Column->getName(), $display_value]);
             }
-            return $id;
+            
+            return $value;
         }
         catch (\Exception $e) {
             throw new Exception\Column($e->getMessage());
