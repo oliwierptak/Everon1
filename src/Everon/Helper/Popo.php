@@ -41,12 +41,12 @@ class Popo implements Interfaces\Arrayable
     
     public function __get($property)
     {
-        throw new Exception\Popo('Public properties are not exposed');
+        throw new Exception\Popo('Public getters are disabled. Requested: "%s"', $property);
     }
     
     public function __set($property, $value)
     {
-        throw new Exception\Popo('Public properties do not exists');
+        throw new Exception\Popo('Public setters are disabled. Requested: "%s"', $property);
     }
     
     /**
@@ -105,6 +105,14 @@ class Popo implements Interfaces\Arrayable
     public function getData()
     {
         return $this->data;
+    }
+
+    /**
+     * @param array $data
+     */
+    public function setData(array $data)
+    {
+        $this->data = $data;
     }
 
     public function __sleep()
