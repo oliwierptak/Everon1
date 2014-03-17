@@ -92,23 +92,25 @@ interface Factory
      * @param $name
      * @param $version
      * @param $href
+     * @param $resource_name
      * @param Domain\Interfaces\Entity $Entity
      * @param string $namespace
      * @return Rest\Interfaces\Resource
      * @throws Exception\Factory
      */
-    function buildRestResource($name, $version, $href, Domain\Interfaces\Entity $Entity, $namespace='Everon\Rest\Resource');
+    function buildRestResource($name, $version, $href, $resource_name, Domain\Interfaces\Entity $Entity, $namespace='Everon\Rest\Resource');
 
     /**
      * @param $name
      * @param $version
      * @param $href
+     * @param $resource_name
      * @param Interfaces\Collection $Collection
      * @param string $namespace
      * @return Rest\Interfaces\ResourceCollection
      * @throws Exception\Factory
      */
-    function buildRestCollectionResource($name, $version, $href, Interfaces\Collection $Collection, $namespace='Everon\Rest\Resource');
+    function buildRestCollectionResource($name, $version, $href, $resource_name, Interfaces\Collection $Collection, $namespace='Everon\Rest\Resource');
 
     /**
      * @param Rest\Interfaces\Request $Request
@@ -210,13 +212,13 @@ interface Factory
 
     /**
      * @param $class_name
-     * @param string $id
+     * @param string $id_field
      * @param array $data
      * @param string $namespace
      * @return Domain\Interfaces\Entity
      * @throws Exception\Factory
      */
-    function buildDomainEntity($class_name, $id, array $data, $namespace='Everon\Domain');
+    function buildDomainEntity($class_name, $id_field, array $data, $namespace='Everon\Domain');
     
     /**
      * @param $class_name

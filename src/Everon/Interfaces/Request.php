@@ -156,7 +156,7 @@ interface Request extends Arrayable
 
     /**
      * http://stackoverflow.com/questions/6038236/http-accept-language
-     * @return array
+     * @return string
      */
     function getPreferredLanguageCode();
 }

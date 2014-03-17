@@ -65,9 +65,9 @@ interface Entity extends Interfaces\Arrayable
     function setValueByName($name, $value);
 
     /**
-     * @inheritdoc
+     * @param array $data
      */
-    function persist($id, array $data);
+    function persist(array $data);
 
     /**
      * @return void

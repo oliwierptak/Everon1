@@ -223,12 +223,12 @@ class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildRestResource($name, $version, $href, Domain\Interfaces\Entity $Entity, $namespace='Everon\Rest\Resource')
+    public function buildRestResource($name, $version, $href, $resource_name, Domain\Interfaces\Entity $Entity, $namespace='Everon\Rest\Resource')
     {
         try {
             $class_name = $this->getFullClassName('Everon\Rest\Resource\\'.$name, $version);
             $this->classExists($class_name);
-            $Resource = new $class_name($href, $version, $Entity);
+            $Resource = new $class_name($href, $version, $resource_name, $name, $Entity);
             $this->injectDependencies($class_name, $Resource);
             return $Resource;
         }
@@ -240,12 +240,12 @@ class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildRestCollectionResource($name, $version, $href, Interfaces\Collection $Collection, $namespace='Everon\Rest\Resource')
+    public function buildRestCollectionResource($name, $version, $href, $resource_name, Interfaces\Collection $Collection, $namespace='Everon\Rest\Resource')
     {
         try {
             $class_name = 'Everon\Rest\Resource\Collection';
             $this->classExists($class_name);
-            $CollectionResource = new $class_name($href, $version, $Collection);
+            $CollectionResource = new $class_name($href, $version, $resource_name, $Collection);
             $this->injectDependencies($class_name, $CollectionResource);
             return $CollectionResource;
         }
@@ -597,12 +597,12 @@ class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildDomainEntity($class_name, $id, array $data, $namespace='Everon\Domain')
+    public function buildDomainEntity($class_name, $id_field, array $data, $namespace='Everon\Domain')
     {
         try {
             $class_name = $this->getFullClassName($namespace, $class_name.'\Entity');
             $this->classExists($class_name);
-            $Entity = new $class_name($id, $data);
+            $Entity = new $class_name($id_field, $data);
             $this->injectDependencies($class_name, $Entity);
             return $Entity;
         }

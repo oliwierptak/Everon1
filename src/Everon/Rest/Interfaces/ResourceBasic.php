@@ -39,4 +39,14 @@ interface ResourceBasic extends \Everon\Interfaces\Arrayable
      * @return string
      */
     function toJson();
+
+    /**
+     * @param $resource_name
+     */
+    function setName($resource_name);
+
+    /**
+     * @return string
+     */
+    function getName();
 }

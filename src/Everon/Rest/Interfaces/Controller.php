@@ -13,10 +13,21 @@ use Everon\Interfaces;
 
 interface Controller extends Interfaces\Controller
 {
+    function addResourceFromRequest();
+
+    function serveResourceFromRequest();
+
+    function deleteResourceFromRequest();
+    
     /**
      * @return mixed
      */
     function getModel();
+
+    /**
+     * @return Interfaces\Resource
+     */
+    function getResourceFromRequest();
 
     /**
      * @param $name

@@ -75,4 +75,77 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
     {
         echo $this->getResponse()->toJson();
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function addResourceFromRequest()
+    {
+        $version = $this->getRequest()->getVersion();
+        $data = $this->getRequest()->getPostCollection()->toArray(true);
+        $resource_name = $this->getRequest()->getQueryParameter('resource', null);
+        $Resource = $this->getResourceManager()->add($version, $resource_name, $data);
+        
+        $this->getResponse()->setData($Resource);
+        $this->getResponse()->setStatusCode(201);
+        $this->getResponse()->setHeader('Location', $Resource->getHref());
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function saveResourceFromRequest()
+    {
+        $version = $this->getRequest()->getVersion();
+        $data = $this->getRequest()->getPostCollection()->toArray(true);
+        $resource_name = $this->getRequest()->getQueryParameter('resource', null);
+        $resource_id = $this->getRequest()->getQueryParameter('resource_id', null);
+        $Resource = $this->getResourceManager()->save($version, $resource_name, $resource_id, $data);
+
+        $this->getResponse()->setData($Resource);
+        $this->getResponse()->setStatusCode(200);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function deleteResourceFromRequest()
+    {
+        $version = $this->getRequest()->getVersion();
+        $resource_name = $this->getRequest()->getQueryParameter('resource', null);
+        $resource_id = $this->getRequest()->getQueryParameter('resource_id', null);
+        $Resource = $this->getResourceManager()->delete($version, $resource_name, $resource_id);
+
+        $this->getResponse()->setData($Resource);
+        $this->getResponse()->setStatusCode(204);
+    }
+    
+    /**
+     * @inheritdoc
+     */
+    public function serveResourceFromRequest()
+    {
+        $Resource = $this->getResourceFromRequest();
+        $this->getResponse()->setData($Resource);
+    }
+    
+    /**
+     * @inheritdoc
+     */
+    public function getResourceFromRequest()
+    {
+        $version = $this->getRequest()->getVersion();
+        $resource_id = $this->getRequest()->getQueryParameter('resource_id', null);
+        $resource_name = $this->getRequest()->getQueryParameter('resource', null);
+        $Navigator = $this->getFactory()->buildRestResourceNavigator($this->getRequest());
+
+        if ($resource_id === null) {
+            $Resource = $this->getResourceManager()->getCollectionResource($resource_name, $version, $Navigator);
+        }
+        else {
+            $Resource = $this->getResourceManager()->getResource($resource_id, $resource_name, $version, $Navigator);
+        }
+
+        return $Resource;
+    }
 }

@@ -43,7 +43,14 @@ interface Table extends Arrayable, Immutable
     /**
      * @param $id
      * @return mixed
-     * @throws \Everon\DataMapper\Exception\Column
      */
     function validateId($id);
+
+    /**
+     * @param $name
+     * @param $value
+     * @return mixed
+     * @throws \Everon\DataMapper\Exception\Column
+     */
+    function validateColumnValue($name, $value);
 }

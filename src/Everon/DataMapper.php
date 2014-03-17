@@ -28,8 +28,8 @@ abstract class DataMapper implements Interfaces\DataMapper
     protected $write_connection_name = 'write';
     protected $read_connection_name = 'read';
     
-    abstract protected function getInsertSql(Entity $Entity);
-    abstract protected function getUpdateSql(Entity $Entity);
+    abstract protected function getInsertSql(array $data);
+    abstract protected function getUpdateSql(array $data);
     abstract protected function getDeleteSql(Entity $Entity);
     abstract protected function getFetchAllSql(Criteria $Criteria);
 
@@ -48,7 +48,7 @@ abstract class DataMapper implements Interfaces\DataMapper
      * @param string $placeholder
      * @return array
      */
-    protected function getPlaceholderForQuery($placeholder=':', $skip_pk=false)
+    protected function getPlaceholderForQuery($placeholder=':')
     {
         $placeholders = [];
         $columns = $this->getTable()->getColumns();
@@ -56,7 +56,7 @@ abstract class DataMapper implements Interfaces\DataMapper
          * @var DataMapper\Interfaces\Schema\Column $Column
          */
         foreach ($columns as $name => $Column) {
-            if ($skip_pk === true && $Column->isPk()) {
+            if ($Column->isPk()) {
                 continue;
             }
             $placeholders[] = $placeholder.$name;
@@ -66,11 +66,11 @@ abstract class DataMapper implements Interfaces\DataMapper
     }
 
     /**
-     * @param Entity $Entity
+     * @param array $data
      * @param string $delimiter
      * @return array
      */
-    protected function getValuesForQuery(Entity $Entity, $delimiter='', $skip_pk=false)
+    protected function getValuesForQuery(array $data, $delimiter='')
     {
         $values = [];
         $columns = $this->getTable()->getColumns();
@@ -78,54 +78,43 @@ abstract class DataMapper implements Interfaces\DataMapper
          * @var DataMapper\Interfaces\Schema\Column $Column
          */
         foreach ($columns as $name => $Column) {
-            if ($skip_pk === true && $Column->isPk()) {
+            if ($Column->isPk()) {
                 continue;
             }
-            $values[$delimiter.$name] = $this->getEntityValueAndRemapId($name, $Entity);
+            $values[$delimiter.$name] = $data[$name];
         }
 
         return $values;
     }
 
     /**
-     * @param $value_name
-     * @param Entity $Entity
-     * @return mixed
-     */
-    protected function getEntityValueAndRemapId($value_name, Entity $Entity)
-    {
-        if (strcasecmp($value_name, $this->getTable()->getPk()) === 0) {
-            $value = $Entity->getId();
-        }
-        else {
-            $value = $Entity->getValueByName($value_name);
-        }
-        return $value;
-    }
-
-    /**
      * @inheritdoc
      */
-    public function add(Entity $Entity)
+    public function add(array $data)
     {
-        list($sql, $parameters) = $this->getInsertSql($Entity);
+        list($sql, $parameters) = $this->getInsertSql($data);
         $PdoAdapter = $this->getSchema()->getPdoAdapterByName($this->write_connection_name);
         $primary_keys = $this->getTable()->getPrimaryKeys();
         /**
          * @var DataMapper\Interfaces\Schema\PrimaryKey $PrimaryKey
          */
         $PrimaryKey = $primary_keys[$this->getTable()->getPk()];
+        
         $id = $PdoAdapter->insert($sql, $parameters, $PrimaryKey->getSequenceName());
-        return $this->getTable()->validateId($id);
+        $id = $this->getTable()->validateId($id);
+        $data[$this->getTable()->getPk()] = $id;
+        
+        return $data;
     }
 
     /**
      * @inheritdoc
      */
-    public function save(Entity $Entity)
+    public function save(array $data)
     {
-        $this->getTable()->validateId($Entity->getId());
-        list($sql, $parameters) = $this->getUpdateSql($Entity);
+        $id = $this->getIdFromData($data);
+        $id = $this->getTable()->validateId($id);
+        list($sql, $parameters) = $this->getUpdateSql($data);
         return $this->getSchema()->getPdoAdapterByName($this->write_connection_name)->update($sql, $parameters);
     }
 
@@ -182,20 +171,43 @@ abstract class DataMapper implements Interfaces\DataMapper
     /**
      * @inheritdoc
      */
-    public function getAndValidateId($data)
+    public function getIdFromData($data)
     {
         $pk_name = $this->getTable()->getPk();
-        $id = @$data[$pk_name];
-        return $this->validateId($id);
+        if (isset($data[$pk_name]) === false) {
+            return null;
+        }
+        
+        return $data[$pk_name];
     }
 
     /**
-     * @param $id
-     * @return bool
+     * @inheritdoc
      */
-    public function validateId($id)
+    public function validateData(array $data, $validate_id)
     {
-        return $this->getTable()->validateId($id);
+        $entity_data = [];
+        /**
+         * @var DataMapper\Interfaces\Schema\Column $Column
+         */
+        foreach ($this->getTable()->getColumns() as $name => $Column) {
+            if ($Column->isPk()) {
+                $entity_data[$name] = null;
+                continue;
+            }
+
+            $value = $this->getTable()->validateColumnValue($name, $data[$name]);
+            $entity_data[$name] = $value;
+        }
+        
+        if ($validate_id) {
+            $pk_name = $this->getTable()->getPk();
+            $id = $this->getIdFromData($data);
+            $id = $this->getTable()->validateId($id);
+            $entity_data[$pk_name] = $id;
+        }
+        
+        return $entity_data;
     }
 
     /**

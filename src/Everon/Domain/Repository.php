@@ -77,30 +77,25 @@ abstract class Repository implements Interfaces\Repository
     {
         return $this->name;
     }
-
+   
     /**
      * @inheritdoc
      */
-    public function persistFromArray(array $data, Criteria $RelationCriteria=null)
+    public function persistFromArray(array $data)
     {
-        $Entity = $this->buildEntity($data, $RelationCriteria, true);
+        $Entity = $this->buildEntity($data);
         $this->persist($Entity);
         return $Entity;
     }
-    
-    /**
-     * @inheritdoc
-     */
-    protected function buildEntity(array $data, Criteria $RelationCriteria=null, $is_new=false)
+      
+    protected function buildEntity(array $data, Criteria $RelationCriteria=null)
     {
-        $id = ($is_new === false) ? $this->getMapper()->getAndValidateId($data) : null;
-        $data[$this->getMapper()->getTable()->getPk()] = $id;
-
-        $Entity = $this->getFactory()->buildDomainEntity($this->getName(), $id, $data);
+        $id = $this->getMapper()->getIdFromData($data);
+        $data = $this->getMapper()->validateData($data, $id !== null);
+        $Entity = $this->getFactory()->buildDomainEntity($this->getName(), $this->getMapper()->getTable()->getPk(), $data);
         $this->buildRelations($Entity, $RelationCriteria);
-
         return $Entity;
-    }
+    } 
     
     /**
      * @param $id
@@ -149,15 +144,13 @@ abstract class Repository implements Interfaces\Repository
     public function persist(Interfaces\Entity $Entity)
     {
         if ($Entity->isNew()) {
-            $id = $this->getMapper()->add($Entity);
+            $data = $this->getMapper()->add($Entity->toArray());
         }
         else {
-            $id = $Entity->getId();
-            $this->getMapper()->save($Entity);
+            $data = $this->getMapper()->save($Entity->toArray());
         }
 
-        $data = $Entity->toArray();
-        $Entity->persist($id, $data);
+        $Entity->persist($data);
     }
 
     /**

@@ -15,7 +15,7 @@ namespace Everon\Domain\Entity;
 abstract class Composite extends \Everon\Domain\Entity
 {
 
-    protected $id = [];
+    protected $id_name = [];
 
     protected function isIdSet()
     {

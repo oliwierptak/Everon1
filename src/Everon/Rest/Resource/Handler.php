@@ -83,7 +83,7 @@ class Handler implements Interfaces\ResourceHandler
         $resource_id = $this->generateResourceId($Entity->getId(), $resource_name);
         $link = $this->getResourceUrl($version, $resource_name, $resource_id);
 
-        $Resource = $this->getFactory()->buildRestResource($domain_name, $version, $link, $Entity); //todo: change version to href
+        $Resource = $this->getFactory()->buildRestResource($domain_name, $version, $link, $resource_name, $Entity); //todo: change version to href
         $this->buildResourceRelations($Resource, $resource_id, $resource_name, $version);
 
         return $Resource;
@@ -104,7 +104,39 @@ class Handler implements Interfaces\ResourceHandler
             throw new Exception\Resource($e->getMessage(), null, $e);
         }
     }
+    
+    /**
+     * @inheritdoc
+     */
+    public function save($version, $resource_name, $resource_id, array $data)
+    {
+        try {
+            die('wtf');
+        }
+        catch (EveronException\Domain $e) {
+            throw new Exception\Resource($e->getMessage(), null, $e);
+        }
+    }
 
+    /**
+     * @inheritdoc
+     */
+    public function delete($version, $resource_name, $resource_id)
+    {
+        try {
+            $domain_name = $this->getDomainNameFromMapping($resource_name);
+            $Repository = $this->getDomainManager()->getRepository($domain_name);
+            $id = $this->generateEntityId($resource_id, $domain_name);
+            $Entity = $Repository->getEntityById($id);
+            $Repository->remove($Entity);
+            return $this->buildResourceFromEntity($Entity, $resource_name, $version);
+        }
+        catch (EveronException\Domain $e) {
+            throw new Exception\Resource($e->getMessage(), null, $e);
+        }
+    }
+
+    //remove fucking navigator from here, add expandResource, make version, name and domain name properties of resource
     /**
      * @inheritdoc
      */
@@ -140,7 +172,7 @@ class Handler implements Interfaces\ResourceHandler
                 }
 
                 $link = $this->getResourceUrl($version, $resource_name, $resource_id, $collection_name);
-                $CollectionResource = $this->getFactory()->buildRestCollectionResource($domain_name, $version, $link, $RelationCollection);
+                $CollectionResource = $this->getFactory()->buildRestCollectionResource($domain_name, $version, $link, $resource_name, $RelationCollection);
                 $CollectionResource->setLimit($this->getRequest()->getGetParameter('limit', 10));
                 $CollectionResource->setOffset($this->getRequest()->getGetParameter('offset', 0));
 
@@ -174,7 +206,7 @@ class Handler implements Interfaces\ResourceHandler
                 $ResourceList->set($a, $this->buildResourceFromEntity($CollectionEntity, $resource_name, $version));
             }
             
-            $CollectionResource = $this->getFactory()->buildRestCollectionResource($domain_name, $version, $link, $ResourceList);
+            $CollectionResource = $this->getFactory()->buildRestCollectionResource($domain_name, $version, $link, $resource_name, $ResourceList);
             $CollectionResource->setLimit($EntityRelationCriteria->getLimit());
             $CollectionResource->setOffset($EntityRelationCriteria->getOffset());
             return $CollectionResource;

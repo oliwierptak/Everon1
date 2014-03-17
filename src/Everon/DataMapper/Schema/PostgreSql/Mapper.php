@@ -17,39 +17,43 @@ use Everon\Domain\Interfaces\Entity;
 abstract class Mapper extends DataMapper 
 {
     /**
-     * @param Entity $Entity
+     * @param array $data
      * @return array
      */
-    protected function getInsertSql(Entity $Entity)
+    protected function getInsertSql(array $data)
     {
-        $values_str = rtrim(implode(',', $this->getPlaceholderForQuery(':',true)), ',');
-        $columns_str = rtrim(implode(',', $this->getPlaceholderForQuery('', true)), ',');
+        $data = $this->validateData($data, false);
+        $values_str = rtrim(implode(',', $this->getPlaceholderForQuery()), ',');
+        $columns_str = rtrim(implode(',', $this->getPlaceholderForQuery('')), ',');
         $sql = sprintf('INSERT INTO %s.%s (%s) VALUES (%s)', $this->getTable()->getSchema(), $this->getTable()->getName(), $columns_str, $values_str);
-        return [$sql, $this->getValuesForQuery($Entity, ':', true)];
+        return [$sql, $this->getValuesForQuery($data)];
     }
 
     /**
-     * @param Entity $Entity
+     * @param array $data
      * @return array
      */
-    protected function getUpdateSql(Entity $Entity)
+    protected function getUpdateSql(array $data)
     {
+        $data = $this->validateData($data, true);
+        $id = $this->getIdFromData($data);
         $pk_name = $this->getTable()->getPk();
+                
         $values_str = '';
         $columns = $this->getTable()->getColumns();
         /**
          * @var DataMapper\Interfaces\Schema\Column $Column
          */
-        
         foreach ($columns as $name => $Column) {
             if ($Column->isPk() === false) {
                 $values_str .= $name.' = :'.$name.',';
             }
         }
-        
+
         $values_str = rtrim($values_str, ',');
         $sql = sprintf('UPDATE %s.%s SET '.$values_str.' WHERE %s = :%s', $this->getTable()->getSchema(), $this->getTable()->getName(), $pk_name, $pk_name);
-        $params = $this->getValuesForQuery($Entity);
+        $params = $this->getValuesForQuery($data);
+        $params[$pk_name] = $id;
         return [$sql, $params];
     }
 

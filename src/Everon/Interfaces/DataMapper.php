@@ -17,16 +17,16 @@ use Everon\DataMapper\Interfaces\Schema\Table;
 interface DataMapper
 {
     /**
-     * @param Entity $Entity
+     * @param array $data
      * @return int Return last inserted ID
      */
-    function add(Entity $Entity);
+    function add(array $data);
 
     /**
-     * @param Entity $Entity
+     * @param array $data
      * @return bool
      */
-    function save(Entity $Entity);
+    function save(array $data);
 
     /**
      * @param Entity $Entity
@@ -52,19 +52,26 @@ interface DataMapper
      */
     function fetchAll(Criteria $Criteria);
 
+    /**
+     * @return string
+     */
     function getName();
 
     /**
      * @param $data
-     * @return mixed|null
+     * @return mixed
      */
-    function getAndValidateId($data);
+    function getIdFromData($data);
 
     /**
-     * @param $id
-     * @return bool
+     * Validates all fields but ID. Assumes that ID has been checked elsewhere.
+     *
+     * @param array $data
+     * @param bool $validate_id
+     * @return array
+     * @throws \Everon\Exception\DataMapper
      */
-    function validateId($id);
+    function validateData(array $data, $validate_id);
 
     /**
      * @return Schema

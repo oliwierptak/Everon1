@@ -22,6 +22,25 @@ interface ResourceHandler
      * @throws \Everon\Rest\Exception\Resource
      */
     function add($version, $resource_name, array $data);
+
+    /**
+     * @param $version
+     * @param $resource_name
+     * @param $resource_id
+     * @param array $data
+     * @return ResourceInterface
+     * @throws \Everon\Rest\Exception\Resource
+     */
+    function save($version, $resource_name, $resource_id, array $data);
+
+    /**
+     * @param $version
+     * @param $resource_name
+     * @param $resource_id
+     * @return ResourceInterface
+     * @throws \Everon\Rest\Exception\Resource
+     */
+    function delete($version, $resource_name, $resource_id);
         
     /**
      * @param $resource_id
