@@ -18,7 +18,9 @@ class Reader extends Schema\Reader implements Interfaces\Schema\Reader
     protected function getTablesSql()
     {
         return "
-            SELECT *, table_name AS \"TABLE_NAME\"
+            SELECT *, 
+                table_schema || '.' || table_name AS \"TABLE_NAME\",
+                table_name AS \"TABLE_NAME_WITHOUT_SCHEMA\"
             FROM information_schema.tables
             WHERE 
                 table_type = 'BASE TABLE'
@@ -31,10 +33,11 @@ class Reader extends Schema\Reader implements Interfaces\Schema\Reader
     {
         return "
             SELECT
-            tc.constraint_type, tc.constraint_name, tc.table_name, kcu.column_name,
-            ccu.table_name AS foreign_table_name,
-            ccu.column_name AS foreign_column_name,
-            tc.table_name AS \"TABLE_NAME\"
+                tc.constraint_type, tc.constraint_name, tc.table_name, kcu.column_name,
+                ccu.table_name AS foreign_table_name,
+                ccu.column_name AS foreign_column_name,
+                tc.table_schema || '.' || tc.table_name AS \"TABLE_NAME\",
+                tc.table_name AS \"TABLE_NAME_WITHOUT_SCHEMA\"
             FROM 
                 information_schema.table_constraints AS tc 
             JOIN information_schema.key_column_usage AS kcu
@@ -49,7 +52,9 @@ class Reader extends Schema\Reader implements Interfaces\Schema\Reader
     protected function getColumnsSql()
     {
         return "
-            SELECT *, table_name AS \"TABLE_NAME\"
+            SELECT *, 
+                table_schema || '.' || table_name AS \"TABLE_NAME\",
+                table_name AS \"TABLE_NAME_WITHOUT_SCHEMA\"
             FROM information_schema.columns
             WHERE 1=1
                 AND table_schema NOT IN ('pg_catalog', 'information_schema')
@@ -62,7 +67,9 @@ class Reader extends Schema\Reader implements Interfaces\Schema\Reader
     protected function getUniqueKeysSql()
     {
         return "
-            SELECT *, tc.table_name AS \"TABLE_NAME\"
+            SELECT *, 
+                tc.table_schema || '.' || tc.table_name AS \"TABLE_NAME\",
+                tc.table_name AS \"TABLE_NAME_WITHOUT_SCHEMA\"
             FROM
                 information_schema.table_constraints tc,  
                 information_schema.key_column_usage kcu  
@@ -79,8 +86,10 @@ class Reader extends Schema\Reader implements Interfaces\Schema\Reader
     protected function getPrimaryKeysSql()
     {
         return "
-            SELECT *, tc.table_name AS \"TABLE_NAME\"
-            ,(SELECT pg_get_serial_sequence(tc.table_schema || '.' || kcu.table_name, kcu.column_name)) AS sequence_name
+            SELECT *, 
+                tc.table_schema || '.' || tc.table_name AS \"TABLE_NAME\",
+                tc.table_name AS \"TABLE_NAME_WITHOUT_SCHEMA\",
+                (SELECT pg_get_serial_sequence(tc.table_schema || '.' || kcu.table_name, kcu.column_name)) AS sequence_name
             FROM
                 information_schema.table_constraints tc,  
                 information_schema.key_column_usage kcu  
@@ -90,7 +99,8 @@ class Reader extends Schema\Reader implements Interfaces\Schema\Reader
                 AND kcu.table_schema = tc.table_schema
                 AND kcu.constraint_name = tc.constraint_name
                 AND kcu.table_catalog = :schema
-            ORDER BY tc.table_schema, tc.table_name
+            ORDER BY
+                tc.table_schema, tc.table_name
         ";
     }
 
@@ -98,12 +108,13 @@ class Reader extends Schema\Reader implements Interfaces\Schema\Reader
     {
         return "
             SELECT
-            tc.constraint_type, tc.constraint_name, tc.table_name, kcu.column_name,
-            ccu.table_name AS foreign_table_name,
-            ccu.column_name AS foreign_column_name,
-            ccu.constraint_schema,
-            tc.constraint_catalog, 
-            tc.table_name AS \"TABLE_NAME\"
+                tc.constraint_type, tc.constraint_name, tc.table_name, kcu.column_name,
+                ccu.table_name AS foreign_table_name,
+                ccu.column_name AS foreign_column_name,
+                ccu.constraint_schema,
+                tc.constraint_catalog, 
+                tc.table_schema || '.' || tc.table_name AS \"TABLE_NAME\",
+                tc.table_name AS \"TABLE_NAME_WITHOUT_SCHEMA\"
             FROM 
                 information_schema.table_constraints AS tc 
             JOIN information_schema.key_column_usage AS kcu

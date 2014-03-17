@@ -158,7 +158,7 @@ abstract class Repository implements Interfaces\Repository
      */
     public function remove(Interfaces\Entity $Entity)
     {
-        $this->getMapper()->delete($Entity);
+        $this->getMapper()->delete($Entity->getId());
         $Entity->delete();
     }
 }

@@ -101,7 +101,7 @@ class Handler implements Interfaces\ResourceHandler
             return $this->buildResourceFromEntity($Entity, $resource_name, $version);
         }
         catch (EveronException\Domain $e) {
-            throw new Exception\Resource($e->getMessage(), null, $e);
+            throw new Exception\Resource($e->getMessage());
         }
     }
     
@@ -111,10 +111,13 @@ class Handler implements Interfaces\ResourceHandler
     public function save($version, $resource_name, $resource_id, array $data)
     {
         try {
-            die('wtf');
+            $domain_name = $this->getDomainNameFromMapping($resource_name);
+            $Repository = $this->getDomainManager()->getRepository($domain_name);
+            $Entity = $Repository->persistFromArray($data);
+            return $this->buildResourceFromEntity($Entity, $resource_name, $version);
         }
         catch (EveronException\Domain $e) {
-            throw new Exception\Resource($e->getMessage(), null, $e);
+            throw new Exception\Resource($e->getMessage());
         }
     }
 
@@ -128,11 +131,12 @@ class Handler implements Interfaces\ResourceHandler
             $Repository = $this->getDomainManager()->getRepository($domain_name);
             $id = $this->generateEntityId($resource_id, $domain_name);
             $Entity = $Repository->getEntityById($id);
+            $this->assertIsNull($Entity, sprintf('Domain Entity: "%s" with id: "%s" not found', $domain_name, $resource_id), 'Domain');
             $Repository->remove($Entity);
             return $this->buildResourceFromEntity($Entity, $resource_name, $version);
         }
         catch (EveronException\Domain $e) {
-            throw new Exception\Resource($e->getMessage(), null, $e);
+            throw new Exception\Resource($e->getMessage());
         }
     }
 
@@ -150,7 +154,7 @@ class Handler implements Interfaces\ResourceHandler
             $domain_name = $this->getDomainNameFromMapping($resource_name);
             $id = $this->generateEntityId($resource_id, $domain_name);
             $Entity = $this->getDomainManager()->getRepository($domain_name)->getEntityById($id, $EntityRelationCriteria);
-            $this->assertIsNull($Entity, sprintf('Domain Entity: "%s" not found', $domain_name), 'Domain');
+            $this->assertIsNull($Entity, sprintf('Domain Entity: "%s" with id: "%s" not found', $domain_name, $resource_id), 'Domain');
             
             $Resource = $this->buildResourceFromEntity($Entity, $resource_name, $version);
             $link = $this->getResourceUrl($version, $resource_name, $resource_id);
@@ -182,7 +186,7 @@ class Handler implements Interfaces\ResourceHandler
             return $Resource;
         }
         catch (EveronException\Domain $e) {
-            throw new Exception\Resource($e->getMessage(), null, $e);
+            throw new Exception\Resource($e->getMessage());
         }
     }
 
@@ -212,7 +216,7 @@ class Handler implements Interfaces\ResourceHandler
             return $CollectionResource;
         }
         catch (EveronException\Domain $e) {
-            throw new Exception\Resource($e->getMessage(), null, $e);
+            throw new Exception\Resource($e->getMessage());
         }
     }
 

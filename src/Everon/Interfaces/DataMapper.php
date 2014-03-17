@@ -29,10 +29,10 @@ interface DataMapper
     function save(array $data);
 
     /**
-     * @param Entity $Entity
+     * @param $id
      * @return bool
      */
-    function delete(Entity $Entity);
+    function delete($id);
 
     /**
      * @param int $id

@@ -30,7 +30,7 @@ abstract class DataMapper implements Interfaces\DataMapper
     
     abstract protected function getInsertSql(array $data);
     abstract protected function getUpdateSql(array $data);
-    abstract protected function getDeleteSql(Entity $Entity);
+    abstract protected function getDeleteSql($id);
     abstract protected function getFetchAllSql(Criteria $Criteria);
 
 
@@ -112,8 +112,6 @@ abstract class DataMapper implements Interfaces\DataMapper
      */
     public function save(array $data)
     {
-        $id = $this->getIdFromData($data);
-        $id = $this->getTable()->validateId($id);
         list($sql, $parameters) = $this->getUpdateSql($data);
         return $this->getSchema()->getPdoAdapterByName($this->write_connection_name)->update($sql, $parameters);
     }
@@ -121,10 +119,9 @@ abstract class DataMapper implements Interfaces\DataMapper
     /**
      * @inheritdoc
      */
-    public function delete(Entity $Entity)
+    public function delete($id)
     {
-        $this->getTable()->validateId($Entity->getId());
-        list($sql, $parameters) = $this->getDeleteSql($Entity);
+        list($sql, $parameters) = $this->getDeleteSql($id);
         return $this->getSchema()->getPdoAdapterByName($this->write_connection_name)->delete($sql, $parameters);
     }
 

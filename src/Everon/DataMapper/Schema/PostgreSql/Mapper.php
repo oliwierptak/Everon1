@@ -37,6 +37,7 @@ abstract class Mapper extends DataMapper
     {
         $data = $this->validateData($data, true);
         $id = $this->getIdFromData($data);
+        $id = $this->getTable()->validateId($id);
         $pk_name = $this->getTable()->getPk();
                 
         $values_str = '';
@@ -58,14 +59,15 @@ abstract class Mapper extends DataMapper
     }
 
     /**
-     * @param Entity $Entity
+     * @param $id
      * @return array
      */
-    protected function getDeleteSql(Entity $Entity)
+    protected function getDeleteSql($id)
     {
+        $id = $this->getTable()->validateId($id);
         $pk_name = $this->getTable()->getPk();
-        $sql = sprintf('DELETE FROM %s.%s WHERE %s = :%s LIMIT 1', $this->getTable()->getSchema(), $this->getTable()->getName(), $pk_name, $pk_name);
-        $params = [$pk_name => $Entity->getId()];
+        $sql = sprintf('DELETE FROM %s.%s WHERE %s = :%s', $this->getTable()->getSchema(), $this->getTable()->getName(), $pk_name, $pk_name);
+        $params = [$pk_name => $id];
         return [$sql, $params];
     }
 

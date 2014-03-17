@@ -62,10 +62,8 @@ class Schema implements Interfaces\Schema
         };
         
         foreach ($table_list as $name => $table_data) {
-            $table_schema_name = trim($table_data['table_schema']);
-            $table_id = strtolower($table_schema_name ? $table_data['table_schema'].'.'.$name : $name); 
-            $this->tables[$table_id] = $this->getFactory()->buildSchemaTable(
-                $name,
+            $this->tables[$name] = $this->getFactory()->buildSchemaTable(
+                $table_data['TABLE_NAME_WITHOUT_SCHEMA'],
                 $table_data['table_schema'],
                 $this->getAdapterName(),
                 $castToEmptyArrayWhenNull($name, $column_list), 
