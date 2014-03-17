@@ -23,7 +23,7 @@ class Entity extends Helper\Popo implements Interfaces\Entity
     const STATE_PERSISTED = 3;
     const STATE_DELETED = 4;
 
-    protected $id = null;
+    protected $id_name = null;
 
     protected $modified_properties = null;
     
@@ -35,9 +35,9 @@ class Entity extends Helper\Popo implements Interfaces\Entity
     protected $RelationCollection = null;
     
 
-    public function __construct($id, array $data=[])
+    public function __construct($id_name, array $data=[])
     {
-        $this->id = $id;
+        $this->id_name = $id_name;
         $this->data = $data;
         $this->RelationCollection = new Helper\Collection([]);
         
@@ -88,7 +88,8 @@ class Entity extends Helper\Popo implements Interfaces\Entity
      */
     protected function isIdSet()
     {
-        return mb_strlen(trim($this->id)) > 0;
+        $id = trim($this->data[$this->id_name]);
+        return mb_strlen($id) > 0;
     }
 
     /**
@@ -144,7 +145,7 @@ class Entity extends Helper\Popo implements Interfaces\Entity
      */
     public function getId()
     {
-        return $this->id;
+        return $this->data[$this->id_name];
     }
 
     /**
@@ -172,7 +173,6 @@ class Entity extends Helper\Popo implements Interfaces\Entity
     public function delete()
     {
         $this->markDeleted();
-        $this->id = null;
         $this->modified_properties = null;
         $this->data = null;
     }
@@ -180,10 +180,9 @@ class Entity extends Helper\Popo implements Interfaces\Entity
     /**
      * @inheritdoc
      */
-    public function persist($id, array $data)
+    public function persist(array $data)
     {
         $this->markPersisted();
-        $this->id = $id;
         $this->data = $data;
         $this->modified_properties = null;
     }
