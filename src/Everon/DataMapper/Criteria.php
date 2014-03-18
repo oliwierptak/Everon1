@@ -186,10 +186,12 @@ class Criteria implements Interfaces\Criteria
         $where_str = $this->getWhereSql();
         $order_by_str = $this->getOrderByAndSortSql();
         $offset_limit_sql = $this->getOffsetLimitSql();
+        $group_by = $this->getGroupBy();
         
         return $where_str.'
             '.$order_by_str.'
-            '.$offset_limit_sql;
+            '.$offset_limit_sql.'
+            '.$group_by;
     }
 
 }
