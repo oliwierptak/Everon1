@@ -188,10 +188,11 @@ class Criteria implements Interfaces\Criteria
         $offset_limit_sql = $this->getOffsetLimitSql();
         $group_by = $this->getGroupBy();
         
-        return $where_str.'
-            '.$order_by_str.'
-            '.$offset_limit_sql.'
-            '.$group_by;
+        return "$where_str
+            $group_by
+            $order_by_str
+            $offset_limit_sql
+            ";
     }
 
 }
