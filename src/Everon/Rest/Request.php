@@ -14,6 +14,9 @@ use Everon\Exception;
 
 class Request extends \Everon\Request implements Interfaces\Request
 {
+    use Helper\Asserts\IsStringAndNonEmpty;
+    use Helper\Exceptions;
+    
     protected $accepted_methods = [
         self::METHOD_DELETE,
         self::METHOD_GET,
@@ -97,5 +100,21 @@ class Request extends \Everon\Request implements Interfaces\Request
     public function getVersion()
     {
         return $this->version;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getRawInput()
+    {
+        $result = null;
+        $input = parent::getRawInput();
+        $this->assertIsStringAndNonEmpty($input, 'Invalid input type, only JSON format is supported', 'Everon\Rest\Exception\Request');
+        
+        $input = trim($input);
+        if ($input !== '') {
+            $result = json_decode($input, true);
+        }
+        return $result;
     }
 }

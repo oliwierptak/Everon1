@@ -583,4 +583,13 @@ class Request implements Interfaces\Request
         return $current;
     }
 
+    /**
+     * @inheritdoc
+     */
+    public function getRawInput()
+    {
+        $result = null;
+        return file_get_contents('php://input');
+    }
+
 }

@@ -11,5 +11,57 @@ namespace Everon\Rest\Interfaces;
 
 interface Client
 {
+    /**
+     * @param $resource_name
+     * @param $resource_id
+     * @param $collection_name
+     */
+    function get($resource_name, $resource_id=null, $collection_name=null);
 
+    /**
+     * @param $resource_name
+     * @param array $data
+     */
+    function post($resource_name, array $data);
+
+    /**
+     * @param $resource_name
+     * @param $resource_id
+     * @param array $data
+     */
+    function put($resource_name, $resource_id, array $data);
+
+    /**
+     * @param $resource_name
+     * @param $resource_id
+     */
+    function delete($resource_name, $resource_id);
+    
+    /**
+     * @param $resource_name
+     * @param $resource_id
+     * @param $collection
+     * @return string
+     */
+    function getUrl($resource_name, $resource_id=null, $collection=null);
+
+    /**
+     * @param CurlAdapter $CurlAdapter
+     */
+    function setCurlAdapter($CurlAdapter);
+
+    /**
+     * @return CurlAdapter
+     */
+    function getCurlAdapter();
+
+    /**
+     * @param ResourceHref $ResourceHref
+     */
+    function setResourceHref($ResourceHref);
+
+    /**
+     * @return ResourceHref
+     */
+    function getResourceHref();
 }

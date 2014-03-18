@@ -77,6 +77,15 @@ abstract class Repository implements Interfaces\Repository
     {
         return $this->name;
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildFromArray(array $data)
+    {
+        $Entity = $this->buildEntity($data);
+        return $Entity;
+    }
    
     /**
      * @inheritdoc

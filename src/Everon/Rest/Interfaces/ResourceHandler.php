@@ -9,6 +9,7 @@
  */
 namespace Everon\Rest\Interfaces;
 
+use Everon\Domain\Interfaces\Entity;
 use Everon\Rest\Interfaces\Resource as ResourceInterface;
 
 interface ResourceHandler
@@ -41,6 +42,14 @@ interface ResourceHandler
      * @throws \Everon\Rest\Exception\Resource
      */
     function delete($version, $resource_name, $resource_id);
+
+    /**
+     * @param Entity $Entity
+     * @param $resource_name
+     * @param $version
+     * @return ResourceInterface
+     */
+    function buildResourceFromEntity(Entity $Entity, $resource_name, $version);
         
     /**
      * @param $resource_id

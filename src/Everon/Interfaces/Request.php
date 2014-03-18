@@ -159,4 +159,9 @@ interface Request extends Arrayable
      * @return string
      */
     function getPreferredLanguageCode();
+
+    /**
+     * @return array
+     */
+    public function getRawInput();
 }

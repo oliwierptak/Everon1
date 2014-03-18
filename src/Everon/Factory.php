@@ -157,14 +157,29 @@ class Factory implements Interfaces\Factory
             throw new Exception\Factory('Mvc initialization error', null, $e);
         }
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildRestCurlAdapter()
+    {
+        try {
+            $Adapter = new Rest\CurlAdapter();
+            $this->injectDependencies('Everon\Rest\CurlAdapter', $Adapter);
+            return $Adapter;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('RestClient initialization error', null, $e);
+        }
+    }
     
     /**
      * @inheritdoc
      */
-    public function buildRestClient()
+    public function buildRestClient($Href, Rest\Interfaces\CurlAdapter $CurlAdapter)
     {
         try {
-            $Client = new Rest\Client();
+            $Client = new Rest\Client($Href, $CurlAdapter);
             $this->injectDependencies('Everon\Rest\Client', $Client);
             return $Client;
         }

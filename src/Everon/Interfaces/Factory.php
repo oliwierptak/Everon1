@@ -57,10 +57,18 @@ interface Factory
     function buildMvc();
 
     /**
-     * @return Interfaces\Core
+     * @return Rest\CurlAdapter
      * @throws Exception\Factory
      */
-    function buildRestClient();
+    function buildRestCurlAdapter();
+
+    /**
+     * @param $Href
+     * @param Rest\Interfaces\CurlAdapter $CurlAdapter
+     * @return Interfaces\Core|Rest\Client
+     * @throws Exception\Factory
+     */
+    function buildRestClient($Href, Rest\Interfaces\CurlAdapter $CurlAdapter);
 
     /**
      * @return Interfaces\Core

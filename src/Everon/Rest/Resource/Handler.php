@@ -75,7 +75,7 @@ class Handler implements Interfaces\ResourceHandler
      * @param $version
      * @return Interfaces\Resource
      */
-    protected function buildResourceFromEntity(Entity $Entity, $resource_name, $version)
+    public function buildResourceFromEntity(Entity $Entity, $resource_name, $version)
     {
         $this->assertIsInArray($version, $this->supported_versions, 'Unsupported version: "%s"', 'Domain');
         

@@ -11,6 +11,7 @@ namespace Everon\Rest\Resource;
 
 use Everon\Rest\Dependency;
 use Everon\Helper;
+use Everon\Rest\Exception;
 use Everon\Rest\Interfaces;
 
 class Href implements Interfaces\ResourceHref
@@ -28,7 +29,10 @@ class Href implements Interfaces\ResourceHref
         $this->version = $version;
         $this->versioning = $versioning;
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public function getLink($resource_name, $resource_id='', $collection='', $request_path='')
     {
         $request_path = trim($request_path) !== '' ? '?'.$request_path : $request_path;
@@ -42,6 +46,8 @@ class Href implements Interfaces\ResourceHref
                 return $this->url.$params;
                 break;
         }
+        
+        throw new Exception\Resource('Invalid versioning type: "%s"', $this->versioning);
     }
 
     /**

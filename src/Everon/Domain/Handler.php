@@ -123,4 +123,14 @@ abstract class Handler implements Interfaces\Handler
         
         return $key;
     }
+
+    /**
+     * @param $domain_name
+     * @param array $data
+     */
+    public function buildEntityFromArray($domain_name, array $data)
+    {
+        $Repository = $this->getRepository($domain_name);
+        return $Repository->buildFromArray($data);
+    }
 }
