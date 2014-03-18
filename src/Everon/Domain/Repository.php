@@ -143,11 +143,12 @@ abstract class Repository implements Interfaces\Repository
      */
     public function persist(Interfaces\Entity $Entity)
     {
+        $data = $Entity->toArray();
         if ($Entity->isNew()) {
-            $data = $this->getMapper()->add($Entity->toArray());
+            $data = $this->getMapper()->add($data);
         }
         else {
-            $data = $this->getMapper()->save($Entity->toArray());
+            $this->getMapper()->save($data);
         }
 
         $Entity->persist($data);

@@ -97,7 +97,7 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
     public function saveResourceFromRequest()
     {
         $version = $this->getRequest()->getVersion();
-        $data = $this->getRequest()->getPostCollection()->toArray(true);
+        $data = $this->getRequest()->getGetCollection()->toArray(true);
         $resource_name = $this->getRequest()->getQueryParameter('resource', null);
         $resource_id = $this->getRequest()->getQueryParameter('resource_id', null);
         $Resource = $this->getResourceManager()->save($version, $resource_name, $resource_id, $data);

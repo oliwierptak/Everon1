@@ -113,6 +113,10 @@ class Handler implements Interfaces\ResourceHandler
         try {
             $domain_name = $this->getDomainNameFromMapping($resource_name);
             $Repository = $this->getDomainManager()->getRepository($domain_name);
+            $id = $this->generateEntityId($resource_id, $resource_name);
+            $Entity = $Repository->getEntityById($id);
+            $this->assertIsNull($Entity, sprintf('Domain Entity: "%s" with id: "%s" not found', $domain_name, $resource_id), 'Domain');
+            $data = $this->arrayMergeDefault($Entity->toArray(), $data);
             $Entity = $Repository->persistFromArray($data);
             return $this->buildResourceFromEntity($Entity, $resource_name, $version);
         }
