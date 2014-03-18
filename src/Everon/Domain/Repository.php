@@ -92,7 +92,7 @@ abstract class Repository implements Interfaces\Repository
      */
     public function persistFromArray(array $data)
     {
-        $Entity = $this->buildEntity($data);
+        $Entity = $this->buildFromArray($data);
         $this->persist($Entity);
         return $Entity;
     }

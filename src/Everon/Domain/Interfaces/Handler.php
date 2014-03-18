@@ -13,7 +13,7 @@ use Everon\DataMapper\Interfaces\ConnectionManager;
 use Everon\DataMapper\Interfaces\Schema;
 use Everon\Interfaces\Factory;
 
-interface Handler
+interface Handler extends \Everon\Interfaces\Dependency\Factory
 {
     /**
      * @return ConnectionManager
@@ -44,12 +44,15 @@ interface Handler
     function getModel($domain_name);
 
     /**
-     * @param Factory $Factory
+     * @param $domain_name
+     * @return mixed|null
      */
-    function setFactory(Factory $Factory);
+    function getDataMapperNameFromDomain($domain_name);
 
     /**
-     * @return Factory
+     * @param $domain_name
+     * @param array $data
+     * @return Entity
      */
-    function getFactory();
+    function buildEntityFromArray($domain_name, array $data);
 }

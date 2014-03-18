@@ -61,4 +61,10 @@ interface Repository
     function setMapper(DataMapper $Mapper);
 
     function getName();
+
+    /**
+     * @param array $data
+     * @return Entity
+     */
+    function buildFromArray(array $data);
 }

@@ -113,7 +113,10 @@ abstract class Handler implements Interfaces\Handler
 
         return $this->Schema;
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public function getDataMapperNameFromDomain($domain_name)
     {
         $key = array_search($domain_name, $this->MappingCollection->toArray());
@@ -125,8 +128,7 @@ abstract class Handler implements Interfaces\Handler
     }
 
     /**
-     * @param $domain_name
-     * @param array $data
+     * @inheritdoc
      */
     public function buildEntityFromArray($domain_name, array $data)
     {

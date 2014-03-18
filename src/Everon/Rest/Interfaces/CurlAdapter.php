@@ -41,15 +41,15 @@ interface CurlAdapter
 
     /**
      * @param $url
-     * @param array $data
+     * @param $data
      * @return mixed|null
      */
-    public function post($url, array $data);
+    public function post($url, $data);
 
     /**
      * @param $url
-     * @param array $data
+     * @param $data
      * @return mixed|null
      */
-    public function put($url, array $data);
+    public function put($url, $data);
 }

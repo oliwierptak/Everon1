@@ -55,7 +55,12 @@ class CurlAdapter implements Interfaces\CurlAdapter
         $response = null;
         try {
             $response = curl_exec($curl);
-            $this->http_response_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+            $this->http_response_code = (int) curl_getinfo($curl, CURLINFO_HTTP_CODE);
+            if ($this->http_response_code !== 200 && $this->http_response_code !== 201 && $this->http_response_code !== 204) {
+                $error = json_decode($response, true);
+                $str = $error['data']['error'];
+                throw new Exception\Resource($str);
+            }
         }
         catch (\Exception $e) {
             throw new Exception\Curl($e);
@@ -68,13 +73,14 @@ class CurlAdapter implements Interfaces\CurlAdapter
 
     /**
      * @param $url
-     * @param array $data
+     * @param $data
      * @return mixed|null
      */
-    public function put($url, array $data)
+    public function put($url, $data)
     {
         $ch = $this->getCurlProcess($url, [
-            CURLOPT_POST => 1,
+            CURLOPT_PUT => 1,
+            CURLOPT_CUSTOMREQUEST => 'PUT',
             CURLOPT_POSTFIELDS => $data
         ]);
         return $this->execute($ch);
@@ -82,10 +88,10 @@ class CurlAdapter implements Interfaces\CurlAdapter
 
     /**
      * @param $url
-     * @param array $data
+     * @param $data
      * @return mixed|null
      */
-    public function post($url, array $data)
+    public function post($url, $data)
     {
         $ch = $this->getCurlProcess($url, [
             CURLOPT_POST => 1,

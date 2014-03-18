@@ -43,7 +43,6 @@ class Client implements Interfaces\Client
     {
         $url = $this->getUrl($resource_name, $resource_id, $collection_name);
         $result = $this->getCurlAdapter()->get($url);
-        //$code = $this->getCurlAdapter()->get
         return json_decode($result, true);
     }
 
