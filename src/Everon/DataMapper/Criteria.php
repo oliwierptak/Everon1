@@ -27,6 +27,8 @@ class Criteria implements Interfaces\Criteria
 
     protected $order_by = null;
     
+    protected $group_by = null;
+    
     protected $sort = 'ASC';
     
     
@@ -51,6 +53,12 @@ class Criteria implements Interfaces\Criteria
     public function orderBy($order_by)
     {
         $this->order_by = $order_by;
+        return $this;
+    }
+    
+    public function groupBy($group_by)
+    {
+        $this->group_by = $group_by;
         return $this;
     }
     
@@ -105,6 +113,15 @@ class Criteria implements Interfaces\Criteria
         }
 
         return 'ORDER BY '.$this->order_by.' '.$this->sort;
+    }
+    
+    public function getGroupBy()
+    {
+        if ($this->group_by === null) {
+            return '';
+        }
+
+        return 'GROUP BY '.$this->group_by;
     }
     
     protected function getToArray()
