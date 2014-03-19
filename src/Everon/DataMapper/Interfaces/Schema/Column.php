@@ -26,4 +26,11 @@ interface Column extends Arrayable, Immutable
      * @return array
      */
     function getValidationRules();
+
+    /**
+     * @param $value
+     * @return mixed
+     * @throws \Everon\DataMapper\Exception\Column
+     */
+    function validateColumnValue($value);
 }

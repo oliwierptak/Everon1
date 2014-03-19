@@ -55,32 +55,42 @@ abstract class Column implements Schema\Column
         $this->init($data, $primary_key_list, $unique_key_list, $foreign_key_list);
         $this->lock();
     }
-    
+
+    protected function getToString()
+    {
+        return (string) $this->name;
+    }
+
+    protected function hasInfo($name, $data)
+    {
+        return isset($data[$name]);
+    }
+
     public function isPk()
     {
         return $this->is_pk;
     }
-    
+
     public function getName()
     {
         return $this->name;
     }
-    
+
     public function getType()
     {
         return $this->type;
     }
-    
+
     public function getLength()
     {
         return $this->length;
     }
-    
+
     public function isNullable()
     {
         return $this->is_nullable;
     }
-    
+
     public function getDefault()
     {
         return $this->default;
@@ -101,19 +111,33 @@ abstract class Column implements Schema\Column
     {
         return $this->validation_rules;
     }
-    
     public function toArray($deep=false)
     {
         return get_object_vars($this);
     }
-    
-    protected function getToString()
+
+    /**
+     * @inheritdoc
+     */
+    public function validateColumnValue($value)
     {
-        return (string) $this->name;
-    }
-    
-    protected function hasInfo($name, $data)
-    {
-        return isset($data[$name]);
+        try {
+            $validation_result = filter_var_array([$this->getName() => $value], $this->getValidationRules());
+            $display_value = $value === null ? 'NULL' : $value;
+
+            if (($validation_result === false || $validation_result === null) || ($this->isNullable() === false && $value === null)) {
+                throw new Exception\Column('Column: "%s" failed to validate with value: "%s"', [$this->getName(), $display_value]);
+            }
+
+            $value = $validation_result[$this->getName()];
+            if ($value === false) {
+                throw new Exception\Column('Column: "%s" failed to validate with value: "%s"', [$this->getName(), $display_value]);
+            }
+
+            return $value;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Column($e->getMessage());
+        }
     }
 }

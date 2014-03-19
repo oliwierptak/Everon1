@@ -21,7 +21,7 @@ use Everon\Rest\Interfaces;
 class Handler implements Interfaces\ResourceHandler
 {
     use Dependency\Injection\Factory;
-    use Dependency\Injection\DomainManager;
+    use \Everon\Domain\Dependency\Injection\DomainManager;
     use Dependency\Injection\Request; //todo meh
     use Helper\AlphaId;
     use Helper\Arrays;

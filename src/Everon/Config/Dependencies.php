@@ -14,6 +14,18 @@ namespace Everon;
  * @var Interfaces\Factory $Factory
  */
 
+/**
+ * @var Bootstrap $Bootstrap
+ * @var Interfaces\Environment $Environment
+ * @var Interfaces\DependencyContainer $Container
+ * @var Interfaces\Factory $Factory
+ */
+if ($Bootstrap->useEveronAutoload()) {
+    $Bootstrap->getClassLoader()->add('Everon\DataMapper', $Environment->getDataMapper());
+    $Bootstrap->getClassLoader()->add('Everon\Domain', $Environment->getDomain());
+    $Bootstrap->getClassLoader()->add('Everon\Module', $Environment->getModule());
+}
+
 $Container->propose('Logger', function() use ($Factory) {
     $Factory->getDependencyContainer()->monitor('Logger', ['Everon\Config\Manager', 'Everon\Environment']);
     $enabled = $Factory->getDependencyContainer()->resolve('ConfigManager')->getConfigValue('application.logger.enabled');
@@ -59,18 +71,40 @@ $Container->propose('ModuleManager', function() use ($Factory) {
     return $Factory->buildModuleManager();
 });
 
+$Container->propose('DomainMapper', function() use ($Factory) {
+    $Factory->getDependencyContainer()->monitor('DomainMapper', ['Everon\Config\Manager']);
+    $DomainConfig = $Factory->getDependencyContainer()->resolve('ConfigManager')->getConfigByName('domain');
+    return $Factory->buildDomainMapper($DomainConfig->toArray());
+});
+
 $Container->propose('DomainManager', function() use ($Factory) {
-    $Factory->getDependencyContainer()->monitor('DomainManager', ['Everon\DataMapper\Connection\Manager', 'Everon\Config\Manager']);
-    $ConfigManager = $Factory->getDependencyContainer()->resolve('ConfigManager');
+    $Factory->getDependencyContainer()->monitor('DomainManager', ['Everon\Domain\Mapper']);
+    $DomainMapper = $Factory->getDependencyContainer()->resolve('DomainMapper');
+    return $Factory->buildDomainManager($DomainMapper);
+});
+
+$Container->propose('DataMapperManager', function() use ($Factory) {
+    $Factory->getDependencyContainer()->monitor('DataMapperManager', ['Everon\DataMapper\Connection\Manager', 'Everon\Domain\Mapper']);
     $ConnectionManager = $Factory->getDependencyContainer()->resolve('ConnectionManager');
-    $mapping = $ConfigManager->getConfigValue('domain.mapping', []);
-    return $Factory->buildDomainManager($ConnectionManager, $mapping);
+    $DomainMapper = $Factory->getDependencyContainer()->resolve('DomainMapper');
+    return $Factory->buildDataMapperManager($ConnectionManager, $DomainMapper);
 });
 
 $Container->propose('ConnectionManager', function() use ($Factory) {
     $Factory->getDependencyContainer()->monitor('ConnectionManager', ['Everon\Config\Manager']);
     $DatabaseConfig = $Factory->getDependencyContainer()->resolve('ConfigManager')->getDatabaseConfig();
     return $Factory->buildConnectionManager($DatabaseConfig);
+});
+
+$Container->propose('ResourceManager', function() use ($Factory) {
+    $Factory->getDependencyContainer()->monitor('ResourceManager ', ['Everon\Config\Manager']);
+    $ConfigManager = $Factory->getDependencyContainer()->resolve('ConfigManager');
+
+    $rest = $ConfigManager->getConfigValue('rest.rest');
+    $versioning = $ConfigManager->getConfigValue('rest.versioning');
+    $mapping = $ConfigManager->getConfigValue('rest.mapping', []);
+    $rest_server_url = $rest['protocol'].$rest['host'].':'.$rest['port'].$rest['url'];
+    return $Factory->buildRestResourceManager($rest_server_url, $versioning['supported_versions'], $versioning['type'], $mapping);
 });
 
 //xxx

@@ -7,10 +7,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon\DataMapper\Dependency\Injection;
+namespace Everon\Domain\Dependency\Injection;
 
-
-trait ConnectionManager
+trait DomainManager
 {
-    use \Everon\DataMapper\Dependency\ConnectionManager;
+    use \Everon\Domain\Dependency\DomainManager;
 }

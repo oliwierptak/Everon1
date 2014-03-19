@@ -21,7 +21,7 @@ use Everon\Http;
  */
 abstract class Controller extends \Everon\Controller implements Interfaces\Controller
 {
-    use Dependency\Injection\DomainManager;
+    use \Everon\Domain\Dependency\Injection\DomainManager;
     use Dependency\Injection\Environment;
     use Dependency\Injection\Factory;
     use Dependency\Injection\ModuleManager;

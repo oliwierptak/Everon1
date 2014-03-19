@@ -9,10 +9,7 @@
  */
 namespace Everon\Config\Interfaces;
 
-/**
- * @method string getName
- */
-interface ItemRouter
+interface ItemRouter extends Item
 {
     /**
      * @param string $module

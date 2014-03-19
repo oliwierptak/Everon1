@@ -16,7 +16,7 @@ use Everon\Rest\Dependency\Injection\ResourceManager as InjectResourceManager;
 
 class Client implements Interfaces\Client
 {
-    use Dependency\Injection\DomainManager;
+    use \Everon\Domain\Dependency\Injection\DomainManager;
     use InjectResourceManager;
     
     /**

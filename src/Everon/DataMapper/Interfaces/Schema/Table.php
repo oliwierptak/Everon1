@@ -22,6 +22,13 @@ interface Table extends Arrayable, Immutable
      * @return array
      */
     function getColumns();
+
+    /**
+     * @param $name
+     * @return Column
+     * @throws \Everon\DataMapper\Exception\Table
+     */
+    function getColumnByName($name);
     
     /**
      * @return array
@@ -47,10 +54,16 @@ interface Table extends Arrayable, Immutable
     function validateId($id);
 
     /**
-     * @param $name
-     * @param $value
-     * @return mixed
-     * @throws \Everon\DataMapper\Exception\Column
+     * @param array $data
+     * @param $validate_id
+     * @return array
      */
-    function validateColumnValue($name, $value);
+    function validateData(array $data, $validate_id);
+
+    /**
+     * @param $data
+     * @return mixed
+     */
+    function getIdFromData($data);
+
 }

@@ -10,7 +10,7 @@
 namespace Everon\DataMapper\Dependency\Injection;
 
 
-trait ConnectionManager
+trait DataMapperManager
 {
-    use \Everon\DataMapper\Dependency\ConnectionManager;
+    use \Everon\DataMapper\Dependency\DataMapperManager;
 }

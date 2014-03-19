@@ -210,6 +210,15 @@ interface Factory
     function buildDataMapper($name, DataMapper\Interfaces\Schema\Table $Table, DataMapper\Interfaces\Schema $Schema, $namespace='Everon\DataMapper');
 
     /**
+     * @param DataMapper\Interfaces\ConnectionManager $ConnectionManager
+     * @param Domain\Interfaces\Mapper $DomainMapper
+     * @param string $namespace
+     * @return mixed
+     * @throws Exception\Factory
+     */
+    function buildDataMapperManager(DataMapper\Interfaces\ConnectionManager $ConnectionManager, Domain\Interfaces\Mapper $DomainMapper, $namespace='Everon\DataMapper');
+
+    /**
      * @param $name
      * @param Interfaces\DataMapper $DataMapper
      * @param string $namespace
@@ -227,6 +236,14 @@ interface Factory
      * @throws Exception\Factory
      */
     function buildDomainEntity($class_name, $id_field, array $data, $namespace='Everon\Domain');
+
+    /**
+     * @param array $mappings
+     * @param string $namespace
+     * @return mixed
+     * @throws Exception\Factory
+     */
+    function buildDomainMapper(array $mappings, $namespace='Everon\Domain');
     
     /**
      * @param $class_name
@@ -237,13 +254,12 @@ interface Factory
     function buildDomainModel($class_name, $namespace='Everon\Domain');
 
     /**
-     * @param DataMapper\Interfaces\ConnectionManager $ConnectionManager
-     * @param array $mappings
+     * @param Domain\Interfaces\Mapper $DomainMapper
      * @param string $namespace
      * @return Domain\Interfaces\Manager
      * @throws Exception\Factory
      */
-    function buildDomainManager(DataMapper\Interfaces\ConnectionManager $ConnectionManager, array $mappings, $namespace='Everon\Domain');
+    function buildDomainManager(Domain\Interfaces\Mapper $DomainMapper, $namespace='Everon\Domain');
 
     /**
      * @param DataMapper\Interfaces\Schema\Reader $Reader
@@ -290,6 +306,14 @@ interface Factory
      * @throws Exception\Factory
      */
     function buildConfigItem($name, array $data);
+
+    /**
+     * @param $name
+     * @param array $data
+     * @return Config\Interfaces\ItemDomain
+     * @throws Exception\Factory
+     */
+    function buildConfigItemDomain($name, array $data);
 
     /**
      * @param $name

@@ -29,7 +29,7 @@ abstract class DataMapper implements Interfaces\DataMapper
     protected $read_connection_name = 'read';
     
     abstract protected function getInsertSql(array $data);
-    abstract protected function getUpdateSql(array $data);
+    abstract protected function getUpdateSql($id, array $data);
     abstract protected function getDeleteSql($id);
     abstract protected function getFetchAllSql(Criteria $Criteria);
 
@@ -92,6 +92,7 @@ abstract class DataMapper implements Interfaces\DataMapper
      */
     public function add(array $data)
     {
+        $data = $this->getTable()->validateData($data, false);
         list($sql, $parameters) = $this->getInsertSql($data);
         $PdoAdapter = $this->getSchema()->getPdoAdapterByName($this->write_connection_name);
         $primary_keys = $this->getTable()->getPrimaryKeys();
@@ -112,7 +113,11 @@ abstract class DataMapper implements Interfaces\DataMapper
      */
     public function save(array $data)
     {
-        list($sql, $parameters) = $this->getUpdateSql($data);
+        $data = $this->getTable()->validateData($data, true);
+        $id = $this->getTable()->getIdFromData($data);
+        $id = $this->getTable()->validateId($id);
+
+        list($sql, $parameters) = $this->getUpdateSql($id, $data);
         return $this->getSchema()->getPdoAdapterByName($this->write_connection_name)->update($sql, $parameters);
     }
 
@@ -121,6 +126,7 @@ abstract class DataMapper implements Interfaces\DataMapper
      */
     public function delete($id)
     {
+        $id = $this->getTable()->validateId($id);
         list($sql, $parameters) = $this->getDeleteSql($id);
         return $this->getSchema()->getPdoAdapterByName($this->write_connection_name)->delete($sql, $parameters);
     }
@@ -131,11 +137,9 @@ abstract class DataMapper implements Interfaces\DataMapper
     public function fetchOneById($id)
     {
         $Criteria = new DataMapper\Criteria();
-        $Criteria->limit(1);
         $id = $this->getTable()->validateId($id);
         $Criteria->where([$this->getTable()->getPk() => $id]);
-        $sql = $this->getFetchAllSql($Criteria);
-        return $this->getSchema()->getPdoAdapterByName($this->read_connection_name)->execute($sql, $Criteria->getWhere())->fetch();
+        return $this->fetchOneByCriteria($Criteria);
     }
 
     /**
@@ -163,48 +167,6 @@ abstract class DataMapper implements Interfaces\DataMapper
     public function getName()
     {
         return $this->getTable()->getName();
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getIdFromData($data)
-    {
-        $pk_name = $this->getTable()->getPk();
-        if (isset($data[$pk_name]) === false) {
-            return null;
-        }
-        
-        return $data[$pk_name];
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function validateData(array $data, $validate_id)
-    {
-        $entity_data = [];
-        /**
-         * @var DataMapper\Interfaces\Schema\Column $Column
-         */
-        foreach ($this->getTable()->getColumns() as $name => $Column) {
-            if ($Column->isPk()) {
-                $entity_data[$name] = null;
-                continue;
-            }
-
-            $value = $this->getTable()->validateColumnValue($name, $data[$name]);
-            $entity_data[$name] = $value;
-        }
-        
-        if ($validate_id) {
-            $pk_name = $this->getTable()->getPk();
-            $id = $this->getIdFromData($data);
-            $id = $this->getTable()->validateId($id);
-            $entity_data[$pk_name] = $id;
-        }
-        
-        return $entity_data;
     }
 
     /**

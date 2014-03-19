@@ -18,7 +18,7 @@ use Everon\Helper;
 
 abstract class Repository implements Interfaces\Repository
 {
-    use Dependency\Injection\DomainManager;
+    use \Everon\Domain\Dependency\Injection\DomainManager;
     use Dependency\Injection\Factory;
     
     /**
@@ -99,12 +99,18 @@ abstract class Repository implements Interfaces\Repository
       
     protected function buildEntity(array $data, Criteria $RelationCriteria=null)
     {
-        $id = $this->getMapper()->getIdFromData($data);
-        $data = $this->getMapper()->validateData($data, $id !== null);
+        //$id = $this->getMapper()->getIdFromData($data);
+        //$data = $this->getMapper()->validateData($data, $id !== null);
         $Entity = $this->getFactory()->buildDomainEntity($this->getName(), $this->getMapper()->getTable()->getPk(), $data);
         $this->buildRelations($Entity, $RelationCriteria);
         return $Entity;
     } 
+    
+    public function validateEntityData(Interfaces\Entity $Entity)
+    {
+        $data = $Entity->toArray();
+        return $this->getMapper()->getTable()->validateData($data, $Entity->isNew() === false);
+    }
     
     /**
      * @param $id
@@ -113,17 +119,12 @@ abstract class Repository implements Interfaces\Repository
      */
     public function getEntityById($id, Criteria $RelationCriteria=null)
     {
-        $id = $this->getMapper()->getTable()->validateId($id);
-        $Criteria = (new \Everon\DataMapper\Criteria())->where([
-            $this->getMapper()->getTable()->getPk() => $id
-        ]);
-        
-        $data = $this->getMapper()->fetchAll($Criteria);
+        $data = $this->getMapper()->fetchOneById($id);
         if (empty($data)) {
             return null;
         }
 
-        $data = current($data);
+        return $this->buildEntity($data, $RelationCriteria);
         return $this->buildEntity($data, $RelationCriteria);
     }
 

@@ -9,27 +9,10 @@
  */
 namespace Everon\Domain\Interfaces;
 
-use Everon\DataMapper\Interfaces\ConnectionManager;
 use Everon\DataMapper\Interfaces\Schema;
-use Everon\Interfaces\Factory;
 
 interface Handler extends \Everon\Interfaces\Dependency\Factory
 {
-    /**
-     * @return ConnectionManager
-     */
-    function getConnectionManager();
-
-    /**
-     * @param ConnectionManager $ConnectionManager
-     */
-    function setConnectionManager(ConnectionManager $ConnectionManager);
-
-    /**
-     * @return Schema
-     */
-    function getSchema();
-
     /**
      * @param $domain_name
      * @return Repository
@@ -42,12 +25,6 @@ interface Handler extends \Everon\Interfaces\Dependency\Factory
      * @return mixed
      */
     function getModel($domain_name);
-
-    /**
-     * @param $domain_name
-     * @return mixed|null
-     */
-    function getDataMapperNameFromDomain($domain_name);
 
     /**
      * @param $domain_name

@@ -58,22 +58,6 @@ interface DataMapper
     function getName();
 
     /**
-     * @param $data
-     * @return mixed
-     */
-    function getIdFromData($data);
-
-    /**
-     * Validates all fields but ID. Assumes that ID has been checked elsewhere.
-     *
-     * @param array $data
-     * @param bool $validate_id
-     * @return array
-     * @throws \Everon\Exception\DataMapper
-     */
-    function validateData(array $data, $validate_id);
-
-    /**
      * @return Schema
      */
     function getSchema();

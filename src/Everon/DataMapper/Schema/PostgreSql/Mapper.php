@@ -22,7 +22,6 @@ abstract class Mapper extends DataMapper
      */
     protected function getInsertSql(array $data)
     {
-        $data = $this->validateData($data, false);
         $values_str = rtrim(implode(',', $this->getPlaceholderForQuery()), ',');
         $columns_str = rtrim(implode(',', $this->getPlaceholderForQuery('')), ',');
         $sql = sprintf('INSERT INTO %s.%s (%s) VALUES (%s)', $this->getTable()->getSchema(), $this->getTable()->getName(), $columns_str, $values_str);
@@ -30,16 +29,13 @@ abstract class Mapper extends DataMapper
     }
 
     /**
+     * @param array $id
      * @param array $data
      * @return array
      */
-    protected function getUpdateSql(array $data)
+    protected function getUpdateSql($id, array $data)
     {
-        $data = $this->validateData($data, true);
-        $id = $this->getIdFromData($data);
-        $id = $this->getTable()->validateId($id);
         $pk_name = $this->getTable()->getPk();
-                
         $values_str = '';
         $columns = $this->getTable()->getColumns();
         /**
@@ -64,7 +60,6 @@ abstract class Mapper extends DataMapper
      */
     protected function getDeleteSql($id)
     {
-        $id = $this->getTable()->validateId($id);
         $pk_name = $this->getTable()->getPk();
         $sql = sprintf('DELETE FROM %s.%s WHERE %s = :%s', $this->getTable()->getSchema(), $this->getTable()->getName(), $pk_name, $pk_name);
         $params = [$pk_name => $id];

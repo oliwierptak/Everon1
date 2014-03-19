@@ -9,8 +9,6 @@
  */
 namespace Everon;
 
-use Everon\DataMapper\Interfaces\ConnectionManager;
-use Everon\DataMapper\Schema;
 use Everon\Helper;
 use Everon\Interfaces;
 
@@ -612,6 +610,23 @@ class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
+    public function buildDataMapperManager(DataMapper\Interfaces\ConnectionManager $ConnectionManager, Domain\Interfaces\Mapper $DomainMapper, $namespace='Everon\DataMapper')
+    {
+        try {
+            $class_name = $this->getFullClassName($namespace, 'Manager');
+            $this->classExists($class_name);
+            $DataMapperManager = new $class_name($ConnectionManager, $DomainMapper);
+            $this->injectDependencies($class_name, $DataMapperManager);
+            return $DataMapperManager;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('DataMapperManager initialization error', null, $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function buildDomainEntity($class_name, $id_field, array $data, $namespace='Everon\Domain')
     {
         try {
@@ -646,6 +661,41 @@ class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
+    public function buildDomainMapper(array $mappings, $namespace='Everon\Domain')
+    {
+        try {
+            $class_name = $this->getFullClassName($namespace, 'Mapper');
+            $this->classExists($class_name);
+            $DomainManager = new $class_name($mappings);
+            $this->injectDependencies($class_name, $DomainManager);
+            return $DomainManager;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('DomainMapper initialization error', null, $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    //*
+    public function buildDomainManager(Domain\Interfaces\Mapper $DomainMapper, $namespace='Everon\Domain')
+    {
+        try {
+            $class_name = $this->getFullClassName($namespace, 'Manager');
+            $this->classExists($class_name);
+            $DomainManager = new $class_name($DomainMapper);
+            $this->injectDependencies($class_name, $DomainManager);
+            return $DomainManager;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('DomainManager initialization error', null, $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function buildDomainModel($class_name, $namespace='Everon\Domain')
     {
         try {
@@ -657,23 +707,6 @@ class Factory implements Interfaces\Factory
         }
         catch (\Exception $e) {
             throw new Exception\Factory('DomainModel: "%s" initialization error', $class_name, $e);
-        }
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function buildDomainManager(ConnectionManager $ConnectionManager, array $mappings, $namespace='Everon\Domain')
-    {
-        try {
-            $class_name = $this->getFullClassName($namespace, 'Manager');
-            $this->classExists($class_name);
-            $DomainManager = new $class_name($ConnectionManager, $mappings);
-            $this->injectDependencies($class_name, $DomainManager);
-            return $DomainManager;
-        }
-        catch (\Exception $e) {
-            throw new Exception\Factory('DomainManager initialization error', null, $e);
         }
     }
 
@@ -889,6 +922,25 @@ class Factory implements Interfaces\Factory
         }
         catch (\Exception $e) {
             throw new Exception\Factory('ConfigItem: "%s" initialization error', $name, $e);
+        }
+    }
+
+    /**
+     * @param $name
+     * @param array $data
+     * @return Config\Interfaces\ItemDomain
+     * @throws Exception\Factory
+     */
+    public function buildConfigItemDomain($name, array $data)
+    {
+        try {
+            $data[Config\Item::PROPERTY_NAME] = $name;
+            $DomainItem = new Config\Item\Domain($data);
+            $this->injectDependencies('Everon\Config\Item\Domain', $DomainItem);
+            return $DomainItem;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('ConfigItemDomain: "%s" initialization error', $name, $e);
         }
     }
 

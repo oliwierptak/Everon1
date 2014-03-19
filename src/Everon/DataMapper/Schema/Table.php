@@ -92,6 +92,17 @@ class Table implements Interfaces\Schema\Table
     /**
      * @inheritdoc
      */
+    public function getColumnByName($name)
+    {
+        if (isset($this->columns[$name]) === false) {
+            throw new Exception\Table('Invalid column name: "%s"', $name);
+        }
+        return $this->columns[$name];
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function getForeignKeys()
     {
         return $this->foreign_keys;
@@ -138,36 +149,50 @@ class Table implements Interfaces\Schema\Table
     public function validateId($id)
     {
         $PrimaryKey = current($this->getPrimaryKeys()); //todo: make fix for composite keys
-        return $this->validateColumnValue($PrimaryKey->getName(), $id);
+        $Column = $this->getColumnByName($PrimaryKey->getName());
+        return $Column->validateColumnValue($id);
     }
 
     /**
      * @inheritdoc
      */
-    public function validateColumnValue($name, $value)
+    public function validateData(array $data, $validate_id)
     {
-        try {
-            /**
-             * @var Interfaces\Schema\Column $Column
-             */
-            $Column = $this->getColumns()[$name];
-            $validation_result = filter_var_array([$name => $value], $Column->getValidationRules());
-            $display_value = $value === null ? 'NULL' : $value;
-            
-            if (($validation_result === false || $validation_result === null) || ($Column->isNullable() === false && $value === null)) {
-                throw new Exception\Column('Column: "%s" failed to validate with value: "%s"', [$Column->getName(), $display_value]);
+        $entity_data = [];
+        /**
+         * @var Interfaces\Schema\Column $Column
+         */
+        foreach ($this->getColumns() as $name => $Column) {
+            if ($Column->isPk()) {
+                $entity_data[$name] = null;
+                continue;
             }
 
-            $value = $validation_result[$name];
-            if ($value === false) {
-                throw new Exception\Column('Column: "%s" failed to validate with value: "%s"', [$Column->getName(), $display_value]);
-            }
-            
-            return $value;
+            $value = $Column->validateColumnValue($name, $data[$name]);
+            $entity_data[$name] = $value;
         }
-        catch (\Exception $e) {
-            throw new Exception\Column($e->getMessage());
+
+        if ($validate_id) {
+            $pk_name = $this->getPk();
+            $id = $this->getIdFromData($data);
+            $id = $this->validateId($id);
+            $entity_data[$pk_name] = $id;
         }
+
+        return $entity_data;
+    }
+    
+    /**
+     * @inheritdoc
+     */
+    public function getIdFromData($data)
+    {
+        $pk_name = $this->getPk();
+        if (isset($data[$pk_name]) === false) {
+            return null;
+        }
+
+        return $data[$pk_name];
     }
     
     public function __toString()
