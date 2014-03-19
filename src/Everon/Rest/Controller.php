@@ -143,14 +143,7 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
             $Resource = $this->getResourceManager()->getCollectionResource($resource_name, $version, $Navigator);
         }
         else {
-            $Curl = $this->getFactory()->buildRestCurlAdapter();
-            $Href = new \Everon\Rest\Resource\Href('http://api.nova/', 'v1', 'url');
-
             $Resource = $this->getResourceManager()->getResource($resource_id, $resource_name, $version, $Navigator);
-            $Client = $this->getFactory()->buildRestClient($Href, $Curl);
-
-            $Resource->getDomainEntity()->setEmail('foobar@bar.com');
-            $Client->put('users', 1, $Resource->toArray());
         }
 
         return $Resource;
