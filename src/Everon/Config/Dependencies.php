@@ -10,11 +10,6 @@
 namespace Everon;
 
 /**
- * @var Interfaces\DependencyContainer $Container
- * @var Interfaces\Factory $Factory
- */
-
-/**
  * @var Bootstrap $Bootstrap
  * @var Interfaces\Environment $Environment
  * @var Interfaces\DependencyContainer $Container
@@ -40,7 +35,7 @@ $Container->propose('FileSystem', function() use ($Factory) {
 });
 
 $Container->propose('Request', function() use ($Factory) {
-    return $Factory->buildRequest($_SERVER, $_GET, $_POST, $_FILES, 'Everon\Console');
+    return $Factory->buildRequest($_SERVER, $_GET, $_POST, $_FILES);
 });
 
 $Container->propose('Router', function() use ($Factory) {

@@ -209,7 +209,7 @@ class Manager implements Interfaces\ViewManager
                 throw new Exception\ViewManager('Theme index template: "%s" not found for: "%s"', [$TemplateFilename->getPathname(), $view_name]);
             }
 
-            $view_variables = $this->getConfigManager()->getConfigValue("view.$view_name");
+            $view_variables = $this->getConfigManager()->getConfigValue("view.$view_name", []);
             $view_variables = $this->arrayDotKeysToScope($view_variables, 'View');
             $IndexTemplate = $this->getFactory()->buildTemplate($TemplateFilename, $view_variables);
 
