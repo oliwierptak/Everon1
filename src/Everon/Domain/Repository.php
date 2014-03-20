@@ -125,7 +125,6 @@ abstract class Repository implements Interfaces\Repository
         }
 
         return $this->buildEntity($data, $RelationCriteria);
-        return $this->buildEntity($data, $RelationCriteria);
     }
 
     /**
