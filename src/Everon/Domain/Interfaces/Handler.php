@@ -11,7 +11,7 @@ namespace Everon\Domain\Interfaces;
 
 use Everon\DataMapper\Interfaces\Schema;
 
-interface Handler extends \Everon\Interfaces\Dependency\Factory
+interface Handler extends \Everon\Interfaces\Dependency\Factory, \Everon\DataMapper\Interfaces\Dependency\DataMapperManager
 {
     /**
      * @param $domain_name

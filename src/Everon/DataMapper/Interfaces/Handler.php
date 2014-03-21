@@ -9,7 +9,7 @@
  */
 namespace Everon\DataMapper\Interfaces;
 
-interface Handler
+interface Handler extends \Everon\Domain\Interfaces\Dependency\DomainMapper
 {
     /**
      * @return Schema

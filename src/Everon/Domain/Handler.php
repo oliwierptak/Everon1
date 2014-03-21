@@ -11,6 +11,7 @@ namespace Everon\Domain;
 
 use Everon\DataMapper\Dependency;
 use Everon\DataMapper\Interfaces\Schema;
+use Everon\DataMapper\Interfaces\Manager as DataMapperManager;
 use Everon\DataMapper\Exception\Schema as SchemaException;
 use Everon\Dependency\Injection\Factory as FactoryInjection;
 use Everon\Exception;
@@ -19,7 +20,7 @@ use Everon\Helper;
 abstract class Handler implements Interfaces\Handler
 {
     use FactoryInjection;
-    use Dependency\Injection\DataMapperManager;
+    use Dependency\DataMapperManager;
 
     use Helper\IsCallable;
     use Helper\Asserts\IsNull;
@@ -36,15 +37,10 @@ abstract class Handler implements Interfaces\Handler
      */
     protected $repositories = null;
 
-    /**
-     * @var Interfaces\Mapper
-     */
-    protected $DomainMapper = null;
 
-
-    public function __construct(Interfaces\Mapper $DomainMapper)
+    public function __construct(DataMapperManager $Manager)
     {
-        $this->DomainMapper = $DomainMapper;
+        $this->DataMapperManager = $Manager;
     }
 
     /**
@@ -69,7 +65,7 @@ abstract class Handler implements Interfaces\Handler
     public function getRepository($domain_name)
     {
         if (isset($this->repositories[$domain_name]) === false) {
-            $data_mapper_name = $this->DomainMapper->getDataMapperNameByDomain($domain_name);
+            $data_mapper_name = $this->getDataMapperManager()->getDomainMapper()->getDataMapperNameByDomain($domain_name);
             $this->assertIsNull($data_mapper_name, 'Invalid data mapper relation for: "%s"', 'Domain');
 
             $Schema = $this->getDataMapperManager()->getSchema();

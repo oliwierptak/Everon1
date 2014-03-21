@@ -19,11 +19,16 @@ use Everon\Interfaces;
 abstract class DataMapper implements Interfaces\DataMapper
 {
     use Dependency\Schema;
+    
+    use Helper\String\LastTokenToName;
+    
 
     /**
      * @var Table
      */
     protected $Table = null;
+    
+    protected $name = null;
     
     protected $write_connection_name = 'write';
     protected $read_connection_name = 'read';
@@ -166,7 +171,10 @@ abstract class DataMapper implements Interfaces\DataMapper
      */
     public function getName()
     {
-        return $this->getTable()->getName();
+        if ($this->name === null) {
+            $this->name = $this->stringLastTokenToName(get_class($this));
+        }
+        return $this->name;
     }
 
     /**

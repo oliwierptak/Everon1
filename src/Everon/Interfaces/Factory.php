@@ -254,12 +254,12 @@ interface Factory
     function buildDomainModel($class_name, $namespace='Everon\Domain');
 
     /**
-     * @param Domain\Interfaces\Mapper $DomainMapper
+     * @param DataMapper\Interfaces\Manager $Manager
      * @param string $namespace
      * @return Domain\Interfaces\Manager
      * @throws Exception\Factory
      */
-    function buildDomainManager(Domain\Interfaces\Mapper $DomainMapper, $namespace='Everon\Domain');
+    function buildDomainManager(DataMapper\Interfaces\Manager $Manager, $namespace='Everon\Domain');
 
     /**
      * @param DataMapper\Interfaces\Schema\Reader $Reader

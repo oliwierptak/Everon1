@@ -257,10 +257,11 @@ class Entity extends Helper\Popo implements Interfaces\Entity
     {
         //todo: test me xxx
         return [
-            'id', 
+            'id_name',
             'data',
             'modified_properties',
             'state',
+            'RelationCollection',
             'call_type',
             'call_property',
         ];
@@ -269,11 +270,12 @@ class Entity extends Helper\Popo implements Interfaces\Entity
     public static function __set_state(array $array)
     {
         //todo: test me xxx
-        $Entity = new static($array['id'], $array['data']);
+        $Entity = new static($array['id_name'], $array['data']);
         $Entity->modified_properties = $array['modified_properties'];
         $Entity->state = $array['state'];
         $Entity->call_type = $array['call_type'];
         $Entity->call_property = $array['call_property'];
+        $Entity->RelationCollection = $array['RelationCollection'];
         return $Entity;
     }
 }

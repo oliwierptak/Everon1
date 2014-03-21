@@ -678,13 +678,12 @@ class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    //*
-    public function buildDomainManager(Domain\Interfaces\Mapper $DomainMapper, $namespace='Everon\Domain')
+    public function buildDomainManager(DataMapper\Interfaces\Manager $Manager, $namespace='Everon\Domain')
     {
         try {
             $class_name = $this->getFullClassName($namespace, 'Manager');
             $this->classExists($class_name);
-            $DomainManager = new $class_name($DomainMapper);
+            $DomainManager = new $class_name($Manager);
             $this->injectDependencies($class_name, $DomainManager);
             return $DomainManager;
         }

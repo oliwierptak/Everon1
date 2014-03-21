@@ -9,28 +9,21 @@
  */
 namespace Everon\DataMapper;
 
-use Everon\Dependency;
-use Everon\DataMapper\Dependency\ConnectionManager as ConnectionManagerDependency;
+use Everon\Dependency\Injection\Factory as FactoryDependency;
+use Everon\DataMapper\Dependency;
 use Everon\DataMapper\Interfaces\ConnectionManager;
 use Everon\DataMapper\Interfaces\Schema;
+use Everon\Domain\Dependency\DomainMapper as DomainMapperDependency;
 use Everon\Helper;
 use Everon\Domain\Interfaces\Mapper as DomainMapper;
 
 abstract class Handler implements Interfaces\Handler
 {
-    use Dependency\Injection\Factory;
-    use ConnectionManagerDependency;
+    use Dependency\ConnectionManager;
+    use Dependency\Schema;
+    use FactoryDependency;
+    use DomainMapperDependency;
     
-    /**
-     * @var Schema
-     */
-    protected $Schema = null;
-
-    /**
-     * @var DomainMapper
-     */
-    protected $DomainMapper = null;
-
     /**
      * @param ConnectionManager $ConnectionManager
      * @param DomainMapper $DomainMapper
