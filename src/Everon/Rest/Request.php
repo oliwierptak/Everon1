@@ -22,7 +22,7 @@ class Request extends \Everon\Request implements Interfaces\Request
         self::METHOD_GET,
         self::METHOD_HEAD,
         self::METHOD_POST,
-        self::METHOD_PUT,
+        self::METHOD_PUT
     ];
     
     protected $versioning = Resource\Handler::VERSIONING_URL;
