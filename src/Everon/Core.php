@@ -59,8 +59,6 @@ abstract class Core implements Interfaces\Core
     {
         $this->runOnce($RequestIdentifier);
         
-        //todo move request logic into runOnce
-        
         if ($this->getRequest()->isEmptyUrl()) {
             $this->Module = $this->getModuleManager()->getDefaultModule();
             

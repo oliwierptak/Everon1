@@ -10,9 +10,16 @@
 namespace Everon;
 
 /**
+ * @var Bootstrap $Bootstrap
+ * @var Interfaces\Environment $Environment
  * @var Interfaces\DependencyContainer $Container
  * @var Interfaces\Factory $Factory
  */
+if ($Bootstrap->useEveronAutoload()) {
+    $Bootstrap->getClassLoader()->add('Everon\DataMapper', $Environment->getDataMapper());
+    $Bootstrap->getClassLoader()->add('Everon\Domain', $Environment->getDomain());
+    $Bootstrap->getClassLoader()->add('Everon\Module', $Environment->getModule());
+}
 
 $Container->propose('Logger', function() use ($Factory) {
     $Factory->getDependencyContainer()->monitor('Logger', ['Everon\Config\Manager', 'Everon\Environment']);
@@ -28,7 +35,7 @@ $Container->propose('FileSystem', function() use ($Factory) {
 });
 
 $Container->propose('Request', function() use ($Factory) {
-    return $Factory->buildRequest($_SERVER, $_GET, $_POST, $_FILES, 'Everon\Console');
+    return $Factory->buildRequest($_SERVER, $_GET, $_POST, $_FILES);
 });
 
 $Container->propose('Router', function() use ($Factory) {
