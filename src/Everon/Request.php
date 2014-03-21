@@ -19,6 +19,9 @@ class Request implements Interfaces\Request
     const METHOD_HEAD = 'HEAD';
     const METHOD_POST = 'POST';
     const METHOD_PUT = 'PUT';
+    const METHOD_OPTIONS = 'OPTIONS';
+    const METHOD_TRACE = 'TRACE';
+    const METHOD_CONNECT= 'CONNECT';
 
     /**
      * @var Interfaces\Collection $_SERVER
@@ -90,6 +93,9 @@ class Request implements Interfaces\Request
     protected $accepted_methods = [
         self::METHOD_GET,
         self::METHOD_POST,
+        self::METHOD_OPTIONS,
+        self::METHOD_TRACE,
+        self::METHOD_CONNECT,
     ];
 
 
