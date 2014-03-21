@@ -11,7 +11,7 @@ namespace Everon\DataMapper\Interfaces;
 
 use Everon\Interfaces\PdoAdapter;
 
-interface Schema
+interface Schema  extends \Everon\DataMapper\Interfaces\Dependency\SchemaReader
 {
     /**
      * @param $name

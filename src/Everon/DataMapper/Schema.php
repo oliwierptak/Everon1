@@ -57,7 +57,7 @@ class Schema implements Interfaces\Schema
         $foreign_key_list = $this->getSchemaReader()->getForeignKeyList();
         $unique_key_list = $this->getSchemaReader()->getUniqueKeysList();
 
-        $castToEmptyArrayWhenNull = function($name, $item) {
+        $castToEmptyArrayWhenNull = function($name, $item) {    
             return isset($item[$name]) ? $item[$name] : [];
         };
         

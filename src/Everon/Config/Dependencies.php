@@ -10,16 +10,9 @@
 namespace Everon;
 
 /**
- * @var Bootstrap $Bootstrap
- * @var Interfaces\Environment $Environment
  * @var Interfaces\DependencyContainer $Container
  * @var Interfaces\Factory $Factory
  */
-if ($Bootstrap->useEveronAutoload()) {
-    $Bootstrap->getClassLoader()->add('Everon\DataMapper', $Environment->getDataMapper());
-    $Bootstrap->getClassLoader()->add('Everon\Domain', $Environment->getDomain());
-    $Bootstrap->getClassLoader()->add('Everon\Module', $Environment->getModule());
-}
 
 $Container->propose('Logger', function() use ($Factory) {
     $Factory->getDependencyContainer()->monitor('Logger', ['Everon\Config\Manager', 'Everon\Environment']);
@@ -73,9 +66,9 @@ $Container->propose('DomainMapper', function() use ($Factory) {
 });
 
 $Container->propose('DomainManager', function() use ($Factory) {
-    $Factory->getDependencyContainer()->monitor('DomainManager', ['Everon\Domain\Mapper']);
-    $DomainMapper = $Factory->getDependencyContainer()->resolve('DomainMapper');
-    return $Factory->buildDomainManager($DomainMapper);
+    $Factory->getDependencyContainer()->monitor('DomainManager', ['Everon\DataMapper\Manager']);
+    $DataMapperManager = $Factory->getDependencyContainer()->resolve('DataMapperManager');
+    return $Factory->buildDomainManager($DataMapperManager);
 });
 
 $Container->propose('DataMapperManager', function() use ($Factory) {

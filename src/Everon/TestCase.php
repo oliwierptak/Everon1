@@ -87,19 +87,6 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         return $server;
     }
     
-    public function getFixtureData()
-    {
-        if ($this->data_fixtures === null) {
-            $dir = $this->getDataMapperFixturesDirectory();
-            $Doubles = new \GlobIterator($dir.'*.php');
-            foreach ($Doubles as $filename => $Include) {
-                $this->data_fixtures[$Include->getBasename()] = require($Include->getPathname());
-            }
-        }
-
-        return $this->data_fixtures;
-    }
-
     public function getTmpDirectory()
     {
         return $this->FrameworkEnvironment->getTest().$this->suite_name.DIRECTORY_SEPARATOR.'tmp'.DIRECTORY_SEPARATOR;
@@ -110,16 +97,6 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         return $this->FrameworkEnvironment->getTest().$this->suite_name.DIRECTORY_SEPARATOR.'fixtures'.DIRECTORY_SEPARATOR;
     }
 
-    public function getStubDirectory()
-    {
-        return $this->FrameworkEnvironment->getTest().$this->suite_name.DIRECTORY_SEPARATOR.'stubs'.DIRECTORY_SEPARATOR;
-    }
-
-    public function getMockDirectory()
-    {
-        return $this->FrameworkEnvironment->getTest().$this->suite_name.DIRECTORY_SEPARATOR.'mocks'.DIRECTORY_SEPARATOR;
-    }
-    
     public function getDataMapperFixturesDirectory()
     {
         return $this->getFixtureDirectory().'data_mapper'.DIRECTORY_SEPARATOR;
