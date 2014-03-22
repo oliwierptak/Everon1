@@ -140,10 +140,10 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
         $Navigator = $this->getFactory()->buildRestResourceNavigator($this->getRequest());
 
         if ($resource_id === null) {
-            $Resource = $this->getResourceManager()->getCollectionResource($resource_name, $version, $Navigator);
+            $Resource = $this->getResourceManager()->getCollectionResource($version, $resource_name, $Navigator);
         }
         else {
-            $Resource = $this->getResourceManager()->getResource($resource_id, $resource_name, $version, $Navigator);
+            $Resource = $this->getResourceManager()->getResource($version, $resource_name, $resource_id, $Navigator);
         }
 
         return $Resource;

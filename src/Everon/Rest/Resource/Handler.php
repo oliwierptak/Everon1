@@ -75,7 +75,7 @@ class Handler implements Interfaces\ResourceHandler
      * @param $version
      * @return Interfaces\Resource
      */
-    public function buildResourceFromEntity(Entity $Entity, $resource_name, $version)
+    public function buildResourceFromEntity(Entity $Entity, $version, $resource_name)
     {
         $this->assertIsInArray($version, $this->supported_versions, 'Unsupported version: "%s"', 'Domain');
         
@@ -84,7 +84,7 @@ class Handler implements Interfaces\ResourceHandler
         $link = $this->getResourceUrl($version, $resource_name, $resource_id);
 
         $Resource = $this->getFactory()->buildRestResource($domain_name, $version, $link, $resource_name, $Entity); //todo: change version to href
-        $this->buildResourceRelations($Resource, $resource_id, $resource_name, $version);
+        $this->buildResourceRelations($Resource, $version, $resource_name, $resource_id);
 
         return $Resource;
     }
@@ -98,7 +98,7 @@ class Handler implements Interfaces\ResourceHandler
             $domain_name = $this->getDomainNameFromMapping($resource_name);
             $Repository = $this->getDomainManager()->getRepository($domain_name);
             $Entity = $Repository->persistFromArray($data);
-            return $this->buildResourceFromEntity($Entity, $resource_name, $version);
+            return $this->buildResourceFromEntity($Entity, $version, $resource_name);
         }
         catch (EveronException\Domain $e) {
             throw new Exception\Resource($e->getMessage());
@@ -118,7 +118,7 @@ class Handler implements Interfaces\ResourceHandler
             $this->assertIsNull($Entity, sprintf('Domain Entity: "%s" with id: "%s" not found', $domain_name, $resource_id), 'Domain');
             $data = $this->arrayMergeDefault($Entity->toArray(), $data);
             $Entity = $Repository->persistFromArray($data);
-            return $this->buildResourceFromEntity($Entity, $resource_name, $version);
+            return $this->buildResourceFromEntity($Entity, $version, $resource_name);
         }
         catch (EveronException\Domain $e) {
             throw new Exception\Resource($e->getMessage());
@@ -137,7 +137,7 @@ class Handler implements Interfaces\ResourceHandler
             $Entity = $Repository->getEntityById($id);
             $this->assertIsNull($Entity, sprintf('Domain Entity: "%s" with id: "%s" not found', $domain_name, $resource_id), 'Domain');
             $Repository->remove($Entity);
-            return $this->buildResourceFromEntity($Entity, $resource_name, $version);
+            return $this->buildResourceFromEntity($Entity, $version, $resource_name);
         }
         catch (EveronException\Domain $e) {
             throw new Exception\Resource($e->getMessage());
@@ -148,7 +148,7 @@ class Handler implements Interfaces\ResourceHandler
     /**
      * @inheritdoc
      */
-    public function getResource($resource_id, $resource_name, $version, Interfaces\ResourceNavigator $Navigator)
+    public function getResource($version, $resource_name, $resource_id, Interfaces\ResourceNavigator $Navigator)
     {
         try {
             $EntityRelationCriteria = new Criteria();
@@ -160,7 +160,7 @@ class Handler implements Interfaces\ResourceHandler
             $Entity = $this->getDomainManager()->getRepository($domain_name)->getEntityById($id, $EntityRelationCriteria);
             $this->assertIsNull($Entity, sprintf('Domain Entity: "%s" with id: "%s" not found', $domain_name, $resource_id), 'Domain');
             
-            $Resource = $this->buildResourceFromEntity($Entity, $resource_name, $version);
+            $Resource = $this->buildResourceFromEntity($Entity, $version, $resource_name);
             $link = $this->getResourceUrl($version, $resource_name, $resource_id);
             $Resource->setHref($link);
 
@@ -176,7 +176,7 @@ class Handler implements Interfaces\ResourceHandler
                 $RelationCollection = new Helper\Collection([]);
                 for ($a=0 ;$a<count($relation_list); $a++) {
                     $CollectionEntity = $relation_list[$a];
-                    $RelationCollection->set($a, $this->buildResourceFromEntity($CollectionEntity, $collection_name, $version));
+                    $RelationCollection->set($a, $this->buildResourceFromEntity($CollectionEntity, $version, $collection_name));
                 }
 
                 $link = $this->getResourceUrl($version, $resource_name, $resource_id, $collection_name);
@@ -197,7 +197,7 @@ class Handler implements Interfaces\ResourceHandler
     /**
      * @inheritdoc
      */
-    public function getCollectionResource($resource_name, $version, Interfaces\ResourceNavigator $Navigator)
+    public function getCollectionResource($version, $resource_name, Interfaces\ResourceNavigator $Navigator)
     {
         try {
             $domain_name = $this->getDomainNameFromMapping($resource_name);
@@ -211,7 +211,7 @@ class Handler implements Interfaces\ResourceHandler
             $ResourceList = new Helper\Collection([]);
             for ($a=0; $a<count($entity_list); $a++) {
                 $CollectionEntity = $entity_list[$a];
-                $ResourceList->set($a, $this->buildResourceFromEntity($CollectionEntity, $resource_name, $version));
+                $ResourceList->set($a, $this->buildResourceFromEntity($CollectionEntity, $version, $resource_name));
             }
             
             $CollectionResource = $this->getFactory()->buildRestCollectionResource($domain_name, $version, $link, $resource_name, $ResourceList);
@@ -224,7 +224,7 @@ class Handler implements Interfaces\ResourceHandler
         }
     }
 
-    public function buildResourceRelations(Interfaces\Resource $Resource, $resource_id, $resource_name, $version)
+    public function buildResourceRelations(Interfaces\Resource $Resource, $version, $resource_name, $resource_id)
     {
         /**
          * @var \Everon\Domain\Interfaces\RestZone\Entity $Entity

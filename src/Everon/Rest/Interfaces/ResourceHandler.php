@@ -45,11 +45,11 @@ interface ResourceHandler
 
     /**
      * @param Entity $Entity
-     * @param $resource_name
      * @param $version
+     * @param $resource_name
      * @return ResourceInterface
      */
-    function buildResourceFromEntity(Entity $Entity, $resource_name, $version);
+    function buildResourceFromEntity(Entity $Entity, $version, $resource_name);
         
     /**
      * @param $resource_id
@@ -62,13 +62,13 @@ interface ResourceHandler
     function getResource($resource_id, $resource_name, $version, ResourceNavigator $Navigator);
 
     /**
-     * @param $name
      * @param $version
+     * @param $resource_name
      * @return ResourceCollection
      * @param ResourceNavigator $Navigator
      * @throws \Exception
      */
-    function getCollectionResource($name, $version, ResourceNavigator $Navigator);
+    function getCollectionResource($version, $resource_name, ResourceNavigator $Navigator);
 
     /**
      * @param $resource_id
