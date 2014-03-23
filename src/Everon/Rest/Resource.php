@@ -30,7 +30,13 @@ abstract class Resource extends Resource\Basic implements Interfaces\Resource
     
     protected $domain_name = null;
 
-
+    /**
+     * @param $href
+     * @param $version
+     * @param $resource_name
+     * @param $domain_name
+     * @param Entity $Entity
+     */
     public function __construct($href, $version, $resource_name, $domain_name, Entity $Entity)
     {
         parent::__construct($href, $version, $resource_name);

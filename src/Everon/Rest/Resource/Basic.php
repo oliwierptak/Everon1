@@ -21,6 +21,12 @@ abstract class Basic implements Interfaces\ResourceBasic
     protected $href = null;
     protected $version = null;
 
+
+    /**
+     * @param $href
+     * @param $version
+     * @param $resource_name
+     */
     public function __construct($href, $version, $resource_name)
     {
         $this->href = $href;

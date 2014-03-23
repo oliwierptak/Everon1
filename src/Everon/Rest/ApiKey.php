@@ -17,7 +17,11 @@ class ApiKey implements Interfaces\ApiKey
     protected $id = null;
 
     protected $secret = null;
-    
+
+    /**
+     * @param $id
+     * @param $secret
+     */
     public function __construct($id, $secret)
     {
         $this->id = $id;

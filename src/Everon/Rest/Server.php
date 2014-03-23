@@ -27,6 +27,7 @@ class Server extends \Everon\Core implements Rest\Interfaces\Server
      * @var Rest\Interfaces\Controller
      */
     protected $Controller = null;
+    
 
     /**
      * @param RequestIdentifier $RequestIdentifier

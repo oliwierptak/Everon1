@@ -22,7 +22,13 @@ class Href implements Interfaces\ResourceHref
     protected $resource_id = null;
     protected $collection_name = null;
     protected $versioning = null;
-    
+
+
+    /**
+     * @param $url
+     * @param $version
+     * @param $versioning
+     */
     public function __construct($url, $version, $versioning)
     {
         $this->url = $url;

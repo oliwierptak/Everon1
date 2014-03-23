@@ -17,6 +17,10 @@ use Everon\Rest\Interfaces;
 class Response extends \Everon\Http\Response implements Interfaces\Response
 {
 
+    /**
+     * @param $guid
+     * @param HeaderCollection $Headers
+     */
     public function __construct($guid, HeaderCollection $Headers)
     {
         parent::__construct($guid, $Headers);
