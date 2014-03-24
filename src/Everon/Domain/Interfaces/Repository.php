@@ -30,9 +30,10 @@ interface Repository
 
     /**
      * @param array $data
+     * @param int $user_id
      * @return mixed
      */
-    function persistFromArray(array $data);
+    function persistFromArray(array $data, $user_id);
 
     /**
      * @param Criteria $Criteria
@@ -42,13 +43,15 @@ interface Repository
         
     /**
      * @param Entity $Entity
+     * @param int $user_id
      */
-    function persist(Entity $Entity);
+    function persist(Entity $Entity, $user_id);
 
     /**
-     * @param Entity $Entity
+     * @param Entity
+     * @param int $user_id
      */
-    function remove(Entity $Entity);
+    function remove(Entity $Entity, $user_id);
 
     /**
      * @return DataMapper

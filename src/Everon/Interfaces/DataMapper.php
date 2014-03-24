@@ -18,21 +18,24 @@ interface DataMapper
 {
     /**
      * @param array $data
+     * @param int $user_id
      * @return int Return last inserted ID
      */
-    function add(array $data);
+    function add(array $data, $user_id);
 
     /**
      * @param array $data
+     * @param int $user_id
      * @return bool
      */
-    function save(array $data);
+    function save(array $data, $user_id);
 
     /**
      * @param $id
+     * @param int $user_id
      * @return bool
      */
-    function delete($id);
+    function delete($id, $user_id);
 
     /**
      * @param int $id

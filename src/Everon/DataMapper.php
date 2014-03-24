@@ -92,32 +92,37 @@ abstract class DataMapper implements Interfaces\DataMapper
         return $values;
     }
 
+    protected function setCurrentUserId($user_id)
+    {
+        //SELECT session_variables.set_value('who', 'depesz');
+        //SELECT session_variables.get_value('who');
+
+        $sql = "SELECT s_sessions.set_value('AUDIT_USER_ID', '${user_id}')";
+        $PdoAdapter = $this->getSchema()->getPdoAdapterByName($this->write_connection_name);
+        return $PdoAdapter->execute($sql)->fetch();
+    }
+    
     /**
      * @inheritdoc
      */
-    public function add(array $data)
+    public function add(array $data, $user_id)
     {
+        $this->setCurrentUserId($user_id);
         $data = $this->getTable()->validateData($data, false);
         list($sql, $parameters) = $this->getInsertSql($data);
         $PdoAdapter = $this->getSchema()->getPdoAdapterByName($this->write_connection_name);
-        $primary_keys = $this->getTable()->getPrimaryKeys();
-        /**
-         * @var DataMapper\Interfaces\Schema\PrimaryKey $PrimaryKey
-         */
-        $PrimaryKey = $primary_keys[$this->getTable()->getPk()];
-        
-        $id = $PdoAdapter->insert($sql, $parameters, $PrimaryKey->getSequenceName());
+        $id = $PdoAdapter->insert($sql, $parameters);
         $id = $this->getTable()->validateId($id);
         $data[$this->getTable()->getPk()] = $id;
-        
         return $data;
     }
 
     /**
      * @inheritdoc
      */
-    public function save(array $data)
+    public function save(array $data, $user_id)
     {
+        $this->setCurrentUserId($user_id);
         $data = $this->getTable()->validateData($data, true);
         $id = $this->getTable()->getIdFromData($data);
         $id = $this->getTable()->validateId($id);
@@ -129,8 +134,9 @@ abstract class DataMapper implements Interfaces\DataMapper
     /**
      * @inheritdoc
      */
-    public function delete($id)
+    public function delete($id, $user_id)
     {
+        $this->setCurrentUserId($user_id);
         $id = $this->getTable()->validateId($id);
         list($sql, $parameters) = $this->getDeleteSql($id);
         return $this->getSchema()->getPdoAdapterByName($this->write_connection_name)->delete($sql, $parameters);

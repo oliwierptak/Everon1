@@ -42,14 +42,6 @@ class PdoAdapter implements Interfaces\PdoAdapter
     protected function beginTransaction($sql, $parameters, $fetch_mode)
     {
         $this->getLogger()->sql($sql."|".print_r($parameters, true));
-        /**
-         * @var \PDOStatement $statement
-         */
-        switch ($this->getConnectionConfig()->getDriver()) { //todo: xxx
-            case 'mysql':
-                $this->getPdo()->setAttribute(\PDO::ATTR_AUTOCOMMIT, FALSE);
-                break;
-        }
         $statement = $this->getPdo()->prepare($sql, [\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY]);
         $this->getPdo()->beginTransaction();
 
@@ -122,7 +114,8 @@ class PdoAdapter implements Interfaces\PdoAdapter
     {
         try {
             $statement = $this->beginTransaction($sql, $parameters, $fetch_mode);
-            $last_id = $this->getPdo()->lastInsertId($sequence_name);
+            //$last_id = $this->getPdo()->lastInsertId($sequence_name);
+            $last_id = $statement->fetchColumn();
             $this->getPdo()->commit();
             return $last_id;
         }   
@@ -131,7 +124,7 @@ class PdoAdapter implements Interfaces\PdoAdapter
             throw new Exception\Pdo($e);
         }
     }
-    
+
     /**
      * @inheritdoc
      */

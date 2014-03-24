@@ -24,7 +24,7 @@ abstract class Mapper extends DataMapper
     {
         $values_str = rtrim(implode(',', $this->getPlaceholderForQuery()), ',');
         $columns_str = rtrim(implode(',', $this->getPlaceholderForQuery('')), ',');
-        $sql = sprintf('INSERT INTO %s.%s (%s) VALUES (%s)', $this->getTable()->getSchema(), $this->getTable()->getName(), $columns_str, $values_str);
+        $sql = sprintf('INSERT INTO %s.%s (%s) VALUES (%s) RETURNING %s', $this->getTable()->getSchema(), $this->getTable()->getName(), $columns_str, $values_str, $this->getTable()->getPk());
         return [$sql, $this->getValuesForQuery($data)];
     }
 

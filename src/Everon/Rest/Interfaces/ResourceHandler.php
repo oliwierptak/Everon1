@@ -19,29 +19,32 @@ interface ResourceHandler
      * @param $version
      * @param $resource_name
      * @param array $data
+     * @param int $user_id
      * @return ResourceInterface
      * @throws \Everon\Rest\Exception\Resource
      */
-    function add($version, $resource_name, array $data);
+    function add($version, $resource_name, array $data, $user_id);
 
     /**
      * @param $version
      * @param $resource_name
      * @param $resource_id
      * @param array $data
+     * @param int $user_id
      * @return ResourceInterface
      * @throws \Everon\Rest\Exception\Resource
      */
-    function save($version, $resource_name, $resource_id, array $data);
+    function save($version, $resource_name, $resource_id, array $data, $user_id);
 
     /**
      * @param $version
      * @param $resource_name
      * @param $resource_id
+     * @param int $user_id
      * @return ResourceInterface
      * @throws \Everon\Rest\Exception\Resource
      */
-    function delete($version, $resource_name, $resource_id);
+    function delete($version, $resource_name, $resource_id, $user_id);
 
     /**
      * @param Entity $Entity
