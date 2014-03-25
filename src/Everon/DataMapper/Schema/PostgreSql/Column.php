@@ -48,6 +48,7 @@ class Column extends Schema\Column
                 break;
 
             case 'decimal':
+            case 'point':
                 $this->length = (int) $ColumnInfo->numeric_precision;
                 $this->precision = (int) $ColumnInfo->numeric_scale;
                 $this->validation_rules = [$this->name => \FILTER_VALIDATE_FLOAT];
