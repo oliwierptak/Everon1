@@ -22,6 +22,7 @@ abstract class Column implements Schema\Column
     const TYPE_INTEGER = 'integer';
     const TYPE_FLOAT = 'float';
     const TYPE_TIMESTAMP = 'timestamp';
+    const TYPE_JSON = 'json';
     
     
     protected $is_pk = null;
@@ -122,6 +123,10 @@ abstract class Column implements Schema\Column
     public function validateColumnValue($value)
     {
         try {
+            if ($this->getValidationRules() === null) {
+                return $value; //validation is disabled
+            }
+            
             $validation_result = filter_var_array([$this->getName() => $value], $this->getValidationRules());
             $display_value = $value === null ? 'NULL' : $value;
 

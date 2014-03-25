@@ -62,6 +62,12 @@ class Column extends Schema\Column
                 $this->validation_rules = [$this->name => \FILTER_SANITIZE_STRING];
                 $this->type = static::TYPE_TIMESTAMP;
                 break;
+            
+            case 'json':
+                $this->length = null;
+                $this->validation_rules = [$this->name => \FILTER_SANITIZE_STRING];
+                $this->type = static::TYPE_JSON;
+                break;
 
             default:
                 throw new Exception\Column('Unsupported data type: "%s"', $type);
