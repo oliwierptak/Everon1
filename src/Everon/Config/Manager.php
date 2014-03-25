@@ -98,7 +98,7 @@ class Manager implements \Everon\Config\Interfaces\Manager
         $data['router'] = $this->getFactory()->buildConfigLoaderItem('//Config/router.ini', $data['router']);
         
         //load module.ini data from all modules
-        $module_list = $this->getFileSystem()->listPathDir('//Module');
+        $module_list = $this->getPathsOfActiveModules();
         /**
          * @var \DirectoryIterator $Dir
          */
@@ -114,6 +114,32 @@ class Manager implements \Everon\Config\Interfaces\Manager
         return $data;
     }
 
+    /**
+     * @inheritdoc
+     */
+    public function getPathsOfActiveModules()
+    {
+        $module_list = $this->getFileSystem()->listPathDir($this->getEnvironment()->getModule());
+        $active_modules = $this->getDefaultConfigData();
+        $active_modules = $active_modules['modules']['active'];
+
+        /**
+         * @var \DirectoryIterator $Dir
+         */
+        $result = [];
+        foreach ($module_list as $Dir) {
+            if ($Dir->isDot()) {
+                continue;
+            }
+
+            $module_name = $Dir->getBasename();
+            if (in_array($module_name, $active_modules)) {
+                $result[$module_name] = $Dir;
+            }
+        }
+
+        return $result;
+    }
     /**
      * @param array $configs_data
      * @return array
@@ -153,7 +179,7 @@ class Manager implements \Everon\Config\Interfaces\Manager
     {
         //gather router data from modules xxx
         $router_config_data = [];
-        $module_list = $this->getFileSystem()->listPathDir('//Module');
+        $module_list = $this->getPathsOfActiveModules();
         /**
          * @var \DirectoryIterator $Dir
          */

@@ -100,6 +100,9 @@ class Manager implements Interfaces\Manager
         if ($this->modules === null) {
             $this->initModules();
         }
+        if (isset($this->modules[$name]) === false) {
+            throw new Exception\Module('Module: "%s" not found', $name);
+        }
         
         return $this->modules[$name];
     }
