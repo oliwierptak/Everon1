@@ -51,6 +51,7 @@ class Manager implements Interfaces\Manager
                 $Module->setFactoryWorker($Worker);
             }
             
+            $Module->setup();
             $this->modules[$module_name] = $Module;
         }
     }
