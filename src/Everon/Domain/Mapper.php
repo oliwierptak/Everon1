@@ -58,6 +58,34 @@ class Mapper implements Interfaces\Mapper
         
         return null;
     }
+
+    /**
+     * @param $domain_name
+     * @return \Everon\Config\Interfaces\ItemDomain|null
+     */
+    public function getByDomainName($domain_name)
+    {
+        /**
+         * @var \Everon\Config\Interfaces\ItemDomain $Item
+         */
+        $data = $this->MappingCollection->toArray();
+        foreach ($data as $data_mapper_name => $Item) {
+            if ($domain_name === $Item->getDomain()) {
+                return $Item;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @param $data_mapper_name
+     * @return \Everon\Config\Interfaces\ItemDomain|null
+     */
+    public function getByDataMapperName($data_mapper_name)
+    {
+        return $this->MappingCollection->get($data_mapper_name, null);
+    }
     
     protected function getToArray()
     {

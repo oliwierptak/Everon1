@@ -168,7 +168,7 @@ class Table implements Interfaces\Schema\Table
                 continue;
             }
 
-            $value = $Column->validateColumnValue($data[$name]);
+            $value = $Column->validateColumnValue(@$data[$name]);
             $entity_data[$name] = $value;
         }
 

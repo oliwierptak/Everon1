@@ -33,4 +33,9 @@ interface Column extends Arrayable, Immutable
      * @throws \Everon\DataMapper\Exception\Column
      */
     function validateColumnValue($value);
+
+    /**
+     * @param $is_pk
+     */
+    function updatePkStatus($is_pk);
 }

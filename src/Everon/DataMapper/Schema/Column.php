@@ -112,9 +112,20 @@ abstract class Column implements Schema\Column
     {
         return $this->validation_rules;
     }
+    
     public function toArray($deep=false)
     {
         return get_object_vars($this);
+    }
+
+    /**
+     * @param $is_pk
+     */
+    public function updatePkStatus($is_pk)
+    {
+        $this->unlock();
+        $this->is_pk = $is_pk;
+        $this->lock();
     }
 
     /**
@@ -126,11 +137,15 @@ abstract class Column implements Schema\Column
             if ($this->getValidationRules() === null) {
                 return $value; //validation is disabled
             }
+
+            if ($this->isNullable() && $value === null) {
+                return $value;
+            }
             
             $validation_result = filter_var_array([$this->getName() => $value], $this->getValidationRules());
             $display_value = $value === null ? 'NULL' : $value;
 
-            if (($validation_result === false || $validation_result === null) || ($this->isNullable() === false && $value === null)) {
+            if (($validation_result === false || $validation_result === null)) {
                 throw new Exception\Column('Column: "%s" failed to validate with value: "%s"', [$this->getName(), $display_value]);
             }
 

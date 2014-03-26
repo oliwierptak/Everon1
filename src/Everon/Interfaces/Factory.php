@@ -264,11 +264,12 @@ interface Factory
     /**
      * @param DataMapper\Interfaces\Schema\Reader $Reader
      * @param DataMapper\Interfaces\ConnectionManager $ConnectionManager
+     * @param Domain\Interfaces\Mapper $DomainMapper
      * @param string $namespace
      * @return mixed
      * @throws Exception\Factory
      */
-    function buildSchema(DataMapper\Interfaces\Schema\Reader $Reader, DataMapper\Interfaces\ConnectionManager $ConnectionManager, $namespace='Everon\DataMapper');
+    function buildSchema(DataMapper\Interfaces\Schema\Reader $Reader, DataMapper\Interfaces\ConnectionManager $ConnectionManager, Domain\Interfaces\Mapper $DomainMapper, $namespace='Everon\DataMapper');
 
     /**
      * @param Interfaces\PdoAdapter $PdoAdapter
@@ -294,10 +295,11 @@ interface Factory
      * @param array $primary_keys
      * @param array $unique_keys
      * @param array $foreign_keys
+     * @param Domain\Interfaces\Mapper $DomainMapper
      * @param string $namespace
      * @return mixed
      */
-    function buildSchemaTable($name, $schema, $adapter_name, array $columns, array $primary_keys, array $unique_keys, array $foreign_keys, $namespace='Everon\DataMapper\Schema');
+    function buildSchemaTable($name, $schema, $adapter_name, array $columns, array $primary_keys, array $unique_keys, array $foreign_keys, Domain\Interfaces\Mapper $DomainMapper, $namespace='Everon\DataMapper\Schema');
 
     /**
      * @param $name

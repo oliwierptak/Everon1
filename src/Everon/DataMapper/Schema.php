@@ -9,14 +9,18 @@
  */
 namespace Everon\DataMapper;
 
-use Everon\Dependency\Injection\Factory as FactoryInjection;
+use Everon\Dependency\Injection\Factory as FactoryDependency;
 use Everon\DataMapper\Dependency;
+use Everon\Domain\Dependency\DomainMapper as DomainMapperDependency;
+use Everon\Domain;
 use Everon\Helper;
 
 class Schema implements Interfaces\Schema
 {
     use Dependency\SchemaReader;
-    use FactoryInjection;
+    use DomainMapperDependency;
+    use FactoryDependency;
+    
     use Helper\ToArray;
 
     /**
@@ -39,10 +43,11 @@ class Schema implements Interfaces\Schema
      * @param Interfaces\Schema\Reader $SchemaReader
      * @param Interfaces\ConnectionManager $ConnectionManager
      */
-    public function __construct(Interfaces\Schema\Reader $SchemaReader, Interfaces\ConnectionManager $ConnectionManager)
+    public function __construct(Interfaces\Schema\Reader $SchemaReader, Interfaces\ConnectionManager $ConnectionManager, Domain\Interfaces\Mapper $DomainMapper)
     {
         $this->SchemaReader = $SchemaReader;
         $this->ConnectionManager = $ConnectionManager;
+        $this->DomainMapper = $DomainMapper;
     }
     
     protected function initTables()
@@ -69,7 +74,8 @@ class Schema implements Interfaces\Schema
                 $castToEmptyArrayWhenNull($name, $column_list), 
                 $castToEmptyArrayWhenNull($name, $primary_key_list), 
                 $castToEmptyArrayWhenNull($name, $unique_key_list), 
-                $castToEmptyArrayWhenNull($name, $foreign_key_list)
+                $castToEmptyArrayWhenNull($name, $foreign_key_list),
+                $this->getDomainMapper()
             );
         }
     }

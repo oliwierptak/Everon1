@@ -37,10 +37,6 @@ abstract class Handler implements Interfaces\Handler
     /**
      * @inheritdoc
      */
-
-    /**
-     * @return Schema
-     */
     public function getSchema()
     {
         if ($this->Schema === null) {
@@ -49,7 +45,7 @@ abstract class Handler implements Interfaces\Handler
             $Pdo = $this->getFactory()->buildPdo($dsn, $username, $password, $options);
             $PdoAdapter = $this->getFactory()->buildPdoAdapter($Pdo, $Connection);
             $SchemaReader = $this->getFactory()->buildSchemaReader($PdoAdapter);
-            $this->Schema = $this->getFactory()->buildSchema($SchemaReader, $this->getConnectionManager());
+            $this->Schema = $this->getFactory()->buildSchema($SchemaReader, $this->getConnectionManager(), $this->getDomainMapper());
         }
 
         return $this->Schema;
