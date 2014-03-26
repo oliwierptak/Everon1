@@ -81,7 +81,7 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
      */
     public function addResourceFromRequest()
     {
-        $user_id = 100;
+        $user_id = 1;
         $version = $this->getRequest()->getVersion();
         $data = $this->getRequest()->getRawInput();
         $resource_name = $this->getRequest()->getQueryParameter('resource', null);
@@ -97,7 +97,7 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
      */
     public function saveResourceFromRequest()
     {
-        $user_id = 200;
+        $user_id = 1;
         $version = $this->getRequest()->getVersion();
         $data = $this->getRequest()->getRawInput();
         $resource_name = $this->getRequest()->getQueryParameter('resource', null);
@@ -113,7 +113,7 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
      */
     public function deleteResourceFromRequest()
     {
-        $user_id = 300;
+        $user_id = 1;
         $version = $this->getRequest()->getVersion();
         $resource_name = $this->getRequest()->getQueryParameter('resource', null);
         $resource_id = $this->getRequest()->getQueryParameter('resource_id', null);

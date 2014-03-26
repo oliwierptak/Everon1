@@ -37,7 +37,7 @@ class Entity extends Helper\Popo implements Interfaces\Entity
 
     public function __construct($id_name, array $data=[])
     {
-        $this->id_name = $id_name;
+        $this->id_name = $id_name ?: 'id';
         $this->data = $data;
         $this->RelationCollection = new Helper\Collection([]);
         

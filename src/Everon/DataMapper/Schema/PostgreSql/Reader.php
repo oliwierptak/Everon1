@@ -23,7 +23,7 @@ class Reader extends Schema\Reader implements Interfaces\Schema\Reader
                 table_name AS \"TABLE_NAME_WITHOUT_SCHEMA\"
             FROM information_schema.tables
             WHERE 
-                table_type = 'BASE TABLE'
+                (table_type = 'BASE TABLE' OR table_type = 'VIEW')
                 AND table_schema NOT IN ('pg_catalog', 'information_schema')
                 AND table_catalog = :schema
         ";
