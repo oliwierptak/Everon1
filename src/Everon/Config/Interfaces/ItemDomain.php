@@ -40,4 +40,34 @@ interface ItemDomain extends Item
      * @param string $id_field
      */
     function setIdField($id_field);
+
+    /**
+     * @param string $type
+     */
+    function setType($type);
+
+    /**
+     * @return string
+     */
+    function getType();
+        
+    /**
+     * @param array $primary_keys
+     */
+    function setPrimaryKeys($primary_keys);
+
+    /**
+     * @return array
+     */
+    function getPrimaryKeys();
+
+    /**
+     * @param array $columns
+     */
+    function setColumns($columns);
+
+    /**
+     * @return array
+     */
+    function getColumns();
 }

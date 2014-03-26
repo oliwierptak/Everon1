@@ -15,7 +15,6 @@ use Everon\DataMapper\Interfaces\Schema;
 
 abstract class Column implements Schema\Column 
 {
-    use Helper\Immutable;
     use Helper\ToString;
 
     const TYPE_STRING = 'string';
@@ -46,6 +45,8 @@ abstract class Column implements Schema\Column
     protected $validation_rules = null;
 
     protected $schema = null;
+    
+    protected $table = null;
 
 
     abstract protected function init(array $data, array $primary_key_list, array $unique_key_list, array $foreign_key_list);
@@ -54,7 +55,6 @@ abstract class Column implements Schema\Column
     public function __construct(array $data, array $primary_key_list, array $unique_key_list, array $foreign_key_list)
     {
         $this->init($data, $primary_key_list, $unique_key_list, $foreign_key_list);
-        $this->lock();
     }
 
     protected function getToString()
@@ -67,38 +67,56 @@ abstract class Column implements Schema\Column
         return isset($data[$name]);
     }
 
+    /**
+     * @inheritdoc
+     */
     public function isPk()
     {
         return $this->is_pk;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function getName()
     {
         return $this->name;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function getType()
     {
         return $this->type;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function getLength()
     {
         return $this->length;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function isNullable()
     {
         return $this->is_nullable;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function getDefault()
     {
         return $this->default;
     }
 
     /**
-     * @return null
+     * @inheritdoc
      */
     public function getSchema()
     {
@@ -106,26 +124,123 @@ abstract class Column implements Schema\Column
     }
 
     /**
-     * @return array
+     * @inheritdoc
      */
     public function getValidationRules()
     {
         return $this->validation_rules;
     }
-    
+
+    /**
+     * @inheritdoc
+     */
+    public function getTable()
+    {
+        return $this->table;
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function toArray($deep=false)
     {
         return get_object_vars($this);
     }
 
     /**
-     * @param $is_pk
+     * @param mixed $default
      */
-    public function updatePkStatus($is_pk)
+    public function setDefault($default)
     {
-        $this->unlock();
+        $this->default = $default;
+    }
+
+    /**
+     * @param string $encoding
+     */
+    public function setEncoding($encoding)
+    {
+        $this->encoding = $encoding;
+    }
+
+    /**
+     * @param boolean $is_nullable
+     */
+    public function setIsNullable($is_nullable)
+    {
+        $this->is_nullable = $is_nullable;
+    }
+
+    /**
+     * @param boolean $is_pk
+     */
+    public function setIsPk($is_pk)
+    {
         $this->is_pk = $is_pk;
-        $this->lock();
+    }
+
+    /**
+     * @param boolean $is_unique
+     */
+    public function setIsUnique($is_unique)
+    {
+        $this->is_unique = $is_unique;
+    }
+
+    /**
+     * @param int $length
+     */
+    public function setLength($length)
+    {
+        $this->length = $length;
+    }
+
+    /**
+     * @param string $name
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
+
+    /**
+     * @param int $precision
+     */
+    public function setPrecision($precision)
+    {
+        $this->precision = $precision;
+    }
+
+    /**
+     * @param string $schema
+     */
+    public function setSchema($schema)
+    {
+        $this->schema = $schema;
+    }
+
+    /**
+     * @param string $table
+     */
+    public function setTable($table)
+    {
+        $this->table = $table;
+    }
+
+    /**
+     * @param string $type
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+    }
+
+    /**
+     * @param string $validation_rules
+     */
+    public function setValidationRules($validation_rules)
+    {
+        $this->validation_rules = $validation_rules;
     }
 
     /**
@@ -160,4 +275,5 @@ abstract class Column implements Schema\Column
             throw new Exception\Column($e->getMessage());
         }
     }
+    
 }

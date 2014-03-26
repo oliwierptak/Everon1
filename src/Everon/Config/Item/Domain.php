@@ -13,6 +13,10 @@ use Everon\Config;
 
 class Domain extends Config\Item implements Config\Interfaces\ItemDomain
 {
+    const TYPE_TABLE = 'table';
+    const TYPE_VIEW = 'view';
+    const TYPE_MAT_VIEW = 'mat_view';
+    
     /**
      * @var string
      */
@@ -28,13 +32,31 @@ class Domain extends Config\Item implements Config\Interfaces\ItemDomain
      */
     protected $connection = null;
 
+    /**
+     * @var string
+     */
+    protected $type = null;
+
+    /**
+     * @var array
+     */
+    protected $columns = null;
+
+    /**
+     * @var array
+     */
+    protected $primary_keys = null;
+
     
     public function __construct(array $data)
     {
         parent::__construct($data, [
             'id_field' => null,
             'domain' => null,
-            'connection' => []
+            'type' => static::TYPE_TABLE,
+            'connection' => [],
+            'columns' => [],
+            'primary_keys' => []
         ]);
     }
 
@@ -45,10 +67,13 @@ class Domain extends Config\Item implements Config\Interfaces\ItemDomain
         $this->setIdField($this->data['id_field']);
         $this->setDomain($this->data['domain']);
         $this->setConnections($this->data['connection']);
+        $this->setType($this->data['type']);
+        $this->setColumns($this->data['columns']);
+        $this->setPrimaryKeys($this->data['primary_keys']);
     }
 
     /**
-     * @param array $connections
+     * @inheritdoc
      */
     public function setConnections($connections)
     {
@@ -56,7 +81,7 @@ class Domain extends Config\Item implements Config\Interfaces\ItemDomain
     }
 
     /**
-     * @return array
+     * @inheritdoc
      */
     public function getConnections()
     {
@@ -64,7 +89,7 @@ class Domain extends Config\Item implements Config\Interfaces\ItemDomain
     }
 
     /**
-     * @param string $id_field
+     * @inheritdoc
      */
     public function setIdField($id_field)
     {
@@ -72,7 +97,7 @@ class Domain extends Config\Item implements Config\Interfaces\ItemDomain
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
     public function getIdField()
     {
@@ -80,7 +105,7 @@ class Domain extends Config\Item implements Config\Interfaces\ItemDomain
     }
 
     /**
-     * @param string $domain
+     * @inheritdoc
      */
     public function setDomain($domain)
     {
@@ -88,10 +113,59 @@ class Domain extends Config\Item implements Config\Interfaces\ItemDomain
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
     public function getDomain()
     {
         return $this->domain;
-    }  
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setPrimaryKeys($primary_keys)
+    {
+        $this->primary_keys = $primary_keys;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getPrimaryKeys()
+    {
+        return $this->primary_keys;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setColumns($columns)
+    {
+        $this->columns = $columns;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getColumns()
+    {
+        return $this->columns;
+    }
+    
 }

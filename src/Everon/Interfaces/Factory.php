@@ -298,8 +298,23 @@ interface Factory
      * @param Domain\Interfaces\Mapper $DomainMapper
      * @param string $namespace
      * @return mixed
+     * @throws Exception\Factory
      */
-    function buildSchemaTable($name, $schema, $adapter_name, array $columns, array $primary_keys, array $unique_keys, array $foreign_keys, Domain\Interfaces\Mapper $DomainMapper, $namespace='Everon\DataMapper\Schema');
+    function buildSchemaTableAndDependencies($name, $schema, $adapter_name, array $columns, array $primary_keys,  array $unique_keys, array $foreign_keys, Domain\Interfaces\Mapper $DomainMapper, $namespace='Everon\DataMapper');
+
+    /**
+     * @param $name
+     * @param $schema
+     * @param array $column_list
+     * @param array $primary_key_list
+     * @param array $unique_key_list
+     * @param array $foreign_key_list
+     * @param Domain\Interfaces\Mapper $DomainMapper
+     * @param string $namespace
+     * @return mixed
+     * @throws Exception\Factory
+     */
+    function buildSchemaTable($name, $schema, array $column_list, array $primary_key_list,  array $unique_key_list, array $foreign_key_list, Domain\Interfaces\Mapper $DomainMapper, $namespace='Everon\DataMapper');
 
     /**
      * @param $name

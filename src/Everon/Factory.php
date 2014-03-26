@@ -749,7 +749,7 @@ class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildSchemaTable($name, $schema, $adapter_name, array $columns, array $primary_keys,  array $unique_keys, array $foreign_keys, Domain\Interfaces\Mapper $DomainMapper, $namespace='Everon\DataMapper')
+    public function buildSchemaTableAndDependencies($name, $schema, $adapter_name, array $columns, array $primary_keys,  array $unique_keys, array $foreign_keys, Domain\Interfaces\Mapper $DomainMapper, $namespace='Everon\DataMapper')
     {
         try {
             $primary_key_list = [];
@@ -794,70 +794,31 @@ class Factory implements Interfaces\Factory
                  */
                 $Column = new $class_name($column_data, $primary_key_list, $unique_key_list, $foreign_key_list);
                 $column_list[$Column->getName()] = $Column;
-
-                //tmp fix for views
-                $table_name = $schema.'.'.$name;
-                $Item = $DomainMapper->getByDataMapperName($table_name);
-                if ($Item !== null && $Item->getName() == $table_name && $Item->getIdField() === $Column->getName()) {
-                    if ($Column->isPk() === false) {
-                        $Column->updatePkStatus(true);
-
-                        /**
-                        'constraint_catalog' => string (10) "goldfinger"
-                        'constraint_schema' => string (8) "s_audits"
-                        'constraint_name' => string (33) "s_products__products_deleted_pkey"
-                        'table_catalog' => string (10) "goldfinger"
-                        'table_schema' => string (8) "s_audits"
-                        'table_name' => string (28) "s_products__products_deleted"
-                        'constraint_type' => string (11) "PRIMARY KEY"
-                        'is_deferrable' => string (2) "NO"
-                        'initially_deferred' => string (2) "NO"
-                        'column_name' => string (2) "id"
-                        'ordinal_position' => integer 1
-                        'position_in_unique_constraint' => NULL
-                        'TABLE_NAME' => string (37) "s_audits.s_products__products_deleted"
-                        'TABLE_NAME_WITHOUT_SCHEMA' => string (28) "s_products__products_deleted"
-                        'sequence_name' => string (44) "s_audits.s_products__products_deleted_id_seq"
-                         */
-                        
-                        if (empty($primary_key_list)) { //fake pk for views
-                            $primary_key_data = [
-                                'constraint_catalog' => $column_data['table_catalog'],
-                                'constraint_schema' => $column_data['table_schema'],
-                                'constraint_name' => $table_name.'_pkey',
-                                'table_catalog' => $column_data['table_catalog'],
-                                'table_schema' => $column_data['table_schema'],
-                                'table_name' => $table_name,
-                                'constraint_type' => 'PRIMARY KEY',
-                                'is_deferrable' => 'NO',
-                                'initially_deferred' => 'NO',
-                                'column_name' => $Column->getName(),
-                                'ordinal_position' => 1,
-                                'position_in_unique_constraint' => NULL,
-                                'TABLE_NAME' => $table_name,
-                                'TABLE_NAME_WITHOUT_SCHEMA' => $column_data['table_catalog'],
-                                'sequence_name' => $table_name.'_'.$Column->getName().'_seq',
-                            ];
-
-                            $class_name = $this->getFullClassName($namespace, 'Schema\PrimaryKey');
-                            $this->classExists($class_name);
-                            $PrimaryKey = new $class_name($primary_key_data);
-                            $primary_key_list[$PrimaryKey->getName()] = $PrimaryKey;
-                        }
-                    }
-                }
             }
+            
+            return $this->buildSchemaTable($name, $schema, $column_list, $primary_key_list, $unique_key_list, $foreign_key_list, $DomainMapper);
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('SchemaTableAndDependencies: "%s.%s" initialization error', [$schema,$name], $e);
+        }
+    }
 
+    /**
+     * @inheritdoc
+     */
+    public function buildSchemaTable($name, $schema, array $column_list, array $primary_key_list,  array $unique_key_list, array $foreign_key_list, Domain\Interfaces\Mapper $DomainMapper, $namespace='Everon\DataMapper')
+    {
+        try {
             $class_name = $this->getFullClassName($namespace,'Schema\Table');
             $this->classExists($class_name);
-            $Table = new $class_name($name, $schema, $column_list, $primary_key_list, $unique_key_list, $foreign_key_list);
+            $Table = new $class_name($name, $schema, $column_list, $primary_key_list, $unique_key_list, $foreign_key_list, $DomainMapper);
             return $Table;
         }
         catch (\Exception $e) {
             throw new Exception\Factory('SchemaTable: "%s.%s" initialization error', [$schema,$name], $e);
         }
-    } 
-    
+    }
+
     /**
      * @inheritdoc
      */

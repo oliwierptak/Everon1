@@ -119,6 +119,17 @@ class Table implements Interfaces\Schema\Table
     /**
      * @inheritdoc
      */
+    public function getPrimaryKeyByName($name)
+    {
+        if (isset($this->primary_keys[$name]) === false) {
+            throw new Exception\Table('Invalid primary key name: "%s"', $name);
+        }
+        return $this->primary_keys[$name];
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function getUniqueKeys()
     {
         return $this->unique_keys;
@@ -168,7 +179,7 @@ class Table implements Interfaces\Schema\Table
                 continue;
             }
 
-            $value = $Column->validateColumnValue(@$data[$name]);
+            $value = $Column->validateColumnValue($data[$name]);
             $entity_data[$name] = $value;
         }
 

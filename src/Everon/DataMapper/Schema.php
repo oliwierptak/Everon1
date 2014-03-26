@@ -67,7 +67,7 @@ class Schema implements Interfaces\Schema
         };
         
         foreach ($table_list as $name => $table_data) {
-            $this->tables[$name] = $this->getFactory()->buildSchemaTable(
+            $this->tables[$name] = $this->getFactory()->buildSchemaTableAndDependencies(
                 $table_data['TABLE_NAME_WITHOUT_SCHEMA'],
                 $table_data['table_schema'],
                 $this->getAdapterName(),
@@ -75,6 +75,77 @@ class Schema implements Interfaces\Schema
                 $castToEmptyArrayWhenNull($name, $primary_key_list), 
                 $castToEmptyArrayWhenNull($name, $unique_key_list), 
                 $castToEmptyArrayWhenNull($name, $foreign_key_list),
+                $this->getDomainMapper()
+            );
+        }
+        
+        $this->initViews();
+    }
+    
+    protected function initViews()
+    {
+        /**
+         * @var \Everon\Config\Interfaces\ItemDomain $Item
+         */
+        $mappings = $this->getDomainMapper()->toArray();
+        foreach ($mappings as $table_name => $Item) {
+            if ($Item->getType() !== 'mat_view') {
+                continue;
+            }
+            
+            $columns = $Item->getColumns();
+            if (empty($columns)) {
+                continue;
+            }
+            
+            $view_columns = [];
+            foreach ($columns as $view_column_name => $source) {
+                $tokens = explode('.', $source);
+                $column_name = array_pop($tokens);
+                $item_table_name = implode('.', $tokens);
+                
+                if (isset($this->tables[$item_table_name]) === false) {
+                    continue;
+                }
+
+                /**
+                 * @var \Everon\DataMapper\Interfaces\Schema\Table $Table
+                 */
+                $Table = $this->tables[$item_table_name];
+                $Column = clone $Table->getColumnByName($column_name);
+                $Column->setIsNullable(true);
+                $view_columns[$view_column_name] = $Column;
+            }
+
+            $primary_keys = $Item->getPrimaryKeys();
+            $view_primary_keys = [];
+            foreach ($primary_keys as $view_key_name => $source) {
+                $tokens = explode('.', $source);
+                $column_name = array_pop($tokens);
+                $item_table_name = implode('.', $tokens);
+
+                if (isset($this->tables[$item_table_name]) === false) {
+                    continue;
+                }
+
+                /**
+                 * @var \Everon\DataMapper\Interfaces\Schema\Table $Table
+                 */
+                $Table = $this->tables[$item_table_name];
+                $view_primary_keys[$view_key_name] = $Table->getPrimaryKeyByName($column_name);
+            }
+
+            $tokens = explode('.', $table_name);
+            $table = array_pop($tokens);
+            $schema_name = implode('.', $tokens);
+            
+            $this->tables[$table_name] = $this->getFactory()->buildSchemaTable(
+                $table,
+                $schema_name,
+                $view_columns,
+                $view_primary_keys,
+                [],
+                [],
                 $this->getDomainMapper()
             );
         }

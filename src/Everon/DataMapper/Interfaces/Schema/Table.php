@@ -41,6 +41,13 @@ interface Table extends Arrayable, Immutable
     function getPrimaryKeys();
 
     /**
+     * @param $name
+     * @return mixed
+     * @throws \Everon\DataMapper\Exception\Table
+     */
+    function getPrimaryKeyByName($name);
+
+    /**
      * @return array
      */
     function getUniqueKeys();
