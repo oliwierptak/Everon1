@@ -24,6 +24,7 @@ abstract class Column implements Schema\Column
     const TYPE_JSON = 'json';
     const TYPE_BOOLEAN = 'boolean';
     const TYPE_POINT = 'point';
+    const TYPE_POLYGON = 'polygon';
     
     
     protected $is_pk = null;

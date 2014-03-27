@@ -81,6 +81,12 @@ class Column extends Schema\Column
                 $this->validation_rules = null;
                 $this->type = static::TYPE_POINT;
                 break;
+            
+            case 'polygon':
+                $this->length = null;
+                $this->validation_rules = null;
+                $this->type = static::TYPE_POLYGON;
+                break;
 
             default:
                 throw new Exception\Column('Unsupported data type: "%s"', $type);
