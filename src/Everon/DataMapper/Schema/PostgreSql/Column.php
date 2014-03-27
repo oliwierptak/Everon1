@@ -49,6 +49,7 @@ class Column extends Schema\Column
                 break;
 
             case 'decimal':
+            case 'double precision':
                 $this->length = (int) $ColumnInfo->numeric_precision;
                 $this->precision = (int) $ColumnInfo->numeric_scale;
                 $this->validation_rules = [$this->name => \FILTER_VALIDATE_FLOAT];
@@ -68,11 +69,17 @@ class Column extends Schema\Column
                 $this->validation_rules = [$this->name => \FILTER_SANITIZE_STRING];
                 $this->type = static::TYPE_JSON;
                 break;
+            
+            case 'boolean':
+                $this->length = 1;
+                $this->validation_rules = [$this->name => \FILTER_VALIDATE_BOOLEAN];
+                $this->type = static::TYPE_BOOLEAN;
+                break;
 
             case 'point':
                 $this->length = null;
                 $this->validation_rules = null;
-                $this->type = null;
+                $this->type = static::TYPE_POINT;
                 break;
 
             default:

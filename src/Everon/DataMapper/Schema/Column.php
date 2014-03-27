@@ -22,6 +22,8 @@ abstract class Column implements Schema\Column
     const TYPE_FLOAT = 'float';
     const TYPE_TIMESTAMP = 'timestamp';
     const TYPE_JSON = 'json';
+    const TYPE_BOOLEAN = 'boolean';
+    const TYPE_POINT = 'point';
     
     
     protected $is_pk = null;
