@@ -33,33 +33,6 @@ class ClassMap implements Interfaces\ClassMap
     }
 
     /**
-     * @param $class
-     * @param $file
-     */
-    public function addToMap($class, $file)
-    {
-        $this->loadMap();
-        if (isset($this->class_map[$class]) === false) {
-            $this->class_map[$class] = $file;
-            $this->saveMap();
-        }
-    }
-
-    /**
-     * @param $class
-     * @return null
-     */
-    public function getFilenameFromMap($class)
-    {
-        $this->loadMap();
-        if (isset($this->class_map[$class])) {
-            return $this->class_map[$class];
-        }
-
-        return null;
-    }
-
-    /**
      * @return \SplFileInfo
      */
     protected function getCacheFilename()
@@ -92,6 +65,31 @@ class ClassMap implements Interfaces\ClassMap
         catch (\Exception $e) {
             return null;
         }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function addToMap($class, $file)
+    {
+        $this->loadMap();
+        if (isset($this->class_map[$class]) === false) {
+            $this->class_map[$class] = $file;
+            $this->saveMap();
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getFilenameFromMap($class)
+    {
+        $this->loadMap();
+        if (isset($this->class_map[$class])) {
+            return $this->class_map[$class];
+        }
+
+        return null;
     }
 
 }

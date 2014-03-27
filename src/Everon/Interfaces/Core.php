@@ -16,6 +16,16 @@ use Everon\RequestIdentifier;
 interface Core
 {
     function getRequestIdentifier();
+
+    /**
+     * @inheritdoc
+     */
     function run(RequestIdentifier $RequestIdentifier);
+    
     function shutdown();
+
+    /**
+     * @param \Exception $Exception
+     */
+    function handleExceptions(\Exception $Exception);
 }

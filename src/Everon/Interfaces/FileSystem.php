@@ -21,8 +21,8 @@ interface FileSystem
      * @param $path
      * @param int $mode
      * @throws Exception\FileSystem
-     */    
-    function createPath($path);
+     */
+    function createPath($path, $mode=0775);
 
     /**
      * @param $path

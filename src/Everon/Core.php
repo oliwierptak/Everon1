@@ -17,7 +17,7 @@ abstract class Core implements Interfaces\Core
     use Dependency\Injection\Factory;
     use Dependency\Injection\Router;
     use Dependency\Injection\Request;
-    use Dependency\Injection\ModuleManager;
+    use Module\Dependency\Injection\Manager;
 
     /**
      * @var Interfaces\Controller
@@ -36,6 +36,9 @@ abstract class Core implements Interfaces\Core
     
     protected $previous_exception_handler = null;
 
+    /**
+     * @param RequestIdentifier $RequestIdentifier
+     */
     protected function runOnce(RequestIdentifier $RequestIdentifier)
     {
         if ($this->RequestIdentifier !== null) {
@@ -49,11 +52,9 @@ abstract class Core implements Interfaces\Core
         
         $this->previous_exception_handler = set_exception_handler([$this, 'handleExceptions']);
     }
-    
+
     /**
-     * @param RequestIdentifier $RequestIdentifier
-     * @return void
-     * @throws Exception\Core
+     * @inheritdoc
      */
     public function run(RequestIdentifier $RequestIdentifier)
     {
@@ -102,7 +103,10 @@ abstract class Core implements Interfaces\Core
             restore_exception_handler($this->previous_exception_handler);
         }
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public function handleExceptions(\Exception $Exception)
     {
         $this->restorePreviousExceptionHandler();

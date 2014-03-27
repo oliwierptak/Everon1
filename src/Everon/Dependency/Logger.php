@@ -13,6 +13,9 @@ namespace Everon\Dependency;
 trait Logger
 {
 
+    /**
+     * @var \Everon\Interfaces\logger
+     */
     protected $Logger = null;
 
 

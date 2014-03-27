@@ -12,6 +12,9 @@ namespace Everon\Dependency;
 trait ConfigLoader
 {
 
+    /**
+     * @var \Everon\Config\Interfaces\Loader
+     */
     protected $ConfigLoader = null;
 
 

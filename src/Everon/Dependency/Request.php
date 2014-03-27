@@ -13,6 +13,9 @@ namespace Everon\Dependency;
 trait Request
 {
 
+    /**
+     * @var \Everon\Interfaces\Request
+     */
     protected $Request = null;
 
 

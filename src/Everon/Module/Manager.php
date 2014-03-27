@@ -49,7 +49,7 @@ class Manager implements Interfaces\Manager
             if ((new \SplFileInfo($Dir->getPathname().DIRECTORY_SEPARATOR.'FactoryWorker.php'))->isFile()) {
                 $Worker = $this->getFactory()->buildFactoryWorker($module_name);
                 $Module->setFactoryWorker($Worker);
-            }
+            }//todo: add else with empty/default worker
             
             $Module->setup();
             $this->modules[$module_name] = $Module;

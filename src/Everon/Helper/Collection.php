@@ -57,21 +57,33 @@ class Collection implements \Countable, \ArrayAccess, \IteratorAggregate, Interf
         return new \ArrayIterator($this->data);
     }
 
+    /**
+     * @inheritdoc
+     */
     public function has($name)
     {
         return $this->offsetExists($name);
     }
 
+    /**
+     * @inheritdoc
+     */
     public function remove($name)
     {
         unset($this->data[$name]);
     }
 
+    /**
+     * @inheritdoc
+     */
     public function set($name, $value)
     {
         $this->offsetSet($name, $value);
     }
 
+    /**
+     * @inheritdoc
+     */
     public function get($name, $default=null)
     {
         if ($this->has($name) === false) {
@@ -81,6 +93,10 @@ class Collection implements \Countable, \ArrayAccess, \IteratorAggregate, Interf
         return $this->data[$name];
     }
 
+    /**
+     * @param array $array
+     * @return static
+     */
     public static function __set_state(array $array)
     {
         //todo: test me xxx

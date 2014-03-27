@@ -27,11 +27,10 @@ class Server extends \Everon\Core implements Rest\Interfaces\Server
      * @var Rest\Interfaces\Controller
      */
     protected $Controller = null;
-    
+
 
     /**
-     * @param RequestIdentifier $RequestIdentifier
-     * @return void
+     * @inheritdoc
      */
     public function run(RequestIdentifier $RequestIdentifier)
     {

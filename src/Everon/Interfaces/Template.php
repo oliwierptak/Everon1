@@ -15,5 +15,9 @@ interface Template extends TemplateContainer
      * @return callable|mixed|string
      */
     function getTemplateFile();
+
+    /**
+     * @param $filename
+     */
     function setTemplateFile($filename);
 }

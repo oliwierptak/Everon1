@@ -13,6 +13,9 @@ namespace Everon\Dependency;
 trait View
 {
 
+    /**
+     * @var \Everon\Interfaces\View
+     */
     protected $View = null;
 
 

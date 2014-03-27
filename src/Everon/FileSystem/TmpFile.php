@@ -22,7 +22,10 @@ class TmpFile implements Interfaces\FileSystemTmpFile
     {
         $this->handle = tmpfile();
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public function write($content)
     {
         fwrite($this->handle, $content);

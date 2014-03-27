@@ -39,8 +39,7 @@ class ClassLoader implements Interfaces\ClassLoader
     }
 
     /**
-     * @param $namespace
-     * @param $directory
+     * @inheritdoc
      */
     public function add($namespace, $directory)
     {
@@ -48,9 +47,7 @@ class ClassLoader implements Interfaces\ClassLoader
     }
 
     /**
-     * @param $class_name
-     * @return Interfaces\ClassLoader
-     * @throws \RuntimeException
+     * @inheritdoc
      */
     public function load($class_name)
     {

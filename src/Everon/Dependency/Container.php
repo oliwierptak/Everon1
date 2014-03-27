@@ -70,14 +70,23 @@ class Container implements Interfaces\DependencyContainer
 
         $Receiver->$method($this->resolve($container_name));
     }
-    
+
+    /**
+     * @param $dependency_name
+     * @return bool
+     */
     protected function demandsInjection($dependency_name)
     {
         $tokens = explode('\Dependency\Injection', $dependency_name);
         $container_name = ltrim(@$tokens[1], '\\');
         return $container_name !== '';
     }
-    
+
+    /**
+     * @param $dependency_name
+     * @return string
+     * @throws \Everon\Exception\DependencyContainer
+     */
     protected function getContainerNameFromDependencyToInject($dependency_name)
     {
         $tokens = explode('\Dependency\Injection', $dependency_name);
@@ -95,7 +104,7 @@ class Container implements Interfaces\DependencyContainer
      * @param bool $autoload
      * @return array
      */
-    protected function getClassDependencies($class, $autoload = true) 
+    protected function getClassDependencies($class, $autoload=true) 
     {
         $traits = class_uses($class, $autoload);
         $parents = class_parents($class, $autoload);
@@ -111,10 +120,7 @@ class Container implements Interfaces\DependencyContainer
     }
 
     /**
-     * @param $class_name
-     * @param $Receiver
-     * @return mixed
-     * @throws \Everon\Exception\DependencyContainer
+     * @inheritdoc
      */
     public function inject($class_name, $Receiver)
     {
@@ -155,27 +161,26 @@ class Container implements Interfaces\DependencyContainer
 
         return $Receiver;
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public function wantsFactory($class_name)
     {
         return isset($this->wants_factory[$class_name]) && $this->wants_factory[$class_name]; 
     }
 
     /**
-     * @param $name
-     * @param \Closure $ServiceClosure
+     * @inheritdoc
      */
     public function register($name, \Closure $ServiceClosure)
     {
         $this->definitions[$name] = $ServiceClosure;
         unset($this->services[$name]);
     }
-    
+
     /**
-     * Register only if not already registered
-     * 
-     * @param $name
-     * @param \Closure $ServiceClosure
+     * @inheritdoc
      */
     public function propose($name, \Closure $ServiceClosure)
     {
@@ -187,9 +192,7 @@ class Container implements Interfaces\DependencyContainer
     }
 
     /**
-     * @param $name
-     * @return mixed
-     * @throws Exception\DependencyContainer
+     * @inheritdoc
      */
     public function resolve($name)
     {
@@ -209,8 +212,7 @@ class Container implements Interfaces\DependencyContainer
     }
 
     /**
-     * @param $name
-     * @return bool
+     * @inheritdoc
      */
     public function isRegistered($name)
     {
@@ -218,7 +220,7 @@ class Container implements Interfaces\DependencyContainer
     }
 
     /**
-     * @return array
+     * @inheritdoc
      */
     public function getServices()
     {
@@ -226,7 +228,7 @@ class Container implements Interfaces\DependencyContainer
     }
 
     /**
-     * @return array
+     * @inheritdoc
      */
     public function getDefinitions()
     {

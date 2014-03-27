@@ -13,6 +13,9 @@ namespace Everon\Dependency;
 trait Response
 {
 
+    /**
+     * @var \Everon\Interfaces\Response
+     */
     protected $Response = null;
 
 

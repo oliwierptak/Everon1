@@ -47,7 +47,7 @@ class Template extends Template\Container implements Interfaces\Template
      */
     protected function validateTemplateFilename()
     {
-        if (!is_file($this->getTemplateFile())) {
+        if (is_file($this->getTemplateFile()) === false) {
             throw new Exception\Template('Template file: "%s" was not found', $this->getTemplateFile());
         }
     }
@@ -61,7 +61,7 @@ class Template extends Template\Container implements Interfaces\Template
     }
 
     /**
-     * @param $filename
+     * @inheritdoc
      */
     public function setTemplateFile($filename)
     {

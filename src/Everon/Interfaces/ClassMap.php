@@ -11,7 +11,16 @@ namespace Everon\Interfaces;
 
 interface ClassMap
 {
+    /**
+     * @inheritdoc
+     */
     function addToMap($class, $file);
+    
     function loadMap();
+
+    /**
+     * @param $class
+     * @return null
+     */
     function getFilenameFromMap($class);
 }

@@ -13,6 +13,9 @@ namespace Everon\Dependency;
 trait Session
 {
 
+    /**
+     * @var \Everon\Http\Interfaces\Session
+     */
     protected $Session = null;
 
 

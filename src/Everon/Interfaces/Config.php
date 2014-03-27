@@ -14,8 +14,17 @@ use Everon\Interfaces;
 interface Config extends Arrayable
 {
     function getName();
+
+    /**
+     * @inheritdoc
+     */
     function setName($name);
+    
     function getFilename();
+
+    /**
+     * @param $filename
+     */
     function setFilename($filename);
     
     /**

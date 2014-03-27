@@ -22,8 +22,7 @@ class Mvc extends Core implements Interfaces\Core
     protected $Controller = null;
 
     /**
-     * @param RequestIdentifier $RequestIdentifier
-     * @return void
+     * @inheritdoc
      */
     public function run(RequestIdentifier $RequestIdentifier)
     {

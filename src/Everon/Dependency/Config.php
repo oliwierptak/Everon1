@@ -13,6 +13,9 @@ namespace Everon\Dependency;
 trait Config
 {
 
+    /**
+     * @var \Everon\Interfaces\Config
+     */
     protected $Config = null;
 
 

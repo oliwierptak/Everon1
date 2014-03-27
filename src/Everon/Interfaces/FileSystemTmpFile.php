@@ -13,6 +13,9 @@ use Everon\Exception;
 
 interface FileSystemTmpFile
 {
+    /**
+     * @inheritdoc
+     */
     function write($content);
     function getFilename();
     function close();

@@ -12,6 +12,9 @@ namespace Everon\DataMapper\Dependency;
 
 trait Schema
 {
+    /**
+     * @var \Everon\DataMapper\Interfaces\Schema
+     */
     protected $Schema = null;
 
 

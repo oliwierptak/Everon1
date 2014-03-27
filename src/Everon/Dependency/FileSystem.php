@@ -13,6 +13,9 @@ namespace Everon\Dependency;
 trait FileSystem
 {
 
+    /**
+     * @var \Everon\Interfaces\FileSystem
+     */
     protected $FileSystem = null;
 
 

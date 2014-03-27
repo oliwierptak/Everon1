@@ -155,9 +155,9 @@ class Config implements \Everon\Interfaces\Config
     {
         return $this->name;
     }
-    
+
     /**
-     * @param $name
+     * @inheritdoc
      */
     public function setName($name)
     {
@@ -170,7 +170,7 @@ class Config implements \Everon\Interfaces\Config
     }
 
     /**
-     * @param $filename
+     * @inheritdoc
      */
     public function setFilename($filename)
     {
@@ -178,7 +178,7 @@ class Config implements \Everon\Interfaces\Config
     }
 
     /**
-     * @param mixed $Default
+     * @inheritdoc
      */
     public function setDefaultItem($Default)
     {

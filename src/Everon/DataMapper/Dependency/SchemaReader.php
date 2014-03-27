@@ -12,6 +12,9 @@ namespace Everon\DataMapper\Dependency;
 
 trait SchemaReader
 {
+    /**
+     * @var \Everon\DataMapper\Interfaces\Schema\Reader
+     */
     protected $SchemaReader = null;
 
 

@@ -13,6 +13,9 @@ namespace Everon\Dependency;
 trait RequestValidator
 {
 
+    /**
+     * @var \Everon\Interfaces\RequestValidator
+     */
     protected $RequestValidator = null;
 
 

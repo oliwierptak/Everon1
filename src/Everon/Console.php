@@ -25,8 +25,7 @@ class Console extends Core implements Interfaces\Core
     }
 
     /**
-     * @param RequestIdentifier $RequestIdentifier
-     * @return void
+     * @inheritdoc
      */
     public function run(RequestIdentifier $RequestIdentifier)
     {
@@ -43,6 +42,9 @@ class Console extends Core implements Interfaces\Core
         }
     }
 
+    /**
+     * @inheritdoc
+     */
     public function handleExceptions(\Exception $Exception)
     {
         $this->restorePreviousExceptionHandler();

@@ -13,6 +13,9 @@ namespace Everon\Dependency;
 trait Router
 {
 
+    /**
+     * @var \Everon\Interfaces\Router
+     */
     protected $Router = null;
 
 

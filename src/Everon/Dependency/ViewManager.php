@@ -13,6 +13,9 @@ namespace Everon\Dependency;
 trait ViewManager
 {
 
+    /**
+     * @var \Everon\Interfaces\View
+     */
     protected $ViewManager = null;
 
 

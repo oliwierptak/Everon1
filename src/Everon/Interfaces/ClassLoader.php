@@ -16,6 +16,17 @@ interface ClassLoader
      */
     function register($prepend);
     function unRegister();
+
+    /**
+     * @param $namespace
+     * @param $directory
+     */
     function add($namespace, $directory);
+
+    /**
+     * @param $class_name
+     * @return mixed|null|string
+     * @throws \RuntimeException
+     */
     function load($class_name);
 }
