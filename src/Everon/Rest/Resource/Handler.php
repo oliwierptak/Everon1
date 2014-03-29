@@ -287,7 +287,7 @@ class Handler implements Interfaces\ResourceHandler
      */
     public function getResourceNameFromMapping($domain_name)
     {
-        foreach ($this->MappingCollection as $name => $value) {
+         foreach ($this->MappingCollection as $name => $value) {
             if ($domain_name === $value) {
                 return $name;
             }
