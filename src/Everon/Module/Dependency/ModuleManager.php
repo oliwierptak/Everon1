@@ -10,7 +10,7 @@
 namespace Everon\Module\Dependency;
 
 
-trait Manager
+trait ModuleManager
 {
     /**
      * @var \Everon\Module\Interfaces\Manager

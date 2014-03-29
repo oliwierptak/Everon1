@@ -9,7 +9,7 @@
  */
 namespace Everon\Module\Dependency\Injection;
 
-trait Manager
+trait ModuleManager
 {
-    use \Everon\Module\Dependency\Manager;
+    use \Everon\Module\Dependency\ModuleManager;
 }

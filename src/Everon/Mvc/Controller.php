@@ -24,7 +24,7 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
     use \Everon\Domain\Dependency\Injection\DomainManager;
     use Dependency\Injection\Environment;
     use Dependency\Injection\Factory;
-    use \Everon\Module\Dependency\Injection\Manager;
+    use \Everon\Module\Dependency\Injection\ModuleManager;
     use Dependency\Injection\ViewManager;
 
     use Helper\Arrays;

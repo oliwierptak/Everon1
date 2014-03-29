@@ -17,7 +17,7 @@ abstract class Core implements Interfaces\Core
     use Dependency\Injection\Factory;
     use Dependency\Injection\Router;
     use Dependency\Injection\Request;
-    use Module\Dependency\Injection\Manager;
+    use Module\Dependency\Injection\ModuleManager;
 
     /**
      * @var Interfaces\Controller
