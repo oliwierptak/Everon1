@@ -45,6 +45,12 @@ interface Factory
     function getFullClassName($namespace, $class_name);
 
     /**
+     * @param $class
+     * @throws Exception\Factory
+     */
+    function classExists($class);
+
+    /**
      * @return Interfaces\Core
      * @throws Exception\Factory
      */
@@ -137,6 +143,9 @@ interface Factory
     function buildRestApiKey($id, $secret);
 
     /**
+     * Class name is based on filename from ConfigLoaderItem, eg. /var/www/.../Module/_Core/Config/router.ini
+     * will become Everon\Config\Router
+     *
      * @param $name
      * @param Config\Interfaces\LoaderItem $ConfigLoaderItem
      * @param callable $Compiler
@@ -319,7 +328,7 @@ interface Factory
     /**
      * @param $name
      * @param array $data
-     * @return Config\Interfaces\Item
+     * @return Config\Interfaces\Item|Config\Item
      * @throws Exception\Factory
      */
     function buildConfigItem($name, array $data);
@@ -345,6 +354,7 @@ interface Factory
      * @param Interfaces\RequestValidator $Validator
      * @param string $namespace
      * @return Interfaces\Router
+     * @throws Exception\Factory
      */
     function buildRouter(Interfaces\Config $Config, Interfaces\RequestValidator $Validator, $namespace='Everon');
 
@@ -391,6 +401,7 @@ interface Factory
      * @param $template_string
      * @param array $template_data
      * @return Interfaces\TemplateContainer
+     * @throws Exception\Factory
      */
     function buildTemplateContainer($template_string, array $template_data);
 

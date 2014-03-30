@@ -73,9 +73,9 @@ class Factory implements Interfaces\Factory
         $this->WorkerCollection->set($name, $Worker);
         $Worker->unRegister();
     }*/
-    
+
     /**
-     * @return Interfaces\DependencyContainer
+     * @inheritdoc
      */
     public function getDependencyContainer()
     {
@@ -83,7 +83,7 @@ class Factory implements Interfaces\Factory
     }
 
     /**
-     * @param Interfaces\DependencyContainer $Container
+     * @inheritdoc
      */
     public function setDependencyContainer(Interfaces\DependencyContainer $Container)
     {
@@ -91,8 +91,7 @@ class Factory implements Interfaces\Factory
     }
 
     /**
-     * @param $class_name
-     * @param $Receiver
+     * @inheritdoc
      */
     public function injectDependencies($class_name, $Receiver)
     {
@@ -103,9 +102,7 @@ class Factory implements Interfaces\Factory
     }
 
     /**
-     * @param $namespace
-     * @param $class_name
-     * @return string
+     * @inheritdoc
      */
     public function getFullClassName($namespace, $class_name)
     {
@@ -116,17 +113,19 @@ class Factory implements Interfaces\Factory
         $class = $namespace.'\\'.$class_name;
         return $class;
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public function classExists($class)
     {
         if (class_exists($class, true) === false) {
             throw new Exception\Factory('File for class: "%s" could not be found', $class);
         }
     }
-    
+
     /**
-     * @return Interfaces\Core
-     * @throws Exception\Factory
+     * @inheritdoc
      */
     public function buildConsole()
     {
@@ -141,8 +140,7 @@ class Factory implements Interfaces\Factory
     }
 
     /**
-     * @return Interfaces\Core
-     * @throws Exception\Factory
+     * @inheritdoc
      */
     public function buildMvc()
     {
@@ -317,14 +315,7 @@ class Factory implements Interfaces\Factory
     }
 
     /**
-     * Class name is based on filename from ConfigLoaderItem, eg. /var/www/.../Module/_Core/Config/router.ini
-     * will become Everon\Config\Router
-     * 
-     * @param $name
-     * @param Config\Interfaces\LoaderItem $ConfigLoaderItem
-     * @param callable $Compiler
-     * @return Interfaces\Config
-     * @throws Exception\Factory
+     * @inheritdoc
      */
     public function buildConfig($name, Config\Interfaces\LoaderItem $ConfigLoaderItem, \Closure $Compiler)
     {
@@ -353,9 +344,7 @@ class Factory implements Interfaces\Factory
     }
 
     /**
-     * @param Config\Interfaces\Loader $Loader
-     * @return Config\Interfaces\Manager
-     * @throws Exception\Factory
+     * @inheritdoc
      */
     public function buildConfigManager(Config\Interfaces\Loader $Loader)
     {
@@ -370,8 +359,7 @@ class Factory implements Interfaces\Factory
     }
 
     /**
-     * @return Config\Interfaces\ExpressionMatcher
-     * @throws Exception\Factory
+     * @inheritdoc
      */
     public function buildConfigExpressionMatcher()
     {
@@ -386,10 +374,7 @@ class Factory implements Interfaces\Factory
     }
 
     /**
-     * @param $config_directory
-     * @param $cache_directory
-     * @return Config\Loader
-     * @throws Exception\Factory
+     * @inheritdoc
      */
     public function buildConfigLoader($config_directory, $cache_directory)
     {
@@ -404,10 +389,7 @@ class Factory implements Interfaces\Factory
     }
 
     /**
-     * @param $filename
-     * @param array $data
-     * @return Config\Interfaces\LoaderItem
-     * @throws Exception\Factory
+     * @inheritdoc
      */
     public function buildConfigLoaderItem($filename, array $data)
     {
@@ -882,11 +864,7 @@ class Factory implements Interfaces\Factory
     }
 
     /**
-     * @param Interfaces\Config $Config
-     * @param Interfaces\RequestValidator $Validator
-     * @param string $namespace
-     * @return Interfaces\Router|Router
-     * @throws Exception\Factory
+     * @inheritdoc
      */
     public function buildRouter(Interfaces\Config $Config, Interfaces\RequestValidator $Validator, $namespace='Everon')
     {
@@ -903,8 +881,7 @@ class Factory implements Interfaces\Factory
     }
 
     /**
-     * @return Interfaces\RequestValidator
-     * @throws Exception\Factory
+     * @inheritdoc
      */
     public function buildRequestValidator()
     {
@@ -919,10 +896,7 @@ class Factory implements Interfaces\Factory
     }
 
     /**
-     * @param $name
-     * @param array $data
-     * @return Config\Interfaces\Item
-     * @throws Exception\Factory
+     * @inheritdoc
      */
     public function buildConfigItem($name, array $data)
     {
@@ -938,10 +912,7 @@ class Factory implements Interfaces\Factory
     }
 
     /**
-     * @param $name
-     * @param array $data
-     * @return Config\Interfaces\ItemDomain
-     * @throws Exception\Factory
+     * @inheritdoc
      */
     public function buildConfigItemDomain($name, array $data)
     {
@@ -957,10 +928,7 @@ class Factory implements Interfaces\Factory
     }
 
     /**
-     * @param $name
-     * @param array $data
-     * @return Config\Interfaces\ItemRouter
-     * @throws Exception\Factory
+     * @inheritdoc
      */
     public function buildConfigItemRouter($name, array $data)
     {
@@ -992,9 +960,7 @@ class Factory implements Interfaces\Factory
 
 
     /**
-     * @param $root
-     * @return FileSystem
-     * @throws Exception\Factory
+     * @inheritdoc
      */
     public function buildFileSystem($root)
     {
@@ -1009,10 +975,7 @@ class Factory implements Interfaces\Factory
     }
 
     /**
-     * @param $template_string
-     * @param array $template_data
-     * @return Interfaces\TemplateContainer
-     * @throws Exception\Factory
+     * @inheritdoc
      */
     public function buildTemplateContainer($template_string, array $template_data)
     {
@@ -1027,10 +990,7 @@ class Factory implements Interfaces\Factory
     }
 
     /**
-     * @param $directory
-     * @param boolean $enabled
-     * @return Interfaces\Logger|Logger
-     * @throws Exception\Factory
+     * @inheritdoc
      */
     public function buildLogger($directory, $enabled)
     {
@@ -1045,9 +1005,7 @@ class Factory implements Interfaces\Factory
     }
 
     /**
-     * @param array $headers
-     * @return Interfaces\Collection
-     * @throws Exception\Factory
+     * @inheritdoc
      */
     public function buildHttpHeaderCollection(array $headers=[])
     {
