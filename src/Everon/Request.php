@@ -91,8 +91,14 @@ class Request implements Interfaces\Request
      * @var array Array of accepted request methods
      */
     protected $accepted_methods = [
+        self::METHOD_DELETE,
         self::METHOD_GET,
-        self::METHOD_POST
+        self::METHOD_HEAD,
+        self::METHOD_POST,
+        self::METHOD_PUT,
+        self::METHOD_CONNECT,
+        self::METHOD_OPTIONS,
+        self::METHOD_TRACE
     ];
 
 

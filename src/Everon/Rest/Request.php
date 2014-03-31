@@ -17,14 +17,6 @@ class Request extends \Everon\Request implements Interfaces\Request
     use Helper\Asserts\IsStringAndNonEmpty;
     use Helper\Exceptions;
     
-    protected $accepted_methods = [
-        self::METHOD_DELETE,
-        self::METHOD_GET,
-        self::METHOD_HEAD,
-        self::METHOD_POST,
-        self::METHOD_PUT
-    ];
-    
     protected $versioning = Resource\Handler::VERSIONING_URL;
     
     protected $version = null;
