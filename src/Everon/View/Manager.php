@@ -147,7 +147,7 @@ class Manager implements Interfaces\ViewManager
         foreach ($Template->getData() as $name => $Include) {
             if (($Include instanceof Interfaces\TemplateContainer) === false) {
                 if (is_string($Include)) {
-                    $IncludeScope = $Compiler->compile($Scope->getName(), $Include, [$name => $Template->getData()[$name]]);
+                    $IncludeScope = $Compiler->compile($Scope->getName(), $Include, $Template->getData());
                     $Template->set($name, $IncludeScope->getPhp());
                 }
                 continue;
