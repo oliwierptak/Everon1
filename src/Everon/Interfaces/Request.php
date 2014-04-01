@@ -164,4 +164,11 @@ interface Request extends Arrayable
      * @return array
      */
     public function getRawInput();
+
+    /**
+     * @param $name
+     * @param $default
+     * @return mixed
+     */
+    function getHeader($name, $default);
 }

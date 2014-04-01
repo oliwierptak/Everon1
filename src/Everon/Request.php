@@ -600,7 +600,10 @@ class Request implements Interfaces\Request
         $result = null;
         return file_get_contents('php://input');
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public function getHeader($name, $default)
     {
         return $this->ServerCollection->get($name, $default);
