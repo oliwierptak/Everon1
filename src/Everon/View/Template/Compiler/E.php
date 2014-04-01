@@ -28,8 +28,8 @@ class E extends Compiler
     {
         try {
             $this->scope_name = $scope_name;
-            //$curly_data = $this->arrayToValues($data);
-            $curly_data = $this->arrayDotKeysToScope($data, $scope_name);
+            $curly_data = $this->arrayToValues($data);
+            $curly_data = $this->arrayDotKeysToScope($curly_data, $scope_name);
             $php_content = $this->stringCompilerRun($template_content, $curly_data);
 
             $data = $this->arrayDotKeysToArray(

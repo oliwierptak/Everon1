@@ -71,8 +71,8 @@ abstract class Module implements Interfaces\Module
     public function getController($name)
     {
         if ($this->ControllerCollection->has($name) === false) {
-            $View = $this->createController($name);
-            $this->ControllerCollection->set($name, $View);
+            $Controller = $this->createController($name);
+            $this->ControllerCollection->set($name, $Controller);
         }
 
         return $this->ControllerCollection->get($name);

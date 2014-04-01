@@ -57,6 +57,7 @@ trait Compiler
         list($opening_tag, $closing_tag) = $tags;
         foreach ($data as $name => $value) {
             if ($this->isIterable($value)) {
+                $value = $this->arrayToValues($value);
                 $tokens = array_merge($tokens, $this->stringCompilerGetTokens($name, $value, $tags));
             }
             else {

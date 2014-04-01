@@ -147,7 +147,7 @@ class Manager implements Interfaces\ViewManager
         foreach ($Template->getData() as $name => $Include) {
             if (($Include instanceof Interfaces\TemplateContainer) === false) {
                 if (is_string($Include)) {
-                    $IncludeScope = $Compiler->compile($Scope->getName(), $Include, [$name => $Template->getData()[$name]]);
+                    $IncludeScope = $Compiler->compile($Scope->getName(), $Include, $Template->getData());
                     $Template->set($name, $IncludeScope->getPhp());
                 }
                 continue;
@@ -230,14 +230,21 @@ class Manager implements Interfaces\ViewManager
      */
     public function createView($name, $template_directory, $namespace='Everon\View')
     {
-        $TemplateDirectory = new \SplFileInfo($template_directory);
-        if  ($TemplateDirectory->isDir() === false) {
-            throw new Exception\ViewManager('View template directory: "%s" does not exist', $template_directory);
-        }
-
         $default_extension = $this->getConfigManager()->getConfigValue('application.view.default_extension');
         $view_variables = $this->getConfigManager()->getConfigValue("view.$name", []);
         $view_variables = $this->arrayDotKeysToScope($view_variables, 'View');
+        
+        $TemplateDirectory = new \SplFileInfo($template_directory);
+        if  ($TemplateDirectory->isDir() === false) {  //fallback to theme dir
+            $theme_dir = $this->theme_directory.$this->getThemeName().DIRECTORY_SEPARATOR.$name.DIRECTORY_SEPARATOR.'templates';
+            $TemplateDirectory = new \SplFileInfo($theme_dir);
+            if  ($TemplateDirectory->isDir() === false) {
+                throw new Exception\ViewManager('View template directory: "%s" does not exist', $template_directory);
+            }
+
+            $namespace = 'Everon\View\\'.$this->getThemeName();
+        }
+
         return $this->getFactory()->buildView($name, $TemplateDirectory->getPathname().DIRECTORY_SEPARATOR, $view_variables, $default_extension, $namespace);
     }
 

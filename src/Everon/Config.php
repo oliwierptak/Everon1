@@ -125,6 +125,10 @@ class Config implements \Everon\Interfaces\Config
 
     protected function initItems()
     {
+        if ($this->data === null || empty($this->data)) {
+            return;
+        }
+        
         $this->processData();
         
         $DefaultOrFirstItem = null;
@@ -186,12 +190,16 @@ class Config implements \Everon\Interfaces\Config
     }
 
     /**
-     * @return mixed
+     * @inheritdoc
      */
     public function getDefaultItem()
     {
         if (is_null($this->DefaultItem)) {
             $this->initItems();
+        }
+
+        if ($this->DefaultItem === null) {
+            throw new Exception\Config('Default config item not defined for config: "%s"', $this->getName());
         }
         
         return $this->DefaultItem;

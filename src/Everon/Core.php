@@ -80,6 +80,7 @@ abstract class Core implements Interfaces\Core
         }
 
         $this->Controller = $this->Module->getController($CurrentRoute->getController());
+        $this->Controller->setCurrentRoute($CurrentRoute);
         $this->Controller->execute($CurrentRoute->getAction());
     }
     
