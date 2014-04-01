@@ -28,9 +28,4 @@ class Form extends \Everon\View\Element
         ], $data);
     }
 
-    public static function __set_state(array $array)
-    {
-        return new static($array);
-    }    
-
 }

@@ -56,10 +56,4 @@ class Mvc extends Core implements Interfaces\Core
         
         $Controller->showException($Exception, $code);
     }
-
-    public function shutdown()
-    {
-        $s = parent::shutdown();
-        echo "<hr><pre>$s</pre>";
-    }
 }

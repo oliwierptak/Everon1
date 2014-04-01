@@ -31,6 +31,12 @@ abstract class Controller implements Interfaces\Controller
 
 
     /**
+     * @var Config\Interfaces\ItemRouter
+     */
+    protected $CurrentRoute = null;
+
+
+    /**
      * @param $action
      * @param $result
      * @return void
@@ -118,4 +124,21 @@ abstract class Controller implements Interfaces\Controller
         $Config = $this->getModule()->getRouterConfig()->getItemByName($name);
         return $Config->getUrl();
     }
+
+    /**
+     * @param Config\Interfaces\ItemRouter $CurrentRoute
+     */
+    public function setCurrentRoute(Config\Interfaces\ItemRouter $CurrentRoute)
+    {
+        $this->CurrentRoute = $CurrentRoute;
+    }
+
+    /**
+     * @return Config\Interfaces\ItemRouter
+     */
+    public function getCurrentRoute()
+    {
+        return $this->CurrentRoute;
+    }
+    
 }
