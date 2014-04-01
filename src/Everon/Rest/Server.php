@@ -36,19 +36,19 @@ class Server extends \Everon\Core implements Rest\Interfaces\Server
     public function run(RequestIdentifier $RequestIdentifier)
     {
         try {
-            $access_control = $this->getConfigManager()->getConfigValue('rest.access_control', null);
-            if ($access_control !== null) {
-                foreach ($access_control as $name => $values) {
+            $response_headers = $this->getConfigManager()->getConfigValue('rest.response_headers', null);
+            if ($response_headers !== null) {
+                foreach ($response_headers as $name => $values) {
                     $origin = $this->getRequest()->getHeader('HTTP_ORIGIN', null);
-                    if (strcasecmp($values['origin'], $origin) === 0) {
-                        $this->getResponse()->setHeader('Access-Control-Allow-Origin', $values['origin']);
-                        $this->getResponse()->setHeader('Access-Control-Allow-Methods', $values['methods']);
-                        $this->getResponse()->setHeader('Access-Control-Allow-Headers', $values['headers']);
+                    if (strcasecmp($values['Access-Control-Allow-Origin'], $origin) === 0) {
+                        foreach ($values as $header_name => $header_value) {
+                            $this->getResponse()->setHeader($header_name, $header_value);
+                        }
                     }
                 }
             }
             
-            if ($this->getRequest()     ->getMethod() === \Everon\Request::METHOD_OPTIONS) {
+            if ($this->getRequest()->getMethod() === \Everon\Request::METHOD_OPTIONS) {
                 $this->getLogger()->response('[%s] %s : %s', [$this->getResponse()->getStatusCode(), $this->getRequest()->getPath(), $this->getRequest()->getMethod()]);
                 echo $this->getResponse()->toJson(); //xxx
             }
