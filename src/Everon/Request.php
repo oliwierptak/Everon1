@@ -119,6 +119,28 @@ class Request implements Interfaces\Request
         $this->initRequest();
     }
 
+
+    protected function initRequest()
+    {
+        $data = $this->getDataFromGlobals();
+        $this->validate($data);
+        
+        $this->data = $data;
+        $this->location = $data['location'];
+        $this->method = $data['method'];
+        $this->url = $data['url'];
+        $this->query_string = $data['query_string'];
+        $this->protocol = $data['protocol'];
+        $this->port = (integer) $data['port'];
+        $this->secure = (boolean) $data['secure'];
+        $this->path = $data['path'];
+
+        if (trim($data['query_string']) !== '') {
+            parse_str($data['query_string'], $query);
+            $this->setQueryCollection($this->sanitizeInput($query));
+        }
+    }
+
     /**
      * @return array
      */
@@ -140,7 +162,7 @@ class Request implements Interfaces\Request
     {
         return $this->getServerLocationFromGlobals().@$this->ServerCollection['REQUEST_URI'];
     }
-    
+
     protected function getServerLocationFromGlobals()
     {
         $host = $this->getHostNameFromGlobals();
@@ -158,7 +180,7 @@ class Request implements Interfaces\Request
 
         return $protocol.$host.$port_str;        
     }
-    
+
     protected function getHostNameFromGlobals()
     {
         if ($this->ServerCollection->has('SERVER_NAME')) {
@@ -171,7 +193,7 @@ class Request implements Interfaces\Request
         
         return $this->ServerCollection->get('SERVER_ADDR');
     }
-    
+
     protected function getProtocolFromGlobals()
     {
         $protocol = '';
@@ -227,7 +249,6 @@ class Request implements Interfaces\Request
 
         return $input;
     }
-
     /**
      * @param $value
      * @param $index
@@ -235,27 +256,6 @@ class Request implements Interfaces\Request
     protected function sanitizeInputToken(&$value, $index)
     {
         $value = strip_tags($value);
-    }
-
-    protected function initRequest()
-    {
-        $data = $this->getDataFromGlobals();
-        $this->validate($data);
-        
-        $this->data = $data;
-        $this->location = $data['location'];
-        $this->method = $data['method'];
-        $this->url = $data['url'];
-        $this->query_string = $data['query_string'];
-        $this->protocol = $data['protocol'];
-        $this->port = (integer) $data['port'];
-        $this->secure = (boolean) $data['secure'];
-        $this->path = $data['path'];
-        
-        if (trim($data['query_string']) !== '') {
-            parse_str($data['query_string'], $query);
-            $this->setQueryCollection($this->sanitizeInput($query));
-        }
     }
 
     /**
@@ -599,6 +599,11 @@ class Request implements Interfaces\Request
     {
         $result = null;
         return file_get_contents('php://input');
+    }
+    
+    public function getHeader($name, $default)
+    {
+        return $this->ServerCollection->get($name, $default);
     }
 
 }

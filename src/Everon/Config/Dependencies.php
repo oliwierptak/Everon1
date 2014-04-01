@@ -88,10 +88,10 @@ $Container->propose('ResourceManager', function() use ($Factory) {
     $Factory->getDependencyContainer()->monitor('ResourceManager ', ['Everon\Config\Manager']);
     $ConfigManager = $Factory->getDependencyContainer()->resolve('ConfigManager');
 
-    $rest = $ConfigManager->getConfigValue('rest.rest');
+    $rest_url = $ConfigManager->getConfigValue('rest.url');
     $versioning = $ConfigManager->getConfigValue('rest.versioning');
     $mapping = $ConfigManager->getConfigValue('rest.mapping', []);
-    $rest_server_url = $rest['protocol'].$rest['host'].':'.$rest['port'].$rest['url'];
+    $rest_server_url = $rest_url['protocol'].$rest_url['host'].':'.$rest_url['port'].$rest_url['url'];
     return $Factory->buildRestResourceManager($rest_server_url, $versioning['supported_versions'], $versioning['type'], $mapping);
 });
 

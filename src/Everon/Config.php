@@ -237,7 +237,8 @@ class Config implements \Everon\Interfaces\Config
         }
         
         if (isset($this->items[$name]) === false) {
-            return $this->getDefaultItem();
+            //return $this->getDefaultItem(); xxx
+            return null;
         }
         
         return $this->items[$name];
@@ -267,6 +268,9 @@ class Config implements \Everon\Interfaces\Config
         
         if ($section === null) {
             $Item = $this->getItemByName($name);
+            if ($Item === null) {
+                return $default;
+            }
             return $Item->toArray();
         }
         

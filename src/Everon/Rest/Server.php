@@ -21,6 +21,7 @@ use Everon\Rest;
  */
 class Server extends \Everon\Core implements Rest\Interfaces\Server
 {
+    use Dependency\Injection\ConfigManager;
     use Dependency\Injection\Response;
     
     /**
@@ -35,7 +36,25 @@ class Server extends \Everon\Core implements Rest\Interfaces\Server
     public function run(RequestIdentifier $RequestIdentifier)
     {
         try {
-            parent::run($RequestIdentifier);
+            $access_control = $this->getConfigManager()->getConfigValue('rest.access_control', null);
+            if ($access_control !== null) {
+                foreach ($access_control as $name => $values) {
+                    $origin = $this->getRequest()->getHeader('HTTP_ORIGIN', null);
+                    if (strcasecmp($values['origin'], $origin) === 0) {
+                        $this->getResponse()->setHeader('Access-Control-Allow-Origin', $values['origin']);
+                        $this->getResponse()->setHeader('Access-Control-Allow-Methods', $values['methods']);
+                        $this->getResponse()->setHeader('Access-Control-Allow-Headers', $values['headers']);
+                    }
+                }
+            }
+            
+            if ($this->getRequest()     ->getMethod() === \Everon\Request::METHOD_OPTIONS) {
+                $this->getLogger()->response('[%s] %s : %s', [$this->getResponse()->getStatusCode(), $this->getRequest()->getPath(), $this->getRequest()->getMethod()]);
+                echo $this->getResponse()->toJson(); //xxx
+            }
+            else  {
+                parent::run($RequestIdentifier);
+            }
         }
         catch (Exception\RouteNotDefined $Exception) {
             $this->getLogger()->error($Exception);

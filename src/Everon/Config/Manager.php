@@ -390,7 +390,7 @@ EOF;
                 return null;
             }
 
-            if (count($tokens) == 2) { //application.env.url
+            if (count($tokens) == 2) { //application.env
                 array_push($tokens, null);
             }
 
