@@ -34,6 +34,7 @@ interface Config extends Arrayable
 
     /**
      * @return mixed
+     * @throws \Everon\Exception\Config
      */
     function getDefaultItem();
 
