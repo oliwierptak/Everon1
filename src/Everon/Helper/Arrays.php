@@ -105,10 +105,10 @@ trait Arrays
      *
      * 
      * @param array $input
-     * @param string $default_name 'View' is the default
+     * @param string $default_name
      * @return array
      */
-    protected function arrayDotKeysToScope(array $input, $default_name='View')
+    protected function arrayDotKeysToScope(array $input, $default_name)
     {
         $data = [];
         foreach($input as $key => $value) {

@@ -23,7 +23,7 @@ trait Compiler
      * @param array $tags
      * @return array
      */
-    protected function stringCompilerGetTokens($name, array $data, array $tags)
+    protected function stringCompilerGetTokens($name, $data, array $tags)
     {
         list($opening_tag, $closing_tag) = $tags;
         $tokens = array();
@@ -57,7 +57,6 @@ trait Compiler
         list($opening_tag, $closing_tag) = $tags;
         foreach ($data as $name => $value) {
             if ($this->isIterable($value)) {
-                $value = $this->arrayToValues($value);
                 $tokens = array_merge($tokens, $this->stringCompilerGetTokens($name, $value, $tags));
             }
             else {

@@ -40,6 +40,7 @@ class Container implements Interfaces\TemplateContainer
     public function __construct($content, array $data)
     {
         $this->data = $data;
+        $this->data = $this->arrayDotKeysToScope($data, 'View');
         $this->template_content = $content;
     }
     

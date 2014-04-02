@@ -210,7 +210,6 @@ class Manager implements Interfaces\ViewManager
             }
 
             $view_variables = $this->getConfigManager()->getConfigValue("view.$view_name", []);
-            $view_variables = $this->arrayDotKeysToScope($view_variables, 'View');
             $IndexTemplate = $this->getFactory()->buildTemplate($TemplateFilename, $view_variables);
 
             $Theme = $this->createView($view_name, $TemplateDirectory->getPathname().DIRECTORY_SEPARATOR, 'Everon\View\\'.$theme_name);
@@ -232,7 +231,6 @@ class Manager implements Interfaces\ViewManager
     {
         $default_extension = $this->getConfigManager()->getConfigValue('application.view.default_extension');
         $view_variables = $this->getConfigManager()->getConfigValue("view.$name", []);
-        $view_variables = $this->arrayDotKeysToScope($view_variables, 'View');
         
         $TemplateDirectory = new \SplFileInfo($template_directory);
         if  ($TemplateDirectory->isDir() === false) {  //fallback to theme dir

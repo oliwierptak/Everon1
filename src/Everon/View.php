@@ -49,7 +49,6 @@ abstract class View implements Interfaces\View
     {
         $this->name = $this->stringLastTokenToName(get_class($this));
         $this->template_directory = $template_directory;
-        $this->vars = $this->arrayDotKeysToScope($vars);
         $this->default_extension = $default_extension;
     }
 
