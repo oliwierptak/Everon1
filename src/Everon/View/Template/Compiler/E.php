@@ -77,17 +77,23 @@ class E extends Compiler
      */
     protected function phpize($code)
     {
+        $code = trim($code);
         $needs_echo = false;
         if ($code[0] === '$' || $code[0] === '"' || $code[0] === "'") {
-            $needs_echo = true;
+            $needs_echo = strpos($code, '=') === false; //variable is first but it maybe an assignment
         }
 
         if ($needs_echo) {
             $code = "echo $code";
         }
-
+        
+        if ($code === '') {
+            return $code;
+        }
+        
+        
         $s = trim(str_replace(["\n", "\r", "\r\n"], '', $code));
-        if ($this->stringEndsWith($s, '}') === false && $this->stringEndsWith($s, ';') === false) {
+        if ($this->stringEndsWith($s, '}') === false && $this->stringEndsWith($s, ';') === false && $this->stringEndsWith($s, ':') === false) {
             $code = rtrim($code, ';').";";
         }
         
