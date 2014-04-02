@@ -30,32 +30,11 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
     use Helper\Arrays;
     use Helper\IsIterable;
     use Helper\String\StartsWith;
-    
-    
-    /**
-     * @return View
-     */
-    public function getView()
-    {
-        return $this->getModule()->getView($this->getName());
-    }
-    
-    /**
-     * @return mixed
-     */
-    public function getModel()
-    {
-        return $this->getDomainManager()->getModel($this->getName());
-    }
 
     /**
-     * @return TemplateContainer
+     * @param $action
+     * @param $result
      */
-    public function getActionTemplate()
-    {
-        return $this->getView()->getTemplate($this->action, $this->getView()->getData());
-    }
-
     protected function prepareResponse($action, $result)
     {
         if ($result && $this->isCallable($this->getView(), $action)) {
@@ -81,6 +60,30 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
     protected function response()
     {
         echo $this->getResponse()->toHtml();
+    }
+    
+    /**
+     * @return View
+     */
+    public function getView()
+    {
+        return $this->getModule()->getView($this->getName());
+    }
+    
+    /**
+     * @return mixed
+     */
+    public function getModel()
+    {
+        return $this->getDomainManager()->getModel($this->getName());
+    }
+
+    /**
+     * @return TemplateContainer
+     */
+    public function getActionTemplate()
+    {
+        return $this->getView()->getTemplate($this->action, $this->getView()->getData());
     }
 
     /**
