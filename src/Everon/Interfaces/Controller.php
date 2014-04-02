@@ -9,14 +9,13 @@
  */
 namespace Everon\Interfaces;
 
-use Everon\Config;
+use Everon\Config\Interfaces\ItemRouter;
 use Everon\Exception;
-use Everon\Interfaces;
 use Everon\Http;
 
 /**
- * @method Interfaces\Response getResponse()
- * @method void setResponse(Interfaces\Response $Response)
+ * @method Response getResponse()
+ * @method void setResponse(Response $Response)
  */
 interface Controller
 {
@@ -44,12 +43,12 @@ interface Controller
     function getUrl($name);
 
     /**
-     * @param Config\Interfaces\ItemRouter $CurrentRoute
+     * @param ItemRouter $CurrentRoute
      */
-    function setCurrentRoute(Config\Interfaces\ItemRouter $CurrentRoute);
+    function setCurrentRoute(ItemRouter $CurrentRoute);
 
     /**
-     * @return Config\Interfaces\ItemRouter
+     * @return ItemRouter
      */
     function getCurrentRoute();
 

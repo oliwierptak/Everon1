@@ -19,7 +19,7 @@ use Everon\Http;
 /**
  * @method Http\Interfaces\Response getResponse()
  */
-abstract class Controller extends \Everon\Controller implements Interfaces\Controller
+abstract class Controller extends \Everon\Controller
 {
     use Dependency\Injection\Environment;
     use Dependency\Injection\Factory;
