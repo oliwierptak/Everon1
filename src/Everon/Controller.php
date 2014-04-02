@@ -12,6 +12,7 @@ namespace Everon;
 
 abstract class Controller implements Interfaces\Controller
 {
+    use Dependency\Injection\ConfigManager;
     use Dependency\Injection\Logger;
     use Dependency\Injection\Response;
     use Dependency\Injection\Request;
