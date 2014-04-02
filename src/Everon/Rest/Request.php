@@ -51,6 +51,7 @@ class Request extends \Everon\Request implements Interfaces\Request
             $this->ServerCollection['_QUERY_STRING'] = $query_string;
             $get = $this->GetCollection->toArray();
             array_shift($get);
+            
             if (empty($get) === false) {
                 $query_string = urldecode(http_build_query($get));
             }
