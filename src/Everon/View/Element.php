@@ -21,7 +21,7 @@ abstract class Element extends Helper\Popo implements Interfaces\ViewElement
      */
     public function __construct($defaults, $data=null)
     {
-        $data = (!is_array($data)) ? [] : $data;
+        $data = (is_array($data) === false) ? [] : $data;
         $data = array_merge($defaults, $data);
 
         parent::__construct($data);
