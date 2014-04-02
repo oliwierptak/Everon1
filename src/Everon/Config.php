@@ -283,6 +283,10 @@ class Config implements \Everon\Interfaces\Config
         }
         
         $Item = $this->getItemByName($section);
+        if ($Item === null) {
+            return $default;
+        }
+        
         $data = $Item->toArray();
         $this->go_path = [];
         
