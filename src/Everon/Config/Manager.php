@@ -119,7 +119,7 @@ class Manager implements \Everon\Config\Interfaces\Manager
      */
     public function getPathsOfActiveModules()
     {
-        $module_list = $this->getFileSystem()->listPathDir($this->getEnvironment()->getModule());
+        $module_list = $this->getFileSystem()->listPathDir('//Module');
         $active_modules = $this->getDefaultConfigData();
         $active_modules = $active_modules['modules']['active'];
 
