@@ -21,11 +21,12 @@ use Everon\Http;
  */
 abstract class Controller extends \Everon\Controller implements Interfaces\Controller
 {
-    use \Everon\Domain\Dependency\Injection\DomainManager;
     use Dependency\Injection\Environment;
     use Dependency\Injection\Factory;
-    use \Everon\Module\Dependency\Injection\ModuleManager;
+    use Dependency\Injection\ConfigManager;
     use Dependency\Injection\ViewManager;
+    use \Everon\Domain\Dependency\Injection\DomainManager;
+    use \Everon\Module\Dependency\Injection\ModuleManager;
 
     use Helper\Arrays;
     use Helper\IsIterable;
