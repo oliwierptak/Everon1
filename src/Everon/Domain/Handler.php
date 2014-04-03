@@ -39,11 +39,21 @@ abstract class Handler implements Interfaces\Handler
     protected $repositories = null;
 
 
+    /**
+     * @param DataMapperManager $Manager
+     */
     public function __construct(DataMapperManager $Manager)
     {
         $this->DataMapperManager = $Manager;
     }
 
+    /**
+     * @param $name
+     * @param $arguments
+     * @return Interfaces\Repository|mixed
+     * @throws \Everon\DataMapper\Exception\Schema
+     * @throws \Everon\Exception\Domain
+     */
     public function __call($name, $arguments)
     {
         $tokens = explode('_', $this->stringCamelToUnderscore($name));
