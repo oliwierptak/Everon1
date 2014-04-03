@@ -68,7 +68,7 @@ class Schema implements Interfaces\Schema
         
         foreach ($table_list as $name => $table_data) {
             $this->tables[$name] = $this->getFactory()->buildSchemaTableAndDependencies(
-                $table_data['TABLE_NAME_WITHOUT_SCHEMA'],
+                $table_data['__TABLE_NAME_WITHOUT_SCHEMA'],
                 $table_data['table_schema'],
                 $this->getAdapterName(),
                 $castToEmptyArrayWhenNull($name, $column_list), 

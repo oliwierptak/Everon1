@@ -73,7 +73,7 @@ abstract class Reader implements Interfaces\Schema\Reader
     public function getTableList()
     {
         if ($this->table_list === null) {
-            $this->table_list = $this->arrayArrangeByKeySingle('TABLE_NAME',
+            $this->table_list = $this->arrayArrangeByKeySingle('__TABLE_NAME',
                 $this->getPdoAdapter()->execute($this->getTablesSql(), ['schema'=>$this->getDatabase()], \PDO::FETCH_ASSOC)->fetchAll()
             );
         }
@@ -86,7 +86,7 @@ abstract class Reader implements Interfaces\Schema\Reader
     public function getColumnList()
     {
         if ($this->column_list === null) {
-            $this->column_list = $this->arrayArrangeByKey('TABLE_NAME',
+            $this->column_list = $this->arrayArrangeByKey('__TABLE_NAME',
                 $this->getPdoAdapter()->execute($this->getColumnsSql(), ['schema'=>$this->getDatabase()], \PDO::FETCH_ASSOC)->fetchAll()
             );
         }
@@ -99,7 +99,7 @@ abstract class Reader implements Interfaces\Schema\Reader
     public function getPrimaryKeysList()
     {
         if ($this->constraint_list === null) {
-            $this->constraint_list = $this->arrayArrangeByKey('TABLE_NAME',
+            $this->constraint_list = $this->arrayArrangeByKey('__TABLE_NAME',
                 $this->getPdoAdapter()->execute($this->getPrimaryKeysSql(), ['schema'=>$this->getDatabase()], \PDO::FETCH_ASSOC)->fetchAll()
             );
         }
@@ -112,7 +112,7 @@ abstract class Reader implements Interfaces\Schema\Reader
     public function getForeignKeyList()
     {
         if ($this->foreign_key_list === null) {
-            $this->foreign_key_list = $this->arrayArrangeByKey('TABLE_NAME',
+            $this->foreign_key_list = $this->arrayArrangeByKey('__TABLE_NAME',
                 $this->getPdoAdapter()->execute($this->getForeignKeysSql(), ['schema'=>$this->getDatabase()], \PDO::FETCH_ASSOC)->fetchAll()
             );
         }
@@ -125,7 +125,7 @@ abstract class Reader implements Interfaces\Schema\Reader
     public function getUniqueKeysList()
     {
         if ($this->unique_key_list === null) {
-            $this->unique_key_list = $this->arrayArrangeByKey('TABLE_NAME',
+            $this->unique_key_list = $this->arrayArrangeByKey('__TABLE_NAME',
                 $this->getPdoAdapter()->execute($this->getUniqueKeysSql(), ['schema'=>$this->getDatabase()], \PDO::FETCH_ASSOC)->fetchAll()
             );
         }

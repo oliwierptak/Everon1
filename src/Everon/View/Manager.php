@@ -78,6 +78,7 @@ class Manager implements Interfaces\ViewManager
          * @var $Template Interfaces\Template
          */
         $Template = $View->getContainer();
+        $Template->set('View', $View);
 
         if ($this->getConfigManager()->getConfigValue('application.cache.view')) {
             $this->getCache()->handle($this, $View, $action);
@@ -140,6 +141,7 @@ class Manager implements Interfaces\ViewManager
      */
     protected function compileTemplateRecursive(Interfaces\TemplateCompiler $Compiler, Interfaces\TemplateContainer $Template, Interfaces\TemplateCompilerScope $Scope)
     {
+        $View = $Template->get('View');
         /**
          * @var Interfaces\TemplateContainer $Include
          * @var Interfaces\TemplateContainer $TemplateInclude
@@ -148,29 +150,38 @@ class Manager implements Interfaces\ViewManager
             if (($Include instanceof Interfaces\TemplateContainer) === false) {
                 if (is_string($Include)) {
                     $IncludeScope = $Compiler->compile($Scope->getName(), $Include, $Template->getData());
-                    $Template->set($name, $IncludeScope->getPhp());
+                    $Template->set($name, $IncludeScope->getCompiled());
                 }
                 continue;
             }
 
+            $Include->set('View', $View);
             foreach ($Include->getData() as $include_name => $TemplateInclude) {
                 if (($TemplateInclude instanceof Interfaces\TemplateContainer) === false) {
                     continue;
                 }
 
+                $TemplateInclude->set('View', $View);
                 $this->compileTemplateRecursive($Compiler, $TemplateInclude, $Scope);
-                $Include->set($include_name, $TemplateInclude->getScope()->getPhp());
+                $Include->set($include_name, $TemplateInclude->getScope()->getCompiled());
             }
             
             $ContentScope = $Compiler->compile($Scope->getName(), $Include->getTemplateContent(), $Include->getData());
             $Include->setCompiledContent($ContentScope->getCompiled());
             $Include->setScope($ContentScope);
             
-            $Template->set($name, $Include->getScope()->getPhp());
+            $Template->set($name, $Include->getScope()->getCompiled());
         }
 
         $ContentScope = $Compiler->compile($Scope->getName(), $Template->getTemplateContent(), $Template->getData());
-        
+
+        $Scope->setCompiled($ContentScope->getCompiled());
+        $Scope->setPhp($ContentScope->getPhp());
+        $Scope->setData($ContentScope->getData());
+
+        //compile whole
+        $ContentScope = $Compiler->compile($Scope->getName(), $Scope->getCompiled(), $Scope->getData());
+
         $Scope->setCompiled($ContentScope->getCompiled());
         $Scope->setPhp($ContentScope->getPhp());
         $Scope->setData($ContentScope->getData());
@@ -230,7 +241,11 @@ class Manager implements Interfaces\ViewManager
     public function createView($name, $template_directory, $namespace='Everon\View')
     {
         $default_extension = $this->getConfigManager()->getConfigValue('application.view.default_extension');
-        $view_variables = $this->getConfigManager()->getConfigValue("view.$name", []);
+        $view_variables = $this->getConfigManager()->getConfigValue("view.$name", null);
+        
+        if ($view_variables === null) {
+            throw new Exception\ViewManager('View variables for: "%s" not defined', $name);
+        }
         
         $TemplateDirectory = new \SplFileInfo($template_directory);
         if  ($TemplateDirectory->isDir() === false) {  //fallback to theme dir
@@ -239,11 +254,16 @@ class Manager implements Interfaces\ViewManager
             if  ($TemplateDirectory->isDir() === false) {
                 throw new Exception\ViewManager('View template directory: "%s" does not exist', $template_directory);
             }
-
-            $namespace = 'Everon\View\\'.$this->getThemeName();
         }
-
-        return $this->getFactory()->buildView($name, $TemplateDirectory->getPathname().DIRECTORY_SEPARATOR, $view_variables, $default_extension, $namespace);
+        
+        try {
+            //try to load module view
+            return $this->getFactory()->buildView($name, $TemplateDirectory->getPathname().DIRECTORY_SEPARATOR, $view_variables, $default_extension, $namespace);
+        }
+        catch (Exception\Factory $e) { //fallback to theme view
+            $namespace = 'Everon\View\\'.$this->getThemeName();
+            return $this->getFactory()->buildView($name, $TemplateDirectory->getPathname().DIRECTORY_SEPARATOR, $view_variables, $default_extension, $namespace);
+        }
     }
 
     /**

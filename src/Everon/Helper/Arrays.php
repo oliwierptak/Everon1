@@ -117,7 +117,7 @@ trait Arrays
             if ($property === null) {
                 if ($this->isIterable($value) && empty($value) === false) {
                     foreach ($value as $value_name => $value_value) {
-                        $data["$name.$value_name"] = $value_value;
+                        //$data["$name.$value_name"] = $value_value;
                     }
                 }
                 else {

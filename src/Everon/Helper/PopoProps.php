@@ -30,16 +30,39 @@ class PopoProps implements Interfaces\Arrayable
     protected $strict = false;
 
     /**
+     * @var array
+     */
+    protected $lookup = null;
+
+    /**
      * @param array $data
      */
     public function __construct(array $data)
     {
-        $this->data = array_change_key_case($data, \CASE_LOWER); 
+        $this->data = $data;
+        $this->updateLookup();
     }
     
+    protected function updateLookup()
+    {
+        $this->lookup = array_combine(
+            array_keys(array_change_key_case($this->data, \CASE_LOWER)),
+            array_keys($this->data)
+        );
+    }
+       
     public function __get($property)
     {
-        $property = mb_strtolower($property);
+        $property_to_lookup = mb_strtolower($property);
+        if (array_key_exists($property_to_lookup, $this->lookup) === false) {
+            if ($this->strict) {
+                throw new Exception\Popo('Unknown public property: "%s" in "%s"', [$property, get_class($this)]);
+            }
+            
+            return null;
+        }
+
+        $property = $this->lookup[$property_to_lookup];
         if (array_key_exists($property, $this->data) === false) {
             if ($this->strict) {
                 throw new Exception\Popo('Unknown public property: "%s" in "%s"', [$property, get_class($this)]);
@@ -53,7 +76,9 @@ class PopoProps implements Interfaces\Arrayable
 
     public function __set($name, $value)
     {
-        $this->data[mb_strtolower($name)] = $value;
+        //$this->data[mb_strtolower($name)] = $value;
+        $this->data[$name] = $value;
+        $this->lookup[mb_strtolower($name)] = $name;
     }
     
     public function __call($name, $arguments)

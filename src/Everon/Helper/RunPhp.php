@@ -38,12 +38,18 @@ trait RunPhp
 
             ob_start();
             extract($scope);
+            
+            $View = $Tpl->View;
+
+            unset($Tpl->View);
+            
             include $php_file;
             $content = ob_get_contents();
+            
         }
         catch (\Exception $e) {
-            $this->getLogger()->e_error($e."\n".$php); //todo: this shouldn't be needed here cause the exception should be caught and error logged there
-            $content = '';
+            $this->getLogger()->e_error($e."\n".$php);
+            $content = $e->getMessage().' on line '.$e->getLine();
         }
         finally {
             ob_end_clean();
