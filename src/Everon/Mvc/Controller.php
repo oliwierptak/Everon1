@@ -93,7 +93,7 @@ abstract class Controller extends \Everon\Controller
     public function showException(\Exception $Exception, $code=400)
     {
         $Theme = $this->getViewManager()->getCurrentTheme();
-        $Theme->set('error', $Exception->getMessage());
+        $Theme->set('error', $Exception);
         $data = $this->arrayMergeDefault($Theme->getData(), $this->getView()->getData());
         $Theme->setData($data);
         $this->getView()->setContainer($Theme->getContainer());

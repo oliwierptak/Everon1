@@ -25,6 +25,7 @@ abstract class Handler implements Interfaces\Handler
     use Helper\IsCallable;
     use Helper\Asserts\IsNull;
     use Helper\Exceptions;
+    use Helper\String\CamelToUnderscore;
     
 
     /**
@@ -41,6 +42,27 @@ abstract class Handler implements Interfaces\Handler
     public function __construct(DataMapperManager $Manager)
     {
         $this->DataMapperManager = $Manager;
+    }
+
+    public function __call($name, $arguments)
+    {
+        $tokens = explode('_', $this->stringCamelToUnderscore($name));
+        if (count($tokens) >= 2) {
+            array_shift($tokens); //remove get
+            list($domain_name, $domain_type) = $tokens;
+
+            switch ($domain_type) {
+                case 'Model':
+                    return $this->getModel($domain_name);
+                    break;
+
+                case 'Repository':
+                    return $this->getRepository($domain_name);
+                    break;
+            }
+        }
+        
+        throw new Exception\Domain('Invalid handler method: "%s"', $name);
     }
 
     /**
