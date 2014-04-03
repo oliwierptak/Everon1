@@ -34,13 +34,15 @@ trait RunPhp
         $content = '';
         try {
             $TmpPhpFile->write($php);
-            $php_file = $TmpPhpFile->getFilename(); 
+            $php_file = $TmpPhpFile->getFilename();
+            
+            // $Context = new TemplateContext($View, $Template, $scope);
 
             ob_start();
             extract($scope);
             
+            //meh
             $View = $Tpl->View;
-
             unset($Tpl->View);
             
             include $php_file;
