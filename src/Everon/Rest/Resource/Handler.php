@@ -149,7 +149,6 @@ class Handler implements Interfaces\ResourceHandler
         }
     }
 
-    //remove navigator from here, add expandResource, make version, name and domain name properties of resource
     /**
      * @inheritdoc
      */
