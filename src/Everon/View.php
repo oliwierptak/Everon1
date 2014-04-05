@@ -34,18 +34,12 @@ abstract class View implements Interfaces\View
 
     protected $default_extension = '.htm';
 
-    /**
-     * @var array
-     */
-    protected $vars = [];
-
 
     /**
      * @param $template_directory
-     * @param array $vars
      * @param $default_extension
      */
-    public function __construct($template_directory, array $vars, $default_extension)
+    public function __construct($template_directory, $default_extension)
     {
         $this->name = $this->stringLastTokenToName(get_class($this));
         $this->template_directory = $template_directory;
@@ -125,7 +119,7 @@ abstract class View implements Interfaces\View
             $this->Container = $Container;
         }
         else if (is_string($Container)) {
-            $data = $this->vars;
+            $data = [];
             if ($this->Container !== null) {
                 $data = $this->arrayMergeDefault($data, $this->Container->getData());
             }

@@ -241,11 +241,6 @@ class Manager implements Interfaces\ViewManager
     public function createView($name, $template_directory, $namespace='Everon\View')
     {
         $default_extension = $this->getConfigManager()->getConfigValue('application.view.default_extension');
-        $view_variables = $this->getConfigManager()->getConfigValue("view.$name", null);
-        
-        if ($view_variables === null) {
-            throw new Exception\ViewManager('View variables for: "%s" not defined', $name);
-        }
         
         $TemplateDirectory = new \SplFileInfo($template_directory);
         if  ($TemplateDirectory->isDir() === false) {  //fallback to theme dir
@@ -258,11 +253,11 @@ class Manager implements Interfaces\ViewManager
         
         try {
             //try to load module view
-            return $this->getFactory()->buildView($name, $TemplateDirectory->getPathname().DIRECTORY_SEPARATOR, $view_variables, $default_extension, $namespace);
+            return $this->getFactory()->buildView($name, $TemplateDirectory->getPathname().DIRECTORY_SEPARATOR, $default_extension, $namespace);
         }
         catch (Exception\Factory $e) { //fallback to theme view
             $namespace = 'Everon\View\\'.$this->getThemeName();
-            return $this->getFactory()->buildView($name, $TemplateDirectory->getPathname().DIRECTORY_SEPARATOR, $view_variables, $default_extension, $namespace);
+            return $this->getFactory()->buildView($name, $TemplateDirectory->getPathname().DIRECTORY_SEPARATOR, $default_extension, $namespace);
         }
     }
 

@@ -423,7 +423,7 @@ class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildView($class_name, $template_directory, array $variables, $default_extension, $namespace='Everon\View')
+    public function buildView($class_name, $template_directory, $default_extension, $namespace='Everon\View')
     {
         try {
             $class_name = $this->getFullClassName($namespace, $class_name);
@@ -431,7 +431,7 @@ class Factory implements Interfaces\Factory
             /**
              * @var Interfaces\View $View
              */
-            $View = new $class_name($template_directory, $variables, $default_extension);
+            $View = new $class_name($template_directory, $default_extension);
             $this->injectDependencies($class_name, $View);
             return $View;
         }
