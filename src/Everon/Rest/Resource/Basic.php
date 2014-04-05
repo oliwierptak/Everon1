@@ -17,22 +17,18 @@ abstract class Basic implements Interfaces\ResourceBasic
 {
     use Helper\ToArray;
     
-    protected $resource_name = null;
-    protected $href = null;
-    protected $version = null;
+    /**
+     * @var Interfaces\ResourceHref
+     */
+    protected $Href = null;
 
 
     /**
-     * @param $href
-     * @param $version
-     * @param $resource_name
+     * @param Interfaces\ResourceHref $Href
      */
-    public function __construct($href, $version, $resource_name)
+    public function __construct(Interfaces\ResourceHref $Href)
     {
-        $this->href = $href;
-        $this->version = $version;
-        $this->resource_name = $resource_name;
-        $this->data = null;
+        $this->Href = $Href;
     }
 
     /**
@@ -40,7 +36,7 @@ abstract class Basic implements Interfaces\ResourceBasic
      */
     public function setVersion($version)
     {
-        $this->version = $version;
+        $this->getHref()->setVersion($version);
     }
 
     /**
@@ -48,15 +44,31 @@ abstract class Basic implements Interfaces\ResourceBasic
      */
     public function getVersion()
     {
-        return $this->version;
+        return $this->getHref()->getVersion();
     }
 
     /**
-     * @param $href
+     * @inheritdoc
      */
-    public function setHref($href)
+    public function getResourceId()
     {
-        $this->href = $href;
+        return $this->getHref()->getResourceId();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setResourceId($resource_id)
+    {
+        $this->getHref()->setResourceId($resource_id);
+    }
+    
+    /**
+     * @inheritdoc
+     */
+    public function setHref(Interfaces\ResourceHref $Href)
+    {
+        $this->Href = $Href;
     }
 
     /**
@@ -64,7 +76,7 @@ abstract class Basic implements Interfaces\ResourceBasic
      */
     public function getHref()
     {
-        return $this->href;
+        return $this->Href;
     }
 
     /**
@@ -72,7 +84,7 @@ abstract class Basic implements Interfaces\ResourceBasic
      */
     public function setName($resource_name)
     {
-        $this->resource_name = $resource_name;
+        return $this->getHref()->setResourceName($resource_name);
     }
 
     /**
@@ -80,7 +92,7 @@ abstract class Basic implements Interfaces\ResourceBasic
      */
     public function getName()
     {
-        return $this->resource_name;
+        $this->getHref()->getResourceName();
     }
     /**
      * @inheritdoc
@@ -92,6 +104,6 @@ abstract class Basic implements Interfaces\ResourceBasic
     
     protected function getToArray()
     {
-        return ['href' => $this->getHref()];
+        return ['href' => $this->getHref()->getLink()];
     }
 }

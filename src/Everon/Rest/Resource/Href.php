@@ -18,8 +18,9 @@ class Href implements Interfaces\ResourceHref
 {
     protected $url = null;
     protected $version = null;
-    protected $resource = null;
+    protected $resource_name = null;
     protected $resource_id = null;
+    protected $request_path = null;
     protected $collection_name = null;
     protected $versioning = null;
 
@@ -39,10 +40,11 @@ class Href implements Interfaces\ResourceHref
     /**
      * @inheritdoc
      */
-    public function getLink($resource_name, $resource_id='', $collection='', $request_path='')
+    public function getLink()
     {
+        $request_path = (string) $this->request_path;
         $request_path = trim($request_path) !== '' ? '?'.$request_path : $request_path;
-        $params = '/'.rtrim(implode('/', [$resource_name,$resource_id,$collection]),'/').$request_path;
+        $params = '/'.rtrim(implode('/', [$this->resource_name, $this->resource_id, $this->collection_name]),'/').$request_path;
         switch ($this->versioning) {
             case Handler::VERSIONING_URL:
                 return $this->url.$this->version.$params;
@@ -75,17 +77,17 @@ class Href implements Interfaces\ResourceHref
     /**
      * @param $resource
      */
-    public function setResource($resource)
+    public function setResourceName($resource)
     {
-        $this->resource = $resource;
+        $this->resource_name = $resource;
     }
 
     /**
      * @return string
      */
-    public function getResource()
+    public function getResourceName()
     {
-        return $this->resource;
+        return $this->resource_name;
     }
 
     /**
@@ -150,5 +152,26 @@ class Href implements Interfaces\ResourceHref
     public function getVersioning()
     {
         return $this->versioning;
+    }
+    
+    protected function getToString()
+    {
+        return $this->getLink();
+    }
+
+    /**
+     * @return string
+     */
+    public function getRequestPath()
+    {
+        return $this->request_path;
+    }
+
+    /**
+     * @param string $request_path
+     */
+    public function setRequestPath($request_path)
+    {
+        $this->request_path = $request_path;
     }
 }

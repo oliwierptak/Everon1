@@ -41,4 +41,9 @@ interface Resource extends ResourceBasic
      * @return ResourceCollection
      */
     function getRelationCollectionByName($name);
+
+    /**
+     * @return string
+     */
+    function getDomainName();
 }

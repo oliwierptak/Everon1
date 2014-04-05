@@ -92,7 +92,7 @@ interface ResourceHandler
      * @param $resource_id
      * @param $collection
      * @param null $version
-     * @return string
+     * @return ResourceHref
      */
     function getResourceUrl($resource_name, $resource_id, $collection, $version=null);
 

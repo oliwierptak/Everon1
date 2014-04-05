@@ -105,26 +105,24 @@ interface Factory
     /**
      * @param $name
      * @param $version
-     * @param $href
+     * @param Rest\Interfaces\ResourceHref $Href
      * @param $resource_name
      * @param Domain\Interfaces\Entity $Entity
      * @param string $namespace
      * @return Rest\Interfaces\Resource
      * @throws Exception\Factory
      */
-    function buildRestResource($name, $version, $href, $resource_name, Domain\Interfaces\Entity $Entity, $namespace='Everon\Rest\Resource');
+    function buildRestResource($name, $version, Rest\Interfaces\ResourceHref $Href, $resource_name, Domain\Interfaces\Entity $Entity, $namespace='Everon\Rest\Resource');
 
     /**
      * @param $name
-     * @param $version
-     * @param $href
-     * @param $resource_name
+     * @param Rest\Interfaces\ResourceHref $Href
      * @param Interfaces\Collection $Collection
      * @param string $namespace
      * @return Rest\Interfaces\ResourceCollection
      * @throws Exception\Factory
      */
-    function buildRestCollectionResource($name, $version, $href, $resource_name, Interfaces\Collection $Collection, $namespace='Everon\Rest\Resource');
+    function buildRestCollectionResource($name, Rest\Interfaces\ResourceHref $Href, Interfaces\Collection $Collection, $namespace='Everon\Rest\Resource');
 
     /**
      * @param Rest\Interfaces\Request $Request

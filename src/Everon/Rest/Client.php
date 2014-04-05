@@ -82,7 +82,10 @@ class Client implements Interfaces\Client
      */
     public function getUrl($resource_name, $resource_id=null, $collection=null)
     {
-        return $this->getResourceHref()->getLink($resource_name, $resource_id, $collection);
+        $this->getResourceHref()->setCollectionName($collection);
+        $this->getResourceHref()->setResourceName($resource_name);
+        $this->getResourceHref()->setResourceId($resource_id);
+        return $this->getResourceHref()->getLink();
     }
 
     /**

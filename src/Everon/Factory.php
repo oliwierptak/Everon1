@@ -234,12 +234,12 @@ class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildRestResource($name, $version, $href, $resource_name, Domain\Interfaces\Entity $Entity, $namespace='Everon\Rest\Resource')
+    public function buildRestResource($name, $version, Rest\Interfaces\ResourceHref $Href, $resource_name, Domain\Interfaces\Entity $Entity, $namespace='Everon\Rest\Resource')
     {
         try {
             $class_name = $this->getFullClassName('Everon\Rest\Resource\\'.$name, $version);
             $this->classExists($class_name);
-            $Resource = new $class_name($href, $version, $resource_name, $name, $Entity);
+            $Resource = new $class_name($Href, $Entity);
             $this->injectDependencies($class_name, $Resource);
             return $Resource;
         }
@@ -251,12 +251,12 @@ class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildRestCollectionResource($name, $version, $href, $resource_name, Interfaces\Collection $Collection, $namespace='Everon\Rest\Resource')
+    public function buildRestCollectionResource($name, Rest\Interfaces\ResourceHref $Href, Interfaces\Collection $Collection, $namespace='Everon\Rest\Resource')
     {
         try {
             $class_name = 'Everon\Rest\Resource\Collection';
             $this->classExists($class_name);
-            $CollectionResource = new $class_name($href, $version, $resource_name, $Collection);
+            $CollectionResource = new $class_name($Href, $Collection);
             $this->injectDependencies($class_name, $CollectionResource);
             return $CollectionResource;
         }

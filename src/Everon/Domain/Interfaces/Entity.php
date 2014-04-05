@@ -83,7 +83,7 @@ interface Entity extends Interfaces\Arrayable
      * @param Collection $RelationCollection
      */
     function setRelationCollection(Collection $RelationCollection);
-
+    
     /**
      * @return Collection
      */
@@ -100,4 +100,9 @@ interface Entity extends Interfaces\Arrayable
      * @return Collection
      */
     function getRelationCollectionByName($name);
+
+    /**
+     * @return string
+     */
+    function getDomainName();
 }

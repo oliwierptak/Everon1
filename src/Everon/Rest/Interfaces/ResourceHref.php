@@ -33,7 +33,7 @@ interface ResourceHref
     /**
      * @return string
      */
-    function getResource();
+    function getResourceName();
 
     /**
      * @param string $versioning
@@ -63,7 +63,7 @@ interface ResourceHref
     /**
      * @param $resource
      */
-    function setResource($resource);
+    function setResourceName($resource);
 
     /**
      * @param $collection
@@ -71,17 +71,23 @@ interface ResourceHref
     function setCollectionName($collection);
 
     /**
-     * @param $resource_name
-     * @param string $resource_id
-     * @param string $collection
-     * @param string $request_path
      * @return string
      * @throws \Everon\Rest\Exception\Resource
      */
-    function getLink($resource_name, $resource_id='', $collection='', $request_path='');
+    function getLink();
 
     /**
      * @return string
      */
     function getVersion();
+
+    /**
+     * @return string
+     */
+    function getRequestPath();
+
+    /**
+     * @param string $request_path
+     */
+    function setRequestPath($request_path);
 }

@@ -26,12 +26,22 @@ interface ResourceBasic extends \Everon\Interfaces\Arrayable
     function getVersion();
 
     /**
-     * @param $href
+     * @return string
      */
-    function setHref($href);
+    function getResourceId();
 
     /**
-     * @inheritdoc
+     * @param string $resource_id
+     */
+    function setResourceId($resource_id);
+
+    /**
+     * @param ResourceHref $Href
+     */
+    function setHref(ResourceHref $Href);
+
+    /**
+     * @return ResourceHref
      */
     function getHref();
 

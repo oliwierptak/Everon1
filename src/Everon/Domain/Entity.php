@@ -33,6 +33,11 @@ class Entity extends Helper\Popo implements Interfaces\Entity
      * @var Collection
      */
     protected $RelationCollection = null;
+
+    /**
+     * @var string
+     */
+    protected $domain_name = null;
     
 
     public function __construct($id_name, array $data=[])
@@ -228,7 +233,19 @@ class Entity extends Helper\Popo implements Interfaces\Entity
     {
         return $this->RelationCollection->get($name);
     }
-    
+
+    /**
+     * @return string
+     */
+    public function getDomainName()
+    {
+        if ($this->domain_name === null) {
+            $this->domain_name = get_class($this);
+        }
+        
+        return $this->domain_name;
+    }
+
     /**
      * Does the usual call but also marks properties as modified when setter is used
      * 

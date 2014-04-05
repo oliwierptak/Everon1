@@ -28,8 +28,6 @@ abstract class Resource extends Resource\Basic implements Interfaces\Resource
      */
     protected $RelationCollection = null;
     
-    protected $domain_name = null;
-
     /**
      * @param $href
      * @param $version
@@ -37,12 +35,11 @@ abstract class Resource extends Resource\Basic implements Interfaces\Resource
      * @param $domain_name
      * @param Entity $Entity
      */
-    public function __construct($href, $version, $resource_name, $domain_name, Entity $Entity)
+    public function __construct(Interfaces\ResourceHref $Href, Entity $Entity)
     {
-        parent::__construct($href, $version, $resource_name);
+        parent::__construct($Href);
         $this->DomainEntity = $Entity;
         $this->RelationCollection = new Helper\Collection([]);
-        $this->domain_name = $domain_name;
     }
 
     /**
@@ -55,7 +52,7 @@ abstract class Resource extends Resource\Basic implements Interfaces\Resource
     
     public function getDomainName()
     {
-        return $this->domain_name;
+        return $this->getDomainEntity()->getDomainName();
     }
 
     /**
@@ -91,7 +88,7 @@ abstract class Resource extends Resource\Basic implements Interfaces\Resource
     {
         return $this->RelationCollection->get($name);
     }
-    
+
     protected function getToArray()
     {
         $data = parent::getToArray();

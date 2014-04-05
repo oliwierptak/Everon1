@@ -9,12 +9,10 @@
  */
 namespace Everon\Rest\Resource;
 
-use Everon\Rest\Interfaces\ResourceCollection;
-use Everon\Rest\Resource;
-use Everon\Interfaces;
+use Everon\Rest\Interfaces;
+use Everon\Interfaces\Collection as ItemCollection;
 
-
-class Collection extends Resource\Basic implements ResourceCollection
+class Collection extends Basic implements Interfaces\ResourceCollection
 {
     protected $limit = null;
     protected $offset = null;
@@ -27,17 +25,14 @@ class Collection extends Resource\Basic implements ResourceCollection
      * @var Interfaces\Collection
      */
     protected $ItemCollection = null;
-    
 
     /**
-     * @param $name
-     * @param $version
-     * @param $href
-     * @param Interfaces\Collection $ItemCollection
+     * @param Interfaces\ResourceHref $Href
+     * @param ItemCollection $ItemCollection
      */
-    public function __construct($href, $version, $resource_name, Interfaces\Collection $ItemCollection)
+    public function __construct(Interfaces\ResourceHref $Href, ItemCollection $ItemCollection)
     {
-        parent::__construct($href, $version, $resource_name);
+        parent::__construct($Href);
         $this->ItemCollection = $ItemCollection;
     }
 
