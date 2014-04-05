@@ -47,6 +47,13 @@ interface ResourceHandler
     function delete($version, $resource_name, $resource_id, $user_id);
 
     /**
+     * @param Resource $Resource
+     * @param array $resources_to_expand
+     * @throws \Everon\Rest\Exception\Resource
+     */
+    function expandResource(Resource $Resource, array $resources_to_expand);
+
+    /**
      * @param Entity $Entity
      * @param $version
      * @param $resource_name

@@ -37,14 +37,14 @@ class Handler implements Interfaces\ResourceHandler
     /**
      * @var array
      */
-    protected $supported_versions = null;
+    protected $supported_versions = null;   //[v1, v2, v3, ...]
 
     /**
      * @var string Versioning type. Accepted values are: 'url' or 'header'
      */
     protected $versioning = null;
     
-    protected $current_version = null;  //v1, v2, v3...
+    protected $current_version = null;  //v1
     
     protected $url = null;  //http://api.localhost:80/
 
@@ -177,6 +177,9 @@ class Handler implements Interfaces\ResourceHandler
         }
     }
 
+    /**
+     * @inheritdoc
+     */
     public function expandResource(Interfaces\Resource $Resource, array $resources_to_expand)
     {
         foreach ($resources_to_expand as $collection_name) {
@@ -240,7 +243,6 @@ class Handler implements Interfaces\ResourceHandler
         $RelationCollection = new Helper\Collection([]);
         foreach ($Entity->getRelationCollection() as $domain_name => $Collection) {
             $name = $this->getResourceNameFromMapping($domain_name);
-            //$link = $this->getResourceUrl($version, $resource_name, $resource_id, $name);
             $link = $Resource->getHref()->getLink();
             $RelationCollection->set($name, ['href' => $link]);
         }
