@@ -460,7 +460,7 @@ class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildViewManager(array $compilers_to_init, $theme_directory, $cache_directory)
+    public function buildViewManager(array $compilers_to_init, $view_directory, $cache_directory)
     {
         try {
             $compilers = [];
@@ -468,7 +468,7 @@ class Factory implements Interfaces\Factory
                 $compilers[$extension][] = $this->buildTemplateCompiler($this->stringUnderscoreToCamel($name));
             }
 
-            $Manager = new View\Manager($compilers, $theme_directory, $cache_directory);
+            $Manager = new View\Manager($compilers, $view_directory, $cache_directory);
             $this->injectDependencies('Everon\View\Manager', $Manager);
             return $Manager;
         }

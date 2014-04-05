@@ -430,12 +430,12 @@ interface Factory
 
     /**
      * @param array $compilers_to_init
-     * @param $theme_directory
+     * @param $view_directory
      * @param $cache_directory
      * @return Interfaces\ViewManager
      * @throws Exception\Factory
      */
-    function buildViewManager(array $compilers_to_init, $theme_directory, $cache_directory);
+    function buildViewManager(array $compilers_to_init, $view_directory, $cache_directory);
 
     /**
      * @param $directory

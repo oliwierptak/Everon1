@@ -4,7 +4,7 @@
  *
  * (c) Oliwier Ptak <oliwierptak@gmail.com>
  *
- * For the full copyright and license information, please theme the LICENSE
+ * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 namespace Everon;
@@ -34,17 +34,13 @@ class Environment implements Interfaces\Environment
             'tmp' => $this->getRoot().'Tmp'.DIRECTORY_SEPARATOR,
             'rest' => $this->getRoot().'Rest'.DIRECTORY_SEPARATOR,
             'web' => $this->getRoot().'Web'.DIRECTORY_SEPARATOR,
-            'theme' => $this->getRoot().'Theme'.DIRECTORY_SEPARATOR,
+            'view' => $this->getRoot().'View'.DIRECTORY_SEPARATOR,
         ];
 
         $this->resources += [
             'assets' => $this->getWeb().'assets'.DIRECTORY_SEPARATOR,
         ];
         
-        $this->resources += [
-            'themes' => $this->getAssets().'themes'.DIRECTORY_SEPARATOR,
-        ];
-
         $this->resources += [
             'everon_config' => $this->getEveronRoot().'Config'.DIRECTORY_SEPARATOR,
             'everon_interface' => $this->getEveronRoot().'Interfaces'.DIRECTORY_SEPARATOR,
@@ -113,14 +109,14 @@ class Environment implements Interfaces\Environment
         $this->resources['data_mapper'] = $data_mapper;
     }
     
-    function getTheme()
+    function getView()
     {
-        return $this->resources['theme'];
+        return $this->resources['view'];
     }
     
-    function setTheme($theme)
+    function setView($view)
     {
-        $this->resources['theme'] = $theme;
+        $this->resources['view'] = $view;
     }
 
     function getController()

@@ -209,7 +209,7 @@ class Manager implements Interfaces\ViewManager
         if ($this->ThemeCollection->has($view_name) === false) {
             $TemplateDirectory = new \SplFileInfo($this->theme_directory.$theme_name.DIRECTORY_SEPARATOR.$view_name.DIRECTORY_SEPARATOR.'templates');
             if  ($TemplateDirectory->isDir() === false) {
-                throw new Exception\ViewManager('Theme: "%s" template directory: "%s" does not exist', [$view_name, $TemplateDirectory->getPathname()]);
+                throw new Exception\ViewManager('View: "%s" template directory: "%s" does not exist', [$view_name, $TemplateDirectory->getPathname()]);
             }
 
             $default_extension = $this->getConfigManager()->getConfigValue('application.view.default_extension');
@@ -217,7 +217,7 @@ class Manager implements Interfaces\ViewManager
             //theme index template
             $TemplateFilename = new \SplFileInfo($TemplateDirectory->getPathname().DIRECTORY_SEPARATOR.'index'.$default_extension);
             if ($TemplateFilename->isFile() === false) { //load default theme first
-                throw new Exception\ViewManager('Theme index template: "%s" not found for: "%s"', [$TemplateFilename->getPathname(), $view_name]);
+                throw new Exception\ViewManager('View index template: "%s" not found for: "%s"', [$TemplateFilename->getPathname(), $view_name]);
             }
 
             $view_variables = $this->getConfigManager()->getConfigValue("view.$view_name", []);

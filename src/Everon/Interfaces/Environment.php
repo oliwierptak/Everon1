@@ -22,8 +22,8 @@ interface Environment
     function setDomain($domain);
     function getDataMapper();
     function setDataMapper($data_mapper);
-    function getTheme();
-    function setTheme($theme);
+    function getView();
+    function setView($theme);
     function getController();
     function setController($controller);
     function getTest();
