@@ -86,6 +86,7 @@ class Bootstrap
         if ($this->useEveronAutoload()) {
             $this->setupClassLoader();
             $this->getClassLoader()->add('Everon', $this->getEnvironment()->getEveronRoot());
+            $this->getClassLoader()->add('Everon\Application', $this->getEnvironment()->getApplication());
             $this->getClassLoader()->register($prepend_autoloader);
         }
     }
@@ -107,8 +108,8 @@ class Bootstrap
          * @var Interfaces\DependencyContainer $Container
          * @var Interfaces\Factory $Factory
          */
-        $Container = new Dependency\Container();
-        return new Factory($Container);
+        $Container = new Application\Dependency\Container();
+        return new Application\Factory($Container);
     }
 
     public static function setupExceptionHandler($guid_value, $app_root, $log_filename)

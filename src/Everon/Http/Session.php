@@ -11,8 +11,10 @@ namespace Everon\Http;
 
 use Everon\Helper;
 
-class Session extends Helper\Collection implements Interfaces\Session
+class Session implements Interfaces\Session
 {
+    use Helper\ToArray;
+    
     /**
      * @var string
      */
@@ -26,13 +28,11 @@ class Session extends Helper\Collection implements Interfaces\Session
     
     /**
      * @param $evrid
-     * @param array $data
      */
-    public function __construct($evrid, array $data)
+    public function __construct($evrid)
     {
         $this->guid = $evrid;
         $this->start_time = new \DateTime();
-        parent::__construct($data);
     }
 
     /**
@@ -65,5 +65,41 @@ class Session extends Helper\Collection implements Interfaces\Session
     public function setStartTime(\DateTime $start_time)
     {
         $this->start_time = $start_time;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function has($name)
+    {
+        return isset($_SESSION[$name]);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function remove($name)
+    {
+        unset($_SESSION[$name]);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function set($name, $value)
+    {
+        $_SESSION[$name] = $value;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function get($name, $default=null)
+    {
+        if ($this->has($name) === false) {
+            return $default;
+        }
+
+        return $_SESSION[$name];
     }
 }

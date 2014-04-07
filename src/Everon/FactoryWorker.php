@@ -9,6 +9,7 @@
  */
 namespace Everon;
 
+use Everon\Application;
 use Everon\Helper;
 use Everon\Dependency;
 use Everon\Interfaces;
@@ -18,7 +19,7 @@ abstract class FactoryWorker implements Interfaces\FactoryWorker
 {
     use Dependency\Factory;
     
-    public function __construct(Interfaces\Factory $Factory)
+    public function __construct(Application\Interfaces\Factory $Factory)
     {
         $this->Factory = $Factory;
     }

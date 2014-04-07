@@ -12,6 +12,8 @@ namespace Everon\Interfaces;
 
 interface Environment
 {
+    function getApplication();
+    function setApplication($application);
     function getRoot();
     function setRoot($root);
     function getEveronRoot();

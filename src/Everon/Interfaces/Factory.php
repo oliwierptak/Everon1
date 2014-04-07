@@ -32,12 +32,6 @@ interface Factory
     function setDependencyContainer(Interfaces\DependencyContainer $Container);
 
     /**
-     * @param $class_name
-     * @param $Receiver
-     */
-    function injectDependencies($class_name, $Receiver);
-
-    /**
      * @param $namespace
      * @param $class_name
      * @return string
@@ -469,11 +463,10 @@ interface Factory
 
     /**
      * @param $evrid
-     * @param array $data
      * @return Http\Session
      * @throws Exception\Factory
      */
-    function buildHttpSession($evrid, array $data);
+    function buildHttpSession($evrid);
 
     /**
      * @param array $server
@@ -509,14 +502,6 @@ interface Factory
      * @throws Exception\Factory
      */
     function buildModuleManager();
-
-    /**
-     * @param $name
-     * @param string $namespace
-     * @return Interfaces\Factory
-     * @throws Exception\Factory
-     */
-    function buildFactoryWorker($name, $namespace='Everon\Module');
 
     /**
      * @param $url

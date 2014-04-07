@@ -9,17 +9,15 @@
  */
 namespace Everon\Interfaces\Dependency;
 
-use Everon\Interfaces;
-
 interface Factory
 {
     /**
-     * @return Interfaces\Factory
+     * @return \Everon\Application\Interfaces\Factory
      */
     function getFactory();
 
     /**
-     * @param Interfaces\Factory $Factory
+     * @param \Everon\Application\Interfaces\Factory
      */
-    function setFactory(Interfaces\Factory $Factory);
+    function setFactory(\Everon\Application\Interfaces\Factory $Factory);
 }

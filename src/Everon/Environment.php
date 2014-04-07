@@ -25,6 +25,7 @@ class Environment implements Interfaces\Environment
         ];
 
         $this->resources += [
+            'application' => $this->getRoot().'Application'.DIRECTORY_SEPARATOR,
             'config' => $this->getRoot().'Config'.DIRECTORY_SEPARATOR,
             'controller' => $this->getRoot().'Controller'.DIRECTORY_SEPARATOR,
             'data_mapper' => $this->getRoot().'DataMapper'.DIRECTORY_SEPARATOR,
@@ -56,6 +57,16 @@ class Environment implements Interfaces\Environment
             'cache_config' => $this->getCache().'config'.DIRECTORY_SEPARATOR,
             'cache_view' => $this->getCache().'view'.DIRECTORY_SEPARATOR,
         ];
+    }
+
+    function getApplication()
+    {
+        return $this->resources['application'];
+    }
+
+    function setApplication($application)
+    {
+        $this->resources['application'] = $application;
     }
 
     //todo: replace all methods with get('Src.Everon.Lib');

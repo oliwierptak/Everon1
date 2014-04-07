@@ -9,7 +9,7 @@
  */
 namespace Everon;
 
-require_once(implode(DIRECTORY_SEPARATOR, [$EVERON_SOURCE_ROOT, 'Bootstrap.php']));
+require_once(implode(DIRECTORY_SEPARATOR, [$EVERON_SOURCE_ROOT, 'bootstrap.php']));
 require_once(implode(DIRECTORY_SEPARATOR, [$EVERON_SOURCE_ROOT, 'RequestIdentifier.php']));
 
 $REQUEST_IDENTIFIER = new RequestIdentifier();
@@ -40,4 +40,4 @@ $Container->propose('RequestIdentifier', function() use ($REQUEST_IDENTIFIER) {
     return $REQUEST_IDENTIFIER;
 });
 
-require_once($Environment->getEveronConfig().'Dependencies.php');
+require_once($Environment->getEveronConfig().'dependencies.php');

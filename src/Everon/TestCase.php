@@ -155,7 +155,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
      */
     public function buildFactory()
     {
-        $Factory = new Factory(new Dependency\Container());
+        $Factory = new Application\Factory(new Dependency\Container());
         $Container = $Factory->getDependencyContainer();
 
         $TestEnvironment = new \Everon\Environment($this->FrameworkEnvironment->getRoot(), $this->FrameworkEnvironment->getEveronRoot());
@@ -177,7 +177,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
             return $this->RequestIdentifier;
         });
 
-        require($this->FrameworkEnvironment->getEveronConfig().'Dependencies.php');
+        require($this->FrameworkEnvironment->getEveronConfig().'dependencies.php');
 
         //register global unique (request) identifier with Logger
         /**

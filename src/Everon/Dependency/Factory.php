@@ -14,13 +14,13 @@ trait Factory
 {
 
     /**
-     * @var \Everon\Interfaces\Factory
+     * @var \Everon\Application\Interfaces\Factory
      */
     protected $Factory = null;
 
 
     /**
-     * @return \Everon\Interfaces\Factory
+     * @return \Everon\Application\Interfaces\Factory
      */
     public function getFactory()
     {
@@ -28,9 +28,9 @@ trait Factory
     }
 
     /**
-     * @param \Everon\Interfaces\Factory $Factory
+     * @param \Everon\Application\Interfaces\Factory $Factory
      */
-    public function setFactory(\Everon\Interfaces\Factory $Factory)
+    public function setFactory(\Everon\Application\Interfaces\Factory $Factory)
     {
         $this->Factory = $Factory;
     }

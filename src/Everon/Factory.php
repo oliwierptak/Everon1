@@ -12,7 +12,7 @@ namespace Everon;
 use Everon\Helper;
 use Everon\Interfaces;
 
-class Factory implements Interfaces\Factory
+abstract class Factory implements Interfaces\Factory
 {
     use Helper\String\UnderscoreToCamel;
     use Helper\Arrays;
@@ -88,17 +88,6 @@ class Factory implements Interfaces\Factory
     public function setDependencyContainer(Interfaces\DependencyContainer $Container)
     {
         $this->DependencyContainer = $Container;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function injectDependencies($class_name, $Receiver)
-    {
-        $this->getDependencyContainer()->inject($class_name, $Receiver);
-        if ($this->getDependencyContainer()->wantsFactory($class_name)) {
-            $Receiver->setFactory($this);
-        }
     }
 
     /**
@@ -851,10 +840,10 @@ class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildHttpSession($evrid, array $data)
+    public function buildHttpSession($evrid)
     {
         try {
-            $Session = new Http\Session($evrid, $data);
+            $Session = new Http\Session($evrid);
             $this->injectDependencies('Everon\Http\Session', $Session);
             return $Session;
         }
@@ -1083,23 +1072,6 @@ class Factory implements Interfaces\Factory
         }
         catch (\Exception $e) {
             throw new Exception\Factory('ModuleManager initialization error', null, $e);
-        }
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function buildFactoryWorker($name, $namespace='Everon\Module')
-    {
-        try {
-            $class_name = $this->getFullClassName($namespace, $name.'\FactoryWorker');
-            $this->classExists($class_name);
-            $Worker = new $class_name($this);
-            $this->injectDependencies($class_name, $Worker);
-            return $Worker;
-        }
-        catch (\Exception $e) {
-            throw new Exception\Factory('FactoryWorker: "%s" initialization error', $name, $e);
         }
     }
 }
