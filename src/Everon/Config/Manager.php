@@ -253,12 +253,8 @@ autoloader = false
 view = false
 
 [modules]
-default = SolvariNl
-active[] = Mvc
-active[] = Admin
-active[] = GeoLocation
-active[] = SolvariNl
-active[] = User
+default = Test
+active[] = Test
 
 [view]
 compilers[php] = '.php'
