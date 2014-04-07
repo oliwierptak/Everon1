@@ -39,10 +39,10 @@ abstract class Controller extends \Everon\Controller
      */
     protected function prepareResponse($action, $result)
     {
-        if ($result && $this->isCallable($this->getView(), $action)) {
-            $this->getView()->{$action}();
+        if ($result) {
+            $this->executeView($action);
         }
-
+        
         $ActionTemplate = $this->getView()->getTemplate($action, $this->getView()->getData());
         if ($ActionTemplate === null) { //apparently no template was used, fall back to string
             $ActionTemplate = $this->getView()->getContainer();
@@ -62,6 +62,38 @@ abstract class Controller extends \Everon\Controller
     protected function response()
     {
         echo $this->getResponse()->toHtml();
+    }
+    
+    /**
+     * @param $action
+     * @return bool
+     */
+    protected function executeOnError($action)
+    {
+        $result = parent::executeOnError($action);
+        $result_view = $this->executeView($action.'OnError');
+        
+        if ($result === false && $result_view === false) {
+            return false;
+        }
+
+        if ($result === true || $result_view === true) {
+            return true;
+        }
+        
+        return null;
+    }
+
+
+    protected function executeView($action)
+    {
+        if ($this->isCallable($this->getView(), $action)) {
+            $result = $this->getView()->{$action}();
+            $result = ($result !== false) ? true : $result;
+            return $result;
+        }
+        
+        return null;
     }
     
     /**

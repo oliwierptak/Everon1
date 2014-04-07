@@ -88,7 +88,7 @@ abstract class Controller implements Interfaces\Controller
 
     /**
      * @param $action
-     * @return void
+     * @return bool
      * @throws Exception\InvalidControllerMethod
      * @throws Exception\InvalidControllerResponse
      */
@@ -106,14 +106,34 @@ abstract class Controller implements Interfaces\Controller
         $this->getResponse()->setResult($result);
         
         if ($result === false) {
-            throw new Exception\InvalidControllerResponse(
-                'Invalid controller response for action: "%s:%s"', [$this->getName(),$action]
-            );
+            $result_on_error = $this->executeOnError($action);
+            if ($result_on_error === null) {
+                throw new Exception\InvalidControllerResponse(
+                    'Invalid controller response for: "%s@%s"', [$this->getName(),$action]
+                );
+            }
         }
         
         $this->prepareResponse($action, $result);
         $this->getLogger()->response('[%s] %s : %s', [$this->getResponse()->getResult(), $this->getName(), $action]);
         $this->response();
+        return $result;
+    }
+
+    /**
+     * @param $action
+     * @return bool|null
+     */
+    protected function executeOnError($action)
+    {
+        $action .= 'OnError';
+        if ($this->isCallable($this, $action)) {
+            $result = $this->{$action}();
+            $result = ($result !== false) ? true : $result;
+            return $result;
+        }
+        
+        return null;
     }
 
     /**
