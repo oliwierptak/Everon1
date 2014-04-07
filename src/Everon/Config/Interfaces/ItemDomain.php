@@ -24,12 +24,12 @@ interface ItemDomain extends Item
     /**
      * @return string
      */
-    function getDomain();
+    function getTable();
     
     /**
-     * @param string $domain
+     * @param string $table
      */
-    function setDomain($domain);
+    function setTable($table);
     
     /**
      * @return string

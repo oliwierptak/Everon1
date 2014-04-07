@@ -17,23 +17,11 @@ interface Mapper extends Interfaces\Arrayable
      * @param $domain_name
      * @return string|null
      */
-    function getDataMapperNameByDomain($domain_name);
-
-    /**
-     * @param $data_mapper_name
-     * @return string|null
-     */
-    function getDomainNameByDataMapper($data_mapper_name);
-
-    /**
-     * @param $domain_name
-     * @return \Everon\Config\Interfaces\ItemDomain|null
-     */
     function getByDomainName($domain_name);
 
     /**
      * @param $data_mapper_name
-     * @return \Everon\Config\Interfaces\ItemDomain|null
+     * @return string|null
      */
     function getByDataMapperName($data_mapper_name);
 }

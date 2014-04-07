@@ -34,57 +34,35 @@ class Mapper implements Interfaces\Mapper
     /**
      * @inheritdoc
      */
-    public function getDataMapperNameByDomain($domain_name)
+    public function getByDomainName($domain_name)
     {
-        $data = $this->MappingCollection->toArray();
-        foreach ($data as $data_mapper_name => $Item) {
-            if ($domain_name === $Item->getDomain()) {
-                return $data_mapper_name;
-            }
+        /**
+         * @var \Everon\Config\Interfaces\ItemDomain $Item
+         */
+        $Item = $this->MappingCollection->get($domain_name, null);
+        if ($Item !== null) {
+            return $Item->getTable();
         }
-        
+
         return null;
     }
 
     /**
      * @inheritdoc
      */
-    public function getDomainNameByDataMapper($data_mapper_name)
-    {
-        $Item = $this->MappingCollection->get($data_mapper_name, null);
-        if ($Item !== null) {
-            return $Item->getDomain();
-        }
-        
-        return null;
-    }
-
-    /**
-     * @param $domain_name
-     * @return \Everon\Config\Interfaces\ItemDomain|null
-     */
-    public function getByDomainName($domain_name)
+    public function getByDataMapperName($data_mapper_name)
     {
         /**
          * @var \Everon\Config\Interfaces\ItemDomain $Item
          */
         $data = $this->MappingCollection->toArray();
-        foreach ($data as $data_mapper_name => $Item) {
-            if ($domain_name === $Item->getDomain()) {
-                return $Item;
+        foreach ($data as $domain_name => $Item) {
+            if (strcasecmp($data_mapper_name, $Item->getTable()) === 0) {
+                return $domain_name;
             }
         }
 
         return null;
-    }
-
-    /**
-     * @param $data_mapper_name
-     * @return \Everon\Config\Interfaces\ItemDomain|null
-     */
-    public function getByDataMapperName($data_mapper_name)
-    {
-        return $this->MappingCollection->get($data_mapper_name, null);
     }
     
     protected function getToArray()

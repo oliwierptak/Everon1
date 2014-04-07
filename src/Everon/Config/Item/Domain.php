@@ -25,7 +25,7 @@ class Domain extends Config\Item implements Config\Interfaces\ItemDomain
     /**
      * @var string
      */
-    protected $domain = null;
+    protected $table = null;
     
     /**
      * @var array
@@ -52,7 +52,7 @@ class Domain extends Config\Item implements Config\Interfaces\ItemDomain
     {
         parent::__construct($data, [
             'id_field' => null,
-            'domain' => null,
+            'table' => null,
             'type' => static::TYPE_TABLE,
             'connection' => [],
             'columns' => [],
@@ -65,7 +65,7 @@ class Domain extends Config\Item implements Config\Interfaces\ItemDomain
         parent::init();
         
         $this->setIdField($this->data['id_field']);
-        $this->setDomain($this->data['domain']);
+        $this->setTable($this->data['table']);
         $this->setConnections($this->data['connection']);
         $this->setType($this->data['type']);
         $this->setColumns($this->data['columns']);
@@ -107,17 +107,17 @@ class Domain extends Config\Item implements Config\Interfaces\ItemDomain
     /**
      * @inheritdoc
      */
-    public function setDomain($domain)
+    public function setTable($table)
     {
-        $this->domain = $domain;
+        $this->table = $table;
     }
 
     /**
      * @inheritdoc
      */
-    public function getDomain()
+    public function getTable()
     {
-        return $this->domain;
+        return $this->table;
     }
 
     /**

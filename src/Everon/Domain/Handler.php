@@ -97,7 +97,7 @@ abstract class Handler implements Interfaces\Handler
     public function getRepository($domain_name)
     {
         if (isset($this->repositories[$domain_name]) === false) {
-            $data_mapper_name = $this->getDataMapperManager()->getDomainMapper()->getDataMapperNameByDomain($domain_name);
+            $data_mapper_name = $this->getDataMapperManager()->getDomainMapper()->getByDomainName($domain_name);
             $this->assertIsNull($data_mapper_name, 'Invalid data mapper relation for: "%s"', 'Domain');
 
             $Schema = $this->getDataMapperManager()->getSchema();

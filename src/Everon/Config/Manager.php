@@ -140,6 +140,7 @@ class Manager implements \Everon\Config\Interfaces\Manager
 
         return $result;
     }
+
     /**
      * @param array $configs_data
      * @return array
