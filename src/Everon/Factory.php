@@ -27,7 +27,18 @@ abstract class Factory implements Interfaces\Factory
      * @param $class_name
      * @param $Receiver
      */
-    abstract public function injectDependencies($class_name, $Receiver);
+    //abstract public function injectDependencies($class_name, $Receiver);
+
+    /**
+     * @inheritdoc
+     */
+    public function injectDependencies($class_name, $Receiver)
+    {
+        $this->getDependencyContainer()->inject($class_name, $Receiver);
+        if ($this->getDependencyContainer()->wantsFactory($class_name)) {
+            $Receiver->setFactory($this);
+        }
+    }
 
     /**
      * @var Interfaces\Collection
@@ -1078,6 +1089,23 @@ abstract class Factory implements Interfaces\Factory
         }
         catch (\Exception $e) {
             throw new Exception\Factory('ModuleManager initialization error', null, $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildFactoryWorker($name, $namespace='Everon\Module')
+    {
+        try {
+            $class_name = $this->getFullClassName($namespace, $name.'\FactoryWorker');
+            $this->classExists($class_name);
+            $Worker = new $class_name($this);
+            $this->injectDependencies($class_name, $Worker);
+            return $Worker;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('FactoryWorker: "%s" initialization error', $name, $e);
         }
     }
 }

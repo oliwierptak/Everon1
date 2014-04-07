@@ -22,6 +22,12 @@ use Everon\Rest;
 interface Factory
 {
     /**
+     * @param $class_name
+     * @param $Receiver
+     */
+    function injectDependencies($class_name, $Receiver);
+    
+    /**
      * @return Interfaces\DependencyContainer
      */
     function getDependencyContainer();
@@ -514,7 +520,11 @@ interface Factory
      */
     function buildRestResourceManager($url, array $supported_versions, $versioning, array $mapping, $namespace='Everon\Rest\Resource');
 
-/*    function registerWorker(Interfaces\FactoryWorker $Worker);
-
-    function unRegisterWorker(Interfaces\FactoryWorker $Worker);*/
+    /**
+     * @param $name
+     * @param string $namespace
+     * @return \Everon\Interfaces\FactoryWorker
+     * @throws \Everon\Exception\Factory
+     */
+    function buildFactoryWorker($name, $namespace='Everon\Module');
 }
