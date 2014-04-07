@@ -253,18 +253,16 @@ autoloader = false
 view = false
 
 [modules]
-default = Test
-active[] = Test
-
-[theme]
-default = Main
-
-[database]
-driver = pgsql
+default = SolvariNl
+active[] = Mvc
+active[] = Admin
+active[] = GeoLocation
+active[] = SolvariNl
+active[] = User
 
 [view]
-compilers[e] = '.htm'
-default_extension = '.htm'
+compilers[php] = '.php'
+default_extension = '.php'
 
 [logger]
 enabled = true
