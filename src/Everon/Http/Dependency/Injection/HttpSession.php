@@ -7,9 +7,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon\Dependency\Injection;
+namespace Everon\Http\Dependency\Injection;
 
-trait Session
+trait HttpSession
 {
-    use \Everon\Dependency\Session;
+    use \Everon\Http\Dependency\HttpSession;
 }

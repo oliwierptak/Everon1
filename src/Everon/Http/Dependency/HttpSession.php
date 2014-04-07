@@ -7,32 +7,32 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon\Dependency;
+namespace Everon\Http\Dependency;
 
 
-trait Session
+trait HttpSession
 {
 
     /**
      * @var \Everon\Http\Interfaces\Session
      */
-    protected $Session = null;
+    protected $HttpSession = null;
 
 
     /**
      * @return \Everon\Http\Interfaces\Session
      */
-    public function getSession()
+    public function getHttpSession()
     {
-        return $this->Session;
+        return $this->HttpSession;
     }
 
     /**
-     * @param \Everon\Http\Interfaces\Session $Session
+     * @param \Everon\Http\Interfaces\Session $HttpSession
      */
-    public function setSession(\Everon\Http\Interfaces\Session $Session)
+    public function setHttpSession(\Everon\Http\Interfaces\Session $HttpSession)
     {
-        $this->Session = $Session;
+        $this->HttpSession = $HttpSession;
     }
 
 }

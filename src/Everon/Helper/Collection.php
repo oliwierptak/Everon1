@@ -16,7 +16,6 @@ use Everon\Interfaces;
 class Collection implements \Countable, \ArrayAccess, \IteratorAggregate, Interfaces\Collection
 {
     use Helper\ToArray;
-
     
     protected $position = 0;
     

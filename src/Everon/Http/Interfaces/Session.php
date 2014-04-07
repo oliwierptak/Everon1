@@ -9,6 +9,27 @@
  */
 namespace Everon\Http\Interfaces;
 
-interface Session
+use Everon\Interfaces\Collection;
+
+interface Session extends Collection
 {
+    /**
+     * @return string
+     */
+    function getGuid();
+
+    /**
+     * @param string $guid
+     */
+    function setGuid($guid);
+
+    /**
+     * @return \DateTime
+     */
+    function getStartTime();
+
+    /**
+     * @param \DateTime $start_time
+     */
+    function setStartTime(\DateTime $start_time);
 }

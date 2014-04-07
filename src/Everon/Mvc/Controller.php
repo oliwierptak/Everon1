@@ -12,24 +12,26 @@ namespace Everon\Mvc;
 use Everon\Interfaces\TemplateContainer;
 use Everon\Interfaces\View;
 use Everon\Dependency;
+use Everon\Domain;
 use Everon\Exception;
 use Everon\Helper;
 use Everon\Http;
+use Everon\Module;
 
 /**
  * @method Http\Interfaces\Response getResponse()
+ * @method Module\Interfaces\Mvc getModule()
  */
 abstract class Controller extends \Everon\Controller
 {
-    use Dependency\Injection\Environment;
     use Dependency\Injection\Factory;
     use Dependency\Injection\ViewManager;
-    use \Everon\Domain\Dependency\Injection\DomainManager;
-    use \Everon\Module\Dependency\Injection\ModuleManager;
+    use Domain\Dependency\Injection\DomainManager;
+    use Module\Dependency\Injection\ModuleManager;
+    use Http\Dependency\Injection\HttpSession;
 
     use Helper\Arrays;
-    use Helper\IsIterable;
-    use Helper\String\StartsWith;
+    
 
     /**
      * @param $action
@@ -49,7 +51,6 @@ abstract class Controller extends \Everon\Controller
         $Theme = $this->getViewManager()->getCurrentTheme();
         $Theme->set('body', $ActionTemplate);
         $data = $this->arrayMergeDefault($Theme->getData(), $ActionTemplate->getData());
-        //$data = $this->arrayDotKeysToScope($data, $this->getView()->getName());
         $Theme->setData($data);
         $this->getView()->setContainer($Theme->getContainer());
         $this->getViewManager()->compileView($action, $this->getView());
