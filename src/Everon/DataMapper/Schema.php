@@ -88,7 +88,7 @@ class Schema implements Interfaces\Schema
          * @var \Everon\Config\Interfaces\ItemDomain $Item
          */
         $mappings = $this->getDomainMapper()->toArray();
-        foreach ($mappings as $table_name => $Item) {
+        foreach ($mappings as $domain_name => $Item) {
             if ($Item->getType() !== 'mat_view') {
                 continue;
             }
@@ -135,11 +135,11 @@ class Schema implements Interfaces\Schema
                 $view_primary_keys[$view_key_name] = $Table->getPrimaryKeyByName($column_name);
             }
 
-            $tokens = explode('.', $table_name);
+            $tokens = explode('.', $Item->getTable());
             $table = array_pop($tokens);
             $schema_name = implode('.', $tokens);
             
-            $this->tables[$table_name] = $this->getFactory()->buildSchemaTable(
+            $this->tables[$Item->getTable()] = $this->getFactory()->buildSchemaTable(
                 $table,
                 $schema_name,
                 $view_columns,
