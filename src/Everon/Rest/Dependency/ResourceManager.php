@@ -11,7 +11,9 @@ namespace Everon\Rest\Dependency;
 
 trait ResourceManager
 {
-
+    /**
+     * @var \Everon\Rest\Interfaces\ResourceManager
+     */
     protected $ResourceManager = null;
 
 

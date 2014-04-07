@@ -12,7 +12,7 @@ namespace Everon\Dependency;
 use Everon\Exception;
 use Everon\Interfaces;
 
-class Container implements Interfaces\DependencyContainer
+abstract class Container implements Interfaces\DependencyContainer
 {
     protected $definitions = [];
 

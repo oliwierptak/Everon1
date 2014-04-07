@@ -155,7 +155,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
      */
     public function buildFactory()
     {
-        $Factory = new Application\Factory(new Dependency\Container());
+        $Factory = new Application\Factory(new Application\Dependency\Container());
         $Container = $Factory->getDependencyContainer();
 
         $TestEnvironment = new \Everon\Environment($this->FrameworkEnvironment->getRoot(), $this->FrameworkEnvironment->getEveronRoot());

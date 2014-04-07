@@ -24,6 +24,12 @@ abstract class Factory implements Interfaces\Factory
 
 
     /**
+     * @param $class_name
+     * @param $Receiver
+     */
+    abstract public function injectDependencies($class_name, $Receiver);
+
+    /**
      * @var Interfaces\Collection
      */
     //protected $WorkerCollection = null;
