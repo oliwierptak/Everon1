@@ -131,33 +131,39 @@ abstract class Factory implements Interfaces\Factory
     }
 
     /**
-     * @inheritdoc
+     * @param $name
+     * @param string $namespace
+     * @return mixed
+     * @throws Exception\Factory
      */
-    public function buildConsole()
+    protected function buildCore($name, $namespace='Everon')
     {
         try {
-            $Core = new Console();
-            $this->injectDependencies('Everon\Console', $Core);
+            $class_name = $this->getFullClassName($namespace, $name);
+            $this->classExists($class_name);
+            $Core = new $class_name();
+            $this->injectDependencies($class_name, $Core);
             return $Core;
         }
         catch (\Exception $e) {
-            throw new Exception\Factory('Console initialization error', null, $e);
+            throw new Exception\Factory('Core: "%s" initialization error', $name, $e);
         }
     }
 
     /**
      * @inheritdoc
      */
-    public function buildMvc()
+    public function buildConsole($namespace='Everon')
     {
-        try {
-            $Core = new Mvc();
-            $this->injectDependencies('Everon\Mvc', $Core);
-            return $Core;
-        }
-        catch (\Exception $e) {
-            throw new Exception\Factory('Mvc initialization error', null, $e);
-        }
+        return $this->buildCore('Console', $namespace);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildMvc($namespace='Everon')
+    {
+        return $this->buildCore('Mvc', $namespace);
     }
 
     /**
