@@ -177,7 +177,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
             return $this->RequestIdentifier;
         });
 
-        require($this->FrameworkEnvironment->getEveronConfig().'dependencies.php');
+        require($this->FrameworkEnvironment->getEveronConfig().'_dependencies.php');
 
         //register global unique (request) identifier with Logger
         /**

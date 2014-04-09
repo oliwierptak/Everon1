@@ -1,4 +1,3 @@
-#!/usr/bin/env php
 <?php
 /**
  * This file is part of the Everon framework.
@@ -10,17 +9,60 @@
  */
 namespace Everon;
 
-require_once('../vendor/autoload.php');
+$system_memory = (string) (memory_get_usage(true));
+error_reporting(E_ALL);
+
+require_once('vendor/autoload.php');
 
 /**
  * @var RequestIdentifier $RequestIdentifier
  * @var Interfaces\Factory $Factory
  * @var Interfaces\Core $Console
  */
+
+$nesting = implode('..', array_fill(0, 4, DIRECTORY_SEPARATOR));
+$EVERON_ROOT =  realpath(dirname(__FILE__).$nesting).DIRECTORY_SEPARATOR;
+$EVERON_SOURCE_ROOT = implode(DIRECTORY_SEPARATOR, [dirname(__FILE__), 'src', 'Everon']).DIRECTORY_SEPARATOR;
+
+require_once(implode(DIRECTORY_SEPARATOR, [$EVERON_SOURCE_ROOT, 'Bootstrap.php']));
+require_once(implode(DIRECTORY_SEPARATOR, [$EVERON_SOURCE_ROOT, 'RequestIdentifier.php']));
+
+$REQUEST_IDENTIFIER = new RequestIdentifier();
+
+$CustomExceptionHandler = function() use ($EVERON_ROOT, $REQUEST_IDENTIFIER) {
+    $log_directory = implode(DIRECTORY_SEPARATOR, [$EVERON_ROOT, 'Tmp', 'logs']);
+    $log_filename = $log_directory.DIRECTORY_SEPARATOR.'500.log';
+    $guid_value = $REQUEST_IDENTIFIER->getValue();
+
+    set_exception_handler(function ($Exception) use ($log_filename, $guid_value) {
+        echo Bootstrap::logException($Exception, $guid_value, $log_filename);
+    });  
+};
+
 require_once(
-    implode(DIRECTORY_SEPARATOR, [dirname(__FILE__), '..', '..','..','..', 'Config', 'Bootstrap', 'console.php'])
+implode(DIRECTORY_SEPARATOR,
+    [$EVERON_SOURCE_ROOT, 'Config', '_bootstrap.php'])
 );
 
-$Console = $Factory->buildConsole();
-$Console->run($RequestIdentifier);
+
+/**
+ * @var RequestIdentifier $REQUEST_IDENTIFIER
+ * @var Bootstrap $Bootstrap
+ * @var Interfaces\Environment $Environment
+ * @var Application\Interfaces\DependencyContainer $Container
+ * @var Application\Interfaces\Factory $Factory
+ */
+$Bootstrap->getClassLoader()->add(
+    'Everon\Console\Controller', $Environment->getController().'Console'.DIRECTORY_SEPARATOR
+);
+
+$Container->register('Request', function() use ($Factory) {
+    return $Factory->buildRequest($_SERVER, $_GET, $_POST, $_FILES, 'Everon\Console');
+});
+
+
+
+$REQUEST_IDENTIFIER->setSystemMemoryAtStart($system_memory);
+$Console = $Factory->buildConsoleRunner();
+$Console->run($REQUEST_IDENTIFIER);
 

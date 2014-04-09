@@ -527,4 +527,11 @@ interface Factory
      * @throws \Everon\Exception\Factory
      */
     function buildFactoryWorker($name, $namespace='Everon\Module');
+
+    /**
+     * @param string $namespace
+     * @return mixed
+     * @throws Exception\Factory
+     */
+    function buildConsoleRunner($namespace='Everon\Console');
 }

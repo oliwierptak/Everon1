@@ -117,15 +117,21 @@ class Bootstrap
         $log_directory = implode(DIRECTORY_SEPARATOR, [$app_root, 'Tmp', 'logs']);
         $log_filename = $log_directory.DIRECTORY_SEPARATOR.$log_filename;
 
-        set_exception_handler(function ($Exception) use ($log_filename, $guid_value) {
-            $timestamp = date('c', time());
-            $id = substr($guid_value, 0, 6);
-            $message = "$timestamp ${id} \n$Exception \n\n";
-            error_log($message, 3, $log_filename);
+        set_exception_handler(function ($Exception) use ($guid_value, $log_filename) {
+            Bootstrap::logException($Exception, $guid_value, $log_filename);
             
             if (php_sapi_name() !== 'cli' || headers_sent() === false) {
                 header("HTTP/1.1 500 Internal Server Error. EVRID: $guid_value"); //xxx
             }
         });
+    }
+    
+    public static function logException(\Exception $Exception, $guid_value, $log_filename)
+    {
+        $timestamp = date('c', time());
+        $id = substr($guid_value, 0, 6);
+        $message = "$timestamp ${id} \n$Exception \n\n";
+        error_log($message, 3, $log_filename);
+        return $message;
     }
 }   

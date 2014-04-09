@@ -1107,4 +1107,21 @@ abstract class Factory implements Interfaces\Factory
             throw new Exception\Factory('FactoryWorker: "%s" initialization error', $name, $e);
         }
     }
+    
+    /**
+     * @inheritdoc
+     */
+    public function buildConsoleRunner($namespace='Everon\Console')
+    {
+        try {
+            $class_name = $this->getFullClassName($namespace, 'Runner');
+            $this->classExists($class_name);
+            $Helper = new $class_name($this);
+            $this->injectDependencies($class_name, $Helper);
+            return $Helper;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('ConsoleHelper initialization error', null, $e);
+        }
+    }
 }
