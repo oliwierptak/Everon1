@@ -121,7 +121,8 @@ class Bootstrap
             Bootstrap::logException($Exception, $guid_value, $log_filename);
             
             if (php_sapi_name() !== 'cli' || headers_sent() === false) {
-                header("HTTP/1.1 500 Internal Server Error. EVRID: $guid_value"); //xxx
+                header("HTTP/1.1 500 Internal Server Error");
+                header("EVRID: $guid_value");
             }
         });
     }
