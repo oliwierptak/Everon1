@@ -12,5 +12,5 @@
     "require": {
         "php": "~5.5"
     },
-    "bin": ["bin/everon"]
+    "bin": ["bin/everon.php"]
 }
