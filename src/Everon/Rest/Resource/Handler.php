@@ -31,7 +31,7 @@ class Handler implements Interfaces\ResourceHandler
 
     const VERSIONING_URL = 'url';
     const VERSIONING_HEADER = 'header';
-    const ALPHA_ID_SALT = 'Vhg656';
+    const ALPHA_ID_SALT = 'aVg656';
 
 
     /**
@@ -81,15 +81,15 @@ class Handler implements Interfaces\ResourceHandler
         $this->assertIsInArray($version, $this->supported_versions, 'Unsupported version: "%s"', 'Domain');
         
         $domain_name = $this->getDomainNameFromMapping($resource_name);
-        $resource_id = $this->generateResourceId($Entity->getId(), $resource_name);
-
+        $resource_id = $this->generateResourceId($Entity->getId(), $domain_name);
+        
         $Href = new Href($this->url, $version, $this->versioning);
         $Href->setCollectionName('');
         $Href->setResourceName($resource_name);
         $Href->setResourceId($resource_id);
         
         $Resource = $this->getFactory()->buildRestResource($domain_name, $version, $Href, $resource_name, $Entity); //todo: change version to href
-        $this->buildResourceRelations($Resource, $version, $resource_name, $resource_id);
+        $this->buildResourceRelations($Resource);
 
         return $Resource;
     }
@@ -118,7 +118,7 @@ class Handler implements Interfaces\ResourceHandler
         try {
             $domain_name = $this->getDomainNameFromMapping($resource_name);
             $Repository = $this->getDomainManager()->getRepository($domain_name);
-            $id = $this->generateEntityId($resource_id, $resource_name);
+            $id = $this->generateEntityId($resource_id, $domain_name);
             $Entity = $Repository->getEntityById($id);
             $this->assertIsNull($Entity, sprintf('Domain Entity: "%s" with id: "%s" not found', $domain_name, $resource_id), 'Domain');
             $data = $this->arrayMergeDefault($Entity->toArray(), $data);
@@ -161,6 +161,7 @@ class Handler implements Interfaces\ResourceHandler
             
             $domain_name = $this->getDomainNameFromMapping($resource_name);
             $id = $this->generateEntityId($resource_id, $domain_name);
+
             $Entity = $this->getDomainManager()->getRepository($domain_name)->getEntityById($id, $EntityRelationCriteria);
             $this->assertIsNull($Entity, sprintf('Domain Entity: "%s" with id: "%s" not found', $domain_name, $resource_id), 'Domain');
             
@@ -234,7 +235,10 @@ class Handler implements Interfaces\ResourceHandler
         }
     }
 
-    public function buildResourceRelations(Interfaces\Resource $Resource, $version, $resource_name, $resource_id)
+    /**
+     * @param Interfaces\Resource $Resource
+     */
+    protected function buildResourceRelations(Interfaces\Resource $Resource)
     {
         /**
          * @var \Everon\Domain\Interfaces\RestZone\Entity $Entity
@@ -243,7 +247,7 @@ class Handler implements Interfaces\ResourceHandler
         $RelationCollection = new Helper\Collection([]);
         foreach ($Entity->getRelationCollection() as $domain_name => $Collection) {
             $name = $this->getResourceNameFromMapping($domain_name);
-            $link = $Resource->getHref()->getLink();
+            $link = $Resource->getHref()->getLink($name);
             $RelationCollection->set($name, ['href' => $link]);
         }
         $Resource->setRelationCollection($RelationCollection);
@@ -252,21 +256,21 @@ class Handler implements Interfaces\ResourceHandler
     /**
      * @inheritdoc
      */
-    public function generateEntityId($resource_id, $name)
+    public function generateEntityId($resource_id, $domain_name)
     {
-        return $resource_id;
-        $name .= static::ALPHA_ID_SALT;
-        return $this->alphaId($resource_id, true, 7, $name);
+        //return $resource_id;
+        $domain_name .= static::ALPHA_ID_SALT;
+        return $this->alphaId($resource_id, true, 7, $domain_name);
     }
 
     /**
      * @inheritdoc
      */
-    public function generateResourceId($entity_id, $name)
+    public function generateResourceId($entity_id, $domain_name)
     {
-        return $entity_id;
-        $name .= static::ALPHA_ID_SALT;
-        return $this->alphaId($entity_id, false, 7, $name);
+        //return $entity_id;
+        $domain_name .= static::ALPHA_ID_SALT;
+        return $this->alphaId($entity_id, false, 7, $domain_name);
     }
 
     /**

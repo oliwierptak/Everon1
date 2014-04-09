@@ -82,17 +82,17 @@ interface ResourceHandler
 
     /**
      * @param $resource_id
-     * @param $name
+     * @param $domain_name
      * @return mixed
      */
-    function generateEntityId($resource_id, $name);
+    function generateEntityId($resource_id, $domain_name);
 
     /**
      * @param $entity_id
-     * @param $name
+     * @param $domain_name
      * @return string
      */
-    function generateResourceId($entity_id, $name);
+    function generateResourceId($entity_id, $domain_name);
 
     /**
      * @param $resource_name

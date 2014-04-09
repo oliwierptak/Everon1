@@ -40,11 +40,25 @@ class Href implements Interfaces\ResourceHref
     /**
      * @inheritdoc
      */
-    public function getLink()
+    public function getLink($custom_path='')
     {
         $request_path = (string) $this->request_path;
-        $request_path = trim($request_path) !== '' ? '?'.$request_path : $request_path;
+        $request_path = trim($request_path);
+        $custom_path = trim($custom_path);
+        $path = $custom_path !== '' ? $custom_path : '';
+
+        if ($request_path !== '' && $path !== '') {
+            $request_path = '/'.$path.'?'.$request_path;
+        }
+        else if ($request_path === '' && $path !== '') {
+            $request_path = '/'.$path;
+        }
+        else if ($request_path !== '' && $path === '') {
+            $request_path = '?'.$request_path;
+        }
+                
         $params = '/'.rtrim(implode('/', [$this->resource_name, $this->resource_id, $this->collection_name]),'/').$request_path;
+        
         switch ($this->versioning) {
             case Handler::VERSIONING_URL:
                 return $this->url.$this->version.$params;
