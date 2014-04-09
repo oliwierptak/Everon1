@@ -53,7 +53,7 @@ abstract class Repository implements Interfaces\Repository
     
     protected function buildRelations(Interfaces\Entity $Entity, Criteria $RelationCriteria=null)
     {
-        $RelationCriteria = $RelationCriteria ?: (new \Everon\DataMapper\Criteria())->limit(10)->offset(0);
+        $RelationCriteria = $RelationCriteria ?: (new \Everon\DataMapper\Criteria())->limit(20)->offset(0);
         $this->buildEntityRelations($Entity, $RelationCriteria);
     }
     
