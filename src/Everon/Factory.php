@@ -199,16 +199,9 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildRestServer()
+    public function buildRestServer($namespace='Everon\Rest')
     {
-        try {
-            $Server = new Rest\Server();
-            $this->injectDependencies('Everon\Rest\Server', $Server);
-            return $Server;
-        }
-        catch (\Exception $e) {
-            throw new Exception\Factory('RestServer initialization error', null, $e);
-        }
+        return $this->buildCore('Server', $namespace);
     }
 
     /**
