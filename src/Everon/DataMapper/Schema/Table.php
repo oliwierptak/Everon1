@@ -15,6 +15,8 @@ use Everon\Helper;
 
 class Table implements Interfaces\Schema\Table
 {
+    use Helper\Asserts\IsNumericAndNonZero;
+    use Helper\Exceptions;
     use Helper\Immutable;
     
     protected $name = null;
@@ -81,6 +83,11 @@ class Table implements Interfaces\Schema\Table
         return $this->schema;
     }
 
+    public function getFullName()
+    {
+        return $this->schema.'.'.$this->name;
+    }
+
     /**
      * @inheritdoc
      */
@@ -95,7 +102,7 @@ class Table implements Interfaces\Schema\Table
     public function getColumnByName($name)
     {
         if (isset($this->columns[$name]) === false) {
-            throw new Exception\Table('Invalid column name: "%s"', $name);
+            throw new Exception\Table('Invalid column name: "%s" in table: "%s"', [$name, $this->getFullName()]);
         }
         return $this->columns[$name];
     }
@@ -122,7 +129,7 @@ class Table implements Interfaces\Schema\Table
     public function getPrimaryKeyByName($name)
     {
         if (isset($this->primary_keys[$name]) === false) {
-            throw new Exception\Table('Invalid primary key name: "%s"', $name);
+            throw new Exception\Table('Invalid primary key name: "%s" in table: "%s"', [$name, $this->getFullName()]);
         }
         return $this->primary_keys[$name];
     }
@@ -161,7 +168,13 @@ class Table implements Interfaces\Schema\Table
     {
         $PrimaryKey = current($this->getPrimaryKeys()); //todo: make fix for composite keys
         $Column = $this->getColumnByName($PrimaryKey->getName());
-        return $Column->validateColumnValue($id);
+        $id = $Column->validateColumnValue($id);
+        if (is_integer($id)) {
+            $this->assertIsNumericAndNonZero($id, sprintf(
+                'Invalid ID value: "%s" for column: "%s" in table: "%s"', $id, $Column->getName(), $this->getFullName()
+            ), 'Everon\DataMapper\Exception\Table');
+        }
+        return $id;
     }
 
     /**

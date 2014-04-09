@@ -18,6 +18,8 @@ interface Table extends Arrayable, Immutable
 
     function getSchema();
 
+    function getFullName();
+
     /**
      * @return array
      */
