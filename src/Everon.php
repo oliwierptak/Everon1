@@ -20,3 +20,4 @@ require_once(
 
 $Console = $Factory->buildConsole();
 $Console->run($RequestIdentifier);
+
