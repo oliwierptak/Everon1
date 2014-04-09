@@ -143,4 +143,13 @@ abstract class Controller extends \Everon\Controller
         $this->getResponse()->setStatusMessage($message);
         $this->response();
     }
+    
+    public function redirect($name)
+    {
+        $route = $this->getConfigManager()->getConfigValue('router.'.$name);
+        if ($route === null) {
+            throw new Exception\Controller('Invalid router config name: "%s"', $name);
+        }
+        $this->getResponse()->setHeader('refresh', '1; url='.$route['url']);
+    }
 }

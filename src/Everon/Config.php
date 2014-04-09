@@ -245,7 +245,6 @@ class Config implements \Everon\Interfaces\Config
         }
         
         if (isset($this->items[$name]) === false) {
-            //return $this->getDefaultItem(); xxx
             return null;
         }
         

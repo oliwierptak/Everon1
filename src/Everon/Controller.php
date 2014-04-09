@@ -139,11 +139,16 @@ abstract class Controller implements Interfaces\Controller
     /**
      * @param $name
      * @return null
+     * @throws Exception\Controller
      */
     public function getUrl($name)
     {
-        $Config = $this->getModule()->getRouterConfig()->getItemByName($name);
-        return $Config->getUrl();
+        $route = $this->getConfigManager()->getConfigValue('router.'.$name);
+        if ($route === null) {
+            throw new Exception\Controller('Invalid router config name: "%s"', $name);
+        }
+        
+        return $route['url'];
     }
 
     /**
