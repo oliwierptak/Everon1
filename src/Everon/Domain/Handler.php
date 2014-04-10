@@ -59,7 +59,8 @@ abstract class Handler implements Interfaces\Handler
         $tokens = explode('_', $this->stringCamelToUnderscore($name));
         if (count($tokens) >= 2) {
             array_shift($tokens); //remove get
-            list($domain_name, $domain_type) = $tokens;
+            $domain_type = array_pop($tokens); //remove Model or Repository
+            $domain_name = implode('', $tokens);
 
             switch ($domain_type) {
                 case 'Model':

@@ -21,6 +21,8 @@ class Criteria implements Interfaces\Criteria
     
     protected $where = [];
     
+    protected $in = [];
+    
     protected $offset = null;
     
     protected $limit = null;
@@ -35,6 +37,12 @@ class Criteria implements Interfaces\Criteria
     public function where(array $where)
     {
         $this->where = $this->arrayMergeDefault($this->where, $where);
+        return $this;
+    }
+    
+    public function in(array $in)
+    {
+        $this->in = $this->arrayMergeDefault($this->in, $in);
         return $this;
     }
     
@@ -84,6 +92,15 @@ class Criteria implements Interfaces\Criteria
         foreach ($this->where as $field => $value) {
             $field_ok = str_replace('.', '_', $field); //replace z.id with z_id
             $where_str .= " AND ${field} = :${field_ok}";
+        }
+        
+        if (empty($this->in) === false) {
+            $where_str .= ' ';
+            foreach ($this->in as $field => $values) {
+                //$field_ok = str_replace('.', '_', $field); //replace z.id with z_id
+                $in_str = implode(',', $values);
+                $where_str .= " AND ${field} IN (${in_str})";
+            }
         }
         
         return $where_str;
