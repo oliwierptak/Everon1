@@ -214,9 +214,13 @@ class Handler implements Interfaces\ResourceHandler
             $domain_name = $this->getDomainNameFromMapping($resource_name);
             $Href = $this->getResourceUrl($version, $resource_name);
             $Repository = $this->getDomainManager()->getRepository($domain_name);
+            
             $EntityRelationCriteria = new Criteria();
             $EntityRelationCriteria->limit($Navigator->getLimit());
             $EntityRelationCriteria->offset($Navigator->getOffset());
+            $EntityRelationCriteria->orderBy($Navigator->getOrderBy());
+            $EntityRelationCriteria->sort($Navigator->getSort());
+            
             $entity_list = $Repository->getList($EntityRelationCriteria);
     
             $ResourceList = new Helper\Collection([]);
@@ -258,7 +262,7 @@ class Handler implements Interfaces\ResourceHandler
      */
     public function generateEntityId($resource_id, $domain_name)
     {
-        //return $resource_id;
+        return $resource_id;
         $domain_name .= static::ALPHA_ID_SALT;
         return $this->alphaId($resource_id, true, 7, $domain_name);
     }
@@ -268,7 +272,7 @@ class Handler implements Interfaces\ResourceHandler
      */
     public function generateResourceId($entity_id, $domain_name)
     {
-        //return $entity_id;
+        return $entity_id;
         $domain_name .= static::ALPHA_ID_SALT;
         return $this->alphaId($entity_id, false, 7, $domain_name);
     }

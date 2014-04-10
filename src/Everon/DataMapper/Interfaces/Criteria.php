@@ -21,11 +21,9 @@ interface Criteria extends \Everon\Interfaces\Arrayable
 
     function getWhereSql();
 
-    function sortDesc();
-
     function where(array $where);
 
-    function sortAsc();
+    function sort($sort);
 
     function limit($limit);
 

@@ -70,15 +70,9 @@ class Criteria implements Interfaces\Criteria
         return $this;
     }
     
-    public function sortAsc()
+    public function sort($sort)
     {
-        $this->sort = 'ASC';
-        return $this;
-    }
-    
-    public function sortDesc()
-    {
-        $this->sort = 'DESC';
+        $this->sort = $sort;
         return $this;
     }
     
@@ -125,11 +119,26 @@ class Criteria implements Interfaces\Criteria
 
     public function getOrderByAndSortSql()
     {
-        if ($this->order_by === null) {
+        if (empty($this->order_by)) {
             return '';
         }
 
-        return 'ORDER BY '.$this->order_by.' '.$this->sort;
+        if (is_array($this->order_by)) {
+            $order_by = implode(',', $this->order_by);
+            
+            if (is_array($this->sort)) {
+                $order_by = '';
+                foreach ($this->order_by as $order_field) {
+                    $dir = isset($this->sort[$order_field]) ? $this->sort[$order_field] : 'ASC';
+                    $order_by .= "${order_field} ".$dir;
+                }
+            }
+        }
+        else {
+            $order_by = $this->order_by;
+        }
+
+        return 'ORDER BY '.$order_by;
     }
     
     public function getGroupBy()
