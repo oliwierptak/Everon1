@@ -10,6 +10,7 @@
 namespace Everon\Rest;
 
 use Everon\Dependency;
+use Everon\Domain;
 use Everon\Rest\Dependency as RestDependency;
 use Everon\Exception;
 use Everon\Helper;
@@ -23,10 +24,9 @@ use Everon\Module;
  */
 abstract class Controller extends \Everon\Controller implements Interfaces\Controller
 {
-    use \Everon\Domain\Dependency\Injection\DomainManager;
+    use Domain\Dependency\Injection\DomainManager;
     use Dependency\Injection\Environment;
     use Dependency\Injection\Factory;
-    use Module\Dependency\Injection\ModuleManager;
     use RestDependency\Injection\ResourceManager;
 
     

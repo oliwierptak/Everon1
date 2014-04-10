@@ -16,6 +16,7 @@ abstract class Controller implements Interfaces\Controller
     use Dependency\Injection\Logger;
     use Dependency\Injection\Response;
     use Dependency\Injection\Request;
+    use Module\Dependency\Injection\ModuleManager;
 
     use Helper\IsCallable;
     use Helper\ToString;
