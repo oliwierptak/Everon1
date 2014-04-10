@@ -27,7 +27,6 @@ abstract class Controller extends \Everon\Controller
     use Dependency\Injection\Factory;
     use Dependency\Injection\ViewManager;
     use Domain\Dependency\Injection\DomainManager;
-    use Module\Dependency\Injection\ModuleManager;
     use Http\Dependency\Injection\HttpSession;
 
     use Helper\Arrays;
