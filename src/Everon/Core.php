@@ -60,23 +60,11 @@ abstract class Core implements Interfaces\Core
     {
         $this->runOnce($RequestIdentifier);
         
-        if ($this->getRequest()->isEmptyUrl()) {
-            $this->Module = $this->getModuleManager()->getDefaultModule();
-            
-            if ($this->Module === null) {
-                throw new Exception\Core('Default module not defined');
-            }
-            
-            $CurrentRoute = $this->Module->getRouterConfig()->getDefaultItem();
-            $this->getRouter()->validateAndUpdateRequest($CurrentRoute, $this->getRequest());
-        }
-        else {
-            $CurrentRoute = $this->getRouter()->getRouteByRequest($this->getRequest());
-            $this->Module = $this->getModuleManager()->getModule($CurrentRoute->getModule());
+        $CurrentRoute = $this->getRouter()->getRouteByRequest($this->getRequest());
+        $this->Module = $this->getModuleManager()->getModule($CurrentRoute->getModule());
 
-            if ($this->Module === null) {
-                throw new Exception\Core('No module defined for this request');
-            }
+        if ($this->Module === null) {
+            throw new Exception\Core('No module defined for this request');
         }
 
         $this->Controller = $this->Module->getController($CurrentRoute->getController());

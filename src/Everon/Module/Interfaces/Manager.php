@@ -14,11 +14,6 @@ use Everon\Interfaces\Dependency;
 interface Manager extends Dependency\ConfigManager
 {
     /**
-     * @return \Everon\Interfaces\Module
-     */
-    function getDefaultModule();
-
-    /**
      * @param $name
      * @return \Everon\Interfaces\Module
      */

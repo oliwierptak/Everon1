@@ -107,13 +107,4 @@ class Manager implements Interfaces\Manager
         
         return $this->modules[$name];
     }
-
-    /**
-     * @inheritdoc
-     */
-    public function getDefaultModule()
-    {
-        $default_module = $this->getConfigManager()->getConfigValue('application.modules.default');
-        return $this->getModule($default_module);
-    }
 }
