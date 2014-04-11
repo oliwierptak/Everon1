@@ -43,6 +43,10 @@ class Router implements Interfaces\Router
         $DefaultItem = null;
         $Item = null;
 
+        if ($this->getConfig()->getItems() === null) {
+            throw new Exception\RouteNotDefined('No routes defined');
+        }
+
         foreach ($this->getConfig()->getItems() as $RouteItem) {
             /**
              * @var ItemRouter $RouteItem
