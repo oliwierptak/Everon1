@@ -44,7 +44,7 @@ class Router implements Interfaces\Router
         $Item = null;
 
         if ($this->getConfig()->getItems() === null) {
-            throw new Exception\RouteNotDefined('No routes defined');
+            throw new Exception\Router('No routes defined');
         }
 
         foreach ($this->getConfig()->getItems() as $RouteItem) {
