@@ -171,9 +171,7 @@ abstract class Repository implements Interfaces\Repository
     }
 
     /**
-     * @param Criteria $Criteria
-     * @param Criteria $RelationCriteria
-     * @return Interfaces\Entity|null
+     * @inheritdoc
      */
     public function exists(Criteria $Criteria, Criteria $RelationCriteria=null)
     {
