@@ -54,6 +54,13 @@ interface Repository
     function remove(Entity $Entity, $user_id);
 
     /**
+     * @param Criteria $Criteria
+     * @param Criteria $RelationCriteria
+     * @return Entity|null
+     */
+    function exists(Criteria $Criteria, Criteria $RelationCriteria=null);
+
+    /**
      * @return DataMapper
      */    
     function getMapper();

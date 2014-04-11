@@ -99,8 +99,6 @@ abstract class Repository implements Interfaces\Repository
       
     protected function buildEntity(array $data, Criteria $RelationCriteria=null)
     {
-        //$id = $this->getMapper()->getIdFromData($data);
-        //$data = $this->getMapper()->validateData($data, $id !== null);
         $Entity = $this->getFactory()->buildDomainEntity($this->getName(), $this->getMapper()->getTable()->getPk(), $data);
         $this->buildRelations($Entity, $RelationCriteria);
         return $Entity;
@@ -170,5 +168,20 @@ abstract class Repository implements Interfaces\Repository
     {
         $this->getMapper()->delete($Entity->getId(), $user_id);
         $Entity->delete();
+    }
+
+    /**
+     * @param Criteria $Criteria
+     * @param Criteria $RelationCriteria
+     * @return Interfaces\Entity|null
+     */
+    public function exists(Criteria $Criteria, Criteria $RelationCriteria=null)
+    {
+        $data = $this->getMapper()->fetchOneByCriteria($Criteria);
+        if (empty($data)) {
+            return null;
+        }
+
+        return $this->buildEntity($data, $RelationCriteria);
     }
 }
