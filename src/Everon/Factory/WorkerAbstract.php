@@ -7,7 +7,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon;
+namespace Everon\Factory;
 
 use Everon\Application;
 use Everon\Helper;
@@ -15,7 +15,7 @@ use Everon\Dependency;
 use Everon\Interfaces;
 
 
-abstract class FactoryWorker implements Interfaces\FactoryWorker
+abstract class WorkerAbstract implements Interfaces\FactoryWorker
 {
     use Dependency\Factory;
     

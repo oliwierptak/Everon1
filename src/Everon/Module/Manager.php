@@ -49,7 +49,21 @@ class Manager implements Interfaces\Manager
             if ((new \SplFileInfo($Dir->getPathname().DIRECTORY_SEPARATOR.'FactoryWorker.php'))->isFile()) {
                 $Worker = $this->getFactory()->buildFactoryWorker($module_name);
                 $Module->setFactoryWorker($Worker);
-            }//todo: add else with empty/default worker
+            }
+            else {
+                $DefaultWorker = $this->getFactory()->buildFactoryWorker('Worker', 'Everon\Factory');
+                $Module->setFactoryWorker($DefaultWorker);
+            }
+            
+            //has custom dependency loaders? load them
+            $loader_dir = new \SplFileInfo($Dir->getPathname().DIRECTORY_SEPARATOR.'Dependency'.DIRECTORY_SEPARATOR.'Loader');
+            $LoaderFiles = new \GlobIterator($loader_dir.DIRECTORY_SEPARATOR.'*.php');
+            foreach ($LoaderFiles as $filename => $File) {
+                $Factory = $this->getFactory();
+                $Container = $this->getFactory()->getDependencyContainer();
+                $FactoryWorker = $Module->getFactoryWorker();
+                include($File->getPathname());
+            }
             
             $Module->setup();
             $this->modules[$module_name] = $Module;
