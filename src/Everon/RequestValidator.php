@@ -19,9 +19,10 @@ class RequestValidator implements Interfaces\RequestValidator
      * Validates $_GET, $_POST and $QUERY_STRING.
      * Returns array of validated query, get and post otherwise, or throws an exception
      * 
-     * @param Config\Interfaces\ItemRouter$RouteItem
+     * @param Config\Interfaces\ItemRouter $RouteItem
      * @param Interfaces\Request $Request
      * @return array
+     * @throws Exception\RequestValidator
      */
     public function validate(Config\Interfaces\ItemRouter $RouteItem, Interfaces\Request $Request)
     {

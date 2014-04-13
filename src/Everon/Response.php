@@ -10,6 +10,7 @@
 namespace Everon;
 
 use Everon\Dependency;
+use Everon\Interfaces\Response2;
 
 class Response implements Interfaces\Response
 {
@@ -17,37 +18,58 @@ class Response implements Interfaces\Response
     protected $result = false;
     protected $guid = null;
 
-    
+    /**
+     * @param $guid
+     */
     public function __construct($guid)
     {
         $this->guid = $guid;
     }
-    
+
+    /**
+     * @param mixed $data
+     */
     public function setData($data)
     {
         $this->data = $data;
     }
 
+    /**
+     * @return null
+     */
     public function getData()
     {
         return $this->data;
     }
 
+    /**
+     * @return bool
+     */
     public function getResult()
     {
         return $this->result;
     }
 
+    /**
+     * @param $result
+     */
     public function setResult($result)
     {
         $this->result = (bool) $result;
     }
 
+    /**
+     * @param string $root
+     * @return string
+     */
     public function toJson($root='data')
     {
         return json_encode([$root => $this->data]);
     }
-    
+
+    /**
+     * @return string
+     */
     public function toText()
     {
         return (string) $this->data;

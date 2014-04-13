@@ -12,7 +12,9 @@ namespace Everon;
 class RequestIdentifier
 {
     protected $guid;
+    
     protected $system_memory_at_start = null;
+    
     
     public function __construct()
     {

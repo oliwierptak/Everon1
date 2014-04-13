@@ -11,10 +11,34 @@ namespace Everon\Interfaces;
 
 interface Response
 {
-    function setData($data);
-    function getData();
-    function setResult($result);
-    function getResult();
-    function toJson();
-    function toText();
+    /**
+     * @return bool
+     */
+    public function getResult();
+
+    /**
+     * @param $result
+     */
+    public function setResult($result);
+
+    /**
+     * @param string $root
+     * @return string
+     */
+    public function toJson($root = 'data');
+
+    /**
+     * @return null
+     */
+    public function getData();
+
+    /**
+     * @return string
+     */
+    public function toText();
+
+    /**
+     * @param mixed $data
+     */
+    public function setData($data);
 }

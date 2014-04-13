@@ -39,6 +39,7 @@ interface Controller
     /**
      * @param $name
      * @return null
+     * @throws Exception\Controller
      */
     function getUrl($name);
 

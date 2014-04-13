@@ -63,7 +63,7 @@ class ClassMap implements Interfaces\ClassMap
             fclose($h);
         }
         catch (\Exception $e) {
-            return null;
+            return;
         }
     }
 

@@ -72,4 +72,20 @@ interface Config extends Arrayable
      * @return \Everon\Interfaces\Config
      */    
     function go($where);
+
+    /**
+     * @param $data
+     * @return mixed
+     */
+    function recompile($data);
+
+    /**
+     * @return callable|null  Wrapped Config\Interfaces\ExpressionMatcher
+     */
+    function getCompiler();
+
+    /**
+     * @param \Closure $Compiler Wrapped Config\Interfaces\ExpressionMatcher
+     */
+    function setCompiler(\Closure $Compiler);
 }

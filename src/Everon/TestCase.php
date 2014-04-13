@@ -32,7 +32,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         parent::__construct($name, $data, $dataName);
         $this->FrameworkEnvironment = new Environment($GLOBALS['EVERON_ROOT'], $GLOBALS['EVERON_SOURCE_ROOT']);
         $this->includeDoubles($this->getDoublesDirectory());
-        $this->RequestIdentifier = $GLOBALS['REQUEST_IDENTIFIER']; //import from bootstrap
+        $this->RequestIdentifier = $GLOBALS['REQUEST_IDENTIFIER'];
     }
     
     protected function includeDoubles($dir)
@@ -62,6 +62,9 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
             $this->getLogDirectory(),
         ];
 
+        /**
+         * @var \SplFileInfo $File
+         */
         foreach ($directories as $dir) {
             $TmpFiles = new \GlobIterator($dir.'*.*');
             foreach ($TmpFiles as $filename => $File) {
@@ -131,7 +134,12 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
     {
         return $this->getTmpDirectory().'view'.DIRECTORY_SEPARATOR;
     }
-    
+
+    /**
+     * @param $class_name
+     * @param $name
+     * @return \ReflectionProperty
+     */
     public function getProtectedProperty($class_name, $name)
     {
         $Reflection = new \ReflectionClass($class_name);
@@ -140,7 +148,12 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         
         return $Property;
     }
-    
+
+    /**
+     * @param $class_name
+     * @param $name
+     * @return \ReflectionMethod
+     */
     public function getProtectedMethod($class_name, $name)
     {
         $Reflection = new \ReflectionClass($class_name);

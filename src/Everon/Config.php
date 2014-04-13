@@ -13,7 +13,7 @@ use Everon\Config\Interfaces;
 use Everon\Helper;
 use Everon\Exception;
 
-//todo: no class should rely on concrete classes, either make it abstract or remove config\router
+
 class Config implements \Everon\Interfaces\Config
 {
     use Dependency\Injection\Factory;
@@ -150,6 +150,11 @@ class Config implements \Everon\Interfaces\Config
         $this->data = null; //only getItems() from now on
     }
 
+    /**
+     * @param $name
+     * @param array $data
+     * @return Interfaces\Item|Config\Item
+     */
     protected function buildItem($name, array $data)
     {
         return $this->getFactory()->buildConfigItem($name, $data);
@@ -252,8 +257,7 @@ class Config implements \Everon\Interfaces\Config
     }
 
     /**
-     * @param $name
-     * @return bool
+     * @inheritdoc
      */
     public function itemExists($name)
     {
@@ -265,9 +269,7 @@ class Config implements \Everon\Interfaces\Config
     }
 
     /**
-     * @param $name
-     * @param null $default
-     * @return mixed
+     * @inheritdoc
      */
     public function get($name, $default=null)
     {
@@ -293,23 +295,25 @@ class Config implements \Everon\Interfaces\Config
     }
 
     /**
-     * @param $where
-     * @return Interfaces\Config
+     * @inheritdoc
      */
     public function go($where)
     {
         $this->go_path[] = $where; 
         return $this;
     }
-    
-    public function recompile($data) //todo: meh, use setItems(), decouple compiler
+
+    /**
+     * @inheritdoc
+     */
+    public function recompile($data)
     {
         $this->Compiler->__invoke($data);
         return $data;
     }
 
     /**
-     * @return callable|null  Wrapped Config\Interfaces\ExpressionMatcher
+     * @inheritdoc
      */
     public function getCompiler()
     {
@@ -317,7 +321,7 @@ class Config implements \Everon\Interfaces\Config
     }
 
     /**
-     * @param \Closure $Compiler Wrapped Config\Interfaces\ExpressionMatcher
+     * @inheritdoc
      */
     public function setCompiler(\Closure $Compiler)
     {

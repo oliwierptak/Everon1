@@ -46,12 +46,18 @@ class FileSystem implements Interfaces\FileSystem
         $path = $this->root.$path;
         return $path;
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public function getRealPath($path)
     {
         return $this->getRelativePath($path);
     }
 
+    /**
+     * @inheritdoc
+     */
     public function getRoot()
     {
         return $this->root;

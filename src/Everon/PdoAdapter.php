@@ -38,7 +38,13 @@ class PdoAdapter implements Interfaces\PdoAdapter
         $this->Pdo = $Pdo;
         $this->ConnectionConfig = $Connection;
     }
-    
+
+    /**
+     * @param $sql
+     * @param $parameters
+     * @param $fetch_mode
+     * @return \PDOStatement
+     */
     protected function beginTransaction($sql, $parameters, $fetch_mode)
     {
         $this->getLogger()->sql($sql."|".print_r($parameters, true));

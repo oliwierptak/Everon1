@@ -92,6 +92,10 @@ abstract class DataMapper implements Interfaces\DataMapper
         return $values;
     }
 
+    /**
+     * @param $user_id
+     * @return mixed
+     */
     protected function setCurrentUserId($user_id)
     {
         //SELECT session_variables.set_value('who', 'depesz');

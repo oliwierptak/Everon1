@@ -88,10 +88,7 @@ abstract class Controller implements Interfaces\Controller
     }
 
     /**
-     * @param $action
-     * @return bool
-     * @throws Exception\InvalidControllerMethod
-     * @throws Exception\InvalidControllerResponse
+     * @inheritdoc
      */
     public function execute($action)
     {
@@ -138,9 +135,7 @@ abstract class Controller implements Interfaces\Controller
     }
 
     /**
-     * @param $name
-     * @return null
-     * @throws Exception\Controller
+     * @inheritdoc
      */
     public function getUrl($name)
     {
@@ -153,7 +148,7 @@ abstract class Controller implements Interfaces\Controller
     }
 
     /**
-     * @param Config\Interfaces\ItemRouter $CurrentRoute
+     * @inheritdoc
      */
     public function setCurrentRoute(Config\Interfaces\ItemRouter $CurrentRoute)
     {
@@ -161,7 +156,7 @@ abstract class Controller implements Interfaces\Controller
     }
 
     /**
-     * @return Config\Interfaces\ItemRouter
+     * @inheritdoc
      */
     public function getCurrentRoute()
     {
