@@ -11,12 +11,43 @@ namespace Everon\Interfaces;
 
 interface TemplateContainer extends Arrayable
 {
+    /**
+     * @param $name
+     * @param $value
+     * @return $this
+     */
     function set($name, $value);
+
+    /**
+     * @param $name
+     * @param null $default
+     * @return null
+     */
     function get($name, $default=null);
-    function delete($name);    
-    function setCompiledContent($data);
+
+    /**
+     * @param $name
+     */
+    function delete($name);
+
+    /**
+     * @param string $content
+     */
+    function setCompiledContent($content);
+
+    /**
+     * @return string
+     */
     function getCompiledContent();
+
+    /**
+     * @return string
+     */
     function getTemplateContent();
+
+    /**
+     * @param string $content
+     */
     function setTemplateContent($content);
 
     /**
@@ -28,7 +59,14 @@ interface TemplateContainer extends Arrayable
      * @return TemplateCompilerScope
      */
     function getScope();
-    
+
+    /**
+     * @return array
+     */
     function getData();
+
+    /**
+     * @param array $data
+     */
     function setData(array $data);    
 }

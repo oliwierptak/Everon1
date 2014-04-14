@@ -40,7 +40,6 @@ class Container implements Interfaces\TemplateContainer
     public function __construct($content, array $data)
     {
         $this->data = $data;
-        //$this->data = $this->arrayDotKeysToScope($data, 'View');
         $this->template_content = $content;
     }
     
@@ -50,10 +49,7 @@ class Container implements Interfaces\TemplateContainer
     }
 
     /**
-     * @param $name
-     * @param $value
-     * @return Interfaces\TemplateContainer
-     * @throws Exception\Template
+     * @inheritdoc
      */
     public function set($name, $value)
     {
@@ -66,9 +62,7 @@ class Container implements Interfaces\TemplateContainer
     }
 
     /**
-     * @param $name
-     * @param null $default
-     * @return mixed|null
+     * @inheritdoc
      */
     public function get($name, $default=null)
     {
@@ -80,7 +74,7 @@ class Container implements Interfaces\TemplateContainer
     }
 
     /**
-     * @param $name
+     * @inheritdoc
      */
     public function delete($name)
     {
@@ -89,7 +83,7 @@ class Container implements Interfaces\TemplateContainer
     }
 
     /**
-     * @return array
+     * @inheritdoc
      */
     public function getData()
     {
@@ -97,7 +91,7 @@ class Container implements Interfaces\TemplateContainer
     }
 
     /**
-     * @param array $data
+     * @inheritdoc
      */
     public function setData(array $data)
     {
@@ -106,7 +100,7 @@ class Container implements Interfaces\TemplateContainer
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
     public function getCompiledContent()
     {
@@ -114,7 +108,7 @@ class Container implements Interfaces\TemplateContainer
     }
 
     /**
-     * @param string $content
+     * @inheritdoc
      */
     public function setCompiledContent($content)
     {
@@ -122,7 +116,7 @@ class Container implements Interfaces\TemplateContainer
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
     public function getTemplateContent()
     {
@@ -134,7 +128,7 @@ class Container implements Interfaces\TemplateContainer
     }
 
     /**
-     * @param string $content
+     * @inheritdoc
      */
     public function setTemplateContent($content)
     {
