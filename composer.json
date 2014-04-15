@@ -9,10 +9,6 @@
         "email": "oliwierptak@gmail.com"
     }],
     "version": "0.3",
-	"dist": {
-		"url": "https://github.com/oliwierptak/Everon/archive/v0.3.zip",
-		"type": "zip"
-	},
     "require": {
         "php": "~5.5"
     },
