@@ -87,6 +87,7 @@ class Bootstrap
             $this->setupClassLoader();
             $this->getClassLoader()->add('Everon', $this->getEnvironment()->getEveronRoot());
             $this->getClassLoader()->add('Everon\Application', $this->getEnvironment()->getApplication());
+            $this->getClassLoader()->add('Everon\Module', $this->getEnvironment()->getModule());
             $this->getClassLoader()->register($prepend_autoloader);
         }
     }
