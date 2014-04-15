@@ -15,41 +15,41 @@ interface CurlAdapter
      * @param $url
      * @return mixed|null
      */
-    public function head($url);
+    function head($url);
 
     /**
      * @param $url
      * @return mixed|null
      */
-    public function delete($url);
+    function delete($url);
 
     /**
      * @return int
      */
-    public function getHttpResponseCode();
+    function getHttpResponseCode();
 
     /**
      * @param int $http_response_code
      */
-    public function setHttpResponseCode($http_response_code);
+    function setHttpResponseCode($http_response_code);
 
     /**
      * @param $url
      * @return mixed|null
      */
-    public function get($url);
-
-    /**
-     * @param $url
-     * @param $data
-     * @return mixed|null
-     */
-    public function post($url, $data);
+    function get($url);
 
     /**
      * @param $url
      * @param $data
      * @return mixed|null
      */
-    public function put($url, $data);
+    function post($url, $data);
+
+    /**
+     * @param $url
+     * @param $data
+     * @return mixed|null
+     */
+    function put($url, $data);
 }

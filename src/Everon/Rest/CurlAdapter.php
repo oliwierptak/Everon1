@@ -72,9 +72,7 @@ class CurlAdapter implements Interfaces\CurlAdapter
     }
 
     /**
-     * @param $url
-     * @param $data
-     * @return mixed|null
+     * @inheritdoc
      */
     public function put($url, $data)
     {
@@ -87,9 +85,7 @@ class CurlAdapter implements Interfaces\CurlAdapter
     }
 
     /**
-     * @param $url
-     * @param $data
-     * @return mixed|null
+     * @inheritdoc
      */
     public function post($url, $data)
     {
@@ -101,8 +97,7 @@ class CurlAdapter implements Interfaces\CurlAdapter
     }
 
     /**
-     * @param $url
-     * @return mixed|null
+     * @inheritdoc
      */
     public function get($url)
     {
@@ -111,8 +106,7 @@ class CurlAdapter implements Interfaces\CurlAdapter
     }
 
     /**
-     * @param $url
-     * @return mixed|null
+     * @inheritdoc
      */
     public function delete($url)
     {
@@ -125,8 +119,7 @@ class CurlAdapter implements Interfaces\CurlAdapter
     }
 
     /**
-     * @param $url
-     * @return mixed|null
+     * @inheritdoc
      */
     public function head($url)
     {
@@ -139,7 +132,7 @@ class CurlAdapter implements Interfaces\CurlAdapter
     }
 
     /**
-     * @param int $http_response_code
+     * @inheritdoc
      */
     public function setHttpResponseCode($http_response_code)
     {
@@ -147,7 +140,7 @@ class CurlAdapter implements Interfaces\CurlAdapter
     }
 
     /**
-     * @return int
+     * @inheritdoc
      */
     public function getHttpResponseCode()
     {

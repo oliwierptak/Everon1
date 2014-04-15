@@ -72,8 +72,7 @@ abstract class Resource extends Resource\Basic implements Interfaces\Resource
     }
 
     /**
-     * @param $name
-     * @param Interfaces\ResourceCollection $CollectionResource
+     * @inheritdoc
      */
     public function setRelationCollectionByName($name, Interfaces\ResourceCollection $CollectionResource)
     {
@@ -81,8 +80,7 @@ abstract class Resource extends Resource\Basic implements Interfaces\Resource
     }
 
     /**
-     * @param $name
-     * @return Interfaces\ResourceCollection
+     * @inheritdoc
      */
     public function getRelationCollectionByName($name)
     {
