@@ -109,6 +109,9 @@ class FileSystem implements Interfaces\FileSystem
         try {
             $result = [];
             $path = $this->getRelativePath($path);
+            if ((new \SplFileInfo($path))->isDir() === false) {
+                return [];
+            }
             $files = new \GlobIterator($path.DIRECTORY_SEPARATOR.'*.*');
 
             /**
@@ -136,6 +139,9 @@ class FileSystem implements Interfaces\FileSystem
         try {
             $result = [];
             $path = $this->getRelativePath($path);
+            if ((new \SplFileInfo($path))->isDir() === false) {
+                return [];
+            }
             $directories = new \DirectoryIterator($path.DIRECTORY_SEPARATOR);
 
             /**
