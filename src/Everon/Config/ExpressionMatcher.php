@@ -69,12 +69,23 @@ class ExpressionMatcher implements Interfaces\ExpressionMatcher
         }
         
         if (empty($this->values)) { //todo fix this madness
+            foreach ($configs_data as $name => $items) { //remove inheritance info from section names in order to prepare values, eg. 'myitem < default'
+                foreach ($items as $section_name => $section_items) {
+                    $tokens = explode('<', $section_name);
+                    if (count($tokens) === 2) {
+                        $new_section_name = trim($tokens[0]);
+                        $configs_data[$name][$new_section_name] = $section_items;
+                        unset($configs_data[$name][$section_name]);
+                    }
+                }
+            }
+            
             $this->values = $this->arrayDotKeysFlattern($configs_data);
             $this->values = $this->arrayDotKeysFlattern($this->values);
             $this->values = $this->arrayDotKeysFlattern($this->values);
             $this->values = $this->arrayPrefixKey('%', $this->values, '%');
         }
-
+        
         //compile to update self references, eg.
         //'%application.assets.themes%' => string (34) "%application.env.url_statc%themes/"
         $Compiler = $this->buildCompiler();
