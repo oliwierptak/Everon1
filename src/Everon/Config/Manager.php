@@ -86,17 +86,6 @@ class Manager implements \Everon\Config\Interfaces\Manager
         //load configs from application
         $data = $Loader->load((bool) $this->isCachingEnabled());
         
-        //load router.ini data from all modules
-        $data['router_modules'] = [];
-        $data_router = $this->getRouterDataFromAllModules();
-        foreach ($data_router as $module_name => $module_router_data) {
-            list($filename, $loader_data) = $module_router_data;
-            $loader_data = $this->arrayPrefixKey($module_name.'@', $loader_data);
-            $data[$module_name.'@router'] = $this->getFactory()->buildConfigLoaderItem($filename, $loader_data);
-            $data['router_modules'] = $this->arrayMergeDefault($data['router_modules'], $loader_data); 
-        }
-        $data['router_modules'] = $this->getFactory()->buildConfigLoaderItem('//Config/router_modules.ini', $data['router_modules']);
-        
         //load module.ini data from all modules
         $module_list = $this->getPathsOfActiveModules();
         /**
@@ -109,6 +98,8 @@ class Manager implements \Everon\Config\Interfaces\Manager
             }
             $Filename = new \SplFileInfo($this->getFileSystem()->getRealPath('//Module/'.$module_name.'/Config/module.ini'));
             $data[$module_name.'@module'] = $this->getConfigLoader()->loadByFile($Filename, $this->isCachingEnabled());
+            $Filename = new \SplFileInfo($this->getFileSystem()->getRealPath('//Module/'.$module_name.'/Config/router.ini'));
+            $data[$module_name.'@router'] = $this->getConfigLoader()->loadByFile($Filename, $this->isCachingEnabled());
         }
         
         return $data;
@@ -155,26 +146,6 @@ class Manager implements \Everon\Config\Interfaces\Manager
             $config_items_data[$name] = $ConfigLoaderItem->toArray();
         }
 
-        //parse sections for cross config inheritance, eg. ['login_form < User@router:User@login_form']
-        foreach ($config_items_data as $name => $items) {
-            foreach ($items as $section_name => $section_items) {
-                $tokens = explode('<', $section_name);
-                //$new_section_name = trim($tokens[0]);
-
-                if (count($tokens) === 2) {
-                    $tokens = explode(':', $tokens[1]);
-                    if (count($tokens) === 2) {
-                        $inherits_from_config = trim($tokens[0]);
-                        $inherits_from_section = trim($tokens[1]);
-                        if (array_key_exists($inherits_from_config, $config_items_data)) {
-                            $config_items_data[$name][$inherits_from_section] = $config_items_data[$inherits_from_config][$inherits_from_section];
-                            unset($config_items_data[$name][$section_name]);
-                        }
-                    }
-                }
-            }
-        }
-
         //compile expressions in one go
         $Compiler = $this->getExpressionMatcher()->getCompiler($config_items_data, $this->getEnvironmentExpressions());
 
@@ -195,33 +166,6 @@ class Manager implements \Everon\Config\Interfaces\Manager
             $ConfigLoaderItem->setData($config_items_data[$name]);
             $this->loadAndRegisterOneConfig($name, $ConfigLoaderItem, $Compiler);
         }
-    }
-
-    public function getRouterDataFromAllModules()
-    {
-        //gather router data from modules xxx
-        $router_config_data = [];
-        $module_list = $this->getPathsOfActiveModules();
-        /**
-         * @var \DirectoryIterator $Dir
-         */
-        foreach ($module_list as $Dir) {
-            if ($Dir->isDot()) {
-                continue;
-            }
-            
-            $module_name = $Dir->getBasename();
-            $RouterFilename = new \SplFileInfo($this->getFileSystem()->getRealPath('//Module/'.$module_name.'/Config/router.ini'));
-            $RouterFilename = $this->getConfigLoader()->loadByFile($RouterFilename, $this->isCachingEnabled());
-            $module_config_data = $RouterFilename->getData();
-            
-            foreach ($module_config_data as $section => $data) {
-                $module_config_data[$section][Item\Router::PROPERTY_MODULE] = $module_name;
-            }
-            $router_config_data[$module_name] = [$RouterFilename->getFilename(), $module_config_data];
-        }
-        
-        return $router_config_data;
     }
 
     /**

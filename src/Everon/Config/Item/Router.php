@@ -16,7 +16,7 @@ use Everon\Helper;
 
 class Router extends Config\Item implements Config\Interfaces\ItemRouter
 {
-    const PROPERTY_MODULE = '____module';
+    const PROPERTY_MODULE = 'module';
     
     use Helper\Arrays;
     use Helper\Exceptions;

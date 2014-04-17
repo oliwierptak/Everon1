@@ -59,7 +59,6 @@ class Manager implements Interfaces\Manager
             $loader_dir = new \SplFileInfo($Dir->getPathname().DIRECTORY_SEPARATOR.'Dependency'.DIRECTORY_SEPARATOR.'Loader');
             $LoaderFiles = new \GlobIterator($loader_dir.DIRECTORY_SEPARATOR.'*.php');
             foreach ($LoaderFiles as $filename => $File) {
-                $Factory = $this->getFactory();
                 $Container = $this->getFactory()->getDependencyContainer();
                 $FactoryWorker = $Module->getFactoryWorker();
                 include($File->getPathname());
