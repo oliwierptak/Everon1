@@ -33,5 +33,16 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
     {
         echo $output."\n";
     }
+
+    public function help()
+    {
+        $Config = $this->getModule()->getRouterConfig();
+        $this->lines[] = '';
+        $this->lines[] = 'Usage:';
+        foreach ($Config->getItems() as $Item) {
+            $info = $Item->toArray()['info'];
+            $this->lines[] = '  '.ltrim($Item->getUrl(), '/').' : '.$info;
+        }
+    }
     
 }
