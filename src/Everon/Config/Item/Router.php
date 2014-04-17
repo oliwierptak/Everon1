@@ -16,7 +16,7 @@ use Everon\Helper;
 
 class Router extends Config\Item implements Config\Interfaces\ItemRouter
 {
-    const PROPERTY_MODULE = 'module';
+    const PROPERTY_MODULE = '____module';
     
     use Helper\Arrays;
     use Helper\Exceptions;
@@ -43,6 +43,13 @@ class Router extends Config\Item implements Config\Interfaces\ItemRouter
     
     public function __construct(array $data)
     {
+        $section_name = @$data[static::PROPERTY_NAME];
+        $tokens = explode('@', $section_name);
+        
+        if (count($tokens) === 2) {
+            $data[static::PROPERTY_MODULE] = trim($tokens[0]);
+        }
+
         parent::__construct($data, [
             'url' => null,
             'controller' => null,
@@ -168,10 +175,10 @@ class Router extends Config\Item implements Config\Interfaces\ItemRouter
     public function validateData(array $data)
     {
         parent::validateData($data);
-        $this->assertIsStringAndNonEmpty($data['url'], 'Invalid url: "%s"', 'ConfigItem');
-        $this->assertIsStringAndNonEmpty($data[static::PROPERTY_MODULE], 'Invalid item module name: "%s"', 'ConfigItem');
-        $this->assertIsStringAndNonEmpty($data['controller'], 'Invalid controller: "%s"', 'ConfigItem');
-        $this->assertIsStringAndNonEmpty($data['action'], 'Invalid action: "%s"', 'ConfigItem');
+        $this->assertIsStringAndNonEmpty(@$data['url'], 'Invalid url: "%s"', 'ConfigItem');
+        $this->assertIsStringAndNonEmpty(@$data[static::PROPERTY_MODULE], 'Invalid item module name: "%s"', 'ConfigItem');
+        $this->assertIsStringAndNonEmpty(@$data['controller'], 'Invalid controller: "%s"', 'ConfigItem');
+        $this->assertIsStringAndNonEmpty(@$data['action'], 'Invalid action: "%s"', 'ConfigItem');
     }
 
     /**
