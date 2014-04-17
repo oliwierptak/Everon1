@@ -117,7 +117,20 @@ abstract class Repository implements Interfaces\Repository
      */
     public function getEntityById($id, Criteria $RelationCriteria=null)
     {
-        $data = $this->getMapper()->fetchOneById($id);
+        $Criteria = (new \Everon\DataMapper\Criteria())->where([
+            $this->getMapper()->getTable()->getPk() => $id
+        ]);
+        return $this->getOneByCriteria($Criteria, $RelationCriteria);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getOneByCriteria(Criteria $Criteria, Criteria $RelationCriteria=null)
+    {
+        $Criteria->limit(1);
+        $Criteria->offset(0);
+        $data = $this->getMapper()->fetchOneByCriteria($Criteria);
         if (empty($data)) {
             return null;
         }
@@ -130,7 +143,7 @@ abstract class Repository implements Interfaces\Repository
      * @param Criteria $RelationCriteria
      * @return array|null
      */
-    public function getList(Criteria $Criteria, Criteria $RelationCriteria=null)
+    public function getByCriteria(Criteria $Criteria, Criteria $RelationCriteria=null)
     {
         $data = $this->getMapper()->fetchAll($Criteria);
         if (empty($data)) {
@@ -144,7 +157,7 @@ abstract class Repository implements Interfaces\Repository
         
         return $result;
     }
-        
+
     /**
      * @inheritdoc
      */
@@ -168,18 +181,5 @@ abstract class Repository implements Interfaces\Repository
     {
         $this->getMapper()->delete($Entity->getId(), $user_id);
         $Entity->delete();
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function exists(Criteria $Criteria, Criteria $RelationCriteria=null)
-    {
-        $data = $this->getMapper()->fetchOneByCriteria($Criteria);
-        if (empty($data)) {
-            return null;
-        }
-
-        return $this->buildEntity($data, $RelationCriteria);
     }
 }

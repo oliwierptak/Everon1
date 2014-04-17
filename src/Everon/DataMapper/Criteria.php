@@ -91,7 +91,6 @@ class Criteria implements Interfaces\Criteria
         if (empty($this->in) === false) {
             $where_str .= ' ';
             foreach ($this->in as $field => $values) {
-                //$field_ok = str_replace('.', '_', $field); //replace z.id with z_id
                 $in_str = implode(',', $values);
                 $where_str .= " AND ${field} IN (${in_str})";
             }

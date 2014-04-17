@@ -221,7 +221,7 @@ class Handler implements Interfaces\ResourceHandler
             $EntityRelationCriteria->orderBy($Navigator->getOrderBy());
             $EntityRelationCriteria->sort($Navigator->getSort());
             
-            $entity_list = $Repository->getList($EntityRelationCriteria);
+            $entity_list = $Repository->getByCriteria($EntityRelationCriteria);
     
             $ResourceList = new Helper\Collection([]);
             for ($a=0; $a<count($entity_list); $a++) {

@@ -39,7 +39,7 @@ interface Repository
      * @param Criteria $Criteria
      * @return array|null
      */
-    function getList(Criteria $Criteria);
+    function getByCriteria(Criteria $Criteria);
         
     /**
      * @param Entity $Entity
@@ -58,7 +58,7 @@ interface Repository
      * @param Criteria $RelationCriteria
      * @return Entity|null
      */
-    function exists(Criteria $Criteria, Criteria $RelationCriteria=null);
+    function getOneByCriteria(Criteria $Criteria, Criteria $RelationCriteria=null);
 
     /**
      * @return DataMapper
