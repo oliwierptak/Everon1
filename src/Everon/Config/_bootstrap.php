@@ -16,8 +16,8 @@ if (isset($REQUEST_IDENTIFIER) === false) {
     $REQUEST_IDENTIFIER = new RequestIdentifier();
 }
 
-if (isset($CustomExceptionHandler)) {
-    $CustomExceptionHandler();
+if (isset($CUSTOM_EXCEPTION_HANDLER)) {
+    $CUSTOM_EXCEPTION_HANDLER();
 }
 else {
     Bootstrap::setupExceptionHandler($REQUEST_IDENTIFIER->getValue(), $EVERON_ROOT, '500.log');

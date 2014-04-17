@@ -84,17 +84,6 @@ $Container->propose('ConnectionManager', function() use ($Factory) {
     return $Factory->buildConnectionManager($DatabaseConfig);
 });
 
-$Container->propose('ResourceManager', function() use ($Factory) {
-    $Factory->getDependencyContainer()->monitor('ResourceManager ', ['Everon\Config\Manager']);
-    $ConfigManager = $Factory->getDependencyContainer()->resolve('ConfigManager');
-
-    $rest_url = $ConfigManager->getConfigValue('rest.url');
-    $versioning = $ConfigManager->getConfigValue('rest.versioning');
-    $mapping = $ConfigManager->getConfigValue('rest.mapping', []);
-    $rest_server_url = $rest_url['protocol'].$rest_url['host'].':'.$rest_url['port'].$rest_url['url'];
-    return $Factory->buildRestResourceManager($rest_server_url, $versioning['supported_versions'], $versioning['type'], $mapping);
-});
-
 //xxx
 //avoid circular dependencies
 //the logger needs ConfigManager in order to be instantiated, therefore Logger can't be auto injected into ConfigManger
