@@ -18,7 +18,7 @@ trait Exceptions
      */
     protected function formatExceptionParams($message, $parameters)
     {
-        if (trim($message) == '' || is_null($parameters)) {
+        if (trim($message) === '' || is_null($parameters)) {
             return $message;
         }
 

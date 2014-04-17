@@ -175,10 +175,10 @@ class Router extends Config\Item implements Config\Interfaces\ItemRouter
     public function validateData(array $data)
     {
         parent::validateData($data);
-        $this->assertIsStringAndNonEmpty(@$data['url'], 'Invalid url: "%s"', 'ConfigItem');
-        $this->assertIsStringAndNonEmpty(@$data[static::PROPERTY_MODULE], 'Invalid item module name: "%s"', 'ConfigItem');
-        $this->assertIsStringAndNonEmpty(@$data['controller'], 'Invalid controller: "%s"', 'ConfigItem');
-        $this->assertIsStringAndNonEmpty(@$data['action'], 'Invalid action: "%s"', 'ConfigItem');
+        $this->assertIsStringAndNonEmpty((string) @$data['url'], 'Invalid url: "%s"', 'ConfigItem');
+        $this->assertIsStringAndNonEmpty((string) @$data[static::PROPERTY_MODULE], 'Invalid item module name: "%s"', 'ConfigItem');
+        $this->assertIsStringAndNonEmpty((string) @$data['controller'], 'Invalid controller: "%s"', 'ConfigItem');
+        $this->assertIsStringAndNonEmpty((string) @$data['action'], 'Invalid action: "%s"', 'ConfigItem');
     }
 
     /**

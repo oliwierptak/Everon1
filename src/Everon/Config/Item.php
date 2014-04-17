@@ -56,7 +56,7 @@ class Item implements Interfaces\Item
      */
     public function validateData(array $data)
     {
-        $this->assertIsStringAndNonEmpty(@$data[static::PROPERTY_NAME], 'Invalid item name: "%s"', 'ConfigItem');
+        $this->assertIsStringAndNonEmpty((string) @$data[static::PROPERTY_NAME], 'Invalid item name: "%s"', 'ConfigItem');
     }
 
     public function getName()
