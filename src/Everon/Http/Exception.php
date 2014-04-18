@@ -10,20 +10,28 @@
 namespace Everon\Http;
 
 use Everon\Exception as EveronException; 
-use Everon\Interfaces;
 
-class Exception extends EveronException
+class Exception extends EveronException implements Interfaces\Exception
 {
-    protected $http_status = null;
-    protected $http_message = null;
+    /**
+     * @var Interfaces\Message $Message
+     */
+    protected $HttpMessage;
 
+    /**
+     * @param Interfaces\Message $HttpMessage
+     */
+    public function __construct(Interfaces\Message $HttpMessage)
+    {
+        $this->HttpMessage = $HttpMessage;
+        parent::__construct($HttpMessage->getMessage(), $params=null, $Previous=null, $Callback=null);
+    }
+
+    /**
+     * @return Interfaces\Message
+     */
     public function getHttpMessage()
     {
-        return $this->http_message;
-    }
-    
-    public function getHttpStatus()
-    {
-        return $this->http_status;
+        return $this->HttpMessage;
     }
 }

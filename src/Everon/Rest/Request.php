@@ -110,4 +110,20 @@ class Request extends \Everon\Request implements Interfaces\Request
         }
         return $result;
     }
+
+    /**
+     * @return string
+     */
+    public function getFullPath()
+    {
+        switch ($this->versioning) {
+            case Resource\Handler::VERSIONING_URL:
+                return $this->getVersion().$this->getPath();
+                break;
+
+            default;
+                return $this->getPath();
+                break;
+        }
+    }
 }

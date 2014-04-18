@@ -9,13 +9,11 @@
  */
 namespace Everon;
 
-use Everon\Dependency;
-use Everon\Interfaces;
-use Everon\Exception;
-use Everon\Http;
-
 class Mvc extends Core implements Interfaces\Core
 {
+    use Dependency\Injection\ConfigManager;
+    use Dependency\Injection\Response;
+    
     /**
      * @var Mvc\Interfaces\Controller
      */
@@ -30,6 +28,22 @@ class Mvc extends Core implements Interfaces\Core
             parent::run($RequestIdentifier);
         }
         catch (Exception\RouteNotDefined $Exception) {
+            $NotFound = new Http\Exception((new Http\Message\NotFound('Invalid resource name or version')));
+            $this->showException($NotFound->getHttpMessage()->getStatus(), $NotFound, $this->Controller);
+        }
+        catch (\Exception $Exception) {
+            $this->showException(500, $Exception, $this->Controller);
+        }
+        finally {
+            $url = $this->getConfigManager()->getConfigValue('application.env.url');
+            $this->getLogger()->rest(
+                sprintf(
+                    '[%d] %s %s (%s)',
+                    $this->getResponse()->getStatusCode(), $this->getRequest()->getMethod(), $url.$this->getRequest()->getPath(), $this->getResponse()->getStatusMessage()
+                )
+            );
+        }/*
+        catch (Exception\RouteNotDefined $Exception) {
             $this->getLogger()->error($Exception);
             $NotFound = new Http\Exception\NotFound('Page not found: '.$Exception->getMessage());
             $this->showControllerException($NotFound->getHttpStatus(), $NotFound, $this->Controller);
@@ -37,7 +51,7 @@ class Mvc extends Core implements Interfaces\Core
         catch (\Exception $Exception) {
             $this->getLogger()->error($Exception);
             $this->showControllerException(400, $Exception, $this->Controller);
-        }
+        }*/
     }
 
     /**
@@ -45,7 +59,7 @@ class Mvc extends Core implements Interfaces\Core
      * @param \Exception $Exception
      * @param Mvc\Interfaces\Controller|null $Controller
      */
-    public function showControllerException($code, \Exception $Exception, $Controller)
+    public function showException($code, \Exception $Exception, $Controller)
     {
         /**
          * @var Mvc\Interfaces\Controller $Controller

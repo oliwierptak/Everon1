@@ -18,18 +18,13 @@ use Everon\Rest;
 
 /**
  * @method \Everon\Http\Interfaces\Response getResponse
+ * @method \Everon\Rest\Interfaces\Request getRequest
  */
 class Server extends \Everon\Core implements Rest\Interfaces\Server
 {
     use Dependency\Injection\ConfigManager;
     use Dependency\Injection\Response;
     
-    /**
-     * @var Rest\Interfaces\Controller
-     */
-    protected $Controller = null;
-
-
     /**
      * @inheritdoc
      */
@@ -52,21 +47,29 @@ class Server extends \Everon\Core implements Rest\Interfaces\Server
                 $this->getLogger()->response('[%s] %s : %s', [$this->getResponse()->getStatusCode(), $this->getRequest()->getPath(), $this->getRequest()->getMethod()]);
                 echo $this->getResponse()->toJson(); //xxx
             }
-            else  {
+            else {
                 parent::run($RequestIdentifier);
             }
         }
         catch (Exception\RouteNotDefined $Exception) {
-            $this->getLogger()->error($Exception);
-            $NotFound = new Http\Exception\NotFound('Resource not found: '.$Exception->getMessage());
-            $this->showException($NotFound->getHttpStatus(), $NotFound);
+            $NotFound = new Http\Exception((new Http\Message\NotFound('Invalid resource name or version')));
+            $this->showException($NotFound->getHttpMessage()->getStatus(), $NotFound);
         }
         catch (Rest\Exception\Resource $Exception) {
-            $this->showException(404, $Exception);
+            $NotFound = new Http\Exception((new Http\Message\NotFound($Exception->getMessage())));
+            $this->showException($NotFound->getHttpMessage()->getStatus(), $NotFound);
         }
         catch (\Exception $Exception) {
-            $this->getLogger()->error($Exception);
             $this->showException(500, $Exception);
+        }
+        finally {
+            $url = $this->getConfigManager()->getConfigValue('application.env.url');
+            $this->getLogger()->rest(
+                sprintf(
+                    '[%d] %s %s (%s)',
+                    $this->getResponse()->getStatusCode(), $this->getRequest()->getMethod(), $url.$this->getRequest()->getFullPath(), $this->getResponse()->getStatusMessage()
+                )
+            );
         }
     }
     
@@ -77,12 +80,14 @@ class Server extends \Everon\Core implements Rest\Interfaces\Server
     public function showException($code, \Exception $Exception)
     {
         $message = $Exception->getMessage();
-        $this->getResponse()->setData(['error' => $message]);
         if ($Exception instanceof Http\Exception) {
-            $message = $Exception->getHttpMessage();
-            $code = $Exception->getHttpStatus();
+            //$message = $Exception->getHttpMessage()->getMessage();
+            $message = $Exception->getHttpMessage()->getInfo() !== '' ? $Exception->getHttpMessage()->getInfo() :  $Exception->getHttpMessage()->getMessage();
+            $code = $Exception->getHttpMessage()->getStatus();
         }
 
+        $this->getResponse()->setData(['error' => $message]); //xxx
+        
         $this->getResponse()->setStatusCode($code);
         $this->getResponse()->setStatusMessage($message);
         echo $this->getResponse()->toJson();

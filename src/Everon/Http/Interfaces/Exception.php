@@ -7,10 +7,12 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon\Rest\Interfaces;
+namespace Everon\Http\Interfaces;
 
-interface Request extends \Everon\Interfaces\Request
+interface Exception
 {
-    function getVersion();
-    function getFullPath();
+    /**
+     * @return Message
+     */
+    function getHttpMessage();
 }

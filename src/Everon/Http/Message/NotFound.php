@@ -7,10 +7,10 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon\Rest\Interfaces;
+namespace Everon\Http\Message;
 
-interface Request extends \Everon\Interfaces\Request
+class NotFound extends AbstractMessage 
 {
-    function getVersion();
-    function getFullPath();
+    protected $http_status = 404;
+    protected $http_message = 'NOT FOUND';
 }

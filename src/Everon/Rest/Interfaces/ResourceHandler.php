@@ -67,7 +67,7 @@ interface ResourceHandler
      * @param $version
      * @param ResourceNavigator $Navigator
      * @return ResourceInterface
-     * @throws \Everon\Http\Exception\NotFound
+     * @throws \Everon\Rest\Exception\Resource
      */
     function getResource($resource_id, $resource_name, $version, ResourceNavigator $Navigator);
 
