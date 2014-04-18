@@ -50,7 +50,6 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
         $this->getResponse()->setResult($result);
 
         $this->prepareResponse($action, $result);
-        $this->getLogger()->response('[%s] %s : %s', [$this->getResponse()->getStatusCode(), $this->getName(), $action]);
         $this->response();
     }
     

@@ -44,7 +44,6 @@ class Server extends \Everon\Core implements Rest\Interfaces\Server
             }
             
             if ($this->getRequest()->getMethod() === \Everon\Request::METHOD_OPTIONS) {
-                $this->getLogger()->response('[%s] %s : %s', [$this->getResponse()->getStatusCode(), $this->getRequest()->getPath(), $this->getRequest()->getMethod()]);
                 echo $this->getResponse()->toJson(); //xxx
             }
             else {
@@ -67,7 +66,10 @@ class Server extends \Everon\Core implements Rest\Interfaces\Server
             $this->getLogger()->rest(
                 sprintf(
                     '[%d] %s %s (%s)',
-                    $this->getResponse()->getStatusCode(), $this->getRequest()->getMethod(), $url.$this->getRequest()->getFullPath(), $this->getResponse()->getStatusMessage()
+                    $this->getResponse()->getStatusCode(),
+                    $this->getRequest()->getMethod(), 
+                    $url.$this->getRequest()->getFullPath(), 
+                    $this->getResponse()->getStatusMessage()
                 )
             );
         }

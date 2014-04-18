@@ -31,11 +31,12 @@ class Mvc extends Core implements Interfaces\Core
             parent::run($RequestIdentifier);
         }
         catch (Exception\RouteNotDefined $Exception) {
-            $NotFound = new Http\Exception((new Http\Message\NotFound('Invalid resource name or version')));
+            $NotFound = new Http\Exception((new Http\Message\NotFound('Page not found')));
             $this->showException($NotFound->getHttpMessage()->getStatus(), $NotFound, $this->Controller);
         }
-        catch (\Exception $Exception) {
-            $this->showException(500, $Exception, $this->Controller);
+        catch (Exception $Exception) {
+            $NotFound = new Http\Exception((new Http\Message\InternalServerError($Exception->getMessage())));
+            $this->showException($NotFound->getHttpMessage()->getStatus(), $NotFound, $this->Controller);
         }
         finally {
             $this->getLogger()->mvc(
@@ -44,16 +45,7 @@ class Mvc extends Core implements Interfaces\Core
                     $this->getResponse()->getStatusCode(), $this->getRequest()->getMethod(), $this->getRequest()->getPath(), $this->getResponse()->getStatusMessage()
                 )
             );
-        }/*
-        catch (Exception\RouteNotDefined $Exception) {
-            $this->getLogger()->error($Exception);
-            $NotFound = new Http\Exception\NotFound('Page not found: '.$Exception->getMessage());
-            $this->showControllerException($NotFound->getHttpStatus(), $NotFound, $this->Controller);
         }
-        catch (\Exception $Exception) {
-            $this->getLogger()->error($Exception);
-            $this->showControllerException(400, $Exception, $this->Controller);
-        }*/
     }
 
     /**
