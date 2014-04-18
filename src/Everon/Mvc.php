@@ -9,6 +9,9 @@
  */
 namespace Everon;
 
+/**
+ * @method \Everon\Http\Interfaces\Response getResponse
+ */
 class Mvc extends Core implements Interfaces\Core
 {
     use Dependency\Injection\ConfigManager;
@@ -35,11 +38,10 @@ class Mvc extends Core implements Interfaces\Core
             $this->showException(500, $Exception, $this->Controller);
         }
         finally {
-            $url = $this->getConfigManager()->getConfigValue('application.env.url');
-            $this->getLogger()->rest(
+            $this->getLogger()->mvc(
                 sprintf(
                     '[%d] %s %s (%s)',
-                    $this->getResponse()->getStatusCode(), $this->getRequest()->getMethod(), $url.$this->getRequest()->getPath(), $this->getResponse()->getStatusMessage()
+                    $this->getResponse()->getStatusCode(), $this->getRequest()->getMethod(), $this->getRequest()->getPath(), $this->getResponse()->getStatusMessage()
                 )
             );
         }/*
