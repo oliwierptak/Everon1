@@ -59,7 +59,8 @@ class Server extends \Everon\Core implements Rest\Interfaces\Server
             $this->showException($NotFound->getHttpMessage()->getStatus(), $NotFound);
         }
         catch (\Exception $Exception) {
-            $this->showException(500, $Exception);
+            $InternalServerError = new Http\Exception((new Http\Message\InternalServerError($Exception->getMessage())));
+            $this->showException($InternalServerError->getHttpMessage()->getStatus(), $InternalServerError);
         }
         finally {
             $url = $this->getConfigManager()->getConfigValue('application.env.url');
