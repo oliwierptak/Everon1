@@ -29,6 +29,8 @@ class Dispatcher implements Interfaces\Dispatcher
     {
         if (array_key_exists($name,$this->listeners))
         {
+            $Event->setDispatcher($this);
+            $Event->setName($name);
             $this->doDispatch($this->getListeners($name), $name, $Event);
         }
     }
