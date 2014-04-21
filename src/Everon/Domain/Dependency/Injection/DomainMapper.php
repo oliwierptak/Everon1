@@ -9,7 +9,7 @@
  */
 namespace Everon\Domain\Dependency\Injection;
 
-trait DomainManager
+trait DomainMapper
 {
     use \Everon\Domain\Dependency\DomainMapper;
 }
