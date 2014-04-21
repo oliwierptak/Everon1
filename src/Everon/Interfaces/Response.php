@@ -14,31 +14,31 @@ interface Response
     /**
      * @return bool
      */
-    public function getResult();
+    function getResult();
 
     /**
      * @param $result
      */
-    public function setResult($result);
+    function setResult($result);
 
     /**
      * @param string $root
      * @return string
      */
-    public function toJson($root = 'data');
+    function toJson($root = 'data');
 
     /**
      * @return null
      */
-    public function getData();
+    function getData();
 
     /**
      * @return string
      */
-    public function toText();
+    function toText();
 
     /**
      * @param mixed $data
      */
-    public function setData($data);
+    function setData($data);
 }

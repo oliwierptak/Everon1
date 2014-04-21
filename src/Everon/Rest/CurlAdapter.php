@@ -33,7 +33,7 @@ class CurlAdapter implements Interfaces\CurlAdapter
             CURLOPT_RETURNTRANSFER => 1, 
             CURLOPT_HEADER => 0, 
             CURLOPT_VERBOSE => 0, 
-            CURLOPT_USERPWD => 'goldfinger@grofas.com' . ":" . 'easy', 
+            CURLOPT_USERPWD => 'test' . ":" . 'easy', 
             CURLOPT_TIMEOUT => 5, 
         ];
         $options = $this->arrayMergeDefault($defaults, $options);
