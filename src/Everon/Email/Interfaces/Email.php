@@ -9,6 +9,7 @@ namespace Everon\Email\Interfaces;
 
 interface Email
 {
+
     /**
      * @param mixed $headers
      */
