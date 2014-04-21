@@ -12,7 +12,8 @@ namespace Everon\Email;
 use Everon\Email\Interfaces\Email;
 use Everon\Email\Interfaces\Sender;
 
-class Manager {
+class Manager implements \Everon\Email\Interfaces\Manager
+{
 
     public function send(Sender $Sender, Email $Email, array $receivers)
     {

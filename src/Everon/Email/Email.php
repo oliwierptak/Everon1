@@ -11,11 +11,11 @@ namespace Everon\Email;
 
 class Email implements \Everon\Email\Interfaces\Email
 {
-    private $headers;
+    protected $headers;
 
-    private $subject;
+    protected $subject;
 
-    private $message;
+    protected  $message;
 
     public function __construct($headers, $message, $subject)
     {
