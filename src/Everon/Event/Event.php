@@ -2,7 +2,7 @@
 /**
  * This file is part of the Everon framework.
  *
- * (c) Zeger Hoogeboom <zeger_hoogeboom@hotmail.com>
+ * (c) Oliwier Ptak <oliwierptak@gmail.com>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -11,6 +11,9 @@ namespace Everon\Event;
 
 use Everon\Event\Interfaces\Dispatcher;
 
+/**
+ * @author Zeger Hoogeboom <zeger_hoogeboom@hotmail.com>
+ */
 class Event implements Interfaces\Event
 {
 

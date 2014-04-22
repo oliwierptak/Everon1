@@ -10,12 +10,15 @@
 namespace Everon;
 
 
+use Everon\Event;
+
 abstract class Controller implements Interfaces\Controller
 {
     use Dependency\Injection\ConfigManager;
     use Dependency\Injection\Logger;
     use Dependency\Injection\Response;
     use Dependency\Injection\Request;
+    use Event\Dependency\Injection\Dispatcher;
     use Module\Dependency\Injection\ModuleManager;
 
     use Helper\IsCallable;
@@ -111,7 +114,10 @@ abstract class Controller implements Interfaces\Controller
                 );
             }
         }
-        
+        if ($this instanceof Event\Interfaces\Dispatchable) {
+            $this->getDispatcher()->dispatch(get_class($this));
+        }
+
         $this->prepareResponse($action, $result);
         $this->response();
         return $result;

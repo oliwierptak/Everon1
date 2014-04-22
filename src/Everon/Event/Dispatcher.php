@@ -2,48 +2,55 @@
 /**
  * This file is part of the Everon framework.
  *
- * (c) Zeger Hoogeboom <zeger_hoogeboom@hotmail.com>
+ * (c) Oliwier Ptak <oliwierptak@gmail.com>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 namespace Everon\Event;
 
-
-use Everon\Event\Interfaces\Event;
 use Everon\Event\Interfaces\Listener;
 use Everon\Exception\InvalidListener;
 
+/**
+ * @author Zeger Hoogeboom <zeger_hoogeboom@hotmail.com>
+ */
 class Dispatcher implements Interfaces\Dispatcher
 {
+
     /**
      * @var array
      */
     private $listeners = array();
 
     /**
-     * @param $name
-     * @param $Event Event
+     * @inheritdoc
      */
-    public function dispatch($name, $Event)
+    public function dispatch($controllerName)
     {
-        if (array_key_exists($name,$this->listeners))
-        {
-            $this->doDispatch($this->getListeners($name), $name, $Event);
+        $event_name = '';
+        foreach ($this->listeners as $eventName => $listener) { //@TODO: looping through all listeners is gay..
+            if ($listener === $controllerName) { //@TODO: The action name is appended in the register() function, make sure the matching goes alright, now it surely won't
+                $event_name = $eventName;
+                break;
+            }
+        }
+
+        foreach ($this->listeners[$event_name] as $listener) {
+            call_user_func($listener['callback']);
         }
     }
-
     /**
-     * @param $listeners
-     * @param $name
-     * @param $Event
+     * @inheritdoc
      */
-    protected function doDispatch($listeners, $name, $Event)
+    public function register($eventName, Listener $listener, $moduleName, $controllerName, $action, $callback)
     {
-        foreach ($listeners as $listener)
-        {
-            call_user_func($listener, $Event, $name, $this);
+        if (array_key_exists($eventName,$this->listeners) == false ) {
+            $this->listeners[$eventName] = 'Everon'.DIRECTORY_SEPARATOR.'Module'.DIRECTORY_SEPARATOR.$moduleName.DIRECTORY_SEPARATOR.$controllerName.DIRECTORY_SEPARATOR.$action.DIRECTORY_SEPARATOR;
         }
+        $index = $this->countListeners($eventName) + 1;
+        $this->listeners[$eventName][$index] = $listener;
+        $this->listeners[$eventName][$index]['callback'] = $callback;
     }
 
     /**
@@ -52,10 +59,9 @@ class Dispatcher implements Interfaces\Dispatcher
     public function getListeners($name = null)
     {
         $listeners = array();
-        foreach ($this->listeners as $eventName => $event) {
-            if ($eventName === $name)
-            {
-                $listeners[] = $event;
+        if ($this->listenerExists($name)) {
+            foreach ($this->listeners[$name] as $listener) {
+                $listeners[] = $listener;
             }
         }
         return $this->listeners;
@@ -64,17 +70,17 @@ class Dispatcher implements Interfaces\Dispatcher
     /**
      * @inheritdoc
      */
-    public function addListener($name, Listener $listener)
-    {
-        $this->listeners[$name] = $listener;
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function hasListeners()
     {
         return (bool) count($this->listeners) === 0;
+    }
+
+    public function listenerExists($name)
+    {
+        if (isset($this->listeners[$name])) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -90,7 +96,7 @@ class Dispatcher implements Interfaces\Dispatcher
      */
     public function removeListener($name)
     {
-        if (!isset($this->listeners[$name])) {
+        if ($this->listenerExists($name) == false) {
             throw new InvalidListener('This listener was not registered.');
         }
         unset($this->listeners[$name]);
