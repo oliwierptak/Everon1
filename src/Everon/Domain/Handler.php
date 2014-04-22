@@ -54,22 +54,29 @@ abstract class Handler implements Interfaces\Handler
      * @throws \Everon\DataMapper\Exception\Schema
      * @throws \Everon\Exception\Domain
      */
-    public function __call($name, $arguments)
+    public function __call($name, $arguments) //todo remove me
     {
         $tokens = explode('_', $this->stringCamelToUnderscore($name));
         if (count($tokens) >= 2) {
-            array_shift($tokens); //remove get
+            $action = array_shift($tokens);
             $domain_type = array_pop($tokens); //remove Model or Repository
             $domain_name = implode('', $tokens);
+            
+            if (strcasecmp($action, 'set') === 0) {
+                $action = $action.$domain_type;
+                $this->$action($arguments[0], $arguments[1]);
+                return null;
+            }
+            else if (strcasecmp($action, 'get') === 0) {
+                switch ($domain_type) {
+                    case 'Model':
+                        return $this->getModel($domain_name);
+                        break;
 
-            switch ($domain_type) {
-                case 'Model':
-                    return $this->getModel($domain_name);
-                    break;
-
-                case 'Repository':
-                    return $this->getRepository($domain_name);
-                    break;
+                    case 'Repository':
+                        return $this->getRepository($domain_name);
+                        break;
+                }
             }
         }
         
@@ -95,6 +102,14 @@ abstract class Handler implements Interfaces\Handler
     /**
      * @inheritdoc
      */
+    public function setModel($name, $Model)
+    {
+        $this->repositories[$name] = $Model;
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function getRepository($domain_name)
     {
         if (isset($this->repositories[$domain_name]) === false) {
@@ -111,6 +126,14 @@ abstract class Handler implements Interfaces\Handler
         }
 
         return $this->repositories[$domain_name];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setRepository($name, Interfaces\Repository $Repository)
+    {
+        $this->repositories[$name] = $Repository;
     }
 
     /**
