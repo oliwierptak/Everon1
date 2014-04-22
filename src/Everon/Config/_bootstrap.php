@@ -28,6 +28,7 @@ require_once(implode(DIRECTORY_SEPARATOR, [$EVERON_SOURCE_ROOT, 'Environment.php
 
 $Environment = new Environment($EVERON_ROOT, $EVERON_SOURCE_ROOT);
 $Bootstrap = new Bootstrap($Environment);
+
 $Factory = $Bootstrap->run();
 $Container = $Factory->getDependencyContainer();
 

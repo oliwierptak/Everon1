@@ -106,6 +106,7 @@ class Bootstrap
         $this->registerClassLoader($prepend_autoloader);
         
         require_once($this->getEnvironment()->getEveronHelper().'ToString.php');
+        require_once($this->getEnvironment()->getEveronHelper().'Exceptions.php');
         require_once($this->getEnvironment()->getEveronRoot().'Exception.php');
 
         /**
