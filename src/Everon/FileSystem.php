@@ -41,10 +41,42 @@ class FileSystem implements Interfaces\FileSystem
         else if ($is_absolute) { //absolute, eg. '/var/www/Everon/Tests/Everon/tmp/';
             //strip absolute root from path
             $path = mb_substr($path, mb_strlen($this->root));
-        }        
-        
+        }
+
         $path = $this->root.$path;
         return $path;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function directoryExists($path)
+    {
+        $path = $this->getRealPath($path);
+        $Info = new \SplFileInfo($path);
+        if ($Info->isFile()) {
+            throw new Exception\FileSystem('Expected a directory, got a file: "%s"', $path);
+        }
+        if ($Info->isDir()) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function fileExists($path)
+    {
+        $path = $this->getRealPath($path);
+        $Info = new \SplFileInfo($path);
+        if ($Info->isDir()) {
+            throw new Exception\FileSystem('Expected a file, got a directory: "%s"', $path);
+        }
+        if ($Info->isFile()) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -66,6 +98,21 @@ class FileSystem implements Interfaces\FileSystem
     /**
      * @inheritdoc
      */
+    public function setRoot($root)
+    {
+        /**
+         * @var \SplFileInfo $Dir
+         */
+        $Dir = new \SplFileInfo($root);
+        if ($Dir->isDir() === false) {
+            throw new Exception\FileSystem('Root directory does not exist: "%s"', $root);
+        }
+        $this->root = $Dir->getPathname().DIRECTORY_SEPARATOR;
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function createPath($path, $mode=0775)
     {
         try {
@@ -76,6 +123,29 @@ class FileSystem implements Interfaces\FileSystem
         }
         catch (\Exception $e) {
             throw new Exception\FileSystem($e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function copyPath($source, $destination, $mode=0775)
+    {
+        $this->createPath($destination,$mode);
+
+        /**
+         * @var \RecursiveIteratorIterator $iterator
+         */
+        $iterator = new \RecursiveIteratorIterator(
+            new \RecursiveDirectoryIterator($source, \RecursiveDirectoryIterator::SKIP_DOTS),
+            \RecursiveIteratorIterator::SELF_FIRST);
+
+        foreach ($iterator as $item) {
+            if ($item->isDir()) {
+                $this->createPath($destination . DIRECTORY_SEPARATOR . $iterator->getSubPathName());
+            } else {
+                copy($item, $destination. DIRECTORY_SEPARATOR . $iterator->getSubPathName());
+            }
         }
     }
 
@@ -123,14 +193,14 @@ class FileSystem implements Interfaces\FileSystem
                     $result[] = $File;
                 }
             }
-            
+
             return $result;
         }
         catch (\Exception $e) {
             throw new Exception\FileSystem($e);
-        }            
+        }
     }
-    
+
     /**
      * @inheritdoc
      */
@@ -153,12 +223,12 @@ class FileSystem implements Interfaces\FileSystem
                     $result[] = clone $Dir;
                 }
             }
-            
+
             return $result;
         }
         catch (\Exception $e) {
             throw new Exception\FileSystem($e);
-        }            
+        }
     }
 
     /**
@@ -198,7 +268,7 @@ class FileSystem implements Interfaces\FileSystem
             if (file_exists($filename) === false) {
                 return null;
             }
-            
+
             return file_get_contents($filename);
         }
         catch (\Exception $e) {

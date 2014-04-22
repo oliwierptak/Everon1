@@ -27,12 +27,9 @@ abstract class Resource extends Resource\Basic implements Interfaces\Resource
      * @var Collection
      */
     protected $RelationCollection = null;
-    
+
     /**
-     * @param $href
-     * @param $version
-     * @param $resource_name
-     * @param $domain_name
+     * @param Interfaces\ResourceHref $Href
      * @param Entity $Entity
      */
     public function __construct(Interfaces\ResourceHref $Href, Entity $Entity)

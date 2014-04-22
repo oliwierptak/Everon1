@@ -29,6 +29,16 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
 
     public function __construct($name = NULL, array $data=[], $dataName='')
     {
+        $Dir = new \SplFileInfo(@$GLOBALS['EVERON_ROOT']);
+        if ($Dir->isDir() === false) {
+            throw new Exception\Core('Everon root directory is not defined');
+        }
+        
+        $Dir = new \SplFileInfo(@$GLOBALS['EVERON_SOURCE_ROOT']);
+        if ($Dir->isDir() === false) {
+            throw new Exception\Core('Everon source directory is not defined');
+        }
+        
         parent::__construct($name, $data, $dataName);
         $this->FrameworkEnvironment = new Environment($GLOBALS['EVERON_ROOT'], $GLOBALS['EVERON_SOURCE_ROOT']);
         $this->includeDoubles($this->getDoublesDirectory());

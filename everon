@@ -52,15 +52,9 @@ implode(DIRECTORY_SEPARATOR,
  * @var Application\Interfaces\DependencyContainer $Container
  * @var Application\Interfaces\Factory $Factory
  */
-$Bootstrap->getClassLoader()->add(
-    'Everon\Console\Controller', $Environment->getController().'Console'.DIRECTORY_SEPARATOR
-);
-
 $Container->register('Request', function() use ($Factory) {
     return $Factory->buildRequest($_SERVER, $_GET, $_POST, $_FILES, 'Everon\Console');
 });
-
-
 
 $REQUEST_IDENTIFIER->setSystemMemoryAtStart($system_memory);
 $Console = $Factory->buildConsoleRunner();

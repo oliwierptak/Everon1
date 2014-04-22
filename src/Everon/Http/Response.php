@@ -36,7 +36,11 @@ class Response extends BasicResponse implements Interfaces\Response
     
     protected $status_message = 'OK';
 
-    
+
+    /**
+     * @param $guid
+     * @param Interfaces\HeaderCollection $Headers
+     */
     public function __construct($guid, Interfaces\HeaderCollection $Headers)
     {
         parent::__construct($guid);
@@ -63,6 +67,9 @@ class Response extends BasicResponse implements Interfaces\Response
         return $this->content_type;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function setContentType($content_type)
     {
         $this->content_type = $content_type;
@@ -73,24 +80,32 @@ class Response extends BasicResponse implements Interfaces\Response
         return $this->charset;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function setCharset($charset)
     {
         $this->charset = $charset;
     }
 
-
+    /**
+     * @inheritdoc
+     */
     public function setHeader($name, $value)
     {
         $this->HeaderCollection->set($name, $value);
     }
 
+    /**
+     * @inheritdoc
+     */
     public function getHeader($name)
     {
         $this->HeaderCollection->get($name);
     }
 
     /**
-     * @return HeaderCollection
+     * @inheritdoc
      */
     public function getHeaderCollection()
     {
@@ -98,7 +113,7 @@ class Response extends BasicResponse implements Interfaces\Response
     }
 
     /**
-     * @param Interfaces\HeaderCollection $Collection
+     * @inheritdoc
      */
     public function setHeaderCollection(Interfaces\HeaderCollection $Collection)
     {
@@ -110,6 +125,9 @@ class Response extends BasicResponse implements Interfaces\Response
         return $this->status_code;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function setStatusCode($status)
     {
         $this->status_code = (int) $status;
@@ -121,7 +139,7 @@ class Response extends BasicResponse implements Interfaces\Response
     }
 
     /**
-     * @param string $status_message
+     * @inheritdoc
      */
     public function setStatusMessage($status_message)
     {
@@ -136,6 +154,9 @@ class Response extends BasicResponse implements Interfaces\Response
         return (string) $this->data;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function toJson($root='data')
     {
         $this->setContentType('application/json');
@@ -153,6 +174,7 @@ class Response extends BasicResponse implements Interfaces\Response
         $this->send();
         return (string) $text;
     }
+
     public function send()
     {
         if (headers_sent() === false) {
