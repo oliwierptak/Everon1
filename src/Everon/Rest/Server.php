@@ -63,7 +63,7 @@ class Server extends \Everon\Core implements Rest\Interfaces\Server
             $this->showException($InternalServerError->getHttpMessage()->getStatus(), $InternalServerError);
         }
         finally {
-            $url = $this->getConfigManager()->getConfigValue('application.env.url');
+            $url = $this->getConfigManager()->getConfigValue('application.env.url'); //xxx
             $this->getLogger()->rest(
                 sprintf(
                     '[%d] %s %s (%s)',

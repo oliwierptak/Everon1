@@ -33,12 +33,18 @@ class Console extends Core implements Interfaces\Core
             parent::run($RequestIdentifier);
         }
         catch (Exception\RouteNotDefined $e) {
-            $this->getLogger()->notFound($e);
             echo "Unknown command: ".$e->getMessage()."\n";
         }
         catch (\Exception $e) {
-            $this->getLogger()->error($e);
             echo "Error: ".$e->getMessage()."\n";
+        }
+        finally {
+            $this->getLogger()->console(
+                sprintf(
+                    '[%d] %s %s (%s)',
+                    $this->getResponse()->getStatusCode(), $this->getRequest()->getMethod(), $this->getRequest()->getPath(), $this->getResponse()->getStatusMessage()
+                )
+            );
         }
     }
 

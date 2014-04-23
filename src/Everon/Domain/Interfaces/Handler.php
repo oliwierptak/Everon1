@@ -9,8 +9,6 @@
  */
 namespace Everon\Domain\Interfaces;
 
-use Everon\DataMapper\Interfaces\Schema;
-
 interface Handler extends \Everon\Interfaces\Dependency\Factory, \Everon\DataMapper\Interfaces\Dependency\DataMapperManager
 {
     /**
@@ -21,10 +19,22 @@ interface Handler extends \Everon\Interfaces\Dependency\Factory, \Everon\DataMap
     function getRepository($domain_name);
 
     /**
+     * @param $name
+     * @param Repository $Repository
+     */
+    function setRepository($name, Repository $Repository);
+
+    /**
      * @param $domain_name
      * @return mixed
      */
     function getModel($domain_name);
+
+    /**
+     * @param $name
+     * @param $Model
+     */
+    function setModel($name, $Model);
 
     /**
      * @param $domain_name
