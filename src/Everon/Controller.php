@@ -12,13 +12,13 @@ namespace Everon;
 
 use Everon\Event;
 
-abstract class Controller implements Interfaces\Controller
+abstract class Controller implements Interfaces\Controller, Event\Interfaces\Dispatchable
 {
     use Dependency\Injection\ConfigManager;
     use Dependency\Injection\Logger;
     use Dependency\Injection\Response;
     use Dependency\Injection\Request;
-    use Event\Dependency\Injection\Dispatcher;
+    use Event\Dependency\Injection\EventManager;
     use Module\Dependency\Injection\ModuleManager;
 
     use Helper\IsCallable;
@@ -101,11 +101,12 @@ abstract class Controller implements Interfaces\Controller
                 'Controller: "%s@%s" has no action: "%s" defined', [$this->getModule()->getName(), $this->getName(), $action]
             );
         }
-        
+        $this->getEventManager()->dispatchBeforeExecute($this->getModule()->getName(), $this->getName(), $action);
+
         $result = $this->{$action}();
         $result = ($result !== false) ? true : $result;
         $this->getResponse()->setResult($result);
-        
+
         if ($result === false) {
             $result_on_error = $this->executeOnError($action);
             if ($result_on_error === null) {
@@ -114,10 +115,7 @@ abstract class Controller implements Interfaces\Controller
                 );
             }
         }
-        if ($this instanceof Event\Interfaces\Dispatchable) {
-            $this->getDispatcher()->dispatch(get_class($this));
-        }
-
+        $this->getEventManager()->dispatchAfterExecute($this->getModule()->getName(), $this->getName(), $action);
         $this->prepareResponse($action, $result);
         $this->response();
         return $result;

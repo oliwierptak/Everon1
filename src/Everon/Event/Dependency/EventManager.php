@@ -12,25 +12,25 @@ namespace Everon\Event\Dependency;
 /**
  * @author Zeger Hoogeboom <zeger_hoogeboom@hotmail.com>
  */
-trait Dispatcher
+trait EventManager
 {
     /**
-     * @var \Everon\Event\Interfaces\Dispatcher
+     * @var \Everon\Event\Interfaces\Manager
      */
     protected $Dispatcher = null;
 
     /**
-     * @param \Everon\Event\Interfaces\Dispatcher $Dispatcher
+     * @param \Everon\Event\Interfaces\Manager $Dispatcher
      */
-    public function setDispatcher($Dispatcher)
+    public function setEventManager($Dispatcher)
     {
         $this->Dispatcher = $Dispatcher;
     }
 
     /**
-     * @return \Everon\Event\Interfaces\Dispatcher
+     * @return \Everon\Event\Interfaces\Manager
      */
-    public function getDispatcher()
+    public function getEventManager()
     {
         return $this->Dispatcher;
     }
