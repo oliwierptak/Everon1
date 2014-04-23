@@ -101,7 +101,7 @@ abstract class Controller implements Interfaces\Controller, Event\Interfaces\Dis
                 'Controller: "%s@%s" has no action: "%s" defined', [$this->getModule()->getName(), $this->getName(), $action]
             );
         }
-        $this->getEventManager()->dispatchBeforeExecute($this->getModule()->getName(), $this->getName(), $action);
+        $this->getEventManager()->dispatchBeforeExecute($this->getModule()->getName().'.'.$this->getName().'.'.$action);
 
         $result = $this->{$action}();
         $result = ($result !== false) ? true : $result;
@@ -115,7 +115,7 @@ abstract class Controller implements Interfaces\Controller, Event\Interfaces\Dis
                 );
             }
         }
-        $this->getEventManager()->dispatchAfterExecute($this->getModule()->getName(), $this->getName(), $action);
+        $this->getEventManager()->dispatchAfterExecute($this->getModule()->getName().'.'.$this->getName().'.'.$action);
         $this->prepareResponse($action, $result);
         $this->response();
         return $result;

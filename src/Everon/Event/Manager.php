@@ -17,8 +17,6 @@ use Everon\Helper;
  */
 class Manager implements Interfaces\Manager
 {
-    use Helper\IsCallable;
-
     /**
      * @var array
      */
@@ -37,32 +35,35 @@ class Manager implements Interfaces\Manager
     /**
      * @inheritdoc
      */
-    public function dispatchBeforeExecute($moduleName,$controllerName, $action)
+    public function dispatchBeforeExecute($eventName)
     {
         $this->propagation = Propagation::Running;
-        $this->dispatch($moduleName,$controllerName, $action);
+        $this->sortByPriority($eventName);
+        $this->dispatch($eventName, 'before');
     }
 
     /**
      * @inheritdoc
      */
-    public function dispatchAfterExecute($moduleName,$controllerName, $action)
+    public function dispatchAfterExecute($eventName)
     {
-        $this->dispatch($moduleName,$controllerName, $action);
+        $this->dispatch($eventName, 'after');
     }
 
     /**
      * @inheritdoc
      */
-    public function dispatch($moduleName, $controllerName, $action)
+    public function dispatch($eventName, $when)
     {
-        foreach ($this->listeners[$moduleName][$controllerName][$action] as $listener) {
+        foreach ($this->listeners[$eventName][$when] as $listener) {
             if ($this->propagation === Propagation::Halted) {
                 break;
             }
-            $result = call_user_func($listener);
-            if ($result === false) {
-                $this->propagation = Propagation::Halted;
+            if (is_callable($listener)) {
+                $result = call_user_func($listener);
+                if ($result === false) {
+                    $this->propagation = Propagation::Halted;
+                }
             }
         }
     }
@@ -70,13 +71,25 @@ class Manager implements Interfaces\Manager
     /**
      * @inheritdoc
      */
-    public function register($moduleName, $controllerName, $action, $beforeExecuteCallback, $afterExecuteCallback)
+    public function register($eventName, $beforeExecuteCallback = null, $afterExecuteCallback = null, $priority = 0)
     {
-        if (is_callable($beforeExecuteCallback) === false || is_callable($afterExecuteCallback) === false) {
-            throw new \Everon\Exception\Helper("This is not a valid callable");
+        $index = 0;
+        while(isset($this->listeners[$eventName]['before'][$priority][$index])) {
+            $index++;
         }
-        //@TODO: add the afterExecuteCallback to the array, somehow retrieve 'the next' index for it and pass some parameter to dispatch()
-        $this->listeners[$moduleName][$controllerName][$action][] = $beforeExecuteCallback;
+        $this->listeners[$eventName]['before'][$priority][$index] = $beforeExecuteCallback;
+        $this->listeners[$eventName]['after'][$priority][$index] = $afterExecuteCallback;
+    }
+
+    protected function countListeners($eventName)
+    {
+        return count($this->listeners[$eventName]);
+    }
+
+    protected function sortByPriority($eventName)
+    {
+        sort($this->listeners[$eventName]['before'],SORT_NUMERIC);
+        sort($this->listeners[$eventName]['after'],SORT_NUMERIC);
     }
 
 } 
