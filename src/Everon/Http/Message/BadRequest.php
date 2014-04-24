@@ -7,12 +7,10 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon\Http\Exception;
+namespace Everon\Http\Message;
 
-use Everon\Interfaces;
-
-class NotFound extends \Everon\Http\Exception 
+class BadRequest extends AbstractMessage 
 {
-    protected $http_status = 404;
-    protected $http_message = 'NOT FOUND';
+    protected $http_status = 400;
+    protected $http_message = 'BAD REQUEST';
 }

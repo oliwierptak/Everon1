@@ -9,6 +9,8 @@
  */
 namespace Everon;
 
+use Everon\Interfaces\Environment;
+
 class Bootstrap
 {
     /**
@@ -25,12 +27,27 @@ class Bootstrap
     
     protected $application_ini = null;
     
+    protected $environment_name = null;
     
-    public function __construct($Environment, $os=PHP_OS)
+    
+    public function __construct($Environment, $environment_name, $os=PHP_OS)
     {
+        $this->environment_name = trim($environment_name);
+        if ($this->environment_name === '') {
+            throw new \Exception('Undefined environment name');
+        }
+        
         $this->Environment = $Environment;
         $os = substr($os, 0, 3);
         $this->os_name = $os === 'WIN' ? 'win' : 'unix';
+        
+        //define config directory based on EVERON_ENVIRONMENT
+        $ConfigDir = new \SplFileInfo($this->Environment->getConfig().$this->environment_name);
+        if ($ConfigDir->isDir() === false) {
+            throw new \Exception(sprintf('Invalid config directory: "%s"', $ConfigDir->getPathname()));
+        }
+                
+        $this->Environment->setConfig($ConfigDir->getPathname().DIRECTORY_SEPARATOR);
     }
     
     public function getClassLoader()
@@ -41,6 +58,11 @@ class Bootstrap
     public function getEnvironment()
     {
         return $this->Environment;
+    }
+    
+    public function setEnvironment(Environment $Environment)
+    {
+        return $this->Environment = $Environment;
     }
     
     public function getOsName()
@@ -140,4 +162,23 @@ class Bootstrap
         error_log($message, 3, $log_filename);
         return $message;
     }
-}   
+
+    /**
+     * @param string $environment_name
+     */
+    public function setEnvironmentName($environment_name)
+    {
+        $this->environment_name = $environment_name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEnvironmentName()
+    {
+        return $this->environment_name;
+    }
+    
+    
+    
+}

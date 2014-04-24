@@ -30,7 +30,7 @@ abstract class Rest extends \Everon\Module implements Interfaces\Rest
         $this->authenticateRequest();
         
         if ($this->ApiKey === null) {
-            throw new Http\Exception\Unauthorized('Invalid ApiKey');
+            throw new Http\Exception(new Http\Message\Unauthorized('Invalid API key'));
         }
     }
 
@@ -41,7 +41,7 @@ abstract class Rest extends \Everon\Module implements Interfaces\Rest
 
         if (trim($user) === '' || trim($secret) === '') {
             $this->getResponse()->setHeader('WWW-Authenticate', 'Basic realm="Grofas REST API"');
-            throw new Http\Exception\Unauthorized('Invalid credentials');
+            throw new Http\Exception(new Http\Message\Unauthorized('Authentication required'));
         }
 
         //find user+pass in database 

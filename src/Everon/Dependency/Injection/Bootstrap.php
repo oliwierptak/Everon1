@@ -9,7 +9,7 @@
  */
 namespace Everon\Dependency\Injection;
 
-trait Environment
+trait Bootstrap
 {
-    use \Everon\Dependency\Environment;
+    use \Everon\Dependency\Bootstrap;
 }

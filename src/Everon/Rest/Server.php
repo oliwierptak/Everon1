@@ -55,8 +55,11 @@ class Server extends \Everon\Core implements Rest\Interfaces\Server
             $this->showException($NotFound->getHttpMessage()->getStatus(), $NotFound);
         }
         catch (Rest\Exception\Resource $Exception) {
-            $NotFound = new Http\Exception((new Http\Message\NotFound($Exception->getMessage())));
+            $NotFound = new Http\Exception((new Http\Message\BadRequest($Exception->getMessage())));
             $this->showException($NotFound->getHttpMessage()->getStatus(), $NotFound);
+        }
+        catch (Http\Exception $Exception) {
+            $this->showException($Exception->getHttpMessage()->getStatus(), $Exception);
         }
         catch (\Exception $Exception) {
             $InternalServerError = new Http\Exception((new Http\Message\InternalServerError($Exception->getMessage())));

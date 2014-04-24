@@ -15,7 +15,6 @@ use Everon\Helper;
 
 class Loader implements Interfaces\Loader
 {
-    use Dependency\Injection\Environment;
     use Dependency\Injection\Factory;
     use Dependency\Injection\FileSystem;
     use Helper\Arrays;
