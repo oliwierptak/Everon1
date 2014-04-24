@@ -41,8 +41,8 @@ class Console extends Core implements Interfaces\Core
         finally {
             $this->getLogger()->console(
                 sprintf(
-                    '[%d] %s %s (%s)',
-                    $this->getResponse()->getStatusCode(), $this->getRequest()->getMethod(), $this->getRequest()->getPath(), $this->getResponse()->getStatusMessage()
+                    '[%d] %s %s',
+                    $this->getResponse()->getResult(), $this->getRequest()->getMethod(), $this->getRequest()->getPath()
                 )
             );
         }
