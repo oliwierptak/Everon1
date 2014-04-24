@@ -20,6 +20,9 @@ class Manager implements Interfaces\Manager
     
     const WHEN_AFTER = 'after';
     const WHEN_BEFORE = 'before';
+
+    const PROPAGATION_RUNNING = 1;
+    const PROPAGATION_HALTED = 2;
     
     /**
      * @var array
@@ -27,7 +30,7 @@ class Manager implements Interfaces\Manager
     protected $listeners = [];
 
     /**
-     * @var Propagation $propagation
+     * @var int
      */
     protected $propagation;
 
@@ -39,7 +42,7 @@ class Manager implements Interfaces\Manager
 
     public function __construct()
     {
-        $this->propagation = Propagation::HALTED;
+        $this->propagation = static::PROPAGATION_HALTED;
         $this->Listeners = new Helper\Collection([]);
     }
 
@@ -48,7 +51,7 @@ class Manager implements Interfaces\Manager
      */
     public function dispatchBefore($event_name)
     {
-        $this->propagation = Propagation::RUNNING;
+        $this->propagation = static::PROPAGATION_RUNNING;
         return $this->dispatch($event_name, static::WHEN_BEFORE);
     }
 
@@ -57,13 +60,14 @@ class Manager implements Interfaces\Manager
      */
     public function dispatchAfter($event_name)
     {
-        $this->propagation = Propagation::RUNNING;
+        $this->propagation = static::PROPAGATION_RUNNING;
         return $this->dispatch($event_name, static::WHEN_AFTER);
     }
 
     /**
      * @param $event_name
      * @param $when
+     * @return bool
      */
     protected function dispatch($event_name, $when)
     {
@@ -73,10 +77,10 @@ class Manager implements Interfaces\Manager
         $this->sortByPriority($event_name, $when);
         
         $result = null;
-        $this->propagation = Propagation::RUNNING;
+        $this->propagation = static::PROPAGATION_RUNNING;
         
         foreach ($this->listeners[$event_name][$when] as $callbacks) {
-            if ($this->propagation === Propagation::HALTED) {
+            if ($this->propagation === static::PROPAGATION_HALTED) {
                 break;
             }
             
@@ -84,7 +88,7 @@ class Manager implements Interfaces\Manager
                 if (is_callable($Callback)) {
                     $result = $Callback();
                     if ($result === false) {
-                        $this->propagation = Propagation::HALTED;
+                        $this->propagation = static::PROPAGATION_HALTED;
                         break;
                     }
                 }
@@ -113,7 +117,7 @@ class Manager implements Interfaces\Manager
     {
         $this->register($event_name, null, $Callback, $priority);
     }
-
+    
     /**
      * @param $event_name
      * @param \Closure $BeforeExecuteCallback
@@ -122,10 +126,11 @@ class Manager implements Interfaces\Manager
      */
     protected function register($event_name, \Closure $BeforeExecuteCallback=null, \Closure $AfterExecuteCallback=null, $priority=0)
     {
-        $index = count($this->listeners[$event_name][$priority]);
+        $index = count(@$this->listeners[$event_name][$priority]);
         while (isset($this->listeners[$event_name][static::WHEN_BEFORE][$priority][$index])) {
             $index++;
         }
+        
         $this->listeners[$event_name][static::WHEN_BEFORE][$priority][$index] = $BeforeExecuteCallback;
         $this->listeners[$event_name][static::WHEN_AFTER][$priority][$index] = $AfterExecuteCallback;
         
