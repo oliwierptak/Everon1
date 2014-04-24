@@ -12,6 +12,12 @@ namespace Everon;
 require_once(implode(DIRECTORY_SEPARATOR, [$EVERON_SOURCE_ROOT, 'Bootstrap.php']));
 require_once(implode(DIRECTORY_SEPARATOR, [$EVERON_SOURCE_ROOT, 'RequestIdentifier.php']));
 
+//include the environment type (dev, staging, production), eg, const EVERON_ENVIRONMENT = 'dev';
+@include_once($EVERON_ROOT.'Web'.DIRECTORY_SEPARATOR.'env.php');
+if (defined('EVERON_ENVIRONMENT') === false) {
+    define('EVERON_ENVIRONMENT', 'dev');
+}
+
 if (isset($REQUEST_IDENTIFIER) === false) {
     $REQUEST_IDENTIFIER = new RequestIdentifier();
 }
@@ -27,17 +33,13 @@ require_once(implode(DIRECTORY_SEPARATOR, [$EVERON_SOURCE_ROOT, 'Interfaces', 'E
 require_once(implode(DIRECTORY_SEPARATOR, [$EVERON_SOURCE_ROOT, 'Environment.php']));
 
 $Environment = new Environment($EVERON_ROOT, $EVERON_SOURCE_ROOT);
-$Bootstrap = new Bootstrap($Environment);
+$Bootstrap = new Bootstrap($Environment, EVERON_ENVIRONMENT);
 
 $Factory = $Bootstrap->run();
 $Container = $Factory->getDependencyContainer();
 
 $Container->propose('Bootstrap', function() use ($Bootstrap) {
     return $Bootstrap;
-});
-
-$Container->propose('Environment', function() use ($Environment) {
-    return $Environment;
 });
 
 $Container->propose('RequestIdentifier', function() use ($REQUEST_IDENTIFIER) {

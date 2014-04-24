@@ -18,7 +18,6 @@ class Manager implements Interfaces\ViewManager
 {
     use Dependency\Injection\Factory;
     use Dependency\Injection\ConfigManager;
-    use Dependency\Injection\Environment;
 
     use Helper\Arrays;
     use Helper\IsIterable;
