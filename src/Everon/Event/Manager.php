@@ -9,7 +9,6 @@
  */
 namespace Everon\Event;
 
-use Everon\Event\Interfaces\Listener;
 use Everon\Helper;
 
 /**
@@ -17,79 +16,130 @@ use Everon\Helper;
  */
 class Manager implements Interfaces\Manager
 {
+    use Helper\Asserts\IsArrayKey;
+    
+    const WHEN_AFTER = 'after';
+    const WHEN_BEFORE = 'before';
+    
     /**
      * @var array
      */
-    protected $listeners = array();
+    protected $listeners = [];
 
     /**
      * @var Propagation $propagation
      */
     protected $propagation;
 
+    /**
+     * @var \Everon\Interfaces\Collection
+     */
+    protected $Listeners = null;
+    
+
     public function __construct()
     {
-        $this->propagation = Propagation::Running;
+        $this->propagation = Propagation::HALTED;
+        $this->Listeners = new Helper\Collection([]);
     }
 
     /**
      * @inheritdoc
      */
-    public function dispatchBeforeExecute($eventName)
+    public function dispatchBefore($event_name)
     {
-        $this->propagation = Propagation::Running;
-        $this->sortByPriority($eventName);
-        $this->dispatch($eventName, 'before');
+        $this->propagation = Propagation::RUNNING;
+        return $this->dispatch($event_name, static::WHEN_BEFORE);
     }
 
     /**
      * @inheritdoc
      */
-    public function dispatchAfterExecute($eventName)
+    public function dispatchAfter($event_name)
     {
-        $this->dispatch($eventName, 'after');
+        $this->propagation = Propagation::RUNNING;
+        return $this->dispatch($event_name, static::WHEN_AFTER);
     }
 
     /**
-     * @inheritdoc
+     * @param $event_name
+     * @param $when
      */
-    public function dispatch($eventName, $when)
+    protected function dispatch($event_name, $when)
     {
-        foreach ($this->listeners[$eventName][$when] as $listener) {
-            if ($this->propagation === Propagation::Halted) {
+        $this->assertIsArrayKey($event_name, $this->Listeners, 'Invalid event: "%s"');
+        $this->assertIsArrayKey($when, $this->Listeners->get($event_name), 'Invalid event type: "%s"');
+            
+        $this->sortByPriority($event_name, $when);
+        
+        $result = null;
+        $this->propagation = Propagation::RUNNING;
+        
+        foreach ($this->listeners[$event_name][$when] as $callbacks) {
+            if ($this->propagation === Propagation::HALTED) {
                 break;
             }
-            if (is_callable($listener)) {
-                $result = call_user_func($listener);
-                if ($result === false) {
-                    $this->propagation = Propagation::Halted;
+            
+            foreach ($callbacks as $priority => $Callback) {
+                if (is_callable($Callback)) {
+                    $result = $Callback();
+                    if ($result === false) {
+                        $this->propagation = Propagation::HALTED;
+                        break;
+                    }
                 }
             }
         }
+        
+        return $result !== false;
     }
 
     /**
-     * @inheritdoc
+     * @param $event_name
+     * @param callable $Callback
+     * @param int $priority
      */
-    public function register($eventName, $beforeExecuteCallback = null, $afterExecuteCallback = null, $priority = 0)
+    public function registerBefore($event_name, \Closure $Callback, $priority=0)
     {
-        $index = 0;
-        while(isset($this->listeners[$eventName]['before'][$priority][$index])) {
+        $this->register($event_name, $Callback, null, $priority);
+    }
+
+    /**
+     * @param $event_name
+     * @param callable $Callback
+     * @param int $priority
+     */
+    public function registerAfter($event_name, \Closure $Callback, $priority=0)
+    {
+        $this->register($event_name, null, $Callback, $priority);
+    }
+
+    /**
+     * @param $event_name
+     * @param \Closure $BeforeExecuteCallback
+     * @param \Closure $AfterExecuteCallback
+     * @param int $priority
+     */
+    protected function register($event_name, \Closure $BeforeExecuteCallback=null, \Closure $AfterExecuteCallback=null, $priority=0)
+    {
+        $index = count($this->listeners[$event_name][$priority]);
+        while (isset($this->listeners[$event_name][static::WHEN_BEFORE][$priority][$index])) {
             $index++;
         }
-        $this->listeners[$eventName]['before'][$priority][$index] = $beforeExecuteCallback;
-        $this->listeners[$eventName]['after'][$priority][$index] = $afterExecuteCallback;
+        $this->listeners[$event_name][static::WHEN_BEFORE][$priority][$index] = $BeforeExecuteCallback;
+        $this->listeners[$event_name][static::WHEN_AFTER][$priority][$index] = $AfterExecuteCallback;
+        
+        $this->Listeners->get($event_name, new Helper\Collection([static::WHEN_BEFORE=>[], static::WHEN_AFTER=>[]]))
+            ->get(static::WHEN_BEFORE, new Helper\Collection([$priority=>[]]))
+            ->get($priority)->set($index, $BeforeExecuteCallback);
+        
+        $this->Listeners->get($event_name)->get(static::WHEN_AFTER)->get($priority)->set($index, $AfterExecuteCallback);
     }
 
-    protected function countListeners($eventName)
+    protected function sortByPriority($event_name, $when)
     {
-        return count($this->listeners[$eventName]);
-    }
-
-    protected function sortByPriority($eventName)
-    {
-        sort($this->listeners[$eventName]['before'],SORT_NUMERIC);
-        sort($this->listeners[$eventName]['after'],SORT_NUMERIC);
+        arsort($this->listeners[$event_name][$when], SORT_NUMERIC);
+        arsort($this->Listeners->get($event_name)->get($when), SORT_NUMERIC);
     }
 
 } 

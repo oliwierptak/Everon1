@@ -96,17 +96,16 @@ abstract class Controller implements Interfaces\Controller, Event\Interfaces\Dis
     public function execute($action)
     {
         $this->action = $action;
+        $event_name = $this->getModule()->getName().'.'.$this->getName().'.'.$action;
+        
         if ($this->isCallable($this, $action) === false) {
             throw new Exception\InvalidControllerMethod(
                 'Controller: "%s@%s" has no action: "%s" defined', [$this->getModule()->getName(), $this->getName(), $action]
             );
         }
-        $this->getEventManager()->dispatchBeforeExecute($this->getModule()->getName().'.'.$this->getName().'.'.$action);
-
-        $result = $this->{$action}();
-        $result = ($result !== false) ? true : $result;
+        
+        $result = $this->getEventManager()->dispatchBefore($event_name);
         $this->getResponse()->setResult($result);
-
         if ($result === false) {
             $result_on_error = $this->executeOnError($action);
             if ($result_on_error === null) {
@@ -115,9 +114,33 @@ abstract class Controller implements Interfaces\Controller, Event\Interfaces\Dis
                 );
             }
         }
-        $this->getEventManager()->dispatchAfterExecute($this->getModule()->getName().'.'.$this->getName().'.'.$action);
+
+        $result = $this->{$action}();
+        $result = ($result !== false) ? true : $result;
+        $this->getResponse()->setResult($result);
+        if ($result === false) {
+            $result_on_error = $this->executeOnError($action);
+            if ($result_on_error === null) {
+                throw new Exception\InvalidControllerResponse(
+                    'Invalid controller response for: "%s@%s"', [$this->getName(),$action]
+                );
+            }
+        }
+        
+        $result = $this->getEventManager()->dispatchAfter($event_name);
+        $this->getResponse()->setResult($result);
+        if ($result === false) {
+            $result_on_error = $this->executeOnError($action);
+            if ($result_on_error === null) {
+                throw new Exception\InvalidControllerResponse(
+                    'Invalid controller response for: "%s@%s"', [$this->getName(),$action]
+                );
+            }
+        }
+        
         $this->prepareResponse($action, $result);
         $this->response();
+        
         return $result;
     }
 

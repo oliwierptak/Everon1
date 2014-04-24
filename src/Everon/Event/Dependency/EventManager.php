@@ -17,14 +17,14 @@ trait EventManager
     /**
      * @var \Everon\Event\Interfaces\Manager
      */
-    protected $Dispatcher = null;
+    protected $EventManager = null;
 
     /**
-     * @param \Everon\Event\Interfaces\Manager $Dispatcher
+     * @param \Everon\Event\Interfaces\Manager $EventManager
      */
-    public function setEventManager($Dispatcher)
+    public function setEventManager(\Everon\Event\Interfaces\Manager $EventManager)
     {
-        $this->Dispatcher = $Dispatcher;
+        $this->EventManager = $EventManager;
     }
 
     /**
@@ -32,8 +32,6 @@ trait EventManager
      */
     public function getEventManager()
     {
-        return $this->Dispatcher;
+        return $this->EventManager;
     }
-
-
 }
