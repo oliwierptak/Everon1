@@ -9,7 +9,6 @@
  */
 namespace Everon;
 
-
 use Everon\Event;
 
 abstract class Controller implements Interfaces\Controller, Event\Interfaces\Dispatchable
@@ -105,6 +104,7 @@ abstract class Controller implements Interfaces\Controller, Event\Interfaces\Dis
         }
         
         $result = $this->getEventManager()->dispatchBefore($event_name);
+        $result = ($result !== false) ? true : $result;
         $this->getResponse()->setResult($result);
         if ($result === false) {
             $result_on_error = $this->executeOnError($action);
@@ -128,6 +128,7 @@ abstract class Controller implements Interfaces\Controller, Event\Interfaces\Dis
         }
         
         $result = $this->getEventManager()->dispatchAfter($event_name);
+        $result = ($result !== false) ? true : $result;
         $this->getResponse()->setResult($result);
         if ($result === false) {
             $result_on_error = $this->executeOnError($action);

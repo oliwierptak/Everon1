@@ -10,8 +10,8 @@
 namespace Everon;
 
 /**
- * @var Interfaces\DependencyContainer $Container
- * @var Interfaces\Factory $Factory
+ * @var Application\Interfaces\DependencyContainer $Container
+ * @var Application\Interfaces\Factory $Factory
  */
 
 $Container->propose('Logger', function() use ($Factory) {
@@ -82,6 +82,10 @@ $Container->propose('ConnectionManager', function() use ($Factory) {
     $Factory->getDependencyContainer()->monitor('ConnectionManager', ['Everon\Config\Manager']);
     $DatabaseConfig = $Factory->getDependencyContainer()->resolve('ConfigManager')->getDatabaseConfig();
     return $Factory->buildConnectionManager($DatabaseConfig);
+});
+
+$Container->propose('EventManager', function() use ($Factory) {
+    return $Factory->buildEventManager();
 });
 
 //xxx

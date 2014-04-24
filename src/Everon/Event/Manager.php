@@ -17,6 +17,7 @@ use Everon\Helper;
 class Manager implements Interfaces\Manager
 {
     use Helper\Asserts\IsArrayKey;
+    use Helper\Exceptions;
     
     const WHEN_AFTER = 'after';
     const WHEN_BEFORE = 'before';
@@ -25,25 +26,23 @@ class Manager implements Interfaces\Manager
     const PROPAGATION_HALTED = 2;
     
     /**
-     * @var array
+     * @var \Everon\Interfaces\Collection
      */
-    protected $listeners = [];
+    protected $Listeners = null;
 
     /**
      * @var int
      */
     protected $propagation;
 
-    /**
-     * @var \Everon\Interfaces\Collection
-     */
-    protected $Listeners = null;
-    
 
     public function __construct()
     {
         $this->propagation = static::PROPAGATION_HALTED;
-        $this->Listeners = new Helper\Collection([]);
+        $this->Listeners = new Helper\Collection([
+            static::WHEN_BEFORE => [],
+            static::WHEN_AFTER => []
+        ]);
     }
 
     /**
@@ -71,10 +70,11 @@ class Manager implements Interfaces\Manager
      */
     protected function dispatch($event_name, $when)
     {
-        $this->assertIsArrayKey($event_name, $this->Listeners, 'Invalid event: "%s"');
-        $this->assertIsArrayKey($when, $this->Listeners->get($event_name), 'Invalid event type: "%s"');
-            
-        $this->sortByPriority($event_name, $when);
+        if ($this->Listeners->get($when)->get($event_name) === null) {
+            return null;
+        }
+        
+        arsort($this->listeners[$event_name][$when], SORT_NUMERIC);
         
         $result = null;
         $this->propagation = static::PROPAGATION_RUNNING;
@@ -103,7 +103,7 @@ class Manager implements Interfaces\Manager
      * @param callable $Callback
      * @param int $priority
      */
-    public function registerBefore($event_name, \Closure $Callback, $priority=0)
+    public function registerBefore($event_name, \Closure $Callback, $priority=1)
     {
         $this->register($event_name, $Callback, null, $priority);
     }
@@ -113,7 +113,7 @@ class Manager implements Interfaces\Manager
      * @param callable $Callback
      * @param int $priority
      */
-    public function registerAfter($event_name, \Closure $Callback, $priority=0)
+    public function registerAfter($event_name, \Closure $Callback, $priority=1)
     {
         $this->register($event_name, null, $Callback, $priority);
     }
@@ -124,27 +124,20 @@ class Manager implements Interfaces\Manager
      * @param \Closure $AfterExecuteCallback
      * @param int $priority
      */
-    protected function register($event_name, \Closure $BeforeExecuteCallback=null, \Closure $AfterExecuteCallback=null, $priority=0)
+    protected function register($event_name, \Closure $BeforeExecuteCallback=null, \Closure $AfterExecuteCallback=null, $priority)
     {
-        $index = count(@$this->listeners[$event_name][$priority]);
+        $priority = (int) $priority;
+        $priority = $priority !== 0 ?: 1;
+        
+        $index = 0;
+        sd($this->listeners[$event_name][static::WHEN_BEFORE][$priority][$index]);
         while (isset($this->listeners[$event_name][static::WHEN_BEFORE][$priority][$index])) {
             $index++;
         }
+        s($index);
         
         $this->listeners[$event_name][static::WHEN_BEFORE][$priority][$index] = $BeforeExecuteCallback;
         $this->listeners[$event_name][static::WHEN_AFTER][$priority][$index] = $AfterExecuteCallback;
-        
-        $this->Listeners->get($event_name, new Helper\Collection([static::WHEN_BEFORE=>[], static::WHEN_AFTER=>[]]))
-            ->get(static::WHEN_BEFORE, new Helper\Collection([$priority=>[]]))
-            ->get($priority)->set($index, $BeforeExecuteCallback);
-        
-        $this->Listeners->get($event_name)->get(static::WHEN_AFTER)->get($priority)->set($index, $AfterExecuteCallback);
-    }
-
-    protected function sortByPriority($event_name, $when)
-    {
-        arsort($this->listeners[$event_name][$when], SORT_NUMERIC);
-        arsort($this->Listeners->get($event_name)->get($when), SORT_NUMERIC);
     }
 
 } 
