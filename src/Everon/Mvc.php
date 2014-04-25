@@ -14,9 +14,6 @@ namespace Everon;
  */
 class Mvc extends Core implements Interfaces\Core
 {
-    use Dependency\Injection\ConfigManager;
-    use Dependency\Injection\Response;
-    
     /**
      * @var Mvc\Interfaces\Controller
      */
