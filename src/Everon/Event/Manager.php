@@ -120,12 +120,12 @@ class Manager implements Interfaces\Manager
 
     /**
      * @param $event_name
-     * @param Interfaces\Context $Callback
+     * @param Interfaces\Context $Context
      * @param int $priority
      */
-    public function registerAfter($event_name, Interfaces\Context $Callback, $priority=1)
+    public function registerAfter($event_name, Interfaces\Context $Context, $priority=1)
     {
-        $this->register($event_name, null, $Callback, $priority);
+        $this->register($event_name, null, $Context, $priority);
     }
     
     /**
