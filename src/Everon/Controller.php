@@ -142,6 +142,8 @@ abstract class Controller implements Interfaces\Controller
     }
 
     /**
+     * Null is returned when no action 'OnError' was found
+     * 
      * @param $action
      * @return bool|null
      */
