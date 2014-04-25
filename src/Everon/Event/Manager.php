@@ -42,11 +42,11 @@ class Manager implements Interfaces\Manager
     }
 
     /**
-     * @param array $listeners
+     * @param array $events
      */
-    public function setEvents(array $listeners)
+    public function setEvents(array $events)
     {
-        $this->events = $listeners;
+        $this->events = $events;
     }
 
     /**
