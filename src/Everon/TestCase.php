@@ -187,7 +187,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         $TestEnvironment->setCacheConfig($this->getConfigCacheDirectory());
         $TestEnvironment->setTmp($this->getTmpDirectory());
         
-        $Bootstrap = $Container->resolve('Bootstrap');
+        $Bootstrap = new \Everon\Bootstrap($TestEnvironment, EVERON_ENVIRONMENT); //xxx
         $Bootstrap->setEnvironment($TestEnvironment);
 
         $Container->register('Bootstrap', function() use ($Bootstrap) {
