@@ -22,9 +22,6 @@ use Everon\Rest;
  */
 class Server extends \Everon\Core implements Rest\Interfaces\Server
 {
-    use Dependency\Injection\ConfigManager;
-    use Dependency\Injection\Response;
-    
     /**
      * @inheritdoc
      */
