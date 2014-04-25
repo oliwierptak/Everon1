@@ -129,12 +129,9 @@ abstract class Controller implements Interfaces\Controller
             $result = ($result !== false) ? true : $result;
             $this->getResponse()->setResult($result);
             if ($result === false) {
-                $result_on_error = $this->executeOnError($action);
-                if ($result_on_error === null) {
-                    throw new Exception\InvalidControllerResponse(
-                        'Invalid controller response for: "%s@%s"', [$this->getName(),$action]
-                    );
-                }
+                throw new Exception\InvalidControllerResponse(
+                    'Invalid controller response for: "%s@%s"', [$this->getName(),$action]
+                );
             }
         }
         
