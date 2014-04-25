@@ -19,16 +19,16 @@ class Manager implements Interfaces\Manager
     use Helper\Asserts\IsArrayKey;
     use Helper\Exceptions;
     
-    const WHEN_AFTER = 'after';
-    const WHEN_BEFORE = 'before';
-
-    const PROPAGATION_RUNNING = 1;
-    const PROPAGATION_HALTED = 2;
+    const DISPATCH_AFTER = 'after';
+    const DISPATCH_BEFORE = 'before';
+    
+    const PROPAGATION_RUNNING = 'running';
+    const PROPAGATION_HALTED = 'halted';
     
     /**
-     * @var \Everon\Interfaces\Collection
+     * @var array
      */
-    protected $Listeners = null;
+    protected $events = [];
 
     /**
      * @var int
@@ -39,19 +39,30 @@ class Manager implements Interfaces\Manager
     public function __construct()
     {
         $this->propagation = static::PROPAGATION_HALTED;
-        $this->Listeners = new Helper\Collection([
-            static::WHEN_BEFORE => [],
-            static::WHEN_AFTER => []
-        ]);
     }
 
+    /**
+     * @param array $listeners
+     */
+    public function setEvents(array $listeners)
+    {
+        $this->events = $listeners;
+    }
+
+    /**
+     * @return array
+     */
+    public function getEvents()
+    {
+        return $this->events;
+    }
+    
     /**
      * @inheritdoc
      */
     public function dispatchBefore($event_name)
     {
-        $this->propagation = static::PROPAGATION_RUNNING;
-        return $this->dispatch($event_name, static::WHEN_BEFORE);
+        return $this->dispatch($event_name, static::DISPATCH_BEFORE);
     }
 
     /**
@@ -59,28 +70,27 @@ class Manager implements Interfaces\Manager
      */
     public function dispatchAfter($event_name)
     {
-        $this->propagation = static::PROPAGATION_RUNNING;
-        return $this->dispatch($event_name, static::WHEN_AFTER);
+        return $this->dispatch($event_name, static::DISPATCH_AFTER);
     }
 
     /**
      * @param $event_name
-     * @param $when
-     * @return bool
+     * @param $dispatch_type
+     * @return bool|null
      */
-    protected function dispatch($event_name, $when)
+    protected function dispatch($event_name, $dispatch_type)
     {
-        if ($this->Listeners->get($when)->get($event_name) === null) {
+        if (isset($this->events[$event_name][$dispatch_type]) === false) {
             return null;
         }
         
-        arsort($this->listeners[$event_name][$when], SORT_NUMERIC);
+        arsort($this->events[$event_name][$dispatch_type], SORT_NUMERIC);
         
         $result = null;
-        $this->propagation = static::PROPAGATION_RUNNING;
+        $this->run();
         
-        foreach ($this->listeners[$event_name][$when] as $callbacks) {
-            if ($this->propagation === static::PROPAGATION_HALTED) {
+        foreach ($this->events[$event_name][$dispatch_type] as $callbacks) {
+            if ($this->isHalted()) {
                 break;
             }
             
@@ -88,7 +98,7 @@ class Manager implements Interfaces\Manager
                 if (is_callable($Callback)) {
                     $result = $Callback();
                     if ($result === false) {
-                        $this->propagation = static::PROPAGATION_HALTED;
+                        $this->halt();
                         break;
                     }
                 }
@@ -100,44 +110,63 @@ class Manager implements Interfaces\Manager
 
     /**
      * @param $event_name
-     * @param callable $Callback
+     * @param Interfaces\Context $Context
      * @param int $priority
      */
-    public function registerBefore($event_name, \Closure $Callback, $priority=1)
+    public function registerBefore($event_name, Interfaces\Context $Context, $priority=1)
     {
-        $this->register($event_name, $Callback, null, $priority);
+        $this->register($event_name, $Context, null, $priority);
     }
 
     /**
      * @param $event_name
-     * @param callable $Callback
+     * @param Interfaces\Context $Callback
      * @param int $priority
      */
-    public function registerAfter($event_name, \Closure $Callback, $priority=1)
+    public function registerAfter($event_name, Interfaces\Context $Callback, $priority=1)
     {
         $this->register($event_name, null, $Callback, $priority);
     }
     
     /**
      * @param $event_name
-     * @param \Closure $BeforeExecuteCallback
-     * @param \Closure $AfterExecuteCallback
+     * @param Interfaces\Context $BeforeExecuteCallback
+     * @param Interfaces\Context $AfterExecuteCallback
      * @param int $priority
      */
-    protected function register($event_name, \Closure $BeforeExecuteCallback=null, \Closure $AfterExecuteCallback=null, $priority)
+    protected function register($event_name, Interfaces\Context $BeforeExecuteCallback=null, Interfaces\Context $AfterExecuteCallback=null, $priority)
     {
         $priority = (int) $priority;
-        $priority = $priority !== 0 ?: 1;
+        $priority = $priority === 0 ?: 1;
         
-        $index = 0;
-        sd($this->listeners[$event_name][static::WHEN_BEFORE][$priority][$index]);
-        while (isset($this->listeners[$event_name][static::WHEN_BEFORE][$priority][$index])) {
-            $index++;
+        if (isset($this->events[$event_name]) === false) {
+            $this->events = [$event_name => [
+                static::DISPATCH_BEFORE => [],
+                static::DISPATCH_AFTER => []
+            ]];
         }
-        s($index);
         
-        $this->listeners[$event_name][static::WHEN_BEFORE][$priority][$index] = $BeforeExecuteCallback;
-        $this->listeners[$event_name][static::WHEN_AFTER][$priority][$index] = $AfterExecuteCallback;
+        while (array_key_exists($priority, $this->events[$event_name][static::DISPATCH_BEFORE])) {
+            $priority++;
+        }
+
+        $this->events[$event_name][static::DISPATCH_BEFORE][$priority] = $BeforeExecuteCallback;
+        $this->events[$event_name][static::DISPATCH_AFTER][$priority] = $AfterExecuteCallback;
+    }
+    
+    protected function run()
+    {
+        $this->propagation = static::PROPAGATION_RUNNING;
+    }
+
+    protected function halt()
+    {
+        $this->propagation = static::PROPAGATION_HALTED;
+    }
+    
+    protected function isHalted()
+    {
+        return $this->propagation === static::PROPAGATION_HALTED;
     }
 
 } 

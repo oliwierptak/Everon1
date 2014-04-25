@@ -16,17 +16,17 @@ interface Manager
 {
     /**
      * @param $event_name
-     * @param callable $Callback
+     * @param Context $Context
      * @param int $priority
      */
-    function registerBefore($event_name, \Closure $Callback, $priority=0);
+    function registerBefore($event_name, Context $Context, $priority=1);
 
     /**
      * @param $event_name
-     * @param callable $Callback
+     * @param Context $Callback
      * @param int $priority
      */
-    function registerAfter($event_name, \Closure $Callback, $priority=0);
+    function registerAfter($event_name, Context $Callback, $priority=1);
     
     /**
      * Resets the propagation to 'Running' and dispatches the event
@@ -35,9 +35,18 @@ interface Manager
      */
     function dispatchBefore($event_name);
 
-
     /**
      * @param $event_name
      */
     function dispatchAfter($event_name);
+
+    /**
+     * @param array $listeners
+     */
+    function setEvents(array $listeners);
+
+    /**
+     * @return array
+     */
+    function getEvents();
 }

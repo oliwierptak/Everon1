@@ -9,10 +9,7 @@
  */
 namespace Everon\Event\Interfaces;
 
-/**
- * @author Zeger Hoogeboom <zeger_hoogeboom@hotmail.com>
- */
-interface Listener 
+interface Context
 {
 
 }

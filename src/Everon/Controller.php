@@ -11,7 +11,7 @@ namespace Everon;
 
 use Everon\Event;
 
-abstract class Controller implements Interfaces\Controller, Event\Interfaces\Dispatchable
+abstract class Controller implements Interfaces\Controller
 {
     use Dependency\Injection\ConfigManager;
     use Dependency\Injection\Logger;
@@ -107,12 +107,9 @@ abstract class Controller implements Interfaces\Controller, Event\Interfaces\Dis
         $result = ($result !== false) ? true : $result;
         $this->getResponse()->setResult($result);
         if ($result === false) {
-            $result_on_error = $this->executeOnError($action);
-            if ($result_on_error === null) {
-                throw new Exception\InvalidControllerResponse(
-                    'Invalid controller response for: "%s@%s"', [$this->getName(),$action]
-                );
-            }
+            throw new Exception\InvalidControllerResponse(
+                'Invalid controller response for: "%s@%s"', [$this->getName(),$action]
+            );
         }
 
         $result = $this->{$action}();
@@ -127,15 +124,17 @@ abstract class Controller implements Interfaces\Controller, Event\Interfaces\Dis
             }
         }
         
-        $result = $this->getEventManager()->dispatchAfter($event_name);
-        $result = ($result !== false) ? true : $result;
-        $this->getResponse()->setResult($result);
-        if ($result === false) {
-            $result_on_error = $this->executeOnError($action);
-            if ($result_on_error === null) {
-                throw new Exception\InvalidControllerResponse(
-                    'Invalid controller response for: "%s@%s"', [$this->getName(),$action]
-                );
+        if ($result) {
+            $result = $this->getEventManager()->dispatchAfter($event_name);
+            $result = ($result !== false) ? true : $result;
+            $this->getResponse()->setResult($result);
+            if ($result === false) {
+                $result_on_error = $this->executeOnError($action);
+                if ($result_on_error === null) {
+                    throw new Exception\InvalidControllerResponse(
+                        'Invalid controller response for: "%s@%s"', [$this->getName(),$action]
+                    );
+                }
             }
         }
         
