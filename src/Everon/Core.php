@@ -13,6 +13,7 @@ use Everon\Exception;
 
 abstract class Core implements Interfaces\Core
 {
+    use Dependency\Injection\ConfigManager;
     use Dependency\Injection\Logger;
     use Dependency\Injection\Factory;
     use Dependency\Injection\Router;
