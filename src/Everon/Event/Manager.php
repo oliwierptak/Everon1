@@ -88,10 +88,10 @@ class Manager implements Interfaces\Manager
         uksort($this->events[$event_name][$dispatch_type], function ($a, $b) {
             return (int) $a < (int) $b; //reverse order
         });
-        
-        $result = null;
+
         $this->run();
-        
+        $result = null;
+
         foreach ($this->events[$event_name][$dispatch_type] as $Callback) {
             if ($this->isHalted()) {
                 break;

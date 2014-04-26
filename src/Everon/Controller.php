@@ -104,39 +104,41 @@ abstract class Controller implements Interfaces\Controller
         }
         
         $result = $this->getEventManager()->dispatchBefore($event_name);
-        $result = ($result !== false) ? true : $result;
-        $this->getResponse()->setResult($result);
-        if ($result === false) {
-            throw new Exception\InvalidControllerResponse(
-                'Invalid controller response for: "%s@%s"', [$this->getName(),$action]
-            );
-        }
+        $result = $this->validateActionResponseResult($action, $result, false);
 
-        $result = $this->{$action}();
+        if ($result) {
+            $result = $this->{$action}();
+            $result = $this->validateActionResponseResult($action, $result, true);
+        }
+        
+        if ($result) {
+            $result = $this->getEventManager()->dispatchAfter($event_name);
+            $result = $this->validateActionResponseResult($action, $result, false);
+        }
+        
+        $this->prepareResponse($action, $result);
+        $this->response();
+        
+        return $result;
+    }
+    
+    protected function validateActionResponseResult($action, $result, $use_on_error)
+    {
         $result = ($result !== false) ? true : $result;
         $this->getResponse()->setResult($result);
+        
         if ($result === false) {
-            $result_on_error = $this->executeOnError($action);
+            $result_on_error = null;
+            if ($use_on_error) {
+                $result_on_error = $this->executeOnError($action);
+            }
+            
             if ($result_on_error === null) {
                 throw new Exception\InvalidControllerResponse(
                     'Invalid controller response for: "%s@%s"', [$this->getName(),$action]
                 );
             }
         }
-        
-        if ($result) {
-            $result = $this->getEventManager()->dispatchAfter($event_name);
-            $result = ($result !== false) ? true : $result;
-            $this->getResponse()->setResult($result);
-            if ($result === false) {
-                throw new Exception\InvalidControllerResponse(
-                    'Invalid controller response for: "%s@%s"', [$this->getName(),$action]
-                );
-            }
-        }
-        
-        $this->prepareResponse($action, $result);
-        $this->response();
         
         return $result;
     }
