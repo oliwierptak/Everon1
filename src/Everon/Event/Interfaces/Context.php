@@ -9,7 +9,20 @@
  */
 namespace Everon\Event\Interfaces;
 
+
+/**
+ * @author Zeger Hoogeboom <zeger_hoogeboom@hotmail.com>
+ * @author Oliwier Ptak <oliwierptak@gmail.com>
+ */
 interface Context
 {
+    /**
+     * @param \Closure $Callback
+     */
+    function setCallback(\Closure $Callback);
 
+    /**
+     * @return \Closure
+     */
+    function getCallback();
 }

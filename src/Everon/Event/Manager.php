@@ -13,6 +13,7 @@ use Everon\Helper;
 
 /**
  * @author Zeger Hoogeboom <zeger_hoogeboom@hotmail.com>
+ * @author Oliwier Ptak <oliwierptak@gmail.com>
  */
 class Manager implements Interfaces\Manager
 {
@@ -33,7 +34,7 @@ class Manager implements Interfaces\Manager
     /**
      * @var int
      */
-    protected $propagation;
+    protected $propagation;   
 
 
     public function __construct()
@@ -83,24 +84,24 @@ class Manager implements Interfaces\Manager
         if (isset($this->events[$event_name][$dispatch_type]) === false) {
             return null;
         }
-        
-        arsort($this->events[$event_name][$dispatch_type], SORT_NUMERIC);
+
+        uksort($this->events[$event_name][$dispatch_type], function ($a, $b) {
+            return (int) $a < (int) $b; //reverse order
+        });
         
         $result = null;
         $this->run();
         
-        foreach ($this->events[$event_name][$dispatch_type] as $callbacks) {
+        foreach ($this->events[$event_name][$dispatch_type] as $Callback) {
             if ($this->isHalted()) {
                 break;
             }
             
-            foreach ($callbacks as $priority => $Callback) {
-                if (is_callable($Callback)) {
-                    $result = $Callback();
-                    if ($result === false) {
-                        $this->halt();
-                        break;
-                    }
+            if (is_callable($Callback)) {
+                $result = $Callback();
+                if ($result === false) {
+                    $this->halt();
+                    break;
                 }
             }
         }

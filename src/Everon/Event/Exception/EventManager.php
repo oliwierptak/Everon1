@@ -7,13 +7,8 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon\Event\Dependency\Injection;
+namespace Everon\Event\Exception;
 
-/**
- * @author Zeger Hoogeboom <zeger_hoogeboom@hotmail.com>
- * @author Oliwier Ptak <oliwierptak@gmail.com>
- */
-trait EventManager
-{
-    use \Everon\Event\Dependency\EventManager;
-}
+use Everon\Exception as EveronException;
+
+class EventManager extends EveronException{};

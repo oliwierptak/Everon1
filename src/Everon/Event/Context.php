@@ -12,6 +12,11 @@ namespace Everon\Event;
 use Everon\Helper;
 use Everon\Event\Dependency;
 
+
+/**
+ * @author Zeger Hoogeboom <zeger_hoogeboom@hotmail.com>
+ * @author Oliwier Ptak <oliwierptak@gmail.com>
+ */
 class Context implements Interfaces\Context
 {
     use Dependency\Injection\EventManager;
@@ -30,5 +35,21 @@ class Context implements Interfaces\Context
     public function __invoke()
     {
         return $this->Callback->__invoke();
+    }
+
+    /**
+     * @param \Closure $Callback
+     */
+    public function setCallback(\Closure $Callback)
+    {
+        $this->Callback = $Callback;
+    }
+
+    /**
+     * @return \Closure
+     */
+    public function getCallback()
+    {
+        return $this->Callback;
     }
 } 
