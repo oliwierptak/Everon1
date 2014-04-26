@@ -92,6 +92,35 @@ abstract class Controller implements Interfaces\Controller
     /**
      * @inheritdoc
      */
+    public function getUrl($name)
+    {
+        $route = $this->getConfigManager()->getConfigValue('router.'.$name);
+        if ($route === null) {
+            throw new Exception\Controller('Invalid router config name: "%s"', $name);
+        }
+
+        return $route['url'];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setCurrentRoute(Config\Interfaces\ItemRouter $CurrentRoute)
+    {
+        $this->CurrentRoute = $CurrentRoute;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getCurrentRoute()
+    {
+        return $this->CurrentRoute;
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function execute($action)
     {
         $this->action = $action;
@@ -121,7 +150,14 @@ abstract class Controller implements Interfaces\Controller
         
         return $result;
     }
-    
+
+    /**
+     * @param $action
+     * @param $result
+     * @param $use_on_error
+     * @return bool
+     * @throws Exception\InvalidControllerResponse
+     */
     protected function validateActionResponseResult($action, $result, $use_on_error)
     {
         $result = ($result !== false) ? true : $result;
@@ -161,33 +197,4 @@ abstract class Controller implements Interfaces\Controller
         return null;
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function getUrl($name)
-    {
-        $route = $this->getConfigManager()->getConfigValue('router.'.$name);
-        if ($route === null) {
-            throw new Exception\Controller('Invalid router config name: "%s"', $name);
-        }
-        
-        return $route['url'];
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function setCurrentRoute(Config\Interfaces\ItemRouter $CurrentRoute)
-    {
-        $this->CurrentRoute = $CurrentRoute;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getCurrentRoute()
-    {
-        return $this->CurrentRoute;
-    }
-    
 }
