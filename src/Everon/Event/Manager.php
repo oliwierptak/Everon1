@@ -75,6 +75,22 @@ class Manager implements Interfaces\Manager
     }
 
     /**
+     * @inheritdoc
+     */
+    public function registerBefore($event_name, Interfaces\Context $Context, $priority=1)
+    {
+        $this->register($event_name, $Context, null, $priority);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function registerAfter($event_name, Interfaces\Context $Context, $priority=1)
+    {
+        $this->register($event_name, null, $Context, $priority);
+    }
+
+    /**
      * @param $event_name
      * @param $dispatch_type
      * @return bool|null
@@ -96,7 +112,7 @@ class Manager implements Interfaces\Manager
             if ($this->isHalted()) {
                 break;
             }
-            
+
             if (is_callable($Callback)) {
                 $result = $Callback();
                 if ($result === false) {
@@ -105,30 +121,10 @@ class Manager implements Interfaces\Manager
                 }
             }
         }
-        
+
         return $result !== false;
     }
 
-    /**
-     * @param $event_name
-     * @param Interfaces\Context $Context
-     * @param int $priority
-     */
-    public function registerBefore($event_name, Interfaces\Context $Context, $priority=1)
-    {
-        $this->register($event_name, $Context, null, $priority);
-    }
-
-    /**
-     * @param $event_name
-     * @param Interfaces\Context $Context
-     * @param int $priority
-     */
-    public function registerAfter($event_name, Interfaces\Context $Context, $priority=1)
-    {
-        $this->register($event_name, null, $Context, $priority);
-    }
-    
     /**
      * @param $event_name
      * @param Interfaces\Context $BeforeExecuteCallback
