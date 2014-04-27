@@ -86,10 +86,10 @@ class Bootstrap
 
             $classmap_filename = $this->Environment->getCache().'everon_classmap_'.$this->getOsName().'.php';
             $ClassMap = new ClassMap($classmap_filename);
-            $ClassLoader = new ClassLoaderCache($this->useEveronAutoload(), $ClassMap);
+            $ClassLoader = new ClassLoaderCache($this->hasAutoloader('everon'), $ClassMap);
         }
         else {
-            $ClassLoader = new ClassLoader($this->useEveronAutoload());
+            $ClassLoader = new ClassLoader($this->hasAutoloader('everon'));
         }
         
         $this->ClassLoader = $ClassLoader;
@@ -105,7 +105,11 @@ class Bootstrap
     
     protected function registerClassLoader($prepend_autoloader)
     {
-        if ($this->useEveronAutoload()) {
+        if ($this->hasAutoloader('composer')) {
+            require_once($this->Environment->getRoot().'vendor/autoload.php');
+        }
+        
+        if ($this->hasAutoloader('everon')) {
             $this->setupClassLoader();
             $this->getClassLoader()->add('Everon', $this->getEnvironment()->getEveronRoot());
             $this->getClassLoader()->add('Everon\Application', $this->getEnvironment()->getApplication());
@@ -113,14 +117,21 @@ class Bootstrap
             $this->getClassLoader()->add('Everon\Domain', $this->getEnvironment()->getDomain());
             $this->getClassLoader()->add('Everon\Module', $this->getEnvironment()->getModule());
             $this->getClassLoader()->add('Everon\Rest', $this->getEnvironment()->getRest());
+            $this->getClassLoader()->add('Everon\View', $this->getEnvironment()->getView());
             $this->getClassLoader()->register($prepend_autoloader);
         }
     }
     
-    public function useEveronAutoload()
+    public function hasAutoloader($name)
     {
         $ini = $this->getApplicationIni();
-        return strcasecmp(@$ini['env']['autoload'], 'everon') === 0;
+        $autoloaders = @$ini['autoloader']['active'];
+        
+        if (is_array($autoloaders)) {
+            return in_array($name, $autoloaders);
+        }
+        
+        return false;
     }
     
     public function run($prepend_autoloader = false)
