@@ -11,6 +11,7 @@ namespace Everon\Event\Dependency\Injection;
 
 /**
  * @author Zeger Hoogeboom <zeger_hoogeboom@hotmail.com>
+ * @author Oliwier Ptak <oliwierptak@gmail.com>
  */
 trait EventManager
 {

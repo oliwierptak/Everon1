@@ -11,34 +11,43 @@ namespace Everon\Event\Interfaces;
 
 /**
  * @author Zeger Hoogeboom <zeger_hoogeboom@hotmail.com>
+ * @author Oliwier Ptak <oliwierptak@gmail.com>
  */
 interface Manager
 {
     /**
-     * @param $eventName
-     * @param $when
+     * @param $event_name
+     * @param Context $Context
+     * @param int $priority
      */
-    function dispatch($eventName, $when);
+    function registerBefore($event_name, Context $Context, $priority=1);
 
     /**
-     * @param $eventName
-     * @param $beforeExecuteCallback
-     * @param $afterExecuteCallback
-     * @throws \Everon\Exception\Helper
+     * @param $event_name
+     * @param Context $Callback
+     * @param int $priority
      */
-    function register($eventName, $beforeExecuteCallback, $afterExecuteCallback);
+    function registerAfter($event_name, Context $Callback, $priority=1);
+    
     /**
-     * <p>
      * Resets the propagation to 'Running' and dispatches the event
-     * </p>
      *
-     * @param $eventName
+     * @param $event_name
      */
-    function dispatchBeforeExecute($eventName);
-
+    function dispatchBefore($event_name);
 
     /**
-     * @param $eventName
+     * @param $event_name
      */
-    function dispatchAfterExecute($eventName);
+    function dispatchAfter($event_name);
+
+    /**
+     * @param array $listeners
+     */
+    function setEvents(array $listeners);
+
+    /**
+     * @return array
+     */
+    function getEvents();
 }

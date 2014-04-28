@@ -17,9 +17,9 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
     protected $data_fixtures = null;
 
     /**
-     * @var Interfaces\Environment
+     * @var Bootstrap
      */
-    protected $FrameworkEnvironment = null;
+    protected $FrameworkBootstrap = null;
 
     /**
      * @var \Everon\RequestIdentifier
@@ -40,7 +40,8 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         }
         
         parent::__construct($name, $data, $dataName);
-        $this->FrameworkEnvironment = new Environment($GLOBALS['EVERON_ROOT'], $GLOBALS['EVERON_SOURCE_ROOT']);
+        $Environment = new Environment($GLOBALS['EVERON_ROOT'], $GLOBALS['EVERON_SOURCE_ROOT']); //xxx
+        $this->FrameworkBootstrap = new Bootstrap($Environment, EVERON_ENVIRONMENT);
         $this->includeDoubles($this->getDoublesDirectory());
         $this->RequestIdentifier = $GLOBALS['REQUEST_IDENTIFIER'];
     }
@@ -102,12 +103,12 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
     
     public function getTmpDirectory()
     {
-        return $this->FrameworkEnvironment->getTest().$this->suite_name.DIRECTORY_SEPARATOR.'tmp'.DIRECTORY_SEPARATOR;
+        return $this->FrameworkBootstrap->getEnvironment()->getTest().$this->suite_name.DIRECTORY_SEPARATOR.'tmp'.DIRECTORY_SEPARATOR;
     }
 
     public function getFixtureDirectory()
     {
-        return $this->FrameworkEnvironment->getTest().$this->suite_name.DIRECTORY_SEPARATOR.'fixtures'.DIRECTORY_SEPARATOR;
+        return $this->FrameworkBootstrap->getEnvironment()->getTest().$this->suite_name.DIRECTORY_SEPARATOR.'fixtures'.DIRECTORY_SEPARATOR;
     }
 
     public function getDataMapperFixturesDirectory()
@@ -117,7 +118,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
     
     public function getDoublesDirectory()
     {
-        return $this->FrameworkEnvironment->getTest().$this->suite_name.DIRECTORY_SEPARATOR.'doubles'.DIRECTORY_SEPARATOR;
+        return $this->FrameworkBootstrap->getEnvironment()->getTest().$this->suite_name.DIRECTORY_SEPARATOR.'doubles'.DIRECTORY_SEPARATOR;
     }
 
     public function getLogDirectory()
@@ -127,7 +128,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
 
     public function getConfigDirectory()
     {
-        return $this->getFixtureDirectory().'config'.DIRECTORY_SEPARATOR;
+        return $this->getFixtureDirectory().'config'.DIRECTORY_SEPARATOR.EVERON_ENVIRONMENT.DIRECTORY_SEPARATOR;
     }
     
     public function getTemplateDirectory()
@@ -181,11 +182,18 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         $Factory = new Application\Factory(new Application\Dependency\Container());
         $Container = $Factory->getDependencyContainer();
 
-        $TestEnvironment = new \Everon\Environment($this->FrameworkEnvironment->getRoot(), $this->FrameworkEnvironment->getEveronRoot());
+        $TestEnvironment = new \Everon\Environment($this->FrameworkBootstrap->getEnvironment()->getRoot(), $this->FrameworkBootstrap->getEnvironment()->getEveronRoot());
         $TestEnvironment->setLog($this->getLogDirectory());
-        $TestEnvironment->setConfig($this->getConfigDirectory());
+        $TestEnvironment->setConfig($this->getFixtureDirectory().'config'.DIRECTORY_SEPARATOR);
         $TestEnvironment->setCacheConfig($this->getConfigCacheDirectory());
         $TestEnvironment->setTmp($this->getTmpDirectory());
+        
+        $Bootstrap = new \Everon\Bootstrap($TestEnvironment, EVERON_ENVIRONMENT); //xxx
+        $Bootstrap->setEnvironment($TestEnvironment);
+
+        $Container->register('Bootstrap', function() use ($Bootstrap) {
+            return $Bootstrap;
+        });
 
         $Container->register('Environment', function() use ($TestEnvironment) {
             return $TestEnvironment;
@@ -200,7 +208,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
             return $this->RequestIdentifier;
         });
 
-        require($this->FrameworkEnvironment->getEveronConfig().'_dependencies.php');
+        require($this->FrameworkBootstrap->getEnvironment()->getEveronConfig().'_dependencies.php');
 
         //register global unique (request) identifier with Logger
         /**

@@ -14,9 +14,6 @@ namespace Everon;
  */
 class Mvc extends Core implements Interfaces\Core
 {
-    use Dependency\Injection\ConfigManager;
-    use Dependency\Injection\Response;
-    
     /**
      * @var Mvc\Interfaces\Controller
      */
@@ -34,7 +31,10 @@ class Mvc extends Core implements Interfaces\Core
             $NotFound = new Http\Exception((new Http\Message\NotFound('Page not found')));
             $this->showException($NotFound->getHttpMessage()->getStatus(), $NotFound, $this->Controller);
         }
-        catch (Exception $Exception) {
+        catch (Http\Exception $Exception) {
+            $this->showException($Exception->getHttpMessage()->getStatus(), $Exception, $this->Controller);
+        }
+        catch (\Exception $Exception) {
             $NotFound = new Http\Exception((new Http\Message\InternalServerError($Exception->getMessage())));
             $this->showException($NotFound->getHttpMessage()->getStatus(), $NotFound, $this->Controller);
         }

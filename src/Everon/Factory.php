@@ -9,6 +9,7 @@
  */
 namespace Everon;
 
+use Everon\Email;
 use Everon\Helper;
 use Everon\Interfaces;
 
@@ -16,6 +17,10 @@ abstract class Factory implements Interfaces\Factory
 {
     use Helper\String\UnderscoreToCamel;
     use Helper\Arrays;
+    use Helper\Exceptions;
+    use Helper\Asserts\IsStringAndNotEmpty;
+    use Helper\Asserts\IsArrayKey;
+
 
     /**
      * @var Interfaces\DependencyContainer
@@ -1062,6 +1067,40 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
+    public function buildEventManager($namespace='Everon\Event')
+    {
+        try {
+            $class_name = $this->getFullClassName($namespace, 'Manager');
+            $this->classExists($class_name);
+            $Manager = new $class_name();
+            $this->injectDependencies($class_name, $Manager);
+            return $Manager;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('EventManager initialization error', null, $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildEventContext(\Closure $Callback, $namespace='Everon\Event')
+    {
+        try {
+            $class_name = $this->getFullClassName($namespace, 'Context');
+            $this->classExists($class_name);
+            $Context = new $class_name($Callback);
+            $this->injectDependencies($class_name, $Context);
+            return $Context;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('EventContext initialization error', null, $e);
+        }
+    }    
+    
+    /**
+     * @inheritdoc
+     */
     public function buildModule($name, $module_directory, Interfaces\Config $Config, Interfaces\Config $RouterConfig)
     {
         try {
@@ -1107,7 +1146,7 @@ abstract class Factory implements Interfaces\Factory
             throw new Exception\Factory('FactoryWorker: "%s" initialization error', $name, $e);
         }
     }
-    
+
     /**
      * @inheritdoc
      */
@@ -1123,5 +1162,68 @@ abstract class Factory implements Interfaces\Factory
         catch (\Exception $e) {
             throw new Exception\Factory('ConsoleHelper initialization error', null, $e);
         }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildEmailSender($name, Email\Interfaces\Credential $Credentials, $namespace='Everon\Email\Senders')
+    {
+        try {
+            $class_name = $this->getFullClassName($namespace, $name);
+            $this->classExists($class_name);
+            $Sender = new $class_name($Credentials);
+            $this->injectDependencies($class_name, $Sender);
+            return $Sender;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('Mailer: "%s" initialization error', $name, $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildEmailManager($namespace='Everon\Email')
+    {
+        try {
+            $class_name = $this->getFullClassName($namespace, 'Manager');
+            $this->classExists($class_name);
+            $EmailManager = new $class_name();
+            $this->injectDependencies($class_name, $EmailManager);
+            return $EmailManager;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('EmailManager initialization error', null, $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildEmailCredentials(array $credentialData)
+    {
+        $this->assertIsArrayKey('username', $credentialData);
+        $this->assertIsArrayKey('password', $credentialData);
+        $this->assertIsArrayKey('port', $credentialData);
+        $this->assertIsArrayKey('server', $credentialData);
+        $this->assertIsArrayKey('sender_name', $credentialData);
+        $this->assertIsArrayKey('sender_email', $credentialData);
+
+        $this->assertIsStringAndNonEmpty($credentialData['username']);
+        $this->assertIsStringAndNonEmpty($credentialData['password']);
+        $this->assertIsStringAndNonEmpty($credentialData['port']);
+        $this->assertIsStringAndNonEmpty($credentialData['server']);
+        $this->assertIsStringAndNonEmpty($credentialData['sender_name']);
+        $this->assertIsStringAndNonEmpty($credentialData['sender_email']);
+
+        $Credentials = new Email\Credential();
+        $Credentials->setUserName($credentialData['username']);
+        $Credentials->setPassword($credentialData['password']);
+        $Credentials->setServer($credentialData['server']);
+        $Credentials->setPort($credentialData['port']);
+        $Credentials->setSenderEmail($credentialData['sender_email']);
+        $Credentials->setSenderName($credentialData['sender_name']);
+        return $Credentials;
     }
 }

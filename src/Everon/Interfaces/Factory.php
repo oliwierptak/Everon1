@@ -18,6 +18,7 @@ use Everon\Module;
 use Everon\View;
 use Everon\Http;
 use Everon\Rest;
+use Everon\Email;
 
 interface Factory
 {
@@ -494,6 +495,21 @@ interface Factory
     function buildEnvironment($app_root, $source_root);
 
     /**
+     * @param string $namespace
+     * @return \Everon\Event\Interfaces\Manager
+     * @throws Exception\Factory
+     */
+    function buildEventManager($namespace='Everon\Event');
+
+    /**
+     * @param callable $Callback
+     * @param string $namespace
+     * @return \Everon\Event\Interfaces\Context
+     * @throws Exception\Factory
+     */
+    function buildEventContext(\Closure $Callback, $namespace='Everon\Event');
+
+    /**
      * @param $name
      * @param Interfaces\Config $module_directory
      * @param Interfaces\Config $Config
@@ -534,4 +550,27 @@ interface Factory
      * @throws Exception\Factory
      */
     function buildConsoleRunner($namespace='Everon\Console');
+
+    /**
+     * @param $name
+     * @param Email\Interfaces\Credential $Credentials
+     * @param string $namespace
+     * @return mixed
+     * @throws Exception\Factory
+     */
+    function buildEmailSender($name, Email\Interfaces\Credential $Credentials, $namespace='Everon\Email');
+
+    /**
+     * @param string $namespace
+     * @return mixed
+     * @throws Exception\Factory
+     */
+    function buildEmailManager($namespace='Everon\Email');
+
+    /**
+     * @param array $credentialData
+     * @return Email\Credential
+     */
+    function buildEmailCredentials(array $credentialData);
+
 }

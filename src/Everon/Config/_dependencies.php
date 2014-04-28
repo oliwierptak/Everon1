@@ -10,20 +10,20 @@
 namespace Everon;
 
 /**
- * @var Interfaces\DependencyContainer $Container
- * @var Interfaces\Factory $Factory
+ * @var Application\Interfaces\DependencyContainer $Container
+ * @var Application\Interfaces\Factory $Factory
  */
 
 $Container->propose('Logger', function() use ($Factory) {
     $Factory->getDependencyContainer()->monitor('Logger', ['Everon\Config\Manager', 'Everon\Environment']);
     $enabled = $Factory->getDependencyContainer()->resolve('ConfigManager')->getConfigValue('application.logger.enabled');
-    $log_directory = $Factory->getDependencyContainer()->resolve('Environment')->getLog();
+    $log_directory = $Factory->getDependencyContainer()->resolve('Bootstrap')->getEnvironment()->getLog();
     return $Factory->buildLogger($log_directory, $enabled);
 });
 
 $Container->propose('FileSystem', function() use ($Factory) {
     $Factory->getDependencyContainer()->monitor('FileSystem', ['Everon\Environment']);
-    $root_directory = $Factory->getDependencyContainer()->resolve('Environment')->getRoot();
+    $root_directory = $Factory->getDependencyContainer()->resolve('Bootstrap')->getEnvironment()->getRoot();
     return $Factory->buildFileSystem($root_directory);
 });
 
@@ -49,7 +49,7 @@ $Container->propose('ConfigManager', function() use ($Factory) {
     /**
      * @var \Everon\Interfaces\Environment $Environment
      */
-    $Environment = $Factory->getDependencyContainer()->resolve('Environment');
+    $Environment = $Factory->getDependencyContainer()->resolve('Bootstrap')->getEnvironment();
     $config_cache_directory = $Environment->getCacheConfig();
     $Loader = $Factory->buildConfigLoader($Environment->getConfig(), $config_cache_directory);
     return $Factory->buildConfigManager($Loader);
@@ -82,6 +82,10 @@ $Container->propose('ConnectionManager', function() use ($Factory) {
     $Factory->getDependencyContainer()->monitor('ConnectionManager', ['Everon\Config\Manager']);
     $DatabaseConfig = $Factory->getDependencyContainer()->resolve('ConfigManager')->getDatabaseConfig();
     return $Factory->buildConnectionManager($DatabaseConfig);
+});
+
+$Container->propose('EventManager', function() use ($Factory) {
+    return $Factory->buildEventManager();
 });
 
 //xxx

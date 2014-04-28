@@ -15,7 +15,7 @@ use Everon\Helper;
 
 class Manager implements \Everon\Config\Interfaces\Manager
 {
-    use Dependency\Injection\Environment;
+    use Dependency\Injection\Bootstrap;
     use Dependency\Injection\Factory;
     use Dependency\Injection\FileSystem;
     use Dependency\Logger;
@@ -264,7 +264,7 @@ EOF;
      */
     public function getEnvironmentExpressions()
     {
-        $data = $this->getEnvironment()->toArray();
+        $data = $this->getBootstrap()->getEnvironment()->toArray();
         foreach ($data as $key => $value) {
             $data["%environment.paths.$key%"] = $value;
             unset($data[$key]);

@@ -7,11 +7,10 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon\Event\Interfaces;
+namespace Everon\Http\Message;
 
-/**
- * @author Zeger Hoogeboom <zeger_hoogeboom@hotmail.com>
- */
-interface Listener {
-
+class BadRequest extends AbstractMessage 
+{
+    protected $http_status = 400;
+    protected $http_message = 'BAD REQUEST';
 }

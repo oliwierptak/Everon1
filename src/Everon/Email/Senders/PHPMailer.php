@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Everon\Email\Send;
+namespace Everon\Email\Senders;
 
 
 use Everon\Email\Interfaces\Email;

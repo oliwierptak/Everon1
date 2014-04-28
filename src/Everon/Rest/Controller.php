@@ -25,7 +25,6 @@ use Everon\Module;
 abstract class Controller extends \Everon\Controller implements Interfaces\Controller
 {
     use Domain\Dependency\Injection\DomainManager;
-    use Dependency\Injection\Environment;
     use Dependency\Injection\Factory;
     use RestDependency\Injection\ResourceManager;
 

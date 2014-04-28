@@ -15,16 +15,6 @@ use Everon\Interfaces;
 class Console extends Core implements Interfaces\Core
 {
     /**
-     * @param $name
-     * @param $module
-     * @return Interfaces\Controller
-     */
-    protected function createController($name, $module)
-    {
-        return $this->getFactory()->buildController($name, 'Everon\Console\Controller');
-    }
-
-    /**
      * @inheritdoc
      */
     public function run(RequestIdentifier $RequestIdentifier)
@@ -41,8 +31,8 @@ class Console extends Core implements Interfaces\Core
         finally {
             $this->getLogger()->console(
                 sprintf(
-                    '[%d] %s %s (%s)',
-                    $this->getResponse()->getStatusCode(), $this->getRequest()->getMethod(), $this->getRequest()->getPath(), $this->getResponse()->getStatusMessage()
+                    '[%d] %s %s',
+                    $this->getResponse()->getResult(), $this->getRequest()->getMethod(), $this->getRequest()->getPath()
                 )
             );
         }

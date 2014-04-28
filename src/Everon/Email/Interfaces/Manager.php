@@ -14,5 +14,12 @@ namespace Everon\Email\Interfaces;
  */
 interface Manager
 {
-    public function send(Sender $Sender, Email $Email, array $receivers);
+    /**
+     * @param Sender $Sender
+     * @param Email $Email
+     * @param Recipient $Recipient
+     * @return bool
+     */
+    function send(Sender $Sender, Email $Email, Recipient $Recipient);
+
 }

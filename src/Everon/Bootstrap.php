@@ -9,6 +9,8 @@
  */
 namespace Everon;
 
+use Everon\Interfaces\Environment;
+
 class Bootstrap
 {
     /**
@@ -25,12 +27,27 @@ class Bootstrap
     
     protected $application_ini = null;
     
+    protected $environment_name = null;
     
-    public function __construct($Environment, $os=PHP_OS)
+    
+    public function __construct($Environment, $environment_name, $os=PHP_OS)
     {
+        $this->environment_name = trim($environment_name);
+        if ($this->environment_name === '') {
+            throw new \Exception('Undefined environment name');
+        }
+        
         $this->Environment = $Environment;
         $os = substr($os, 0, 3);
         $this->os_name = $os === 'WIN' ? 'win' : 'unix';
+        
+        //define config directory based on EVERON_ENVIRONMENT
+        $ConfigDir = new \SplFileInfo($this->Environment->getConfig().$this->environment_name);
+        if ($ConfigDir->isDir() === false) {
+            throw new \Exception(sprintf('Invalid config directory: "%s"', $ConfigDir->getPathname()));
+        }
+                
+        $this->Environment->setConfig($ConfigDir->getPathname().DIRECTORY_SEPARATOR);
     }
     
     public function getClassLoader()
@@ -41,6 +58,11 @@ class Bootstrap
     public function getEnvironment()
     {
         return $this->Environment;
+    }
+    
+    public function setEnvironment(Environment $Environment)
+    {
+        return $this->Environment = $Environment;
     }
     
     public function getOsName()
@@ -64,10 +86,10 @@ class Bootstrap
 
             $classmap_filename = $this->Environment->getCache().'everon_classmap_'.$this->getOsName().'.php';
             $ClassMap = new ClassMap($classmap_filename);
-            $ClassLoader = new ClassLoaderCache($this->useEveronAutoload(), $ClassMap);
+            $ClassLoader = new ClassLoaderCache($this->hasAutoloader('everon'), $ClassMap);
         }
         else {
-            $ClassLoader = new ClassLoader($this->useEveronAutoload());
+            $ClassLoader = new ClassLoader($this->hasAutoloader('everon'));
         }
         
         $this->ClassLoader = $ClassLoader;
@@ -83,7 +105,11 @@ class Bootstrap
     
     protected function registerClassLoader($prepend_autoloader)
     {
-        if ($this->useEveronAutoload()) {
+        if ($this->hasAutoloader('composer')) {
+            require_once($this->Environment->getRoot().'vendor/autoload.php');
+        }
+        
+        if ($this->hasAutoloader('everon')) {
             $this->setupClassLoader();
             $this->getClassLoader()->add('Everon', $this->getEnvironment()->getEveronRoot());
             $this->getClassLoader()->add('Everon\Application', $this->getEnvironment()->getApplication());
@@ -91,14 +117,21 @@ class Bootstrap
             $this->getClassLoader()->add('Everon\Domain', $this->getEnvironment()->getDomain());
             $this->getClassLoader()->add('Everon\Module', $this->getEnvironment()->getModule());
             $this->getClassLoader()->add('Everon\Rest', $this->getEnvironment()->getRest());
+            $this->getClassLoader()->add('Everon\View', $this->getEnvironment()->getView());
             $this->getClassLoader()->register($prepend_autoloader);
         }
     }
     
-    public function useEveronAutoload()
+    public function hasAutoloader($name)
     {
         $ini = $this->getApplicationIni();
-        return strcasecmp(@$ini['env']['autoload'], 'everon') === 0;
+        $autoloaders = @$ini['autoloader']['active'];
+        
+        if (is_array($autoloaders)) {
+            return in_array($name, $autoloaders);
+        }
+        
+        return false;
     }
     
     public function run($prepend_autoloader = false)
@@ -140,4 +173,23 @@ class Bootstrap
         error_log($message, 3, $log_filename);
         return $message;
     }
-}   
+
+    /**
+     * @param string $environment_name
+     */
+    public function setEnvironmentName($environment_name)
+    {
+        $this->environment_name = $environment_name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEnvironmentName()
+    {
+        return $this->environment_name;
+    }
+    
+    
+    
+}

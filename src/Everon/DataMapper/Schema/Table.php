@@ -15,7 +15,7 @@ use Everon\Helper;
 
 class Table implements Interfaces\Schema\Table
 {
-    use Helper\Asserts\IsNumericAndNonZero;
+    use Helper\Asserts\IsNumericAndNotZero;
     use Helper\Exceptions;
     use Helper\Immutable;
     

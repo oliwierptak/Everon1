@@ -17,7 +17,6 @@ use Everon\Helper;
 class Manager implements Interfaces\Manager
 {
     use Dependency\Injection\ConfigManager;
-    use Dependency\Injection\Environment;
     use Dependency\Injection\Factory;
     use Dependency\Injection\FileSystem;
 
