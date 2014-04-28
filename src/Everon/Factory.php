@@ -1126,6 +1126,9 @@ abstract class Factory implements Interfaces\Factory
         }
     }
 
+    /**
+     * @inheritdoc
+     */
     public function buildMailer($name, Email\Interfaces\Credentials $Credentials, $namespace='Everon\Email')
     {
         try {
@@ -1137,6 +1140,23 @@ abstract class Factory implements Interfaces\Factory
         }
         catch (\Exception $e) {
             throw new Exception\Factory('Mailer: "%s" initialization error', $name, $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildEmailManager($namespace='Everon\Email')
+    {
+        try {
+            $class_name = $this->getFullClassName($namespace, 'Manager');
+            $this->classExists($class_name);
+            $EmailManager = new $class_name();
+            $this->injectDependencies($class_name, $EmailManager);
+            return $EmailManager;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('EmailManager initialization error', null, $e);
         }
     }
 }

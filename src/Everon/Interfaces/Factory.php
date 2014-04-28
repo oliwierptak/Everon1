@@ -18,6 +18,7 @@ use Everon\Module;
 use Everon\View;
 use Everon\Http;
 use Everon\Rest;
+use Everon\Email;
 
 interface Factory
 {
@@ -534,4 +535,21 @@ interface Factory
      * @throws Exception\Factory
      */
     function buildConsoleRunner($namespace='Everon\Console');
+
+    /**
+     * @param $name
+     * @param Email\Interfaces\Credentials $Credentials
+     * @param string $namespace
+     * @return mixed
+     * @throws Exception\Factory
+     */
+    function buildMailer($name, Email\Interfaces\Credentials $Credentials, $namespace='Everon\Email');
+
+    /**
+     * @param string $namespace
+     * @return mixed
+     * @throws Exception\Factory
+     */
+    function buildEmailManager($namespace='Everon\Email');
+
 }
