@@ -1062,6 +1062,40 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
+    public function buildEventManager($namespace='Everon\Event')
+    {
+        try {
+            $class_name = $this->getFullClassName($namespace, 'Manager');
+            $this->classExists($class_name);
+            $Manager = new $class_name();
+            $this->injectDependencies($class_name, $Manager);
+            return $Manager;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('EventManager initialization error', null, $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildEventContext(\Closure $Callback, $namespace='Everon\Event')
+    {
+        try {
+            $class_name = $this->getFullClassName($namespace, 'Context');
+            $this->classExists($class_name);
+            $Context = new $class_name($Callback);
+            $this->injectDependencies($class_name, $Context);
+            return $Context;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('EventContext initialization error', null, $e);
+        }
+    }    
+    
+    /**
+     * @inheritdoc
+     */
     public function buildModule($name, $module_directory, Interfaces\Config $Config, Interfaces\Config $RouterConfig)
     {
         try {

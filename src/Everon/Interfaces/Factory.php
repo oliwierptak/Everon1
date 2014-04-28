@@ -494,6 +494,21 @@ interface Factory
     function buildEnvironment($app_root, $source_root);
 
     /**
+     * @param string $namespace
+     * @return \Everon\Event\Interfaces\Manager
+     * @throws Exception\Factory
+     */
+    function buildEventManager($namespace='Everon\Event');
+
+    /**
+     * @param callable $Callback
+     * @param string $namespace
+     * @return \Everon\Event\Interfaces\Context
+     * @throws Exception\Factory
+     */
+    function buildEventContext(\Closure $Callback, $namespace='Everon\Event');
+
+    /**
      * @param $name
      * @param Interfaces\Config $module_directory
      * @param Interfaces\Config $Config
