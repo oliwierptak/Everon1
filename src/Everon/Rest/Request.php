@@ -14,7 +14,7 @@ use Everon\Exception;
 
 class Request extends \Everon\Request implements Interfaces\Request
 {
-    use Helper\Asserts\IsStringAndNonEmpty;
+    use Helper\Asserts\IsStringAndNotEmpty;
     use Helper\Exceptions;
     
     protected $versioning = Resource\Handler::VERSIONING_URL;
