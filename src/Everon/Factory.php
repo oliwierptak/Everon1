@@ -17,6 +17,7 @@ abstract class Factory implements Interfaces\Factory
 {
     use Helper\String\UnderscoreToCamel;
     use Helper\Arrays;
+    use Helper\Exceptions;
     use Helper\Asserts\IsArrayAndNotEmpty;
     use Helper\Asserts\IsArrayKey;
 
