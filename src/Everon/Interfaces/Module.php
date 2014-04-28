@@ -12,7 +12,7 @@ namespace Everon\Interfaces;
 use Everon\Interfaces;
 use Everon\Exception;
 
-interface Module
+interface Module extends Dependency\Factory
 {
     /**
      * @return Interfaces\Config
