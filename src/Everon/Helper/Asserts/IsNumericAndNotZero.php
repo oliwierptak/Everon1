@@ -9,21 +9,20 @@
  */
 namespace Everon\Helper\Asserts;
 
-trait IsStringAndNonEmpty
+trait IsNumericAndNotZero
 {
     /**
-     * Verifies that the specified condition is string and non empty.
-     * The assertion fails if the condition is not string or empty string.
+     * Verifies that the specified condition is numeric and non zero.
+     * The assertion fails if the condition is not numeric or numeric less or equal zero.
      *
-     * @static
-     * @param string $value
+     * @param integer $value
      * @param string $message
      * @param string $exception
      * @throws \Everon\Exception\Asserts
      */
-    public function assertIsStringAndNonEmpty($value, $message='%s must be a string and not empty', $exception='Asserts')
+    public function assertIsNumericAndNonZero($value, $message='%s must be a number and not 0', $exception='Asserts')
     {
-        if (is_string($value) === false || strlen($value) < 1) {
+        if (is_numeric($value) === false || floatval($value) <= 0) {
             $this->throwException($exception, $message, $value);
         }
     }

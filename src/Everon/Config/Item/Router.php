@@ -20,7 +20,7 @@ class Router extends Config\Item implements Config\Interfaces\ItemRouter
     
     use Helper\Arrays;
     use Helper\Exceptions;
-    use Helper\Asserts\IsStringAndNonEmpty;
+    use Helper\Asserts\IsStringAndNotEmpty;
     use Helper\IsIterable;
     use Helper\Regex;
 

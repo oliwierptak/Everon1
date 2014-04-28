@@ -18,7 +18,7 @@ class Item implements Interfaces\Item
     const PROPERTY_NAME = '____name';
 
     use Helper\Exceptions;
-    use Helper\Asserts\IsStringAndNonEmpty;
+    use Helper\Asserts\IsStringAndNotEmpty;
     use Helper\ToArray;
     
     protected $name = null;
