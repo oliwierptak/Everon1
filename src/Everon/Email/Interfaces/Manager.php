@@ -18,7 +18,8 @@ interface Manager
      * @param Sender $Sender
      * @param Email $Email
      * @param Recipient $Recipient
+     * @return bool
      */
-    public function send(Sender $Sender, Email $Email, Recipient $Recipient);
+    function send(Sender $Sender, Email $Email, Recipient $Recipient);
 
 }

@@ -18,15 +18,6 @@ class Credentials implements Interfaces\Credentials
 
     protected $senderName;
 
-    public function __construct($fromEmail, $password, $port, $senderName, $server, $username)
-    {
-        $this->senderEmail = $fromEmail;
-        $this->password = $password;
-        $this->port = $port;
-        $this->senderName = $senderName;
-        $this->server = $server;
-        $this->username = $username;
-    }
 
     /**
      * @param mixed $fromEmail
