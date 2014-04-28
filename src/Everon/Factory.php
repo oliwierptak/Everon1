@@ -17,6 +17,8 @@ abstract class Factory implements Interfaces\Factory
 {
     use Helper\String\UnderscoreToCamel;
     use Helper\Arrays;
+    use Helper\Asserts\IsArrayAndNotEmpty;
+    use Helper\Asserts\IsArrayKey;
 
     /**
      * @var Interfaces\DependencyContainer
@@ -1158,5 +1160,34 @@ abstract class Factory implements Interfaces\Factory
         catch (\Exception $e) {
             throw new Exception\Factory('EmailManager initialization error', null, $e);
         }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildEmailCredentials(array $credentialData)
+    {
+        $this->assertIsArrayKey('username', $credentialData);
+        $this->assertIsArrayKey('password', $credentialData);
+        $this->assertIsArrayKey('port', $credentialData);
+        $this->assertIsArrayKey('server', $credentialData);
+        $this->assertIsArrayKey('sender_name', $credentialData);
+        $this->assertIsArrayKey('sender_email', $credentialData);
+
+        $this->assertIsArrayAndNotEmpty($credentialData['username']);
+        $this->assertIsArrayAndNotEmpty($credentialData['password']);
+        $this->assertIsArrayAndNotEmpty($credentialData['port']);
+        $this->assertIsArrayAndNotEmpty($credentialData['server']);
+        $this->assertIsArrayAndNotEmpty($credentialData['sender_name']);
+        $this->assertIsArrayAndNotEmpty($credentialData['sender_email']);
+
+        $Credentials = new Email\Credentials();
+        $Credentials->setUserName($credentialData['username']);
+        $Credentials->setPassword($credentialData['password']);
+        $Credentials->setServer($credentialData['server']);
+        $Credentials->setPort($credentialData['port']);
+        $Credentials->setSenderEmail($credentialData['sender_email']);
+        $Credentials->setSenderName($credentialData['sender_name']);
+        return $Credentials;
     }
 }

@@ -552,4 +552,10 @@ interface Factory
      */
     function buildEmailManager($namespace='Everon\Email');
 
+    /**
+     * @param array $credentialData
+     * @return Email\Credentials
+     */
+    function buildEmailCredentials(array $credentialData);
+
 }
