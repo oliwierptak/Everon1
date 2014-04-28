@@ -8,57 +8,38 @@
  * file that was distributed with this source code.
  */
 
-namespace Everon\Email\Send;
+namespace Everon\Email\Senders;
 
-
-use Everon\Email\Interfaces\Email;
-use Everon\Email\Interfaces\Sender;
+use Everon\Email\Interfaces;
 
 /**
  * @author Zeger Hoogeboom <zeger_hoogeboom@hotmail.com>
  */
-class SwiftMailer implements Sender
+class SwiftMailer implements Interfaces\Sender
 {
+    protected $Credentials;
 
-    protected $username;
-
-    protected $password;
-
-    protected $server;
-
-    protected $port;
-
-    protected $fromEmail;
-
-    protected $senderName;
-
-    public function __construct($password, $username, $server, $port, $fromEmail, $senderName)
+    public function __construct(Interfaces\Credentials $Credentials)
     {
-        $this->password = $password;
-        $this->username = $username;
-        $this->server = $server;
-        $this->port = $port;
-        $this->fromEmail = $fromEmail;
-        $this->senderName = $senderName;
+        $this->Credentials = $Credentials;
     }
 
     /**
      * @inheritdoc
      */
-    function send(Email $Email, $receiver)
+    function send(Interfaces\Email $Email, Interfaces\Recipient $Recipient)
     {
-        $transport = \Swift_SmtpTransport::newInstance($this->server, 25)
+        $transport = \Swift_SmtpTransport::newInstance($this->Credentials->getServer(), 25)
             ->setUsername($this->username)
             ->setPassword($this->password);
 
         $mailer = \Swift_Mailer::newInstance($transport);
 
         $message = \Swift_Message::newInstance($Email->getSubject())
-            ->setFrom(array($this->fromEmail => $this->senderName))
-            ->setTo(array($receiver))
+            ->setFrom([$this->Credentials->getSenderEmail() => $this->senderName])
+            ->setTo($Recipient->getTo())
             ->setBody($Email->getMessage());
 
-        //set headers
         return $mailer->send($message);
     }
 

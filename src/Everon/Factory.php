@@ -9,6 +9,7 @@
  */
 namespace Everon;
 
+use Everon\Email;
 use Everon\Helper;
 use Everon\Interfaces;
 
@@ -1107,7 +1108,7 @@ abstract class Factory implements Interfaces\Factory
             throw new Exception\Factory('FactoryWorker: "%s" initialization error', $name, $e);
         }
     }
-    
+
     /**
      * @inheritdoc
      */
@@ -1122,6 +1123,20 @@ abstract class Factory implements Interfaces\Factory
         }
         catch (\Exception $e) {
             throw new Exception\Factory('ConsoleHelper initialization error', null, $e);
+        }
+    }
+
+    public function buildMailer($name, Email\Interfaces\Credentials $Credentials, $namespace='Everon\Email')
+    {
+        try {
+            $class_name = $this->getFullClassName($namespace, $name);
+            $this->classExists($class_name);
+            $Mailer = new $class_name($Credentials);
+            $this->injectDependencies($class_name, $Mailer);
+            return $Mailer;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('Mailer: "%s" initialization error', $name, $e);
         }
     }
 }

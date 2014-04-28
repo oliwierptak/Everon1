@@ -9,21 +9,28 @@
  */
 namespace Everon\Email;
 
-
-use Everon\Email\Interfaces\Email;
-use Everon\Email\Interfaces\Sender;
+use Everon\Email\Interfaces;
+use Everon\Dependency;
 
 /**
  * @author Zeger Hoogeboom <zeger_hoogeboom@hotmail.com>
  */
-class Manager implements \Everon\Email\Interfaces\Manager
+class Manager implements Interfaces\Manager
 {
+    use Dependency\Injection\Logger;
 
-    public function send(Sender $Sender, Email $Email, array $receivers)
+    /**
+     * @inheritdoc
+     */
+    public function send(Interfaces\Sender $Sender, Interfaces\Email $Email, Interfaces\Recipient $Recipient)
     {
-        foreach ($receivers as $receiver)
-        {
-            $Sender->send($Email, $receiver);
+        try {
+            $Sender->send($Email, $Recipient);
+            return true;
+        }
+        catch (\Exception $e) {
+            $this->getLogger()->email($e);
+            return false;
         }
     }
 } 

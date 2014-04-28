@@ -13,12 +13,13 @@ namespace Everon\Email\Interfaces;
 /**
  * @author Zeger Hoogeboom <zeger_hoogeboom@hotmail.com>
  */
-interface Sender {
+interface Sender
+{
 
     /**
      * @param Email $Email
-     * @param array $receiver
+     * @param Recipient $Recipient
      * @return bool
      */
-    function send(Email $Email, $receiver);
+    function send(Email $Email, Recipient $Recipient);
 } 

@@ -19,7 +19,9 @@ class Email implements \Everon\Email\Interfaces\Email
 
     protected $subject;
 
-    protected  $message;
+    protected $message;
+
+    protected $attachments;
 
     public function __construct($headers, $message, $subject)
     {
