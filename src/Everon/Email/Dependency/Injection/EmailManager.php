@@ -3,6 +3,6 @@
 namespace Everon\Email\Dependency\Injection;
 
 
-class EmailManager {
+trait EmailManager {
     use \Everon\Email\Dependency\EmailManager;
 } 
