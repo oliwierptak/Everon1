@@ -1,7 +1,7 @@
 <?php
 namespace Everon\Email\Interfaces;
 
-interface Credentials
+interface Credential
 {
     /**
      * @return mixed

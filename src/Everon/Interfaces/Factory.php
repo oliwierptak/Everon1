@@ -553,12 +553,12 @@ interface Factory
 
     /**
      * @param $name
-     * @param Email\Interfaces\Credentials $Credentials
+     * @param Email\Interfaces\Credential $Credentials
      * @param string $namespace
      * @return mixed
      * @throws Exception\Factory
      */
-    function buildMailer($name, Email\Interfaces\Credentials $Credentials, $namespace='Everon\Email');
+    function buildEmailSender($name, Email\Interfaces\Credential $Credentials, $namespace='Everon\Email');
 
     /**
      * @param string $namespace
@@ -569,7 +569,7 @@ interface Factory
 
     /**
      * @param array $credentialData
-     * @return Email\Credentials
+     * @return Email\Credential
      */
     function buildEmailCredentials(array $credentialData);
 

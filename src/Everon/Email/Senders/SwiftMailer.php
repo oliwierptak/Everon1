@@ -19,7 +19,7 @@ class SwiftMailer implements Interfaces\Sender
 {
     protected $Credentials;
 
-    public function __construct(Interfaces\Credentials $Credentials)
+    public function __construct(Interfaces\Credential $Credentials)
     {
         $this->Credentials = $Credentials;
     }

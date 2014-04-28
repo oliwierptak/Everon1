@@ -18,8 +18,9 @@ abstract class Factory implements Interfaces\Factory
     use Helper\String\UnderscoreToCamel;
     use Helper\Arrays;
     use Helper\Exceptions;
-    use Helper\Asserts\IsArrayAndNotEmpty;
+    use Helper\Asserts\IsStringAndNotEmpty;
     use Helper\Asserts\IsArrayKey;
+
 
     /**
      * @var Interfaces\DependencyContainer
@@ -1166,14 +1167,14 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildMailer($name, Email\Interfaces\Credentials $Credentials, $namespace='Everon\Email')
+    public function buildEmailSender($name, Email\Interfaces\Credential $Credentials, $namespace='Everon\Email\Senders')
     {
         try {
             $class_name = $this->getFullClassName($namespace, $name);
             $this->classExists($class_name);
-            $Mailer = new $class_name($Credentials);
-            $this->injectDependencies($class_name, $Mailer);
-            return $Mailer;
+            $Sender = new $class_name($Credentials);
+            $this->injectDependencies($class_name, $Sender);
+            return $Sender;
         }
         catch (\Exception $e) {
             throw new Exception\Factory('Mailer: "%s" initialization error', $name, $e);
@@ -1209,14 +1210,14 @@ abstract class Factory implements Interfaces\Factory
         $this->assertIsArrayKey('sender_name', $credentialData);
         $this->assertIsArrayKey('sender_email', $credentialData);
 
-        $this->assertIsArrayAndNotEmpty($credentialData['username']);
-        $this->assertIsArrayAndNotEmpty($credentialData['password']);
-        $this->assertIsArrayAndNotEmpty($credentialData['port']);
-        $this->assertIsArrayAndNotEmpty($credentialData['server']);
-        $this->assertIsArrayAndNotEmpty($credentialData['sender_name']);
-        $this->assertIsArrayAndNotEmpty($credentialData['sender_email']);
+        $this->assertIsStringAndNonEmpty($credentialData['username']);
+        $this->assertIsStringAndNonEmpty($credentialData['password']);
+        $this->assertIsStringAndNonEmpty($credentialData['port']);
+        $this->assertIsStringAndNonEmpty($credentialData['server']);
+        $this->assertIsStringAndNonEmpty($credentialData['sender_name']);
+        $this->assertIsStringAndNonEmpty($credentialData['sender_email']);
 
-        $Credentials = new Email\Credentials();
+        $Credentials = new Email\Credential();
         $Credentials->setUserName($credentialData['username']);
         $Credentials->setPassword($credentialData['password']);
         $Credentials->setServer($credentialData['server']);

@@ -3,7 +3,7 @@
 namespace Everon\Email;
 
 
-class Credentials implements Interfaces\Credentials
+class Credential implements Interfaces\Credential
 {
 
     protected $username;
