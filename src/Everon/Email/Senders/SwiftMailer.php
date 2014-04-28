@@ -40,7 +40,7 @@ class SwiftMailer implements Interfaces\Sender
             ->setTo($Recipient->getTo())
             ->setBody($Email->getMessage());
 
-        return $mailer->send($message);
+        return $mailer->send($message) > 0;
     }
 
 }
