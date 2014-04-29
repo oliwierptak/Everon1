@@ -30,6 +30,7 @@ class Request extends \Everon\Request implements Interfaces\Request
      */
     public function __construct(array $server, array $get, array $post, array $files, $versioning)
     {
+        $post = $this->getRawInput();
         $this->versioning = $versioning;
         parent::__construct($server, $get, $post, $files);
     }

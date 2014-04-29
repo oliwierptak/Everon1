@@ -81,7 +81,7 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
     {
         $user_id = 1;
         $version = $this->getRequest()->getVersion();
-        $data = $this->getRequest()->getRawInput();
+        $data = $this->getRequest()->getPostCollection()->toArray(true);
         $resource_name = $this->getRequest()->getQueryParameter('resource', null);
         $Resource = $this->getResourceManager()->add($version, $resource_name, $data, $user_id);
         
@@ -97,7 +97,7 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
     {
         $user_id = 1;
         $version = $this->getRequest()->getVersion();
-        $data = $this->getRequest()->getRawInput();
+        $data = $this->getRequest()->getPostCollection()->toArray(true);
         $resource_name = $this->getRequest()->getQueryParameter('resource', null);
         $resource_id = $this->getRequest()->getQueryParameter('resource_id', null);
         $Resource = $this->getResourceManager()->save($version, $resource_name, $resource_id, $data, $user_id);
