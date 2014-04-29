@@ -7,24 +7,24 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Everon\Email\Sender;
 
-namespace Everon\Email\Senders;
+use Everon\Email\Interfaces;
 
-
-use Everon\Email\Interfaces\Email;
-use Everon\Email\Interfaces\Sender;
 
 /**
  * @author Zeger Hoogeboom <zeger_hoogeboom@hotmail.com>
+ * @author Oliwier Ptak <oliwierptak@gmail.com>
  */
-class PHPMailer implements Sender{
+class Php implements Interfaces\Sender
+{
 
     /**
      * @inheritdoc
      */
-    function send(Email $Email, $receiver)
+    function send(Interfaces\Email $Email, Interfaces\Recipient $Recipient)
     {
-        mail($receiver,$Email->getSubject(),$Email->getMessage());
+        //todo
     }
 
 } 

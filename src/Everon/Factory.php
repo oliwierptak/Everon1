@@ -1167,17 +1167,17 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildEmailSender($name, Email\Interfaces\Credential $Credentials, $namespace='Everon\Email\Senders')
+    public function buildEmailSender($name, Email\Interfaces\Credential $Credential, $namespace='Everon\Email\Sender')
     {
         try {
             $class_name = $this->getFullClassName($namespace, $name);
             $this->classExists($class_name);
-            $Sender = new $class_name($Credentials);
+            $Sender = new $class_name($Credential);
             $this->injectDependencies($class_name, $Sender);
             return $Sender;
         }
         catch (\Exception $e) {
-            throw new Exception\Factory('Mailer: "%s" initialization error', $name, $e);
+            throw new Exception\Factory('EmailSender: "%s" initialization error', $name, $e);
         }
     }
 

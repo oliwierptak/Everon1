@@ -7,33 +7,40 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Everon\Email;
 
 /**
  * @author Zeger Hoogeboom <zeger_hoogeboom@hotmail.com>
+ * @author Oliwier Ptak <oliwierptak@gmail.com>
  */
 class Email implements \Everon\Email\Interfaces\Email
 {
+    /**
+     * @var array
+     */
     protected $headers;
 
     protected $subject;
 
     protected $message;
 
+    /**
+     * @var array
+     */
     protected $attachments;
+    
 
-    public function __construct($headers, $message, $subject)
+    public function __construct($subject, $message, array $headers=[])
     {
-        $this->headers = $headers;
-        $this->message = $message;
         $this->subject = $subject;
+        $this->message = $message;
+        $this->headers = $headers;
     }
 
     /**
-     * @param mixed $headers
+     * @param array  $headers
      */
-    public function setHeaders($headers)
+    public function setHeaders(array $headers)
     {
         $this->headers = $headers;
     }
@@ -78,5 +85,20 @@ class Email implements \Everon\Email\Interfaces\Email
         return $this->subject;
     }
 
+    /**
+     * @param array $attachments
+     */
+    public function setAttachments($attachments)
+    {
+        $this->attachments = $attachments;
+    }
 
+    /**
+     * @return array
+     */
+    public function getAttachments()
+    {
+        return $this->attachments;
+    }
+    
 } 

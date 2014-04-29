@@ -7,18 +7,21 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
-namespace Everon\Email\Senders;
+namespace Everon\Email\Sender;
 
 use Everon\Email\Interfaces;
 
 /**
  * @author Zeger Hoogeboom <zeger_hoogeboom@hotmail.com>
+ * @author Oliwier Ptak <oliwierptak@gmail.com>
  */
-class SwiftMailer implements Interfaces\Sender
+class Swift implements Interfaces\Sender
 {
     protected $Credentials;
 
+    /**
+     * @param Interfaces\Credential $Credentials
+     */
     public function __construct(Interfaces\Credential $Credentials)
     {
         $this->Credentials = $Credentials;

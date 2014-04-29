@@ -1,65 +1,77 @@
 <?php
+/**
+ * This file is part of the Everon framework.
+ *
+ * (c) Oliwier Ptak <oliwierptak@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 namespace Everon\Email\Interfaces;
 
+/**
+ * @author Zeger Hoogeboom <zeger_hoogeboom@hotmail.com>
+ * @author Oliwier Ptak <oliwierptak@gmail.com>
+ */
 interface Credential
 {
     /**
-     * @return mixed
+     * @return string
      */
-    public function getPassword();
+    function getPassword();
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getUsername();
+    function getUsername();
 
     /**
-     * @return mixed
+     * @return int
      */
-    public function getPort();
+    function getPort();
 
     /**
-     * @param mixed $password
+     * @param string $password
      */
-    public function setPassword($password);
+    function setPassword($password);
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getSenderEmail();
+    function getSenderEmail();
 
     /**
-     * @param mixed $username
+     * @param string $username
      */
-    public function setUsername($username);
+    function setUsername($username);
 
     /**
-     * @param mixed $senderName
+     * @param string $senderName
      */
-    public function setSenderName($senderName);
+    function setSenderName($senderName);
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getSenderName();
+    function getSenderName();
 
     /**
-     * @param mixed $fromEmail
+     * @param string $fromEmail
      */
-    public function setSenderEmail($fromEmail);
+    function setSenderEmail($fromEmail);
 
     /**
-     * @param mixed $port
+     * @param string $port
      */
-    public function setPort($port);
+    function setPort($port);
 
     /**
-     * @param mixed $server
+     * @param string $server
      */
-    public function setServer($server);
+    function setServer($server);
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getServer();
+    function getServer();
 }
