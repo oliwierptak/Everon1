@@ -47,20 +47,20 @@ class Server extends \Everon\Core implements Rest\Interfaces\Server
                 parent::run($RequestIdentifier);
             }
         }
-        catch (Exception\RouteNotDefined $Exception) {
-            $BadRequest = new Http\Exception((new Http\Message\NotFound('Invalid resource name, request method or version')));
-            $this->showException($BadRequest->getHttpMessage()->getStatus(), $BadRequest);
-        }
-        catch (Rest\Exception\Resource $Exception) {
-            $BadRequest = new Http\Exception((new Http\Message\BadRequest($Exception->getMessage())));
-            $this->showException($BadRequest->getHttpMessage()->getStatus(), $BadRequest);
-        }
         catch (Exception\Pdo $Exception) {
             $BadRequest = new Http\Exception((new Http\Message\BadRequest($Exception->getMessage())));
             $this->showException($BadRequest->getHttpMessage()->getStatus(), $BadRequest);
         }
+        catch (Exception\RouteNotDefined $Exception) {
+            $BadRequest = new Http\Exception((new Http\Message\NotFound('Invalid resource name, request method or version')));
+            $this->showException($BadRequest->getHttpMessage()->getStatus(), $BadRequest);
+        }
         catch (Http\Exception $Exception) {
             $this->showException($Exception->getHttpMessage()->getStatus(), $Exception);
+        }
+        catch (Rest\Exception\Resource $Exception) {
+            $BadRequest = new Http\Exception((new Http\Message\BadRequest($Exception->getMessage())));
+            $this->showException($BadRequest->getHttpMessage()->getStatus(), $BadRequest);
         }
         catch (\Exception $Exception) {
             $InternalServerError = new Http\Exception((new Http\Message\InternalServerError($Exception->getMessage())));
