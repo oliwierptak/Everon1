@@ -1101,12 +1101,12 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildModule($name, $module_directory, Interfaces\Config $Config, Interfaces\Config $RouterConfig)
+    public function buildModule($name, $module_directory, Interfaces\Config $Config)
     {
         try {
             $class_name = $this->getFullClassName('Everon\Module\\'.$name, 'Module');
             $this->classExists($class_name);
-            $Module = new $class_name($name, $module_directory, $Config, $RouterConfig);
+            $Module = new $class_name($name, $module_directory, $Config);
             $this->injectDependencies($class_name, $Module);
             return $Module;
         }

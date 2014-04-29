@@ -513,11 +513,10 @@ interface Factory
      * @param $name
      * @param Interfaces\Config $module_directory
      * @param Interfaces\Config $Config
-     * @param Interfaces\Config $RouterConfig
      * @return Module
      * @throws Exception\Factory
      */
-    function buildModule($name, $module_directory, Interfaces\Config $Config, Interfaces\Config $RouterConfig);
+    function buildModule($name, $module_directory, Interfaces\Config $Config);
 
     /**
      * @return Module\Manager

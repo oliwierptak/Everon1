@@ -41,8 +41,7 @@ class Manager implements Interfaces\Manager
             }
             
             $Config = $this->getModuleConfig($module_name, 'module');
-            $ConfigRouter = $this->getModuleConfig($module_name, 'router');
-            $Module = $this->getFactory()->buildModule($module_name, $Dir->getPathname().DIRECTORY_SEPARATOR, $Config, $ConfigRouter);
+            $Module = $this->getFactory()->buildModule($module_name, $Dir->getPathname().DIRECTORY_SEPARATOR, $Config);
             
             //has worker? register it
             if ((new \SplFileInfo($Dir->getPathname().DIRECTORY_SEPARATOR.'FactoryWorker.php'))->isFile()) {
