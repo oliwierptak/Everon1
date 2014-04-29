@@ -48,7 +48,7 @@ class Server extends \Everon\Core implements Rest\Interfaces\Server
             }
         }
         catch (Exception\RouteNotDefined $Exception) {
-            $BadRequest = new Http\Exception((new Http\Message\NotFound('Invalid resource name or version')));
+            $BadRequest = new Http\Exception((new Http\Message\NotFound('Invalid resource name, request method or version')));
             $this->showException($BadRequest->getHttpMessage()->getStatus(), $BadRequest);
         }
         catch (Rest\Exception\Resource $Exception) {
