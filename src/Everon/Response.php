@@ -59,12 +59,11 @@ class Response implements Interfaces\Response
     }
 
     /**
-     * @param string $root
      * @return string
      */
-    public function toJson($root='data')
+    public function toJson()
     {
-        return json_encode([$root => $this->data]);
+        return json_encode($this->data);
     }
 
     /**

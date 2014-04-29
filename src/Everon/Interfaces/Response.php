@@ -22,10 +22,9 @@ interface Response
     function setResult($result);
 
     /**
-     * @param string $root
      * @return string
      */
-    function toJson($root = 'data');
+    function toJson();
 
     /**
      * @return null
