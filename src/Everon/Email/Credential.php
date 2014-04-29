@@ -15,33 +15,33 @@ namespace Everon\Email;
  */
 class Credential implements Interfaces\Credential
 {
-    protected $username;
+    protected $username = null;
 
-    protected $password;
+    protected $password = null;
 
-    protected $server;
+    protected $host = null;
 
-    protected $port;
+    protected $port = null;
 
-    protected $senderEmail;
+    protected $email = null;
 
-    protected $senderName;
+    protected $name = null;
 
 
     /**
-     * @param mixed $fromEmail
+     * @param mixed $email
      */
-    public function setSenderEmail($fromEmail)
+    public function setEmail($email)
     {
-        $this->senderEmail = $fromEmail;
+        $this->email = $email;
     }
 
     /**
      * @return mixed
      */
-    public function getSenderEmail()
+    public function getEmail()
     {
-        return $this->senderEmail;
+        return $this->email;
     }
 
     /**
@@ -77,35 +77,35 @@ class Credential implements Interfaces\Credential
     }
 
     /**
-     * @param mixed $senderName
+     * @param mixed $name
      */
-    public function setSenderName($senderName)
+    public function setName($name)
     {
-        $this->senderName = $senderName;
+        $this->name = $name;
     }
 
     /**
      * @return mixed
      */
-    public function getSenderName()
+    public function getName()
     {
-        return $this->senderName;
+        return $this->name;
     }
 
     /**
-     * @param mixed $server
+     * @param mixed $host
      */
-    public function setServer($server)
+    public function setHost($host)
     {
-        $this->server = $server;
+        $this->host = $host;
     }
 
     /**
      * @return mixed
      */
-    public function getServer()
+    public function getHost()
     {
-        return $this->server;
+        return $this->host;
     }
 
     /**

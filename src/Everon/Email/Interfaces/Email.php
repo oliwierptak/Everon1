@@ -16,24 +16,24 @@ namespace Everon\Email\Interfaces;
 interface Email
 {
     /**
-     * @param array  $headers
+     * @param array $headers
      */
     function setHeaders(array $headers);
 
     /**
-     * @param mixed $message
+     * @param string $message
      */
-    function setMessage($message);
+    function setBody($message);
 
     /**
-     * @return mixed
+     * @return string
      */
     function getSubject();
 
     /**
-     * @return mixed
+     * @return string
      */
-    function getMessage();
+    function getBody();
 
     /**
      * @return array
@@ -41,7 +41,7 @@ interface Email
     function getHeaders();
 
     /**
-     * @param mixed $subject
+     * @param string $subject
      */
     function setSubject($subject);
 
@@ -54,4 +54,14 @@ interface Email
      * @return array
      */
     function getAttachments();
+
+    /**
+     * @param Recipient $Recipient
+     */
+    function setRecipient(Recipient $Recipient);
+
+    /**
+     * @return Recipient
+     */
+    function getRecipient();
 }

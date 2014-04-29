@@ -551,6 +551,17 @@ interface Factory
     function buildConsoleRunner($namespace='Everon\Console');
 
     /**
+     * @param Email\Interfaces\Recipient $Recipient
+     * @param $subject
+     * @param $body
+     * @param array $headers
+     * @param string $namespace
+     * @return \Everon\Email\Interfaces\Recipient
+     * @throws Exception\Factory
+     */
+    function buildEmailMessage(Email\Interfaces\Recipient $Recipient, $subject, $body, array $headers=[], $namespace='Everon\Email');
+
+    /**
      * @param $name
      * @param Email\Interfaces\Credential $Credentials
      * @param string $namespace
@@ -560,6 +571,17 @@ interface Factory
     function buildEmailSender($name, Email\Interfaces\Credential $Credentials, $namespace='Everon\Email');
 
     /**
+     * @param $name
+     * @param $to
+     * @param array $cc
+     * @param array $bcc
+     * @param string $namespace
+     * @return \Everon\Email\Interfaces\Recipient
+     * @throws Exception\Factory
+     */
+    function buildEmailRecipient($name, $to, array $cc=[], array $bcc=[], $namespace='Everon\Email');
+
+    /**
      * @param string $namespace
      * @return mixed
      * @throws Exception\Factory
@@ -567,9 +589,9 @@ interface Factory
     function buildEmailManager($namespace='Everon\Email');
 
     /**
-     * @param array $credentialData
+     * @param array $credential_data
      * @return Email\Credential
      */
-    function buildEmailCredentials(array $credentialData);
+    function buildEmailCredential(array $credential_data);
 
 }

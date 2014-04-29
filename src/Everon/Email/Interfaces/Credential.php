@@ -38,7 +38,7 @@ interface Credential
     /**
      * @return string
      */
-    function getSenderEmail();
+    function getEmail();
 
     /**
      * @param string $username
@@ -48,17 +48,17 @@ interface Credential
     /**
      * @param string $senderName
      */
-    function setSenderName($senderName);
+    function setName($senderName);
 
     /**
      * @return string
      */
-    function getSenderName();
+    function getName();
 
     /**
      * @param string $fromEmail
      */
-    function setSenderEmail($fromEmail);
+    function setEmail($fromEmail);
 
     /**
      * @param string $port
@@ -66,12 +66,12 @@ interface Credential
     function setPort($port);
 
     /**
-     * @param string $server
+     * @param string $host
      */
-    function setServer($server);
+    function setHost($host);
 
     /**
      * @return string
      */
-    function getServer();
+    function getHost();
 }

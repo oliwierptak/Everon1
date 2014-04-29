@@ -17,14 +17,17 @@ use Everon\Email\Interfaces;
  */
 class Swift implements Interfaces\Sender
 {
-    protected $Credentials;
+    /**
+     * @var Interfaces\Credential
+     */
+    protected $Credential = null;
 
     /**
      * @param Interfaces\Credential $Credentials
      */
     public function __construct(Interfaces\Credential $Credentials)
     {
-        $this->Credentials = $Credentials;
+        $this->Credential = $Credentials;
     }
 
     /**
@@ -32,18 +35,18 @@ class Swift implements Interfaces\Sender
      */
     function send(Interfaces\Email $Email, Interfaces\Recipient $Recipient)
     {
-        $transport = \Swift_SmtpTransport::newInstance($this->Credentials->getServer(), 25)
-            ->setUsername($this->username)
-            ->setPassword($this->password);
+        $Transport = \Swift_SmtpTransport::newInstance($this->Credential->getHost(), 25)
+            ->setUsername($this->Credential->getUsername())
+            ->setPassword($this->Credential->getPassword());
 
-        $mailer = \Swift_Mailer::newInstance($transport);
+        $Mailer = \Swift_Mailer::newInstance($Transport);
 
         $message = \Swift_Message::newInstance($Email->getSubject())
-            ->setFrom([$this->Credentials->getSenderEmail() => $this->senderName])
+            ->setFrom([$this->Credential->getEmail() => $this->Credential->getName()])
             ->setTo($Recipient->getTo())
-            ->setBody($Email->getMessage());
+            ->setBody($Email->getBody());
 
-        return $mailer->send($message) > 0;
+        return $Mailer->send($message) > 0;
     }
 
 }

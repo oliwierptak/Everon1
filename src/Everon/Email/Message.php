@@ -13,7 +13,7 @@ namespace Everon\Email;
  * @author Zeger Hoogeboom <zeger_hoogeboom@hotmail.com>
  * @author Oliwier Ptak <oliwierptak@gmail.com>
  */
-class Email implements \Everon\Email\Interfaces\Email
+class Message implements Interfaces\Email
 {
     /**
      * @var array
@@ -22,18 +22,24 @@ class Email implements \Everon\Email\Interfaces\Email
 
     protected $subject;
 
-    protected $message;
+    protected $body;
 
     /**
      * @var array
      */
     protected $attachments;
-    
 
-    public function __construct($subject, $message, array $headers=[])
+
+    /**
+     * @var Interfaces\Recipient
+     */
+    protected $Recipient;
+
+    public function __construct(Interfaces\Recipient $Recipient, $subject, $body, array $headers=[])
     {
+        $this->Recipient = $Recipient;
         $this->subject = $subject;
-        $this->message = $message;
+        $this->body = $body;
         $this->headers = $headers;
     }
 
@@ -56,17 +62,17 @@ class Email implements \Everon\Email\Interfaces\Email
     /**
      * @param mixed $message
      */
-    public function setMessage($message)
+    public function setBody($message)
     {
-        $this->message = $message;
+        $this->body = $message;
     }
 
     /**
      * @return mixed
      */
-    public function getMessage()
+    public function getBody()
     {
-        return $this->message;
+        return $this->body;
     }
 
     /**
@@ -100,5 +106,21 @@ class Email implements \Everon\Email\Interfaces\Email
     {
         return $this->attachments;
     }
+
+    /**
+     * @param \Everon\Email\Interfaces\Recipient $Recipient
+     */
+    public function setRecipient(Interfaces\Recipient $Recipient)
+    {
+        $this->Recipient = $Recipient;
+    }
+
+    /**
+     * @return \Everon\Email\Interfaces\Recipient
+     */
+    public function getRecipient()
+    {
+        return $this->Recipient;
+    }
     
-} 
+}

@@ -15,6 +15,9 @@ namespace Everon\Email;
  */
 class Recipient implements Interfaces\Recipient
 {
+    
+    protected $name = null;
+    
     protected $to = null;
 
     /**
@@ -28,9 +31,10 @@ class Recipient implements Interfaces\Recipient
     protected $bcc;
     
 
-    function __construct($to, array $cc=[], array $bcc=[])
+    function __construct($name, $to, array $cc=[], array $bcc=[])
     {
-        $this->to = $to;
+        $this->name = $name;
+        $this->to = $name;
         $this->cc = $cc;
         $this->bcc = $bcc;
     }
@@ -52,7 +56,7 @@ class Recipient implements Interfaces\Recipient
     }
 
     /**
-     * @param mixed $cc
+     * @param array $cc
      */
     public function setCc(array $cc)
     {
@@ -68,7 +72,7 @@ class Recipient implements Interfaces\Recipient
     }
 
     /**
-     * @param mixed $to
+     * @param string $to
      */
     public function setTo($to)
     {
@@ -76,10 +80,26 @@ class Recipient implements Interfaces\Recipient
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getTo()
     {
         return $this->to;
+    }
+
+    /**
+     * @param string $name
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
     }
 } 
