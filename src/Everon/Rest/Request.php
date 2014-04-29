@@ -103,12 +103,16 @@ class Request extends \Everon\Request implements Interfaces\Request
     {
         $result = null;
         $input = parent::getRawInput();
-        $this->assertIsStringAndNonEmpty($input, 'Invalid input type, only JSON format is supported', 'Everon\Rest\Exception\Request');
         
         $input = trim($input);
         if ($input !== '') {
             $result = json_decode($input, true);
         }
+        
+        if (is_array($result) === false) {
+            $result = [];
+        }
+        
         return $result;
     }
 
