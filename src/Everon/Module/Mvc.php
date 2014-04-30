@@ -28,11 +28,10 @@ abstract class Mvc extends \Everon\Module implements Interfaces\Mvc
      * @param $name
      * @param $module_directory
      * @param Config $Config
-     * @param Config $RouterConfig
      */
-    public function __construct($name, $module_directory, Config $Config, Config $RouterConfig)
+    public function __construct($name, $module_directory, Config $Config)
     {
-        parent::__construct($name, $module_directory, $Config, $RouterConfig);
+        parent::__construct($name, $module_directory, $Config);
         $this->ViewCollection = new Helper\Collection([]);
     }
 

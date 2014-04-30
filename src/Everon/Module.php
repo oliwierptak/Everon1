@@ -40,7 +40,6 @@ abstract class Module implements Interfaces\Module
      * @param $name
      * @param $module_directory
      * @param Interfaces\Config $Config
-     * @param Interfaces\Config $RouterConfig
      */
     public function __construct($name, $module_directory, Interfaces\Config $Config)
     {
