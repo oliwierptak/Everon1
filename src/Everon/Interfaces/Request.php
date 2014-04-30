@@ -155,10 +155,10 @@ interface Request extends Arrayable
     function isEmptyUrl();
 
     /**
-     * http://stackoverflow.com/questions/6038236/http-accept-language
+     * @param string $default
      * @return string
      */
-    function getPreferredLanguageCode();
+    function getPreferredLanguageCode($default='en-US');
 
     /**
      * @return array

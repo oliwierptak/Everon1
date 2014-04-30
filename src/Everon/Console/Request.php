@@ -51,4 +51,13 @@ class Request extends \Everon\Request
             $current_get, $get
         ));
     }
+
+    protected function getPreferredLanguage()
+    {
+        $language_str = $this->ServerCollection->get('LANGUAGE', '');
+        $tokens = explode(':', $language_str);
+        $current = array_shift($tokens);
+        return $current;
+    }
+
 }
