@@ -484,7 +484,18 @@ interface Factory
      * @return Interfaces\Request
      * @throws Exception\Factory
      */
-    function buildRequest(array $server, array $get, array $post, array $files, $namespace='Everon');
+    function buildConsoleRequest(array $server, array $get, array $post, array $files, $namespace='Everon\Console');
+
+    /**
+     * @param array $server
+     * @param array $get
+     * @param array $post
+     * @param array $files
+     * @param string $namespace
+     * @return Interfaces\Request
+     * @throws Exception\Factory
+     */
+    function buildHttpRequest(array $server, array $get, array $post, array $files, $namespace='Everon\Http');
 
     /**
      * @param $app_root

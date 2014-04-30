@@ -28,7 +28,7 @@ $Container->propose('FileSystem', function() use ($Factory) {
 });
 
 $Container->propose('Request', function() use ($Factory) {
-    return $Factory->buildRequest($_SERVER, $_GET, $_POST, $_FILES);
+    return $Factory->buildConsoleRequest($_SERVER, $_GET, $_POST, $_FILES);
 });
 
 $Container->propose('Router', function() use ($Factory) {

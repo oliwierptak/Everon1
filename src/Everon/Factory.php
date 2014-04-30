@@ -1036,18 +1036,45 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildRequest(array $server, array $get, array $post, array $files, $namespace='Everon')
+    public function buildHttpRequest(array $server, array $get, array $post, array $files, $namespace='Everon\Http')
     {
         try {
-            $class_name = $this->getFullClassName($namespace, 'Request');
-            $this->classExists($class_name);
-            $Request = new $class_name($server, $get, $post, $files);
-            $this->injectDependencies($class_name, $Request);
-            return $Request;
+            return $this->buildRequest($server, $get, $post, $files, $namespace);
         }
         catch (\Exception $e) {
-            throw new Exception\Factory('Request initialization error', null, $e);
+            throw new Exception\Factory('HttpRequest initialization error', null, $e);
         }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildConsoleRequest(array $server, array $get, array $post, array $files, $namespace='Everon\Console')
+    {
+        try {
+            return $this->buildRequest($server, $get, $post, $files, $namespace);
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('ConsoleRequest initialization error', null, $e);
+        }
+    }
+
+    /**
+     * @param array $server
+     * @param array $get
+     * @param array $post
+     * @param array $files
+     * @param $namespace
+     * @return Interfaces\Request
+     * @throws Exception\Factory
+     */
+    protected function buildRequest(array $server, array $get, array $post, array $files, $namespace)
+    {
+        $class_name = $this->getFullClassName($namespace, 'Request');
+        $this->classExists($class_name);
+        $Request = new $class_name($server, $get, $post, $files);
+        $this->injectDependencies($class_name, $Request);
+        return $Request;
     }
 
     /**
