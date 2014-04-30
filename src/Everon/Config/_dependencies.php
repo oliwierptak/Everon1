@@ -28,7 +28,7 @@ $Container->propose('FileSystem', function() use ($Factory) {
 });
 
 $Container->propose('Request', function() use ($Factory) {
-    return $Factory->buildRequest($_SERVER, $_GET, $_POST, $_FILES);
+    return $Factory->buildConsoleRequest($_SERVER, $_GET, $_POST, $_FILES);
 });
 
 $Container->propose('Router', function() use ($Factory) {
@@ -82,6 +82,10 @@ $Container->propose('ConnectionManager', function() use ($Factory) {
     $Factory->getDependencyContainer()->monitor('ConnectionManager', ['Everon\Config\Manager']);
     $DatabaseConfig = $Factory->getDependencyContainer()->resolve('ConfigManager')->getDatabaseConfig();
     return $Factory->buildConnectionManager($DatabaseConfig);
+});
+
+$Container->propose('EmailManager', function() use ($Factory) {
+    return $Factory->buildEmailManager();
 });
 
 $Container->propose('EventManager', function() use ($Factory) {

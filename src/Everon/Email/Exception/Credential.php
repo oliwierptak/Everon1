@@ -7,12 +7,8 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon\Email\Dependency\Injection;
+namespace Everon\Email\Exception;
 
-/**
- * @author Zeger Hoogeboom <zeger_hoogeboom@hotmail.com>
- */
-trait EmailManager 
-{
-    use \Everon\Email\Dependency\EmailManager;
-} 
+use Everon\Exception as EveronException;
+
+class Credential extends EveronException{};

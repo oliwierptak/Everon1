@@ -1,33 +1,54 @@
 <?php
+/**
+ * This file is part of the Everon framework.
+ *
+ * (c) Oliwier Ptak <oliwierptak@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 namespace Everon\Email;
 
-
-class Recipient implements \Everon\Email\Interfaces\Recipient
+/**
+ * @author Zeger Hoogeboom <zeger_hoogeboom@hotmail.com>
+ * @author Oliwier Ptak <oliwierptak@gmail.com>
+ */
+class Recipient implements Interfaces\Recipient
 {
-
-    protected $to;
-
-    protected $cc;
-
-    protected $bcc;
-
-    function __construct($bcc, $cc, $to)
-    {
-        $this->bcc = $bcc;
-        $this->cc = $cc;
-        $this->to = $to;
-    }
+    
+    protected $name = null;
+    
+    protected $to = null;
 
     /**
-     * @param mixed $bcc
+     * @var array
      */
-    public function setBcc($bcc)
+    protected $cc = null;
+
+    /**
+     * @var array
+     */
+    protected $bcc;
+    
+
+    function __construct($name, $to, array $cc=[], array $bcc=[])
+    {
+        $this->name = $name;
+        $this->to = $name;
+        $this->cc = $cc;
+        $this->bcc = $bcc;
+    }
+
+    /**
+     * @param array $bcc
+     */
+    public function setBcc(array $bcc)
     {
         $this->bcc = $bcc;
     }
 
     /**
-     * @return mixed
+     * @return array
      */
     public function getBcc()
     {
@@ -35,15 +56,15 @@ class Recipient implements \Everon\Email\Interfaces\Recipient
     }
 
     /**
-     * @param mixed $cc
+     * @param array $cc
      */
-    public function setCc($cc)
+    public function setCc(array $cc)
     {
         $this->cc = $cc;
     }
 
     /**
-     * @return mixed
+     * @return array
      */
     public function getCc()
     {
@@ -51,7 +72,7 @@ class Recipient implements \Everon\Email\Interfaces\Recipient
     }
 
     /**
-     * @param mixed $to
+     * @param string $to
      */
     public function setTo($to)
     {
@@ -59,12 +80,26 @@ class Recipient implements \Everon\Email\Interfaces\Recipient
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getTo()
     {
         return $this->to;
     }
 
+    /**
+     * @param string $name
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
 
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
 } 

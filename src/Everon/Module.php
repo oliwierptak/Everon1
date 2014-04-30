@@ -14,16 +14,11 @@ abstract class Module implements Interfaces\Module
 {
     use Dependency\Config;
     use Dependency\Injection\Factory;
-    
+    use Module\Dependency\Injection\ModuleManager;
     
     protected $name = null;
     
     protected $directory = null;
-
-    /**
-     * @var \Everon\Config\Interfaces\ItemRouter
-     */
-    protected $RouterConfig = null;
 
     /**
      * @var Interfaces\Collection
@@ -45,14 +40,12 @@ abstract class Module implements Interfaces\Module
      * @param $name
      * @param $module_directory
      * @param Interfaces\Config $Config
-     * @param Interfaces\Config $RouterConfig
      */
-    public function __construct($name, $module_directory, Interfaces\Config $Config, Interfaces\Config $RouterConfig)
+    public function __construct($name, $module_directory, Interfaces\Config $Config)
     {
         $this->name = $name;
         $this->directory = $module_directory;
         $this->Config = $Config;
-        $this->RouterConfig = $RouterConfig;
         $this->ControllerCollection = new Helper\Collection([]);
     }
 
@@ -108,22 +101,6 @@ abstract class Module implements Interfaces\Module
     public function getDirectory()
     {
         return $this->directory;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function setRouterConfig(Interfaces\Config $RouteConfig)
-    {
-        $this->RouterConfig = $RouteConfig;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getRouterConfig()
-    {
-        return $this->RouterConfig;
     }
 
     /**

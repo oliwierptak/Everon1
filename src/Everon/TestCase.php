@@ -224,7 +224,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
                 'QUERY_STRING' => '',
             ]);
             
-            return $Factory->buildRequest($server_data, $_GET, $_POST, $_FILES);
+            return $Factory->buildHttpRequest($server_data, $_GET, $_POST, $_FILES);
         });
 
         return $Factory;

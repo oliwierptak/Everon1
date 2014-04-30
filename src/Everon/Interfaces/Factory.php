@@ -484,7 +484,18 @@ interface Factory
      * @return Interfaces\Request
      * @throws Exception\Factory
      */
-    function buildRequest(array $server, array $get, array $post, array $files, $namespace='Everon');
+    function buildConsoleRequest(array $server, array $get, array $post, array $files, $namespace='Everon\Console');
+
+    /**
+     * @param array $server
+     * @param array $get
+     * @param array $post
+     * @param array $files
+     * @param string $namespace
+     * @return Interfaces\Request
+     * @throws Exception\Factory
+     */
+    function buildHttpRequest(array $server, array $get, array $post, array $files, $namespace='Everon\Http');
 
     /**
      * @param $app_root
@@ -513,11 +524,10 @@ interface Factory
      * @param $name
      * @param Interfaces\Config $module_directory
      * @param Interfaces\Config $Config
-     * @param Interfaces\Config $RouterConfig
      * @return Module
      * @throws Exception\Factory
      */
-    function buildModule($name, $module_directory, Interfaces\Config $Config, Interfaces\Config $RouterConfig);
+    function buildModule($name, $module_directory, Interfaces\Config $Config);
 
     /**
      * @return Module\Manager
@@ -552,6 +562,17 @@ interface Factory
     function buildConsoleRunner($namespace='Everon\Console');
 
     /**
+     * @param Email\Interfaces\Recipient $Recipient
+     * @param $subject
+     * @param $body
+     * @param array $headers
+     * @param string $namespace
+     * @return \Everon\Email\Interfaces\Recipient
+     * @throws Exception\Factory
+     */
+    function buildEmailMessage(Email\Interfaces\Recipient $Recipient, $subject, $body, array $headers=[], $namespace='Everon\Email');
+
+    /**
      * @param $name
      * @param Email\Interfaces\Credential $Credentials
      * @param string $namespace
@@ -561,16 +582,27 @@ interface Factory
     function buildEmailSender($name, Email\Interfaces\Credential $Credentials, $namespace='Everon\Email');
 
     /**
+     * @param $name
+     * @param $to
+     * @param array $cc
+     * @param array $bcc
      * @param string $namespace
-     * @return mixed
+     * @return \Everon\Email\Interfaces\Recipient
+     * @throws Exception\Factory
+     */
+    function buildEmailRecipient($name, $to, array $cc=[], array $bcc=[], $namespace='Everon\Email');
+
+    /**
+     * @param string $namespace
+     * @return \Everon\Email\Interfaces\Manager
      * @throws Exception\Factory
      */
     function buildEmailManager($namespace='Everon\Email');
 
     /**
-     * @param array $credentialData
+     * @param array $credential_data
      * @return Email\Credential
      */
-    function buildEmailCredentials(array $credentialData);
+    function buildEmailCredential(array $credential_data);
 
 }

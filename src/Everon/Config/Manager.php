@@ -98,8 +98,6 @@ class Manager implements \Everon\Config\Interfaces\Manager
             }
             $Filename = new \SplFileInfo($this->getFileSystem()->getRealPath('//Module/'.$module_name.'/Config/module.ini'));
             $data[$module_name.'@module'] = $this->getConfigLoader()->loadByFile($Filename, $this->isCachingEnabled());
-            $Filename = new \SplFileInfo($this->getFileSystem()->getRealPath('//Module/'.$module_name.'/Config/router.ini'));
-            $data[$module_name.'@router'] = $this->getConfigLoader()->loadByFile($Filename, $this->isCachingEnabled());
         }
         
         return $data;

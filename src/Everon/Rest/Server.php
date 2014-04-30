@@ -47,23 +47,27 @@ class Server extends \Everon\Core implements Rest\Interfaces\Server
                 parent::run($RequestIdentifier);
             }
         }
-        catch (Exception\RouteNotDefined $Exception) {
-            $NotFound = new Http\Exception((new Http\Message\NotFound('Invalid resource name or version')));
-            $this->showException($NotFound->getHttpMessage()->getStatus(), $NotFound);
+        catch (Exception\Pdo $Exception) {
+            $BadRequest = new Http\Exception((new Http\Message\BadRequest($Exception->getMessage())));
+            $this->showException($BadRequest->getHttpMessage()->getStatus(), $BadRequest);
         }
-        catch (Rest\Exception\Resource $Exception) {
-            $NotFound = new Http\Exception((new Http\Message\BadRequest($Exception->getMessage())));
-            $this->showException($NotFound->getHttpMessage()->getStatus(), $NotFound);
+        catch (Exception\RouteNotDefined $Exception) {
+            $BadRequest = new Http\Exception((new Http\Message\NotFound('Invalid resource name, request method or version')));
+            $this->showException($BadRequest->getHttpMessage()->getStatus(), $BadRequest);
         }
         catch (Http\Exception $Exception) {
             $this->showException($Exception->getHttpMessage()->getStatus(), $Exception);
+        }
+        catch (Rest\Exception\Resource $Exception) {
+            $BadRequest = new Http\Exception((new Http\Message\BadRequest($Exception->getMessage())));
+            $this->showException($BadRequest->getHttpMessage()->getStatus(), $BadRequest);
         }
         catch (\Exception $Exception) {
             $InternalServerError = new Http\Exception((new Http\Message\InternalServerError($Exception->getMessage())));
             $this->showException($InternalServerError->getHttpMessage()->getStatus(), $InternalServerError);
         }
         finally {
-            $url = $this->getConfigManager()->getConfigValue('application.env.url'); //xxx
+            $url = $this->getConfigManager()->getConfigValue('rest.server.url');
             $this->getLogger()->rest(
                 sprintf(
                     '[%d] %s %s (%s)',

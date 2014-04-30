@@ -36,7 +36,7 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
 
     public function help()
     {
-        $Config = $this->getModule()->getRouterConfig();
+        $Config = $this->getConfigManager()->getConfigByName('router');
         $this->lines[] = '';
         $this->lines[] = 'Usage:';
         foreach ($Config->getItems() as $Item) {

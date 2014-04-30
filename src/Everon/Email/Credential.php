@@ -1,38 +1,47 @@
 <?php
-
+/**
+ * This file is part of the Everon framework.
+ *
+ * (c) Oliwier Ptak <oliwierptak@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 namespace Everon\Email;
 
-
+/**
+ * @author Zeger Hoogeboom <zeger_hoogeboom@hotmail.com>
+ * @author Oliwier Ptak <oliwierptak@gmail.com>
+ */
 class Credential implements Interfaces\Credential
 {
+    protected $username = null;
 
-    protected $username;
+    protected $password = null;
 
-    protected $password;
+    protected $host = null;
 
-    protected $server;
+    protected $port = null;
 
-    protected $port;
+    protected $email = null;
 
-    protected $senderEmail;
-
-    protected $senderName;
+    protected $name = null;
 
 
     /**
-     * @param mixed $fromEmail
+     * @param mixed $email
      */
-    public function setSenderEmail($fromEmail)
+    public function setEmail($email)
     {
-        $this->senderEmail = $fromEmail;
+        $this->email = $email;
     }
 
     /**
      * @return mixed
      */
-    public function getSenderEmail()
+    public function getEmail()
     {
-        return $this->senderEmail;
+        return $this->email;
     }
 
     /**
@@ -68,35 +77,35 @@ class Credential implements Interfaces\Credential
     }
 
     /**
-     * @param mixed $senderName
+     * @param mixed $name
      */
-    public function setSenderName($senderName)
+    public function setName($name)
     {
-        $this->senderName = $senderName;
+        $this->name = $name;
     }
 
     /**
      * @return mixed
      */
-    public function getSenderName()
+    public function getName()
     {
-        return $this->senderName;
+        return $this->name;
     }
 
     /**
-     * @param mixed $server
+     * @param mixed $host
      */
-    public function setServer($server)
+    public function setHost($host)
     {
-        $this->server = $server;
+        $this->host = $host;
     }
 
     /**
      * @return mixed
      */
-    public function getServer()
+    public function getHost()
     {
-        return $this->server;
+        return $this->host;
     }
 
     /**
@@ -114,6 +123,5 @@ class Credential implements Interfaces\Credential
     {
         return $this->username;
     }
-
 
 } 

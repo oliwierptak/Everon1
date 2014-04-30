@@ -53,16 +53,6 @@ interface Module extends Dependency\Factory
      * @param $name
      */
     function setName($name);
-    
-    /**
-     * @return Interfaces\Config
-     */
-    function getRouterConfig();
-
-    /**
-     * @param Interfaces\Config $RouteConfig
-     */
-    function setRouterConfig(Interfaces\Config $RouteConfig);
 
     function setup();
 }

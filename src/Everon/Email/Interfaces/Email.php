@@ -11,37 +11,57 @@ namespace Everon\Email\Interfaces;
 
 /**
  * @author Zeger Hoogeboom <zeger_hoogeboom@hotmail.com>
+ * @author Oliwier Ptak <oliwierptak@gmail.com>
  */
 interface Email
 {
+    /**
+     * @param array $headers
+     */
+    function setHeaders(array $headers);
 
     /**
-     * @param mixed $headers
+     * @param string $message
      */
-    public function setHeaders($headers);
+    function setBody($message);
 
     /**
-     * @param mixed $message
+     * @return string
      */
-    public function setMessage($message);
+    function getSubject();
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getSubject();
+    function getBody();
 
     /**
-     * @return mixed
+     * @return array
      */
-    public function getMessage();
+    function getHeaders();
 
     /**
-     * @return mixed
+     * @param string $subject
      */
-    public function getHeaders();
+    function setSubject($subject);
 
     /**
-     * @param mixed $subject
+     * @param array $attachments
      */
-    public function setSubject($subject);
+    function setAttachments($attachments);
+
+    /**
+     * @return array
+     */
+    function getAttachments();
+
+    /**
+     * @param Recipient $Recipient
+     */
+    function setRecipient(Recipient $Recipient);
+
+    /**
+     * @return Recipient
+     */
+    function getRecipient();
 }

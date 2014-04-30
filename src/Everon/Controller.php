@@ -189,7 +189,19 @@ abstract class Controller implements Interfaces\Controller
     {
         $action .= 'OnError';
         if ($this->isCallable($this, $action)) {
-            $result = $this->{$action}();
+            $event_name = $this->getModule()->getName().'.'.$this->getName().'.'.$action;
+            $result = $this->getEventManager()->dispatchBefore($event_name);
+            $result = ($result !== false) ? true : $result;
+
+            if ($result) {
+                $result = $this->{$action}();
+                $result = ($result !== false) ? true : $result;
+            }
+
+            if ($result) {
+                $result = $this->getEventManager()->dispatchAfter($event_name);
+            }
+
             $result = ($result !== false) ? true : $result;
             return $result;
         }

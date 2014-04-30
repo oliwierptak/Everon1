@@ -10,32 +10,32 @@ namespace Everon\Email\Interfaces;
 interface Recipient
 {
     /**
-     * @param mixed $cc
+     * @param array $cc
      */
-    public function setCc($cc);
+    public function setCc(array $cc);
 
     /**
-     * @param mixed $bcc
+     * @param array $bcc
      */
-    public function setBcc($bcc);
+    public function setBcc(array $bcc);
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getTo();
 
     /**
-     * @return mixed
+     * @return array
      */
     public function getBcc();
 
     /**
-     * @param mixed $to
+     * @param string $to
      */
     public function setTo($to);
 
     /**
-     * @return mixed
+     * @return array
      */
     public function getCc();
 }

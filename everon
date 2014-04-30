@@ -53,7 +53,7 @@ implode(DIRECTORY_SEPARATOR,
  * @var Application\Interfaces\Factory $Factory
  */
 $Container->register('Request', function() use ($Factory) {
-    return $Factory->buildRequest($_SERVER, $_GET, $_POST, $_FILES, 'Everon\Console');
+    return $Factory->buildConsoleRequest($_SERVER, $_GET, $_POST, $_FILES);
 });
 
 $REQUEST_IDENTIFIER->setSystemMemoryAtStart($system_memory);
