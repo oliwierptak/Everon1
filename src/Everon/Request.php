@@ -609,4 +609,12 @@ class Request implements Interfaces\Request
         return $this->ServerCollection->get($name, $default);
     }
 
+    /**
+     * @inheritdoc
+     */
+    public function getIpAddress()
+    {
+        return $this->getServerCollection()->get('REMOTE_ADDR');
+    }
+
 }

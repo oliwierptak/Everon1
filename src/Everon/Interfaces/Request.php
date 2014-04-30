@@ -171,4 +171,9 @@ interface Request extends Arrayable
      * @return mixed
      */
     function getHeader($name, $default);
+
+    /**
+     * @return mixed
+     */
+    function getIpAddress();
 }
