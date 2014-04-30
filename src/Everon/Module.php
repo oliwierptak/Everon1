@@ -14,7 +14,7 @@ abstract class Module implements Interfaces\Module
 {
     use Dependency\Config;
     use Dependency\Injection\Factory;
-    
+    use Module\Dependency\Injection\ModuleManager;
     
     protected $name = null;
     

@@ -583,7 +583,7 @@ interface Factory
 
     /**
      * @param string $namespace
-     * @return mixed
+     * @return \Everon\Email\Interfaces\Manager
      * @throws Exception\Factory
      */
     function buildEmailManager($namespace='Everon\Email');

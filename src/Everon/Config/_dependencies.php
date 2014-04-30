@@ -84,6 +84,10 @@ $Container->propose('ConnectionManager', function() use ($Factory) {
     return $Factory->buildConnectionManager($DatabaseConfig);
 });
 
+$Container->propose('EmailManager', function() use ($Factory) {
+    return $Factory->buildEmailManager();
+});
+
 $Container->propose('EventManager', function() use ($Factory) {
     return $Factory->buildEventManager();
 });
