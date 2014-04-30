@@ -33,20 +33,28 @@ class Swift implements Interfaces\Sender
     /**
      * @inheritdoc
      */
-    function send(Interfaces\Email $Email, Interfaces\Recipient $Recipient)
+    function send(Interfaces\Message $Email, Interfaces\Recipient $Recipient)
     {
-        $Transport = \Swift_SmtpTransport::newInstance($this->Credential->getHost(), 25)
+        $Transport = \Swift_SmtpTransport::newInstance($this->Credential->getHost(), $this->Credential->getPort())
             ->setUsername($this->Credential->getUsername())
             ->setPassword($this->Credential->getPassword());
 
-        $Mailer = \Swift_Mailer::newInstance($Transport);
-
-        $message = \Swift_Message::newInstance($Email->getSubject())
+        $Message = \Swift_Message::newInstance($Email->getSubject())
             ->setFrom([$this->Credential->getEmail() => $this->Credential->getName()])
             ->setTo($Recipient->getTo())
             ->setBody($Email->getBody());
+        foreach($Email->getAttachments() as $attachment) {
+            $Message->attach(Swift_Attachment::fromPath($attachment));
+        }
+        if(!empty($Recipient->getCc())) {
+            $Message->setCc($Recipient->getCc());
+        }
+        if(!empty($Recipient->getBcc())) {
+            $Message->setBcc($Recipient->getBcc());
+        }
 
-        return $Mailer->send($message) > 0;
+        $Mailer = \Swift_Mailer::newInstance($Transport);
+        return $Mailer->send($Message) > 0;
     }
 
 }

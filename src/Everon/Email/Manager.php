@@ -22,7 +22,7 @@ class Manager implements Interfaces\Manager
     /**
      * @inheritdoc
      */
-    public function send(Interfaces\Sender $Sender, Interfaces\Email $Email, Interfaces\Recipient $Recipient)
+    public function send(Interfaces\Sender $Sender, Interfaces\Message $Email, Interfaces\Recipient $Recipient)
     {
         try {
             return $Sender->send($Email, $Recipient);

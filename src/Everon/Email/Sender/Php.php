@@ -22,9 +22,21 @@ class Php implements Interfaces\Sender
     /**
      * @inheritdoc
      */
-    function send(Interfaces\Email $Email, Interfaces\Recipient $Recipient)
+    function send(Interfaces\Message $Email, Interfaces\Recipient $Recipient)
     {
-        //todo
+        $this->appendCcAndBccToHeaders($Email, $Recipient);
+        mail ($Recipient->getTo(), $Email->getSubject(), $Email->getBody(), $Email->getHeaders());
+    }
+
+    private function appendCcAndBccToHeaders(Interfaces\Message $Email, Interfaces\Recipient $Recipient)
+    {
+        $headers = $Email->getHeaders();
+        foreach ($Recipient->getCc() as $cc) {
+            $headers .= 'Cc: '.$cc."\r\n";
+        }
+        foreach ($Recipient->getBcc() as $bcc) {
+            $headers .= 'Bcc: '.$bcc."\r\n";
+        }
     }
 
 } 

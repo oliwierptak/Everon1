@@ -13,7 +13,7 @@ namespace Everon\Email;
  * @author Zeger Hoogeboom <zeger_hoogeboom@hotmail.com>
  * @author Oliwier Ptak <oliwierptak@gmail.com>
  */
-class Message implements Interfaces\Email
+class Message implements Interfaces\Message
 {
     /**
      * @var array
