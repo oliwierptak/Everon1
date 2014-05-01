@@ -27,9 +27,9 @@ class Context implements Interfaces\Context
     protected $Callback = null;
     
     
-    public function __construct(\Closure $Callback)
+    public function __construct(\Closure $Callback, $Scope)
     {
-        $this->Callback = $Callback->bindTo($this);
+        $this->Callback = $Callback->bindTo($Scope);
     }
     
     public function __invoke()

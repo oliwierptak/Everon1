@@ -1112,14 +1112,14 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildEventContext(\Closure $Callback, $namespace='Everon\Event')
+    public function buildEventContext(\Closure $Callback, $Scope, $namespace='Everon\Event')
     {
         try {
             $class_name = $this->getFullClassName($namespace, 'Context');
             $this->classExists($class_name);
-            $Context = new $class_name($Callback);
-            $this->injectDependencies($class_name, $Context);
-            return $Context;
+            $Scope = new $class_name($Callback, $Scope);
+            $this->injectDependencies($class_name, $Scope);
+            return $Scope;
         }
         catch (\Exception $e) {
             throw new Exception\Factory('EventContext initialization error', null, $e);
