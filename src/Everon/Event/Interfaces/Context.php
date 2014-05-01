@@ -25,4 +25,19 @@ interface Context
      * @return \Closure
      */
     function getCallback();
+
+    /**
+     * @param mixed $Callee
+     */
+    function setCaller($Callee);
+
+    /**
+     * @return mixed
+     */
+    function getCaller();
+
+    /**
+     * @return mixed
+     */
+    function execute();
 }

@@ -33,13 +33,15 @@ interface Manager
      * Resets the propagation to 'Running' and dispatches the event
      *
      * @param $event_name
+     * @param \Everon\Interfaces\Controller $Controller
      */
-    function dispatchBefore($event_name);
+    function dispatchBefore($event_name, \Everon\Interfaces\Controller $Controller);
 
     /**
      * @param $event_name
+     * @param \Everon\Interfaces\Controller $Controller
      */
-    function dispatchAfter($event_name);
+    function dispatchAfter($event_name, \Everon\Interfaces\Controller $Controller);
 
     /**
      * @param array $listeners
