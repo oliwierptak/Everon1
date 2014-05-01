@@ -33,20 +33,36 @@ class Swift implements Interfaces\Sender
     /**
      * @inheritdoc
      */
-    function send(Interfaces\Email $Email, Interfaces\Recipient $Recipient)
+    function send(Interfaces\Email $Email)
     {
-        $Transport = \Swift_SmtpTransport::newInstance($this->Credential->getHost(), 25)
-            ->setUsername($this->Credential->getUsername())
-            ->setPassword($this->Credential->getPassword());
+        $Transport = \Swift_SmtpTransport::newInstance($this->getCredential()->getHost(), 25)
+            ->setUsername($this->getCredential()->getUsername())
+            ->setPassword($this->getCredential()->getPassword());
 
         $Mailer = \Swift_Mailer::newInstance($Transport);
 
         $message = \Swift_Message::newInstance($Email->getSubject())
-            ->setFrom([$this->Credential->getEmail() => $this->Credential->getName()])
-            ->setTo($Recipient->getTo())
+            ->setFrom([$this->getCredential()->getEmail() => $this->getCredential()->getName()])
+            ->setTo($Email->getRecipient()->getTo())
             ->setBody($Email->getBody());
 
         return $Mailer->send($message) > 0;
     }
 
+    /**
+     * @param Interfaces\Credential $Credential
+     */
+    public function setCredential(Interfaces\Credential $Credential)
+    {
+        $this->Credential = $Credential;
+    }
+
+    /**
+     * @return Interfaces\Credential
+     */
+    public function getCredential()
+    {
+        return $this->Credential;
+    }
+    
 }
