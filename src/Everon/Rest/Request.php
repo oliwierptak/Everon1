@@ -12,7 +12,7 @@ namespace Everon\Rest;
 use Everon\Helper;
 use Everon\Exception;
 
-class Request extends \Everon\Request implements Interfaces\Request
+class Request extends \Everon\Http\Request implements Interfaces\Request
 {
     use Helper\Asserts\IsStringAndNotEmpty;
     use Helper\Exceptions;
