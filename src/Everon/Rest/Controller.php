@@ -149,4 +149,22 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
 
         return $Resource;
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function showException(\Exception $Exception)
+    {
+        $message = $Exception->getMessage();
+        $code = $Exception->getCode();
+        if ($Exception instanceof Http\Exception) {
+            $code = $Exception->getHttpMessage()->getCode();
+        }
+
+        $this->getResponse()->setData(['error' => $message]); //xxx
+
+        $this->getResponse()->setStatusCode($code);
+        $this->getResponse()->setStatusMessage($message);
+        echo $this->getResponse()->toJson();
+    }
 }

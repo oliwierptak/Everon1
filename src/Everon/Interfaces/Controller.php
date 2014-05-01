@@ -53,4 +53,8 @@ interface Controller
      */
     function getCurrentRoute();
 
+    /**
+     * @param \Exception $Exception
+     */
+    function showException(\Exception $Exception);
 }

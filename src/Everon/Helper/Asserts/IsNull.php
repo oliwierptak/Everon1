@@ -23,6 +23,7 @@ trait IsNull
     public function assertIsNull($value, $message='Unexpected null value: %s', $exception='Asserts')
     {
         if (is_null($value)) {
+            $value = 'NULL';
             $this->throwException($exception, $message, $value);
         }
     }

@@ -84,7 +84,7 @@ class Manager implements Interfaces\Manager
     public function getPathsOfActiveModules()
     {
         $module_list = $this->getFileSystem()->listPathDir('//Module');
-        $active_modules = $this->getConfigManager()->getConfigValue('application.modules.active');
+        $active_modules = $this->getConfigManager()->getConfigValue('application.module.active');
 
         /**
          * @var \DirectoryIterator $Dir
@@ -117,5 +117,14 @@ class Manager implements Interfaces\Manager
         }
         
         return $this->modules[$name];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getDefaultModule()
+    {
+        $default = $this->getConfigManager()->getConfigValue('application.module.default', null);
+        return $this->getModule($default);
     }
 }

@@ -29,18 +29,18 @@ class Mvc extends Core implements Interfaces\Core
         }
         catch (Exception\RouteNotDefined $Exception) {
             $NotFound = new Http\Exception((new Http\Message\NotFound('Page not found')));
-            $this->showException($NotFound->getHttpMessage()->getStatus(), $NotFound, $this->Controller);
+            $this->showException($NotFound, $this->Controller);
         }
         catch (Exception\InvalidRoute $Exception) {
             $NotFound = new Http\Exception((new Http\Message\NotFound($Exception->getMessage())));
-            $this->showException($NotFound->getHttpMessage()->getStatus(), $NotFound, $this->Controller);
+            $this->showException($NotFound, $this->Controller);
         }
         catch (Http\Exception $Exception) {
-            $this->showException($Exception->getHttpMessage()->getStatus(), $Exception, $this->Controller);
+            $this->showException($Exception, $this->Controller);
         }
         catch (\Exception $Exception) {
-            $NotFound = new Http\Exception((new Http\Message\InternalServerError($Exception->getMessage())));
-            $this->showException($NotFound->getHttpMessage()->getStatus(), $NotFound, $this->Controller);
+            $Internal = new Http\Exception((new Http\Message\InternalServerError($Exception->getMessage())));
+            $this->showException($Internal, $this->Controller);
         }
         finally {
             $this->getLogger()->mvc(
@@ -52,20 +52,4 @@ class Mvc extends Core implements Interfaces\Core
         }
     }
 
-    /**
-     * @param $code
-     * @param \Exception $Exception
-     * @param Mvc\Interfaces\Controller|null $Controller
-     */
-    public function showException($code, \Exception $Exception, $Controller)
-    {
-        /**
-         * @var Mvc\Interfaces\Controller $Controller
-         */
-        if ($Controller === null) {
-            $Controller = $this->getModuleManager()->getModule('Mvc')->getController('Error');
-        }
-        
-        $Controller->showException($Exception, $code);
-    }
 }

@@ -207,4 +207,12 @@ abstract class Controller implements Interfaces\Controller
         return null;
     }
 
+    /**
+     * @inheritdoc
+     */
+    public function showException(\Exception $Exception)
+    {
+        echo $Exception->getMessage();
+    }
+
 }

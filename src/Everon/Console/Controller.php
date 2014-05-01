@@ -44,5 +44,16 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
             $this->lines[] = '  '.ltrim($Item->getUrl(), '/').' : '.$info;
         }
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function showException(\Exception $Exception)
+    {
+        $message = $Exception->getMessage();
+        $this->lines[] = $message;
+        $this->getResponse()->setResult(false);
+        $this->response();
+    }
     
 }

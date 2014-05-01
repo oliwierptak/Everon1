@@ -23,4 +23,9 @@ interface Manager extends Dependency\ConfigManager
      * @return array
      */
     function getPathsOfActiveModules();
+
+    /**
+     * @return \Everon\Interfaces\Module
+     */
+    function getDefaultModule();
 }

@@ -11,6 +11,6 @@ namespace Everon\Http\Message;
 
 class NotFound extends AbstractMessage 
 {
-    protected $http_status = 404;
+    protected $http_status_code = 404;
     protected $http_message = 'NOT FOUND';
 }
