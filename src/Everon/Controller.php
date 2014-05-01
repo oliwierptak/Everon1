@@ -191,14 +191,12 @@ abstract class Controller implements Interfaces\Controller
         if ($this->isCallable($this, $action)) {
             $event_name = $this->getModule()->getName().'.'.$this->getName().'.'.$action;
             $result = $this->getEventManager()->dispatchBefore($event_name, $this);
-            $result = ($result !== false) ? true : $result;
 
-            if ($result) {
+            if ($result !== false) {
                 $result = $this->{$action}();
-                $result = ($result !== false) ? true : $result;
             }
 
-            if ($result) {
+            if ($result !== false) {
                 $result = $this->getEventManager()->dispatchAfter($event_name, $this);
             }
 
