@@ -36,8 +36,6 @@ abstract class Module implements Interfaces\Module
     protected $FactoryWorker = null;
     
     
-    public abstract function setup();
-
     
     /**
      * @param $name
@@ -120,5 +118,10 @@ abstract class Module implements Interfaces\Module
     public function getName()
     {
         return $this->name;
+    }
+    
+    public function setup()
+    {
+        
     }
 }
