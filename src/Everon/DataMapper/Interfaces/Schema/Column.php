@@ -62,6 +62,12 @@ interface Column extends Arrayable
     function validateColumnValue($value);
 
     /**
+     * @param $value
+     * @return string
+     */
+    function getDataValue($value);
+
+    /**
      * @return string
      */
     function getTable();

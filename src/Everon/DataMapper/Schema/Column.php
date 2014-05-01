@@ -268,7 +268,7 @@ abstract class Column implements Schema\Column
             }
 
             $value = $validation_result[$this->getName()];
-            if ($value === false) {
+            if ($value === null) {
                 throw new Exception\Column('Column: "%s" failed to validate with value: "%s"', [$this->getName(), $display_value]);
             }
 
@@ -278,5 +278,21 @@ abstract class Column implements Schema\Column
             throw new Exception\Column($e->getMessage());
         }
     }
-    
+
+    /**
+     * @param $value
+     * @return string
+     */
+    public function getDataValue($value)
+    {
+        switch ($this->type) {
+            case 'boolean':
+                return ($value) ? 't' : 'f';
+                break;
+
+            default:
+                return $value;
+                break;           
+        }
+    }
 }

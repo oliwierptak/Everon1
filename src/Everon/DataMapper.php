@@ -86,7 +86,8 @@ abstract class DataMapper implements Interfaces\DataMapper
             if ($Column->isPk()) {
                 continue;
             }
-            $values[$delimiter.$name] = $data[$name];
+            
+            $values[$delimiter.$name] = $Column->getDataValue($data[$name]);
         }
 
         return $values;
