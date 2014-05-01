@@ -165,6 +165,6 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
 
         $this->getResponse()->setStatusCode($code);
         $this->getResponse()->setStatusMessage($message);
-        echo $this->getResponse()->toJson();
+        $this->response();
     }
 }

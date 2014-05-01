@@ -84,7 +84,7 @@ class Manager implements Interfaces\Manager
     public function getPathsOfActiveModules()
     {
         $module_list = $this->getFileSystem()->listPathDir('//Module');
-        $active_modules = $this->getConfigManager()->getConfigValue('application.module.active');
+        $active_modules = $this->getConfigManager()->getConfigValue('application.module.active', []);
 
         /**
          * @var \DirectoryIterator $Dir

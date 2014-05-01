@@ -113,13 +113,14 @@ class Config implements \Everon\Interfaces\Config
                 $data_processed[$for] = $this->arrayMergeDefault($data_processed[$from], $data_processed[$for]);
             }
 
+            /*
             //make sure everything has default
             $default = reset($data_processed);
             foreach ($data_processed as $name => $data) {
-                $data_processed[$name] = $this->arrayMergeDefault($default, $data_processed[$name]);
-            }
+                //$data_processed[$name] = $this->arrayMergeDefault($default, $data_processed[$name]);
+            }*/
         }
-        
+
         $this->data = $data_processed;
     }
 

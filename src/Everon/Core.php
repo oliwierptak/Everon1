@@ -118,10 +118,13 @@ abstract class Core implements Interfaces\Core
          * @var \Everon\Mvc\Interfaces\Controller $Controller
          */
         if ($Controller === null) {
-            $Controller = $this->getModuleManager()->getDefaultModule()->getController('Error');
+            //$Controller = $this->getModuleManager()->getDefaultModule()->getController('Error'); //xxx infinite loop when setup() in default module will throw an error
+            echo $Exception->getMessage();
+        }
+        else {
+            $Controller->showException($Exception);
         }
 
-        $Controller->showException($Exception);
     }
 
     protected function restorePreviousExceptionHandler()
