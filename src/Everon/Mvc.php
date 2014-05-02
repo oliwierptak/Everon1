@@ -46,7 +46,10 @@ class Mvc extends Core implements Interfaces\Core
             $this->getLogger()->mvc(
                 sprintf(
                     '[%d] %s %s (%s)',
-                    $this->getResponse()->getStatusCode(), $this->getRequest()->getMethod(), $this->getRequest()->getPath(), $this->getResponse()->getStatusMessage()
+                    $this->getResponse()->getStatusCode(),
+                    $this->getRequest()->getMethod(),
+                    $this->getRequest()->getPath(),
+                    $this->getResponse()->getStatusMessage()
                 )
             );
         }

@@ -22,9 +22,6 @@ class Console extends Core implements Interfaces\Core
         try {
             parent::run($RequestIdentifier);
         }
-        catch (Exception\RouteNotDefined $e) {
-            $this->showException($e, $this->Controller);
-        }
         catch (\Exception $e) {
             $this->showException($e, $this->Controller);
         }
