@@ -7,12 +7,18 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon;
+namespace Everon\Mvc;
+
+use Everon\Interfaces;
+use Everon\RequestIdentifier;
+use Everon\Exception;
+use Everon\Mvc;
+use Everon\Http;
 
 /**
  * @method \Everon\Http\Interfaces\Response getResponse
  */
-class Mvc extends Core implements Interfaces\Core
+class Core extends \Everon\Core implements Interfaces\Core
 {
     /**
      * @var Mvc\Interfaces\Controller
