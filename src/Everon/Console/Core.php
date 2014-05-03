@@ -7,12 +7,13 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon;
+namespace Everon\Console;
 
 use Everon\Dependency;
 use Everon\Interfaces;
+use Everon\RequestIdentifier;
 
-class Console extends Core implements Interfaces\Core
+class Core extends \Everon\Core implements Interfaces\Core
 {
     /**
      * @inheritdoc
@@ -22,11 +23,8 @@ class Console extends Core implements Interfaces\Core
         try {
             parent::run($RequestIdentifier);
         }
-        catch (Exception\RouteNotDefined $e) {
-            echo "Unknown command: ".$e->getMessage()."\n";
-        }
         catch (\Exception $e) {
-            echo "Error: ".$e->getMessage()."\n";
+            $this->showException($e, $this->Controller);
         }
         finally {
             $this->getLogger()->console(
@@ -38,16 +36,6 @@ class Console extends Core implements Interfaces\Core
         }
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function handleExceptions(\Exception $Exception)
-    {
-        $this->restorePreviousExceptionHandler();
-        $this->getLogger()->console($Exception);
-        echo $Exception;
-    }
-    
     public function shutdown()
     {
         $s = parent::shutdown();

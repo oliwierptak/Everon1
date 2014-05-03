@@ -11,6 +11,6 @@ namespace Everon\Http\Message;
 
 class BadRequest extends AbstractMessage 
 {
-    protected $http_status = 400;
+    protected $http_status_code = 400;
     protected $http_message = 'BAD REQUEST';
 }

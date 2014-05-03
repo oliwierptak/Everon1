@@ -152,24 +152,24 @@ abstract class Factory implements Interfaces\Factory
             return $Core;
         }
         catch (\Exception $e) {
-            throw new Exception\Factory('Core: "%s" initialization error', $name, $e);
+            throw new Exception\Factory('Core: "%s\%s" initialization error', [$namespace, $name], $e);
         }
     }
 
     /**
      * @inheritdoc
      */
-    public function buildConsole($namespace='Everon')
+    public function buildConsole($namespace='Everon\Console')
     {
-        return $this->buildCore('Console', $namespace);
+        return $this->buildCore('Core', $namespace);
     }
 
     /**
      * @inheritdoc
      */
-    public function buildMvc($namespace='Everon')
+    public function buildMvc($namespace='Everon\Mvc')
     {
-        return $this->buildCore('Mvc', $namespace);
+        return $this->buildCore('Core', $namespace);
     }
 
     /**
@@ -1112,14 +1112,14 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildEventContext(\Closure $Callback, $namespace='Everon\Event')
+    public function buildEventContext(\Closure $Callback, $Scope, $namespace='Everon\Event')
     {
         try {
             $class_name = $this->getFullClassName($namespace, 'Context');
             $this->classExists($class_name);
-            $Context = new $class_name($Callback);
-            $this->injectDependencies($class_name, $Context);
-            return $Context;
+            $Scope = new $class_name($Callback, $Scope);
+            $this->injectDependencies($class_name, $Scope);
+            return $Scope;
         }
         catch (\Exception $e) {
             throw new Exception\Factory('EventContext initialization error', null, $e);

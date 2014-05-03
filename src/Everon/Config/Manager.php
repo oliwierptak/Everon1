@@ -110,7 +110,7 @@ class Manager implements \Everon\Config\Interfaces\Manager
     {
         $module_list = $this->getFileSystem()->listPathDir('//Module');
         $active_modules = $this->getDefaultConfigData();
-        $active_modules = $active_modules['modules']['active'];
+        $active_modules = $active_modules['module']['active'];
 
         /**
          * @var \DirectoryIterator $Dir
@@ -215,7 +215,7 @@ config_manager = false
 autoloader = false
 view = false
 
-[modules]
+[module]
 default = Test
 active[] = Test
 

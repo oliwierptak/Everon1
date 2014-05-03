@@ -48,23 +48,27 @@ class Server extends \Everon\Core implements Rest\Interfaces\Server
             }
         }
         catch (Exception\Pdo $Exception) {
-            $BadRequest = new Http\Exception((new Http\Message\BadRequest($Exception->getMessage())));
-            $this->showException($BadRequest->getHttpMessage()->getStatus(), $BadRequest);
+            $PdoException = new Http\Exception((new Http\Message\BadRequest($Exception->getMessage())));
+            $this->showException($PdoException, $this->Controller);
         }
         catch (Exception\RouteNotDefined $Exception) {
-            $BadRequest = new Http\Exception((new Http\Message\NotFound('Invalid resource name, request method or version')));
-            $this->showException($BadRequest->getHttpMessage()->getStatus(), $BadRequest);
+            $RouteNotDefined = new Http\Exception((new Http\Message\NotFound('Invalid resource name, request method or version')));
+            $this->showException($RouteNotDefined, $this->Controller);
+        }
+        catch (Exception\InvalidRoute $Exception) {
+            $BadRequest = new Http\Exception((new Http\Message\BadRequest($Exception->getMessage())));
+            $this->showException($BadRequest, $this->Controller);
         }
         catch (Http\Exception $Exception) {
-            $this->showException($Exception->getHttpMessage()->getStatus(), $Exception);
+            $this->showException($Exception, $this->Controller);
         }
         catch (Rest\Exception\Resource $Exception) {
-            $BadRequest = new Http\Exception((new Http\Message\BadRequest($Exception->getMessage())));
-            $this->showException($BadRequest->getHttpMessage()->getStatus(), $BadRequest);
+            $RestException = new Http\Exception((new Http\Message\BadRequest($Exception->getMessage())));
+            $this->showException($RestException, $this->Controller);
         }
         catch (\Exception $Exception) {
             $InternalServerError = new Http\Exception((new Http\Message\InternalServerError($Exception->getMessage())));
-            $this->showException($InternalServerError->getHttpMessage()->getStatus(), $InternalServerError);
+            $this->showException($InternalServerError, $this->Controller);
         }
         finally {
             $url = $this->getConfigManager()->getConfigValue('rest.server.url');
@@ -80,17 +84,14 @@ class Server extends \Everon\Core implements Rest\Interfaces\Server
         }
     }
     
-    /**
-     * @param $code
-     * @param \Exception $Exception
-     */
-    public function showException($code, \Exception $Exception) //dry
+ 
+    public function showException(Http\Exception $Exception, $Controller)
     {
         $message = $Exception->getMessage();
+        $code = $Exception->getCode();
         if ($Exception instanceof Http\Exception) {
-            //$message = $Exception->getHttpMessage()->getMessage();
-            $message = $Exception->getHttpMessage()->getInfo() !== '' ? $Exception->getHttpMessage()->getInfo() :  $Exception->getHttpMessage()->getMessage();
-            $code = $Exception->getHttpMessage()->getStatus();
+            $message = $Exception->getHttpMessage()->getInfo();
+            $code = $Exception->getHttpMessage()->getCode();
         }
 
         $this->getResponse()->setData(['error' => $message]); //xxx

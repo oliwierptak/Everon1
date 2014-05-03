@@ -114,7 +114,7 @@ abstract class Handler implements Interfaces\Handler
     {
         if (isset($this->repositories[$domain_name]) === false) {
             $data_mapper_name = $this->getDataMapperManager()->getDomainMapper()->getByDomainName($domain_name);
-            $this->assertIsNull($data_mapper_name, 'Invalid data mapper relation for: "%s"', 'Domain');
+            $this->assertIsNull($data_mapper_name, 'Invalid mapper definition for domain: "'.$domain_name.'"', 'Everon\Domain\Exception\Mapper');
 
             $Schema = $this->getDataMapperManager()->getSchema();
             $DataMapper = $this->getFactory()->buildDataMapper($domain_name, $Schema->getTable($data_mapper_name), $Schema);

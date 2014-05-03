@@ -132,7 +132,7 @@ abstract class Controller implements Interfaces\Controller
             );
         }
         
-        $result = $this->getEventManager()->dispatchBefore($event_name);
+        $result = $this->getEventManager()->dispatchBefore($event_name, $this);
         $result = $this->validateActionResponseResult($action, $result, false);
 
         if ($result) {
@@ -141,7 +141,7 @@ abstract class Controller implements Interfaces\Controller
         }
         
         if ($result) {
-            $result = $this->getEventManager()->dispatchAfter($event_name);
+            $result = $this->getEventManager()->dispatchAfter($event_name, $this);
             $result = $this->validateActionResponseResult($action, $result, false);
         }
         
@@ -190,16 +190,14 @@ abstract class Controller implements Interfaces\Controller
         $action .= 'OnError';
         if ($this->isCallable($this, $action)) {
             $event_name = $this->getModule()->getName().'.'.$this->getName().'.'.$action;
-            $result = $this->getEventManager()->dispatchBefore($event_name);
-            $result = ($result !== false) ? true : $result;
+            $result = $this->getEventManager()->dispatchBefore($event_name, $this);
 
-            if ($result) {
+            if ($result !== false) {
                 $result = $this->{$action}();
-                $result = ($result !== false) ? true : $result;
             }
 
-            if ($result) {
-                $result = $this->getEventManager()->dispatchAfter($event_name);
+            if ($result !== false) {
+                $result = $this->getEventManager()->dispatchAfter($event_name, $this);
             }
 
             $result = ($result !== false) ? true : $result;
@@ -207,6 +205,14 @@ abstract class Controller implements Interfaces\Controller
         }
         
         return null;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function showException(\Exception $Exception)
+    {
+        echo $Exception->getMessage();
     }
 
 }

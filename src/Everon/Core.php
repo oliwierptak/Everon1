@@ -37,6 +37,7 @@ abstract class Core implements Interfaces\Core
     protected $RequestIdentifier = null;
     
     protected $previous_exception_handler = null;
+    
 
     /**
      * @param RequestIdentifier $RequestIdentifier
@@ -53,6 +54,14 @@ abstract class Core implements Interfaces\Core
         $this->getLogger()->setRequestIdentifier($this->RequestIdentifier->getValue());
         
         $this->previous_exception_handler = set_exception_handler([$this, 'handleExceptions']);
+    }
+
+    /**
+     * @return RequestIdentifier
+     */
+    public function getRequestIdentifier()
+    {
+        return $this->RequestIdentifier;
     }
 
     /**
@@ -73,7 +82,7 @@ abstract class Core implements Interfaces\Core
         $this->Controller->setCurrentRoute($CurrentRoute);
         $this->Controller->execute($CurrentRoute->getAction());
     }
-    
+
     public function shutdown()
     {
         $data = $this->getRequestIdentifier()->getStats();
@@ -87,13 +96,6 @@ abstract class Core implements Interfaces\Core
         
         return $s;
     }
-    
-    protected function restorePreviousExceptionHandler()
-    {
-        if ($this->previous_exception_handler !== null) {
-            restore_exception_handler($this->previous_exception_handler);
-        }
-    }
 
     /**
      * @inheritdoc
@@ -103,10 +105,32 @@ abstract class Core implements Interfaces\Core
         $this->restorePreviousExceptionHandler();
         $this->getLogger()->critical($Exception);
     }
-    
-    public function getRequestIdentifier()
+
+    /**
+     * @param \Exception $Exception
+     * @param \Everon\Mvc\Interfaces\Controller|null $Controller
+     */
+    protected function showException(\Exception $Exception, $Controller)
     {
-        return $this->RequestIdentifier;
+        $this->getLogger()->error($Exception->getMessage());
+
+        /**
+         * @var \Everon\Mvc\Interfaces\Controller $Controller
+         */
+        if ($Controller === null) {
+            //$Controller = $this->getModuleManager()->getDefaultModule()->getController('Error'); //xxx infinite loop when setup() in default module will throw an error
+            echo $Exception->getMessage();
+        }
+        else {
+            $Controller->showException($Exception);
+        }
+
     }
-    
+
+    protected function restorePreviousExceptionHandler()
+    {
+        if ($this->previous_exception_handler !== null) {
+            restore_exception_handler($this->previous_exception_handler);
+        }
+    }
 }

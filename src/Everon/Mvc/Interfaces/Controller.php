@@ -35,7 +35,6 @@ interface Controller extends Interfaces\Controller
 
     /**
      * @param \Exception $Exception
-     * @param int $code
      */
-    function showException(\Exception $Exception, $code=400);
+    function showException(\Exception $Exception);
 }

@@ -24,7 +24,7 @@ class Exception extends EveronException implements Interfaces\Exception
     public function __construct(Interfaces\Message $HttpMessage)
     {
         $this->HttpMessage = $HttpMessage;
-        parent::__construct($HttpMessage->getMessage(), $params=null, $Previous=null, $Callback=null);
+        parent::__construct($HttpMessage->getInfo(), $params=null, $Previous=null, $Callback=null);
     }
 
     /**

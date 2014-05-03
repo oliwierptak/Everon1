@@ -140,7 +140,6 @@ class Manager implements Interfaces\ViewManager
      */
     protected function compileTemplateRecursive(Interfaces\TemplateCompiler $Compiler, Interfaces\TemplateContainer $Template, Interfaces\TemplateCompilerScope $Scope)
     {
-        $View = $Template->get('View');
         /**
          * @var Interfaces\TemplateContainer $Include
          * @var Interfaces\TemplateContainer $TemplateInclude
@@ -154,13 +153,11 @@ class Manager implements Interfaces\ViewManager
                 continue;
             }
 
-            $Include->set('View', $View);
             foreach ($Include->getData() as $include_name => $TemplateInclude) {
                 if (($TemplateInclude instanceof Interfaces\TemplateContainer) === false) {
                     continue;
                 }
 
-                $TemplateInclude->set('View', $View);
                 $this->compileTemplateRecursive($Compiler, $TemplateInclude, $Scope);
                 $Include->set($include_name, $TemplateInclude->getScope()->getCompiled());
             }

@@ -515,10 +515,11 @@ interface Factory
     /**
      * @param callable $Callback
      * @param string $namespace
+     * @param mixed $Scope
      * @return \Everon\Event\Interfaces\Context
      * @throws Exception\Factory
      */
-    function buildEventContext(\Closure $Callback, $namespace='Everon\Event');
+    function buildEventContext(\Closure $Callback, $Scope, $namespace='Everon\Event');
 
     /**
      * @param $name

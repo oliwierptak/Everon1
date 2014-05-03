@@ -122,14 +122,14 @@ abstract class Controller extends \Everon\Controller
     /**
      * @inheritdoc
      */
-    public function showException(\Exception $Exception, $code=400) //dry
+    public function showException(\Exception $Exception)
     {
         $message = $Exception->getMessage();
+        $code = $Exception->getCode();
         if ($Exception instanceof Http\Exception) {
-            $message = $Exception->getHttpMessage()->getInfo() !== '' ? $Exception->getHttpMessage()->getInfo() :  $Exception->getHttpMessage()->getMessage();
-            $code = $Exception->getHttpMessage()->getStatus();
+            $code = $Exception->getHttpMessage()->getCode();
         }
-        
+
         $Theme = $this->getViewManager()->getCurrentTheme();
         $Theme->set('error', $message);
         $data = $this->arrayMergeDefault($Theme->getData(), $this->getView()->getData());
@@ -137,8 +137,6 @@ abstract class Controller extends \Everon\Controller
         $this->getView()->setContainer($Theme->getContainer());
         $this->getViewManager()->compileView(null, $this->getView());
         $this->getResponse()->setData((string) $this->getView()->getContainer());
-
-
 
         $this->getResponse()->setStatusCode($code);
         $this->getResponse()->setStatusMessage($message);

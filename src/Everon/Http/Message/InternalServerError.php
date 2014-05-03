@@ -11,6 +11,6 @@ namespace Everon\Http\Message;
 
 class InternalServerError extends AbstractMessage 
 {
-    protected $http_status = 500;
+    protected $http_status_code = 500;
     protected $http_message = 'Internal Server Error';
 }

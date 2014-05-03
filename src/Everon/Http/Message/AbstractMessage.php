@@ -19,7 +19,7 @@ class AbstractMessage implements Interfaces\Message
     /**
      * @var int
      */
-    protected $http_status = null;
+    protected $http_status_code = null;
 
     /**
      * @var string
@@ -46,9 +46,9 @@ class AbstractMessage implements Interfaces\Message
     /**
      * @return int
      */
-    public function getStatus()
+    public function getCode()
     {
-        return $this->http_status;
+        return $this->http_status_code;
     }
 
     /**

@@ -34,7 +34,8 @@ abstract class Module implements Interfaces\Module
      * @var Interfaces\FactoryWorker
      */
     protected $FactoryWorker = null;
-
+    
+    
     
     /**
      * @param $name

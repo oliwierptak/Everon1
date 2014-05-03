@@ -557,7 +557,6 @@ abstract class Request implements Interfaces\Request
      */
     public function getRawInput()
     {
-        $result = null;
         return file_get_contents('php://input');
     }
 

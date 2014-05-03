@@ -16,9 +16,18 @@ interface Sender
 {
 
     /**
-     * @param Message $Email
-     * @param Recipient $Recipient
+     * @param Email $Email
      * @return bool
      */
-    function send(Message $Email, Recipient $Recipient);
+    function send(Email $Email);
+
+    /**
+     * @param Credential $Credential
+     */
+    function setCredential(Credential $Credential);
+
+    /**
+     * @return Credential
+     */
+    function getCredential();
 }

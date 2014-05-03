@@ -33,28 +33,46 @@ class Swift implements Interfaces\Sender
     /**
      * @inheritdoc
      */
-    function send(Interfaces\Message $Email, Interfaces\Recipient $Recipient)
+    function send(Interfaces\Email $Email)
     {
-        $Transport = \Swift_SmtpTransport::newInstance($this->Credential->getHost(), $this->Credential->getPort())
-            ->setUsername($this->Credential->getUsername())
-            ->setPassword($this->Credential->getPassword());
+        $Transport = \Swift_SmtpTransport::newInstance($this->getCredential()->getHost(), $this->Credential->getPort())
+            ->setUsername($this->getCredential()->getUsername())
+            ->setPassword($this->getCredential()->getPassword());
+
+        $Mailer = \Swift_Mailer::newInstance($Transport);
 
         $Message = \Swift_Message::newInstance($Email->getSubject())
-            ->setFrom([$this->Credential->getEmail() => $this->Credential->getName()])
-            ->setTo($Recipient->getTo())
+            ->setFrom([$this->getCredential()->getEmail() => $this->getCredential()->getName()])
+            ->setTo($Email->getRecipient()->getTo())
             ->setBody($Email->getBody());
         foreach($Email->getAttachments() as $attachment) {
             $Message->attach(Swift_Attachment::fromPath($attachment));
         }
-        if(!empty($Recipient->getCc())) {
-            $Message->setCc($Recipient->getCc());
-        }
-        if(!empty($Recipient->getBcc())) {
-            $Message->setBcc($Recipient->getBcc());
-        }
+//        if(!empty($Recipient->getCc())) {
+//            $Message->setCc($Recipient->getCc());
+//        }
+//        if(!empty($Recipient->getBcc())) {
+//            $Message->setBcc($Recipient->getBcc());
+//        }
 
         $Mailer = \Swift_Mailer::newInstance($Transport);
         return $Mailer->send($Message) > 0;
     }
 
+    /**
+     * @param Interfaces\Credential $Credential
+     */
+    public function setCredential(Interfaces\Credential $Credential)
+    {
+        $this->Credential = $Credential;
+    }
+
+    /**
+     * @return Interfaces\Credential
+     */
+    public function getCredential()
+    {
+        return $this->Credential;
+    }
+    
 }

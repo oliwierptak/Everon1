@@ -26,19 +26,25 @@ class Context implements Interfaces\Context
      */
     protected $Callback = null;
     
-    
-    public function __construct(\Closure $Callback)
+    protected $Caller = null;
+
+
+    /**
+     * @param callable $Callback
+     * @param $Scope
+     */
+    public function __construct(\Closure $Callback, $Scope)
     {
-        $this->Callback = $Callback->bindTo($this);
+        $this->Callback = $Callback->bindTo($Scope);
     }
-    
+        
     public function __invoke()
     {
-        return $this->Callback->__invoke();
+        return $this->execute();
     }
 
     /**
-     * @param \Closure $Callback
+     * @inheritdoc
      */
     public function setCallback(\Closure $Callback)
     {
@@ -46,10 +52,35 @@ class Context implements Interfaces\Context
     }
 
     /**
-     * @return \Closure
+     * @inheritdoc
      */
     public function getCallback()
     {
         return $this->Callback;
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function setCaller($Callee)
+    {
+        $this->Caller = $Callee;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getCaller()
+    {
+        return $this->Caller;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function execute()
+    {
+        return call_user_func($this->Callback, $this->Caller);
+    }
+
 } 

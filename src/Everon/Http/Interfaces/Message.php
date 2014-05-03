@@ -12,6 +12,6 @@ namespace Everon\Http\Interfaces;
 interface Message
 {
     function getMessage();
-    function getStatus();
+    function getCode();
     function getInfo();
 }
