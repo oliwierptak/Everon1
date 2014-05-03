@@ -18,25 +18,54 @@ use Everon\Email\Interfaces;
  */
 class Php implements Interfaces\Sender
 {
+    /**
+     * @var Interfaces\Credential
+     */
+    protected $Credential;
+
+    /**
+     * @param Interfaces\Credential $Credentials
+     */
+    public function __construct(Interfaces\Credential $Credentials)
+    {
+        $this->Credential = $Credentials;
+    }
 
     /**
      * @inheritdoc
      */
-    function send(Interfaces\Message $Email, Interfaces\Recipient $Recipient)
+    function send(Interfaces\Message $Email)
     {
-        $this->appendCcAndBccToHeaders($Email, $Recipient);
-        mail ($Recipient->getTo(), $Email->getSubject(), $Email->getBody(), $Email->getHeaders());
+        $this->appendCcAndBccToHeaders($Email);
+        mail ($Email->getRecipient()->getTo(), $Email->getSubject(), $Email->getBody(), $Email->getHeaders());
     }
 
-    private function appendCcAndBccToHeaders(Interfaces\Message $Email, Interfaces\Recipient $Recipient)
+    private function appendCcAndBccToHeaders(Interfaces\Message $Email)
     {
         $headers = $Email->getHeaders();
-        foreach ($Recipient->getCc() as $cc) {
+        foreach ($Email->getRecipient()->getCc() as $cc) {
             $headers .= 'Cc: '.$cc."\r\n";
         }
-        foreach ($Recipient->getBcc() as $bcc) {
+        foreach ($Email->getRecipient()->getBcc() as $bcc) {
             $headers .= 'Bcc: '.$bcc."\r\n";
         }
     }
+
+    /**
+     * @param Interfaces\Credential $Credential
+     */
+    function setCredential(Interfaces\Credential $Credential)
+    {
+        $this->Credential = $Credential;
+    }
+
+    /**
+     * @return Interfaces\Credential
+     */
+    function getCredential()
+    {
+        return $this->Credential;
+    }
+
 
 } 

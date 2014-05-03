@@ -33,7 +33,7 @@ class Swift implements Interfaces\Sender
     /**
      * @inheritdoc
      */
-    function send(Interfaces\Email $Email)
+    function send(Interfaces\Message $Email)
     {
         $Transport = \Swift_SmtpTransport::newInstance($this->getCredential()->getHost(), $this->Credential->getPort())
             ->setUsername($this->getCredential()->getUsername())
@@ -48,12 +48,12 @@ class Swift implements Interfaces\Sender
         foreach($Email->getAttachments() as $attachment) {
             $Message->attach(Swift_Attachment::fromPath($attachment));
         }
-//        if(!empty($Recipient->getCc())) {
-//            $Message->setCc($Recipient->getCc());
-//        }
-//        if(!empty($Recipient->getBcc())) {
-//            $Message->setBcc($Recipient->getBcc());
-//        }
+        if(!empty($Email->getRecipient()->getCc())) {
+            $Message->setCc($Email->getRecipient()->getCc());
+        }
+        if(!empty($Email->getRecipient()->getBcc())) {
+            $Message->setBcc($Email->getRecipient()->getBcc());
+        }
 
         $Mailer = \Swift_Mailer::newInstance($Transport);
         return $Mailer->send($Message) > 0;
