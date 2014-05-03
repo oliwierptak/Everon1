@@ -13,7 +13,7 @@ namespace Everon\Email\Interfaces;
  * @author Zeger Hoogeboom <zeger_hoogeboom@hotmail.com>
  * @author Oliwier Ptak <oliwierptak@gmail.com>
  */
-interface Email
+interface Message
 {
     /**
      * @param array $headers
