@@ -7,12 +7,13 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon;
+namespace Everon\Console;
 
 use Everon\Dependency;
 use Everon\Interfaces;
+use Everon\RequestIdentifier;
 
-class Console extends Core implements Interfaces\Core
+class Core extends \Everon\Core implements Interfaces\Core
 {
     /**
      * @inheritdoc

@@ -20,31 +20,11 @@ use Everon\Interfaces\FactoryWorker;
  */
 abstract class Rest extends \Everon\Module implements Interfaces\Rest
 {
-    use Dependency\Injection\Request;
-    use Dependency\Injection\Response;
-    use RestDependency\ApiKey; //todo: this should be request token
-
 
     public function setup()
     {
-        $this->authenticateRequest();
-        
-        if ($this->ApiKey === null) {
-            throw new Http\Exception(new Http\Message\Unauthorized('Invalid API key'));
-        }
+
     }
 
-    protected function authenticateRequest()
-    {
-        $user = $this->getRequest()->getServerCollection()->get('PHP_AUTH_USER', null);
-        $secret = $this->getRequest()->getServerCollection()->get('PHP_AUTH_PW', null);
-
-        if (trim($user) === '' || trim($secret) === '') {
-            $this->getResponse()->setHeader('WWW-Authenticate', 'Basic realm="Grofas REST API"');
-            throw new Http\Exception(new Http\Message\Unauthorized('Authentication required'));
-        }
-
-        //find user+pass in database 
-        $this->ApiKey = $this->getFactory()->buildRestApiKey($user, $secret);
-    }
+ 
 }

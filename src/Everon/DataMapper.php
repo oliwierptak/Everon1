@@ -13,7 +13,6 @@ use Everon\DataMapper\Interfaces\Schema;
 use Everon\DataMapper\Interfaces\Criteria;
 use Everon\DataMapper\Interfaces\Schema\Table;
 use Everon\DataMapper\Dependency;
-use Everon\Domain\Interfaces\Entity;
 use Everon\Interfaces;
 
 abstract class DataMapper implements Interfaces\DataMapper
