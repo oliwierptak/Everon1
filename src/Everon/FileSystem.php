@@ -53,14 +53,7 @@ class FileSystem implements Interfaces\FileSystem
     public function directoryExists($path)
     {
         $path = $this->getRealPath($path);
-        $Info = new \SplFileInfo($path);
-        if ($Info->isFile()) {
-            throw new Exception\FileSystem('Expected a directory, got a file: "%s"', $path);
-        }
-        if ($Info->isDir()) {
-            return true;
-        }
-        return false;
+        return (new \SplFileInfo($path))->isDir();
     }
 
     /**
@@ -69,14 +62,7 @@ class FileSystem implements Interfaces\FileSystem
     public function fileExists($path)
     {
         $path = $this->getRealPath($path);
-        $Info = new \SplFileInfo($path);
-        if ($Info->isDir()) {
-            throw new Exception\FileSystem('Expected a file, got a directory: "%s"', $path);
-        }
-        if ($Info->isFile()) {
-            return true;
-        }
-        return false;
+        return (new \SplFileInfo($path))->isFile();
     }
 
     /**
@@ -103,8 +89,7 @@ class FileSystem implements Interfaces\FileSystem
         /**
          * @var \SplFileInfo $Dir
          */
-        $Dir = new \SplFileInfo($root);
-        if ($Dir->isDir() === false) {
+        if ((new \SplFileInfo($root))->isDir() === false) {
             throw new Exception\FileSystem('Root directory does not exist: "%s"', $root);
         }
         $this->root = $Dir->getPathname().DIRECTORY_SEPARATOR;
@@ -134,17 +119,20 @@ class FileSystem implements Interfaces\FileSystem
         $this->createPath($destination,$mode);
 
         /**
-         * @var \RecursiveIteratorIterator $iterator
+         * @var \RecursiveIteratorIterator $Iterator
          */
-        $iterator = new \RecursiveIteratorIterator(
+        $Iterator = new \RecursiveIteratorIterator(
             new \RecursiveDirectoryIterator($source, \RecursiveDirectoryIterator::SKIP_DOTS),
             \RecursiveIteratorIterator::SELF_FIRST);
 
-        foreach ($iterator as $item) {
-            if ($item->isDir()) {
-                $this->createPath($destination . DIRECTORY_SEPARATOR . $iterator->getSubPathName());
+        /**
+         * @var \SplFileInfo $Item
+         */
+        foreach ($Iterator as $Item) {
+            if ($Item->isDir()) {
+                $this->createPath($destination . DIRECTORY_SEPARATOR . $Iterator->getSubPathName());
             } else {
-                copy($item, $destination. DIRECTORY_SEPARATOR . $iterator->getSubPathName());
+                copy($Item, $destination. DIRECTORY_SEPARATOR . $Iterator->getSubPathName());
             }
         }
     }
