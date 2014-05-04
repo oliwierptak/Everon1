@@ -21,6 +21,9 @@ class ForeignKey extends Constraint implements Schema\ForeignKey
     protected $column_name = null;
 
 
+    /**
+     * @param array $data
+     */
     public function __construct(array $data)
     {
         parent::__construct($data);
@@ -34,7 +37,7 @@ class ForeignKey extends Constraint implements Schema\ForeignKey
     }
 
     /**
-     * @param null $column_name
+     * @param string $column_name
      */
     public function setColumnName($column_name)
     {
@@ -48,22 +51,34 @@ class ForeignKey extends Constraint implements Schema\ForeignKey
     {
         return $this->column_name;
     }
-    
+
+    /**
+     * @param $referenced_table_name
+     */
     public function setReferencedTableName($referenced_table_name)
     {
         $this->referenced_table_name = $referenced_table_name;
     }
 
+    /**
+     * @return string
+     */
     public function getReferencedTableName()
     {
         return $this->referenced_table_name;
     }
-    
+
+    /**
+     * @param $referenced_column_name
+     */
     public function setReferencedColumnName($referenced_column_name)
     {
         $this->referenced_column_name = $referenced_column_name;
     }
 
+    /**
+     * @return string
+     */
     public function getReferencedColumnName()
     {
         return $this->referenced_column_name;
