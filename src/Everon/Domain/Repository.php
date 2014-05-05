@@ -90,7 +90,7 @@ abstract class Repository implements Interfaces\Repository
     /**
      * @inheritdoc
      */
-    public function persistFromArray(array $data, $user_id)
+    public function persistFromArray(array $data, $user_id=null)
     {
         $Entity = $this->buildFromArray($data);
         $this->persist($Entity, $user_id);
@@ -161,7 +161,7 @@ abstract class Repository implements Interfaces\Repository
     /**
      * @inheritdoc
      */
-    public function persist(Interfaces\Entity $Entity, $user_id)
+    public function persist(Interfaces\Entity $Entity, $user_id=null)
     {
         $data = $Entity->toArray();
         if ($Entity->isNew()) {
@@ -177,7 +177,7 @@ abstract class Repository implements Interfaces\Repository
     /**
      * @inheritdoc
      */
-    public function remove(Interfaces\Entity $Entity, $user_id)
+    public function remove(Interfaces\Entity $Entity, $user_id=null)
     {
         $this->getMapper()->delete($Entity->getId(), $user_id);
         $Entity->delete();
