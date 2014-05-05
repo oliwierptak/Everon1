@@ -127,7 +127,7 @@ class Manager implements Interfaces\ViewManager
     {
         $default_extension = $this->getConfigManager()->getConfigValue('application.view.default_extension');
         if (isset($this->compilers[$default_extension]) === false) {
-            throw new Exception\ViewManager('Default template compiler not set');
+            throw new Exception\ViewManager('Default template compiler not set for: "%s"', $default_extension);
         }
         
         return $this->compilers[$default_extension];
@@ -257,6 +257,23 @@ class Manager implements Interfaces\ViewManager
         }
     }
 
+    public function createViewWidget($name, $namespace='Everon\View\Widget')
+    {
+        $template_directory = $this->getThemeDirectory().'Widget'.DIRECTORY_SEPARATOR.$name.DIRECTORY_SEPARATOR.'templates'.DIRECTORY_SEPARATOR;
+        return $this->createView('Base', $template_directory, $namespace);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function createWidget($name, $namespace='Everon\View')
+    {
+        $ViewWidget = $this->createViewWidget($name);
+        $Widget = $this->getFactory()->buildViewWidget($name, $namespace.'\\'.$this->getThemeName().'\Widget');
+        $Widget->setView($ViewWidget);
+        return $Widget;
+    }
+
     /**
      * @param string $theme
      */
@@ -289,5 +306,42 @@ class Manager implements Interfaces\ViewManager
     public function getCurrentTheme($view_name='Index')
     {
         return $this->getTheme($this->getThemeName(), $view_name);
+    }
+
+    /**
+     * @param string $cache_directory
+     */
+    public function setCacheDirectory($cache_directory)
+    {
+        $this->cache_directory = $cache_directory;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCacheDirectory()
+    {
+        return $this->cache_directory;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setThemeDirectory($theme_directory)
+    {
+        $this->theme_directory = $theme_directory;
+    }
+
+    /**
+     * @return string
+     */
+    public function getThemeDirectory()
+    {
+        return $this->theme_directory;
+    }
+
+    public function includeWidget($name)
+    {
+        $Widget = $this->createWidget($name);
     }
 }

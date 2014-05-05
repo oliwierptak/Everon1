@@ -136,6 +136,7 @@ abstract class View implements Interfaces\View
      */
     public function getTemplate($name, $data)
     {
+
         $Filename = $this->getTemplateFilename($name);
         if ($Filename->isFile() === false) {
             return null;

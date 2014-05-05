@@ -34,7 +34,14 @@ interface ViewManager extends Dependency\ConfigManager
      * @return Interfaces\View
      * @throws \Everon\Exception\ViewManager
      */
-    function createView($name, $template_directory, $namespace);    
+    function createView($name, $template_directory, $namespace);
+
+    /**
+     * @param $name
+     * @param string $namespace
+     * @return Interfaces\ViewWidget
+     */
+    function createWidget($name, $namespace='Everon\View');
 
     /**
      * @return array
@@ -73,4 +80,25 @@ interface ViewManager extends Dependency\ConfigManager
     function setThemeName($theme);
         
     function getThemeName();
+
+    /**
+     * @param string $theme_directory
+     */
+    function setThemeDirectory($theme_directory);
+
+    /**
+     * @return string
+     */
+    function getThemeDirectory();
+
+    /**
+     * @param string $cache_directory
+     */
+    function setCacheDirectory($cache_directory);
+
+    /**
+     * @return string
+     */
+    function getCacheDirectory();
+
 }
