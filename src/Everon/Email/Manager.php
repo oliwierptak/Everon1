@@ -22,10 +22,10 @@ class Manager implements Interfaces\Manager
     /**
      * @inheritdoc
      */
-    public function send(Interfaces\Sender $Sender, Interfaces\Email $Email)
+    public function send(Interfaces\Sender $Sender, Interfaces\Message $Message)
     {
         try {
-            return $Sender->send($Email);
+            return $Sender->send($Message);
         }
         catch (\Exception $e) {
             $this->getLogger()->email($e);

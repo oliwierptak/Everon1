@@ -9,7 +9,6 @@
  */
 namespace Everon\Interfaces\Dependency;
 
-use Everon\Config;
 
 interface ViewManager
 {

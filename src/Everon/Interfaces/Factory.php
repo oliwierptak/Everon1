@@ -439,6 +439,14 @@ interface Factory
     function buildViewManager(array $compilers_to_init, $view_directory, $cache_directory);
 
     /**
+     * @param $class_name
+     * @param string $namespace
+     * @return Interfaces\ViewWidget
+     * @throws Exception\Factory
+     */
+    function buildViewWidget($class_name, $namespace='Everon\View');
+
+    /**
      * @param $directory
      * @param boolean $enabled
      * @return Interfaces\Logger
