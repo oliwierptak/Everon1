@@ -38,8 +38,11 @@ abstract class Widget implements ViewWidget
      */
     protected $View;
 
+    protected abstract function populate();
+
     public function __construct()
     {
+        $this->data = null;
         $this->name = get_class($this);
     }
 
@@ -72,6 +75,9 @@ abstract class Widget implements ViewWidget
      */
     public function getData()
     {
+        if ($this->data === null) {
+            $this->populate();
+        }
         return $this->data;
     }
 

@@ -16,6 +16,7 @@ abstract class View implements Interfaces\View
 {
     use Dependency\Injection\Factory;
     use Dependency\Injection\Request;
+    use Dependency\Injection\ViewManager;
 
     use Helper\Arrays;
     use Helper\IsIterable;

@@ -36,9 +36,14 @@ class Manager implements Interfaces\ViewManager
     protected $Cache = null;
 
     /**
-     * @var Helper\Collection
+     * @var Interfaces\Collection
      */
     protected $ThemeCollection = [];
+
+    /**
+     * @var Interfaces\Collection
+     */
+    protected $WidgetCollection = [];
 
 
     /**
@@ -52,6 +57,7 @@ class Manager implements Interfaces\ViewManager
         $this->theme_directory = $theme_directory;
         $this->cache_directory = $cache_directory;
         $this->ThemeCollection = new Helper\Collection([]);
+        $this->WidgetCollection = new Helper\Collection([]);
     }
     
     public function getCache()
@@ -259,7 +265,7 @@ class Manager implements Interfaces\ViewManager
 
     public function createViewWidget($name, $namespace='Everon\View\Widget')
     {
-        $template_directory = $this->getThemeDirectory().'Widget'.DIRECTORY_SEPARATOR.$name.DIRECTORY_SEPARATOR.'templates'.DIRECTORY_SEPARATOR;
+        $template_directory = $this->getThemeDirectory().$this->getThemeName().DIRECTORY_SEPARATOR.'Widget'.DIRECTORY_SEPARATOR.$name.DIRECTORY_SEPARATOR.'templates'.DIRECTORY_SEPARATOR;
         return $this->createView('Base', $template_directory, $namespace);
     }
 
@@ -340,8 +346,16 @@ class Manager implements Interfaces\ViewManager
         return $this->theme_directory;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function includeWidget($name)
     {
-        $Widget = $this->createWidget($name);
+        if ($this->WidgetCollection->has($name) === false) {
+            $Widget = $this->createWidget($name);
+            $this->WidgetCollection->set($name,$Widget);
+        }
+
+        return $this->WidgetCollection->get($name)->render();
     }
 }

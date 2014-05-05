@@ -101,4 +101,9 @@ interface ViewManager extends Dependency\ConfigManager
      */
     function getCacheDirectory();
 
+    /**
+     * @param $name
+     */
+    function includeWidget($name);
+
 }
