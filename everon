@@ -57,6 +57,6 @@ $Container->register('Request', function() use ($Factory) {
 });
 
 $REQUEST_IDENTIFIER->setSystemMemoryAtStart($system_memory);
-$Console = $Factory->buildConsoleRunner();
+$Console = $Factory->buildConsole();
 $Console->run($REQUEST_IDENTIFIER);
 
