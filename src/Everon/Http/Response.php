@@ -19,6 +19,11 @@ class Response extends BasicResponse implements Interfaces\Response
      * @var Interfaces\HeaderCollection
      */
     protected $HeaderCollection = null;
+
+    /**
+     * @var Interfaces\CookieCollection
+     */
+    protected $CookieCollection = null;
     
     protected $content_type = 'text/plain';
 
@@ -40,17 +45,34 @@ class Response extends BasicResponse implements Interfaces\Response
     /**
      * @param $guid
      * @param Interfaces\HeaderCollection $Headers
+     * @param Interfaces\CookieCollection $CookieCollection
      */
-    public function __construct($guid, Interfaces\HeaderCollection $Headers)
+    public function __construct($guid, Interfaces\HeaderCollection $Headers, Interfaces\CookieCollection $CookieCollection)
     {
         parent::__construct($guid);
         $this->HeaderCollection = $Headers;
+        $this->CookieCollection = $CookieCollection;
     }
     
     protected function sendHeaders()
     {
         $this->HeaderCollection->set('HTTP/1.1 '.$this->status_code, '');
         $this->HeaderCollection->set('EVRID', $this->guid);
+
+        /**
+         * @var \Everon\Http\Interfaces\Cookie $Cookie
+         */
+        foreach ($this->CookieCollection as $name => $Cookie) {
+            setcookie(
+                $Cookie->getName(),
+                $Cookie->getValue(),
+                $Cookie->getExpireDate(),
+                $Cookie->getPath(),
+                $Cookie->getDomain(),
+                $Cookie->isSecure(),
+                $Cookie->isHttpOnly()
+            );
+        }
         
         foreach ($this->HeaderCollection as $name => $value) {
             if (trim($value) !== '') {
@@ -60,6 +82,32 @@ class Response extends BasicResponse implements Interfaces\Response
                 header($name, false);
             }
         }
+    }
+
+    /**
+     * @param Interfaces\Cookie $Cookie
+     */
+    public function addCookie(Interfaces\Cookie $Cookie)
+    {
+        $this->CookieCollection->set($Cookie->getName(), $Cookie);
+    }
+
+    /**
+     * @param Interfaces\Cookie $Cookie
+     */
+    public function deleteCookie(Interfaces\Cookie $Cookie)
+    {
+        $Cookie->setExpireDateFromString('-1 year');
+        $this->CookieCollection->set($Cookie->getName(), $Cookie);
+    }
+
+    /**
+     * @param $name
+     * @return Interfaces\Cookie|null
+     */
+    public function getCookie($name)
+    {
+        return $this->CookieCollection->get($name, null);
     }
 
     public function getContentType()

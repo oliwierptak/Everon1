@@ -32,12 +32,12 @@ interface Cookie
     /**
      * @return boolean
      */
-    function IsSecure();
+    function isSecure();
 
     /**
      * @return boolean
      */
-    function IsHttpOnly();
+    function isHttpOnly();
 
     /**
      * @return string

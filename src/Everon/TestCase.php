@@ -40,10 +40,10 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         }
         
         parent::__construct($name, $data, $dataName);
+        $this->RequestIdentifier = $GLOBALS['REQUEST_IDENTIFIER'];
         $Environment = new Environment($GLOBALS['EVERON_ROOT'], $GLOBALS['EVERON_SOURCE_ROOT']); //xxx
         $this->FrameworkBootstrap = new Bootstrap($Environment, EVERON_ENVIRONMENT);
         $this->includeDoubles($this->getDoublesDirectory());
-        $this->RequestIdentifier = $GLOBALS['REQUEST_IDENTIFIER'];
     }
     
     protected function includeDoubles($dir)

@@ -481,12 +481,13 @@ interface Factory
 
     /**
      * @param $guid
-     * @param Http\Interfaces\HeaderCollection $Headers
+     * @param Http\Interfaces\HeaderCollection $HeaderCollection
+     * @param Http\Interfaces\CookieCollection $CookieCollection
      * @param string $namespace
      * @return Http\Interfaces\Response
      * @throws Exception\Factory
      */
-    function buildHttpResponse($guid, Http\Interfaces\HeaderCollection $Headers, $namespace='Everon\Http');
+    function buildHttpResponse($guid, Http\Interfaces\HeaderCollection $HeaderCollection, Http\Interfaces\CookieCollection $CookieCollection, $namespace='Everon\Http');
 
     /**
      * @param $evrid

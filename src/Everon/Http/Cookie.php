@@ -136,7 +136,7 @@ class Cookie implements Interfaces\Cookie
     /**
      * @inheritdoc
      */
-    public function IsHttpOnly()
+    public function isHttpOnly()
     {
         return $this->is_http_only;
     }
@@ -152,7 +152,7 @@ class Cookie implements Interfaces\Cookie
     /**
      * @inheritdoc
      */
-    public function IsSecure()
+    public function isSecure()
     {
         return $this->is_secure;
     }

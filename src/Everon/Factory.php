@@ -888,7 +888,13 @@ abstract class Factory implements Interfaces\Factory
         try {
             $class_name = $this->getFullClassName($namespace, 'CookieCollection');
             $this->classExists($class_name);
-            $Cookie = new $class_name($data);
+            
+            $cookies = [];
+            foreach ($data as $cookie_name => $cookie_value) {
+                $cookies[] = $this->buildHttpCookie($cookie_name, $cookie_value, (int) ini_get('session.cookie_lifetime'));
+            }
+            
+            $Cookie = new $class_name($cookies);
             $this->injectDependencies($class_name, $Cookie);
             return $Cookie;
         }
@@ -900,12 +906,12 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildHttpResponse($guid, Http\Interfaces\HeaderCollection $Headers, $namespace='Everon\Http')
+    public function buildHttpResponse($guid, Http\Interfaces\HeaderCollection $HeaderCollection, Http\Interfaces\CookieCollection $CookieCollection, $namespace='Everon\Http')
     {
         try {
             $class_name = $this->getFullClassName($namespace, 'Response');
             $this->classExists($class_name);
-            $Response = new $class_name($guid, $Headers);
+            $Response = new $class_name($guid, $HeaderCollection, $CookieCollection);
             $this->injectDependencies($class_name, $Response);
             return $Response;
         }

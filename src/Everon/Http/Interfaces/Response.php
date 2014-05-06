@@ -9,10 +9,24 @@
  */
 namespace Everon\Http\Interfaces;
 
-use Everon\Interfaces;
-
-interface Response extends Interfaces\Response 
+interface Response extends \Everon\Interfaces\Response 
 {
+    /**
+     * @param Cookie $Cookie
+     */
+    function addCookie(Cookie $Cookie);
+
+    /**
+     * @param Cookie $Cookie
+     */
+    function deleteCookie(Cookie $Cookie);
+
+    /**
+     * @param $name
+     * @return Cookie|null
+     */
+    function getCookie($name);
+    
     function getContentType();
 
     /**
