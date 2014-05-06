@@ -879,6 +879,23 @@ abstract class Factory implements Interfaces\Factory
             throw new Exception\Factory('HttpCookie initialization error', null, $e);
         }
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildHttpCookieCollection(array $data, $namespace='Everon\Http')
+    {
+        try {
+            $class_name = $this->getFullClassName($namespace, 'CookieCollection');
+            $this->classExists($class_name);
+            $Cookie = new $class_name($data);
+            $this->injectDependencies($class_name, $Cookie);
+            return $Cookie;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('HttpCookieCollection initialization error', null, $e);
+        }
+    }
     
     /**
      * @inheritdoc

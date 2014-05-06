@@ -472,6 +472,14 @@ interface Factory
     function buildHttpCookie($name, $value, $expire_date, $namespace='Everon\Http');
 
     /**
+     * @param array $data
+     * @param string $namespace
+     * @return Http\Interfaces\CookieCollection
+     * @throws Exception\Factory
+     */
+    function buildHttpCookieCollection(array $data, $namespace='Everon\Http');
+
+    /**
      * @param $guid
      * @param Http\Interfaces\HeaderCollection $Headers
      * @param string $namespace
