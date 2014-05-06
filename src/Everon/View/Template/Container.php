@@ -39,8 +39,8 @@ class Container implements Interfaces\TemplateContainer
      */
     public function __construct($content, array $data)
     {
-        $this->data = $data;
         $this->template_content = $content;
+        $this->data = $data;
     }
     
     protected function resetCompiledContent()

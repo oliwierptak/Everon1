@@ -33,7 +33,7 @@ abstract class View implements Interfaces\View
      */
     protected $Container = null;
 
-    protected $default_extension = '.htm';
+    protected $default_extension = '.php';
 
 
     /**
@@ -45,6 +45,11 @@ abstract class View implements Interfaces\View
         $this->name = $this->stringLastTokenToName(get_class($this));
         $this->template_directory = $template_directory;
         $this->default_extension = $default_extension;
+    }
+
+    protected function getToString()
+    {
+        return (string) $this->getContainer();
     }
 
     /**
@@ -137,7 +142,6 @@ abstract class View implements Interfaces\View
      */
     public function getTemplate($name, $data)
     {
-
         $Filename = $this->getTemplateFilename($name);
         if ($Filename->isFile() === false) {
             return null;
@@ -186,11 +190,6 @@ abstract class View implements Interfaces\View
         return $this->getContainer()->getData();
     }
 
-    protected function getToString()
-    {
-        return (string) $this->getContainer();
-    }
-
     /**
      * @inheritdoc
      */
@@ -212,7 +211,7 @@ abstract class View implements Interfaces\View
      */
     public function getFilename()
     {
-        return new \SplFileInfo($this->template_directory.$this->name.$this->default_extension);
+        return new \SplFileInfo($this->getTemplateDirectory().$this->getName().$this->getDefaultExtension());
     }
     
 }

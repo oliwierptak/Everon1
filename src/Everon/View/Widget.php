@@ -17,7 +17,6 @@ use Everon\Interfaces\ViewWidget;
 
 abstract class Widget implements ViewWidget
 {
-
     use Dependency\Injection\ConfigManager;
     use Dependency\Injection\Logger;
     use Dependency\Injection\Response;
@@ -25,7 +24,6 @@ abstract class Widget implements ViewWidget
     use Dependency\Injection\ViewManager;
     use Dependency\Injection\Factory;
 
-    use Helper\IsCallable;
     use Helper\ToString;
     use Helper\String\LastTokenToName;
 
@@ -39,11 +37,12 @@ abstract class Widget implements ViewWidget
     protected $View;
 
     protected abstract function populate();
+    
 
     public function __construct()
     {
         $this->data = null;
-        $this->name = get_class($this);
+        $this->name = $this->stringLastTokenToName(get_class($this));
     }
 
     /**
