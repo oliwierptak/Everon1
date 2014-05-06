@@ -59,8 +59,8 @@ class Cookie implements Interfaces\Cookie
     {
         $this->name = $name;
         $this->value = $value;
-        
-        if (is_numeric($expire_date)) {
+
+        if (is_numeric($expire_date) === false) {
             $this->setExpireDateFromString($expire_date);
         }
         else {
@@ -68,19 +68,33 @@ class Cookie implements Interfaces\Cookie
         }
     }
 
+    /**
+     * @inheritdoc
+     */
     public function setExpireDateFromString($date_value='+15 minutes')
     {
         $this->expire_date = strtotime($date_value);
     }
 
+    /**
+     * @inheritdoc
+     */
+    public function neverExpire()
+    {
+        $this->setExpireDate(0);
+    }
+    
+    /**
+     * @inheritdoc
+     */
     public function hasExpired()
     {
         $expires = (int) $this->expire_date;
         return $expires > 0 && $expires < time();
     }
-    
+
     /**
-     * @param string $domain
+     * @inheritdoc
      */
     public function setDomain($domain)
     {
@@ -88,7 +102,7 @@ class Cookie implements Interfaces\Cookie
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
     public function getDomain()
     {
@@ -96,7 +110,7 @@ class Cookie implements Interfaces\Cookie
     }
 
     /**
-     * @param int $expire_date
+     * @inheritdoc
      */
     public function setExpireDate($expire_date)
     {
@@ -104,7 +118,7 @@ class Cookie implements Interfaces\Cookie
     }
 
     /**
-     * @return int
+     * @inheritdoc
      */
     public function getExpireDate()
     {
@@ -112,7 +126,7 @@ class Cookie implements Interfaces\Cookie
     }
 
     /**
-     * @param boolean $is_http_only
+     * @inheritdoc
      */
     public function setIsHttpOnly($is_http_only)
     {
@@ -120,7 +134,7 @@ class Cookie implements Interfaces\Cookie
     }
 
     /**
-     * @return boolean
+     * @inheritdoc
      */
     public function IsHttpOnly()
     {
@@ -128,7 +142,7 @@ class Cookie implements Interfaces\Cookie
     }
 
     /**
-     * @param boolean $is_secure
+     * @inheritdoc
      */
     public function setIsSecure($is_secure)
     {
@@ -136,7 +150,7 @@ class Cookie implements Interfaces\Cookie
     }
 
     /**
-     * @return boolean
+     * @inheritdoc
      */
     public function IsSecure()
     {
@@ -144,7 +158,7 @@ class Cookie implements Interfaces\Cookie
     }
 
     /**
-     * @param string $name
+     * @inheritdoc
      */
     public function setName($name)
     {
@@ -152,7 +166,7 @@ class Cookie implements Interfaces\Cookie
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
     public function getName()
     {
@@ -160,7 +174,7 @@ class Cookie implements Interfaces\Cookie
     }
 
     /**
-     * @param string $path
+     * @inheritdoc
      */
     public function setPath($path)
     {
@@ -168,7 +182,7 @@ class Cookie implements Interfaces\Cookie
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
     public function getPath()
     {
@@ -176,7 +190,7 @@ class Cookie implements Interfaces\Cookie
     }
 
     /**
-     * @param string $value
+     * @inheritdoc
      */
     public function setValue($value)
     {
@@ -184,7 +198,7 @@ class Cookie implements Interfaces\Cookie
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
     public function getValue()
     {

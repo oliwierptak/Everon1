@@ -22,6 +22,8 @@ interface Cookie
      */
     function setExpireDateFromString($date_value='+15 minutes');
 
+    function neverExpire();
+
     /**
      * @return string
      */
