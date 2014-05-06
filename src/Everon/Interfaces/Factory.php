@@ -460,12 +460,16 @@ interface Factory
      */
     function buildResponse($guid, $namespace='Everon');
 
+
     /**
+     * @param string $name
+     * @param $value
+     * @param mixed $expire_date int as in 'time()' or string as in '+15 minutes'
      * @param string $namespace
      * @return Http\Interfaces\Cookie
      * @throws Exception\Factory
      */
-    function buildHttpCookie($namespace='Everon\Http');
+    function buildHttpCookie($name, $value, $expire_date, $namespace='Everon\Http');
 
     /**
      * @param $guid

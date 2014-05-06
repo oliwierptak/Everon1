@@ -866,12 +866,12 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildHttpCookie($namespace='Everon\Http')
+    public function buildHttpCookie($name, $value, $expire_date, $namespace='Everon\Http')
     {
         try {
             $class_name = $this->getFullClassName($namespace, 'Cookie');
             $this->classExists($class_name);
-            $Cookie = new $class_name();
+            $Cookie = new $class_name($name, $value, $expire_date);
             $this->injectDependencies($class_name, $Cookie);
             return $Cookie;
         }
