@@ -888,7 +888,7 @@ abstract class Factory implements Interfaces\Factory
         try {
             $class_name = $this->getFullClassName($namespace, 'Response');
             $this->classExists($class_name);
-            $Response = new $class_name();
+            $Response = new $class_name($guid, $Headers);
             $this->injectDependencies($class_name, $Response);
             return $Response;
         }
@@ -905,7 +905,7 @@ abstract class Factory implements Interfaces\Factory
         try {
             $class_name = $this->getFullClassName($namespace, 'Session');
             $this->classExists($class_name);
-            $Session = new $class_name();
+            $Session = new $class_name($evrid);
             $this->injectDependencies($class_name, $Session);
             return $Session;
         }
@@ -954,7 +954,6 @@ abstract class Factory implements Interfaces\Factory
     public function buildConfigItem($name, array $data, $class_name='Everon\Config\Item')
     {
         try {
-            $class_name = $this->getFullClassName($class_name, '');
             $this->classExists($class_name);
             $data[Config\Item::PROPERTY_NAME] = $name;
             $ConfigItem = new $class_name($data);
@@ -962,7 +961,7 @@ abstract class Factory implements Interfaces\Factory
             return $ConfigItem;
         }
         catch (\Exception $e) {
-            throw new Exception\Factory('ConfigItem: "%s\%s" initialization error', [$class_name, $name], $e);
+            throw new Exception\Factory('ConfigItem: "%s[%s]" initialization error', [$class_name, $name], $e);
         }
     }
 
@@ -1006,7 +1005,7 @@ abstract class Factory implements Interfaces\Factory
     public function buildFileSystem($root, $namespace='Everon')
     {
         try {
-            $class_name = $this->getFullClassName($namespace, 'Template');
+            $class_name = $this->getFullClassName($namespace, 'FileSystem');
             $this->classExists($class_name);
             $FileSystem = new $class_name($root);
             $this->injectDependencies($class_name, $FileSystem);
