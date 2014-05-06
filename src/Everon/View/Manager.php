@@ -12,9 +12,10 @@ namespace Everon\View;
 use Everon\Dependency;
 use Everon\Exception;
 use Everon\Helper;
-use Everon\Interfaces;
+use Everon\Interfaces\Collection;
+use Everon\View\Interfaces;
 
-class Manager implements Interfaces\ViewManager
+class Manager implements Interfaces\Manager
 {
     use Dependency\Injection\Factory;
     use Dependency\Injection\ConfigManager;
@@ -25,9 +26,9 @@ class Manager implements Interfaces\ViewManager
     use Helper\String\EndsWith;
 
     
-    protected $theme_name = 'Main';
+    protected $current_theme_name = 'Main';
 
-    protected $theme_directory = null;
+    protected $view_directory = null;
     
     protected $cache_directory = null;
     
@@ -36,25 +37,25 @@ class Manager implements Interfaces\ViewManager
     protected $Cache = null;
 
     /**
-     * @var Interfaces\Collection
+     * @var Collection
      */
     protected $ThemeCollection = [];
 
     /**
-     * @var Interfaces\Collection
+     * @var Collection
      */
     protected $WidgetCollection = [];
 
 
     /**
      * @param array $compilers
-     * @param $theme_directory
+     * @param $view_directory
      * @param $cache_directory
      */
-    public function __construct(array $compilers, $theme_directory, $cache_directory)
+    public function __construct(array $compilers, $view_directory, $cache_directory)
     {
         $this->compilers = $compilers;
-        $this->theme_directory = $theme_directory;
+        $this->view_directory = $view_directory;
         $this->cache_directory = $cache_directory;
         $this->ThemeCollection = new Helper\Collection([]);
         $this->WidgetCollection = new Helper\Collection([]);
@@ -83,7 +84,6 @@ class Manager implements Interfaces\ViewManager
          * @var $Template Interfaces\Template
          */
         $Template = $View->getContainer();
-        $Template->set('View', $View);
 
         if ($this->getConfigManager()->getConfigValue('application.cache.view')) {
             $this->getCache()->handle($this, $View, $action);
@@ -208,29 +208,24 @@ class Manager implements Interfaces\ViewManager
      */
     public function getTheme($theme_name, $view_name)
     {
-        if ($this->ThemeCollection->has($view_name) === false) {
-            $TemplateDirectory = new \SplFileInfo($this->theme_directory.$theme_name.DIRECTORY_SEPARATOR.$view_name.DIRECTORY_SEPARATOR.'templates');
-            if  ($TemplateDirectory->isDir() === false) {
-                throw new Exception\ViewManager('View: "%s" template directory: "%s" does not exist', [$view_name, $TemplateDirectory->getPathname()]);
+        if ($this->ThemeCollection->has($theme_name) === false) {
+            $TemplateDirectory = new \SplFileInfo($this->getViewDirectory().$theme_name.DIRECTORY_SEPARATOR.$view_name.DIRECTORY_SEPARATOR.'templates'.DIRECTORY_SEPARATOR);
+            if ($TemplateDirectory->isDir() === false) { 
+                $view_name = 'Index';//revert to default
+                $TemplateDirectory = new \SplFileInfo($this->getViewDirectory().$theme_name.DIRECTORY_SEPARATOR.$view_name.DIRECTORY_SEPARATOR.'templates'.DIRECTORY_SEPARATOR);
+                if ($TemplateDirectory->isDir() === false) {
+                    throw new Exception\ViewManager('View: "%s" template directory: "%s" does not exist', [$view_name, $TemplateDirectory->getPathname()]);
+                }
             }
-
-            $default_extension = $this->getConfigManager()->getConfigValue('application.view.default_extension');
             
-            //theme index template
-            $TemplateFilename = new \SplFileInfo($TemplateDirectory->getPathname().DIRECTORY_SEPARATOR.'index'.$default_extension);
-            if ($TemplateFilename->isFile() === false) { //load default theme first
-                throw new Exception\ViewManager('View index template: "%s" not found for: "%s"', [$TemplateFilename->getPathname(), $view_name]);
-            }
-
+            $Theme = $this->createView($view_name, $TemplateDirectory->getPathname(), 'Everon\View\\'.$theme_name);
             $view_variables = $this->getConfigManager()->getConfigValue("view.$view_name", []);
-            $IndexTemplate = $this->getFactory()->buildTemplate($TemplateFilename, $view_variables);
-
-            $Theme = $this->createView($view_name, $TemplateDirectory->getPathname().DIRECTORY_SEPARATOR, 'Everon\View\\'.$theme_name);
+            $IndexTemplate = $Theme->getTemplate('index', $view_variables);
             $Theme->setContainer($IndexTemplate);
-
-            $this->ThemeCollection->set($view_name, $Theme);
+            
+            $this->ThemeCollection->set($theme_name, $Theme);
         }
-        return $this->ThemeCollection->get($view_name);
+        return $this->ThemeCollection->get($theme_name);
     }
 
     /**
@@ -246,7 +241,7 @@ class Manager implements Interfaces\ViewManager
         
         $TemplateDirectory = new \SplFileInfo($template_directory);
         if  ($TemplateDirectory->isDir() === false) {  //fallback to theme dir
-            $theme_dir = $this->theme_directory.$this->getThemeName().DIRECTORY_SEPARATOR.$name.DIRECTORY_SEPARATOR.'templates';
+            $theme_dir = $this->view_directory.$this->getCurrentThemeName().DIRECTORY_SEPARATOR.$name.DIRECTORY_SEPARATOR.'templates';
             $TemplateDirectory = new \SplFileInfo($theme_dir);
             if  ($TemplateDirectory->isDir() === false) {
                 throw new Exception\ViewManager('View template directory: "%s" does not exist', $template_directory);
@@ -258,14 +253,14 @@ class Manager implements Interfaces\ViewManager
             return $this->getFactory()->buildView($name, $TemplateDirectory->getPathname().DIRECTORY_SEPARATOR, $default_extension, $namespace);
         }
         catch (Exception\Factory $e) { //fallback to theme view
-            $namespace = 'Everon\View\\'.$this->getThemeName();
+            $namespace = 'Everon\View\\'.$this->getCurrentThemeName();
             return $this->getFactory()->buildView($name, $TemplateDirectory->getPathname().DIRECTORY_SEPARATOR, $default_extension, $namespace);
         }
     }
 
     public function createViewWidget($name, $namespace='Everon\View\Widget')
     {
-        $template_directory = $this->getThemeDirectory().$this->getThemeName().DIRECTORY_SEPARATOR.'Widget'.DIRECTORY_SEPARATOR.$name.DIRECTORY_SEPARATOR.'templates'.DIRECTORY_SEPARATOR;
+        $template_directory = $this->getViewDirectory().$this->getCurrentThemeName().DIRECTORY_SEPARATOR.'Widget'.DIRECTORY_SEPARATOR.$name.DIRECTORY_SEPARATOR.'templates'.DIRECTORY_SEPARATOR;
         return $this->createView('Base', $template_directory, $namespace);
     }
 
@@ -275,7 +270,7 @@ class Manager implements Interfaces\ViewManager
     public function createWidget($name, $namespace='Everon\View')
     {
         $ViewWidget = $this->createViewWidget($name);
-        $Widget = $this->getFactory()->buildViewWidget($name, $namespace.'\\'.$this->getThemeName().'\Widget');
+        $Widget = $this->getFactory()->buildViewWidget($name, $namespace.'\\'.$this->getCurrentThemeName().'\Widget');
         $Widget->setView($ViewWidget);
         return $Widget;
     }
@@ -283,35 +278,25 @@ class Manager implements Interfaces\ViewManager
     /**
      * @param string $theme
      */
-    public function setThemeName($theme)
+    public function setCurrentThemeName($theme)
     {
-        $this->theme_name = $theme;
+        $this->current_theme_name = $theme;
     }
 
     /**
      * @return string
      */
-    public function getThemeName()
+    public function getCurrentThemeName()
     {
-        return $this->theme_name;
+        return $this->current_theme_name;
     }
 
     /**
-     * @param string $view_name
      * @return Interfaces\View
      */
-    public function getDefaultTheme($view_name='Index')
+    public function getCurrentTheme($view_name)
     {
-        return $this->getTheme('Main', $view_name);
-    }
-
-    /**
-     * @param string $view_name
-     * @return Interfaces\View
-     */
-    public function getCurrentTheme($view_name='Index')
-    {
-        return $this->getTheme($this->getThemeName(), $view_name);
+        return $this->getTheme($this->getCurrentThemeName(), $view_name);
     }
 
     /**
@@ -333,17 +318,17 @@ class Manager implements Interfaces\ViewManager
     /**
      * @inheritdoc
      */
-    public function setThemeDirectory($theme_directory)
+    public function setViewDirectory($theme_directory)
     {
-        $this->theme_directory = $theme_directory;
+        $this->view_directory = $theme_directory;
     }
 
     /**
      * @return string
      */
-    public function getThemeDirectory()
+    public function getViewDirectory()
     {
-        return $this->theme_directory;
+        return $this->view_directory;
     }
 
     /**

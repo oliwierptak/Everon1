@@ -9,9 +9,9 @@
  */
 namespace Everon\Module\Interfaces;
 
-use Everon\Interfaces\Dependency;
+use Everon\Config;
 
-interface Manager extends Dependency\ConfigManager
+interface Manager extends Config\Interfaces\Dependency\Manager
 {
     /**
      * @param $name

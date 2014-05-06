@@ -7,18 +7,17 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon\Interfaces\Dependency;
+namespace Everon\View\Interfaces;
 
-
-interface ViewManager
+interface Template extends TemplateContainer
 {
     /**
-     * @return \Everon\Interfaces\ViewManager
+     * @return callable|mixed|string
      */
-    function getViewManager();
+    function getTemplateFile();
 
     /**
-     * @param \Everon\Interfaces\ViewManager $Manager
+     * @param $filename
      */
-    function setViewManager(\Everon\Interfaces\ViewManager $Manager);
+    function setTemplateFile($filename);
 }

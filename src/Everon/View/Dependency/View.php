@@ -14,13 +14,13 @@ trait View
 {
 
     /**
-     * @var \Everon\Interfaces\View
+     * @var \Everon\View\Interfaces\View
      */
     protected $View = null;
 
 
     /**
-     * @return \Everon\Interfaces\View
+     * @return \Everon\View\Interfaces\View
      */
     public function getView()
     {
@@ -28,9 +28,9 @@ trait View
     }
 
     /**
-     * @param \Everon\Interfaces\View $View
+     * @param \Everon\View\Interfaces\View $View
      */
-    public function setView(\Everon\Interfaces\View $View)
+    public function setView(\Everon\View\Interfaces\View $View)
     {
         $this->View = $View;
     }

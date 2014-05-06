@@ -12,16 +12,14 @@ namespace Everon\View;
 
 use Everon\Dependency;
 use Everon\Helper;
-use Everon\Interfaces;
-use Everon\Interfaces\ViewWidget;
+use Everon\View\Interfaces;
 
-abstract class Widget implements ViewWidget
+abstract class Widget implements Interfaces\Widget
 {
     use Dependency\Injection\ConfigManager;
     use Dependency\Injection\Logger;
     use Dependency\Injection\Response;
     use Dependency\Injection\Request;
-    use Dependency\Injection\ViewManager;
     use Dependency\Injection\Factory;
 
     use Helper\ToString;
@@ -46,7 +44,7 @@ abstract class Widget implements ViewWidget
     }
 
     /**
-     * @param \Everon\Interfaces\View $View
+     * @param Interfaces\View $View
      */
     public function setView($View)
     {
@@ -54,7 +52,7 @@ abstract class Widget implements ViewWidget
     }
 
     /**
-     * @return \Everon\Interfaces\View
+     * @return Interfaces\View
      */
     public function getView()
     {

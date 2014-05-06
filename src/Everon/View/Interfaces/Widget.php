@@ -7,12 +7,13 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon\Interfaces;
+namespace Everon\View\Interfaces;
 
-interface ViewWidget extends \Everon\Interfaces\Dependency\ViewManager
+
+interface Widget extends Dependency\Manager
 {
     /**
-     * @param \Everon\Interfaces\View $View
+     * @param \Everon\View\Interfaces\View $View
      */
     function setView($View);
 
@@ -37,7 +38,7 @@ interface ViewWidget extends \Everon\Interfaces\Dependency\ViewManager
     function getData();
 
     /**
-     * @return \Everon\Interfaces\View
+     * @return \Everon\View\Interfaces\View
      */
     function getView();
 

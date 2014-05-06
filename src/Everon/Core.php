@@ -91,9 +91,7 @@ abstract class Core implements Interfaces\Core
         $mu = vsprintf('%0dkb', ($data['memory_total'] - $data['memory_at_start']) / 1024);
         $time = vsprintf('%.3f', round($data['time'], 3));
         $s = "${time}s $mu $sbs/$sas"; 
-        
-        $this->getLogger()->monitor($s);
-        
+               
         return $s;
     }
 
@@ -104,6 +102,7 @@ abstract class Core implements Interfaces\Core
     {
         $this->restorePreviousExceptionHandler();
         $this->getLogger()->critical($Exception);
+        $this->showException($Exception, null);
     }
 
     /**
@@ -119,7 +118,7 @@ abstract class Core implements Interfaces\Core
          */
         if ($Controller === null) {
             //$Controller = $this->getModuleManager()->getDefaultModule()->getController('Error'); //xxx infinite loop when setup() in default module will throw an error
-            echo $Exception->getMessage();
+            echo $Exception;
         }
         else {
             $Controller->showException($Exception);

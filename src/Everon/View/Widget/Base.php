@@ -9,6 +9,6 @@
  */
 namespace Everon\View\Widget;
 
-class Base extends \Everon\View
+class Base extends \Everon\View\AbstractView
 {
 }

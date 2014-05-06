@@ -112,13 +112,6 @@ class Config implements \Everon\Interfaces\Config
                 $this->assertIsArrayKey($from, $data_processed, 'Undefined config from section: "%s"');
                 $data_processed[$for] = $this->arrayMergeDefault($data_processed[$from], $data_processed[$for]);
             }
-
-            /*
-            //make sure everything has default
-            $default = reset($data_processed);
-            foreach ($data_processed as $name => $data) {
-                //$data_processed[$name] = $this->arrayMergeDefault($default, $data_processed[$name]);
-            }*/
         }
 
         $this->data = $data_processed;
@@ -137,7 +130,7 @@ class Config implements \Everon\Interfaces\Config
             $Item = $this->buildItem($item_name, $config_data); 
             $this->items[$item_name] = $Item;
 
-            $DefaultOrFirstItem = (is_null($DefaultOrFirstItem)) ? $Item : $DefaultOrFirstItem;
+            $DefaultOrFirstItem = ($DefaultOrFirstItem === null) ? $Item : $DefaultOrFirstItem;
             if ($Item->isDefault()) {
                 $this->setDefaultItem($Item);
             }

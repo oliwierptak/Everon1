@@ -391,7 +391,7 @@ interface Factory
     /**
      * @param $filename
      * @param array $template_data
-     * @return Interfaces\Template
+     * @return View\Interfaces\Template
      * @throws Exception\Factory
      */
     function buildTemplate($filename, array $template_data);
@@ -399,7 +399,7 @@ interface Factory
     /**
      * @param $template_string
      * @param array $template_data
-     * @return Interfaces\TemplateContainer
+     * @return View\Interfaces\TemplateContainer
      * @throws Exception\Factory
      */
     function buildTemplateContainer($template_string, array $template_data);
@@ -407,7 +407,7 @@ interface Factory
     /**
      * @param $class_name
      * @param string $namespace
-     * @return Interfaces\TemplateCompiler
+     * @return View\Interfaces\TemplateCompiler
      * @throws Exception\Factory
      */
     function buildTemplateCompiler($class_name, $namespace='Everon\View\Template\Compiler');
@@ -417,14 +417,14 @@ interface Factory
      * @param $template_directory
      * @param $default_extension
      * @param string $namespace
-     * @return Interfaces\View
+     * @return View\Interfaces\View
      * @throws Exception\Factory
      */
     function buildView($class_name, $template_directory, $default_extension, $namespace='Everon\View');
 
     /**
      * @param Interfaces\FileSystem $FileSystem
-     * @return View\Cache
+     * @return View\Interfaces\Cache
      * @throws Exception\Factory
      */
     function buildViewCache(Interfaces\FileSystem $FileSystem);
@@ -433,7 +433,7 @@ interface Factory
      * @param array $compilers_to_init
      * @param $view_directory
      * @param $cache_directory
-     * @return Interfaces\ViewManager
+     * @return View\Interfaces\Manager
      * @throws Exception\Factory
      */
     function buildViewManager(array $compilers_to_init, $view_directory, $cache_directory);
@@ -441,7 +441,7 @@ interface Factory
     /**
      * @param $class_name
      * @param string $namespace
-     * @return Interfaces\ViewWidget
+     * @return View\Interfaces\Widget
      * @throws Exception\Factory
      */
     function buildViewWidget($class_name, $namespace='Everon\View');

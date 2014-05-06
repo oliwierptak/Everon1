@@ -9,14 +9,13 @@
  */
 namespace Everon\Mvc;
 
-use Everon\Interfaces\TemplateContainer;
-use Everon\Interfaces\View;
 use Everon\Dependency;
 use Everon\Domain;
 use Everon\Exception;
 use Everon\Helper;
 use Everon\Http;
 use Everon\Module;
+use Everon\View;
 
 /**
  * @method Http\Interfaces\Response getResponse()
@@ -25,7 +24,7 @@ use Everon\Module;
 abstract class Controller extends \Everon\Controller
 {
     use Dependency\Injection\Factory;
-    use Dependency\Injection\ViewManager;
+    use View\Dependency\Injection\ViewManager;
     use Domain\Dependency\Injection\DomainManager;
     use Http\Dependency\Injection\HttpSession;
 
@@ -39,7 +38,7 @@ abstract class Controller extends \Everon\Controller
     protected function prepareResponse($action, $result)
     {
         if ($result) {
-            $this->executeView($action);
+            $this->executeView($this->getView(), $action);
         }
         
         $ActionTemplate = $this->getView()->getTemplate($action, $this->getView()->getData());
@@ -47,8 +46,11 @@ abstract class Controller extends \Everon\Controller
             $ActionTemplate = $this->getView()->getContainer();
         }
 
-        $Theme = $this->getViewManager()->getCurrentTheme();
+        $Theme = $this->getViewManager()->getCurrentTheme($this->getName());
+        
         $Theme->set('body', $ActionTemplate);
+        $this->executeView($Theme, $action);
+        
         $data = $this->arrayMergeDefault($Theme->getData(), $ActionTemplate->getData());
         $Theme->setData($data);
         $this->getView()->setContainer($Theme->getContainer());
@@ -70,7 +72,7 @@ abstract class Controller extends \Everon\Controller
     protected function executeOnError($action)
     {
         $result = parent::executeOnError($action);
-        $result_view = $this->executeView($action.'OnError');
+        $result_view = $this->executeView($this->getView(), $action.'OnError');
         
         if ($result === false && $result_view === false) {
             return false;
@@ -84,10 +86,10 @@ abstract class Controller extends \Everon\Controller
     }
 
 
-    protected function executeView($action)
+    protected function executeView($View, $action)
     {
-        if ($this->isCallable($this->getView(), $action)) {
-            $result = $this->getView()->{$action}();
+        if ($this->isCallable($View, $action)) {
+            $result = $View->{$action}();
             $result = ($result !== false) ? true : $result;
             return $result;
         }
@@ -96,7 +98,7 @@ abstract class Controller extends \Everon\Controller
     }
     
     /**
-     * @return View
+     * @return View\Interfaces\View
      */
     public function getView()
     {
@@ -112,7 +114,7 @@ abstract class Controller extends \Everon\Controller
     }
 
     /**
-     * @return TemplateContainer
+     * @return View\Interfaces\TemplateContainer
      */
     public function getActionTemplate()
     {
@@ -130,7 +132,7 @@ abstract class Controller extends \Everon\Controller
             $code = $Exception->getHttpMessage()->getCode();
         }
 
-        $Theme = $this->getViewManager()->getCurrentTheme();
+        $Theme = $this->getViewManager()->getCurrentTheme('Error');
         $Theme->set('error', $message);
         $data = $this->arrayMergeDefault($Theme->getData(), $this->getView()->getData());
         $Theme->setData($data);

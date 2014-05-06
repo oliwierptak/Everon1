@@ -7,16 +7,16 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon;
+namespace Everon\View;
 
+use Everon\Helper;
 use Everon\Exception;
-use Everon\Interfaces;
+use Everon\Dependency;
 
-abstract class View implements Interfaces\View
+abstract class AbstractView implements Interfaces\View
 {
     use Dependency\Injection\Factory;
     use Dependency\Injection\Request;
-    use Dependency\Injection\ViewManager;
 
     use Helper\Arrays;
     use Helper\IsIterable;
@@ -40,11 +40,13 @@ abstract class View implements Interfaces\View
      * @param $template_directory
      * @param $default_extension
      */
-    public function __construct($template_directory, $default_extension)
+    public function __construct($template_directory, $default_extension=null)
     {
         $this->name = $this->stringLastTokenToName(get_class($this));
         $this->template_directory = $template_directory;
-        $this->default_extension = $default_extension;
+        if ($default_extension !== null) {
+            $this->default_extension = $default_extension;
+        }
     }
 
     protected function getToString()
@@ -53,11 +55,16 @@ abstract class View implements Interfaces\View
     }
 
     /**
-     * @inheritdoc
+     * @param $name
+     * @return \SplFileInfo
      */
-    public function setName($name)
+    protected function getTemplateFilename($name)
     {
-        $this->name = $name;
+        if ($this->stringEndsWith($name, $this->default_extension) === false) {
+            $name .= $this->default_extension;
+        }
+
+        return new \SplFileInfo($this->getTemplateDirectory().$name);
     }
 
     /**
@@ -66,18 +73,6 @@ abstract class View implements Interfaces\View
     public function getName()
     {
         return $this->name;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getTemplateFilename($name)
-    {
-        if ($this->stringEndsWith($name, $this->default_extension) === false) {
-            $name .= $this->default_extension;
-        }
-
-        return new \SplFileInfo($this->getTemplateDirectory().$name);
     }
 
     /**
@@ -127,7 +122,7 @@ abstract class View implements Interfaces\View
         else if (is_string($Container)) {
             $data = [];
             if ($this->Container !== null) {
-                $data = $this->arrayMergeDefault($data, $this->Container->getData());
+                $data = $this->Container->getData();
             }
             $this->Container = $this->getFactory()->buildTemplateContainer($Container, $data);
         } 

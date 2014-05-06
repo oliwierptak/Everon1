@@ -440,7 +440,7 @@ abstract class Factory implements Interfaces\Factory
             $class_name = $this->getFullClassName($namespace, $class_name);
             $this->classExists($class_name);
             /**
-             * @var Interfaces\View $View
+             * @var View\Interfaces\View $View
              */
             $View = new $class_name($template_directory, $default_extension);
             $this->injectDependencies($class_name, $View);
@@ -453,7 +453,7 @@ abstract class Factory implements Interfaces\Factory
 
     /**
      * @param Interfaces\FileSystem $FileSystem
-     * @return View\Cache
+     * @return View\Interfaces\Cache
      * @throws Exception\Factory
      */
     public function buildViewCache(Interfaces\FileSystem $FileSystem)
@@ -497,7 +497,7 @@ abstract class Factory implements Interfaces\Factory
             $class_name = $this->getFullClassName($namespace, $class_name);
             $this->classExists($class_name);
             /**
-             * @var Interfaces\ViewWidget $Widget
+             * @var View\Interfaces\Widget $Widget
              */
             $Widget = new $class_name();
             $this->injectDependencies($class_name, $Widget);
@@ -509,10 +509,7 @@ abstract class Factory implements Interfaces\Factory
     }
 
     /**
-     * @param $class_name
-     * @param string $namespace
-     * @return Interfaces\TemplateCompiler
-     * @throws Exception\Factory
+     * @inheritdoc
      */
     public function buildTemplateCompiler($class_name, $namespace='Everon\View\Template\Compiler')
     {

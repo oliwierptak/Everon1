@@ -7,19 +7,19 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon\Interfaces\Dependency;
+namespace Everon\Config\Interfaces\Dependency;
 
-use Everon\Config;
+use Everon\Config\Interfaces;
 
-interface ConfigManager
+interface Manager
 {
     /**
-     * @return Config\Interfaces\Manager
+     * @return Interfaces\Manager
      */
     function getConfigManager();
 
     /**
-     * @param Config\Interfaces\Manager $ConfigManager
+     * @param Interfaces\Manager $ConfigManager
      */
-    function setConfigManager(Config\Interfaces\Manager $ConfigManager);
+    function setConfigManager(Interfaces\Manager $ConfigManager);
 }

@@ -7,19 +7,18 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon\Interfaces;
+namespace Everon\View\Interfaces\Dependency;
 
-interface ViewElement extends Arrayable
+
+interface Manager
 {
     /**
-     * @param $name
-     * @param mixed $data
+     * @return \Everon\View\Interfaces\Manager
      */
-    function set($name, $data);
+    function getViewManager();
 
     /**
-     * @param $name
-     * @return mixed|null
+     * @param \Everon\View\Interfaces\Manager $Manager
      */
-    function get($name);    
+    function setViewManager(\Everon\View\Interfaces\Manager $Manager);
 }

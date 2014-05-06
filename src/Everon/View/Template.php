@@ -10,7 +10,6 @@
 namespace Everon\View;
 
 use Everon\Exception;
-use Everon\Interfaces;
 
 class Template extends Template\Container implements Interfaces\Template
 {
