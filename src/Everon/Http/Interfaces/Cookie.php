@@ -102,4 +102,15 @@ interface Cookie
      * @param boolean $is_http_only
      */
     function setIsHttpOnly($is_http_only);
+
+
+    /**
+     * @param boolean $use_json
+     */
+    function setUseJson($use_json);
+
+    /**
+     * @return boolean
+     */
+    function getUseJson();
 }

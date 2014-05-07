@@ -210,7 +210,7 @@ class Cookie implements Interfaces\Cookie
     public function getValue()
     {
         if ($this->use_json) {
-            return $this->getValueAsJson();
+            //return $this->getValueAsJson();
         }
         
         return $this->value;
@@ -227,7 +227,7 @@ class Cookie implements Interfaces\Cookie
             $this->use_json = true;
             $data = json_decode($json, true);
             $this->value = $data['value'];
-            $this->expire = $data['expire'];            
+            $this->expire = $data['expire'];
         }
         catch (\Exception $e) {
             $this->value = '';
@@ -242,4 +242,21 @@ class Cookie implements Interfaces\Cookie
             'expire' => $this->expire
         ]);
     }
+
+    /**
+     * @param boolean $use_json
+     */
+    public function setUseJson($use_json)
+    {
+        $this->use_json = $use_json;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getUseJson()
+    {
+        return $this->use_json;
+    }
+    
 }
