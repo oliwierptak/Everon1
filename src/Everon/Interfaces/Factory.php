@@ -469,7 +469,7 @@ interface Factory
      * @return Http\Interfaces\Cookie
      * @throws Exception\Factory
      */
-    function buildHttpCookie($name, $value, $expire_date, $namespace='Everon\Http');
+    function buildHttpCookie($name, $value, $expire_date, $namespace='Everon\Http\Cookie');
 
     /**
      * @param array $data

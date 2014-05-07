@@ -34,7 +34,12 @@ interface Cookie
     /**
      * @return string
      */
-    function getJsonValue();
+    function getValueAsJson();
+
+    /**
+     * @param $json
+     */
+    function setDataFromJson($json);
 
     /**
      * @return boolean

@@ -14,12 +14,20 @@ use Everon\Http\Interfaces;
 
 class Cookie implements Interfaces\Cookie
 {
-    use Helper\Arrays;
-    
     /**
      * @var string
      */
     protected $name = 'everon_cookie';
+
+    /**
+     * @var string
+     */
+    protected $value = '';
+
+    /**
+     * @var int
+     */
+    protected $expire = null;
 
     /**
      * @var string
@@ -41,12 +49,7 @@ class Cookie implements Interfaces\Cookie
      */
     protected $is_http_only = true;
     
-    protected $data_default = [
-        'value' => null,
-        'expire' => 0
-    ];
-    
-    protected $data = [];
+    protected $use_json = false;
 
 
     /**
@@ -57,15 +60,19 @@ class Cookie implements Interfaces\Cookie
     function __construct($name, $value, $expire_date)
     {
         $this->name = $name;
+        $this->value = $value;
 
         if (is_numeric($expire_date) === false) {
             $this->setExpireDateFromString($expire_date);
         }
         else {
-            $this->setExpire($expire_date);
+            $this->expire = $expire_date;
         }
-        
-        $this->setDataFromJsonOrValue($value);
+
+        $value = trim((string) $value);
+        if ($value !== '' && $value[0] === '{') {
+            $this->setDataFromJson($value);
+        }
     }
 
     /**
@@ -73,7 +80,7 @@ class Cookie implements Interfaces\Cookie
      */
     public function setExpireDateFromString($date_value)
     {
-        $this->setExpire(strtotime($date_value));
+        $this->expire = strtotime($date_value);
     }
 
     /**
@@ -83,13 +90,13 @@ class Cookie implements Interfaces\Cookie
     {
         $this->setExpireDateFromString('+5 years');
     }
-    
+
     /**
      * @inheritdoc
      */
     public function isExpired()
     {
-        $expires = (int) $this->getExpire();
+        $expires = (int) $this->expire;
         return $expires > 0 && $expires < time();
     }
 
@@ -114,7 +121,7 @@ class Cookie implements Interfaces\Cookie
      */
     public function setExpire($expire_date)
     {
-        $this->data['expire'] = $expire_date;
+        $this->expire = $expire_date;
     }
 
     /**
@@ -122,7 +129,7 @@ class Cookie implements Interfaces\Cookie
      */
     public function getExpire()
     {
-        return $this->data['expire'];
+        return $this->expire;
     }
 
     /**
@@ -194,7 +201,7 @@ class Cookie implements Interfaces\Cookie
      */
     public function setValue($value)
     {
-        $this->data['value'] = $value;
+        $this->value = $value;
     }
 
     /**
@@ -202,35 +209,37 @@ class Cookie implements Interfaces\Cookie
      */
     public function getValue()
     {
-        return $this->data['value'];
-    }
-
-    /**
-     * @return string
-     */
-    public function getJsonValue()
-    {
-        return json_encode($this->data);
-    }
-
-    /**
-     * @param $json_value string
-     */
-    public function setDataFromJsonOrValue($json_value)
-    {
-        $json_value = trim((string) $json_value);
-        if ($json_value !== '' && $json_value[0] === '{') {
-            $this->data = $this->arrayMergeDefault($this->data_default, json_decode($json_value, true));
+        if ($this->use_json) {
+            return $this->getValueAsJson();
         }
-        else {
-            $this->data = $this->arrayMergeDefault($this->data_default, [
-                'value' => $json_value
-            ]);
-        }
+        
+        return $this->value;
     }
 
     public function delete()
     {
         $this->setExpireDateFromString('-1 year');
+    }
+    
+    public function setDataFromJson($json)
+    {
+        try {
+            $this->use_json = true;
+            $data = json_decode($json, true);
+            $this->value = $data['value'];
+            $this->expire = $data['expire'];            
+        }
+        catch (\Exception $e) {
+            $this->value = '';
+            $this->expire = 0;           
+        }
+    }
+    
+    public function getValueAsJson()
+    {
+        return json_encode([
+            'value' => $this->value,
+            'expire' => $this->expire
+        ]);
     }
 }

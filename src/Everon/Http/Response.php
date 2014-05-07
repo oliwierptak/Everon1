@@ -63,11 +63,11 @@ class Response extends BasicResponse implements Interfaces\Response
 
         /**
          * @var \Everon\Http\Interfaces\Cookie $Cookie
-         */
+         */     
         foreach ($this->CookieCollection as $name => $Cookie) {
             setcookie(
                 $Cookie->getName(),
-                $Cookie->getJsonValue(),
+                $Cookie->getValue(),
                 $Cookie->getExpire(),
                 $Cookie->getPath(),
                 $Cookie->getDomain(),
@@ -105,7 +105,7 @@ class Response extends BasicResponse implements Interfaces\Response
     /**
      * @param Interfaces\Cookie $Cookie
      */
-    public function addCookie(Interfaces\Cookie $Cookie)
+    public function setCookie(Interfaces\Cookie $Cookie)
     {
         $this->CookieCollection->set($Cookie->getName(), $Cookie);
     }

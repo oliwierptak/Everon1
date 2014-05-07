@@ -24,7 +24,7 @@ interface Response extends \Everon\Interfaces\Response
     /**
      * @param Cookie $Cookie
      */
-    function addCookie(Cookie $Cookie);
+    function setCookie(Cookie $Cookie);
 
     /**
      * @param Cookie $Cookie
