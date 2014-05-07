@@ -71,7 +71,7 @@ class Cookie implements Interfaces\Cookie
     /**
      * @inheritdoc
      */
-    public function setExpireDateFromString($date_value='+15 minutes')
+    public function setExpireDateFromString($date_value)
     {
         $this->expire_date = strtotime($date_value);
     }
@@ -81,7 +81,7 @@ class Cookie implements Interfaces\Cookie
      */
     public function neverExpire()
     {
-        $this->setExpireDate(0);
+        $this->setExpireDateFromString('+5 years');
     }
     
     /**
@@ -205,4 +205,8 @@ class Cookie implements Interfaces\Cookie
         return $this->value;
     }
 
+    public function delete()
+    {
+        $this->setExpireDateFromString('-1 year');
+    }
 }

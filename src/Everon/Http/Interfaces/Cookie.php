@@ -11,6 +11,8 @@ namespace Everon\Http\Interfaces;
 
 interface Cookie
 {
+    function delete();
+    
     /**
      * @param boolean $is_secure
      */
@@ -20,7 +22,7 @@ interface Cookie
      * @param string $date_value
      * @return void
      */
-    function setExpireDateFromString($date_value='+15 minutes');
+    function setExpireDateFromString($date_value);
 
     function neverExpire();
 

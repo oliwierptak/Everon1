@@ -12,6 +12,16 @@ namespace Everon\Http\Interfaces;
 interface Response extends \Everon\Interfaces\Response 
 {
     /**
+     * @param \Everon\Http\Interfaces\CookieCollection $CookieCollection
+     */
+    function setCookieCollection($CookieCollection);
+
+    /**
+     * @return \Everon\Http\Interfaces\CookieCollection
+     */
+    function getCookieCollection();
+        
+    /**
      * @param Cookie $Cookie
      */
     function addCookie(Cookie $Cookie);
@@ -20,6 +30,11 @@ interface Response extends \Everon\Interfaces\Response
      * @param Cookie $Cookie
      */
     function deleteCookie(Cookie $Cookie);
+
+    /**
+     * @param Cookie $name
+     */
+    public function deleteCookieByName($name);
 
     /**
      * @param $name

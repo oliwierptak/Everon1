@@ -15,6 +15,8 @@ use Everon\Response as BasicResponse;
 
 class Response extends BasicResponse implements Interfaces\Response
 {
+    use Dependency\Injection\Factory;
+    
     /**
      * @var Interfaces\HeaderCollection
      */
@@ -85,6 +87,22 @@ class Response extends BasicResponse implements Interfaces\Response
     }
 
     /**
+     * @param \Everon\Http\Interfaces\CookieCollection $CookieCollection
+     */
+    public function setCookieCollection($CookieCollection)
+    {
+        $this->CookieCollection = $CookieCollection;
+    }
+
+    /**
+     * @return \Everon\Http\Interfaces\CookieCollection
+     */
+    public function getCookieCollection()
+    {
+        return $this->CookieCollection;
+    }
+    
+    /**
      * @param Interfaces\Cookie $Cookie
      */
     public function addCookie(Interfaces\Cookie $Cookie)
@@ -97,7 +115,23 @@ class Response extends BasicResponse implements Interfaces\Response
      */
     public function deleteCookie(Interfaces\Cookie $Cookie)
     {
-        $Cookie->setExpireDateFromString('-1 year');
+        $this->deleteCookieByName($Cookie->getName());
+    }
+
+    /**
+     * @param Interfaces\Cookie $name
+     */
+    public function deleteCookieByName($name)
+    {
+        $Cookie = $this->getCookie($name);
+        if ($Cookie !== null) {
+            $Cookie->delete();
+        }
+        else {
+            $Cookie = $this->getFactory()->buildHttpCookie($name, '', time());
+            $Cookie->delete();
+        }
+        
         $this->CookieCollection->set($Cookie->getName(), $Cookie);
     }
 

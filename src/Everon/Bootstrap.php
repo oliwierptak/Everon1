@@ -29,6 +29,8 @@ class Bootstrap
     
     protected $environment_name = null;
     
+    protected $show_auto_loader_exceptions = null;
+    
     
     public function __construct($Environment, $environment_name, $os=PHP_OS)
     {
@@ -48,6 +50,26 @@ class Bootstrap
         }
                 
         $this->Environment->setConfig($ConfigDir->getPathname().DIRECTORY_SEPARATOR);
+    }
+
+    /**
+     * @param bool $show_auto_loader_exceptions
+     */
+    public function setShowAutoLoaderExceptions($show_auto_loader_exceptions)
+    {
+        $this->show_auto_loader_exceptions = $show_auto_loader_exceptions;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getShowAutoLoaderExceptions()
+    {
+        if ($this->show_auto_loader_exceptions === null) {
+            $ini = $this->getApplicationIni();
+            $this->show_auto_loader_exceptions = @$ini['autoloader']['throw_exceptions'] === true;
+        }
+        return $this->show_auto_loader_exceptions;
     }
     
     public function getClassLoader()
@@ -86,10 +108,10 @@ class Bootstrap
 
             $classmap_filename = $this->Environment->getCache().'everon_classmap_'.$this->getOsName().'.php';
             $ClassMap = new ClassMap($classmap_filename);
-            $ClassLoader = new ClassLoaderCache($this->hasAutoloader('everon'), $ClassMap);
+            $ClassLoader = new ClassLoaderCache($this->getShowAutoLoaderExceptions(), $ClassMap);
         }
         else {
-            $ClassLoader = new ClassLoader($this->hasAutoloader('everon'));
+            $ClassLoader = new ClassLoader($this->getShowAutoLoaderExceptions());
         }
         
         $this->ClassLoader = $ClassLoader;
@@ -102,7 +124,7 @@ class Bootstrap
         }
         return $this->application_ini;
     }
-    
+
     protected function registerClassLoader($prepend_autoloader)
     {
         if ($this->hasAutoloader('composer')) {
@@ -121,7 +143,7 @@ class Bootstrap
             $this->getClassLoader()->register($prepend_autoloader);
         }
     }
-    
+
     public function hasAutoloader($name)
     {
         $ini = $this->getApplicationIni();
@@ -133,8 +155,8 @@ class Bootstrap
         
         return false;
     }
-    
-    public function run($prepend_autoloader = false)
+
+    public function run($prepend_autoloader=false)
     {
         $this->registerClassLoader($prepend_autoloader);
         
