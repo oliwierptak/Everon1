@@ -32,6 +32,11 @@ interface Cookie
     function getValue();
 
     /**
+     * @return string
+     */
+    function getJsonValue();
+
+    /**
      * @return boolean
      */
     function isSecure();
@@ -51,12 +56,12 @@ interface Cookie
      */
     function setPath($path);
 
-    function hasExpired();
+    function isExpired();
 
     /**
      * @param int $expire_date
      */
-    function setExpireDate($expire_date);
+    function setExpire($expire_date);
 
     /**
      * @param string $domain
@@ -71,7 +76,7 @@ interface Cookie
     /**
      * @return int
      */
-    function getExpireDate();
+    function getExpire();
 
     /**
      * @return string

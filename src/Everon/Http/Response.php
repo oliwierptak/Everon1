@@ -67,8 +67,8 @@ class Response extends BasicResponse implements Interfaces\Response
         foreach ($this->CookieCollection as $name => $Cookie) {
             setcookie(
                 $Cookie->getName(),
-                $Cookie->getValue(),
-                $Cookie->getExpireDate(),
+                $Cookie->getJsonValue(),
+                $Cookie->getExpire(),
                 $Cookie->getPath(),
                 $Cookie->getDomain(),
                 $Cookie->isSecure(),

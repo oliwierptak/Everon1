@@ -14,20 +14,12 @@ use Everon\Http\Interfaces;
 
 class Cookie implements Interfaces\Cookie
 {
+    use Helper\Arrays;
+    
     /**
      * @var string
      */
     protected $name = 'everon_cookie';
-
-    /**
-     * @var string
-     */
-    protected $value = '';
-
-    /**
-     * @var int
-     */
-    protected $expire_date = null;
 
     /**
      * @var string
@@ -48,6 +40,13 @@ class Cookie implements Interfaces\Cookie
      * @var bool
      */
     protected $is_http_only = true;
+    
+    protected $data_default = [
+        'value' => null,
+        'expire' => 0
+    ];
+    
+    protected $data = [];
 
 
     /**
@@ -58,14 +57,15 @@ class Cookie implements Interfaces\Cookie
     function __construct($name, $value, $expire_date)
     {
         $this->name = $name;
-        $this->value = $value;
 
         if (is_numeric($expire_date) === false) {
             $this->setExpireDateFromString($expire_date);
         }
         else {
-            $this->expire_date = $expire_date;
+            $this->setExpire($expire_date);
         }
+        
+        $this->setDataFromJsonOrValue($value);
     }
 
     /**
@@ -73,7 +73,7 @@ class Cookie implements Interfaces\Cookie
      */
     public function setExpireDateFromString($date_value)
     {
-        $this->expire_date = strtotime($date_value);
+        $this->setExpire(strtotime($date_value));
     }
 
     /**
@@ -87,9 +87,9 @@ class Cookie implements Interfaces\Cookie
     /**
      * @inheritdoc
      */
-    public function hasExpired()
+    public function isExpired()
     {
-        $expires = (int) $this->expire_date;
+        $expires = (int) $this->getExpire();
         return $expires > 0 && $expires < time();
     }
 
@@ -112,17 +112,17 @@ class Cookie implements Interfaces\Cookie
     /**
      * @inheritdoc
      */
-    public function setExpireDate($expire_date)
+    public function setExpire($expire_date)
     {
-        $this->expire_date = $expire_date;
+        $this->data['expire'] = $expire_date;
     }
 
     /**
      * @inheritdoc
      */
-    public function getExpireDate()
+    public function getExpire()
     {
-        return $this->expire_date;
+        return $this->data['expire'];
     }
 
     /**
@@ -194,7 +194,7 @@ class Cookie implements Interfaces\Cookie
      */
     public function setValue($value)
     {
-        $this->value = $value;
+        $this->data['value'] = $value;
     }
 
     /**
@@ -202,7 +202,31 @@ class Cookie implements Interfaces\Cookie
      */
     public function getValue()
     {
-        return $this->value;
+        return $this->data['value'];
+    }
+
+    /**
+     * @return string
+     */
+    public function getJsonValue()
+    {
+        return json_encode($this->data);
+    }
+
+    /**
+     * @param $json_value string
+     */
+    public function setDataFromJsonOrValue($json_value)
+    {
+        $json_value = trim((string) $json_value);
+        if ($json_value !== '' && $json_value[0] === '{') {
+            $this->data = $this->arrayMergeDefault($this->data_default, json_decode($json_value, true));
+        }
+        else {
+            $this->data = $this->arrayMergeDefault($this->data_default, [
+                'value' => $json_value
+            ]);
+        }
     }
 
     public function delete()
