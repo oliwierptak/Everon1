@@ -240,7 +240,6 @@ class Cookie implements Interfaces\Cookie
             $this->expire = $data['expire'];
         }
         catch (\Exception $e) {
-            throw $e;
             $this->value = '';
             $this->expire = 0;           
         }
