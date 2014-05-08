@@ -141,13 +141,15 @@ class Cookie implements Interfaces\Cookie
     {
         return $this->expire;
     }
-
-    /**
-     * @inheritdoc
-     */
-    public function setIsHttpOnly($is_http_only)
+   
+    public function enableHttpOnly()
     {
-        $this->is_http_only = $is_http_only;
+        $this->is_http_only = true;
+    }
+
+    public function disableHttpOnly()
+    {
+        $this->is_http_only = false;
     }
 
     /**
@@ -158,12 +160,14 @@ class Cookie implements Interfaces\Cookie
         return $this->is_http_only;
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function setIsSecure($is_secure)
+    public function enableSecure()
     {
-        $this->is_secure = $is_secure;
+        $this->is_secure = true;
+    }
+
+    public function disableSecure()
+    {
+        $this->is_secure = false;
     }
 
     /**
@@ -219,10 +223,6 @@ class Cookie implements Interfaces\Cookie
      */
     public function getValue()
     {
-        if ($this->use_json) {
-            //return $this->getValueAsJson();
-        }
-        
         return $this->value;
     }
 
@@ -252,19 +252,21 @@ class Cookie implements Interfaces\Cookie
             'expire' => $this->expire
         ]);
     }
-
-    /**
-     * @param boolean $use_json
-     */
-    public function setUseJson($use_json)
+    
+    public function enableJson()
     {
-        $this->use_json = $use_json;
+        $this->use_json = true;
     }
-
+    
+    public function disableJson()
+    {
+        $this->use_json = false;
+    }
+    
     /**
      * @return boolean
      */
-    public function getUseJson()
+    public function isJsonEnabled()
     {
         return $this->use_json;
     }

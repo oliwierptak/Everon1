@@ -12,11 +12,6 @@ namespace Everon\Http\Interfaces;
 interface Cookie
 {
     function delete();
-    
-    /**
-     * @param boolean $is_secure
-     */
-    function setIsSecure($is_secure);
 
     /**
      * @param string $date_value
@@ -40,16 +35,6 @@ interface Cookie
      * @param $json
      */
     function setDataFromJson($json);
-
-    /**
-     * @return boolean
-     */
-    function isSecure();
-
-    /**
-     * @return boolean
-     */
-    function isHttpOnly();
 
     /**
      * @return string
@@ -98,19 +83,30 @@ interface Cookie
      */
     function getDomain();
 
-    /**
-     * @param boolean $is_http_only
-     */
-    function setIsHttpOnly($is_http_only);
+    function enableHttpOnly();
 
-
-    /**
-     * @param boolean $use_json
-     */
-    function setUseJson($use_json);
+    function disableHttpOnly();
 
     /**
      * @return boolean
      */
-    function getUseJson();
+    function isHttpOnly();
+
+    function enableJson();
+
+    function disableJson();
+    
+    /**
+     * @return boolean
+     */
+    function isJsonEnabled();
+
+    function enableSecure();
+
+    function disableSecure();
+
+    /**
+     * @return boolean
+     */
+    function isSecure();
 }
