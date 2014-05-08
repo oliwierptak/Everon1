@@ -576,4 +576,11 @@ abstract class Request implements Interfaces\Request
         return $this->getServerCollection()->get('REMOTE_ADDR');
     }
 
+    /**
+     * @return string
+     */
+    public function getUserAgent()
+    {
+        return $this->ServerCollection->get('HTTP_USER_AGENT', '');
+    }
 }

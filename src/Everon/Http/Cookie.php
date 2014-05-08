@@ -14,6 +14,8 @@ use Everon\Http\Interfaces;
 
 class Cookie implements Interfaces\Cookie
 {
+    use Helper\Arrays;
+    
     /**
      * @var string
      */
@@ -46,15 +48,18 @@ class Cookie implements Interfaces\Cookie
 
     /**
      * @var bool
-     */
+    */
     protected $is_http_only = true;
-    
+
+    /**
+     * @var bool
+     */
     protected $use_json = false;
 
 
     /**
      * @param $name
-     * @param $value
+     * @param mixed $value if json string or array is used, the $use_json will be set to true
      * @param mixed $expire_date int as in 'time()' or string as in '+15 minutes'
      */
     function __construct($name, $value, $expire_date)
@@ -69,9 +74,14 @@ class Cookie implements Interfaces\Cookie
             $this->expire = $expire_date;
         }
 
-        $value = trim((string) $value);
-        if ($value !== '' && $value[0] === '{') {
-            $this->setDataFromJson($value);
+        if (is_array($value)) {
+            $this->use_json = true;
+        }
+        else {
+            $value = trim((string) $value);
+            if ($value !== '' && $value[0] === '{') {
+                $this->setDataFromJson($value);
+            }
         }
     }
 
@@ -230,6 +240,7 @@ class Cookie implements Interfaces\Cookie
             $this->expire = $data['expire'];
         }
         catch (\Exception $e) {
+            throw $e;
             $this->value = '';
             $this->expire = 0;           
         }

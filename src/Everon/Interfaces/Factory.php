@@ -463,7 +463,7 @@ interface Factory
 
     /**
      * @param string $name
-     * @param $value
+     * @param mixed $value if json string or array is used, the $use_json will be set to true
      * @param mixed $expire_date int as in 'time()' or string as in '+15 minutes'
      * @param string $namespace
      * @return Http\Interfaces\Cookie

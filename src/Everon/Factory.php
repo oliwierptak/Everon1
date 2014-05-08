@@ -891,9 +891,8 @@ abstract class Factory implements Interfaces\Factory
             
             $cookies = [];
             foreach ($data as $cookie_name => $cookie_value) {
-                $CookieCollection = $this->buildHttpCookie($cookie_name, $cookie_value, 0);
-                $CookieCollection->setExpire($CookieCollection->getExpire());
-                $cookies[$cookie_name] = $CookieCollection;
+                $Cookie = $this->buildHttpCookie($cookie_name, $cookie_value, 0);
+                $cookies[$cookie_name] = $Cookie;
             }
             
             $CookieCollection = new $class_name($cookies);
