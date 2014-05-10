@@ -45,7 +45,10 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         $this->FrameworkBootstrap = new Bootstrap($Environment, EVERON_ENVIRONMENT);
         $this->includeDoubles($this->getDoublesDirectory());
     }
-    
+
+    /**
+     * @param $dir
+     */
     protected function includeDoubles($dir)
     {
         /**
@@ -83,7 +86,11 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
             }
         }
     }
-    
+
+    /**
+     * @param $data
+     * @return array
+     */
     public function getServerDataForRequest($data)
     {
         $server = [
