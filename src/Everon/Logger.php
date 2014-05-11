@@ -30,8 +30,11 @@ class Logger implements Interfaces\Logger
     protected $enabled = false;
     
     protected $write_count = 0;
-    
-    
+
+    /**
+     * @param $directory
+     * @param $enabled
+     */
     public function __construct($directory, $enabled)
     {
         $this->log_directory = $directory;
