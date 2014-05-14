@@ -230,10 +230,10 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildRestResponse($guid, Http\Interfaces\HeaderCollection $Headers)
+    public function buildRestResponse($guid, Http\Interfaces\HeaderCollection $HeaderCollection, Http\Interfaces\CookieCollection $CookieCollection, $namespace='Everon\Http')
     {
         try {
-            $Response = new Rest\Response($guid, $Headers);
+            $Response = new Rest\Response($guid, $HeaderCollection, $CookieCollection);
             $this->injectDependencies('Everon\Rest\Response', $Response);
             return $Response;
         }
@@ -883,7 +883,7 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildHttpCookieCollection(array $data, $namespace='Everon\Http')
+    public function buildHttpCookieCollection(array $data=[], $namespace='Everon\Http')
     {
         try {
             $class_name = $this->getFullClassName($namespace, 'CookieCollection');

@@ -97,11 +97,13 @@ interface Factory
 
     /**
      * @param $guid
-     * @param Http\Interfaces\HeaderCollection $Headers
+     * @param Http\Interfaces\HeaderCollection $HeaderCollection
+     * @param Http\Interfaces\CookieCollection $CookieCollection
+     * @param string $namespace
      * @return Rest\Response
      * @throws Exception\Factory
      */
-    function buildRestResponse($guid, Http\Interfaces\HeaderCollection $Headers);
+    function buildRestResponse($guid, Http\Interfaces\HeaderCollection $HeaderCollection, Http\Interfaces\CookieCollection $CookieCollection, $namespace='Everon\Rest');
 
     /**
      * @param $name
@@ -477,7 +479,7 @@ interface Factory
      * @return Http\Interfaces\CookieCollection
      * @throws Exception\Factory
      */
-    function buildHttpCookieCollection(array $data, $namespace='Everon\Http');
+    function buildHttpCookieCollection(array $data=[], $namespace='Everon\Http');
 
     /**
      * @param $guid
