@@ -85,7 +85,6 @@ abstract class Controller extends \Everon\Controller
         return null;
     }
 
-
     /**
      * @param $View
      * @param $action
@@ -150,12 +149,15 @@ abstract class Controller extends \Everon\Controller
         $this->response();
     }
     
-    public function redirect($name)
+    public function redirect($name, $query=[])
     {
-        $route = $this->getConfigManager()->getConfigValue('router.'.$name);
-        if ($route === null) {
+        $Item = $this->getConfigManager()->getConfigByName('router')->getItemByName($name);
+        $Item->compileUrl($query);
+        
+        if ($Item === null) {
             throw new Exception\Controller('Invalid router config name: "%s"', $name);
         }
-        $this->getResponse()->setHeader('refresh', '1; url='.$route['url']);
+        
+        $this->getResponse()->setHeader('refresh', '1; url='.$Item->getParsedUrl());
     }
 }

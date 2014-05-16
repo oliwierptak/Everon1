@@ -34,7 +34,7 @@ class Router extends EveronRouter implements Interfaces\Router
              */
             if ($RouteItem->matchesByPath($Request->getPath())) {
                 if ($Request->getMethod() === $RouteItem->getMethod()) {
-                    $this->validateAndUpdateRequest($RouteItem, $Request);
+                    $this->validateAndUpdateRequestAndRouteItem($RouteItem, $Request);
                     return $RouteItem;
                 }
             }
