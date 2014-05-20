@@ -55,7 +55,7 @@ class Request extends \Everon\Request
         $current = array_shift($tokens);
         
         if (strlen($current) !== strlen($default)) {
-            
+            return $default;
         }
         
         return $current;
