@@ -52,7 +52,7 @@ class Request extends \Everon\Request
         ));
     }
 
-    protected function getPreferredLanguage()
+    protected function getPreferredLanguage($default='en-US')
     {
         $language_str = $this->ServerCollection->get('LANGUAGE', '');
         $tokens = explode(':', $language_str);

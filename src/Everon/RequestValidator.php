@@ -19,7 +19,7 @@ class RequestValidator implements Interfaces\RequestValidator
 
     /**
      * Validates $_GET, $_POST and $QUERY_STRING.
-     * Returns array of validated query, get and post otherwise, or throws an exception
+     * Returns array of validated query, get and post, or throws an exception
      * 
      * @param Config\Interfaces\ItemRouter $RouteItem
      * @param Interfaces\Request $Request
@@ -40,7 +40,7 @@ class RequestValidator implements Interfaces\RequestValidator
             $RouteItem->getName(),
             (array) $RouteItem->getQueryRegex(),
             $parsed_query_parameters,
-            true
+            true //so 404 can be thrown
         );
 
         $parsed_get_parameters = $this->validateGet($RouteItem, $Request->getGetCollection()->toArray());

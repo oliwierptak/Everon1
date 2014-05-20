@@ -11,7 +11,7 @@ namespace Everon\Rest\Resource;
 
 use Everon\DataMapper\Criteria;
 use Everon\Dependency;
-use Everon\Domain\Interfaces\Entity;
+use Everon\Domain;
 use Everon\Exception as EveronException;
 use Everon\Helper;
 use Everon\Http;
@@ -21,7 +21,7 @@ use Everon\Rest\Interfaces;
 class Handler implements Interfaces\ResourceHandler
 {
     use Dependency\Injection\Factory;
-    use \Everon\Domain\Dependency\Injection\DomainManager;
+    use Domain\Dependency\Injection\DomainManager;
     use Dependency\Injection\Request; //todo meh
     use Helper\AlphaId;
     use Helper\Arrays;
@@ -70,13 +70,13 @@ class Handler implements Interfaces\ResourceHandler
     }
 
     /**
-     * @param Entity $Entity
+     * @param Domain\Interfaces\Entity $Entity
      * @param $version
      * @param $resource_name
      * @return Interfaces\Resource
      * @throws \Everon\Rest\Exception\Resource
      */
-    public function buildResourceFromEntity(Entity $Entity, $version, $resource_name)
+    public function buildResourceFromEntity(Domain\Interfaces\Entity $Entity, $version, $resource_name)
     {
         $this->assertIsInArray($version, $this->supported_versions, 'Unsupported version: "%s"', 'Domain');
         

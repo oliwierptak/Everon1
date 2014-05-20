@@ -16,9 +16,10 @@ class Request extends \Everon\Request
 {
     /**
      * http://stackoverflow.com/questions/6038236/http-accept-language
-     * @return string
+     * @param string $default
+     * @return mixed|string
      */
-    protected function getPreferredLanguage()
+    protected function getPreferredLanguage($default='en-US')
     {
         $acceptedLanguages = $this->getServerCollection()->get('HTTP_ACCEPT_LANGUAGE');
 
@@ -52,6 +53,10 @@ class Request extends \Everon\Request
 
         $tokens = array_keys($lang2pref);
         $current = array_shift($tokens);
+        
+        if (strlen($current) !== strlen($default)) {
+            
+        }
         
         return $current;
     }

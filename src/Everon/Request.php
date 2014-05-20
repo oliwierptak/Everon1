@@ -104,7 +104,7 @@ abstract class Request implements Interfaces\Request
     /**
      * @return string
      */
-    protected abstract function getPreferredLanguage();
+    protected abstract function getPreferredLanguage($default='en-US');
     
 
     /**

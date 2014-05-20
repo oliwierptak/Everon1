@@ -242,8 +242,8 @@ class Response extends BasicResponse implements Interfaces\Response
     public function toJson()
     {
         $this->setContentType('application/json');
-        $json = parent::toJson();
         $this->setHeader('content-type', 'application/json');
+        $json = parent::toJson();
         $this->send();
         return $json;
     }
