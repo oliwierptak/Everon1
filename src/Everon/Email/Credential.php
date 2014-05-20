@@ -27,6 +27,8 @@ class Credential implements Interfaces\Credential
 
     protected $name = null;
 
+    protected $encryption = null;
+
 
     /**
      * @param mixed $email
@@ -124,4 +126,20 @@ class Credential implements Interfaces\Credential
         return $this->username;
     }
 
-} 
+    /**
+     * @param mixed $encryption
+     */
+    public function setEncryption($encryption)
+    {
+        $this->encryption = $encryption;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getEncryption()
+    {
+        return $this->encryption;
+    }
+
+}
