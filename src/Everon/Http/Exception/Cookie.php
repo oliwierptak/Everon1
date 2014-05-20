@@ -7,8 +7,8 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon\View\Widget;
+namespace Everon\Http\Exception;
 
-class Base extends \Everon\View\AbstractView
-{
-}
+use Everon\Exception as EveronException;
+
+class Cookie extends EveronException{};

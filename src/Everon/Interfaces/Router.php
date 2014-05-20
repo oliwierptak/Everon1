@@ -13,13 +13,13 @@ use Everon\Config\Interfaces\ItemRouter;
 use Everon\Interfaces;
 use Everon\Exception;
 
-interface Router
+interface Router extends Interfaces\Dependency\RequestValidator
 {
     /**
      * @param ItemRouter $RouteItem
      * @param Interfaces\Request $Request
      */
-    function validateAndUpdateRequest(ItemRouter $RouteItem, Interfaces\Request $Request);
+    function validateAndUpdateRequestAndRouteItem(ItemRouter $RouteItem, Interfaces\Request $Request);
         
     /**
      * @param Interfaces\Request $Request

@@ -7,20 +7,17 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon\Module\Interfaces;
+namespace Everon\Http\Interfaces\Dependency;
 
-use Everon\Config;
-
-interface Manager extends Config\Interfaces\Dependency\Manager
+interface Session
 {
     /**
-     * @param $name
-     * @return \Everon\Interfaces\Module
+     * @return \Everon\Http\Interfaces\Session
      */
-    function getModule($name);
+    function getHttpSession();
 
     /**
-     * @return array
+     * @param \Everon\Http\Interfaces\Session $HttpSession
      */
-    function getPathsOfActiveModules();
+    function setHttpSession(\Everon\Http\Interfaces\Session $HttpSession);
 }

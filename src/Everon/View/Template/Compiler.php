@@ -9,9 +9,9 @@
  */
 namespace Everon\View\Template;
 
-use Everon\Helper;
-use Everon\Interfaces;
 use Everon\Dependency;
+use Everon\Helper;
+use Everon\View\Interfaces;
 
 
 abstract class Compiler implements Interfaces\TemplateCompiler

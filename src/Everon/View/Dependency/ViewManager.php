@@ -7,20 +7,20 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon\Dependency;
+namespace Everon\View\Dependency;
 
 
 trait ViewManager
 {
 
     /**
-     * @var \Everon\Interfaces\View
+     * @var \Everon\View\Interfaces\View
      */
     protected $ViewManager = null;
 
 
     /**
-     * @return \Everon\Interfaces\ViewManager
+     * @return \Everon\View\Interfaces\Manager
      */
     public function getViewManager()
     {
@@ -28,9 +28,9 @@ trait ViewManager
     }
 
     /**
-     * @param \Everon\Interfaces\ViewManager $Manager
+     * @param \Everon\View\Interfaces\Manager $Manager
      */
-    public function setViewManager(\Everon\Interfaces\ViewManager $Manager)
+    public function setViewManager(\Everon\View\Interfaces\Manager $Manager)
     {
         $this->ViewManager = $Manager;
     }

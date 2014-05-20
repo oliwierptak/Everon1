@@ -104,7 +104,7 @@ abstract class Request implements Interfaces\Request
     /**
      * @return string
      */
-    protected abstract function getPreferredLanguage();
+    protected abstract function getPreferredLanguage($default='en-US');
     
 
     /**
@@ -131,7 +131,7 @@ abstract class Request implements Interfaces\Request
         $this->validate($data);
         
         $this->data = $data;
-        $this->location = $data['location'];
+        $this->location = $data['location'];  
         $this->method = $data['method'];
         $this->url = $data['url'];
         $this->query_string = $data['query_string'];
@@ -139,11 +139,6 @@ abstract class Request implements Interfaces\Request
         $this->port = (integer) $data['port'];
         $this->secure = (boolean) $data['secure'];
         $this->path = $data['path'];
-
-        if (trim($data['query_string']) !== '') {
-            parse_str($data['query_string'], $query);
-            $this->setQueryCollection($this->sanitizeInput($query));
-        }
     }
 
     /**
@@ -576,4 +571,12 @@ abstract class Request implements Interfaces\Request
         return $this->getServerCollection()->get('REMOTE_ADDR');
     }
 
+    /**
+     * @return string
+     */
+    public function getUserAgent()
+    {
+        return $this->ServerCollection->get('HTTP_USER_AGENT', '');
+    }
+   
 }

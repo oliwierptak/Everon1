@@ -19,6 +19,7 @@ class Router implements Interfaces\Router
     use Helper\Asserts\IsArrayKey;
     use Helper\Regex;
 
+
     /**
      * @var ItemRouter
      */
@@ -41,7 +42,7 @@ class Router implements Interfaces\Router
     public function getRouteByRequest(Interfaces\Request $Request)
     {
         $DefaultItem = null;
-        $Item = null;
+        $this->CurrentRoute = null;
 
         if ($this->getConfig()->getItems() === null) {
             throw new Exception\Router('No routes defined');
@@ -52,39 +53,41 @@ class Router implements Interfaces\Router
              * @var ItemRouter $RouteItem
              */
             if ($RouteItem->matchesByPath($Request->getPath())) {
-                $Item = $RouteItem;
+                $this->CurrentRoute = $RouteItem;
                 break;
-            }   
+            }
             
             //remember the first item as default
-            $DefaultItem = ($Item === null && $DefaultItem === null) ? $RouteItem : $DefaultItem;
+            $DefaultItem = ($this->CurrentRoute === null && $DefaultItem === null) ? $RouteItem : $DefaultItem;
         }
 
         //check for default route
-        if ($Request->isEmptyUrl() && $Item === null) {
+        if ($Request->isEmptyUrl() && $this->CurrentRoute === null) {
             $DefaultItem = $this->getConfig()->getDefaultItem() ?: $DefaultItem;
             if ($DefaultItem === null) {
                 throw new Exception\RouteNotDefined('Default route does not exist');
             }
-            
-            $Item = $DefaultItem;
+
+            $this->CurrentRoute = $DefaultItem;
         }
 
-        if ($Item === null) {
+        if ($this->CurrentRoute === null) {
             throw new Exception\RouteNotDefined($Request->getPath());
         }
         
-        $this->validateAndUpdateRequest($Item, $Request);
+        $this->validateAndUpdateRequestAndRouteItem($this->CurrentRoute, $Request);
 
-        return $Item;
+        return $this->CurrentRoute;
     }
 
     /**
      * @inheritdoc
      */
-    public function validateAndUpdateRequest(ItemRouter $RouteItem, Interfaces\Request $Request)
+    public function validateAndUpdateRequestAndRouteItem(ItemRouter $RouteItem, Interfaces\Request $Request)
     {
         list($query, $get, $post) = $this->getRequestValidator()->validate($RouteItem, $Request);
+
+        $RouteItem->compileUrl($query);
 
         $Request->setQueryCollection(
             array_merge($Request->getQueryCollection()->toArray(), $query)
@@ -108,7 +111,7 @@ class Router implements Interfaces\Router
          * @var $RouteItem ItemRouter
          */
         foreach ($this->getConfig()->getItems() as $RouteItem) {
-            if (strcasecmp($RouteItem->getUrl(), $url) === 0) {
+            if (strcasecmp($RouteItem->getParsedUrl(), $url) === 0) {
                 return $RouteItem;
             }
         }
@@ -127,6 +130,22 @@ class Router implements Interfaces\Router
         catch (\Exception $e) {
             throw new Exception\Router($e);
         }
+    }
+
+    /**
+     * @param \Everon\Config\Interfaces\ItemRouter $CurrentRoute
+     */
+    public function setCurrentRoute($CurrentRoute)
+    {
+        $this->CurrentRoute = $CurrentRoute;
+    }
+
+    /**
+     * @return \Everon\Config\Interfaces\ItemRouter
+     */
+    public function getCurrentRoute()
+    {
+        return $this->CurrentRoute;
     }
 
 }

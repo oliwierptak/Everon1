@@ -7,22 +7,16 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon\Interfaces;
+namespace Everon\View\Interfaces;
 
-use Everon\Interfaces;
 use Everon\Exception;
 
 interface View
 {        
-    /**
-     * @param $name
-     */
-    function setName($name);
-
     function getName();
 
     /**
-     * @return Interfaces\Template|Interfaces\TemplateContainer|null
+     * @return Template
      * @throws \Everon\Exception\View
      */
     function getContainer();
@@ -42,14 +36,8 @@ interface View
 
     /**
      * @param $name
-     * @return \SplFileInfo
-     */    
-    function getTemplateFilename($name);
-
-    /**
-     * @param $name
      * @param $data
-     * @return Interfaces\TemplateContainer
+     * @return Template
      */    
     function getTemplate($name, $data);
 

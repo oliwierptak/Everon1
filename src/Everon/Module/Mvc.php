@@ -13,11 +13,11 @@ use Everon\Dependency;
 use Everon\Helper;
 use Everon\Interfaces\Config;
 use Everon\Interfaces\Collection;
-use Everon\Interfaces\View;
+use Everon\View;
 
 abstract class Mvc extends \Everon\Module implements Interfaces\Mvc
 {
-    use Dependency\Injection\ViewManager;
+    use View\Dependency\Injection\ViewManager;
     
     /**
      * @var Collection
@@ -37,7 +37,7 @@ abstract class Mvc extends \Everon\Module implements Interfaces\Mvc
 
     /**
      * @param $name
-     * @return View
+     * @return View\Interfaces\View
      */
     protected function createView($name)
     {

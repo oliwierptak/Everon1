@@ -16,7 +16,6 @@ class Domain extends \Everon\Config
 {      
     protected function buildItem($name, array $data)
     {
-        return $this->getFactory()->buildConfigItemDomain($name, $data);
+        return $this->getFactory()->buildConfigItem($name, $data, 'Everon\Config\Item\Domain');
     }
 }
-
