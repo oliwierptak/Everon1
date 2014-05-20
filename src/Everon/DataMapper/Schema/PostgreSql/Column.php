@@ -66,7 +66,7 @@ class Column extends Schema\Column
             
             case 'json':
                 $this->length = null;
-                $this->validation_rules = [$this->name => \FILTER_SANITIZE_STRING];
+                $this->validation_rules = null;
                 $this->type = static::TYPE_JSON;
                 break;
             

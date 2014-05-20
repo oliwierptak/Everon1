@@ -29,18 +29,18 @@ class Message implements Interfaces\Message
      */
     protected $attachments;
 
-
     /**
      * @var Interfaces\Recipient
      */
     protected $Recipient;
 
-    public function __construct(Interfaces\Recipient $Recipient, $subject, $body, array $headers=[])
+    public function __construct(Interfaces\Recipient $Recipient, $subject, $body, array $attachments=[],array $headers=[])
     {
         $this->Recipient = $Recipient;
         $this->subject = $subject;
         $this->body = $body;
         $this->headers = $headers;
+        $this->attachments = $attachments;
     }
 
     /**

@@ -1282,12 +1282,12 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildEmailMessage(Email\Interfaces\Recipient $Recipient, $subject, $body, array $headers=[], $namespace='Everon\Email')
+    public function buildEmailMessage(Email\Interfaces\Recipient $Recipient, $subject, $body, array $attachments = [], array $headers = [], $namespace = 'Everon\Email')
     {
         try {
             $class_name = $this->getFullClassName($namespace, 'Message');
             $this->classExists($class_name);
-            $Message = new $class_name($Recipient, $subject, $body, $headers);
+            $Message = new $class_name($Recipient, $subject, $body, $attachments, $headers);
             $this->injectDependencies($class_name, $Message);
             return $Message;
         }

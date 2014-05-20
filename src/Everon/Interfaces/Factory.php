@@ -586,12 +586,13 @@ interface Factory
      * @param Email\Interfaces\Recipient $Recipient
      * @param $subject
      * @param $body
+     * @param array $attachments
      * @param array $headers
      * @param string $namespace
-     * @return \Everon\Email\Interfaces\Recipient
      * @throws Exception\Factory
+     * @return \Everon\Email\Interfaces\Recipient
      */
-    function buildEmailMessage(Email\Interfaces\Recipient $Recipient, $subject, $body, array $headers=[], $namespace='Everon\Email');
+    function buildEmailMessage(Email\Interfaces\Recipient $Recipient, $subject, $body, array $attachments = [], array $headers = [], $namespace = 'Everon\Email');
 
     /**
      * @param $name
