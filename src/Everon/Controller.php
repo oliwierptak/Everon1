@@ -93,14 +93,15 @@ abstract class Controller implements Interfaces\Controller
     /**
      * @inheritdoc
      */
-    public function getUrl($name)
+    public function getUrl($name, $query=[])
     {
-        $route = $this->getConfigManager()->getConfigValue('router.'.$name);
-        if ($route === null) {
+        $Item = $this->getConfigManager()->getConfigByName('router')->getItemByName($name);
+        if ($Item === null) {
             throw new Exception\Controller('Invalid router config name: "%s"', $name);
         }
 
-        return $route['url'];
+        $Item->compileUrl($query);
+        return $Item->getParsedUrl();
     }
 
     /**

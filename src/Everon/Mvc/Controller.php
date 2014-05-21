@@ -151,13 +151,7 @@ abstract class Controller extends \Everon\Controller
     
     public function redirect($name, $query=[])
     {
-        $Item = $this->getConfigManager()->getConfigByName('router')->getItemByName($name);
-        $Item->compileUrl($query);
-        
-        if ($Item === null) {
-            throw new Exception\Controller('Invalid router config name: "%s"', $name);
-        }
-        
-        $this->getResponse()->setHeader('refresh', '1; url='.$Item->getParsedUrl());
+        $url = $this->getUrl($name, $query);
+        $this->getResponse()->setHeader('refresh', '1; url='.$url);
     }
 }
