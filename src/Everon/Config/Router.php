@@ -16,7 +16,7 @@ class Router extends \Everon\Config
 {      
     protected function buildItem($name, array $data)
     {
-        $data['url'] = '%application.url.app%'.$data['url']; //auto append application url
+        $data['url'] = '/'.$data['url']; //auto append application url
         $data = $this->recompile($data);
         return $this->getFactory()->buildConfigItem($name, $data, 'Everon\Config\Item\Router');
     }
