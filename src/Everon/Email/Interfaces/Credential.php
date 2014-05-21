@@ -74,4 +74,14 @@ interface Credential
      * @return string
      */
     function getHost();
+
+    /**
+     * @param mixed $encryption
+     */
+    function setEncryption($encryption);
+
+    /**
+     * @return mixed
+     */
+    function getEncryption();
 }

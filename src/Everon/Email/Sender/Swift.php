@@ -33,30 +33,35 @@ class Swift implements Interfaces\Sender
     /**
      * @inheritdoc
      */
-    function send(Interfaces\Message $Email)
+    public function send(Interfaces\Message $Email)
     {
-        $Transport = \Swift_SmtpTransport::newInstance($this->getCredential()->getHost(), $this->Credential->getPort())
-            ->setUsername($this->getCredential()->getUsername())
-            ->setPassword($this->getCredential()->getPassword());
+            $Transport = \Swift_SmtpTransport::newInstance($this->getCredential()->getHost(), $this->getCredential()->getPort(), $this->getCredential()->getEncryption());
+            $Transport->setUsername($this->getCredential()->getUsername());
+            $Transport->setPassword($this->getCredential()->getPassword());
 
-        $Mailer = \Swift_Mailer::newInstance($Transport);
+            /**
+             * @var \Swift_Message $Message
+             */
+            $Message = \Swift_Message::newInstance($Email->getSubject())
+                ->setFrom([$this->getCredential()->getEmail() => $this->getCredential()->getName()])
+                ->setTo($Email->getRecipient()->getTo())
+                ->setBody($Email->getBody());
+    //        foreach($Email->getAttachments() as $attachment) {
+    //            $Message->attach(\Swift_Attachment::fromPath($attachment));
+    //        }
+    //        if(!empty($Email->getRecipient()->getCc())) {
+    //            $Message->setCc($Email->getRecipient()->getCc()[0]);
+    //        }
+    //        if(!empty($Email->getRecipient()->getBcc())) {
+    //            $Message->setBcc($Email->getRecipient()->getBcc()[0]);
+    //        }
 
-        $Message = \Swift_Message::newInstance($Email->getSubject())
-            ->setFrom([$this->getCredential()->getEmail() => $this->getCredential()->getName()])
-            ->setTo($Email->getRecipient()->getTo())
-            ->setBody($Email->getBody());
-        foreach($Email->getAttachments() as $attachment) {
-            $Message->attach(Swift_Attachment::fromPath($attachment));
-        }
-        if(!empty($Email->getRecipient()->getCc())) {
-            $Message->setCc($Email->getRecipient()->getCc());
-        }
-        if(!empty($Email->getRecipient()->getBcc())) {
-            $Message->setBcc($Email->getRecipient()->getBcc());
-        }
+            $Mailer = \Swift_Mailer::newInstance($Transport);
+    //        sd($Transport);
+            $result = $Mailer->send($Message);
+            sd($result);
+            return $result > 0;
 
-        $Mailer = \Swift_Mailer::newInstance($Transport);
-        return $Mailer->send($Message) > 0;
     }
 
     /**

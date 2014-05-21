@@ -1236,6 +1236,7 @@ abstract class Factory implements Interfaces\Factory
             $this->assertIsArrayKey('port', $credential_data);
             $this->assertIsArrayKey('name', $credential_data);
             $this->assertIsArrayKey('email', $credential_data);
+            $this->assertIsArrayKey('encryption', $credential_data);
 
             $this->assertIsStringAndNonEmpty($credential_data['username']);
             $this->assertIsStringAndNonEmpty($credential_data['password']);
@@ -1243,6 +1244,7 @@ abstract class Factory implements Interfaces\Factory
             $this->assertIsNumericAndNonZero($credential_data['port']);
             $this->assertIsStringAndNonEmpty($credential_data['email']);
             $this->assertIsStringAndNonEmpty($credential_data['name']);
+            $this->assertIsStringAndNonEmpty($credential_data['encryption']);
 
             $Credentials = new Email\Credential();
             $Credentials->setUserName($credential_data['username']);
@@ -1251,6 +1253,8 @@ abstract class Factory implements Interfaces\Factory
             $Credentials->setPort($credential_data['port']);
             $Credentials->setEmail($credential_data['email']);
             $Credentials->setName($credential_data['name']);
+            $Credentials->setEncryption($credential_data['encryption']);
+
             return $Credentials;
         }
         catch (\Exception $e) {
@@ -1278,12 +1282,12 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildEmailMessage(Email\Interfaces\Recipient $Recipient, $subject, $body, array $headers=[], $namespace='Everon\Email')
+    public function buildEmailMessage(Email\Interfaces\Recipient $Recipient, $subject, $body, array $attachments = [], array $headers = [], $namespace = 'Everon\Email')
     {
         try {
             $class_name = $this->getFullClassName($namespace, 'Message');
             $this->classExists($class_name);
-            $Message = new $class_name($Recipient, $subject, $body, $headers);
+            $Message = new $class_name($Recipient, $subject, $body, $attachments, $headers);
             $this->injectDependencies($class_name, $Message);
             return $Message;
         }

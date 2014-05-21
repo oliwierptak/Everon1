@@ -24,12 +24,6 @@ class Manager implements Interfaces\Manager
      */
     public function send(Interfaces\Sender $Sender, Interfaces\Message $Message)
     {
-        try {
-            return $Sender->send($Message);
-        }
-        catch (\Exception $e) {
-            $this->getLogger()->email($e);
-            return false;
-        }
+        return $Sender->send($Message);
     }
 } 
