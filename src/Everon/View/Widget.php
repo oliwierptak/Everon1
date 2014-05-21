@@ -99,7 +99,7 @@ abstract class Widget implements Interfaces\Widget
      */
     public function render()
     {
-        $Tpl = $this->getView()->getTemplate('index', $this->getData());
+        $Tpl = $this->getView()->getTemplate('Index', $this->getData());
 
         $this->getView()->setContainer($Tpl);
         $this->getViewManager()->compileView('', $this->getView());

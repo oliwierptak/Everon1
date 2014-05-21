@@ -223,8 +223,8 @@ class Manager implements Interfaces\Manager
             $IndexTemplate = $Theme->getTemplate('index', $view_variables);
             
             if ($IndexTemplate === null) { //fallback to default theme and view
-                $TemplateDirectory = new \SplFileInfo($this->getViewDirectory().$this->getCurrentThemeName().DIRECTORY_SEPARATOR.'index'.DIRECTORY_SEPARATOR.'templates'.DIRECTORY_SEPARATOR);
-                $Theme = $this->createView('index', $TemplateDirectory->getPathname(), 'Everon\View\\'.$this->getCurrentThemeName());
+                $TemplateDirectory = new \SplFileInfo($this->getViewDirectory().$this->getCurrentThemeName().DIRECTORY_SEPARATOR.'Index'.DIRECTORY_SEPARATOR.'templates'.DIRECTORY_SEPARATOR);
+                $Theme = $this->createView('Index', $TemplateDirectory->getPathname(), 'Everon\View\\'.$this->getCurrentThemeName());
                 $view_variables = $this->getConfigManager()->getConfigValue("view.$view_name", []);
                 $IndexTemplate = $Theme->getTemplate('index', $view_variables);
             }
