@@ -11,13 +11,13 @@ namespace Everon\Module\Interfaces;
 
 use Everon\Interfaces\Dependency;
 use Everon\Interfaces\Module;
-use Everon\Interfaces\View;
+use Everon\View;
 
-interface Mvc extends Module, Dependency\ViewManager
+interface Mvc extends Module, View\Interfaces\Dependency\Manager
 {
     /**
      * @param $name
-     * @return View
+     * @return View\Interfaces\View
      */
     function getView($name);
 }

@@ -18,6 +18,10 @@ interface ItemRouter extends Item
 
     function getModule();
     
+    function getParsedUrl();
+    function setParsedUrl($parsed_url);
+    function compileUrl($parts);
+    
     function getUrl();
     function setUrl($url);
     function getController();

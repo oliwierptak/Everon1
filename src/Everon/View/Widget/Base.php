@@ -7,17 +7,8 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon\Interfaces;
+namespace Everon\View\Widget;
 
-interface Template extends TemplateContainer
+class Base extends \Everon\View\AbstractView
 {
-    /**
-     * @return callable|mixed|string
-     */
-    function getTemplateFile();
-
-    /**
-     * @param $filename
-     */
-    function setTemplateFile($filename);
 }

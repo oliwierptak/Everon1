@@ -97,11 +97,13 @@ interface Factory
 
     /**
      * @param $guid
-     * @param Http\Interfaces\HeaderCollection $Headers
+     * @param Http\Interfaces\HeaderCollection $HeaderCollection
+     * @param Http\Interfaces\CookieCollection $CookieCollection
+     * @param string $namespace
      * @return Rest\Response
      * @throws Exception\Factory
      */
-    function buildRestResponse($guid, Http\Interfaces\HeaderCollection $Headers);
+    function buildRestResponse($guid, Http\Interfaces\HeaderCollection $HeaderCollection, Http\Interfaces\CookieCollection $CookieCollection, $namespace='Everon\Rest');
 
     /**
      * @param $name
@@ -325,28 +327,13 @@ interface Factory
     function buildSchemaTable($name, $schema, array $column_list, array $primary_key_list,  array $unique_key_list, array $foreign_key_list, Domain\Interfaces\Mapper $DomainMapper, $namespace='Everon\DataMapper');
 
     /**
-     * @param $name
+     * @param string $name
      * @param array $data
+     * @param string $class_name
      * @return Config\Interfaces\Item|Config\Item
      * @throws Exception\Factory
      */
-    function buildConfigItem($name, array $data);
-
-    /**
-     * @param $name
-     * @param array $data
-     * @return Config\Interfaces\ItemDomain
-     * @throws Exception\Factory
-     */
-    function buildConfigItemDomain($name, array $data);
-
-    /**
-     * @param $name
-     * @param array $data
-     * @return Config\Interfaces\ItemRouter
-     * @throws Exception\Factory
-     */
-    function buildConfigItemRouter($name, array $data);
+    function buildConfigItem($name, array $data, $class_name='Everon\Config\Item');
 
     /**
      * @param Interfaces\Config $Config
@@ -358,17 +345,19 @@ interface Factory
     function buildRouter(Interfaces\Config $Config, Interfaces\RequestValidator $Validator, $namespace='Everon');
 
     /**
+     * @param string $namespace
      * @return Interfaces\RequestValidator
      * @throws Exception\Factory
      */
-    function buildRequestValidator();
+    function buildRequestValidator($namespace='Everon\Http');
 
     /**
      * @param $root
+     * @param string $namespace
      * @return FileSystem
      * @throws Exception\Factory
      */
-    function buildFileSystem($root);
+    function buildFileSystem($root, $namespace='Everon\View');
 
     /**
      * @param DataMapper\Interfaces\ConnectionItem $dsn
@@ -391,23 +380,25 @@ interface Factory
     /**
      * @param $filename
      * @param array $template_data
-     * @return Interfaces\Template
+     * @param string $namespace
+     * @return View\Interfaces\Template
      * @throws Exception\Factory
      */
-    function buildTemplate($filename, array $template_data);
+    function buildTemplate($filename, array $template_data, $namespace='Everon\View');
 
     /**
      * @param $template_string
      * @param array $template_data
-     * @return Interfaces\TemplateContainer
+     * @param string $namespace
+     * @return View\Interfaces\TemplateContainer
      * @throws Exception\Factory
      */
-    function buildTemplateContainer($template_string, array $template_data);
+    function buildTemplateContainer($template_string, array $template_data, $namespace='Everon\View\Template');
 
     /**
      * @param $class_name
      * @param string $namespace
-     * @return Interfaces\TemplateCompiler
+     * @return View\Interfaces\TemplateCompiler
      * @throws Exception\Factory
      */
     function buildTemplateCompiler($class_name, $namespace='Everon\View\Template\Compiler');
@@ -417,14 +408,14 @@ interface Factory
      * @param $template_directory
      * @param $default_extension
      * @param string $namespace
-     * @return Interfaces\View
+     * @return View\Interfaces\View
      * @throws Exception\Factory
      */
     function buildView($class_name, $template_directory, $default_extension, $namespace='Everon\View');
 
     /**
      * @param Interfaces\FileSystem $FileSystem
-     * @return View\Cache
+     * @return View\Interfaces\Cache
      * @throws Exception\Factory
      */
     function buildViewCache(Interfaces\FileSystem $FileSystem);
@@ -433,47 +424,80 @@ interface Factory
      * @param array $compilers_to_init
      * @param $view_directory
      * @param $cache_directory
-     * @return Interfaces\ViewManager
+     * @return View\Interfaces\Manager
      * @throws Exception\Factory
      */
     function buildViewManager(array $compilers_to_init, $view_directory, $cache_directory);
 
     /**
+     * @param $class_name
+     * @param string $namespace
+     * @return View\Interfaces\Widget
+     * @throws Exception\Factory
+     */
+    function buildViewWidget($class_name, $namespace='Everon\View');
+
+    /**
      * @param $directory
      * @param boolean $enabled
+     * @param string $namespace
      * @return Interfaces\Logger
      * @throws Exception\Factory
      */
-    function buildLogger($directory, $enabled);
+    function buildLogger($directory, $enabled, $namespace='Everon');
 
     /**
      * @param array $headers
+     * @param string $namespace
      * @return Interfaces\Collection
      * @throws Exception\Factory
      */    
-    function buildHttpHeaderCollection(array $headers=[]);
+    function buildHttpHeaderCollection(array $headers=[], $namespace='Everon\Http');
 
     /**
-     * @param string Unique ID
+     * @param $guid
+     * @param string $namespace
      * @return Interfaces\Response
      * @throws Exception\Factory
      */
-    function buildResponse($guid);
+    function buildResponse($guid, $namespace='Everon');
+
 
     /**
-     * @param string Unique ID
-     * @param Http\Interfaces\HeaderCollection $Headers
+     * @param string $name
+     * @param mixed $value if json string or array is used, the $use_json will be set to true
+     * @param mixed $expire_date int as in 'time()' or string as in '+15 minutes'
+     * @param string $namespace
+     * @return Http\Interfaces\Cookie
+     * @throws Exception\Factory
+     */
+    function buildHttpCookie($name, $value, $expire_date, $namespace='Everon\Http\Cookie');
+
+    /**
+     * @param array $data
+     * @param string $namespace
+     * @return Http\Interfaces\CookieCollection
+     * @throws Exception\Factory
+     */
+    function buildHttpCookieCollection(array $data=[], $namespace='Everon\Http');
+
+    /**
+     * @param $guid
+     * @param Http\Interfaces\HeaderCollection $HeaderCollection
+     * @param Http\Interfaces\CookieCollection $CookieCollection
+     * @param string $namespace
      * @return Http\Interfaces\Response
      * @throws Exception\Factory
      */
-    function buildHttpResponse($guid, Http\Interfaces\HeaderCollection $Headers);
+    function buildHttpResponse($guid, Http\Interfaces\HeaderCollection $HeaderCollection, Http\Interfaces\CookieCollection $CookieCollection, $namespace='Everon\Http');
 
     /**
      * @param $evrid
+     * @param string $namespace
      * @return Http\Session
      * @throws Exception\Factory
      */
-    function buildHttpSession($evrid);
+    function buildHttpSession($evrid, $namespace='Everon\Http');
 
     /**
      * @param array $server
@@ -500,10 +524,11 @@ interface Factory
     /**
      * @param $app_root
      * @param $source_root
+     * @param string $namespace
      * @return Interfaces\Environment
      * @throws Exception\Factory
      */
-    function buildEnvironment($app_root, $source_root);
+    function buildEnvironment($app_root, $source_root, $namespace='Everon');
 
     /**
      * @param string $namespace
@@ -525,16 +550,18 @@ interface Factory
      * @param $name
      * @param Interfaces\Config $module_directory
      * @param Interfaces\Config $Config
+     * @param string $namespace
      * @return Module
      * @throws Exception\Factory
      */
-    function buildModule($name, $module_directory, Interfaces\Config $Config);
+    function buildModule($name, $module_directory, Interfaces\Config $Config, $namespace='Everon\Module');
 
     /**
+     * @param string $namespace
      * @return Module\Manager
      * @throws Exception\Factory
      */
-    function buildModuleManager();
+    function buildModuleManager($namespace='Everon\Module');
 
     /**
      * @param $url
@@ -554,13 +581,6 @@ interface Factory
      * @throws \Everon\Exception\Factory
      */
     function buildFactoryWorker($name, $namespace='Everon\Module');
-
-    /**
-     * @param string $namespace
-     * @return mixed
-     * @throws Exception\Factory
-     */
-    function buildConsoleRunner($namespace='Everon\Console');
 
     /**
      * @param Email\Interfaces\Recipient $Recipient

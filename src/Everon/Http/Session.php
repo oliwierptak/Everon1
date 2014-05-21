@@ -102,4 +102,19 @@ class Session implements Interfaces\Session
 
         return $_SESSION[$name];
     }
+
+    public function __sleep()
+    {
+        return [
+            'guid',
+            'start_time'
+        ];
+    }
+
+    public static function __set_state(array $array)
+    {
+        $Session = new static($array['guid']);
+        $Session->start_time = $array['start_time'];
+        return $Session;
+    }
 }

@@ -73,11 +73,11 @@ abstract class Core implements Interfaces\Core
         
         $CurrentRoute = $this->getRouter()->getRouteByRequest($this->getRequest());
         $this->Module = $this->getModuleManager()->getModule($CurrentRoute->getModule());
-
+        
         if ($this->Module === null) {
             throw new Exception\Core('No module defined for this request');
         }
-
+    
         $this->Controller = $this->Module->getController($CurrentRoute->getController());
         $this->Controller->setCurrentRoute($CurrentRoute);
         $this->Controller->execute($CurrentRoute->getAction());
@@ -91,9 +91,7 @@ abstract class Core implements Interfaces\Core
         $mu = vsprintf('%0dkb', ($data['memory_total'] - $data['memory_at_start']) / 1024);
         $time = vsprintf('%.3f', round($data['time'], 3));
         $s = "${time}s $mu $sbs/$sas"; 
-        
-        $this->getLogger()->monitor($s);
-        
+               
         return $s;
     }
 
@@ -104,6 +102,7 @@ abstract class Core implements Interfaces\Core
     {
         $this->restorePreviousExceptionHandler();
         $this->getLogger()->critical($Exception);
+        $this->showException($Exception, null);
     }
 
     /**
@@ -118,13 +117,19 @@ abstract class Core implements Interfaces\Core
          * @var \Everon\Mvc\Interfaces\Controller $Controller
          */
         if ($Controller === null) {
-            //$Controller = $this->getModuleManager()->getDefaultModule()->getController('Error'); //xxx infinite loop when setup() in default module will throw an error
-            echo $Exception->getMessage();
+            try {
+                $error_handler = $this->getConfigManager()->getConfigValue('application.module.error_handler', null);
+                $Module =  $this->getModuleManager()->getModule($error_handler);
+                $Controller = $Module->getController('Error');
+            }
+            catch (\Exception $e) {
+                $this->getLogger()->error('Error: '.$e.' while displaying exception: '.$Exception);
+            }
         }
-        else {
+        
+        if ($Controller instanceof Interfaces\Controller) {
             $Controller->showException($Exception);
         }
-
     }
 
     protected function restorePreviousExceptionHandler()

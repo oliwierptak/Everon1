@@ -7,19 +7,17 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon\Interfaces;
+namespace Everon\View\Interfaces;
 
-interface ViewElement extends Arrayable
+interface Template extends TemplateContainer
 {
     /**
-     * @param $name
-     * @param mixed $data
+     * @return callable|mixed|string
      */
-    function set($name, $data);
+    function getTemplateFile();
 
     /**
-     * @param $name
-     * @return mixed|null
+     * @param $filename
      */
-    function get($name);    
+    function setTemplateFile($filename);
 }

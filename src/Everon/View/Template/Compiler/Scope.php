@@ -9,7 +9,7 @@
  */
 namespace Everon\View\Template\Compiler;
 
-use Everon\Interfaces;
+use Everon\View\Interfaces;
 
 class Scope implements Interfaces\TemplateCompilerScope
 {

@@ -11,7 +11,7 @@ namespace Everon\View\Template;
 
 use Everon\Exception;
 use Everon\Helper;
-use Everon\Interfaces;
+use Everon\View\Interfaces;
 
 
 class Container implements Interfaces\TemplateContainer
@@ -39,8 +39,8 @@ class Container implements Interfaces\TemplateContainer
      */
     public function __construct($content, array $data)
     {
-        $this->data = $data;
         $this->template_content = $content;
+        $this->data = $data;
     }
     
     protected function resetCompiledContent()

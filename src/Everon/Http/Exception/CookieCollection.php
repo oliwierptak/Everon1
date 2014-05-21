@@ -7,9 +7,8 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon\Dependency\Injection;
+namespace Everon\Http\Exception;
 
-trait ViewManager
-{
-    use \Everon\Dependency\ViewManager;
-}
+use Everon\Exception as EveronException;
+
+class CookieCollection extends EveronException{};

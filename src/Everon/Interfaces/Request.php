@@ -176,4 +176,9 @@ interface Request extends Arrayable
      * @return mixed
      */
     function getIpAddress();
+
+    /**
+     * @return string
+     */
+    function getUserAgent();
 }

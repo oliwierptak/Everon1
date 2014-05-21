@@ -19,10 +19,11 @@ class Router extends Config\Item implements Config\Interfaces\ItemRouter
     const PROPERTY_MODULE = '____module';
     
     use Helper\Arrays;
-    use Helper\Exceptions;
     use Helper\Asserts\IsStringAndNotEmpty;
+    use Helper\Exceptions;
     use Helper\IsIterable;
     use Helper\Regex;
+    use Helper\String\Compiler;
 
     protected $url = null;
     
@@ -39,6 +40,8 @@ class Router extends Config\Item implements Config\Interfaces\ItemRouter
     protected $regex_post = [];
     
     protected $method = null;
+    
+    protected $parsed_url = null;
 
     
     public function __construct(array $data)
@@ -68,6 +71,7 @@ class Router extends Config\Item implements Config\Interfaces\ItemRouter
         unset($this->data[static::PROPERTY_MODULE]);
         
         $this->setUrl($this->data['url']);
+        $this->setParsedUrl($this->data['url']);
         $this->setController($this->data['controller']);
         $this->setAction($this->data['action']);
         $this->setGetRegex($this->data['get']);
@@ -301,5 +305,21 @@ class Router extends Config\Item implements Config\Interfaces\ItemRouter
     public function getMethod()
     {
         return $this->method;
-    }   
+    }
+
+    public function getParsedUrl()
+    {
+        return $this->parsed_url;
+    }
+
+    public function setParsedUrl($parsed_url)
+    {
+        $this->parsed_url = $parsed_url;
+    }
+
+    public function compileUrl($parts)
+    {
+        $parsed_url = $this->stringCompilerRun($this->getUrl(), $parts);
+        $this->setParsedUrl($parsed_url);
+    }
 }

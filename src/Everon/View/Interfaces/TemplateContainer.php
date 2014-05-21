@@ -7,9 +7,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon\Interfaces;
+namespace Everon\View\Interfaces;
 
-interface TemplateContainer extends Arrayable
+interface TemplateContainer extends \Everon\Interfaces\Arrayable
 {
     /**
      * @param $name

@@ -10,10 +10,10 @@
 namespace Everon\View;
 
 use Everon\Helper;
-use Everon\Interfaces;
+use Everon\View\Interfaces;
 
 
-abstract class Element extends Helper\Popo implements Interfaces\ViewElement
+abstract class Element extends Helper\Popo implements Interfaces\Element
 {
     /**
      * @param array $defaults

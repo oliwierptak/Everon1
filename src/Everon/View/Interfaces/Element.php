@@ -7,20 +7,19 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon\Module\Interfaces;
+namespace Everon\View\Interfaces;
 
-use Everon\Config;
-
-interface Manager extends Config\Interfaces\Dependency\Manager
+interface Element extends \Everon\Interfaces\Arrayable
 {
     /**
      * @param $name
-     * @return \Everon\Interfaces\Module
+     * @param mixed $data
      */
-    function getModule($name);
+    function set($name, $data);
 
     /**
-     * @return array
+     * @param $name
+     * @return mixed|null
      */
-    function getPathsOfActiveModules();
+    function get($name);    
 }

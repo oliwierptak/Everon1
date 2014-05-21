@@ -9,9 +9,9 @@
  */
 namespace Everon\Mvc\Interfaces;
 
-use Everon\Interfaces;
+use Everon\View\Interfaces;
 
-interface Controller extends Interfaces\Controller
+interface Controller extends \Everon\Interfaces\Controller
 {
     /**
      * @return Interfaces\TemplateContainer
@@ -29,7 +29,7 @@ interface Controller extends Interfaces\Controller
     function getModel();
 
     /**
-     * @return Interfaces\ViewManager
+     * @return Interfaces\Manager
      */
     function getViewManager();
 

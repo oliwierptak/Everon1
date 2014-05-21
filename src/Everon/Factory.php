@@ -230,10 +230,10 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildRestResponse($guid, Http\Interfaces\HeaderCollection $Headers)
+    public function buildRestResponse($guid, Http\Interfaces\HeaderCollection $HeaderCollection, Http\Interfaces\CookieCollection $CookieCollection, $namespace='Everon\Http')
     {
         try {
-            $Response = new Rest\Response($guid, $Headers);
+            $Response = new Rest\Response($guid, $HeaderCollection, $CookieCollection);
             $this->injectDependencies('Everon\Rest\Response', $Response);
             return $Response;
         }
@@ -440,7 +440,7 @@ abstract class Factory implements Interfaces\Factory
             $class_name = $this->getFullClassName($namespace, $class_name);
             $this->classExists($class_name);
             /**
-             * @var Interfaces\View $View
+             * @var View\Interfaces\View $View
              */
             $View = new $class_name($template_directory, $default_extension);
             $this->injectDependencies($class_name, $View);
@@ -453,7 +453,7 @@ abstract class Factory implements Interfaces\Factory
 
     /**
      * @param Interfaces\FileSystem $FileSystem
-     * @return View\Cache
+     * @return View\Interfaces\Cache
      * @throws Exception\Factory
      */
     public function buildViewCache(Interfaces\FileSystem $FileSystem)
@@ -489,10 +489,27 @@ abstract class Factory implements Interfaces\Factory
     }
 
     /**
-     * @param $class_name
-     * @param string $namespace
-     * @return Interfaces\TemplateCompiler
-     * @throws Exception\Factory
+     * @inheritdoc
+     */
+    public function buildViewWidget($class_name, $namespace='Everon\View')
+    {
+        try {
+            $class_name = $this->getFullClassName($namespace, $class_name);
+            $this->classExists($class_name);
+            /**
+             * @var View\Interfaces\Widget $Widget
+             */
+            $Widget = new $class_name();
+            $this->injectDependencies($class_name, $Widget);
+            return $Widget;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('ViewWidget: "%s" initialization error', $class_name, $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
      */
     public function buildTemplateCompiler($class_name, $namespace='Everon\View\Template\Compiler')
     {
@@ -832,26 +849,71 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildResponse($guid)
+    public function buildResponse($guid, $namespace='Everon')
     {
         try {
-            $Response = new Response($guid);
-            $this->injectDependencies('Everon\Response', $Response);
+            $class_name = $this->getFullClassName($namespace, 'Response');
+            $this->classExists($class_name);
+            $Response = new $class_name($guid);
+            $this->injectDependencies($class_name, $Response);
             return $Response;
         }
         catch (\Exception $e) {
             throw new Exception\Factory('Response initialization error', null, $e);
         }
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildHttpCookie($name, $value, $expire_date, $namespace='Everon\Http')
+    {
+        try {
+            $class_name = $this->getFullClassName($namespace, 'Cookie');
+            $this->classExists($class_name);
+            $Cookie = new $class_name($name, $value, $expire_date);
+            $this->injectDependencies($class_name, $Cookie);
+            return $Cookie;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('HttpCookie initialization error', null, $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildHttpCookieCollection(array $data=[], $namespace='Everon\Http')
+    {
+        try {
+            $class_name = $this->getFullClassName($namespace, 'CookieCollection');
+            $this->classExists($class_name);
+            
+            $cookies = [];
+            foreach ($data as $cookie_name => $cookie_value) {
+                $Cookie = $this->buildHttpCookie($cookie_name, $cookie_value, 0);
+                $cookies[$cookie_name] = $Cookie;
+            }
+            
+            $CookieCollection = new $class_name($cookies);
+            $this->injectDependencies($class_name, $CookieCollection);
+            return $CookieCollection;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('HttpCookieCollection initialization error', null, $e);
+        }
+    }
     
     /**
      * @inheritdoc
      */
-    public function buildHttpResponse($guid, Http\Interfaces\HeaderCollection $Headers)
+    public function buildHttpResponse($guid, Http\Interfaces\HeaderCollection $HeaderCollection, Http\Interfaces\CookieCollection $CookieCollection, $namespace='Everon\Http')
     {
         try {
-            $Response = new Http\Response($guid, $Headers);
-            $this->injectDependencies('Everon\Http\Response', $Response);
+            $class_name = $this->getFullClassName($namespace, 'Response');
+            $this->classExists($class_name);
+            $Response = new $class_name($guid, $HeaderCollection, $CookieCollection);
+            $this->injectDependencies($class_name, $Response);
             return $Response;
         }
         catch (\Exception $e) {
@@ -862,11 +924,13 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildHttpSession($evrid)
+    public function buildHttpSession($evrid, $namespace='Everon\Http')
     {
         try {
-            $Session = new Http\Session($evrid);
-            $this->injectDependencies('Everon\Http\Session', $Session);
+            $class_name = $this->getFullClassName($namespace, 'Session');
+            $this->classExists($class_name);
+            $Session = new $class_name($evrid);
+            $this->injectDependencies($class_name, $Session);
             return $Session;
         }
         catch (\Exception $e) {
@@ -894,11 +958,13 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildRequestValidator()
+    public function buildRequestValidator($namespace='Everon')
     {
         try {
-            $RequestValidator = new RequestValidator();
-            $this->injectDependencies('Everon\RequestValidator', $RequestValidator);
+            $class_name = $this->getFullClassName($namespace, 'RequestValidator');
+            $this->classExists($class_name);
+            $RequestValidator = new $class_name();
+            $this->injectDependencies($class_name, $RequestValidator);
             return $RequestValidator;
         }
         catch (\Exception $e) {
@@ -909,75 +975,64 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildConfigItem($name, array $data)
+    public function buildConfigItem($name, array $data, $class_name='Everon\Config\Item')
     {
         try {
+            $this->classExists($class_name);
             $data[Config\Item::PROPERTY_NAME] = $name;
-            $ConfigItem = new Config\Item($data);
-            $this->injectDependencies('Everon\Config\Item', $ConfigItem);
+            $ConfigItem = new $class_name($data);
+            $this->injectDependencies($class_name, $ConfigItem);
             return $ConfigItem;
         }
         catch (\Exception $e) {
-            throw new Exception\Factory('ConfigItem: "%s" initialization error', $name, $e);
+            throw new Exception\Factory('ConfigItem: "%s[%s]" initialization error', [$class_name, $name], $e);
         }
     }
 
     /**
      * @inheritdoc
      */
-    public function buildConfigItemDomain($name, array $data)
+    public function buildTemplate($filename, array $template_data, $namespace='Everon\View')
     {
         try {
-            $data[Config\Item::PROPERTY_NAME] = $name;
-            $DomainItem = new Config\Item\Domain($data);
-            $this->injectDependencies('Everon\Config\Item\Domain', $DomainItem);
-            return $DomainItem;
-        }
-        catch (\Exception $e) {
-            throw new Exception\Factory('ConfigItemDomain: "%s" initialization error', $name, $e);
-        }
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function buildConfigItemRouter($name, array $data)
-    {
-        try {
-            $data[Config\Item::PROPERTY_NAME] = $name;
-            $RouteItem = new Config\Item\Router($data);
-            $this->injectDependencies('Everon\Config\Item\Router', $RouteItem);
-            return $RouteItem;
-        }
-        catch (\Exception $e) {
-            throw new Exception\Factory('ConfigItemRouter: "%s" initialization error', $name, $e);
-        }
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function buildTemplate($filename, array $template_data)
-    {
-        try {
-            $Template = new View\Template($filename, $template_data);
-            $this->injectDependencies('Everon\View\Template', $Template);
+            $class_name = $this->getFullClassName($namespace, 'Template');
+            $this->classExists($class_name);
+            $Template = new $class_name($filename, $template_data);
+            $this->injectDependencies($class_name, $Template);
             return $Template;
         }
         catch (\Exception $e) {
-            throw new Exception\Factory('Template initialization error', null, $e);
+            throw new Exception\Factory('ViewTemplate initialization error', null, $e);
         }
     }
-
 
     /**
      * @inheritdoc
      */
-    public function buildFileSystem($root)
+    public function buildTemplateContainer($template_string, array $template_data, $namespace='Everon\View\Template')
     {
         try {
-            $FileSystem = new FileSystem($root);
-            $this->injectDependencies('Everon\FileSystem', $FileSystem);
+            $class_name = $this->getFullClassName($namespace, 'Container');
+            $this->classExists($class_name);
+            $Container = new $class_name($template_string, $template_data);
+            $this->injectDependencies($class_name, $Container);
+            return $Container;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('TemplateContainer initialization error', null, $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildFileSystem($root, $namespace='Everon')
+    {
+        try {
+            $class_name = $this->getFullClassName($namespace, 'FileSystem');
+            $this->classExists($class_name);
+            $FileSystem = new $class_name($root);
+            $this->injectDependencies($class_name, $FileSystem);
             return $FileSystem;
         }
         catch (\Exception $e) {
@@ -988,26 +1043,13 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildTemplateContainer($template_string, array $template_data)
+    public function buildLogger($directory, $enabled, $namespace='Everon')
     {
         try {
-            $TemplateContainer = new View\Template\Container($template_string, $template_data);
-            $this->injectDependencies('Everon\View\Template\Container', $TemplateContainer);
-            return $TemplateContainer;
-        }
-        catch (\Exception $e) {
-            throw new Exception\Factory('TemplateContainer initialization error', null, $e);
-        }
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function buildLogger($directory, $enabled)
-    {
-        try {
-            $Logger = new Logger($directory, $enabled);
-            $this->injectDependencies('Everon\Logger', $Logger);
+            $class_name = $this->getFullClassName($namespace, 'Logger');
+            $this->classExists($class_name);
+            $Logger = new $class_name($directory, $enabled);
+            $this->injectDependencies($class_name, $Logger);
             return $Logger;
         }
         catch (\Exception $e) {
@@ -1018,15 +1060,14 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildHttpHeaderCollection(array $headers=[])
+    public function buildHttpHeaderCollection(array $headers=[], $namespace='Everon\Http')
     {
         try {
-            /**
-             * @var Interfaces\Collection $Headers
-             */
-            $Headers = new Http\HeaderCollection($headers);
-            $this->injectDependencies('Everon\Http\HeaderCollection', $Headers);
-            return $Headers;
+            $class_name = $this->getFullClassName($namespace, 'HeaderCollection');
+            $this->classExists($class_name);
+            $HeaderCollection = new $class_name($headers);
+            $this->injectDependencies($class_name, $HeaderCollection);
+            return $HeaderCollection;
         }
         catch (\Exception $e) {
             throw new Exception\Factory('HttpHeaderCollection initialization error', null, $e);
@@ -1080,12 +1121,14 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildEnvironment($app_root, $source_root)
+    public function buildEnvironment($app_root, $source_root, $namespace='Everon')
     {
         try {
-            $Environment = new Environment($app_root, $source_root);
-            $this->injectDependencies('Everon\Environment', $Environment);
-            return $Environment;
+            $class_name = $this->getFullClassName($namespace, 'Environment');
+            $this->classExists($class_name);
+            $Environment = new $class_name($app_root, $source_root);
+            $this->injectDependencies($class_name, $Environment);
+            return $Environment;            
         }
         catch (\Exception $e) {
             throw new Exception\Factory('Environment initialization error', null, $e);
@@ -1129,29 +1172,31 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildModule($name, $module_directory, Interfaces\Config $Config)
+    public function buildModule($name, $module_directory, Interfaces\Config $Config, $namespace='Everon\Module')
     {
         try {
-            $class_name = $this->getFullClassName('Everon\Module\\'.$name, 'Module');
+            $class_name = $this->getFullClassName($namespace.'\\'.$name, 'Module');
             $this->classExists($class_name);
             $Module = new $class_name($name, $module_directory, $Config);
             $this->injectDependencies($class_name, $Module);
             return $Module;
         }
         catch (\Exception $e) {
-            throw new Exception\Factory('Module initialization error', null, $e);
+            throw new Exception\Factory('Module: "%s" initialization error', $name, $e);
         }
     }
 
     /**
      * @inheritdoc
      */
-    public function buildModuleManager()
+    public function buildModuleManager($namespace='Everon\Module')
     {
         try {
-            $ModuleManager = new Module\Manager();
-            $this->injectDependencies('Everon\Module\Manager', $ModuleManager);
-            return $ModuleManager;
+            $class_name = $this->getFullClassName($namespace, 'Manager');
+            $this->classExists($class_name);
+            $Manager = new $class_name();
+            $this->injectDependencies($class_name, $Manager);
+            return $Manager;
         }
         catch (\Exception $e) {
             throw new Exception\Factory('ModuleManager initialization error', null, $e);
@@ -1178,30 +1223,13 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildConsoleRunner($namespace='Everon\Console')
-    {
-        try {
-            $class_name = $this->getFullClassName($namespace, 'Runner');
-            $this->classExists($class_name);
-            $Helper = new $class_name($this);
-            $this->injectDependencies($class_name, $Helper);
-            return $Helper;
-        }
-        catch (\Exception $e) {
-            throw new Exception\Factory('ConsoleHelper initialization error', null, $e);
-        }
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function buildEmailCredential(array $credential_data, $namespace='Everon\Email')
     {
         try {
             $class_name = $this->getFullClassName($namespace, 'Credential');
             $this->classExists($class_name);
 
-            //todo: move it to Credential
+            //todo: move it to Credential or Manager, no validation in Factory
             $this->assertIsArrayKey('username', $credential_data);
             $this->assertIsArrayKey('password', $credential_data);
             $this->assertIsArrayKey('host', $credential_data);

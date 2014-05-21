@@ -15,9 +15,11 @@ class RequestValidator implements Interfaces\RequestValidator
     use Helper\Asserts\IsArrayKey;    
     use Helper\Regex;
 
+    protected $errors = null;
+
     /**
      * Validates $_GET, $_POST and $QUERY_STRING.
-     * Returns array of validated query, get and post otherwise, or throws an exception
+     * Returns array of validated query, get and post, or throws an exception
      * 
      * @param Config\Interfaces\ItemRouter $RouteItem
      * @param Interfaces\Request $Request
@@ -31,43 +33,53 @@ class RequestValidator implements Interfaces\RequestValidator
             throw new Exception\RequestValidator('Invalid request method: "%s", expected: "%s"', [$Request->getMethod(), $method]);
         }
         
+        $this->errors = null;
+        
         $parsed_query_parameters = $this->validateQuery($RouteItem, $Request->getPath(), $Request->getQueryCollection()->toArray());
         $this->validateRoute(
             $RouteItem->getName(),
             (array) $RouteItem->getQueryRegex(),
-            $parsed_query_parameters
+            $parsed_query_parameters,
+            true //so 404 can be thrown
         );
 
         $parsed_get_parameters = $this->validateGet($RouteItem, $Request->getGetCollection()->toArray());
         $this->validateRoute(
             $RouteItem->getName(),
             (array) $RouteItem->getGetRegex(),
-            $parsed_get_parameters
+            $parsed_get_parameters,
+            false
         );
-
+        
         $parsed_post_parameters = $this->validatePost($RouteItem, $Request->getPostCollection()->toArray());
         $this->validateRoute(
             $RouteItem->getName(),
             (array) $RouteItem->getPostRegex(),
-            $parsed_post_parameters
+            $parsed_post_parameters,
+            false
         );
 
-        return [$parsed_query_parameters, $parsed_get_parameters, $parsed_post_parameters];            
+        return [$parsed_query_parameters, $parsed_get_parameters, $parsed_post_parameters];
     }
 
     /**
      * @param $route_name
      * @param array $route_params
      * @param array $parsed_request_params
+     * @param $throw
      * @throws Exception\InvalidRoute
      */
-    protected function validateRoute($route_name, array $route_params, array $parsed_request_params)
+    protected function validateRoute($route_name, array $route_params, array $parsed_request_params, $throw)
     {
         foreach ($route_params as $name => $expression) {
-            $this->assertIsArrayKey($name, $parsed_request_params,
-                vsprintf('Invalid required parameter: "%s" for route: "%s"', [$name, $route_name]),
-                'InvalidRoute'
-            );
+            $msg = vsprintf('Invalid parameter: "%s" for route: "%s"', [$name, $route_name]);
+            if (isset($parsed_request_params[$name]) === false) {
+                $this->errors[$name] = $msg;
+            }
+            
+            if ($throw) {
+                $this->assertIsArrayKey($name, $parsed_request_params, $msg, 'InvalidRoute');
+            }
         }
     }
 
@@ -163,4 +175,28 @@ class RequestValidator implements Interfaces\RequestValidator
         }
     }
 
+    /**
+     * @param array $validation_errors
+     */
+    public function setErrors($validation_errors)
+    {
+        $this->errors = $validation_errors;
+    }
+
+    /**
+     * @return array
+     */
+    public function getErrors()
+    {
+        return $this->errors;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isValid()
+    {
+        return $this->errors === null;
+    }
+    
 }

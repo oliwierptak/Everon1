@@ -7,19 +7,18 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon\Interfaces\Dependency;
+namespace Everon\View\Interfaces\Dependency;
 
-use Everon\Config;
 
-interface ViewManager
+interface Manager
 {
     /**
-     * @return \Everon\Interfaces\ViewManager
+     * @return \Everon\View\Interfaces\Manager
      */
     function getViewManager();
 
     /**
-     * @param \Everon\Interfaces\ViewManager $Manager
+     * @param \Everon\View\Interfaces\Manager $Manager
      */
-    function setViewManager(\Everon\Interfaces\ViewManager $Manager);
+    function setViewManager(\Everon\View\Interfaces\Manager $Manager);
 }

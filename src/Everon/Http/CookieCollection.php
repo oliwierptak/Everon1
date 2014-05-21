@@ -10,8 +10,18 @@
 namespace Everon\Http;
 
 use Everon\Helper;
+use Everon\Http\Exception;
 
 class CookieCollection extends Helper\Collection implements Interfaces\CookieCollection
 {
-    
+    public function __construct(array $data)
+    {
+        foreach ($data as $Item) {
+            if (($Item instanceof Interfaces\Cookie) === false) {
+                throw new Exception\CookieCollection('Only Cookies allowed in Collection');
+            }
+        }
+     
+        parent::__construct($data);
+    }
 }

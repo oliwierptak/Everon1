@@ -38,14 +38,17 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         if ($Dir->isDir() === false) {
             throw new Exception\Core('Everon source directory is not defined');
         }
-        
+
         parent::__construct($name, $data, $dataName);
+        $this->RequestIdentifier = $GLOBALS['REQUEST_IDENTIFIER'];
         $Environment = new Environment($GLOBALS['EVERON_ROOT'], $GLOBALS['EVERON_SOURCE_ROOT']); //xxx
         $this->FrameworkBootstrap = new Bootstrap($Environment, EVERON_ENVIRONMENT);
         $this->includeDoubles($this->getDoublesDirectory());
-        $this->RequestIdentifier = $GLOBALS['REQUEST_IDENTIFIER'];
     }
-    
+
+    /**
+     * @param $dir
+     */
     protected function includeDoubles($dir)
     {
         /**
@@ -83,7 +86,11 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
             }
         }
     }
-    
+
+    /**
+     * @param $data
+     * @return array
+     */
     public function getServerDataForRequest($data)
     {
         $server = [

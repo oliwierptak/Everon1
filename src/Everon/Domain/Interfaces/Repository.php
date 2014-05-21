@@ -33,7 +33,7 @@ interface Repository
      * @param int $user_id
      * @return mixed
      */
-    function persistFromArray(array $data, $user_id);
+    function persistFromArray(array $data, $user_id=null);
 
     /**
      * @param Criteria $Criteria
@@ -45,13 +45,13 @@ interface Repository
      * @param Entity $Entity
      * @param int $user_id
      */
-    function persist(Entity $Entity, $user_id);
+    function persist(Entity $Entity, $user_id=null);
 
     /**
      * @param Entity
      * @param int $user_id
      */
-    function remove(Entity $Entity, $user_id);
+    function remove(Entity $Entity, $user_id=null);
 
     /**
      * @param Criteria $Criteria

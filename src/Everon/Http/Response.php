@@ -15,10 +15,17 @@ use Everon\Response as BasicResponse;
 
 class Response extends BasicResponse implements Interfaces\Response
 {
+    use Dependency\Injection\Factory;
+    
     /**
      * @var Interfaces\HeaderCollection
      */
     protected $HeaderCollection = null;
+
+    /**
+     * @var Interfaces\CookieCollection
+     */
+    protected $CookieCollection = null;
     
     protected $content_type = 'text/plain';
 
@@ -40,17 +47,34 @@ class Response extends BasicResponse implements Interfaces\Response
     /**
      * @param $guid
      * @param Interfaces\HeaderCollection $Headers
+     * @param Interfaces\CookieCollection $CookieCollection
      */
-    public function __construct($guid, Interfaces\HeaderCollection $Headers)
+    public function __construct($guid, Interfaces\HeaderCollection $Headers, Interfaces\CookieCollection $CookieCollection)
     {
         parent::__construct($guid);
         $this->HeaderCollection = $Headers;
+        $this->CookieCollection = $CookieCollection;
     }
     
     protected function sendHeaders()
     {
         $this->HeaderCollection->set('HTTP/1.1 '.$this->status_code, '');
         $this->HeaderCollection->set('EVRID', $this->guid);
+
+        /**
+         * @var \Everon\Http\Interfaces\Cookie $Cookie
+         */     
+        foreach ($this->CookieCollection as $name => $Cookie) {
+            setcookie(
+                $Cookie->getName(),
+                $Cookie->isJsonEnabled() ? $Cookie->getValueAsJson() : $Cookie->getValue(),
+                $Cookie->getExpire(),
+                $Cookie->getPath(),
+                $Cookie->getDomain(),
+                $Cookie->isSecure(),
+                $Cookie->isHttpOnly()
+            );
+        }
         
         foreach ($this->HeaderCollection as $name => $value) {
             if (trim($value) !== '') {
@@ -60,6 +84,64 @@ class Response extends BasicResponse implements Interfaces\Response
                 header($name, false);
             }
         }
+    }
+
+    /**
+     * @param \Everon\Http\Interfaces\CookieCollection $CookieCollection
+     */
+    public function setCookieCollection($CookieCollection)
+    {
+        $this->CookieCollection = $CookieCollection;
+    }
+
+    /**
+     * @return \Everon\Http\Interfaces\CookieCollection
+     */
+    public function getCookieCollection()
+    {
+        return $this->CookieCollection;
+    }
+    
+    /**
+     * @param Interfaces\Cookie $Cookie
+     */
+    public function setCookie(Interfaces\Cookie $Cookie)
+    {
+        $this->CookieCollection->set($Cookie->getName(), $Cookie);
+    }
+
+    /**
+     * @param Interfaces\Cookie $Cookie
+     */
+    public function deleteCookie(Interfaces\Cookie $Cookie)
+    {
+        $this->deleteCookieByName($Cookie->getName());
+    }
+
+    /**
+     * @param Interfaces\Cookie $name
+     */
+    public function deleteCookieByName($name)
+    {
+        $Cookie = $this->getCookie($name);
+        if ($Cookie !== null) {
+            $Cookie->delete();
+        }
+        else {
+            $Cookie = $this->getFactory()->buildHttpCookie($name, '', time());
+            $Cookie->delete();
+        }
+        
+        $this->CookieCollection->set($Cookie->getName(), $Cookie);
+    }
+
+    /**
+     * @param $name
+     * @return Interfaces\Cookie|null
+     */
+    public function getCookie($name)
+    {
+        return $this->CookieCollection->get($name, null);
     }
 
     public function getContentType()
@@ -157,11 +239,11 @@ class Response extends BasicResponse implements Interfaces\Response
     /**
      * @inheritdoc
      */
-    public function toJson($root='data')
+    public function toJson()
     {
         $this->setContentType('application/json');
-        $json = parent::toJson($root);
         $this->setHeader('content-type', 'application/json');
+        $json = parent::toJson();
         $this->send();
         return $json;
     }
