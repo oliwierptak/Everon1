@@ -14,16 +14,20 @@ use Everon\Exception;
 use Everon\Helper;
 use Everon\Interfaces\Collection;
 use Everon\View\Interfaces;
+use Everon\View\Template\Compiler\Scope;
 
 class Manager implements Interfaces\Manager
 {
-    use Dependency\Injection\Factory;
     use Dependency\Injection\ConfigManager;
+    use Dependency\Injection\Factory;
+    use Dependency\Injection\Logger;
+    use Dependency\Injection\FileSystem;
 
     use Helper\Arrays;
     use Helper\IsIterable;
     use Helper\String\LastTokenToName;
     use Helper\String\EndsWith;
+    use Helper\RunPhp;
 
     
     protected $current_theme_name = 'Main';
@@ -54,11 +58,38 @@ class Manager implements Interfaces\Manager
      */
     public function __construct(array $compilers, $view_directory, $cache_directory)
     {
-        $this->compilers = $compilers;
+        //$this->compilers = $compilers;
+        $this->compilers = ['.php' => [$this]]; //todo: quick hack
         $this->view_directory = $view_directory;
         $this->cache_directory = $cache_directory;
         $this->ThemeCollection = new Helper\Collection([]);
         $this->WidgetCollection = new Helper\Collection([]);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function compile($scope_name, $template_content, array $data)
+    {
+        $Scope = new Scope();
+        $Scope->setName('View');
+        $Scope->setPhp($template_content);
+
+        try {
+            $this->scope_name = $scope_name;
+            $ScopeData = new Helper\PopoProps($data);
+            $code = $this->runPhp($template_content, ['Tpl' => $ScopeData], $this->getFileSystem());
+            $Scope->setCompiled($code);
+            $Scope->setData($data);
+
+            $this->getLogger()->e($code);
+
+            return $Scope;
+        }
+        catch (\Exception $e) {
+            $this->getLogger()->e_error($e);
+            return $Scope;
+        }
     }
     
     public function getCache()

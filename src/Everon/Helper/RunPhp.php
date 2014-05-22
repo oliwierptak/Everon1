@@ -41,13 +41,8 @@ trait RunPhp
             ob_start();
             extract($scope);
             
-            //meh
-            $View = $Tpl->View;
-            unset($Tpl->View);
-            
             include $php_file;
             $content = ob_get_contents();
-            
         }
         catch (\Exception $e) {
             $this->getLogger()->e_error($e."\n".$php);
