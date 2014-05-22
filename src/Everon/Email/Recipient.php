@@ -34,7 +34,7 @@ class Recipient implements Interfaces\Recipient
     function __construct($name, $to, array $cc=[], array $bcc=[])
     {
         $this->name = $name;
-        $this->to = $name;
+        $this->to = $to;
         $this->cc = $cc;
         $this->bcc = $bcc;
     }

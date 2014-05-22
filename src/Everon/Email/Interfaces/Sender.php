@@ -16,10 +16,10 @@ interface Sender
 {
 
     /**
-     * @param Message $Email
+     * @param Message $Message
      * @return bool
      */
-    function send(Message $Email);
+    function send(Message $Message);
 
     /**
      * @param Credential $Credential

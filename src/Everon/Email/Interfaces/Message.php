@@ -21,19 +21,9 @@ interface Message
     function setHeaders(array $headers);
 
     /**
-     * @param string $message
-     */
-    function setBody($message);
-
-    /**
      * @return string
      */
     function getSubject();
-
-    /**
-     * @return string
-     */
-    function getBody();
 
     /**
      * @return array
@@ -64,4 +54,45 @@ interface Message
      * @return Recipient
      */
     function getRecipient();
+
+    /**
+     * @param $fromEmail
+     * @return mixed
+     */
+    function setFromEmail($fromEmail);
+
+    /**
+     * @return mixed
+     */
+    function getFromEmail();
+    /**
+     * @param mixed $fromName
+     */
+    function setFromName($fromName);
+
+    /**
+     * @return mixed
+     */
+    function getFromName();
+
+    /**
+     * @param mixed $plainBody
+     */
+    function setPlainBody($plainBody);
+
+    /**
+     * @return mixed
+     */
+    function getPlainBody();
+
+    /**
+     * @param mixed $richBody
+     */
+    function setRichBody($richBody);
+
+    /**
+     * @return mixed
+     */
+    function getRichBody();
+
 }

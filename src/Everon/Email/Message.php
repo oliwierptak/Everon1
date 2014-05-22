@@ -20,9 +20,15 @@ class Message implements Interfaces\Message
      */
     protected $headers;
 
+    protected $fromEmail;
+
+    protected $fromName;
+
     protected $subject;
 
-    protected $body;
+    protected $richBody;
+
+    protected $plainBody;
 
     /**
      * @var array
@@ -34,17 +40,20 @@ class Message implements Interfaces\Message
      */
     protected $Recipient;
 
-    public function __construct(Interfaces\Recipient $Recipient, $subject, $body, array $attachments=[],array $headers=[])
+    public function __construct(Interfaces\Recipient $Recipient, $fromEmail, $fromName, $subject, $richBody, $plainBody, array $attachments=[],array $headers=[])
     {
         $this->Recipient = $Recipient;
+        $this->fromEmail = $fromEmail;
+        $this->fromName = $fromName;
         $this->subject = $subject;
-        $this->body = $body;
+        $this->richBody = $richBody;
+        $this->plainBody = $plainBody;
         $this->headers = $headers;
         $this->attachments = $attachments;
     }
 
     /**
-     * @param array  $headers
+     * @inheritdoc
      */
     public function setHeaders(array $headers)
     {
@@ -52,7 +61,7 @@ class Message implements Interfaces\Message
     }
 
     /**
-     * @return mixed
+     * @inheritdoc
      */
     public function getHeaders()
     {
@@ -60,23 +69,39 @@ class Message implements Interfaces\Message
     }
 
     /**
-     * @param mixed $message
+     * @inheritdoc
      */
-    public function setBody($message)
+    public function setPlainBody($plainBody)
     {
-        $this->body = $message;
+        $this->plainBody = $plainBody;
     }
 
     /**
-     * @return mixed
+     * @inheritdoc
      */
-    public function getBody()
+    public function getPlainBody()
     {
-        return $this->body;
+        return $this->plainBody;
     }
 
     /**
-     * @param mixed $subject
+     * @inheritdoc
+     */
+    public function setRichBody($richBody)
+    {
+        $this->richBody = $richBody;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getRichBody()
+    {
+        return $this->richBody;
+    }
+
+    /**
+     * @inheritdoc
      */
     public function setSubject($subject)
     {
@@ -84,7 +109,7 @@ class Message implements Interfaces\Message
     }
 
     /**
-     * @return mixed
+     * @inheritdoc
      */
     public function getSubject()
     {
@@ -92,7 +117,7 @@ class Message implements Interfaces\Message
     }
 
     /**
-     * @param array $attachments
+     * @inheritdoc
      */
     public function setAttachments($attachments)
     {
@@ -100,7 +125,7 @@ class Message implements Interfaces\Message
     }
 
     /**
-     * @return array
+     * @inheritdoc
      */
     public function getAttachments()
     {
@@ -108,7 +133,7 @@ class Message implements Interfaces\Message
     }
 
     /**
-     * @param \Everon\Email\Interfaces\Recipient $Recipient
+     * @inheritdoc
      */
     public function setRecipient(Interfaces\Recipient $Recipient)
     {
@@ -116,11 +141,43 @@ class Message implements Interfaces\Message
     }
 
     /**
-     * @return \Everon\Email\Interfaces\Recipient
+     * @inheritdoc
      */
     public function getRecipient()
     {
         return $this->Recipient;
     }
-    
+
+    /**
+     * @inheritdoc
+     */
+    public function setFromEmail($fromEmail)
+    {
+        $this->fromEmail = $fromEmail;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getFromEmail()
+    {
+        return $this->fromEmail;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setFromName($fromName)
+    {
+        $this->fromName = $fromName;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getFromName()
+    {
+        return $this->fromName;
+    }
+
 }

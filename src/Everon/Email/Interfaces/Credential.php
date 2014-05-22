@@ -36,11 +36,6 @@ interface Credential
     function setPassword($password);
 
     /**
-     * @return string
-     */
-    function getEmail();
-
-    /**
      * @param string $username
      */
     function setUsername($username);
@@ -54,11 +49,6 @@ interface Credential
      * @return string
      */
     function getName();
-
-    /**
-     * @param string $fromEmail
-     */
-    function setEmail($fromEmail);
 
     /**
      * @param string $port

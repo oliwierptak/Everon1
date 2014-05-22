@@ -27,12 +27,12 @@ interface Factory
      * @param $Receiver
      */
     function injectDependencies($class_name, $Receiver);
-    
+
     /**
      * @return Interfaces\DependencyContainer
      */
     function getDependencyContainer();
-    
+
     /**
      * @param Interfaces\DependencyContainer $Container
      */
@@ -254,7 +254,7 @@ interface Factory
      * @throws Exception\Factory
      */
     function buildDomainMapper(array $mappings, $namespace='Everon\Domain');
-    
+
     /**
      * @param $class_name
      * @param string $namespace
@@ -288,7 +288,7 @@ interface Factory
      * @throws Exception\Factory
      */
     function buildSchemaReader(Interfaces\PdoAdapter $PdoAdapter, $namespace='Everon\DataMapper\Schema');
-    
+
     /**
      * @param array $data
      * @param string $namespace
@@ -451,7 +451,7 @@ interface Factory
      * @param string $namespace
      * @return Interfaces\Collection
      * @throws Exception\Factory
-     */    
+     */
     function buildHttpHeaderCollection(array $headers=[], $namespace='Everon\Http');
 
     /**
@@ -584,15 +584,18 @@ interface Factory
 
     /**
      * @param Email\Interfaces\Recipient $Recipient
-     * @param $subject
-     * @param $body
+     * @param $fromEmail
+     * @param $fromName
+     * @param array $subject
+     * @param array $richBody
+     * @param array $plainBody
      * @param array $attachments
      * @param array $headers
      * @param string $namespace
+     * @return Email\Interfaces\Recipient
      * @throws Exception\Factory
-     * @return \Everon\Email\Interfaces\Recipient
      */
-    function buildEmailMessage(Email\Interfaces\Recipient $Recipient, $subject, $body, array $attachments = [], array $headers = [], $namespace = 'Everon\Email');
+    function buildEmailMessage(Email\Interfaces\Recipient $Recipient, $fromEmail, $fromName, $subject, $richBody, $plainBody, array $attachments = [], array $headers = [], $namespace = 'Everon\Email');
 
     /**
      * @param $name

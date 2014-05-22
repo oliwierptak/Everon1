@@ -23,28 +23,10 @@ class Credential implements Interfaces\Credential
 
     protected $port = null;
 
-    protected $email = null;
-
     protected $name = null;
 
     protected $encryption = null;
 
-
-    /**
-     * @param mixed $email
-     */
-    public function setEmail($email)
-    {
-        $this->email = $email;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getEmail()
-    {
-        return $this->email;
-    }
 
     /**
      * @param mixed $password
