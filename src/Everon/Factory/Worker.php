@@ -12,6 +12,6 @@ namespace Everon\Factory;
 use Everon\Exception;
 use Everon\Interfaces;
 
-class Worker extends WorkerAbstract
+class Worker extends AbstractWorker
 {
 }
