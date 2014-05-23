@@ -630,4 +630,19 @@ interface Factory
      */
     function buildEmailCredential(array $credential_data);
 
+    /**
+     * @param string $namespace
+     * @return \Everon\Task\Interfaces\Manager
+     * @throws \Everon\Exception\Factory
+     */
+    function buildTaskManager($namespace='Everon\Task');
+
+    /**
+     * @param $type
+     * @param string $namespace
+     * @return \Everon\Task\Interfaces\Item
+     * @throws \Everon\Exception\Factory
+     */
+    function buildTaskItem($type, $namespace='Everon\Task');
+
 }

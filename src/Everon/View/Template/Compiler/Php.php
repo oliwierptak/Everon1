@@ -37,12 +37,12 @@ class Php extends Compiler
             $Scope->setCompiled($code);
             $Scope->setData($data);
             
-            $this->getLogger()->e($code);
+            $this->getLogger()->php($code);
 
             return $Scope;
         }
         catch (\Exception $e) {
-            $this->getLogger()->e_error($e);
+            $this->getLogger()->error($e);
             return $Scope;
         }
     }

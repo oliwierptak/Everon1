@@ -82,12 +82,12 @@ class Manager implements Interfaces\Manager
             $Scope->setCompiled($code);
             $Scope->setData($data);
 
-            $this->getLogger()->e($code);
+            $this->getLogger()->view($code);
 
             return $Scope;
         }
         catch (\Exception $e) {
-            $this->getLogger()->e_error($e);
+            $this->getLogger()->error($e);
             return $Scope;
         }
     }

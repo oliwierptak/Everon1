@@ -1326,4 +1326,38 @@ abstract class Factory implements Interfaces\Factory
             throw new Exception\Factory('EmailSender: "%s" initialization error', $name, $e);
         }
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildTaskItem($type, $namespace='Everon\Module\Console\Task')
+    {
+        try {
+            $class_name = $this->getFullClassName($namespace, $type);
+            $this->classExists($class_name);
+            $Item = new $class_name();
+            $this->injectDependencies($class_name, $Item);
+            return $Item;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('TaskItem: "%s" initialization error', $type, $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildTaskManager($namespace='Everon\Module\Console\Task')
+    {
+        try {
+            $class_name = $this->getFullClassName($namespace, 'Manager');
+            $this->classExists($class_name);
+            $TaskHandler = new $class_name($this);
+            $this->injectDependencies($class_name, $TaskHandler);
+            return $TaskHandler;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('TaskManager initialization error', null, $e);
+        }
+    }
 }

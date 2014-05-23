@@ -45,7 +45,7 @@ trait RunPhp
             $content = ob_get_contents();
         }
         catch (\Exception $e) {
-            $this->getLogger()->e_error($e."\n".$php);
+            $this->getLogger()->error($e."\n".$php);
             $content = $e->getMessage().' on line '.$e->getLine();
         }
         finally {
