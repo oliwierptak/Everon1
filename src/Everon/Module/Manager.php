@@ -24,6 +24,11 @@ class Manager implements Interfaces\Manager
      * @var array
      */
     protected $modules = null;
+
+    /**
+     * @var array
+     */
+    protected $factory_workers = null;
     
     protected $configs_were_registered = false;
     
@@ -41,26 +46,10 @@ class Manager implements Interfaces\Manager
             }
             
             $Config = $this->getModuleConfig($module_name, 'module');
-            $Module = $this->getFactory()->buildModule($module_name, $Dir->getPathname().DIRECTORY_SEPARATOR, $Config);
-            
-            //has worker? register it
-            if ((new \SplFileInfo($Dir->getPathname().DIRECTORY_SEPARATOR.'FactoryWorker.php'))->isFile()) {
-                $Worker = $this->getFactory()->buildFactoryWorker($module_name);
-                $Module->setFactoryWorker($Worker);
-            }
-            else {
-                $DefaultWorker = $this->getFactory()->buildFactoryWorker('Worker', 'Everon\Factory');
-                $Module->setFactoryWorker($DefaultWorker);
-            }
-            
-            //has custom dependency loaders? load them
-            $loader_dir = new \SplFileInfo($Dir->getPathname().DIRECTORY_SEPARATOR.'Dependency'.DIRECTORY_SEPARATOR.'Loader');
-            $LoaderFiles = new \GlobIterator($loader_dir.DIRECTORY_SEPARATOR.'*.php');
-            foreach ($LoaderFiles as $filename => $File) {
-                $Container = $this->getFactory()->getDependencyContainer();
-                $FactoryWorker = $Module->getFactoryWorker();
-                include($File->getPathname());
-            }
+            $Module = $this->getFactory()->buildModule($module_name, $Dir->getPathname().DIRECTORY_SEPARATOR, $Config);           
+
+            $Worker = $this->getFactoryWorker($module_name);
+            $Module->setFactoryWorker($Worker);
             
             $Module->setup();
             $this->modules[$module_name] = $Module;
@@ -117,5 +106,52 @@ class Manager implements Interfaces\Manager
         }
         
         return $this->modules[$name];
+    }
+    
+    /**
+     * @inheritdoc
+     */
+    public function getFactoryWorker($module_name)
+    {
+        if (isset($this->factory_workers[$module_name])) {
+            return $this->factory_workers[$module_name];
+        }
+        
+        $Dir = new \SplFileInfo($this->getFileSystem()->getRealPath('//Module/'.$module_name));
+        if ((new \SplFileInfo($Dir->getPathname().DIRECTORY_SEPARATOR.'FactoryWorker.php'))->isFile()) {
+            $Worker = $this->getFactory()->buildFactoryWorker($module_name);
+        }
+        else {
+            $Worker = $this->getFactory()->buildFactoryWorker('Worker', 'Everon\Factory');
+        }
+        
+        $this->factory_workers[$module_name] = $Worker;
+        
+        return $Worker;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function loadModuleDependencies()
+    {
+        $path_list = $this->getPathsOfActiveModules();
+        /**
+         * @var \DirectoryIterator $Dir
+         */
+        foreach ($path_list as $Dir) {
+            $module_name = $Dir->getBasename();
+            //has custom dependency loaders? load them
+            $loader_dir = new \SplFileInfo($Dir->getPathname().DIRECTORY_SEPARATOR.'Dependency'.DIRECTORY_SEPARATOR.'Loader');
+            $LoaderFiles = new \GlobIterator($loader_dir.DIRECTORY_SEPARATOR.'*.php');
+            /**
+             * @var \SplFileInfo $File
+             */
+            foreach ($LoaderFiles as $filename => $File) {
+                $Container = $this->getFactory()->getDependencyContainer();
+                $FactoryWorker = $this->getFactoryWorker($module_name);
+                include($File->getPathname());
+            }
+        }
     }
 }
