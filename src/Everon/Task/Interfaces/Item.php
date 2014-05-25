@@ -5,6 +5,10 @@ use Everon\Domain;
 
 interface Item 
 {
+    /**
+     * @return boolean True or throws exception
+     * @throws \Everon\Task\Exception\Execute
+     */
     function execute();
     
     function markAsExecuted();

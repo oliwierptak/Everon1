@@ -43,6 +43,7 @@ class Manager implements Interfaces\Manager
         catch (\Exception $e) {
             $Task->markAsFailed();
             $Task->setError($e);
+            $Task->setResult(false);
             $this->getLogger()->error($e);
         }
     }
