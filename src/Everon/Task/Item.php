@@ -43,9 +43,23 @@ abstract class Item implements Interfaces\Item
     protected $error = null;
 
     /**
+     * @var mixed
+     */
+    protected $Data = null;
+
+    /**
      * @inheritdoc
      */
     public abstract function execute();
+
+
+    /**
+     * @param mixed $Data
+     */
+    function __construct($Data)
+    {
+        $this->Data = $Data;
+    }
 
     /**
      * @inheritdoc
@@ -144,7 +158,7 @@ abstract class Item implements Interfaces\Item
     }
 
     /**
-     * @param string $error
+     * @inheritdoc
      */
     public function setError($error)
     {
@@ -152,11 +166,27 @@ abstract class Item implements Interfaces\Item
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
     public function getError()
     {
         return $this->error;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setData($Item)
+    {
+        $this->Data = $Item;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getData()
+    {
+        return $this->Data;
     }
     
 }

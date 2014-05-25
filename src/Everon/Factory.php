@@ -1330,12 +1330,13 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildTaskItem($type, $namespace='Everon\Module\Console\Task')
+    public function buildTaskItem($type, $data, $namespace='Everon\Task\Item')
     {
         try {
+            $type = ucfirst($this->stringUnderscoreToCamel(strtolower($type)));
             $class_name = $this->getFullClassName($namespace, $type);
             $this->classExists($class_name);
-            $Item = new $class_name();
+            $Item = new $class_name($data);
             $this->injectDependencies($class_name, $Item);
             return $Item;
         }
@@ -1347,7 +1348,7 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildTaskManager($namespace='Everon\Module\Console\Task')
+    public function buildTaskManager($namespace='Everon\Task')
     {
         try {
             $class_name = $this->getFullClassName($namespace, 'Manager');

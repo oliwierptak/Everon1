@@ -639,10 +639,11 @@ interface Factory
 
     /**
      * @param $type
+     * @param mixed $data
      * @param string $namespace
      * @return \Everon\Task\Interfaces\Item
      * @throws \Everon\Exception\Factory
      */
-    function buildTaskItem($type, $namespace='Everon\Task');
+    function buildTaskItem($type, $data, $namespace='Everon\Task\Item');
 
 }

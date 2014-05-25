@@ -64,4 +64,14 @@ interface Item
      * @return string
      */
     function getError();
+
+    /**
+     * @param \Everon\Task\Interfaces\Item $Item
+     */
+    function setData($Item);
+
+    /**
+     * @return \Everon\Task\Interfaces\Item
+     */
+    function getData();
 }
