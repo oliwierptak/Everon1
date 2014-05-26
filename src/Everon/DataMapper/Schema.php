@@ -115,7 +115,6 @@ class Schema implements Interfaces\Schema
                 $Table = $this->tables[$item_table_name];
                 $Column = clone $Table->getColumnByName($column_name);
                 $Column->setName($view_column_name);
-                $Column->setIsNullable(true);
                 $view_columns[$view_column_name] = $Column;
             }
 
