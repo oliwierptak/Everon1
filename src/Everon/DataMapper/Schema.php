@@ -106,15 +106,17 @@ class Schema implements Interfaces\Schema
                 $item_table_name = implode('.', $tokens);
                 
                 if (isset($this->tables[$item_table_name]) === false) {
-                    continue;
+                    throw new Exception\Schema('Invalid target table name: "%s"', $item_table_name);
                 }
 
                 /**
                  * @var \Everon\DataMapper\Interfaces\Schema\Table $Table
+                 * @var \Everon\DataMapper\Interfaces\Schema\Column $Column
                  */
                 $Table = $this->tables[$item_table_name];
                 $Column = clone $Table->getColumnByName($column_name);
                 $Column->setName($view_column_name);
+                $Column->unMarkAsPk();
                 $view_columns[$view_column_name] = $Column;
             }
 
@@ -126,12 +128,15 @@ class Schema implements Interfaces\Schema
                 $item_table_name = implode('.', $tokens);
 
                 if (isset($this->tables[$item_table_name]) === false) {
-                    continue;
+                    throw new Exception\Schema('Invalid target table name: "%s"', $item_table_name);
                 }
 
                 /**
                  * @var \Everon\DataMapper\Interfaces\Schema\Table $Table
+                 * @var \Everon\DataMapper\Interfaces\Schema\Column $Column
                  */
+                $Column = $view_columns[$view_key_name];
+                $Column->markAsPk();
                 $Table = $this->tables[$item_table_name];
                 $view_primary_keys[$view_key_name] = $Table->getPrimaryKeyByName($column_name);
             }

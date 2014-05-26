@@ -40,4 +40,12 @@ class PrimaryKey extends Constraint implements Schema\PrimaryKey
     {
         return $this->sequence_name;
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function setSequenceName($name)
+    {
+        $this->sequence_name = $name;
+    }
 }

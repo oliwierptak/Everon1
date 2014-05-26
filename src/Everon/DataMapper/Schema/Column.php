@@ -81,6 +81,22 @@ abstract class Column implements Schema\Column
     /**
      * @inheritdoc
      */
+    public function markAsPk()
+    {
+        $this->is_pk = true;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function unMarkAsPk()
+    {
+        $this->is_pk = false;
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function getName()
     {
         return $this->name;
