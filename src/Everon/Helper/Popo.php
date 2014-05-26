@@ -61,7 +61,7 @@ class Popo implements Interfaces\Arrayable
         $this->call_property = null;
         
         if (empty($this->data)) {
-            throw new Exception\Popo('Empty data in: "%s"', get_class($this));
+            throw new Exception\Popo('Empty data in: "%s"', get_called_class());
         }
 
         $getter = strpos($name, 'get') === 0;
@@ -75,7 +75,7 @@ class Popo implements Interfaces\Arrayable
         }
 
         if ($setter === false && $getter === false) {
-            throw new Exception\Popo('Unknown method: "%s" in "%s"', [$name, get_class($this)]);
+            throw new Exception\Popo('Unknown method: "%s" in "%s"', [$name, get_called_class()]);
         }
 
         $camelized = preg_split('/(?<=\\w)(?=[A-Z])/', $name);
@@ -85,7 +85,7 @@ class Popo implements Interfaces\Arrayable
 
         if (array_key_exists($property, $this->data) === false) {
             if ($getter) {
-                throw new Exception\Popo('Unknown property: "%s" in "%s"', array($property, get_class($this)));
+                throw new Exception\Popo('Unknown property: "%s" in "%s"', array($property, get_called_class()));
             }
         }
 

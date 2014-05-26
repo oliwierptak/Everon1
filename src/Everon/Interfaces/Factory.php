@@ -430,12 +430,13 @@ interface Factory
     function buildViewManager(array $compilers_to_init, $view_directory, $cache_directory);
 
     /**
-     * @param $class_name
+     * @param string $name
+     * @param View\Interfaces\View $View
      * @param string $namespace
      * @return View\Interfaces\Widget
      * @throws Exception\Factory
      */
-    function buildViewWidget($class_name, $namespace='Everon\View');
+    function buildViewWidget($name, View\Interfaces\View $View, $namespace='Everon\View');
 
     /**
      * @param $directory

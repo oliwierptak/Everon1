@@ -491,20 +491,20 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildViewWidget($class_name, $namespace='Everon\View')
+    public function buildViewWidget($name, View\Interfaces\View $View, $namespace='Everon\View')
     {
         try {
-            $class_name = $this->getFullClassName($namespace, $class_name);
+            $class_name = $this->getFullClassName($namespace, $name);
             $this->classExists($class_name);
             /**
              * @var View\Interfaces\Widget $Widget
              */
-            $Widget = new $class_name();
+            $Widget = new $class_name($View);
             $this->injectDependencies($class_name, $Widget);
             return $Widget;
         }
         catch (\Exception $e) {
-            throw new Exception\Factory('ViewWidget: "%s" initialization error', $class_name, $e);
+            throw new Exception\Factory('ViewWidget: "%s" initialization error', $name, $e);
         }
     }
 

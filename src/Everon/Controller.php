@@ -84,7 +84,7 @@ abstract class Controller implements Interfaces\Controller
     public function getName()
     {
         if ($this->name === null) {
-            $this->name = $this->stringLastTokenToName(get_class($this));
+            $this->name = $this->stringLastTokenToName(get_called_class());
         }
 
         return $this->name;

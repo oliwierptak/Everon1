@@ -42,7 +42,7 @@ abstract class AbstractView implements Interfaces\View
      */
     public function __construct($template_directory, $default_extension=null)
     {
-        $this->name = $this->stringLastTokenToName(get_class($this));
+        $this->name = $this->stringLastTokenToName(get_called_class());
         $this->template_directory = $template_directory;
         if ($default_extension !== null) {
             $this->default_extension = $default_extension;

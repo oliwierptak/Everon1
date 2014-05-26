@@ -28,16 +28,6 @@ interface Widget extends Dependency\Manager
     function setName($name);
 
     /**
-     * @param mixed $data
-     */
-    function setData($data);
-
-    /**
-     * @return mixed
-     */
-    function getData();
-
-    /**
      * @return \Everon\View\Interfaces\View
      */
     function getView();

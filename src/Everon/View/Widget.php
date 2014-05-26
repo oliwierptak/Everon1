@@ -18,18 +18,13 @@ use Everon\View\Dependency\Injection\ViewManager as ViewManagerDependency;
 abstract class Widget implements Interfaces\Widget
 {
     use ViewManagerDependency;
-    use Dependency\Injection\ConfigManager;
-    use Dependency\Injection\Logger;
-    use Dependency\Injection\Response;
-    use Dependency\Injection\Request;
-    use Dependency\Injection\Factory;
 
     use Helper\ToString;
     use Helper\String\LastTokenToName;
 
     protected $name;
 
-    protected $data;
+    protected $populated = null;
 
     /**
      * @var Interfaces\View
@@ -39,10 +34,10 @@ abstract class Widget implements Interfaces\Widget
     protected abstract function populate();
     
 
-    public function __construct()
+    public function __construct(Interfaces\View $View)
     {
-        $this->data = null;
-        $this->name = $this->stringLastTokenToName(get_class($this));
+        $this->name = $this->stringLastTokenToName(get_called_class());
+        $this->View = $View;
     }
 
     /**
@@ -59,25 +54,6 @@ abstract class Widget implements Interfaces\Widget
     public function getView()
     {
         return $this->View;
-    }
-
-    /**
-     * @param mixed $data
-     */
-    public function setData($data)
-    {
-        $this->data = $data;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getData()
-    {
-        if ($this->data === null) {
-            $this->populate();
-        }
-        return $this->data;
     }
 
     /**
@@ -101,13 +77,16 @@ abstract class Widget implements Interfaces\Widget
      */
     public function render()
     {
-        $Tpl = $this->getView()->getTemplate('Index', $this->getData());
-
+        if ($this->populated !== true) {
+            $this->populate();
+            $this->populated = true;
+        }
+        
+        $Tpl = $this->getView()->getTemplate('index', $this->getView()->getData());
         $this->getView()->setContainer($Tpl);
+        
         $this->getViewManager()->compileView('', $this->getView());
-
         return (string) $this->getView()->getContainer();
     }
-
 
 }

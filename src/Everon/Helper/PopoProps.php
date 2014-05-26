@@ -56,7 +56,7 @@ class PopoProps implements Interfaces\Arrayable
         $property_to_lookup = mb_strtolower($property);
         if (array_key_exists($property_to_lookup, $this->lookup) === false) {
             if ($this->strict) {
-                throw new Exception\Popo('Unknown public property: "%s" in "%s"', [$property, get_class($this)]);
+                throw new Exception\Popo('Unknown public property: "%s" in "%s"', [$property, get_called_class()]);
             }
             
             return null;
@@ -65,7 +65,7 @@ class PopoProps implements Interfaces\Arrayable
         $property = $this->lookup[$property_to_lookup];
         if (array_key_exists($property, $this->data) === false) {
             if ($this->strict) {
-                throw new Exception\Popo('Unknown public property: "%s" in "%s"', [$property, get_class($this)]);
+                throw new Exception\Popo('Unknown public property: "%s" in "%s"', [$property, get_called_class()]);
             }
 
             return null;

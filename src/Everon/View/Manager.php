@@ -309,8 +309,7 @@ class Manager implements Interfaces\Manager
     public function createWidget($name, $namespace='Everon\View')
     {
         $ViewWidget = $this->createViewWidget($name);
-        $Widget = $this->getFactory()->buildViewWidget($name, $namespace.'\\'.$this->getCurrentThemeName().'\Widget');
-        $Widget->setView($ViewWidget);
+        $Widget = $this->getFactory()->buildViewWidget($name, $ViewWidget, $namespace.'\\'.$this->getCurrentThemeName().'\Widget');
         return $Widget;
     }
 
