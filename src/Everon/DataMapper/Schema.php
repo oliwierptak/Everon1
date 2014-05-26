@@ -9,6 +9,7 @@
  */
 namespace Everon\DataMapper;
 
+use Everon\Config;
 use Everon\Dependency\Injection\Factory as FactoryDependency;
 use Everon\DataMapper\Dependency;
 use Everon\Domain\Dependency\DomainMapper as DomainMapperDependency;
@@ -89,7 +90,7 @@ class Schema implements Interfaces\Schema
          */
         $mappings = $this->getDomainMapper()->toArray();
         foreach ($mappings as $domain_name => $Item) {
-            if ($Item->getType() !== 'mat_view') {
+            if ($Item->getType() !== Config\Item\Domain::TYPE_MAT_VIEW) {
                 continue;
             }
             
@@ -113,6 +114,7 @@ class Schema implements Interfaces\Schema
                  */
                 $Table = $this->tables[$item_table_name];
                 $Column = clone $Table->getColumnByName($column_name);
+                $Column->setName($view_column_name);
                 $Column->setIsNullable(true);
                 $view_columns[$view_column_name] = $Column;
             }
