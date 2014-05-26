@@ -13,9 +13,11 @@ namespace Everon\View;
 use Everon\Dependency;
 use Everon\Helper;
 use Everon\View\Interfaces;
+use Everon\View\Dependency\Injection\ViewManager as ViewManagerDependency;
 
 abstract class Widget implements Interfaces\Widget
 {
+    use ViewManagerDependency;
     use Dependency\Injection\ConfigManager;
     use Dependency\Injection\Logger;
     use Dependency\Injection\Response;
