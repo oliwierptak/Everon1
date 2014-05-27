@@ -72,9 +72,9 @@ class Manager implements Interfaces\Manager
     public function compile($scope_name, $template_content, array $data)
     {
         $Scope = new Scope();
-        $Scope->setName('View');
+        $Scope->setName($scope_name);
         $Scope->setPhp($template_content);
-
+        
         try {
             $this->scope_name = $scope_name;
             $ScopeData = new Helper\PopoProps($data);
@@ -376,7 +376,7 @@ class Manager implements Interfaces\Manager
     {
         if ($this->WidgetCollection->has($name) === false) {
             $Widget = $this->createWidget($name);
-            $this->WidgetCollection->set($name,$Widget);
+            $this->WidgetCollection->set($name, $Widget);
         }
 
         return $this->WidgetCollection->get($name)->render();
