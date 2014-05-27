@@ -26,7 +26,7 @@ interface Recipient
     function setBcc(array $bcc);
 
     /**
-     * @return string
+     * @return array
      */
     function getTo();
 
@@ -36,9 +36,9 @@ interface Recipient
     function getBcc();
 
     /**
-     * @param string $to
+     * @param array $to
      */
-    function setTo($to);
+    function setTo(array $to);
 
     /**
      * @return array

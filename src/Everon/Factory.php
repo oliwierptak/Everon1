@@ -1296,7 +1296,7 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildEmailRecipient($name, $to, array $cc=[], array $bcc=[], $namespace='Everon\Email')
+    public function buildEmailRecipient($name, array $to, array $cc=[], array $bcc=[], $namespace='Everon\Email')
     {
         try {
             $class_name = $this->getFullClassName($namespace, 'Recipient');
@@ -1330,7 +1330,7 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildTaskItem($type, $data, $namespace='Everon\Task\Item')
+    public function buildTaskItem($type, $data, $namespace)
     {
         try {
             $type = ucfirst($this->stringUnderscoreToCamel(strtolower($type)));

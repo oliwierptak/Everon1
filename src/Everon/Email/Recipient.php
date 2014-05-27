@@ -17,7 +17,10 @@ class Recipient implements Interfaces\Recipient
 {
     
     protected $name = null;
-    
+
+    /**
+     * @var array
+     */
     protected $to = null;
 
     /**
@@ -31,7 +34,7 @@ class Recipient implements Interfaces\Recipient
     protected $bcc;
     
 
-    function __construct($name, $to, array $cc=[], array $bcc=[])
+    function __construct($name, array $to, array $cc=[], array $bcc=[])
     {
         $this->name = $name;
         $this->to = $to;
@@ -72,15 +75,15 @@ class Recipient implements Interfaces\Recipient
     }
 
     /**
-     * @param string $to
+     * @param array $to
      */
-    public function setTo($to)
+    public function setTo(array $to)
     {
         $this->to = $to;
     }
 
     /**
-     * @return string
+     * @return array
      */
     public function getTo()
     {

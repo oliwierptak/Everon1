@@ -609,14 +609,14 @@ interface Factory
 
     /**
      * @param $name
-     * @param $to
+     * @param array $to
      * @param array $cc
      * @param array $bcc
      * @param string $namespace
      * @return \Everon\Email\Interfaces\Recipient
      * @throws Exception\Factory
      */
-    function buildEmailRecipient($name, $to, array $cc=[], array $bcc=[], $namespace='Everon\Email');
+    function buildEmailRecipient($name, array $to, array $cc=[], array $bcc=[], $namespace='Everon\Email');
 
     /**
      * @param string $namespace
@@ -645,6 +645,6 @@ interface Factory
      * @return \Everon\Task\Interfaces\Item
      * @throws \Everon\Exception\Factory
      */
-    function buildTaskItem($type, $data, $namespace='Everon\Task\Item');
+    function buildTaskItem($type, $data, $namespace);
 
 }
