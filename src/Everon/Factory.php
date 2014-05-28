@@ -1333,10 +1333,11 @@ abstract class Factory implements Interfaces\Factory
     public function buildTaskItem($type, $data, $namespace)
     {
         try {
-            $type = ucfirst($this->stringUnderscoreToCamel(strtolower($type)));
-            $class_name = $this->getFullClassName($namespace, $type);
+            $task_type = ucfirst($this->stringUnderscoreToCamel(strtolower($type)));
+            $class_name = $this->getFullClassName($namespace, $task_type);
             $this->classExists($class_name);
             $Item = new $class_name($data);
+            $Item->setType($type);
             $this->injectDependencies($class_name, $Item);
             return $Item;
         }

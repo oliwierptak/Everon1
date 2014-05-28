@@ -70,6 +70,16 @@ interface Item
     function getError();
 
     /**
+     * @param \DateTime $executed_at
+     */
+    function setExecutedAt(\DateTime $executed_at);
+
+    /**
+     * @return \DateTime
+     */
+    function getExecutedAt();
+
+    /**
      * @param mixed $Item
      */
     function setData($Item);

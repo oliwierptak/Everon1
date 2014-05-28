@@ -43,6 +43,11 @@ abstract class Item implements Interfaces\Item
     protected $error = null;
 
     /**
+     * @var \DateTime
+     */
+    protected $executed_at = null;
+
+    /**
      * @var mixed
      */
     protected $Data = null;
@@ -173,6 +178,22 @@ abstract class Item implements Interfaces\Item
         return $this->error;
     }
 
+    /**
+     * @param \DateTime $executed_at
+     */
+    public function setExecutedAt(\DateTime $executed_at)
+    {
+        $this->executed_at = $executed_at;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getExecutedAt()
+    {
+        return $this->executed_at;
+    }
+    
     /**
      * @inheritdoc
      */

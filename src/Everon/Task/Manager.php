@@ -34,17 +34,27 @@ class Manager implements Interfaces\Manager
      */
     public function processOne(Interfaces\Item $Task)
     {
+        $result = false;
+        $ExecutedAt = new \DateTime();
+        
         try {
             $Task->markAsProcessing();
             $result = $Task->execute();
-            $Task->setResult($result);
-            $Task->markAsExecuted();
         }
         catch (\Exception $e) {
-            $Task->markAsFailed();
             $Task->setError($e);
-            $Task->setResult(false);
             $this->getLogger()->error($e);
+        }
+        finally {
+            if ($result) {
+                $Task->markAsExecuted();
+            }
+            else {
+                $Task->markAsFailed();
+            }
+            
+            $Task->setResult($result);
+            $Task->setExecutedAt($ExecutedAt);
         }
     }
 }
