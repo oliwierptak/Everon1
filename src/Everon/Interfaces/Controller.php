@@ -38,10 +38,12 @@ interface Controller
 
     /**
      * @param $name
-     * @return null
+     * @param array $query
+     * @param array $get
+     * @return string
      * @throws Exception\Controller
      */
-    function getUrl($name);
+    function getUrl($name, $query=[], $get=[]);
 
     /**
      * @param ItemRouter $CurrentRoute

@@ -93,7 +93,7 @@ abstract class Controller implements Interfaces\Controller
     /**
      * @inheritdoc
      */
-    public function getUrl($name, $query=[])
+    public function getUrl($name, $query=[], $get=[])
     {
         $Item = $this->getConfigManager()->getConfigByName('router')->getItemByName($name);
         if ($Item === null) {
@@ -101,7 +101,17 @@ abstract class Controller implements Interfaces\Controller
         }
 
         $Item->compileUrl($query);
-        return $Item->getParsedUrl();
+        $url = $Item->getParsedUrl();
+
+        $get_url = '';
+        if (empty($get) === false) {
+            $get_url = http_build_query($get);
+            if (trim($get_url) !== '') {
+                $get_url = '?'.$get_url;
+            }
+        }
+
+        return $url.$get_url;
     }
 
     /**
