@@ -21,7 +21,7 @@ use Everon\View;
  * @method Http\Interfaces\Response getResponse()
  * @method Module\Interfaces\Mvc getModule()
  */
-abstract class Controller extends \Everon\Controller
+abstract class Controller extends \Everon\Controller implements Interfaces\Controller
 {
     use Dependency\Injection\Factory;
     use View\Dependency\Injection\ViewManager;
@@ -148,10 +148,13 @@ abstract class Controller extends \Everon\Controller
         $this->getResponse()->setStatusMessage($message);
         $this->response();
     }
-    
-    public function redirect($name, $query=[])
+
+    /**
+     * @inheritdoc
+     */
+    public function redirect($name, $query=[], $get=[])
     {
-        $url = $this->getUrl($name, $query);
+        $url = $this->getUrl($name, $query, $get);
         $this->getResponse()->setHeader('refresh', '1; url='.$url);
     }
 }

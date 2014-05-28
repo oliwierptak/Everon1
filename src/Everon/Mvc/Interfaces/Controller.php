@@ -11,7 +11,7 @@ namespace Everon\Mvc\Interfaces;
 
 use Everon\View\Interfaces;
 
-interface Controller extends \Everon\Interfaces\Controller
+interface Controller extends \Everon\Interfaces\Controller, \Everon\View\Interfaces\Dependency\Manager
 {
     /**
      * @return Interfaces\TemplateContainer
@@ -29,12 +29,14 @@ interface Controller extends \Everon\Interfaces\Controller
     function getModel();
 
     /**
-     * @return Interfaces\Manager
-     */
-    function getViewManager();
-
-    /**
      * @param \Exception $Exception
      */
     function showException(\Exception $Exception);
+
+    /**
+     * @param $name
+     * @param array $query
+     * @param array $get
+     */
+    function redirect($name, $query=[], $get=[]);
 }
