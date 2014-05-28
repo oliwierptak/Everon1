@@ -29,6 +29,15 @@ class Swift implements Interfaces\Sender
     {
         $this->Credential = $Credentials;
     }
+    
+    protected function contactToSwiftContact($contacts)
+    {
+        $result = [];
+        foreach ($contacts as $item) {
+            $result[$item['email']] = $item['name'];
+        }
+        return $result;
+    }
 
     /**
      * @inheritdoc
@@ -39,47 +48,30 @@ class Swift implements Interfaces\Sender
         $Transport->setUsername($this->getCredential()->getUsername());
         $Transport->setPassword($this->getCredential()->getPassword());
 
-        $to = [];
-        foreach ($Message->getRecipient()->getTo() as $to_item) {
-            if (isset($to_item['email'])) {
-                $to[$to_item['email']] = $to_item['name'];
-            }
-        }
-        $cc = [];
-        foreach ($Message->getRecipient()->getCc() as $cc_item) {
-            if (isset($cc_item['email'])) {
-                $cc[$cc_item['email']] = $cc_item['name'];
-            }
-        }
-        $bcc = [];
-        foreach ($Message->getRecipient()->getBcc() as $bcc_item) {
-            if (isset($bcc_item['email'])) {
-                $bcc[$bcc_item['email']] = $bcc_item['name'];
-            }
-        }
-
+        $to = $this->contactToSwiftContact($Message->getRecipient()->getTo());
+        $cc = $this->contactToSwiftContact($Message->getRecipient()->getCc());
+        $bcc = $this->contactToSwiftContact($Message->getRecipient()->getBcc());
+        
         /**
          * @var \Swift_Message $SwiftMessage
          */
         $SwiftMessage = \Swift_Message::newInstance($Message->getSubject())
             ->setFrom([$Message->getFromEmail() => $Message->getFromName()])
             ->setTo($to)
-            ->setBody($Message->getRichBody(), 'text/html');
-        $SwiftMessage->addPart($Message->getPlainBody(), 'text/plain');
-
+            ->setCc($cc)
+            ->setBcc($bcc)
+            ->setBody($Message->getPlainBody())
+            ->addPart($Message->getRichBody(), 'text/html')
+        ;
+        
         foreach($Message->getAttachments() as $attachment) {
-            if (isset($attachment['location'])) {
-            $SwiftMessage->attach(\Swift_Attachment::fromPath($attachment['location'])
-                ->setFilename($attachment['name']));
-            }
+            $SwiftMessage->attach(\Swift_Attachment::fromPath($attachment['filename'])
+                ->setFilename($attachment['label']));
         }
-        $SwiftMessage->setCc($cc);
-        $SwiftMessage->setBcc($bcc);
 
         $Mailer = \Swift_Mailer::newInstance($Transport);
         $result = $Mailer->send($SwiftMessage);
         return $result > 0;
-
     }
 
     /**

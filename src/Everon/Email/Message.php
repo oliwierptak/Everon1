@@ -15,32 +15,50 @@ namespace Everon\Email;
  */
 class Message implements Interfaces\Message
 {
-    /**
-     * @var array
-     */
-    protected $headers;
-
-    protected $fromEmail;
-
-    protected $fromName;
-
-    protected $subject;
-
-    protected $richBody;
-
-    protected $plainBody;
-
-    /**
-     * @var array
-     */
-    protected $attachments;
 
     /**
      * @var Interfaces\Recipient
      */
     protected $Recipient;
 
-    public function __construct(Interfaces\Recipient $Recipient, $fromEmail, $fromName, $subject, $richBody, $plainBody, array $attachments=[],array $headers=[])
+    /**
+     * @var string
+     */
+    protected $fromEmail = null;
+
+    /**
+     * @var string
+     */
+    protected $fromName = null;
+
+    /**
+     * @var string
+     */
+    protected $subject = null;
+
+    /**
+     * @var string
+     */
+    protected $richBody = null;
+
+    /**
+     * @var string
+     */
+    protected $plainBody = null;
+
+    /**
+     * @var array
+     */
+    protected $attachments;
+    
+    /**
+     * @var array
+     */
+    protected $headers = null;
+
+
+
+    public function __construct(Interfaces\Recipient $Recipient, $fromEmail, $fromName, $subject, $richBody, $plainBody, array $attachments=[], array $headers=[])
     {
         $this->Recipient = $Recipient;
         $this->fromEmail = $fromEmail;

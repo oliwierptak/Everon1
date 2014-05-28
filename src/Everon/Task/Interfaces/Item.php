@@ -70,12 +70,12 @@ interface Item
     function getError();
 
     /**
-     * @param \Everon\Task\Interfaces\Item $Item
+     * @param mixed $Item
      */
     function setData($Item);
 
     /**
-     * @return \Everon\Task\Interfaces\Item
+     * @return mixed
      */
     function getData();
 }
