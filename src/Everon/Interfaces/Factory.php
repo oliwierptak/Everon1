@@ -584,6 +584,15 @@ interface Factory
     function buildFactoryWorker($name, $namespace='Everon\Module');
 
     /**
+     * @param $email
+     * @param $name
+     * @param string $namespace
+     * @return Email\Interfaces\Address
+     * @throws Exception\Factory
+     */
+    function buildEmailAddress($email, $name, $namespace='Everon\Email');
+
+    /**
      * @param Email\Interfaces\Recipient $Recipient
      * @param string $fromEmail
      * @param string $fromName
@@ -608,15 +617,14 @@ interface Factory
     function buildEmailSender($name, Email\Interfaces\Credential $Credentials, $namespace='Everon\Email');
 
     /**
-     * @param $name
-     * @param array $to
-     * @param array $cc
-     * @param array $bcc
+     * @param array $to array of Email\Interfaces\Address
+     * @param array $cc array of Email\Interfaces\Address
+     * @param array $bcc array of Email\Interfaces\Address
      * @param string $namespace
      * @return \Everon\Email\Interfaces\Recipient
      * @throws Exception\Factory
      */
-    function buildEmailRecipient($name, array $to, array $cc=[], array $bcc=[], $namespace='Everon\Email');
+    function buildEmailRecipient(array $to, array $cc=[], array $bcc=[], $namespace='Everon\Email');
 
     /**
      * @param string $namespace

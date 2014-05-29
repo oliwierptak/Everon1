@@ -1223,6 +1223,23 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
+    public function buildEmailAddress($email, $name, $namespace='Everon\Email')
+    {
+        try {
+            $class_name = $this->getFullClassName($namespace, 'Address');
+            $this->classExists($class_name);
+            $Recipient = new $class_name($email, $name);
+            $this->injectDependencies($class_name, $Recipient);
+            return $Recipient;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('EmailAddress initialization error', null, $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function buildEmailCredential(array $credential_data, $namespace='Everon\Email')
     {
         try {
@@ -1296,17 +1313,17 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildEmailRecipient($name, array $to, array $cc=[], array $bcc=[], $namespace='Everon\Email')
+    public function buildEmailRecipient(array $to, array $cc=[], array $bcc=[], $namespace='Everon\Email')
     {
         try {
             $class_name = $this->getFullClassName($namespace, 'Recipient');
             $this->classExists($class_name);
-            $Recipient = new $class_name($name, $to, $cc, $bcc);
+            $Recipient = new $class_name($to, $cc, $bcc);
             $this->injectDependencies($class_name, $Recipient);
             return $Recipient;
         }
         catch (\Exception $e) {
-            throw new Exception\Factory('EmailRecipient: "%s" initialization error', $name, $e);
+            throw new Exception\Factory('EmailRecipient initialization error', null, $e);
         }
     }
 

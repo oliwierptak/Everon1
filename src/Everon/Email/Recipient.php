@@ -32,11 +32,15 @@ class Recipient implements Interfaces\Recipient
      * @var array
      */
     protected $bcc;
-    
 
-    function __construct($name, array $to, array $cc=[], array $bcc=[])
+
+    /**
+     * @param array $to ['email'=>'example@example.com, 'name=>'John Doe']
+     * @param array $cc [['email'=>'example@example.com, 'name=>'John Doe'],['email'=>'foo@example.com, 'name=>'Bar']]
+     * @param array $bcc [['email'=>'example@example.com, 'name=>'John Doe'],['email'=>'foo@example.com, 'name=>'Bar']]
+     */
+    function __construct(array $to, array $cc=[], array $bcc=[])
     {
-        $this->name = $name;
         $this->to = $to;
         $this->cc = $cc;
         $this->bcc = $bcc;

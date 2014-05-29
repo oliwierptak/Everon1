@@ -124,6 +124,20 @@ abstract class Repository implements Interfaces\Repository
     }
 
     /**
+     * @param $property_name
+     * @param $property_value
+     * @param Criteria $RelationCriteria
+     * @return Interfaces\Entity|null
+     */
+    public function getEntityByPropertyValue($property_name, $property_value, Criteria $RelationCriteria=null)
+    {
+        $Criteria = (new \Everon\DataMapper\Criteria())->where([
+            $property_name => $property_value
+        ]);
+        return $this->getOneByCriteria($Criteria, $RelationCriteria);
+    }
+
+    /**
      * @inheritdoc
      */
     public function getOneByCriteria(Criteria $Criteria, Criteria $RelationCriteria=null)
