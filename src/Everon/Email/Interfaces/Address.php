@@ -9,7 +9,7 @@
  */
 namespace Everon\Email\Interfaces;
 
-interface Address
+interface Address extends \Everon\Interfaces\Arrayable
 {
     /**
      * @return string

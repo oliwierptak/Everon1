@@ -33,8 +33,11 @@ class Swift implements Interfaces\Sender
     protected function contactToSwiftContact($contacts)
     {
         $result = [];
-        foreach ($contacts as $item) {
-            $result[$item['email']] = $item['name'];
+        /**
+         * @var \Everon\Email\Interfaces\Address $Address
+         */
+        foreach ($contacts as $Address) {
+            $result[$Address->getEmail()] = $Address->getName();
         }
         return $result;
     }
@@ -56,12 +59,12 @@ class Swift implements Interfaces\Sender
          * @var \Swift_Message $SwiftMessage
          */
         $SwiftMessage = \Swift_Message::newInstance($Message->getSubject())
-            ->setFrom([$Message->getFromEmail() => $Message->getFromName()])
+            ->setFrom([$Message->getFromEmail() => $Message->getFrom()])
             ->setTo($to)
             ->setCc($cc)
             ->setBcc($bcc)
-            ->setBody($Message->getPlainBody())
-            ->addPart($Message->getRichBody(), 'text/html')
+            ->setBody($Message->getTextBody())
+            ->addPart($Message->getHtmlBody(), 'text/html')
         ;
         
         foreach($Message->getAttachments() as $attachment) {

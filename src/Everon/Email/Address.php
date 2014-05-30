@@ -9,9 +9,12 @@
  */
 namespace Everon\Email;
 
+use Everon\Helper;
 
 class Address implements Interfaces\Address
 {
+    use Helper\ToArray;
+    
     /**
      * @var string
      */
@@ -21,6 +24,17 @@ class Address implements Interfaces\Address
      * @var string
      */
     protected $email = null;
+
+
+    /**
+     * @param $name
+     * @param $email
+     */
+    public function __construct($name, $email)
+    {
+        $this->email = $email;
+        $this->name = $name;
+    }
 
     /**
      * @param string $email
@@ -54,4 +68,11 @@ class Address implements Interfaces\Address
         return $this->name;
     }
     
+    protected function getToArray()
+    {
+        return [
+            'email' => $this->getEmail(),
+            'name' => $this->getName()
+        ];
+    }
 }

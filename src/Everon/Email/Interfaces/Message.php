@@ -13,7 +13,7 @@ namespace Everon\Email\Interfaces;
  * @author Zeger Hoogeboom <zeger_hoogeboom@hotmail.com>
  * @author Oliwier Ptak <oliwierptak@gmail.com>
  */
-interface Message
+interface Message extends \Everon\Interfaces\Arrayable
 {
     /**
      * @param array $headers
@@ -54,45 +54,35 @@ interface Message
      * @return Recipient
      */
     function getRecipient();
+    
+    /**
+     * @param Address $From
+     */
+    function setFrom(Address $From);
 
     /**
-     * @param $fromEmail
-     * @return mixed
+     * @return Address
      */
-    function setFromEmail($fromEmail);
+    function getFrom();
 
     /**
-     * @return mixed
+     * @param mixed $text_body
      */
-    function getFromEmail();
-    /**
-     * @param mixed $fromName
-     */
-    function setFromName($fromName);
-
-    /**
-     * @return mixed
-     */
-    function getFromName();
-
-    /**
-     * @param mixed $plainBody
-     */
-    function setPlainBody($plainBody);
+    function setTextBody($text_body);
 
     /**
      * @return mixed
      */
-    function getPlainBody();
+    function getTextBody();
 
     /**
      * @param mixed $richBody
      */
-    function setRichBody($richBody);
+    function setHtmlBody($richBody);
 
     /**
      * @return mixed
      */
-    function getRichBody();
+    function getHtmlBody();
 
 }

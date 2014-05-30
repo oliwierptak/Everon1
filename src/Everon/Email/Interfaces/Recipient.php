@@ -13,12 +13,23 @@ namespace Everon\Email\Interfaces;
  * @author Zeger Hoogeboom <zeger_hoogeboom@hotmail.com>
  * @author Oliwier Ptak <oliwierptak@gmail.com>
  */
-interface Recipient
+interface Recipient extends \Everon\Interfaces\Arrayable
 {
+
+    /**
+     * @return array
+     */
+    function getCc();
+
     /**
      * @param array $cc
      */
     function setCc(array $cc);
+
+    /**
+     * @return array
+     */
+    function getBcc();
 
     /**
      * @param array $bcc
@@ -29,29 +40,8 @@ interface Recipient
      * @return array
      */
     function getTo();
-
-    /**
-     * @return array
-     */
-    function getBcc();
-
     /**
      * @param array $to
      */
     function setTo(array $to);
-
-    /**
-     * @return array
-     */
-    function getCc();
-
-    /**
-     * @param string $name
-     */
-    function setName($name);
-
-    /**
-     * @return string
-     */
-    function getName();
 }

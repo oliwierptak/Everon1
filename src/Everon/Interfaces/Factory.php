@@ -592,20 +592,20 @@ interface Factory
      */
     function buildEmailAddress($email, $name, $namespace='Everon\Email');
 
+
     /**
      * @param Email\Interfaces\Recipient $Recipient
-     * @param string $fromEmail
-     * @param string $fromName
+     * @param Email\Interfaces\Address $FromAddress
      * @param string $subject
-     * @param string $richBody
-     * @param string $plainBody
+     * @param string $html_body
+     * @param string $text_body
      * @param array $attachments
      * @param array $headers
      * @param string $namespace
      * @return Email\Interfaces\Message
      * @throws Exception\Factory
      */
-    function buildEmailMessage(Email\Interfaces\Recipient $Recipient, $fromEmail, $fromName, $subject, $richBody, $plainBody, array $attachments = [], array $headers = [], $namespace = 'Everon\Email');
+    function buildEmailMessage(Email\Interfaces\Recipient $Recipient, Email\Interfaces\Address $FromAddress, $subject, $html_body, $text_body='', array $attachments = [], array $headers = [], $namespace = 'Everon\Email');
 
     /**
      * @param $name

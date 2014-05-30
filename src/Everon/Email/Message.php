@@ -9,12 +9,15 @@
  */
 namespace Everon\Email;
 
+use Everon\Helper;
+
 /**
  * @author Zeger Hoogeboom <zeger_hoogeboom@hotmail.com>
  * @author Oliwier Ptak <oliwierptak@gmail.com>
  */
 class Message implements Interfaces\Message
 {
+    use Helper\ToArray;
 
     /**
      * @var Interfaces\Recipient
@@ -22,14 +25,9 @@ class Message implements Interfaces\Message
     protected $Recipient;
 
     /**
-     * @var string
+     * @var Interfaces\Address
      */
-    protected $fromEmail = null;
-
-    /**
-     * @var string
-     */
-    protected $fromName = null;
+    protected $From = null;
 
     /**
      * @var string
@@ -39,12 +37,12 @@ class Message implements Interfaces\Message
     /**
      * @var string
      */
-    protected $richBody = null;
+    protected $html_body = null;
 
     /**
      * @var string
      */
-    protected $plainBody = null;
+    protected $text_body = null;
 
     /**
      * @var array
@@ -57,15 +55,14 @@ class Message implements Interfaces\Message
     protected $headers = null;
 
 
-
-    public function __construct(Interfaces\Recipient $Recipient, $fromEmail, $fromName, $subject, $richBody, $plainBody, array $attachments=[], array $headers=[])
+    
+    public function __construct(Interfaces\Recipient $Recipient, Interfaces\Address $FromAddress, $subject, $html_body, $text_body='', array $attachments=[], array $headers=[])
     {
         $this->Recipient = $Recipient;
-        $this->fromEmail = $fromEmail;
-        $this->fromName = $fromName;
+        $this->From = $FromAddress;
         $this->subject = $subject;
-        $this->richBody = $richBody;
-        $this->plainBody = $plainBody;
+        $this->html_body = $html_body;
+        $this->text_body = $text_body;
         $this->headers = $headers;
         $this->attachments = $attachments;
     }
@@ -89,33 +86,33 @@ class Message implements Interfaces\Message
     /**
      * @inheritdoc
      */
-    public function setPlainBody($plainBody)
+    public function setTextBody($text_body)
     {
-        $this->plainBody = $plainBody;
+        $this->text_body = $text_body;
     }
 
     /**
      * @inheritdoc
      */
-    public function getPlainBody()
+    public function getTextBody()
     {
-        return $this->plainBody;
+        return $this->text_body;
     }
 
     /**
      * @inheritdoc
      */
-    public function setRichBody($richBody)
+    public function setHtmlBody($richBody)
     {
-        $this->richBody = $richBody;
+        $this->html_body = $richBody;
     }
 
     /**
      * @inheritdoc
      */
-    public function getRichBody()
+    public function getHtmlBody()
     {
-        return $this->richBody;
+        return $this->html_body;
     }
 
     /**
@@ -169,33 +166,30 @@ class Message implements Interfaces\Message
     /**
      * @inheritdoc
      */
-    public function setFromEmail($fromEmail)
+    public function setFrom(Interfaces\Address $From)
     {
-        $this->fromEmail = $fromEmail;
+        $this->From = $From;
     }
 
     /**
      * @inheritdoc
      */
-    public function getFromEmail()
+    public function getFrom()
     {
-        return $this->fromEmail;
+        return $this->From;
     }
-
-    /**
-     * @inheritdoc
-     */
-    public function setFromName($fromName)
+    
+    public function getToArray()
     {
-        $this->fromName = $fromName;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getFromName()
-    {
-        return $this->fromName;
+        return [
+            'recipient' => $this->getRecipient()->toArray(),
+            'from' => $this->getFrom()->toArray(),
+            'subject' => $this->getSubject(),
+            'html_body' => $this->getHtmlBody(),
+            'text_body' => $this->getTextBody(),
+            'attachments' => (new Helper\Collection($this->getAttachments()))->toArray(true),
+            'headers' => (new Helper\Collection($this->getHeaders()))->toArray(true)
+        ];
     }
 
 }

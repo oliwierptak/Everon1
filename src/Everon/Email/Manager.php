@@ -26,4 +26,4 @@ class Manager implements Interfaces\Manager
     {
         return $Sender->send($Message);
     }
-} 
+}
