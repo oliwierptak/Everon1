@@ -250,7 +250,10 @@ class Manager implements Interfaces\Manager
             }
             
             $Theme = $this->createView($view_name, $TemplateDirectory->getPathname(), 'Everon\View\\'.$theme_name);
-            $view_variables = $this->getConfigManager()->getConfigValue("view.$view_name", []);
+            $view_variables = $this->getConfigManager()->getConfigValue("view.$view_name", null);
+            if ($view_variables === null) {
+                throw new Exception\ViewManager('View: "%s" not defined in view.ini', $view_name);
+            }
             $IndexTemplate = $Theme->getTemplate('index', $view_variables);
             
             if ($IndexTemplate === null) { //fallback to default theme and view
@@ -289,11 +292,17 @@ class Manager implements Interfaces\Manager
         
         try {
             //try to load module view
-            return $this->getFactory()->buildView($name, $TemplateDirectory->getPathname().DIRECTORY_SEPARATOR, $default_extension, $namespace);
+            try {
+                return $this->getFactory()->buildView($name, $TemplateDirectory->getPathname().DIRECTORY_SEPARATOR, $default_extension, $namespace);
+            }
+            catch (Exception\Factory $e) { //fallback to theme view
+                $namespace = 'Everon\View\\'.$this->getCurrentThemeName();
+                return $this->getFactory()->buildView($name, $TemplateDirectory->getPathname().DIRECTORY_SEPARATOR, $default_extension, $namespace);
+            }
         }
-        catch (Exception\Factory $e) { //fallback to theme view
+        catch (Exception\Factory $e) { //fallback to default index theme view
             $namespace = 'Everon\View\\'.$this->getCurrentThemeName();
-            return $this->getFactory()->buildView($name, $TemplateDirectory->getPathname().DIRECTORY_SEPARATOR, $default_extension, $namespace);
+            return $this->getFactory()->buildView('Index', $TemplateDirectory->getPathname().DIRECTORY_SEPARATOR, $default_extension, $namespace);
         }
     }
 
