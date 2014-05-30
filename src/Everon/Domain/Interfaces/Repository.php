@@ -30,12 +30,11 @@ interface Repository
     function getEntityById($id);
 
     /**
-     * @param $property_name
-     * @param $property_value
+     * @param array $property_criteria
      * @param Criteria $RelationCriteria
      * @return Entity|null
      */
-    function getEntityByPropertyValue($property_name, $property_value, Criteria $RelationCriteria=null);
+    function getEntityByPropertyValue(array $property_criteria, Criteria $RelationCriteria=null);
 
     /**
      * @param array $data

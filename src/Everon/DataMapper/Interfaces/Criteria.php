@@ -17,6 +17,12 @@ interface Criteria extends \Everon\Interfaces\Arrayable
 
     function orderBy($order_by);
 
+    /**
+     * @param $group_by
+     * @return $this
+     */
+    function groupBy($group_by);
+
     function getOffsetLimitSql();
 
     function getWhereSql();

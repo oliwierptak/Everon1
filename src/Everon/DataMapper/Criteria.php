@@ -63,7 +63,10 @@ class Criteria implements Interfaces\Criteria
         $this->order_by = $order_by;
         return $this;
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public function groupBy($group_by)
     {
         $this->group_by = $group_by;

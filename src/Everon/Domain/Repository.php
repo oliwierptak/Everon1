@@ -11,6 +11,7 @@ namespace Everon\Domain;
 
 use Everon\DataMapper\Interfaces\Criteria;
 use Everon\Dependency;
+use Everon\Domain;
 use Everon\Domain\Interfaces;
 use Everon\Interfaces\Collection;
 use Everon\Interfaces\DataMapper;
@@ -18,8 +19,9 @@ use Everon\Helper;
 
 abstract class Repository implements Interfaces\Repository
 {
-    use \Everon\Domain\Dependency\Injection\DomainManager;
+    use Domain\Dependency\Injection\DomainManager;
     use Dependency\Injection\Factory;
+    use Helper\Arrays;
     
     /**
      * @var DataMapper
@@ -124,16 +126,12 @@ abstract class Repository implements Interfaces\Repository
     }
 
     /**
-     * @param $property_name
-     * @param $property_value
-     * @param Criteria $RelationCriteria
-     * @return Interfaces\Entity|null
+     * @inheritdoc
      */
-    public function getEntityByPropertyValue($property_name, $property_value, Criteria $RelationCriteria=null)
+    public function getEntityByPropertyValue(array $property_criteria, Criteria $RelationCriteria=null)
     {
-        $Criteria = (new \Everon\DataMapper\Criteria())->where([
-            $property_name => $property_value
-        ]);
+        $where = $this->arrayMergeDefault([], $property_criteria);
+        $Criteria = (new \Everon\DataMapper\Criteria())->where($where);
         return $this->getOneByCriteria($Criteria, $RelationCriteria);
     }
 
