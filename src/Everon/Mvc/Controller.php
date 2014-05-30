@@ -137,6 +137,7 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
         }
 
         $Theme = $this->getViewManager()->getCurrentTheme('Error');
+        $this->getView()->set('body', '');
         $Theme->set('error', $message);
         $data = $this->arrayMergeDefault($Theme->getData(), $this->getView()->getData());
         $Theme->setData($data);
