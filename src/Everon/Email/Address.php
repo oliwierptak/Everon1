@@ -30,7 +30,7 @@ class Address implements Interfaces\Address
      * @param $name
      * @param $email
      */
-    public function __construct($name, $email)
+    public function __construct($email, $name)
     {
         $this->email = $email;
         $this->name = $name;

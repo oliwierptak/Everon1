@@ -59,7 +59,7 @@ class Swift implements Interfaces\Sender
          * @var \Swift_Message $SwiftMessage
          */
         $SwiftMessage = \Swift_Message::newInstance($Message->getSubject())
-            ->setFrom([$Message->getFromEmail() => $Message->getFrom()])
+            ->setFrom([$Message->getFrom()->getEmail() => $Message->getFrom()->getName()])
             ->setTo($to)
             ->setCc($cc)
             ->setBcc($bcc)
