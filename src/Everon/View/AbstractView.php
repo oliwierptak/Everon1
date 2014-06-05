@@ -130,6 +130,8 @@ abstract class AbstractView implements Interfaces\View
         if ($this->Container === null) {
             throw new Exception\Template('Invalid container type');
         }
+
+        $this->set('View', $this); //todo: meh
     }
 
     /**
