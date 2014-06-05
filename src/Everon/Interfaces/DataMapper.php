@@ -42,7 +42,7 @@ interface DataMapper
 
     /**
      * @param Criteria $Criteria
-     * @return mixed
+     * @return array
      */
     function fetchOneByCriteria(Criteria $Criteria);
 
