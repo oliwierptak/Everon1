@@ -28,8 +28,6 @@ class PdoAdapter implements Interfaces\PdoAdapter
      */
     protected $ConnectionConfig = null;
     
-    protected $transaction_count = 0; 
-
 
     /**
      * @param \PDO $Pdo
@@ -47,12 +45,9 @@ class PdoAdapter implements Interfaces\PdoAdapter
      */
     public function beginTransaction()
     {
-        if ($this->transaction_count > 0) {
-            return;
+        if ($this->getPdo()->inTransaction() === false) {
+            $this->getPdo()->beginTransaction();
         }
-
-        $this->getPdo()->beginTransaction();
-        $this->transaction_count++;
     }
 
     /**
@@ -61,7 +56,6 @@ class PdoAdapter implements Interfaces\PdoAdapter
     public function commitTransaction()
     {
         $this->getPdo()->commit();
-        $this->transaction_count--;
     }
 
     /**
@@ -72,7 +66,6 @@ class PdoAdapter implements Interfaces\PdoAdapter
         if ($this->getPdo()->inTransaction()) {
             $this->getPdo()->rollBack();
         }
-        $this->transaction_count = 0;
     }
 
     /**
