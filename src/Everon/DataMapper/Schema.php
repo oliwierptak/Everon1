@@ -43,6 +43,7 @@ class Schema implements Interfaces\Schema
     /**
      * @param Interfaces\Schema\Reader $SchemaReader
      * @param Interfaces\ConnectionManager $ConnectionManager
+     * @param Domain\Interfaces\Mapper $DomainMapper
      */
     public function __construct(Interfaces\Schema\Reader $SchemaReader, Interfaces\ConnectionManager $ConnectionManager, Domain\Interfaces\Mapper $DomainMapper)
     {
