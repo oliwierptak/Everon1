@@ -27,6 +27,8 @@ class PdoAdapter implements Interfaces\PdoAdapter
      * @var ConnectionItem
      */
     protected $ConnectionConfig = null;
+    
+    protected $transaction_count = 0; 
 
 
     /**
@@ -40,16 +42,48 @@ class PdoAdapter implements Interfaces\PdoAdapter
     }
 
     /**
+     * @inheritdoc
+     */
+    public function beginTransaction()
+    {
+        if ($this->transaction_count > 0) {
+            return;
+        }
+
+        $this->getPdo()->beginTransaction();
+        $this->transaction_count++;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function commitTransaction()
+    {
+        $this->getPdo()->commit();
+        $this->transaction_count--;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function rollbackTransaction()
+    {
+        if ($this->getPdo()->inTransaction()) {
+            $this->getPdo()->rollBack();
+        }
+        $this->transaction_count = 0;
+    }
+
+    /**
      * @param $sql
      * @param $parameters
      * @param $fetch_mode
      * @return \PDOStatement
      */
-    protected function beginTransaction($sql, $parameters, $fetch_mode)
+    protected function executeSql($sql, $parameters, $fetch_mode)
     {
         $this->getLogger()->sql($sql."|".print_r($parameters, true));
         $statement = $this->getPdo()->prepare($sql, [\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY]);
-        $this->getPdo()->beginTransaction();
 
         if ($parameters !== null) {
             $result = $statement->execute($parameters);
@@ -100,14 +134,13 @@ class PdoAdapter implements Interfaces\PdoAdapter
     public function execute($sql, array $parameters=null, $fetch_mode=\PDO::FETCH_ASSOC)
     {
         try {
-            $statement = $this->beginTransaction($sql, $parameters, $fetch_mode);
-            $this->getPdo()->commit();
+            $this->beginTransaction();
+            $statement = $this->executeSql($sql, $parameters, $fetch_mode);
+            $this->commitTransaction();
             return $statement;
         }
         catch (\PDOException $e) {
-            if ($this->getPdo()->inTransaction()) {
-                $this->getPdo()->rollBack();
-            }
+            $this->rollbackTransaction();
             $this->getLogger()->sql_error($sql."|".print_r($parameters, true)); //todo: addFromArray logSql to logger to handle thot
             throw new Exception\Pdo($e);
         }
@@ -119,14 +152,15 @@ class PdoAdapter implements Interfaces\PdoAdapter
     public function insert($sql, array $parameters=[], $sequence_name=null, $fetch_mode=\PDO::FETCH_ASSOC)
     {
         try {
-            $statement = $this->beginTransaction($sql, $parameters, $fetch_mode);
+            $this->beginTransaction();
+            $statement = $this->executeSql($sql, $parameters, $fetch_mode);
             //$last_id = $this->getPdo()->lastInsertId($sequence_name);
             $last_id = $statement->fetchColumn();
-            $this->getPdo()->commit();
+            $this->commitTransaction();
             return $last_id;
         }   
         catch (\PDOException $e) {
-            $this->getPdo()->rollBack();
+            $this->rollbackTransaction();
             throw new Exception\Pdo($e);
         }
     }
@@ -137,12 +171,13 @@ class PdoAdapter implements Interfaces\PdoAdapter
     public function update($sql, array $parameters=[], $fetch_mode=\PDO::FETCH_ASSOC)
     {
         try {
-            $statement = $this->beginTransaction($sql, $parameters, $fetch_mode);
-            $this->getPdo()->commit();
+            $this->beginTransaction();
+            $statement = $this->executeSql($sql, $parameters, $fetch_mode);
+            $this->commitTransaction();
             return $statement->rowCount();
         }
         catch (\PDOException $e) {
-            $this->getPdo()->rollBack();
+            $this->rollbackTransaction();
             throw new Exception\Pdo($e);
         }
     }

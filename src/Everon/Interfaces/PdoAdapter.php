@@ -71,4 +71,19 @@ interface PdoAdapter
      * @return \PDO
      */
     function getPdo();
+
+    /**
+     * @inheritdoc
+     */
+    function beginTransaction();
+
+    /**
+     * @inheritdoc
+     */
+    function commitTransaction();
+
+    /**
+     * @inheritdoc
+     */
+    function rollbackTransaction();
 }
