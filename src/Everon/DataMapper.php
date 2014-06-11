@@ -171,7 +171,7 @@ abstract class DataMapper implements Interfaces\DataMapper
     }
 
     /**
-     * @return Table
+     * @inheritdoc
      */
     public function getTable()
     {
@@ -179,11 +179,67 @@ abstract class DataMapper implements Interfaces\DataMapper
     }
 
     /**
-     * @param Table $Table
+     * @inheritdoc
      */
     public function setTable(Table $Table)
     {
         $this->Table = $Table;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setReadConnectionName($read_connection_name)
+    {
+        $this->read_connection_name = $read_connection_name;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getReadConnectionName()
+    {
+        return $this->read_connection_name;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setWriteConnectionName($write_connection_name)
+    {
+        $this->write_connection_name = $write_connection_name;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getWriteConnectionName()
+    {
+        return $this->write_connection_name;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function beginTransaction()
+    {
+        $this->getSchema()->getPdoAdapterByName($this->write_connection_name)->beginTransaction();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function commitTransaction()
+    {
+        $this->getSchema()->getPdoAdapterByName($this->write_connection_name)->commitTransaction();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function rollbackTransaction()
+    {
+        $this->getSchema()->getPdoAdapterByName($this->write_connection_name)->rollbackTransaction();
     }
 
 }

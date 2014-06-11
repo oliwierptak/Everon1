@@ -194,4 +194,19 @@ abstract class Repository implements Interfaces\Repository
         $this->getMapper()->delete($Entity->getId(), $user_id);
         $Entity->delete();
     }
+
+    public function beginTransaction()
+    {
+        $this->getMapper()->getSchema()->getPdoAdapterByName($this->getMapper()->getWriteConnectionName())->beginTransaction();
+    }
+
+    public function commitTransaction()
+    {
+        $this->getMapper()->getSchema()->getPdoAdapterByName($this->getMapper()->getWriteConnectionName())->commitTransaction();
+    }
+
+    public function rollbackTransaction()
+    {
+        $this->getMapper()->getSchema()->getPdoAdapterByName($this->getMapper()->getWriteConnectionName())->rollbackTransaction();
+    }
 }

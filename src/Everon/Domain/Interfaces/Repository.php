@@ -85,4 +85,10 @@ interface Repository
      * @return Entity
      */
     function buildFromArray(array $data);
+
+    function beginTransaction();
+
+    function commitTransaction();
+
+    function rollbackTransaction();
 }
