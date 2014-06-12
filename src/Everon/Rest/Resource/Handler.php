@@ -184,7 +184,7 @@ class Handler implements Interfaces\ResourceHandler
     public function expandResource(Interfaces\Resource $Resource, array $resources_to_expand)
     {
         foreach ($resources_to_expand as $collection_name) {
-            $domain_name = $this->getDomainNameFromMapping($collection_name);
+            $domain_name = $this->getDomainNameFromMapping($collection_name);  
             /**
              * @var \Everon\Interfaces\Collection $RelationCollection
              */
@@ -192,9 +192,14 @@ class Handler implements Interfaces\ResourceHandler
             $relation_list = $RelationCollection->toArray();
 
             $RelationCollection = new Helper\Collection([]);
-            for ($a=0 ;$a<count($relation_list); $a++) {
-                $CollectionEntity = $relation_list[$a];
-                $RelationCollection->set($a, $this->buildResourceFromEntity($CollectionEntity, $Resource->getVersion(), $collection_name));
+            if (is_array($relation_list)) {
+                for ($a=0 ;$a<count($relation_list); $a++) {
+                    $CollectionEntity = $relation_list[$a];
+                    $RelationCollection->set($a, $this->buildResourceFromEntity($CollectionEntity, $Resource->getVersion(), $collection_name));
+                }
+            }
+            else {
+                $RelationCollection->set(0, $this->buildResourceFromEntity($relation_list, $Resource->getVersion(), $collection_name));
             }
 
             $CollectionResource = $this->getFactory()->buildRestCollectionResource($domain_name, $Resource->getHref(), $RelationCollection);
