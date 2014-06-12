@@ -32,32 +32,46 @@ class Criteria implements Interfaces\Criteria
     protected $group_by = null;
     
     protected $sort = 'ASC';
-    
-    
+
+    /**
+     * @inheritdoc
+     */
     public function where(array $where)
     {
         $this->where = $this->arrayMergeDefault($this->where, $where);
         return $this;
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public function in(array $in)
     {
         $this->in = $this->arrayMergeDefault($this->in, $in);
         return $this;
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public function offset($offset)
     {
         $this->offset = (int) $offset;
         return $this;
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public function limit($limit)
     {
         $this->limit = (int) $limit;
         return $this;
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public function orderBy($order_by)
     {
         $this->order_by = $order_by;
