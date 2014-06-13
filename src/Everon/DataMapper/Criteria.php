@@ -20,18 +20,21 @@ class Criteria implements Interfaces\Criteria
     use Helper\ToString;
     
     protected $where = [];
-    
+
     protected $in = [];
-    
+
+    protected $ilike = [];
+
     protected $offset = null;
-    
+
     protected $limit = null;
 
     protected $order_by = null;
-    
+
     protected $group_by = null;
-    
+
     protected $sort = 'ASC';
+    
 
     /**
      * @inheritdoc
@@ -48,6 +51,15 @@ class Criteria implements Interfaces\Criteria
     public function in(array $in)
     {
         $this->in = $this->arrayMergeDefault($this->in, $in);
+        return $this;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function ilike(array $ilike)
+    {
+        $this->ilike = $this->arrayMergeDefault($this->ilike, $ilike);
         return $this;
     }
 
@@ -95,7 +107,7 @@ class Criteria implements Interfaces\Criteria
     
     public function getWhereSql()
     {
-        if (empty($this->where)) {
+        if (empty($this->where) && empty($this->in) && empty($this->ilike)) {
             return '';
         }
         
@@ -108,10 +120,20 @@ class Criteria implements Interfaces\Criteria
         if (empty($this->in) === false) {
             $where_str .= ' ';
             foreach ($this->in as $field => $values) {
-                $in_str = implode(',', $values);
-                $where_str .= " AND ${field} IN (${in_str})";
+                $ilike_str = implode(',', $values);
+                $where_str .= " AND ${field} IN (${ilike_str})";
             }
         }
+
+        if (empty($this->ilike) === false) {
+            $where_str .= ' ';
+            foreach ($this->ilike as $field => $value) {
+                $field_ok = str_replace('.', '_', $field); //replace z.id with z_id
+                $where_str .= " AND ${field} ILIKE :${field_ok}";
+            }
+        }
+        
+        $this->where = $this->arrayMergeDefault($this->where, $this->ilike);
         
         return $where_str;
     }

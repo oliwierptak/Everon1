@@ -47,6 +47,12 @@ interface Criteria extends \Everon\Interfaces\Arrayable
      */
     function in(array $in);
 
+    /**
+     * @param array $ilike
+     * @return $this
+     */
+    function ilike(array $ilike);
+
     function sort($sort);
 
     /**
