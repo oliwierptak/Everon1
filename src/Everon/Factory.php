@@ -471,6 +471,26 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
+    public function buildViewHtmlForm(Config\Interfaces\ItemRouter $RouteItem, $namespace='Everon\View\Html')
+    {
+        try {
+            $class_name = $this->getFullClassName($namespace, 'Form');
+            $this->classExists($class_name);
+            /**
+             * @var View\Interfaces\View $ViewHtmlForm
+             */
+            $ViewHtmlForm = new $class_name($RouteItem);
+            $this->injectDependencies($class_name, $ViewHtmlForm);
+            return $ViewHtmlForm;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('ViewHtmlForm initialization error for: "%s"', $RouteItem->getName(), $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function buildViewManager(array $compilers_to_init, $view_directory, $cache_directory)
     {
         try {

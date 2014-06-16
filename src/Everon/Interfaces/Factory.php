@@ -421,6 +421,14 @@ interface Factory
     function buildViewCache(Interfaces\FileSystem $FileSystem);
 
     /**
+     * @param Config\Interfaces\ItemRouter $RouteItem
+     * @param string $namespace
+     * @return View\Interfaces\Form
+     * @throws Exception\Factory
+     */
+    function buildViewHtmlForm(Config\Interfaces\ItemRouter $RouteItem, $namespace='Everon\View\Html');
+
+    /**
      * @param array $compilers_to_init
      * @param $view_directory
      * @param $cache_directory
