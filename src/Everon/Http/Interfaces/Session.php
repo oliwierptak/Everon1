@@ -9,9 +9,9 @@
  */
 namespace Everon\Http\Interfaces;
 
-use Everon\Interfaces\Collection;
+use Everon\Interfaces\Arrayable;
 
-interface Session extends Collection
+interface Session extends Arrayable
 {
     /**
      * @return string

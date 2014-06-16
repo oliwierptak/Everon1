@@ -94,6 +94,12 @@ class LazyCollection extends Collection
         $this->actuate();
         return parent::get($name, $default);
     }
+
+    public function isEmpty()
+    {
+        $this->actuate();
+        return parent::isEmpty();
+    }
     
     public function toArray($deep=false)
     {
