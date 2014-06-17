@@ -130,8 +130,7 @@ abstract class Repository implements Interfaces\Repository
      */
     public function getEntityByPropertyValue(array $property_criteria, Criteria $RelationCriteria=null)
     {
-        $where = $this->arrayMergeDefault([], $property_criteria);
-        $Criteria = (new \Everon\DataMapper\Criteria())->where($where);
+        $Criteria = (new \Everon\DataMapper\Criteria())->where($property_criteria);
         return $this->getOneByCriteria($Criteria, $RelationCriteria);
     }
 
