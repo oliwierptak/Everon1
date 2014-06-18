@@ -32,4 +32,28 @@ interface Session extends Arrayable
      * @param \DateTime $start_time
      */
     function setStartTime(\DateTime $start_time);
+
+    /**
+     * @param $name
+     * @return bool
+     */
+    function has($name);
+    
+    /**
+     * @param $name
+     */
+    function remove($name);
+
+    /**
+     * @param $name
+     * @param $value
+     */
+    function set($name, $value);
+
+    /**
+     * @param $name
+     * @param null $default
+     * @return null
+     */
+    function get($name, $default=null);
 }
