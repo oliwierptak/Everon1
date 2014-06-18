@@ -42,6 +42,12 @@ interface Criteria extends \Everon\Interfaces\Arrayable
     function where(array $where);
 
     /**
+     * @param array $where_or
+     * @return \Everon\DataMapper\Interfaces\Criteria
+     */
+    function whereOr(array $where_or);
+
+    /**
      * @param array $in
      * @return $this
      */

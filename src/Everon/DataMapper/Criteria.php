@@ -20,6 +20,8 @@ class Criteria implements Interfaces\Criteria
     use Helper\ToString;
     
     protected $where = [];
+    
+    protected $where_or = [];
 
     protected $in = [];
 
@@ -42,6 +44,15 @@ class Criteria implements Interfaces\Criteria
     public function where(array $where)
     {
         $this->where = $this->arrayMergeDefault($this->where, $where);
+        return $this;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function whereOr(array $where_or)
+    {
+        $this->where_or = $this->arrayMergeDefault($this->where_or, $where_or);
         return $this;
     }
 
@@ -111,11 +122,21 @@ class Criteria implements Interfaces\Criteria
             return '';
         }
         
-        $where_str = 'WHERE 1=1';
+        $where_str = '1=1';
         foreach ($this->where as $field => $value) {
             $field_ok = str_replace('.', '_', $field); //replace z.id with z_id
             $where_str .= " AND ${field} = :${field_ok}";
         }
+        $where_str = (empty($this->where) === false) ? '('.$where_str.')' : $where_str;
+
+        $where_or_str = '';
+        foreach ($this->where_or as $field => $value) {
+            $field_ok = str_replace('.', '_', $field);
+            $where_or_str .= " OR ${field} = :${field_ok}";
+        }
+        $where_or_str = (empty($this->where_or) === false) ? '('.$where_or_str.')' : $where_or_str;
+        
+        $where_str = 'WHERE '.$where_str.$where_or_str;
         
         if (empty($this->in) === false) {
             $where_str .= ' ';
