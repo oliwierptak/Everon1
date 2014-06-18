@@ -45,7 +45,7 @@ class Navigator implements Interfaces\ResourceNavigator
     protected function getParameterValue($name, $default=null)
     {
         $as_array = is_array($default);
-        $value = $this->getRequest()->getQueryParameter($name, null);
+        $value = $this->getRequest()->getGetParameter($name, null);
         if ($value !== null) {
             if ($as_array || strpos($value, static::PARAM_SEPARATOR) !== false) {
                 $value = explode(static::PARAM_SEPARATOR, trim($value, static::PARAM_SEPARATOR)); //eg. date_added,user_name
@@ -69,7 +69,7 @@ class Navigator implements Interfaces\ResourceNavigator
         $this->limit = $this->getParameterValue('limit', 10);
         $this->offset = $this->getParameterValue('offset', 0);
         $this->sort = [];
-        
+
         $collection = $this->getRequest()->getQueryParameter('collection', null);
         if ($collection !== null) {
             $this->expand = array_merge($this->expand, [$collection]);
