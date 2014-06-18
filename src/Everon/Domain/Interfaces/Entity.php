@@ -102,6 +102,18 @@ interface Entity extends Interfaces\Arrayable
     function getRelationCollectionByName($name);
 
     /**
+     * @param $name
+     * @return array|null
+     */
+    function getOneToManyRelation($name);
+
+    /**
+     * @param $name
+     * @return array
+     */
+    function getManyToManyRelation($name);
+
+    /**
      * @return string
      */
     function getDomainName();
