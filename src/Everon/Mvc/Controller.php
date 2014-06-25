@@ -88,7 +88,7 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
     /**
      * @param View\Interfaces\View $View
      * @param $action
-     * @return bool|null
+     * @return bool
      */
     protected function executeView(View\Interfaces\View $View, $action)
     {
