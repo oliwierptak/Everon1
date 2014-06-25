@@ -13,6 +13,18 @@ use Everon\Exception;
 
 interface FileSystem
 {
+    /**
+     * @param $path
+     * @return bool
+     */
+    function directoryExists($path);
+
+    /**
+     * @param $path
+     * @return bool
+     */
+    function fileExists($path);
+        
     function getRealPath($path);
     
     function getRoot();
