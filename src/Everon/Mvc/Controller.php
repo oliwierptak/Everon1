@@ -86,11 +86,11 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
     }
 
     /**
-     * @param $View
+     * @param View\Interfaces\View $View
      * @param $action
      * @return bool|null
      */
-    protected function executeView($View, $action)
+    protected function executeView(View\Interfaces\View $View, $action)
     {
         $result = $View->execute($action);
         $result = ($result !== false) ? true : $result;
