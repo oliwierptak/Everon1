@@ -19,6 +19,7 @@ abstract class AbstractView implements Interfaces\View
     use Dependency\Injection\Request;
 
     use Helper\Arrays;
+    use Helper\IsCallable;
     use Helper\IsIterable;
     use Helper\String\EndsWith;
     use Helper\String\LastTokenToName;
@@ -34,6 +35,8 @@ abstract class AbstractView implements Interfaces\View
     protected $Container = null;
 
     protected $default_extension = '.php';
+    
+    protected $index_executed = false;
 
 
     /**
@@ -209,6 +212,28 @@ abstract class AbstractView implements Interfaces\View
     public function getFilename()
     {
         return new \SplFileInfo($this->getTemplateDirectory().$this->getName().$this->getDefaultExtension());
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function execute($action)
+    {
+        if ($this->index_executed === false) {
+            $default_action = 'index';
+            if (strcasecmp($action, $default_action) !== 0) {
+                if ($this->isCallable($this, $default_action)) {
+                    $this->{$default_action}();
+                }
+            }
+        }
+        $this->index_executed = true;
+
+        if ($this->isCallable($this, $action)) {
+            return $this->{$action}();
+        }
+        
+        return null;
     }
     
 }

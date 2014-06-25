@@ -92,13 +92,9 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
      */
     protected function executeView($View, $action)
     {
-        if ($this->isCallable($View, $action)) {
-            $result = $View->{$action}();
-            $result = ($result !== false) ? true : $result;
-            return $result;
-        }
-        
-        return null;
+        $result = $View->execute($action);
+        $result = ($result !== false) ? true : $result;
+        return $result;
     }
     
     /**

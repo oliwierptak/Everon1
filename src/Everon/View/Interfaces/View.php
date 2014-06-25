@@ -80,4 +80,11 @@ interface View
      * @return \SplFileInfo
      */
     function getFilename();
+
+
+    /**
+     * @param $action
+     * @return mixed
+     */
+    function execute($action);
 }
