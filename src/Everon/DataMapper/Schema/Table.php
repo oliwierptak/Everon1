@@ -191,6 +191,10 @@ class Table implements Interfaces\Schema\Table
                 $entity_data[$name] = null;
                 continue;
             }
+            
+            if (array_key_exists($name, $data) === false) {
+                throw new Exception\Table('Invalid data value for column: "%s"', $name);
+            }
 
             $value = $Column->validateColumnValue($data[$name]);
             $entity_data[$name] = $value;
