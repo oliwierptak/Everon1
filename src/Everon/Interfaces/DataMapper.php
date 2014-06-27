@@ -38,7 +38,7 @@ interface DataMapper
      * @param Criteria $Criteria
      * @return int
      */
-    function count(Criteria $Criteria);
+    function count(Criteria $Criteria=null);
 
     /**
      * @param int $id

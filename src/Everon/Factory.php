@@ -262,12 +262,12 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildRestCollectionResource($name, Rest\Interfaces\ResourceHref $Href, Interfaces\Collection $Collection, $namespace='Everon\Rest\Resource')
+    public function buildRestCollectionResource($name, Rest\Interfaces\ResourceHref $Href, Interfaces\Collection $Collection, Interfaces\Paginator $Paginator, $namespace='Everon\Rest\Resource')
     {
         try {
-            $class_name = 'Everon\Rest\Resource\Collection';
+            $class_name = $this->getFullClassName($namespace, 'Collection');
             $this->classExists($class_name);
-            $CollectionResource = new $class_name($Href, $Collection);
+            $CollectionResource = new $class_name($Href, $Collection, $Paginator);
             $this->injectDependencies($class_name, $CollectionResource);
             return $CollectionResource;
         }
@@ -1397,6 +1397,23 @@ abstract class Factory implements Interfaces\Factory
         }
         catch (\Exception $e) {
             throw new Exception\Factory('TaskManager initialization error', null, $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildPaginator($total_count, $items_per_page, $namespace='Everon\Helper')
+    {
+        try {
+            $class_name = $this->getFullClassName($namespace, 'Paginator');
+            $this->classExists($class_name);
+            $Paginator = new $class_name($total_count, $items_per_page);
+            $this->injectDependencies($class_name, $Paginator);
+            return $Paginator;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('Paginator initialization error', null, $e);
         }
     }
 }

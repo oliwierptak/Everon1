@@ -102,22 +102,12 @@ abstract class Mapper extends DataMapper
 
     protected function getCountSql(Interfaces\Criteria $Criteria)
     {
-        $Criteria->where([
-            'schema' => $this->getTable()->getSchema(),
-            'table' => $this->getTable()->getName(),
-            'oid' => sprintf("'%s.%s'::regclass;", $this->getTable()->getSchema(), $this->getTable()->getName())
-        ]);
-        $sql = "
-            SELECT reltuples AS total_count FROM pg_class 
-            
-            -- WHERE oid = '%s.%s'::regclass;
-             
-            "; 
+        $table_name = sprintf('%s.%s', $this->getTable()->getSchema(), $this->getTable()->getName());
+        $sql = "SELECT pgc.reltuples AS total_count FROM pg_catalog.pg_class AS pgc "; 
         $sql .= $Criteria;
-        
-        sd($sql);
+        $where_str = empty($Criteria->getWhere()) ? 'WHERE ' : ''; 
+        $sql .= $where_str.' pgc.oid = '.sprintf("'${table_name}'::regclass", $this->getTable()->getSchema(), $this->getTable()->getName());
 
-        $sql = sprintf($sql, $this->getTable()->getSchema(), $this->getTable()->getName());
         return [$sql, $Criteria->getWhere()];
     }
 }

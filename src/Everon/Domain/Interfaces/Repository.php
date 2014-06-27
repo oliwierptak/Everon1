@@ -48,6 +48,12 @@ interface Repository
      * @return array|null
      */
     function getByCriteria(Criteria $Criteria);
+
+    /**
+     * @param Criteria $Criteria
+     * @return int
+     */
+    function count(Criteria $Criteria=null);
         
     /**
      * @param Entity $Entity

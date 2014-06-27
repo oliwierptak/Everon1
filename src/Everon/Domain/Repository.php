@@ -150,9 +150,7 @@ abstract class Repository implements Interfaces\Repository
     }
 
     /**
-     * @param Criteria $Criteria
-     * @param Criteria $RelationCriteria
-     * @return array|null
+     * @inheritdoc
      */
     public function getByCriteria(Criteria $Criteria, Criteria $RelationCriteria=null)
     {
@@ -167,6 +165,14 @@ abstract class Repository implements Interfaces\Repository
         }
         
         return $result;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function count(Criteria $Criteria=null)
+    {
+        return $this->getMapper()->count($Criteria);
     }
 
     /**

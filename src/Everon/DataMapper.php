@@ -134,13 +134,12 @@ abstract class DataMapper implements Interfaces\DataMapper
     /**
      * @inheritdoc
      */
-    public function count(Criteria $Criteria)
+    public function count(Criteria $Criteria=null)
     {
+        $Criteria = $Criteria ?: new DataMapper\Criteria();
         list($sql, $parameters) = $this->getCountSql($Criteria);
-        $Stm = $this->getSchema()->getPdoAdapterByName($this->write_connection_name)->execute($sql, $parameters);
-        $data = $Stm->fetch(\PDO::FETCH_ASSOC);
-        sd($data);
-        return (int) $data['total_count'];
+        $PdoStatement = $this->getSchema()->getPdoAdapterByName($this->read_connection_name)->execute($sql, $parameters);
+        return (int) $PdoStatement->fetchColumn();
     }
 
     /**

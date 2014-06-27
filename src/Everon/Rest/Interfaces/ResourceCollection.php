@@ -14,6 +14,16 @@ use Everon\Interfaces\Collection;
 interface ResourceCollection extends ResourceBasic
 {
     /**
+     * @param \Everon\Interfaces\Paginator $Paginator
+     */
+    function setPaginator(\Everon\Interfaces\Paginator $Paginator);
+
+    /**
+     * @return \Everon\Interfaces\Paginator
+     */
+    function getPaginator();
+        
+    /**
      * @param int $collection_offset
      */
     function setOffset($collection_offset);

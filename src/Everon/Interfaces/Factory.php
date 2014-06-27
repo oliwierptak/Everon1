@@ -121,11 +121,11 @@ interface Factory
      * @param $name
      * @param Rest\Interfaces\ResourceHref $Href
      * @param Interfaces\Collection $Collection
+     * @param Interfaces\Paginator $Paginator
      * @param string $namespace
      * @return Rest\Interfaces\ResourceCollection
-     * @throws Exception\Factory
      */
-    function buildRestCollectionResource($name, Rest\Interfaces\ResourceHref $Href, Interfaces\Collection $Collection, $namespace='Everon\Rest\Resource');
+    function buildRestCollectionResource($name, Rest\Interfaces\ResourceHref $Href, Interfaces\Collection $Collection, Interfaces\Paginator $Paginator, $namespace='Everon\Rest\Resource');
 
     /**
      * @param Rest\Interfaces\Request $Request
@@ -662,5 +662,14 @@ interface Factory
      * @throws \Everon\Exception\Factory
      */
     function buildTaskItem($type, $data, $namespace);
+
+    /**
+     * @param $total_count
+     * @param $items_per_page
+     * @param string $namespace
+     * @return Paginator
+     * @throws Exception\Factory
+     */
+    function buildPaginator($total_count, $items_per_page, $namespace='Everon\Helper');
 
 }

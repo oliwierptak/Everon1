@@ -33,6 +33,7 @@ class Handler implements Interfaces\ResourceHandler
     const VERSIONING_HEADER = 'header';
     const ALPHA_ID_SALT = 'aVg656';
 
+    protected $pagination_items_per_page = 10;
 
     /**
      * @var array
@@ -184,7 +185,9 @@ class Handler implements Interfaces\ResourceHandler
     public function expandResource(Interfaces\Resource $Resource, array $resources_to_expand)
     {
         foreach ($resources_to_expand as $collection_name) {
-            $domain_name = $this->getDomainNameFromMapping($collection_name);  
+            $domain_name = $this->getDomainNameFromMapping($collection_name);
+            $Repository = $this->getDomainManager()->getRepository($domain_name);
+            $Paginator = $this->getFactory()->buildPaginator($Repository->count(), $this->pagination_items_per_page);
             /**
              * @var \Everon\Interfaces\Collection $RelationCollection
              */
@@ -201,7 +204,7 @@ class Handler implements Interfaces\ResourceHandler
                 $RelationCollection->set(0, $this->buildResourceFromEntity($entity_collection, $Resource->getVersion(), $collection_name));
             }
 
-            $CollectionResource = $this->getFactory()->buildRestCollectionResource($domain_name, $Resource->getHref(), $RelationCollection);
+            $CollectionResource = $this->getFactory()->buildRestCollectionResource($domain_name, $Resource->getHref(), $RelationCollection, $Paginator);
             $CollectionResource->getHref()->setCollectionName($collection_name);
             $CollectionResource->setLimit($this->getRequest()->getGetParameter('limit', 10));
             $CollectionResource->setOffset($this->getRequest()->getGetParameter('offset', 0));
@@ -219,6 +222,9 @@ class Handler implements Interfaces\ResourceHandler
             $domain_name = $this->getDomainNameFromMapping($resource_name);
             $Href = $this->getResourceUrl($version, $resource_name);
             $Repository = $this->getDomainManager()->getRepository($domain_name);
+
+            $Paginator = $this->getFactory()->buildPaginator($Repository->count(), $this->pagination_items_per_page);
+            dd($Paginator);
             
             $EntityRelationCriteria = new Criteria();
             $EntityRelationCriteria->limit($Navigator->getLimit());
@@ -234,7 +240,7 @@ class Handler implements Interfaces\ResourceHandler
                 $ResourceList->set($a, $this->buildResourceFromEntity($CollectionEntity, $version, $resource_name));
             }
             
-            $CollectionResource = $this->getFactory()->buildRestCollectionResource($domain_name, $Href, $ResourceList);
+            $CollectionResource = $this->getFactory()->buildRestCollectionResource($domain_name, $Href, $ResourceList, $Paginator);
             $CollectionResource->setLimit($EntityRelationCriteria->getLimit());
             $CollectionResource->setOffset($EntityRelationCriteria->getOffset());
             return $CollectionResource;
