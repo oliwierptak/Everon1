@@ -36,6 +36,8 @@ abstract class DataMapper implements Interfaces\DataMapper
     abstract protected function getUpdateSql($id, array $data);
     abstract protected function getDeleteSql($id);
     abstract protected function getFetchAllSql(Criteria $Criteria);
+    abstract protected function getCountSql(Criteria $Criteria);
+    
 
 
     /**
@@ -127,6 +129,18 @@ abstract class DataMapper implements Interfaces\DataMapper
         $id = $this->getTable()->validateId($id);
         list($sql, $parameters) = $this->getDeleteSql($id);
         return $this->getSchema()->getPdoAdapterByName($this->write_connection_name)->delete($sql, $parameters);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function count(Criteria $Criteria)
+    {
+        list($sql, $parameters) = $this->getCountSql($Criteria);
+        $Stm = $this->getSchema()->getPdoAdapterByName($this->write_connection_name)->execute($sql, $parameters);
+        $data = $Stm->fetch(\PDO::FETCH_ASSOC);
+        sd($data);
+        return (int) $data['total_count'];
     }
 
     /**

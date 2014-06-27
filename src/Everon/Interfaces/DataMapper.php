@@ -35,6 +35,12 @@ interface DataMapper
     function delete($id);
 
     /**
+     * @param Criteria $Criteria
+     * @return int
+     */
+    function count(Criteria $Criteria);
+
+    /**
      * @param int $id
      * @return array
      */

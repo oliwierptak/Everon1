@@ -9,11 +9,14 @@
  */
 namespace Everon\Rest\Resource;
 
+use Everon\Helper;
 use Everon\Rest\Interfaces;
 use Everon\Interfaces\Collection as ItemCollection;
 
 class Collection extends Basic implements Interfaces\ResourceCollection
 {
+    use Helper\Arrays;
+    
     protected $limit = null;
     protected $offset = null;
     protected $first = null;
@@ -30,7 +33,7 @@ class Collection extends Basic implements Interfaces\ResourceCollection
      * @param Interfaces\ResourceHref $Href
      * @param ItemCollection $ItemCollection
      */
-    public function __construct(Interfaces\ResourceHref $Href, ItemCollection $ItemCollection)
+    public function __construct(Interfaces\ResourceHref $Href, ItemCollection $ItemCollection, $Paginator)
     {
         parent::__construct($Href);
         $this->ItemCollection = $ItemCollection;
@@ -39,12 +42,17 @@ class Collection extends Basic implements Interfaces\ResourceCollection
     protected function getToArray()
     {
         $data = parent::getToArray();
+        $data = $this->arrayMergeDefault($data, $this->getPaginator()->toArray());
+        
+        /*
         $data['first'] = $this->first;
         $data['prev'] = $this->prev;
         $data['next'] = $this->next;
         $data['last'] = $this->last;
         $data['limit'] = $this->limit;
         $data['offset'] = $this->offset;
+        $data['count'] = $total_count;
+        */
         $data['items'] = $this->ItemCollection->toArray(true);
         
         return $data;

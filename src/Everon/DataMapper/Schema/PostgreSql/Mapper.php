@@ -78,10 +78,11 @@ abstract class Mapper extends DataMapper
     {
         $pk_name = $this->getTable()->getPk();
 
-        $sql = '
+        $sql = "
             SELECT * 
             FROM %s.%s
-            '.$Criteria;
+            ";
+        $sql .= $Criteria;
         
         $sql = sprintf($sql, $this->getTable()->getSchema(), $this->getTable()->getName(), $pk_name);
         return $sql;
@@ -89,12 +90,34 @@ abstract class Mapper extends DataMapper
 
     protected function getLeftJoinSql($select, $a, $b, $on_a, $on_b, Interfaces\Criteria $Criteria)
     {
-        $sql = '
+        $sql = "
             SELECT %s FROM %s
             LEFT JOIN %s ON %s = %s 
-            '.$Criteria;
+            ";
+        $sql .= $Criteria;
         
         $sql = sprintf($sql, $select, $a, $b, $on_a, $on_b);
         return $sql;
+    }
+
+    protected function getCountSql(Interfaces\Criteria $Criteria)
+    {
+        $Criteria->where([
+            'schema' => $this->getTable()->getSchema(),
+            'table' => $this->getTable()->getName(),
+            'oid' => sprintf("'%s.%s'::regclass;", $this->getTable()->getSchema(), $this->getTable()->getName())
+        ]);
+        $sql = "
+            SELECT reltuples AS total_count FROM pg_class 
+            
+            -- WHERE oid = '%s.%s'::regclass;
+             
+            "; 
+        $sql .= $Criteria;
+        
+        sd($sql);
+
+        $sql = sprintf($sql, $this->getTable()->getSchema(), $this->getTable()->getName());
+        return [$sql, $Criteria->getWhere()];
     }
 }
