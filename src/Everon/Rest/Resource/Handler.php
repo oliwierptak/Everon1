@@ -189,23 +189,23 @@ class Handler implements Interfaces\ResourceHandler
              * @var \Everon\Interfaces\Collection $RelationCollection
              */
             $RelationCollection = $Resource->getDomainEntity()->getRelationCollectionByName($domain_name);
-            $relation_list = $RelationCollection->toArray();
+            $entity_collection = $RelationCollection->toArray();
 
             $RelationCollection = new Helper\Collection([]);
-            if (is_array($relation_list)) {
-                for ($a=0 ;$a<count($relation_list); $a++) {
-                    $CollectionEntity = $relation_list[$a];
-                    $RelationCollection->set($a, $this->buildResourceFromEntity($CollectionEntity, $Resource->getVersion(), $collection_name));
+            if (is_array($entity_collection)) {
+                for ($a=0; $a<count($entity_collection); $a++) {
+                    $RelationCollection->set($a, $this->buildResourceFromEntity($entity_collection[$a], $Resource->getVersion(), $collection_name));
                 }
             }
             else {
-                $RelationCollection->set(0, $this->buildResourceFromEntity($relation_list, $Resource->getVersion(), $collection_name));
+                $RelationCollection->set(0, $this->buildResourceFromEntity($entity_collection, $Resource->getVersion(), $collection_name));
             }
 
             $CollectionResource = $this->getFactory()->buildRestCollectionResource($domain_name, $Resource->getHref(), $RelationCollection);
+            $CollectionResource->getHref()->setCollectionName($collection_name);
             $CollectionResource->setLimit($this->getRequest()->getGetParameter('limit', 10));
             $CollectionResource->setOffset($this->getRequest()->getGetParameter('offset', 0));
-
+            
             $Resource->setRelationCollectionByName($collection_name, $CollectionResource);
         }
     }
