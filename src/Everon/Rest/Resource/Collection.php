@@ -59,7 +59,6 @@ class Collection extends Basic implements Interfaces\ResourceCollection
         $data['limit'] = $this->limit;
         $data['offset'] = $this->offset;
         $data['total'] = $this->getPaginator()->getTotal();
-        
         $data['items'] = $this->ItemCollection->toArray(true);
         
         return $data;

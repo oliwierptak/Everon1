@@ -224,7 +224,6 @@ class Handler implements Interfaces\ResourceHandler
             $Repository = $this->getDomainManager()->getRepository($domain_name);
 
             $Paginator = $this->getFactory()->buildPaginator($Repository->count(), $this->pagination_items_per_page);
-            dd($Paginator);
             
             $EntityRelationCriteria = new Criteria();
             $EntityRelationCriteria->limit($Navigator->getLimit());
