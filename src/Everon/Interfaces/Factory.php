@@ -664,12 +664,14 @@ interface Factory
     function buildTaskItem($type, $data, $namespace);
 
     /**
-     * @param $total_count
-     * @param $items_per_page
+     * @param int $total
+     * @param int $offset
+     * @param int $limit
      * @param string $namespace
+     * @internal param $total_count
+     * @internal param $items_per_page
      * @return Paginator
-     * @throws Exception\Factory
      */
-    function buildPaginator($total_count, $items_per_page, $namespace='Everon\Helper');
+    function buildPaginator($total, $offset, $limit, $namespace='Everon\Helper');
 
 }

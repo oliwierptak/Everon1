@@ -25,30 +25,40 @@ class Paginator implements Interfaces\Arrayable, \Everon\Interfaces\Paginator
     /**
      * @var int
      */
-    protected $items_per_page = null;
+    protected $current_page = null;
 
     /**
      * @var int
      */
-    protected $current_page = null;
+    protected $offset = null;
+
+    /**
+     * @var int
+     */
+    protected $limit = null;
     
     
-    public function __construct($total_count, $items_per_page=10)
+    public function __construct($total, $offset, $limit)
     {
-        $this->total = $total_count;
-        $this->items_per_page = $items_per_page;
+        $this->total = (int) $total;
+        $this->offset = (int) $offset;
+        $this->limit = (int) $limit;
+        
+        $this->calculateCurrentPage();
     }
 
     /**
-     * @param int $current_page
+     * @inheritdoc
      */
     public function setCurrentPage($current_page)
     {
         $this->current_page = $current_page;
+        $offset = $current_page * $this->getLimit();
+        $this->setOffset($offset);
     }
 
     /**
-     * @return int
+     * @inheritdoc
      */
     public function getCurrentPage()
     {
@@ -56,41 +66,66 @@ class Paginator implements Interfaces\Arrayable, \Everon\Interfaces\Paginator
     }
 
     /**
-     * @param int $items_per_page
-     */
-    public function setItemsPerPage($items_per_page)
-    {
-        $this->items_per_page = $items_per_page;
-    }
-
-    /**
-     * @return int
-     */
-    public function getItemsPerPage()
-    {
-        return $this->items_per_page;
-    }
-
-    /**
-     * @param int $total
+     * @inheritdoc
      */
     public function setTotal($total)
     {
         $this->total = $total;
+        $this->calculateCurrentPage();
     }
 
     /**
-     * @return int
+     * @inheritdoc
      */
     public function getTotal()
     {
         return $this->total;
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public function getPageCount()
     {
-        $page_count = ceil($this->getTotal() / $this->getItemsPerPage());
-        return $page_count;
+        return ceil($this->getTotal() / $this->getLimit());
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setLimit($limit)
+    {
+        $this->limit = $limit;
+        $this->calculateCurrentPage();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getLimit()
+    {
+        return $this->limit;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setOffset($offset)
+    {
+        $this->offset = $offset;
+        $this->calculateCurrentPage();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getOffset()
+    {
+        return $this->offset;
     }
     
-}
+    protected function calculateCurrentPage()
+    {
+        $this->current_page = ceil($this->offset / $this->limit) + 1;
+    }
+}   

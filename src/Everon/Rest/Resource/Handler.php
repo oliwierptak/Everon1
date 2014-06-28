@@ -185,7 +185,7 @@ class Handler implements Interfaces\ResourceHandler
         foreach ($resources_to_expand as $collection_name) {
             $domain_name = $this->getDomainNameFromMapping($collection_name);
             $Repository = $this->getDomainManager()->getRepository($domain_name);
-            $Paginator = $this->getFactory()->buildPaginator($Repository->count(), $Navigator->getLimit());
+            $Paginator = $this->getFactory()->buildPaginator($Repository->count(), $Navigator->getOffset(), $Navigator->getLimit());
             /**
              * @var \Everon\Interfaces\Collection $RelationCollection
              */
@@ -221,7 +221,7 @@ class Handler implements Interfaces\ResourceHandler
             $Href = $this->getResourceUrl($version, $resource_name);
             $Repository = $this->getDomainManager()->getRepository($domain_name);
 
-            $Paginator = $this->getFactory()->buildPaginator($Repository->count(), $Navigator->getLimit());
+            $Paginator = $this->getFactory()->buildPaginator($Repository->count(), $Navigator->getOffset(), $Navigator->getLimit());
             
             $EntityRelationCriteria = new Criteria();
             $EntityRelationCriteria->limit($Navigator->getLimit());

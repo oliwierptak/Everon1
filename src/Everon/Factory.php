@@ -1403,12 +1403,12 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildPaginator($total_count, $items_per_page, $namespace='Everon\Helper')
+    public function buildPaginator($total, $offset, $limit, $namespace = 'Everon\Helper')
     {
         try {
             $class_name = $this->getFullClassName($namespace, 'Paginator');
             $this->classExists($class_name);
-            $Paginator = new $class_name($total_count, $items_per_page);
+            $Paginator = new $class_name($total, $offset, $limit);
             $this->injectDependencies($class_name, $Paginator);
             return $Paginator;
         }

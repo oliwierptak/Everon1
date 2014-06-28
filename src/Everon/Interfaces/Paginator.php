@@ -24,16 +24,6 @@ interface Paginator
     function getPageCount();
 
     /**
-     * @param int $items_per_page
-     */
-    function setItemsPerPage($items_per_page);
-
-    /**
-     * @return int
-     */
-    function getItemsPerPage();
-
-    /**
      * @param int $total
      */
     function setTotal($total);
@@ -42,4 +32,25 @@ interface Paginator
      * @param int $current_page
      */
     function setCurrentPage($current_page);
+
+
+    /**
+     * @param int $limit
+     */
+    function setLimit($limit);
+
+    /**
+     * @return int
+     */
+    function getLimit();
+
+    /**
+     * @param int $offset
+     */
+    function setOffset($offset);
+
+    /**
+     * @return int
+     */
+    function getOffset();
 }

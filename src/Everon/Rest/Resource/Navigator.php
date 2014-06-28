@@ -66,8 +66,8 @@ class Navigator implements Interfaces\ResourceNavigator
         $this->fields = $this->getParameterValue('fields', []);
         $this->expand = $this->getParameterValue('expand', []);
         $this->order_by = $this->getParameterValue('order_by', []);
-        $this->limit = $this->getParameterValue('limit', 10);
-        $this->offset = $this->getParameterValue('offset', 0);
+        $this->limit = $this->getRequest()->getGetParameter('limit', 10);
+        $this->offset = $this->getRequest()->getGetParameter('offset', 0);
         $this->sort = [];
 
         $collection = $this->getRequest()->getQueryParameter('collection', null);
