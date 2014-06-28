@@ -49,9 +49,9 @@ interface ResourceHandler
     /**
      * @param Resource $Resource
      * @param array $resources_to_expand
-     * @throws \Everon\Rest\Exception\Resource
+     * @param ResourceNavigator $Navigator
      */
-    function expandResource(Resource $Resource, array $resources_to_expand);
+    function expandResource(Resource $Resource, array $resources_to_expand, ResourceNavigator $Navigator);
 
     /**
      * @param Entity $Entity
