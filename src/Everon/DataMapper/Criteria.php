@@ -189,13 +189,15 @@ class Criteria implements Interfaces\Criteria
                 $order_by = '';
                 foreach ($this->order_by as $order_field) {
                     $dir = isset($this->sort[$order_field]) ? $this->sort[$order_field] : 'ASC';
-                    $order_by .= "${order_field} ".$dir;
+                    $order_by .= "${order_field} ".$dir.',';
                 }
             }
         }
         else {
             $order_by = $this->order_by;
         }
+        
+        $order_by = trim($order_by, ',');
 
         return 'ORDER BY '.$order_by;
     }

@@ -43,7 +43,11 @@ class Paginator implements Interfaces\Arrayable, \Everon\Interfaces\Paginator
         $this->total = (int) $total;
         $this->offset = (int) $offset;
         $this->limit = (int) $limit;
-        
+
+        if ($this->limit <= 0) {
+            $this->limit = 10;
+        }
+
         $this->calculateCurrentPage();
     }
 
@@ -96,6 +100,10 @@ class Paginator implements Interfaces\Arrayable, \Everon\Interfaces\Paginator
     public function setLimit($limit)
     {
         $this->limit = $limit;
+        if ($this->limit <= 0) {
+            $this->limit = 10;
+        }
+        
         $this->calculateCurrentPage();
     }
 
