@@ -43,12 +43,6 @@ class Paginator implements Interfaces\Arrayable, \Everon\Interfaces\Paginator
         $this->total = (int) $total;
         $this->offset = (int) $offset;
         $this->limit = (int) $limit;
-
-        if ($this->limit <= 0) {
-            $this->limit = 10;
-        }
-
-        $this->calculateCurrentPage();
     }
 
     /**
@@ -56,8 +50,14 @@ class Paginator implements Interfaces\Arrayable, \Everon\Interfaces\Paginator
      */
     public function setCurrentPage($current_page)
     {
-        $this->current_page = $current_page;
-        $offset = $current_page * $this->getLimit();
+        $page_count = $this->getPageCount();
+        $current_page = (int) $current_page;
+        $current_page = ($current_page > $page_count) ? $page_count : $current_page;
+        $current_page = ($current_page <= 0) ? 0 : $current_page - 1;
+        
+        $this->current_page = $current_page + 1;
+        
+        $offset = (int) ($current_page) * $this->getLimit();
         $this->setOffset($offset);
     }
 
@@ -66,6 +66,7 @@ class Paginator implements Interfaces\Arrayable, \Everon\Interfaces\Paginator
      */
     public function getCurrentPage()
     {
+        $this->calculateCurrentPage();
         return $this->current_page;
     }
 
@@ -75,7 +76,6 @@ class Paginator implements Interfaces\Arrayable, \Everon\Interfaces\Paginator
     public function setTotal($total)
     {
         $this->total = $total;
-        $this->calculateCurrentPage();
     }
 
     /**
@@ -91,7 +91,7 @@ class Paginator implements Interfaces\Arrayable, \Everon\Interfaces\Paginator
      */
     public function getPageCount()
     {
-        return ceil($this->getTotal() / $this->getLimit());
+        return (int) ceil($this->getTotal() / $this->getLimit());
     }
 
     /**
@@ -100,11 +100,6 @@ class Paginator implements Interfaces\Arrayable, \Everon\Interfaces\Paginator
     public function setLimit($limit)
     {
         $this->limit = $limit;
-        if ($this->limit <= 0) {
-            $this->limit = 10;
-        }
-        
-        $this->calculateCurrentPage();
     }
 
     /**
@@ -112,6 +107,9 @@ class Paginator implements Interfaces\Arrayable, \Everon\Interfaces\Paginator
      */
     public function getLimit()
     {
+        if ((int) $this->limit <= 0) {
+            $this->limit = 10;
+        }
         return $this->limit;
     }
 
@@ -121,7 +119,6 @@ class Paginator implements Interfaces\Arrayable, \Everon\Interfaces\Paginator
     public function setOffset($offset)
     {
         $this->offset = $offset;
-        $this->calculateCurrentPage();
     }
 
     /**
@@ -134,6 +131,6 @@ class Paginator implements Interfaces\Arrayable, \Everon\Interfaces\Paginator
     
     protected function calculateCurrentPage()
     {
-        $this->current_page = ceil($this->offset / $this->limit) + 1;
+        $this->current_page = (int) ceil($this->getOffset() / $this->getLimit()) + 1;
     }
 }   
