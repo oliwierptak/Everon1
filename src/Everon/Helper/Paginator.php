@@ -75,7 +75,7 @@ class Paginator implements Interfaces\Arrayable, \Everon\Interfaces\Paginator
      */
     public function setTotal($total)
     {
-        $this->total = $total;
+        $this->total = (int) $total;
     }
 
     /**
@@ -99,7 +99,7 @@ class Paginator implements Interfaces\Arrayable, \Everon\Interfaces\Paginator
      */
     public function setLimit($limit)
     {
-        $this->limit = $limit;
+        $this->limit = (int) $limit;
     }
 
     /**
@@ -118,7 +118,11 @@ class Paginator implements Interfaces\Arrayable, \Everon\Interfaces\Paginator
      */
     public function setOffset($offset)
     {
-        $this->offset = $offset;
+        $max = $this->getTotal() - $this->getLimit();
+        if ($offset > $max) {
+            $offset = $max;
+        }
+        $this->offset = (int) $offset;
     }
 
     /**
