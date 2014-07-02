@@ -20,4 +20,5 @@ interface Controller extends \Everon\Interfaces\Controller
      * @return array
      */
     function getJsonData();
+
 }
