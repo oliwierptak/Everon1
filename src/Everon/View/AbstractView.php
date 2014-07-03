@@ -15,6 +15,7 @@ use Everon\Dependency;
 
 abstract class AbstractView implements Interfaces\View
 {
+    use Dependency\Injection\ConfigManager;
     use Dependency\Injection\Factory;
     use Dependency\Injection\Request;
 
@@ -235,5 +236,30 @@ abstract class AbstractView implements Interfaces\View
         
         return null;
     }
-    
+
+
+    /**
+     * @inheritdoc
+     */
+    public function getUrl($name, $query=[], $get=[])
+    {
+        $Item = $this->getConfigManager()->getConfigByName('router')->getItemByName($name);
+        if ($Item === null) {
+            throw new Exception\Controller('Invalid router config name: "%s"', $name);
+        }
+
+        $Item->compileUrl($query);
+        $url = $Item->getParsedUrl();
+
+        $get_url = '';
+        if (empty($get) === false) {
+            $get_url = http_build_query($get);
+            if (trim($get_url) !== '') {
+                $get_url = '?'.$get_url;
+            }
+        }
+
+        return $url.$get_url;
+    }
+
 }

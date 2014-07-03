@@ -87,4 +87,13 @@ interface View
      * @return mixed
      */
     function execute($action);
+
+    /**
+     * @param $name
+     * @param array $query
+     * @param array $get
+     * @return string
+     * @throws \Everon\Exception\Controller
+     */
+    function getUrl($name, $query=[], $get=[]);
 }
