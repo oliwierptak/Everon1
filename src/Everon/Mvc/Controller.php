@@ -98,11 +98,19 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
     }
     
     /**
-     * @return View\Interfaces\View
+     * @inheritdoc
      */
     public function getView()
     {
-        return $this->getModule()->getView($this->getName());
+        return $this->getModule()->getViewByName($this->getName());
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setView(View\Interfaces\View $View)
+    {
+        $this->getModule()->setViewByViewName($View);
     }
     
     /**
@@ -114,7 +122,7 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
     }
 
     /**
-     * @return View\Interfaces\TemplateContainer
+     * @inheritdoc
      */
     public function getActionTemplate()
     {

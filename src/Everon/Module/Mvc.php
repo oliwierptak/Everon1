@@ -48,7 +48,7 @@ abstract class Mvc extends \Everon\Module implements Interfaces\Mvc
     /**
      * @inheritdoc
      */
-    public function getView($name)
+    public function getViewByName($name)
     {
         if ($this->ViewCollection->has($name) === false) {
             $View = $this->createView($name);
@@ -57,5 +57,12 @@ abstract class Mvc extends \Everon\Module implements Interfaces\Mvc
         
         return $this->ViewCollection->get($name);
     }
-    
+
+    /**
+     * @param View\Interfaces\View $View
+     */
+    public function setViewByViewName(View\Interfaces\View $View)
+    {
+        $this->ViewCollection->set($View->getName(), $View);
+    }
 }

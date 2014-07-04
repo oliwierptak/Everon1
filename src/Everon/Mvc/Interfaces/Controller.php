@@ -24,6 +24,11 @@ interface Controller extends \Everon\Interfaces\Controller, \Everon\View\Interfa
     function getView();
 
     /**
+     * @param Interfaces\View $View
+     */
+    function setView(Interfaces\View $View);
+
+    /**
      * @return mixed
      */
     function getModel();
