@@ -36,7 +36,7 @@ abstract class AbstractView implements Interfaces\View
     protected $Container = null;
 
     protected $default_extension = '.php';
-    
+
     protected $index_executed = false;
 
 
@@ -129,7 +129,7 @@ abstract class AbstractView implements Interfaces\View
                 $data = $this->Container->getData();
             }
             $this->Container = $this->getFactory()->buildTemplateContainer($Container, $data);
-        } 
+        }
 
         if ($this->Container === null) {
             throw new Exception\Template('Invalid container type');
@@ -180,7 +180,6 @@ abstract class AbstractView implements Interfaces\View
      */
     public function setData(array $data)
     {
-        $data = $this->arrayMergeDefault($data, $this->getData());
         $this->getContainer()->setData($data);
     }
 
@@ -222,12 +221,6 @@ abstract class AbstractView implements Interfaces\View
     public function execute($action)
     {
         if ($this->index_executed === false) {
-            //at this point the theme/layout is unknown, revert to default 'index' 
-            $view_variables = $this->getConfigManager()->getConfigValue("view.Index", []);
-            $data = $this->arrayMergeDefault($view_variables, $this->getData());
-            $this->setData($data);
-            
-            //execute view's default action 'index'
             $default_action = 'index';
             if (strcasecmp($action, $default_action) !== 0) {
                 if ($this->isCallable($this, $default_action)) {
@@ -240,12 +233,11 @@ abstract class AbstractView implements Interfaces\View
         if ($this->isCallable($this, $action)) {
             return $this->{$action}();
         }
-        
+
         return null;
     }
 
 
-    //xxx make trait
     /**
      * @inheritdoc
      */
