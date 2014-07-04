@@ -180,6 +180,7 @@ abstract class AbstractView implements Interfaces\View
      */
     public function setData(array $data)
     {
+        $data = $this->arrayMergeDefault($data, $this->getData());
         $this->getContainer()->setData($data);
     }
 
