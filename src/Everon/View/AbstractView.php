@@ -222,7 +222,7 @@ abstract class AbstractView implements Interfaces\View
     {
         if ($this->index_executed === false) {
             //at this point the theme/layout is unknown, revert to default 'index' 
-            $view_variables = $this->getConfigManager()->getConfigValue("view.index", []);
+            $view_variables = $this->getConfigManager()->getConfigValue("view.Index", []);
             $data = $this->arrayMergeDefault($view_variables, $this->getData());
             $this->setData($data);
             
