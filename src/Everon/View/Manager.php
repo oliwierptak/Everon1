@@ -259,7 +259,6 @@ class Manager implements Interfaces\Manager
             if ($IndexTemplate === null) { //fallback to default theme and view
                 $TemplateDirectory = new \SplFileInfo($this->getViewDirectory().$this->getCurrentThemeName().DIRECTORY_SEPARATOR.'Index'.DIRECTORY_SEPARATOR.'templates'.DIRECTORY_SEPARATOR);
                 $Theme = $this->createView('Index', $TemplateDirectory->getPathname(), 'Everon\View\\'.$this->getCurrentThemeName());
-                $view_variables = $this->getConfigManager()->getConfigValue("view.$view_name", []);
                 $IndexTemplate = $Theme->getTemplate('index', $view_variables);
             }
             
@@ -289,21 +288,30 @@ class Manager implements Interfaces\Manager
                 throw new Exception\ViewManager('View template directory: "%s" does not exist', $template_directory);
             }
         }
+
+        $view_variables = $this->getConfigManager()->getConfigValue("view.$name", null);
+        if ($view_variables === null) {
+            throw new Exception\ViewManager('View: "%s" not defined in view.ini', $name);
+        }
         
         try {
             //try to load module view
             try {
-                return $this->getFactory()->buildView($name, $TemplateDirectory->getPathname().DIRECTORY_SEPARATOR, $default_extension, $namespace);
+                $View =  $this->getFactory()->buildView($name, $TemplateDirectory->getPathname().DIRECTORY_SEPARATOR, $default_extension, $namespace);
             }
             catch (Exception\Factory $e) { //fallback to theme view
                 $namespace = 'Everon\View\\'.$this->getCurrentThemeName();
-                return $this->getFactory()->buildView($name, $TemplateDirectory->getPathname().DIRECTORY_SEPARATOR, $default_extension, $namespace);
+                $View =  $this->getFactory()->buildView($name, $TemplateDirectory->getPathname().DIRECTORY_SEPARATOR, $default_extension, $namespace);
             }
         }
         catch (Exception\Factory $e) { //fallback to default index theme view
             $namespace = 'Everon\View\\'.$this->getCurrentThemeName();
-            return $this->getFactory()->buildView('Index', $TemplateDirectory->getPathname().DIRECTORY_SEPARATOR, $default_extension, $namespace);
+            $View =  $this->getFactory()->buildView('Index', $TemplateDirectory->getPathname().DIRECTORY_SEPARATOR, $default_extension, $namespace);
         }
+
+        $data = $this->arrayMergeDefault($view_variables, $View->getData());
+        $View->setData($data);
+        return $View;
     }
 
     public function createViewWidget($name, $namespace='Everon\View\Widget')
