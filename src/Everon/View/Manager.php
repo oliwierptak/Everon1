@@ -289,26 +289,20 @@ class Manager implements Interfaces\Manager
             }
         }
 
-        $view_variables = $this->getConfigManager()->getConfigValue("view.index", []);
-        
         try {
             //try to load module view
             try {
-                $View =  $this->getFactory()->buildView($name, $TemplateDirectory->getPathname().DIRECTORY_SEPARATOR, $default_extension, $namespace);
+                return $this->getFactory()->buildView($name, $TemplateDirectory->getPathname().DIRECTORY_SEPARATOR, $default_extension, $namespace);
             }
             catch (Exception\Factory $e) { //fallback to theme view
                 $namespace = 'Everon\View\\'.$this->getCurrentThemeName();
-                $View =  $this->getFactory()->buildView($name, $TemplateDirectory->getPathname().DIRECTORY_SEPARATOR, $default_extension, $namespace);
+                return $this->getFactory()->buildView($name, $TemplateDirectory->getPathname().DIRECTORY_SEPARATOR, $default_extension, $namespace);
             }
         }
         catch (Exception\Factory $e) { //fallback to default index theme view
             $namespace = 'Everon\View\\'.$this->getCurrentThemeName();
-            $View =  $this->getFactory()->buildView('Index', $TemplateDirectory->getPathname().DIRECTORY_SEPARATOR, $default_extension, $namespace);
+            return $this->getFactory()->buildView('Index', $TemplateDirectory->getPathname().DIRECTORY_SEPARATOR, $default_extension, $namespace);
         }
-
-        $data = $this->arrayMergeDefault($view_variables, $View->getData());
-        $View->setData($data);
-        return $View;
     }
 
     public function createViewWidget($name, $namespace='Everon\View\Widget')

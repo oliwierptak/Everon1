@@ -180,7 +180,6 @@ abstract class AbstractView implements Interfaces\View
      */
     public function setData(array $data)
     {
-        $data = $this->arrayMergeDefault($data, $this->getContainer()->getData());
         $this->getContainer()->setData($data);
     }
 
@@ -222,6 +221,12 @@ abstract class AbstractView implements Interfaces\View
     public function execute($action)
     {
         if ($this->index_executed === false) {
+            //at this point the theme/layout is unknown, revert to default 'index' 
+            $view_variables = $this->getConfigManager()->getConfigValue("view.index", []);
+            $data = $this->arrayMergeDefault($view_variables, $this->getData());
+            $this->setData($data);
+            
+            //execute view's default action 'index'
             $default_action = 'index';
             if (strcasecmp($action, $default_action) !== 0) {
                 if ($this->isCallable($this, $default_action)) {
@@ -239,6 +244,7 @@ abstract class AbstractView implements Interfaces\View
     }
 
 
+    //xxx make trait
     /**
      * @inheritdoc
      */
