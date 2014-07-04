@@ -289,10 +289,7 @@ class Manager implements Interfaces\Manager
             }
         }
 
-        $view_variables = $this->getConfigManager()->getConfigValue("view.$name", null);
-        if ($view_variables === null) {
-            throw new Exception\ViewManager('View: "%s" not defined in view.ini', $name);
-        }
+        $view_variables = $this->getConfigManager()->getConfigValue("view.index", []);
         
         try {
             //try to load module view
