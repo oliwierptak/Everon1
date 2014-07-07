@@ -39,10 +39,6 @@ class Environment implements Interfaces\Environment
         ];
 
         $this->resources += [
-            'assets' => $this->getWeb().'assets'.DIRECTORY_SEPARATOR,
-        ];
-        
-        $this->resources += [
             'everon_config' => $this->getEveronRoot().'Config'.DIRECTORY_SEPARATOR,
             'everon_interface' => $this->getEveronRoot().'Interfaces'.DIRECTORY_SEPARATOR,
             'everon_helper' => $this->getEveronRoot().'Helper'.DIRECTORY_SEPARATOR,
@@ -238,16 +234,6 @@ class Environment implements Interfaces\Environment
     function setWeb($web)
     {
         $this->resources['web'] = $web;
-    }
-    
-    function getAssets()
-    {
-        return $this->resources['assets'];
-    }
-    
-    function setAssets($assets)
-    {
-        $this->resources['assets'] = $assets;
     }
     
     function getModule()
