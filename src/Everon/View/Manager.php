@@ -307,8 +307,12 @@ class Manager implements Interfaces\Manager
 
     public function createViewWidget($name, $namespace='Everon\View\Widget')
     {
+        $view_variables = $this->getConfigManager()->getConfigValue("view.Index", []);
         $template_directory = $this->getViewDirectory().$this->getCurrentThemeName().DIRECTORY_SEPARATOR.'Widget'.DIRECTORY_SEPARATOR.$name.DIRECTORY_SEPARATOR.'templates'.DIRECTORY_SEPARATOR;
-        return $this->createView('Base', $template_directory, $namespace);
+        $View = $this->createView('Base', $template_directory, $namespace);
+        $data = $this->arrayMergeDefault($view_variables, $View->getData());
+        $View->setData($data);
+        return $View;
     }
 
     /**

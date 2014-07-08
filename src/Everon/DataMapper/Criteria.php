@@ -194,7 +194,7 @@ class Criteria implements Interfaces\Criteria
             }
         }
         else {
-            $order_by = $this->order_by;
+            $order_by = $this->order_by.' '.$this->sort;
         }
         
         $order_by = trim($order_by, ',');

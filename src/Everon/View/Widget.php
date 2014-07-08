@@ -19,6 +19,7 @@ use Everon\Exception;
 abstract class Widget implements Interfaces\Widget
 {
     use ViewManagerDependency;
+    use Dependency\Logger;
 
     use Helper\ToString;
     use Helper\String\LastTokenToName;
@@ -27,12 +28,17 @@ abstract class Widget implements Interfaces\Widget
     protected $name;
 
     protected $populated = null;
+    
+    protected $has_data = false;
 
     /**
      * @var Interfaces\View
      */
     protected $View;
 
+    /**
+     * @return boolean True if the data was loaded successfully
+     */
     protected abstract function populate();
     
 
@@ -80,8 +86,12 @@ abstract class Widget implements Interfaces\Widget
     public function render()
     {
         if ($this->populated !== true) {
-            $this->populate();
+            $this->has_data = $this->populate() !== false;
             $this->populated = true;
+        }
+        
+        if ($this->hasData() === false) {
+            return '';
         }
         
         $Tpl = $this->getView()->getTemplate('index', $this->getView()->getData());
@@ -91,6 +101,22 @@ abstract class Widget implements Interfaces\Widget
         return (string) $this->getView()->getContainer();
     }
 
+    /**
+     * @param boolean $has_data
+     */
+    public function setHasData($has_data)
+    {
+        $this->has_data = $has_data;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function hasData()
+    {
+        return $this->has_data;
+    }
+    
     public function getUrl($name, $query=[], $get=[])
     {
         $Item = $this->getConfigManager()->getConfigByName('router')->getItemByName($name);

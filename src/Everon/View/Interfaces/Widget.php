@@ -36,4 +36,14 @@ interface Widget extends Dependency\Manager
      * @return string
      */
     function render();
+
+    /**
+     * @param boolean $has_data
+     */
+    function setHasData($has_data);
+
+    /**
+     * @return boolean
+     */
+    function hasData();
 }
