@@ -19,5 +19,10 @@ interface Mvc extends Module, View\Interfaces\Dependency\Manager
      * @param $name
      * @return View\Interfaces\View
      */
-    function getView($name);
+    function getViewByName($name);
+
+    /**
+     * @param View\Interfaces\View $View
+     */
+    function setViewByViewName(View\Interfaces\View $View);
 }

@@ -15,6 +15,8 @@ use Everon\Interfaces;
 class Request extends \Everon\Request 
 {
     /**
+     * If default is set to null, will return the whatever value was found
+     * 
      * http://stackoverflow.com/questions/6038236/http-accept-language
      * @param string $default
      * @return mixed|string
@@ -55,7 +57,7 @@ class Request extends \Everon\Request
         $current = array_shift($tokens);
         
         if (strlen($current) !== strlen($default)) {
-            return $default;
+            return ($default !== null) ? $default : $current;
         }
         
         return $current;

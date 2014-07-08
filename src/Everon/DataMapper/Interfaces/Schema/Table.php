@@ -66,6 +66,7 @@ interface Table extends Arrayable, Immutable
      * @param array $data
      * @param $validate_id
      * @return array
+     * @throws \Everon\DataMapper\Exception\Table
      */
     function validateData(array $data, $validate_id);
 

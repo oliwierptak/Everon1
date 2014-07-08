@@ -27,12 +27,12 @@ interface Factory
      * @param $Receiver
      */
     function injectDependencies($class_name, $Receiver);
-    
+
     /**
      * @return Interfaces\DependencyContainer
      */
     function getDependencyContainer();
-    
+
     /**
      * @param Interfaces\DependencyContainer $Container
      */
@@ -121,11 +121,11 @@ interface Factory
      * @param $name
      * @param Rest\Interfaces\ResourceHref $Href
      * @param Interfaces\Collection $Collection
+     * @param Interfaces\Paginator $Paginator
      * @param string $namespace
      * @return Rest\Interfaces\ResourceCollection
-     * @throws Exception\Factory
      */
-    function buildRestCollectionResource($name, Rest\Interfaces\ResourceHref $Href, Interfaces\Collection $Collection, $namespace='Everon\Rest\Resource');
+    function buildRestCollectionResource($name, Rest\Interfaces\ResourceHref $Href, Interfaces\Collection $Collection, Interfaces\Paginator $Paginator, $namespace='Everon\Rest\Resource');
 
     /**
      * @param Rest\Interfaces\Request $Request
@@ -254,7 +254,7 @@ interface Factory
      * @throws Exception\Factory
      */
     function buildDomainMapper(array $mappings, $namespace='Everon\Domain');
-    
+
     /**
      * @param $class_name
      * @param string $namespace
@@ -288,7 +288,7 @@ interface Factory
      * @throws Exception\Factory
      */
     function buildSchemaReader(Interfaces\PdoAdapter $PdoAdapter, $namespace='Everon\DataMapper\Schema');
-    
+
     /**
      * @param array $data
      * @param string $namespace
@@ -421,6 +421,14 @@ interface Factory
     function buildViewCache(Interfaces\FileSystem $FileSystem);
 
     /**
+     * @param Config\Interfaces\ItemRouter $RouteItem
+     * @param string $namespace
+     * @return View\Interfaces\Form
+     * @throws Exception\Factory
+     */
+    function buildViewHtmlForm(Config\Interfaces\ItemRouter $RouteItem, $namespace='Everon\View\Html');
+
+    /**
      * @param array $compilers_to_init
      * @param $view_directory
      * @param $cache_directory
@@ -430,12 +438,13 @@ interface Factory
     function buildViewManager(array $compilers_to_init, $view_directory, $cache_directory);
 
     /**
-     * @param $class_name
+     * @param string $name
+     * @param View\Interfaces\View $View
      * @param string $namespace
      * @return View\Interfaces\Widget
      * @throws Exception\Factory
      */
-    function buildViewWidget($class_name, $namespace='Everon\View');
+    function buildViewWidget($name, View\Interfaces\View $View, $namespace='Everon\View');
 
     /**
      * @param $directory
@@ -451,7 +460,7 @@ interface Factory
      * @param string $namespace
      * @return Interfaces\Collection
      * @throws Exception\Factory
-     */    
+     */
     function buildHttpHeaderCollection(array $headers=[], $namespace='Everon\Http');
 
     /**
@@ -583,15 +592,28 @@ interface Factory
     function buildFactoryWorker($name, $namespace='Everon\Module');
 
     /**
-     * @param Email\Interfaces\Recipient $Recipient
-     * @param $subject
-     * @param $body
-     * @param array $headers
+     * @param $email
+     * @param $name
      * @param string $namespace
-     * @return \Everon\Email\Interfaces\Recipient
+     * @return Email\Interfaces\Address
      * @throws Exception\Factory
      */
-    function buildEmailMessage(Email\Interfaces\Recipient $Recipient, $subject, $body, array $headers=[], $namespace='Everon\Email');
+    function buildEmailAddress($email, $name, $namespace='Everon\Email');
+
+
+    /**
+     * @param Email\Interfaces\Recipient $Recipient
+     * @param Email\Interfaces\Address $FromAddress
+     * @param string $subject
+     * @param string $html_body
+     * @param string $text_body
+     * @param array $attachments
+     * @param array $headers
+     * @param string $namespace
+     * @return Email\Interfaces\Message
+     * @throws Exception\Factory
+     */
+    function buildEmailMessage(Email\Interfaces\Recipient $Recipient, Email\Interfaces\Address $FromAddress, $subject, $html_body, $text_body='', array $attachments = [], array $headers = [], $namespace = 'Everon\Email');
 
     /**
      * @param $name
@@ -603,15 +625,14 @@ interface Factory
     function buildEmailSender($name, Email\Interfaces\Credential $Credentials, $namespace='Everon\Email');
 
     /**
-     * @param $name
-     * @param $to
-     * @param array $cc
-     * @param array $bcc
+     * @param array $to array of Email\Interfaces\Address
+     * @param array $cc array of Email\Interfaces\Address
+     * @param array $bcc array of Email\Interfaces\Address
      * @param string $namespace
      * @return \Everon\Email\Interfaces\Recipient
      * @throws Exception\Factory
      */
-    function buildEmailRecipient($name, $to, array $cc=[], array $bcc=[], $namespace='Everon\Email');
+    function buildEmailRecipient(array $to, array $cc=[], array $bcc=[], $namespace='Everon\Email');
 
     /**
      * @param string $namespace
@@ -625,5 +646,32 @@ interface Factory
      * @return Email\Credential
      */
     function buildEmailCredential(array $credential_data);
+
+    /**
+     * @param string $namespace
+     * @return \Everon\Task\Interfaces\Manager
+     * @throws \Everon\Exception\Factory
+     */
+    function buildTaskManager($namespace='Everon\Task');
+
+    /**
+     * @param $type
+     * @param mixed $data
+     * @param string $namespace
+     * @return \Everon\Task\Interfaces\Item
+     * @throws \Everon\Exception\Factory
+     */
+    function buildTaskItem($type, $data, $namespace);
+
+    /**
+     * @param int $total
+     * @param int $offset
+     * @param int $limit
+     * @param string $namespace
+     * @internal param $total_count
+     * @internal param $items_per_page
+     * @return Paginator
+     */
+    function buildPaginator($total, $offset, $limit, $namespace='Everon\Helper');
 
 }

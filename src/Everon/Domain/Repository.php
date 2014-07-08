@@ -11,6 +11,7 @@ namespace Everon\Domain;
 
 use Everon\DataMapper\Interfaces\Criteria;
 use Everon\Dependency;
+use Everon\Domain;
 use Everon\Domain\Interfaces;
 use Everon\Interfaces\Collection;
 use Everon\Interfaces\DataMapper;
@@ -18,8 +19,9 @@ use Everon\Helper;
 
 abstract class Repository implements Interfaces\Repository
 {
-    use \Everon\Domain\Dependency\Injection\DomainManager;
+    use Domain\Dependency\Injection\DomainManager;
     use Dependency\Injection\Factory;
+    use Helper\Arrays;
     
     /**
      * @var DataMapper
@@ -126,6 +128,15 @@ abstract class Repository implements Interfaces\Repository
     /**
      * @inheritdoc
      */
+    public function getEntityByPropertyValue(array $property_criteria, Criteria $RelationCriteria=null)
+    {
+        $Criteria = (new \Everon\DataMapper\Criteria())->where($property_criteria);
+        return $this->getOneByCriteria($Criteria, $RelationCriteria);
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function getOneByCriteria(Criteria $Criteria, Criteria $RelationCriteria=null)
     {
         $Criteria->limit(1);
@@ -139,9 +150,7 @@ abstract class Repository implements Interfaces\Repository
     }
 
     /**
-     * @param Criteria $Criteria
-     * @param Criteria $RelationCriteria
-     * @return array|null
+     * @inheritdoc
      */
     public function getByCriteria(Criteria $Criteria, Criteria $RelationCriteria=null)
     {
@@ -156,6 +165,14 @@ abstract class Repository implements Interfaces\Repository
         }
         
         return $result;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function count(Criteria $Criteria=null)
+    {
+        return $this->getMapper()->count($Criteria);
     }
 
     /**
@@ -181,5 +198,20 @@ abstract class Repository implements Interfaces\Repository
     {
         $this->getMapper()->delete($Entity->getId(), $user_id);
         $Entity->delete();
+    }
+
+    public function beginTransaction()
+    {
+        $this->getMapper()->getSchema()->getPdoAdapterByName($this->getMapper()->getWriteConnectionName())->beginTransaction();
+    }
+
+    public function commitTransaction()
+    {
+        $this->getMapper()->getSchema()->getPdoAdapterByName($this->getMapper()->getWriteConnectionName())->commitTransaction();
+    }
+
+    public function rollbackTransaction()
+    {
+        $this->getMapper()->getSchema()->getPdoAdapterByName($this->getMapper()->getWriteConnectionName())->rollbackTransaction();
     }
 }

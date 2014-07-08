@@ -81,6 +81,22 @@ abstract class Column implements Schema\Column
     /**
      * @inheritdoc
      */
+    public function markAsPk()
+    {
+        $this->is_pk = true;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function unMarkAsPk()
+    {
+        $this->is_pk = false;
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function getName()
     {
         return $this->name;
@@ -286,9 +302,15 @@ abstract class Column implements Schema\Column
     public function getDataValue($value)
     {
         switch ($this->type) {
-            case 'boolean':
-                return ($value) ? 't' : 'f';
+            case self::TYPE_BOOLEAN:
+                return ((bool) $value) ? 't' : 'f';
                 break;
+
+            /*
+            case self::TYPE_TIMESTAMP:
+                return $value->format(\DateTime::ISO8601);
+                break;
+            */
 
             default:
                 return $value;

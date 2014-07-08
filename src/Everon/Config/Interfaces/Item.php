@@ -11,8 +11,30 @@ namespace Everon\Config\Interfaces;
 
 interface Item extends \Everon\Interfaces\Arrayable
 {
+    /**
+     * @return string
+     */
     function getName();
+
+    /**
+     * @param $name
+     */
     function setName($name);
+
+    /**
+     * @return bool
+     */
     function isDefault();
+
+    /**
+     * @param bool $is_default
+     */
     function setIsDefault($is_default);
+
+    /**
+     * @param $name
+     * @param null $default
+     * @return null
+     */
+    function getValueByName($name, $default=null);
 }

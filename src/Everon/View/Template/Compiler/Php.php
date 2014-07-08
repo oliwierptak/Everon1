@@ -26,24 +26,24 @@ class Php extends Compiler
      */
     public function compile($scope_name, $template_content, array $data)
     {
+        $Scope = new Scope();
+        $Scope->setName('View');
+        $Scope->setPhp($template_content);
+
         try {
             $this->scope_name = $scope_name;
             $ScopeData = new Helper\PopoProps($data);
-            
-            $Scope = new Scope();
-            $Scope->setName('View');
-            $Scope->setPhp($template_content);
             $code = $this->runPhp($template_content, ['Tpl' => $ScopeData], $this->getFileSystem());
             $Scope->setCompiled($code);
             $Scope->setData($data);
             
-            $this->getLogger()->e($code);
+            $this->getLogger()->php($code);
 
             return $Scope;
         }
         catch (\Exception $e) {
-            $this->getLogger()->e_error($e);
-            return '';
+            $this->getLogger()->error($e);
+            return $Scope;
         }
     }
 }

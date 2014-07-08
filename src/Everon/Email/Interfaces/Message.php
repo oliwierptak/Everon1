@@ -13,7 +13,7 @@ namespace Everon\Email\Interfaces;
  * @author Zeger Hoogeboom <zeger_hoogeboom@hotmail.com>
  * @author Oliwier Ptak <oliwierptak@gmail.com>
  */
-interface Message
+interface Message extends \Everon\Interfaces\Arrayable
 {
     /**
      * @param array $headers
@@ -21,19 +21,9 @@ interface Message
     function setHeaders(array $headers);
 
     /**
-     * @param string $message
-     */
-    function setBody($message);
-
-    /**
      * @return string
      */
     function getSubject();
-
-    /**
-     * @return string
-     */
-    function getBody();
 
     /**
      * @return array
@@ -64,4 +54,35 @@ interface Message
      * @return Recipient
      */
     function getRecipient();
+    
+    /**
+     * @param Address $From
+     */
+    function setFrom(Address $From);
+
+    /**
+     * @return Address
+     */
+    function getFrom();
+
+    /**
+     * @param mixed $text_body
+     */
+    function setTextBody($text_body);
+
+    /**
+     * @return mixed
+     */
+    function getTextBody();
+
+    /**
+     * @param mixed $richBody
+     */
+    function setHtmlBody($richBody);
+
+    /**
+     * @return mixed
+     */
+    function getHtmlBody();
+
 }

@@ -15,37 +15,39 @@ namespace Everon\Email;
  */
 class Credential implements Interfaces\Credential
 {
+    /**
+     * @var string
+     */
     protected $username = null;
 
+    /**
+     * @var string
+     */
     protected $password = null;
 
+    /**
+     * @var string
+     */
     protected $host = null;
-
+    
+    /**
+     * @var int
+     */
     protected $port = null;
 
-    protected $email = null;
-
+    /**
+     * @var string
+     */
     protected $name = null;
 
-
     /**
-     * @param mixed $email
+     * @var string
      */
-    public function setEmail($email)
-    {
-        $this->email = $email;
-    }
+    protected $encryption = null;
+
 
     /**
-     * @return mixed
-     */
-    public function getEmail()
-    {
-        return $this->email;
-    }
-
-    /**
-     * @param mixed $password
+     * @inheritdoc
      */
     public function setPassword($password)
     {
@@ -53,7 +55,7 @@ class Credential implements Interfaces\Credential
     }
 
     /**
-     * @return mixed
+     * @inheritdoc
      */
     public function getPassword()
     {
@@ -61,7 +63,7 @@ class Credential implements Interfaces\Credential
     }
 
     /**
-     * @param mixed $port
+     * @inheritdoc
      */
     public function setPort($port)
     {
@@ -69,7 +71,7 @@ class Credential implements Interfaces\Credential
     }
 
     /**
-     * @return mixed
+     * @inheritdoc
      */
     public function getPort()
     {
@@ -77,7 +79,7 @@ class Credential implements Interfaces\Credential
     }
 
     /**
-     * @param mixed $name
+     * @inheritdoc
      */
     public function setName($name)
     {
@@ -85,7 +87,7 @@ class Credential implements Interfaces\Credential
     }
 
     /**
-     * @return mixed
+     * @inheritdoc
      */
     public function getName()
     {
@@ -93,7 +95,7 @@ class Credential implements Interfaces\Credential
     }
 
     /**
-     * @param mixed $host
+     * @inheritdoc
      */
     public function setHost($host)
     {
@@ -101,7 +103,7 @@ class Credential implements Interfaces\Credential
     }
 
     /**
-     * @return mixed
+     * @inheritdoc
      */
     public function getHost()
     {
@@ -109,7 +111,7 @@ class Credential implements Interfaces\Credential
     }
 
     /**
-     * @param mixed $username
+     * @inheritdoc
      */
     public function setUsername($username)
     {
@@ -117,11 +119,27 @@ class Credential implements Interfaces\Credential
     }
 
     /**
-     * @return mixed
+     * @inheritdoc
      */
     public function getUsername()
     {
         return $this->username;
     }
 
-} 
+    /**
+     * @inheritdoc
+     */
+    public function setEncryption($encryption)
+    {
+        $this->encryption = $encryption;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getEncryption()
+    {
+        return $this->encryption;
+    }
+
+}

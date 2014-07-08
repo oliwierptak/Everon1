@@ -23,4 +23,12 @@ interface Manager extends Config\Interfaces\Dependency\Manager
      * @return array
      */
     function getPathsOfActiveModules();
+
+    /**
+     * @param $module_name
+     * @return \Everon\Interfaces\FactoryWorker
+     */
+    function getFactoryWorker($module_name);
+
+    function loadModuleDependencies();
 }

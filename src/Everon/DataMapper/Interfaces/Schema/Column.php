@@ -19,6 +19,10 @@ interface Column extends Arrayable
      */
     function isPk();
 
+    function markAsPk();
+
+    function unMarkAsPk();
+
     /**
      * @return string
      */

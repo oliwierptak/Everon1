@@ -35,6 +35,12 @@ interface DataMapper
     function delete($id);
 
     /**
+     * @param Criteria $Criteria
+     * @return int
+     */
+    function count(Criteria $Criteria=null);
+
+    /**
      * @param int $id
      * @return array
      */
@@ -42,7 +48,7 @@ interface DataMapper
 
     /**
      * @param Criteria $Criteria
-     * @return mixed
+     * @return array
      */
     function fetchOneByCriteria(Criteria $Criteria);
 
@@ -71,5 +77,31 @@ interface DataMapper
      * @param Table $Table
      */
     function setTable(Table $Table);
+
+    /**
+     * @param string $read_connection_name
+     */
+    function setReadConnectionName($read_connection_name);
+
+    /**
+     * @return string
+     */
+    function getReadConnectionName();
+
+    /**
+     * @param string $write_connection_name
+     */
+    function setWriteConnectionName($write_connection_name);
+
+    /**
+     * @return string
+     */
+    function getWriteConnectionName();
+
+    function beginTransaction();
+
+    function commitTransaction();
+
+    function rollbackTransaction();
 
 }

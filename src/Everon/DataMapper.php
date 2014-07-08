@@ -36,6 +36,8 @@ abstract class DataMapper implements Interfaces\DataMapper
     abstract protected function getUpdateSql($id, array $data);
     abstract protected function getDeleteSql($id);
     abstract protected function getFetchAllSql(Criteria $Criteria);
+    abstract protected function getCountSql(Criteria $Criteria);
+    
 
 
     /**
@@ -132,6 +134,17 @@ abstract class DataMapper implements Interfaces\DataMapper
     /**
      * @inheritdoc
      */
+    public function count(Criteria $Criteria=null)
+    {
+        $Criteria = $Criteria ?: new DataMapper\Criteria();
+        list($sql, $parameters) = $this->getCountSql($Criteria);
+        $PdoStatement = $this->getSchema()->getPdoAdapterByName($this->read_connection_name)->execute($sql, $parameters);
+        return (int) $PdoStatement->fetchColumn();
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function fetchOneById($id)
     {
         $Criteria = new DataMapper\Criteria();
@@ -165,13 +178,13 @@ abstract class DataMapper implements Interfaces\DataMapper
     public function getName()
     {
         if ($this->name === null) {
-            $this->name = $this->stringLastTokenToName(get_class($this));
+            $this->name = $this->stringLastTokenToName(get_called_class());
         }
         return $this->name;
     }
 
     /**
-     * @return Table
+     * @inheritdoc
      */
     public function getTable()
     {
@@ -179,11 +192,67 @@ abstract class DataMapper implements Interfaces\DataMapper
     }
 
     /**
-     * @param Table $Table
+     * @inheritdoc
      */
     public function setTable(Table $Table)
     {
         $this->Table = $Table;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setReadConnectionName($read_connection_name)
+    {
+        $this->read_connection_name = $read_connection_name;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getReadConnectionName()
+    {
+        return $this->read_connection_name;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setWriteConnectionName($write_connection_name)
+    {
+        $this->write_connection_name = $write_connection_name;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getWriteConnectionName()
+    {
+        return $this->write_connection_name;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function beginTransaction()
+    {
+        $this->getSchema()->getPdoAdapterByName($this->write_connection_name)->beginTransaction();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function commitTransaction()
+    {
+        $this->getSchema()->getPdoAdapterByName($this->write_connection_name)->commitTransaction();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function rollbackTransaction()
+    {
+        $this->getSchema()->getPdoAdapterByName($this->write_connection_name)->rollbackTransaction();
     }
 
 }

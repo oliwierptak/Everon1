@@ -9,9 +9,9 @@
  */
 namespace Everon\Http\Interfaces;
 
-use Everon\Interfaces\Collection;
+use Everon\Interfaces\Arrayable;
 
-interface Session extends Collection
+interface Session extends Arrayable
 {
     /**
      * @return string
@@ -32,4 +32,28 @@ interface Session extends Collection
      * @param \DateTime $start_time
      */
     function setStartTime(\DateTime $start_time);
+
+    /**
+     * @param $name
+     * @return bool
+     */
+    function has($name);
+    
+    /**
+     * @param $name
+     */
+    function remove($name);
+
+    /**
+     * @param $name
+     * @param $value
+     */
+    function set($name, $value);
+
+    /**
+     * @param $name
+     * @param null $default
+     * @return null
+     */
+    function get($name, $default=null);
 }

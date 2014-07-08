@@ -27,8 +27,12 @@ class Item implements Interfaces\Item
      * @var boolean
      */
     protected $is_default = false;
-    
 
+
+    /**
+     * @param array $data
+     * @param array $defaults
+     */
     public function __construct(array $data, array $defaults=[])
     {
         $empty_defaults = [
@@ -59,13 +63,16 @@ class Item implements Interfaces\Item
         $this->assertIsStringAndNonEmpty((string) @$data[static::PROPERTY_NAME], 'Invalid item name: "%s"', 'ConfigItem');
     }
 
+    /**
+     * @inheritdoc
+     */
     public function getName()
     {
         return $this->name;
     }
 
     /**
-     * @param $name
+     * @inheritdoc
      */
     public function setName($name)
     {
@@ -73,7 +80,7 @@ class Item implements Interfaces\Item
     }
 
     /**
-     * @return bool
+     * @inheritdoc
      */
     public function isDefault()
     {
@@ -81,10 +88,22 @@ class Item implements Interfaces\Item
     }
 
     /**
-     * @param boolean $is_default
+     * @inheritdoc
      */
     public function setIsDefault($is_default)
     {
         $this->is_default = (bool) $is_default;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getValueByName($name, $default=null)
+    {
+        if (isset($this->data[$name]) === false) {
+            return $default;
+        }
+        
+        return $this->data[$name];
     }
 }

@@ -27,7 +27,7 @@ class PdoAdapter implements Interfaces\PdoAdapter
      * @var ConnectionItem
      */
     protected $ConnectionConfig = null;
-
+    
 
     /**
      * @param \PDO $Pdo
@@ -36,7 +36,38 @@ class PdoAdapter implements Interfaces\PdoAdapter
     public function __construct(\PDO $Pdo, ConnectionItem $Connection)
     {
         $this->Pdo = $Pdo;
+        $this->getPdo()->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
         $this->ConnectionConfig = $Connection;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function beginTransaction()
+    {
+        if ($this->getPdo()->inTransaction() === false) {
+            $this->getPdo()->beginTransaction();
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function commitTransaction()
+    {
+        if ($this->getPdo()->inTransaction()) {
+            $this->getPdo()->commit();
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function rollbackTransaction()
+    {
+        if ($this->getPdo()->inTransaction()) {
+            $this->getPdo()->rollBack();
+        }
     }
 
     /**
@@ -44,22 +75,30 @@ class PdoAdapter implements Interfaces\PdoAdapter
      * @param $parameters
      * @param $fetch_mode
      * @return \PDOStatement
+     * @throws Exception\Pdo
      */
-    protected function beginTransaction($sql, $parameters, $fetch_mode)
+    protected function executeSql($sql, $parameters, $fetch_mode)
     {
-        $this->getLogger()->sql($sql."|".print_r($parameters, true));
-        $statement = $this->getPdo()->prepare($sql, [\PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY]);
-        $this->getPdo()->beginTransaction();
+        try {
+            $this->getLogger()->sql($sql."|".print_r($parameters, true));
+            $statement = $this->getPdo()->prepare($sql, [
+                \PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY
+            ]);
 
-        if ($parameters !== null) {
-            $result = $statement->execute($parameters);
-        }
-        else {
-            $result = $statement->execute();
-        }
+            if ($parameters !== null) {
+                $result = $statement->execute($parameters);
+            }
+            else {
+                $result = $statement->execute();
+            }
 
-        $statement->setFetchMode($fetch_mode);
-        return $statement;
+            $statement->setFetchMode($fetch_mode);
+            return $statement;
+        }
+        catch (\PDOException $e) {
+            $this->getLogger()->sql_error($sql."|".print_r($parameters, true)); //todo: addFromArray logSql to logger to handle thot
+            throw new Exception\Pdo($e);
+        }
     }
     
     /**
@@ -99,18 +138,8 @@ class PdoAdapter implements Interfaces\PdoAdapter
      */
     public function execute($sql, array $parameters=null, $fetch_mode=\PDO::FETCH_ASSOC)
     {
-        try {
-            $statement = $this->beginTransaction($sql, $parameters, $fetch_mode);
-            $this->getPdo()->commit();
-            return $statement;
-        }
-        catch (\PDOException $e) {
-            if ($this->getPdo()->inTransaction()) {
-                $this->getPdo()->rollBack();
-            }
-            $this->getLogger()->sql_error($sql."|".print_r($parameters, true)); //todo: addFromArray logSql to logger to handle thot
-            throw new Exception\Pdo($e);
-        }
+        $statement = $this->executeSql($sql, $parameters, $fetch_mode);
+        return $statement;
     }
 
     /**
@@ -118,17 +147,10 @@ class PdoAdapter implements Interfaces\PdoAdapter
      */
     public function insert($sql, array $parameters=[], $sequence_name=null, $fetch_mode=\PDO::FETCH_ASSOC)
     {
-        try {
-            $statement = $this->beginTransaction($sql, $parameters, $fetch_mode);
-            //$last_id = $this->getPdo()->lastInsertId($sequence_name);
-            $last_id = $statement->fetchColumn();
-            $this->getPdo()->commit();
-            return $last_id;
-        }   
-        catch (\PDOException $e) {
-            $this->getPdo()->rollBack();
-            throw new Exception\Pdo($e);
-        }
+        $statement = $this->executeSql($sql, $parameters, $fetch_mode);
+        //$last_id = $this->getPdo()->lastInsertId($sequence_name);
+        $last_id = $statement->fetchColumn();
+        return $last_id;
     }
 
     /**
@@ -136,15 +158,8 @@ class PdoAdapter implements Interfaces\PdoAdapter
      */
     public function update($sql, array $parameters=[], $fetch_mode=\PDO::FETCH_ASSOC)
     {
-        try {
-            $statement = $this->beginTransaction($sql, $parameters, $fetch_mode);
-            $this->getPdo()->commit();
-            return $statement->rowCount();
-        }
-        catch (\PDOException $e) {
-            $this->getPdo()->rollBack();
-            throw new Exception\Pdo($e);
-        }
+        $statement = $this->executeSql($sql, $parameters, $fetch_mode);
+        return $statement->rowCount();
     }
 
     /**

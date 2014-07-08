@@ -34,4 +34,9 @@ interface Collection extends Arrayable
      * @return null
      */
     function get($name, $default=null);
+
+    /**
+     * @return bool
+     */
+    function isEmpty();
 }

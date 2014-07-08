@@ -14,26 +14,30 @@ use Everon\Exception;
 use Everon\Helper;
 use Everon\Interfaces\Collection;
 use Everon\View\Interfaces;
+use Everon\View\Template\Compiler\Scope;
 
 class Manager implements Interfaces\Manager
 {
-    use Dependency\Injection\Factory;
     use Dependency\Injection\ConfigManager;
+    use Dependency\Injection\Factory;
+    use Dependency\Injection\Logger;
+    use Dependency\Injection\FileSystem;
 
     use Helper\Arrays;
     use Helper\IsIterable;
     use Helper\String\LastTokenToName;
     use Helper\String\EndsWith;
+    use Helper\RunPhp;
 
-    
+
     protected $current_theme_name = 'Main';
 
     protected $view_directory = null;
-    
+
     protected $cache_directory = null;
-    
+
     protected $compilers = [];
-    
+
     protected $Cache = null;
 
     /**
@@ -54,24 +58,51 @@ class Manager implements Interfaces\Manager
      */
     public function __construct(array $compilers, $view_directory, $cache_directory)
     {
-        $this->compilers = $compilers;
+        //$this->compilers = $compilers;
+        $this->compilers = ['.php' => [$this]]; //todo: quick hack
         $this->view_directory = $view_directory;
         $this->cache_directory = $cache_directory;
         $this->ThemeCollection = new Helper\Collection([]);
         $this->WidgetCollection = new Helper\Collection([]);
     }
-    
+
+    /**
+     * @inheritdoc
+     */
+    public function compile($scope_name, $template_content, array $data)
+    {
+        $Scope = new Scope();
+        $Scope->setName($scope_name);
+        $Scope->setPhp($template_content);
+
+        try {
+            $this->scope_name = $scope_name;
+            $ScopeData = new Helper\PopoProps($data);
+            $code = $this->runPhp($template_content, ['Tpl' => $ScopeData], $this->getFileSystem());
+            $Scope->setCompiled($code);
+            $Scope->setData($data);
+
+            $this->getLogger()->view($code);
+
+            return $Scope;
+        }
+        catch (\Exception $e) {
+            $this->getLogger()->error($e);
+            return $Scope;
+        }
+    }
+
     public function getCache()
     {
         if (is_dir($this->cache_directory) === false) {
             throw new Exception\ViewManager('Cache directory does not exist');
         }
-        
+
         if ($this->Cache === null) {
             $FileSystem = $this->getFactory()->buildFileSystem($this->cache_directory);
             $this->Cache = $this->getFactory()->buildViewCache($FileSystem);
         }
-        
+
         return $this->Cache;
     }
 
@@ -101,7 +132,7 @@ class Manager implements Interfaces\Manager
         try {
             $Scope = new Template\Compiler\Scope();
             $Scope->setName($scope_name);
-            
+
             if ($Template instanceof Interfaces\Template) {
                 /**
                  * @var Interfaces\TemplateCompiler $Compiler
@@ -128,14 +159,14 @@ class Manager implements Interfaces\Manager
             throw new Exception\ViewManager($e);
         }
     }
-    
+
     protected function getDefaultCompilers()
     {
         $default_extension = $this->getConfigManager()->getConfigValue('application.view.default_extension');
         if (isset($this->compilers[$default_extension]) === false) {
             throw new Exception\ViewManager('Default template compiler not set for: "%s"', $default_extension);
         }
-        
+
         return $this->compilers[$default_extension];
     }
 
@@ -149,7 +180,7 @@ class Manager implements Interfaces\Manager
         /**
          * @var Interfaces\TemplateContainer $Include
          * @var Interfaces\TemplateContainer $TemplateInclude
-         */        
+         */
         foreach ($Template->getData() as $name => $Include) {
             if (($Include instanceof Interfaces\TemplateContainer) === false) {
                 if (is_string($Include)) {
@@ -167,11 +198,11 @@ class Manager implements Interfaces\Manager
                 $this->compileTemplateRecursive($Compiler, $TemplateInclude, $Scope);
                 $Include->set($include_name, $TemplateInclude->getScope()->getCompiled());
             }
-            
+
             $ContentScope = $Compiler->compile($Scope->getName(), $Include->getTemplateContent(), $Include->getData());
             $Include->setCompiledContent($ContentScope->getCompiled());
             $Include->setScope($ContentScope);
-            
+
             $Template->set($name, $Include->getScope()->getCompiled());
         }
 
@@ -210,27 +241,29 @@ class Manager implements Interfaces\Manager
     {
         if ($this->ThemeCollection->has($theme_name) === false) {
             $TemplateDirectory = new \SplFileInfo($this->getViewDirectory().$theme_name.DIRECTORY_SEPARATOR.$view_name.DIRECTORY_SEPARATOR.'templates'.DIRECTORY_SEPARATOR);
-            if ($TemplateDirectory->isDir() === false) { 
+            if ($TemplateDirectory->isDir() === false) {
                 $view_name = 'Index';//revert to default
                 $TemplateDirectory = new \SplFileInfo($this->getViewDirectory().$theme_name.DIRECTORY_SEPARATOR.$view_name.DIRECTORY_SEPARATOR.'templates'.DIRECTORY_SEPARATOR);
                 if ($TemplateDirectory->isDir() === false) {
                     throw new Exception\ViewManager('View: "%s" template directory: "%s" does not exist', [$view_name, $TemplateDirectory->getPathname()]);
                 }
             }
-            
+
             $Theme = $this->createView($view_name, $TemplateDirectory->getPathname(), 'Everon\View\\'.$theme_name);
-            $view_variables = $this->getConfigManager()->getConfigValue("view.$view_name", []);
+            $view_variables = $this->getConfigManager()->getConfigValue("view.$view_name", null);
+            if ($view_variables === null) {
+                throw new Exception\ViewManager('View: "%s" not defined in view.ini', $view_name);
+            }
             $IndexTemplate = $Theme->getTemplate('index', $view_variables);
-            
+
             if ($IndexTemplate === null) { //fallback to default theme and view
                 $TemplateDirectory = new \SplFileInfo($this->getViewDirectory().$this->getCurrentThemeName().DIRECTORY_SEPARATOR.'Index'.DIRECTORY_SEPARATOR.'templates'.DIRECTORY_SEPARATOR);
                 $Theme = $this->createView('Index', $TemplateDirectory->getPathname(), 'Everon\View\\'.$this->getCurrentThemeName());
-                $view_variables = $this->getConfigManager()->getConfigValue("view.$view_name", []);
                 $IndexTemplate = $Theme->getTemplate('index', $view_variables);
             }
-            
+
             $Theme->setContainer($IndexTemplate);
-            
+
             $this->ThemeCollection->set($theme_name, $Theme);
         }
         return $this->ThemeCollection->get($theme_name);
@@ -246,7 +279,7 @@ class Manager implements Interfaces\Manager
     public function createView($name, $template_directory, $namespace='Everon\View')
     {
         $default_extension = $this->getConfigManager()->getConfigValue('application.view.default_extension');
-        
+
         $TemplateDirectory = new \SplFileInfo($template_directory);
         if  ($TemplateDirectory->isDir() === false) {  //fallback to theme dir
             $theme_dir = $this->view_directory.$this->getCurrentThemeName().DIRECTORY_SEPARATOR.$name.DIRECTORY_SEPARATOR.'templates';
@@ -255,14 +288,20 @@ class Manager implements Interfaces\Manager
                 throw new Exception\ViewManager('View template directory: "%s" does not exist', $template_directory);
             }
         }
-        
+
         try {
             //try to load module view
-            return $this->getFactory()->buildView($name, $TemplateDirectory->getPathname().DIRECTORY_SEPARATOR, $default_extension, $namespace);
+            try {
+                return $this->getFactory()->buildView($name, $TemplateDirectory->getPathname().DIRECTORY_SEPARATOR, $default_extension, $namespace);
+            }
+            catch (Exception\Factory $e) { //fallback to theme view
+                $namespace = 'Everon\View\\'.$this->getCurrentThemeName();
+                return $this->getFactory()->buildView($name, $TemplateDirectory->getPathname().DIRECTORY_SEPARATOR, $default_extension, $namespace);
+            }
         }
-        catch (Exception\Factory $e) { //fallback to theme view
+        catch (Exception\Factory $e) { //fallback to default index theme view
             $namespace = 'Everon\View\\'.$this->getCurrentThemeName();
-            return $this->getFactory()->buildView($name, $TemplateDirectory->getPathname().DIRECTORY_SEPARATOR, $default_extension, $namespace);
+            return $this->getFactory()->buildView('Index', $TemplateDirectory->getPathname().DIRECTORY_SEPARATOR, $default_extension, $namespace);
         }
     }
 
@@ -278,8 +317,7 @@ class Manager implements Interfaces\Manager
     public function createWidget($name, $namespace='Everon\View')
     {
         $ViewWidget = $this->createViewWidget($name);
-        $Widget = $this->getFactory()->buildViewWidget($name, $namespace.'\\'.$this->getCurrentThemeName().'\Widget');
-        $Widget->setView($ViewWidget);
+        $Widget = $this->getFactory()->buildViewWidget($name, $ViewWidget, $namespace.'\\'.$this->getCurrentThemeName().'\Widget');
         return $Widget;
     }
 
@@ -346,7 +384,7 @@ class Manager implements Interfaces\Manager
     {
         if ($this->WidgetCollection->has($name) === false) {
             $Widget = $this->createWidget($name);
-            $this->WidgetCollection->set($name,$Widget);
+            $this->WidgetCollection->set($name, $Widget);
         }
 
         return $this->WidgetCollection->get($name)->render();

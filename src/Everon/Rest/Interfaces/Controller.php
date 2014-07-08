@@ -29,9 +29,4 @@ interface Controller extends Interfaces\Controller
      */
     function getResourceFromRequest();
 
-    /**
-     * @param $name
-     * @return null
-     */
-    function getUrl($name);
 }

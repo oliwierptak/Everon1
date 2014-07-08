@@ -173,8 +173,10 @@ class Entity extends Helper\Popo implements Interfaces\Entity
     {
         $this->data[$name] = $value;
     }
-    
-    
+
+    /**
+     * @inheritdoc
+     */
     public function delete()
     {
         $this->markDeleted();
@@ -201,7 +203,7 @@ class Entity extends Helper\Popo implements Interfaces\Entity
     }
 
     /**
-     * @param Collection $RelationCollection
+     * @inheritdoc
      */
     public function setRelationCollection(Collection $RelationCollection)
     {
@@ -209,7 +211,7 @@ class Entity extends Helper\Popo implements Interfaces\Entity
     }
 
     /**
-     * @return Collection
+     * @inheritdoc
      */
     public function getRelationCollection()
     {
@@ -217,8 +219,7 @@ class Entity extends Helper\Popo implements Interfaces\Entity
     }
 
     /**
-     * @param $name
-     * @param Collection $CollectionResource
+     * @inheritdoc
      */
     public function setRelationCollectionByName($name, Collection $CollectionResource)
     {
@@ -226,8 +227,7 @@ class Entity extends Helper\Popo implements Interfaces\Entity
     }
 
     /**
-     * @param $name
-     * @return Collection
+     * @inheritdoc
      */
     public function getRelationCollectionByName($name)
     {
@@ -235,7 +235,28 @@ class Entity extends Helper\Popo implements Interfaces\Entity
     }
 
     /**
-     * @return string
+     * @inheritdoc
+     */
+    public function getOneToManyRelation($name) 
+    {
+        $data = $this->getRelationCollectionByName($name)->toArray();
+        if (empty($data)) {
+            return null;
+        }
+        
+        return $data;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getManyToManyRelation($name)
+    {
+        return $this->getRelationCollectionByName($name)->toArray();
+    }
+
+    /**
+     * @inheritdoc
      */
     public function getDomainName()
     {

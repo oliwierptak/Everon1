@@ -21,49 +21,89 @@ class Criteria implements Interfaces\Criteria
     
     protected $where = [];
     
+    protected $where_or = [];
+
     protected $in = [];
-    
+
+    protected $ilike = [];
+
     protected $offset = null;
-    
+
     protected $limit = null;
 
     protected $order_by = null;
-    
+
     protected $group_by = null;
-    
+
     protected $sort = 'ASC';
     
-    
+
+    /**
+     * @inheritdoc
+     */
     public function where(array $where)
     {
         $this->where = $this->arrayMergeDefault($this->where, $where);
         return $this;
     }
-    
+
+    /**
+     * @inheritdoc
+     */
+    public function whereOr(array $where_or)
+    {
+        $this->where_or = $this->arrayMergeDefault($this->where_or, $where_or);
+        return $this;
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function in(array $in)
     {
         $this->in = $this->arrayMergeDefault($this->in, $in);
         return $this;
     }
-    
+
+    /**
+     * @inheritdoc
+     */
+    public function ilike(array $ilike)
+    {
+        $this->ilike = $this->arrayMergeDefault($this->ilike, $ilike);
+        return $this;
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function offset($offset)
     {
         $this->offset = (int) $offset;
         return $this;
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public function limit($limit)
     {
         $this->limit = (int) $limit;
         return $this;
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public function orderBy($order_by)
     {
         $this->order_by = $order_by;
         return $this;
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public function groupBy($group_by)
     {
         $this->group_by = $group_by;
@@ -78,23 +118,43 @@ class Criteria implements Interfaces\Criteria
     
     public function getWhereSql()
     {
-        if (empty($this->where)) {
+        if (empty($this->where) && empty($this->in) && empty($this->ilike)) {
             return '';
         }
         
-        $where_str = 'WHERE 1=1';
+        $where_str = '1=1';
         foreach ($this->where as $field => $value) {
             $field_ok = str_replace('.', '_', $field); //replace z.id with z_id
             $where_str .= " AND ${field} = :${field_ok}";
         }
+        $where_str = (empty($this->where) === false) ? '('.$where_str.')' : $where_str;
+
+        $where_or_str = '';
+        foreach ($this->where_or as $field => $value) {
+            $field_ok = str_replace('.', '_', $field);
+            $where_or_str .= " OR ${field} = :${field_ok}";
+        }
+        $where_or_str = (empty($this->where_or) === false) ? '('.$where_or_str.')' : $where_or_str;
+        
+        $where_str = 'WHERE '.$where_str.$where_or_str;
         
         if (empty($this->in) === false) {
             $where_str .= ' ';
             foreach ($this->in as $field => $values) {
-                $in_str = implode(',', $values);
-                $where_str .= " AND ${field} IN (${in_str})";
+                $ilike_str = implode(',', $values);
+                $where_str .= " AND ${field} IN (${ilike_str})";
             }
         }
+
+        if (empty($this->ilike) === false) {
+            $where_str .= ' ';
+            foreach ($this->ilike as $field => $value) {
+                $field_ok = str_replace('.', '_', $field); //replace z.id with z_id
+                $where_str .= " AND ${field} ILIKE :${field_ok}";
+            }
+        }
+        
+        $this->where = $this->arrayMergeDefault($this->where, $this->ilike);
         
         return $where_str;
     }
@@ -129,13 +189,15 @@ class Criteria implements Interfaces\Criteria
                 $order_by = '';
                 foreach ($this->order_by as $order_field) {
                     $dir = isset($this->sort[$order_field]) ? $this->sort[$order_field] : 'ASC';
-                    $order_by .= "${order_field} ".$dir;
+                    $order_by .= "${order_field} ".$dir.',';
                 }
             }
         }
         else {
             $order_by = $this->order_by;
         }
+        
+        $order_by = trim($order_by, ',');
 
         return 'ORDER BY '.$order_by;
     }

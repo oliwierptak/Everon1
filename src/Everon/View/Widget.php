@@ -13,21 +13,20 @@ namespace Everon\View;
 use Everon\Dependency;
 use Everon\Helper;
 use Everon\View\Interfaces;
+use Everon\View\Dependency\Injection\ViewManager as ViewManagerDependency;
+use Everon\Exception;
 
 abstract class Widget implements Interfaces\Widget
 {
-    use Dependency\Injection\ConfigManager;
-    use Dependency\Injection\Logger;
-    use Dependency\Injection\Response;
-    use Dependency\Injection\Request;
-    use Dependency\Injection\Factory;
+    use ViewManagerDependency;
 
     use Helper\ToString;
     use Helper\String\LastTokenToName;
+    use Dependency\Injection\ConfigManager;
 
     protected $name;
 
-    protected $data;
+    protected $populated = null;
 
     /**
      * @var Interfaces\View
@@ -37,10 +36,10 @@ abstract class Widget implements Interfaces\Widget
     protected abstract function populate();
     
 
-    public function __construct()
+    public function __construct(Interfaces\View $View)
     {
-        $this->data = null;
-        $this->name = $this->stringLastTokenToName(get_class($this));
+        $this->name = $this->stringLastTokenToName(get_called_class());
+        $this->View = $View;
     }
 
     /**
@@ -57,25 +56,6 @@ abstract class Widget implements Interfaces\Widget
     public function getView()
     {
         return $this->View;
-    }
-
-    /**
-     * @param mixed $data
-     */
-    public function setData($data)
-    {
-        $this->data = $data;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getData()
-    {
-        if ($this->data === null) {
-            $this->populate();
-        }
-        return $this->data;
     }
 
     /**
@@ -99,13 +79,36 @@ abstract class Widget implements Interfaces\Widget
      */
     public function render()
     {
-        $Tpl = $this->getView()->getTemplate('Index', $this->getData());
-
+        if ($this->populated !== true) {
+            $this->populate();
+            $this->populated = true;
+        }
+        
+        $Tpl = $this->getView()->getTemplate('index', $this->getView()->getData());
         $this->getView()->setContainer($Tpl);
+        
         $this->getViewManager()->compileView('', $this->getView());
-
         return (string) $this->getView()->getContainer();
     }
 
+    public function getUrl($name, $query=[], $get=[])
+    {
+        $Item = $this->getConfigManager()->getConfigByName('router')->getItemByName($name);
+        if ($Item === null) {
+            throw new Exception\Controller('Invalid router config name: "%s"', $name);
+        }
 
+        $Item->compileUrl($query);
+        $url = $Item->getParsedUrl();
+
+        $get_url = '';
+        if (empty($get) === false) {
+            $get_url = http_build_query($get);
+            if (trim($get_url) !== '') {
+                $get_url = '?'.$get_url;
+            }
+        }
+
+        return $url.$get_url;
+    }
 }

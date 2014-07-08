@@ -92,6 +92,10 @@ $Container->propose('EventManager', function() use ($Factory) {
     return $Factory->buildEventManager();
 });
 
+$Container->register('TaskManager', function() use ($Factory) {
+    return $Factory->buildTaskManager();
+});
+
 //xxx
 //avoid circular dependencies
 //the logger needs ConfigManager in order to be instantiated, therefore Logger can't be auto injected into ConfigManger

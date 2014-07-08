@@ -93,6 +93,14 @@ class Collection implements \Countable, \ArrayAccess, \IteratorAggregate, Interf
     }
 
     /**
+     * @return bool
+     */
+    public function isEmpty()
+    {
+        return empty($this->data);
+    }
+
+    /**
      * @param array $array
      * @return static
      */

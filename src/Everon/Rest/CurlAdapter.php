@@ -146,5 +146,5 @@ class CurlAdapter implements Interfaces\CurlAdapter
     {
         return $this->http_response_code;
     }
-    
+   
 }

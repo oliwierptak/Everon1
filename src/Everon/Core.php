@@ -9,6 +9,7 @@
  */
 namespace Everon;
 
+use Everon\Config;
 use Everon\Exception;
 
 abstract class Core implements Interfaces\Core
@@ -32,6 +33,11 @@ abstract class Core implements Interfaces\Core
     protected $Module = null;
 
     /**
+     * @var Config\Interfaces\ItemRouter
+     */
+    protected $Route = null;
+
+    /**
      * @var RequestIdentifier
      */
     protected $RequestIdentifier = null;
@@ -41,6 +47,7 @@ abstract class Core implements Interfaces\Core
 
     /**
      * @param RequestIdentifier $RequestIdentifier
+     * @throws Exception\Core
      */
     protected function runOnce(RequestIdentifier $RequestIdentifier)
     {
@@ -54,6 +61,14 @@ abstract class Core implements Interfaces\Core
         $this->getLogger()->setRequestIdentifier($this->RequestIdentifier->getValue());
         
         $this->previous_exception_handler = set_exception_handler([$this, 'handleExceptions']);
+
+        $this->getModuleManager()->loadModuleDependencies();
+        $this->Route = $this->getRouter()->getRouteByRequest($this->getRequest());
+        $this->Module = $this->getModuleManager()->getModule($this->Route->getModule());
+
+        if ($this->Module === null) {
+            throw new Exception\Core('No module defined for this request');
+        }
     }
 
     /**
@@ -71,16 +86,9 @@ abstract class Core implements Interfaces\Core
     {
         $this->runOnce($RequestIdentifier);
         
-        $CurrentRoute = $this->getRouter()->getRouteByRequest($this->getRequest());
-        $this->Module = $this->getModuleManager()->getModule($CurrentRoute->getModule());
-        
-        if ($this->Module === null) {
-            throw new Exception\Core('No module defined for this request');
-        }
-    
-        $this->Controller = $this->Module->getController($CurrentRoute->getController());
-        $this->Controller->setCurrentRoute($CurrentRoute);
-        $this->Controller->execute($CurrentRoute->getAction());
+        $this->Controller = $this->Module->getController($this->Route->getController());
+        $this->Controller->setCurrentRoute($this->Route);
+        $this->Controller->execute($this->Route->getAction());
     }
 
     public function shutdown()
@@ -91,7 +99,7 @@ abstract class Core implements Interfaces\Core
         $mu = vsprintf('%0dkb', ($data['memory_total'] - $data['memory_at_start']) / 1024);
         $time = vsprintf('%.3f', round($data['time'], 3));
         $s = "${time}s $mu $sbs/$sas"; 
-               
+        
         return $s;
     }
 

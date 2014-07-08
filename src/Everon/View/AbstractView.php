@@ -15,10 +15,12 @@ use Everon\Dependency;
 
 abstract class AbstractView implements Interfaces\View
 {
+    use Dependency\Injection\ConfigManager;
     use Dependency\Injection\Factory;
     use Dependency\Injection\Request;
 
     use Helper\Arrays;
+    use Helper\IsCallable;
     use Helper\IsIterable;
     use Helper\String\EndsWith;
     use Helper\String\LastTokenToName;
@@ -35,6 +37,8 @@ abstract class AbstractView implements Interfaces\View
 
     protected $default_extension = '.php';
 
+    protected $index_executed = false;
+
 
     /**
      * @param $template_directory
@@ -42,7 +46,7 @@ abstract class AbstractView implements Interfaces\View
      */
     public function __construct($template_directory, $default_extension=null)
     {
-        $this->name = $this->stringLastTokenToName(get_class($this));
+        $this->name = $this->stringLastTokenToName(get_called_class());
         $this->template_directory = $template_directory;
         if ($default_extension !== null) {
             $this->default_extension = $default_extension;
@@ -125,11 +129,13 @@ abstract class AbstractView implements Interfaces\View
                 $data = $this->Container->getData();
             }
             $this->Container = $this->getFactory()->buildTemplateContainer($Container, $data);
-        } 
+        }
 
         if ($this->Container === null) {
             throw new Exception\Template('Invalid container type');
         }
+
+        $this->set('View', $this); //todo: meh
     }
 
     /**
@@ -208,5 +214,52 @@ abstract class AbstractView implements Interfaces\View
     {
         return new \SplFileInfo($this->getTemplateDirectory().$this->getName().$this->getDefaultExtension());
     }
-    
+
+    /**
+     * @inheritdoc
+     */
+    public function execute($action)
+    {
+        if ($this->index_executed === false) {
+            $default_action = 'index';
+            if (strcasecmp($action, $default_action) !== 0) {
+                if ($this->isCallable($this, $default_action)) {
+                    $this->{$default_action}();
+                }
+            }
+        }
+        $this->index_executed = true;
+
+        if ($this->isCallable($this, $action)) {
+            return $this->{$action}();
+        }
+
+        return null;
+    }
+
+
+    /**
+     * @inheritdoc
+     */
+    public function getUrl($name, $query=[], $get=[])
+    {
+        $Item = $this->getConfigManager()->getConfigByName('router')->getItemByName($name);
+        if ($Item === null) {
+            throw new Exception\Controller('Invalid router config name: "%s"', $name);
+        }
+
+        $Item->compileUrl($query);
+        $url = $Item->getParsedUrl();
+
+        $get_url = '';
+        if (empty($get) === false) {
+            $get_url = http_build_query($get);
+            if (trim($get_url) !== '') {
+                $get_url = '?'.$get_url;
+            }
+        }
+
+        return $url.$get_url;
+    }
+
 }

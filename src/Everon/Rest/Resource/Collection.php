@@ -9,11 +9,15 @@
  */
 namespace Everon\Rest\Resource;
 
-use Everon\Rest\Interfaces;
+use Everon\Helper;
 use Everon\Interfaces\Collection as ItemCollection;
+use Everon\Interfaces\Paginator as Paginator;
+use Everon\Rest\Interfaces;
 
 class Collection extends Basic implements Interfaces\ResourceCollection
 {
+    use Helper\Arrays;
+    
     protected $limit = null;
     protected $offset = null;
     protected $first = null;
@@ -22,34 +26,60 @@ class Collection extends Basic implements Interfaces\ResourceCollection
     protected $last = null;
     
     /**
-     * @var Interfaces\Collection
+     * @var ItemCollection
      */
     protected $ItemCollection = null;
 
     /**
+     * @var Paginator
+     */
+    protected $Paginator = null;
+
+    /**
      * @param Interfaces\ResourceHref $Href
      * @param ItemCollection $ItemCollection
+     * @param Paginator $Paginator
      */
-    public function __construct(Interfaces\ResourceHref $Href, ItemCollection $ItemCollection)
+    public function __construct(Interfaces\ResourceHref $Href, ItemCollection $ItemCollection, Paginator $Paginator)
     {
         parent::__construct($Href);
         $this->ItemCollection = $ItemCollection;
+        $this->Paginator = $Paginator;
     }
 
     protected function getToArray()
     {
         $data = parent::getToArray();
+        //$data = $this->arrayMergeDefault($data, $this->getPaginator()->toArray());
+        
         $data['first'] = $this->first;
         $data['prev'] = $this->prev;
         $data['next'] = $this->next;
         $data['last'] = $this->last;
-        $data['limit'] = $this->limit;
-        $data['offset'] = $this->offset;
+        $data['limit'] = $this->getPaginator()->getLimit();
+        $data['offset'] = $this->getPaginator()->getOffset();
+        $data['total'] = $this->getPaginator()->getTotal();
         $data['items'] = $this->ItemCollection->toArray(true);
         
         return $data;
     }
 
+    /**
+     * @param \Everon\Interfaces\Paginator $Paginator
+     */
+    public function setPaginator(Paginator $Paginator)
+    {
+        $this->Paginator = $Paginator;
+    }
+
+    /**
+     * @return \Everon\Interfaces\Paginator
+     */
+    public function getPaginator()
+    {
+        return $this->Paginator;
+    }
+    
     /**
      * @inheritdoc
      */

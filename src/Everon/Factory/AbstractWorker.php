@@ -15,7 +15,7 @@ use Everon\Dependency;
 use Everon\Interfaces;
 
 
-abstract class WorkerAbstract implements Interfaces\FactoryWorker
+abstract class AbstractWorker implements Interfaces\FactoryWorker
 {
     use Dependency\Factory;
     

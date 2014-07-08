@@ -17,7 +17,8 @@ interface Repository
 {
     /**
      * @param Entity $Entity
-     * @return mixed
+     * @param Criteria $Criteria
+     * @return void
      */
     function buildEntityRelations(Entity $Entity, Criteria $Criteria);
     
@@ -27,6 +28,13 @@ interface Repository
      * @throws Exception\Repository
      */
     function getEntityById($id);
+
+    /**
+     * @param array $property_criteria
+     * @param Criteria $RelationCriteria
+     * @return Entity|null
+     */
+    function getEntityByPropertyValue(array $property_criteria, Criteria $RelationCriteria=null);
 
     /**
      * @param array $data
@@ -40,6 +48,12 @@ interface Repository
      * @return array|null
      */
     function getByCriteria(Criteria $Criteria);
+
+    /**
+     * @param Criteria $Criteria
+     * @return int
+     */
+    function count(Criteria $Criteria=null);
         
     /**
      * @param Entity $Entity
@@ -77,4 +91,10 @@ interface Repository
      * @return Entity
      */
     function buildFromArray(array $data);
+
+    function beginTransaction();
+
+    function commitTransaction();
+
+    function rollbackTransaction();
 }

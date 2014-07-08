@@ -23,7 +23,11 @@ abstract class Mapper extends DataMapper
     protected function getInsertSql(array $data)
     {
         $values_str = rtrim(implode(',', $this->getPlaceholderForQuery()), ',');
-        $columns_str = rtrim(implode(',', $this->getPlaceholderForQuery('')), ',');
+        $columns = $this->getPlaceholderForQuery('');
+        array_walk($columns, function(&$item) {
+            $item = '"'.$item.'"';
+        });
+        $columns_str = rtrim(implode(',', $columns), ',');
         $sql = sprintf('INSERT INTO %s.%s (%s) VALUES (%s) RETURNING %s', $this->getTable()->getSchema(), $this->getTable()->getName(), $columns_str, $values_str, $this->getTable()->getPk());
         return [$sql, $this->getValuesForQuery($data)];
     }
@@ -74,10 +78,11 @@ abstract class Mapper extends DataMapper
     {
         $pk_name = $this->getTable()->getPk();
 
-        $sql = '
+        $sql = "
             SELECT * 
             FROM %s.%s
-            '.$Criteria;
+            ";
+        $sql .= $Criteria;
         
         $sql = sprintf($sql, $this->getTable()->getSchema(), $this->getTable()->getName(), $pk_name);
         return $sql;
@@ -85,12 +90,29 @@ abstract class Mapper extends DataMapper
 
     protected function getLeftJoinSql($select, $a, $b, $on_a, $on_b, Interfaces\Criteria $Criteria)
     {
-        $sql = '
+        $sql = "
             SELECT %s FROM %s
             LEFT JOIN %s ON %s = %s 
-            '.$Criteria;
+            ";
+        $sql .= $Criteria;
         
         $sql = sprintf($sql, $select, $a, $b, $on_a, $on_b);
         return $sql;
+    }
+
+    protected function getCountSql(Interfaces\Criteria $Criteria)
+    {
+        $table_name = sprintf('%s.%s', $this->getTable()->getSchema(), $this->getTable()->getName());
+/*        
+        $sql = "SELECT pgc.reltuples AS total_count FROM pg_catalog.pg_class AS pgc "; 
+        $sql .= $Criteria;
+        $where_str = empty($Criteria->getWhere()) ? 'WHERE ' : ''; 
+        $sql .= $where_str.' pgc.oid = '.sprintf("'${table_name}'::regclass", $this->getTable()->getSchema(), $this->getTable()->getName());*/
+        
+        //do slow count
+        $pk = $this->getTable()->getPk();
+        $sql = "SELECT COUNT(${pk}) FROM ${table_name}";
+
+        return [$sql, $Criteria->getWhere()];
     }
 }

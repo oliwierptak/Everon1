@@ -9,15 +9,19 @@
  */
 namespace Everon\Email;
 
+use Everon\Helper;
+
 /**
  * @author Zeger Hoogeboom <zeger_hoogeboom@hotmail.com>
  * @author Oliwier Ptak <oliwierptak@gmail.com>
  */
 class Recipient implements Interfaces\Recipient
 {
+    use Helper\ToArray;
     
-    protected $name = null;
-    
+    /**
+     * @var array
+     */
     protected $to = null;
 
     /**
@@ -29,12 +33,16 @@ class Recipient implements Interfaces\Recipient
      * @var array
      */
     protected $bcc;
-    
 
-    function __construct($name, $to, array $cc=[], array $bcc=[])
+
+    /**
+     * @param array $to array of Interfaces\Address
+     * @param array $cc array of Interfaces\Address
+     * @param array $bcc array of Interfaces\Address
+     */
+    function __construct(array $to, array $cc=[], array $bcc=[])
     {
-        $this->name = $name;
-        $this->to = $name;
+        $this->to = $to;
         $this->cc = $cc;
         $this->bcc = $bcc;
     }
@@ -72,34 +80,27 @@ class Recipient implements Interfaces\Recipient
     }
 
     /**
-     * @param string $to
+     * @param array $to
      */
-    public function setTo($to)
+    public function setTo(array $to)
     {
         $this->to = $to;
     }
 
     /**
-     * @return string
+     * @return array
      */
     public function getTo()
     {
         return $this->to;
     }
-
-    /**
-     * @param string $name
-     */
-    public function setName($name)
+    
+    protected function getToArray()
     {
-        $this->name = $name;
-    }
-
-    /**
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->name;
+        return [
+            'to' => (new Helper\Collection($this->to))->toArray(true),
+            'cc' => (new Helper\Collection($this->cc))->toArray(true),
+            'bcc' => (new Helper\Collection($this->bcc))->toArray(true)
+        ];
     }
 } 

@@ -21,7 +21,7 @@ use Everon\View;
  * @method Http\Interfaces\Response getResponse()
  * @method Module\Interfaces\Mvc getModule()
  */
-abstract class Controller extends \Everon\Controller
+abstract class Controller extends \Everon\Controller implements Interfaces\Controller
 {
     use Dependency\Injection\Factory;
     use View\Dependency\Injection\ViewManager;
@@ -86,27 +86,31 @@ abstract class Controller extends \Everon\Controller
     }
 
     /**
-     * @param $View
+     * @param View\Interfaces\View $View
      * @param $action
-     * @return bool|null
+     * @return bool
      */
-    protected function executeView($View, $action)
+    protected function executeView(View\Interfaces\View $View, $action)
     {
-        if ($this->isCallable($View, $action)) {
-            $result = $View->{$action}();
-            $result = ($result !== false) ? true : $result;
-            return $result;
-        }
-        
-        return null;
+        $result = $View->execute($action);
+        $result = ($result !== false) ? true : $result;
+        return $result;
     }
     
     /**
-     * @return View\Interfaces\View
+     * @inheritdoc
      */
     public function getView()
     {
-        return $this->getModule()->getView($this->getName());
+        return $this->getModule()->getViewByName($this->getName());
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setView(View\Interfaces\View $View)
+    {
+        $this->getModule()->setViewByViewName($View);
     }
     
     /**
@@ -118,7 +122,7 @@ abstract class Controller extends \Everon\Controller
     }
 
     /**
-     * @return View\Interfaces\TemplateContainer
+     * @inheritdoc
      */
     public function getActionTemplate()
     {
@@ -137,6 +141,7 @@ abstract class Controller extends \Everon\Controller
         }
 
         $Theme = $this->getViewManager()->getCurrentTheme('Error');
+        $this->getView()->set('body', '');
         $Theme->set('error', $message);
         $data = $this->arrayMergeDefault($Theme->getData(), $this->getView()->getData());
         $Theme->setData($data);
@@ -148,16 +153,13 @@ abstract class Controller extends \Everon\Controller
         $this->getResponse()->setStatusMessage($message);
         $this->response();
     }
-    
-    public function redirect($name, $query=[])
+
+    /**
+     * @inheritdoc
+     */
+    public function redirect($name, $query=[], $get=[])
     {
-        $Item = $this->getConfigManager()->getConfigByName('router')->getItemByName($name);
-        $Item->compileUrl($query);
-        
-        if ($Item === null) {
-            throw new Exception\Controller('Invalid router config name: "%s"', $name);
-        }
-        
-        $this->getResponse()->setHeader('refresh', '1; url='.$Item->getParsedUrl());
+        $url = $this->getUrl($name, $query, $get);
+        $this->getResponse()->setHeader('refresh', '1; url='.$url);
     }
 }

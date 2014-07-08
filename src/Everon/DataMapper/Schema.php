@@ -9,6 +9,7 @@
  */
 namespace Everon\DataMapper;
 
+use Everon\Config;
 use Everon\Dependency\Injection\Factory as FactoryDependency;
 use Everon\DataMapper\Dependency;
 use Everon\Domain\Dependency\DomainMapper as DomainMapperDependency;
@@ -42,6 +43,7 @@ class Schema implements Interfaces\Schema
     /**
      * @param Interfaces\Schema\Reader $SchemaReader
      * @param Interfaces\ConnectionManager $ConnectionManager
+     * @param Domain\Interfaces\Mapper $DomainMapper
      */
     public function __construct(Interfaces\Schema\Reader $SchemaReader, Interfaces\ConnectionManager $ConnectionManager, Domain\Interfaces\Mapper $DomainMapper)
     {
@@ -89,7 +91,7 @@ class Schema implements Interfaces\Schema
          */
         $mappings = $this->getDomainMapper()->toArray();
         foreach ($mappings as $domain_name => $Item) {
-            if ($Item->getType() !== 'mat_view') {
+            if ($Item->getType() !== Config\Item\Domain::TYPE_MAT_VIEW) {
                 continue;
             }
             
@@ -105,15 +107,17 @@ class Schema implements Interfaces\Schema
                 $item_table_name = implode('.', $tokens);
                 
                 if (isset($this->tables[$item_table_name]) === false) {
-                    continue;
+                    throw new Exception\Schema('Invalid target table name: "%s"', $item_table_name);
                 }
 
                 /**
                  * @var \Everon\DataMapper\Interfaces\Schema\Table $Table
+                 * @var \Everon\DataMapper\Interfaces\Schema\Column $Column
                  */
                 $Table = $this->tables[$item_table_name];
                 $Column = clone $Table->getColumnByName($column_name);
-                $Column->setIsNullable(true);
+                $Column->setName($view_column_name);
+                $Column->unMarkAsPk();
                 $view_columns[$view_column_name] = $Column;
             }
 
@@ -125,12 +129,15 @@ class Schema implements Interfaces\Schema
                 $item_table_name = implode('.', $tokens);
 
                 if (isset($this->tables[$item_table_name]) === false) {
-                    continue;
+                    throw new Exception\Schema('Invalid target table name: "%s"', $item_table_name);
                 }
 
                 /**
                  * @var \Everon\DataMapper\Interfaces\Schema\Table $Table
+                 * @var \Everon\DataMapper\Interfaces\Schema\Column $Column
                  */
+                $Column = $view_columns[$view_key_name];
+                $Column->markAsPk();
                 $Table = $this->tables[$item_table_name];
                 $view_primary_keys[$view_key_name] = $Table->getPrimaryKeyByName($column_name);
             }

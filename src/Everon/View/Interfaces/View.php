@@ -80,4 +80,20 @@ interface View
      * @return \SplFileInfo
      */
     function getFilename();
+
+
+    /**
+     * @param $action
+     * @return mixed
+     */
+    function execute($action);
+
+    /**
+     * @param $name
+     * @param array $query
+     * @param array $get
+     * @return string
+     * @throws \Everon\Exception\Controller
+     */
+    function getUrl($name, $query=[], $get=[]);
 }

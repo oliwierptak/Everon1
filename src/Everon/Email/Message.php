@@ -9,42 +9,66 @@
  */
 namespace Everon\Email;
 
+use Everon\Helper;
+
 /**
  * @author Zeger Hoogeboom <zeger_hoogeboom@hotmail.com>
  * @author Oliwier Ptak <oliwierptak@gmail.com>
  */
 class Message implements Interfaces\Message
 {
-    /**
-     * @var array
-     */
-    protected $headers;
-
-    protected $subject;
-
-    protected $body;
-
-    /**
-     * @var array
-     */
-    protected $attachments;
-
+    use Helper\ToArray;
 
     /**
      * @var Interfaces\Recipient
      */
     protected $Recipient;
 
-    public function __construct(Interfaces\Recipient $Recipient, $subject, $body, array $headers=[])
+    /**
+     * @var Interfaces\Address
+     */
+    protected $From = null;
+
+    /**
+     * @var string
+     */
+    protected $subject = null;
+
+    /**
+     * @var string
+     */
+    protected $html_body = null;
+
+    /**
+     * @var string
+     */
+    protected $text_body = null;
+
+    /**
+     * @var array
+     */
+    protected $attachments;
+    
+    /**
+     * @var array
+     */
+    protected $headers = null;
+
+
+    
+    public function __construct(Interfaces\Recipient $Recipient, Interfaces\Address $FromAddress, $subject, $html_body, $text_body='', array $attachments=[], array $headers=[])
     {
         $this->Recipient = $Recipient;
+        $this->From = $FromAddress;
         $this->subject = $subject;
-        $this->body = $body;
+        $this->html_body = $html_body;
+        $this->text_body = $text_body;
         $this->headers = $headers;
+        $this->attachments = $attachments;
     }
 
     /**
-     * @param array  $headers
+     * @inheritdoc
      */
     public function setHeaders(array $headers)
     {
@@ -52,7 +76,7 @@ class Message implements Interfaces\Message
     }
 
     /**
-     * @return mixed
+     * @inheritdoc
      */
     public function getHeaders()
     {
@@ -60,23 +84,39 @@ class Message implements Interfaces\Message
     }
 
     /**
-     * @param mixed $message
+     * @inheritdoc
      */
-    public function setBody($message)
+    public function setTextBody($text_body)
     {
-        $this->body = $message;
+        $this->text_body = $text_body;
     }
 
     /**
-     * @return mixed
+     * @inheritdoc
      */
-    public function getBody()
+    public function getTextBody()
     {
-        return $this->body;
+        return $this->text_body;
     }
 
     /**
-     * @param mixed $subject
+     * @inheritdoc
+     */
+    public function setHtmlBody($richBody)
+    {
+        $this->html_body = $richBody;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getHtmlBody()
+    {
+        return $this->html_body;
+    }
+
+    /**
+     * @inheritdoc
      */
     public function setSubject($subject)
     {
@@ -84,7 +124,7 @@ class Message implements Interfaces\Message
     }
 
     /**
-     * @return mixed
+     * @inheritdoc
      */
     public function getSubject()
     {
@@ -92,7 +132,7 @@ class Message implements Interfaces\Message
     }
 
     /**
-     * @param array $attachments
+     * @inheritdoc
      */
     public function setAttachments($attachments)
     {
@@ -100,7 +140,7 @@ class Message implements Interfaces\Message
     }
 
     /**
-     * @return array
+     * @inheritdoc
      */
     public function getAttachments()
     {
@@ -108,7 +148,7 @@ class Message implements Interfaces\Message
     }
 
     /**
-     * @param \Everon\Email\Interfaces\Recipient $Recipient
+     * @inheritdoc
      */
     public function setRecipient(Interfaces\Recipient $Recipient)
     {
@@ -116,11 +156,40 @@ class Message implements Interfaces\Message
     }
 
     /**
-     * @return \Everon\Email\Interfaces\Recipient
+     * @inheritdoc
      */
     public function getRecipient()
     {
         return $this->Recipient;
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function setFrom(Interfaces\Address $From)
+    {
+        $this->From = $From;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getFrom()
+    {
+        return $this->From;
+    }
     
+    public function getToArray()
+    {
+        return [
+            'recipient' => $this->getRecipient()->toArray(),
+            'from' => $this->getFrom()->toArray(),
+            'subject' => $this->getSubject(),
+            'html_body' => $this->getHtmlBody(),
+            'text_body' => $this->getTextBody(),
+            'attachments' => (new Helper\Collection($this->getAttachments()))->toArray(true),
+            'headers' => (new Helper\Collection($this->getHeaders()))->toArray(true)
+        ];
+    }
+
 }

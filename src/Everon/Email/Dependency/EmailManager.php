@@ -22,7 +22,7 @@ trait EmailManager
     /**
      * @param \Everon\Email\Interfaces\Manager $EmailManager
      */
-    public function setEmailManager($EmailManager)
+    public function setEmailManager(\Everon\Email\Interfaces\Manager $EmailManager)
     {
         $this->EmailManager = $EmailManager;
     }

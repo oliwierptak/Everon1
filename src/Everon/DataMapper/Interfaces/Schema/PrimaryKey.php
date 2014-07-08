@@ -15,4 +15,9 @@ interface PrimaryKey extends Constraint
      * @return string
      */
     function getSequenceName();
+
+    /**
+     * @param $name
+     */
+    function setSequenceName($name);
 }

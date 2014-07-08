@@ -29,34 +29,52 @@ class Swift implements Interfaces\Sender
     {
         $this->Credential = $Credentials;
     }
+    
+    protected function contactToSwiftContact($contacts)
+    {
+        $result = [];
+        /**
+         * @var \Everon\Email\Interfaces\Address $Address
+         */
+        foreach ($contacts as $Address) {
+            $result[$Address->getEmail()] = $Address->getName();
+        }
+        return $result;
+    }
 
     /**
      * @inheritdoc
      */
-    function send(Interfaces\Message $Email)
+    public function send(Interfaces\Message $Message)
     {
-        $Transport = \Swift_SmtpTransport::newInstance($this->getCredential()->getHost(), $this->Credential->getPort())
-            ->setUsername($this->getCredential()->getUsername())
-            ->setPassword($this->getCredential()->getPassword());
+        $Transport = \Swift_SmtpTransport::newInstance($this->getCredential()->getHost(), $this->getCredential()->getPort(), $this->getCredential()->getEncryption());
+        $Transport->setUsername($this->getCredential()->getUsername());
+        $Transport->setPassword($this->getCredential()->getPassword());
+
+        $to = $this->contactToSwiftContact($Message->getRecipient()->getTo());
+        $cc = $this->contactToSwiftContact($Message->getRecipient()->getCc());
+        $bcc = $this->contactToSwiftContact($Message->getRecipient()->getBcc());
+        
+        /**
+         * @var \Swift_Message $SwiftMessage
+         */
+        $SwiftMessage = \Swift_Message::newInstance($Message->getSubject())
+            ->setFrom([$Message->getFrom()->getEmail() => $Message->getFrom()->getName()])
+            ->setTo($to)
+            ->setCc($cc)
+            ->setBcc($bcc)
+            ->setBody($Message->getTextBody())
+            ->addPart($Message->getHtmlBody(), 'text/html')
+        ;
+        
+        foreach($Message->getAttachments() as $attachment) {
+            $SwiftMessage->attach(\Swift_Attachment::fromPath($attachment['filename'])
+                ->setFilename($attachment['label']));
+        }
 
         $Mailer = \Swift_Mailer::newInstance($Transport);
-
-        $Message = \Swift_Message::newInstance($Email->getSubject())
-            ->setFrom([$this->getCredential()->getEmail() => $this->getCredential()->getName()])
-            ->setTo($Email->getRecipient()->getTo())
-            ->setBody($Email->getBody());
-        foreach($Email->getAttachments() as $attachment) {
-            $Message->attach(Swift_Attachment::fromPath($attachment));
-        }
-        if(!empty($Email->getRecipient()->getCc())) {
-            $Message->setCc($Email->getRecipient()->getCc());
-        }
-        if(!empty($Email->getRecipient()->getBcc())) {
-            $Message->setBcc($Email->getRecipient()->getBcc());
-        }
-
-        $Mailer = \Swift_Mailer::newInstance($Transport);
-        return $Mailer->send($Message) > 0;
+        $result = $Mailer->send($SwiftMessage);
+        return $result > 0;
     }
 
     /**
@@ -74,5 +92,5 @@ class Swift implements Interfaces\Sender
     {
         return $this->Credential;
     }
-    
+
 }

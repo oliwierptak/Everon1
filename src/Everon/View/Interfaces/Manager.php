@@ -12,7 +12,7 @@ namespace Everon\View\Interfaces;
 use Everon\Exception;
 use Everon\Interfaces;
 
-interface Manager
+interface Manager extends TemplateCompiler
 {
     /**
      * @param Template $scope_name

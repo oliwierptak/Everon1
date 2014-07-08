@@ -1,41 +1,47 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: Zeger
- * Date: 28/04/14
- * Time: 11:31
+ * This file is part of the Everon framework.
+ *
+ * (c) Oliwier Ptak <oliwierptak@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 namespace Everon\Email\Interfaces;
 
-interface Recipient
+/**
+ * @author Zeger Hoogeboom <zeger_hoogeboom@hotmail.com>
+ * @author Oliwier Ptak <oliwierptak@gmail.com>
+ */
+interface Recipient extends \Everon\Interfaces\Arrayable
 {
+
+    /**
+     * @return array
+     */
+    function getCc();
+
     /**
      * @param array $cc
      */
-    public function setCc(array $cc);
+    function setCc(array $cc);
+
+    /**
+     * @return array
+     */
+    function getBcc();
 
     /**
      * @param array $bcc
      */
-    public function setBcc(array $bcc);
-
-    /**
-     * @return string
-     */
-    public function getTo();
+    function setBcc(array $bcc);
 
     /**
      * @return array
      */
-    public function getBcc();
-
+    function getTo();
     /**
-     * @param string $to
+     * @param array $to
      */
-    public function setTo($to);
-
-    /**
-     * @return array
-     */
-    public function getCc();
+    function setTo(array $to);
 }

@@ -262,12 +262,12 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildRestCollectionResource($name, Rest\Interfaces\ResourceHref $Href, Interfaces\Collection $Collection, $namespace='Everon\Rest\Resource')
+    public function buildRestCollectionResource($name, Rest\Interfaces\ResourceHref $Href, Interfaces\Collection $Collection, Interfaces\Paginator $Paginator, $namespace='Everon\Rest\Resource')
     {
         try {
-            $class_name = 'Everon\Rest\Resource\Collection';
+            $class_name = $this->getFullClassName($namespace, 'Collection');
             $this->classExists($class_name);
-            $CollectionResource = new $class_name($Href, $Collection);
+            $CollectionResource = new $class_name($Href, $Collection, $Paginator);
             $this->injectDependencies($class_name, $CollectionResource);
             return $CollectionResource;
         }
@@ -471,6 +471,26 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
+    public function buildViewHtmlForm(Config\Interfaces\ItemRouter $RouteItem, $namespace='Everon\View\Html')
+    {
+        try {
+            $class_name = $this->getFullClassName($namespace, 'Form');
+            $this->classExists($class_name);
+            /**
+             * @var View\Interfaces\View $ViewHtmlForm
+             */
+            $ViewHtmlForm = new $class_name($RouteItem);
+            $this->injectDependencies($class_name, $ViewHtmlForm);
+            return $ViewHtmlForm;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('ViewHtmlForm initialization error for: "%s"', $RouteItem->getName(), $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function buildViewManager(array $compilers_to_init, $view_directory, $cache_directory)
     {
         try {
@@ -491,20 +511,20 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildViewWidget($class_name, $namespace='Everon\View')
+    public function buildViewWidget($name, View\Interfaces\View $View, $namespace='Everon\View')
     {
         try {
-            $class_name = $this->getFullClassName($namespace, $class_name);
+            $class_name = $this->getFullClassName($namespace, $name);
             $this->classExists($class_name);
             /**
              * @var View\Interfaces\Widget $Widget
              */
-            $Widget = new $class_name();
+            $Widget = new $class_name($View);
             $this->injectDependencies($class_name, $Widget);
             return $Widget;
         }
         catch (\Exception $e) {
-            throw new Exception\Factory('ViewWidget: "%s" initialization error', $class_name, $e);
+            throw new Exception\Factory('ViewWidget: "%s" initialization error', $name, $e);
         }
     }
 
@@ -1223,6 +1243,23 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
+    public function buildEmailAddress($email, $name, $namespace='Everon\Email')
+    {
+        try {
+            $class_name = $this->getFullClassName($namespace, 'Address');
+            $this->classExists($class_name);
+            $Recipient = new $class_name($email, $name);
+            $this->injectDependencies($class_name, $Recipient);
+            return $Recipient;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('EmailAddress initialization error', null, $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function buildEmailCredential(array $credential_data, $namespace='Everon\Email')
     {
         try {
@@ -1235,22 +1272,23 @@ abstract class Factory implements Interfaces\Factory
             $this->assertIsArrayKey('host', $credential_data);
             $this->assertIsArrayKey('port', $credential_data);
             $this->assertIsArrayKey('name', $credential_data);
-            $this->assertIsArrayKey('email', $credential_data);
+            $this->assertIsArrayKey('encryption', $credential_data);
 
             $this->assertIsStringAndNonEmpty($credential_data['username']);
             $this->assertIsStringAndNonEmpty($credential_data['password']);
             $this->assertIsStringAndNonEmpty($credential_data['host']);
             $this->assertIsNumericAndNonZero($credential_data['port']);
-            $this->assertIsStringAndNonEmpty($credential_data['email']);
             $this->assertIsStringAndNonEmpty($credential_data['name']);
+            $this->assertIsStringAndNonEmpty($credential_data['encryption']);
 
             $Credentials = new Email\Credential();
             $Credentials->setUserName($credential_data['username']);
             $Credentials->setPassword($credential_data['password']);
             $Credentials->setHost($credential_data['host']);
             $Credentials->setPort($credential_data['port']);
-            $Credentials->setEmail($credential_data['email']);
             $Credentials->setName($credential_data['name']);
+            $Credentials->setEncryption($credential_data['encryption']);
+
             return $Credentials;
         }
         catch (\Exception $e) {
@@ -1278,12 +1316,12 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildEmailMessage(Email\Interfaces\Recipient $Recipient, $subject, $body, array $headers=[], $namespace='Everon\Email')
+    public function buildEmailMessage(Email\Interfaces\Recipient $Recipient, Email\Interfaces\Address $FromAddress, $subject, $html_body, $text_body='', array $attachments = [], array $headers = [], $namespace = 'Everon\Email')
     {
         try {
             $class_name = $this->getFullClassName($namespace, 'Message');
             $this->classExists($class_name);
-            $Message = new $class_name($Recipient, $subject, $body, $headers);
+            $Message = new $class_name($Recipient, $FromAddress, $subject, $html_body, $text_body, $attachments, $headers);
             $this->injectDependencies($class_name, $Message);
             return $Message;
         }
@@ -1295,17 +1333,17 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildEmailRecipient($name, $to, array $cc=[], array $bcc=[], $namespace='Everon\Email')
+    public function buildEmailRecipient(array $to, array $cc=[], array $bcc=[], $namespace='Everon\Email')
     {
         try {
             $class_name = $this->getFullClassName($namespace, 'Recipient');
             $this->classExists($class_name);
-            $Recipient = new $class_name($name, $to, $cc, $bcc);
+            $Recipient = new $class_name($to, $cc, $bcc);
             $this->injectDependencies($class_name, $Recipient);
             return $Recipient;
         }
         catch (\Exception $e) {
-            throw new Exception\Factory('EmailRecipient: "%s" initialization error', $name, $e);
+            throw new Exception\Factory('EmailRecipient initialization error', null, $e);
         }
     }
 
@@ -1323,6 +1361,59 @@ abstract class Factory implements Interfaces\Factory
         }
         catch (\Exception $e) {
             throw new Exception\Factory('EmailSender: "%s" initialization error', $name, $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildTaskItem($type, $data, $namespace)
+    {
+        try {
+            $task_type = ucfirst($this->stringUnderscoreToCamel(strtolower($type)));
+            $class_name = $this->getFullClassName($namespace, $task_type);
+            $this->classExists($class_name);
+            $Item = new $class_name($data);
+            $Item->setType($type);
+            $this->injectDependencies($class_name, $Item);
+            return $Item;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('TaskItem: "%s" initialization error', $type, $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildTaskManager($namespace='Everon\Task')
+    {
+        try {
+            $class_name = $this->getFullClassName($namespace, 'Manager');
+            $this->classExists($class_name);
+            $TaskHandler = new $class_name($this);
+            $this->injectDependencies($class_name, $TaskHandler);
+            return $TaskHandler;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('TaskManager initialization error', null, $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildPaginator($total, $offset, $limit, $namespace = 'Everon\Helper')
+    {
+        try {
+            $class_name = $this->getFullClassName($namespace, 'Paginator');
+            $this->classExists($class_name);
+            $Paginator = new $class_name($total, $offset, $limit);
+            $this->injectDependencies($class_name, $Paginator);
+            return $Paginator;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('Paginator initialization error', null, $e);
         }
     }
 }
