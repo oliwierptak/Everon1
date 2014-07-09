@@ -44,16 +44,16 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
         $Theme = $this->getViewManager()->getCurrentTheme($this->getName());
         $data = $this->arrayMergeDefault($Theme->getData(), $this->getView()->getData());
 
-        $ActionTemplate = $this->getView()->getTemplate($action, $data);
-        if ($ActionTemplate === null) { //apparently no template was used, fall back to string
-            $ActionTemplate = $this->getView()->getContainer();
+        if ($result) {
+            $ActionTemplate = $this->getView()->getTemplate($action, $data);
+            if ($ActionTemplate === null) {
+                $ActionTemplate = $this->getView()->getContainer();
+            }
+            $Theme->set('body', $ActionTemplate);
         }
 
-        $Theme->set('body', $ActionTemplate);
         $this->executeView($Theme, $action);
         
-        //$data = $this->arrayMergeDefault($Theme->getData(), $ActionTemplate->getData());
-        //$Theme->setData($data);
         $this->getView()->setContainer($Theme->getContainer());
         $this->getViewManager()->compileView($action, $this->getView());
 
