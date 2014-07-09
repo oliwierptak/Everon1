@@ -96,4 +96,17 @@ interface View
      * @throws \Everon\Exception\Controller
      */
     function getUrl($name, $query=[], $get=[]);
+
+    /**
+     * @param array $data
+     * @return \Everon\Helper\PopoProps
+     */
+    function templetize(array $data);
+
+
+    /**
+     * @param array $data Array of items implementing Arrayable Interface
+     * @return array Array of Helper\PopoProps objects
+     */
+    function templetizeCollection(array $data);
 }

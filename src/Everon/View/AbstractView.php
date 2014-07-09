@@ -237,6 +237,28 @@ abstract class AbstractView implements Interfaces\View
         return null;
     }
 
+    /**
+     * @inheritdoc
+     */
+    public function templetize(array $data)
+    {
+        return new Helper\PopoProps($data);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function templetizeCollection(array $data)
+    {
+        /**
+         * @var \Everon\Interfaces\Arrayable $Item
+         */
+        foreach ($data as $index => $Item) {
+            $data[$index] = $this->templetize($Item->toArray());
+        }
+        
+        return $data;
+    }
 
     /**
      * @inheritdoc
