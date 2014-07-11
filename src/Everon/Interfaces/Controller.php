@@ -17,8 +17,18 @@ use Everon\Http;
  * @method Response getResponse()
  * @method void setResponse(Response $Response)
  */
-interface Controller
+interface Controller extends \Everon\Interfaces\Dependency\GetUrl
 {
+    /**
+     * @param string $action
+     */
+    function setAction($action);
+
+    /**
+     * @return string
+     */
+    function getAction();
+        
     function getName();
 
     /**
@@ -35,15 +45,14 @@ interface Controller
      */
     function execute($action);
 
-
     /**
-     * @param $name
+     * @param \Everon\Config\Interfaces\ItemRouter $Item
      * @param array $query
      * @param array $get
      * @return string
      * @throws Exception\Controller
      */
-    function getUrl($name, $query=[], $get=[]);
+    static function generateUrl(\Everon\Config\Interfaces\ItemRouter $Item, $query=[], $get=[]);
 
     /**
      * @param ItemRouter $CurrentRoute

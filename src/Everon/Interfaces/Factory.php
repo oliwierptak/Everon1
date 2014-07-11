@@ -404,6 +404,12 @@ interface Factory
     function buildTemplateCompiler($class_name, $namespace='Everon\View\Template\Compiler');
 
     /**
+     * @param string $namespace
+     * @return View\Interfaces\TemplateCompilerContext
+     */
+    function buildTemplateCompilerContext($namespace='Everon\View\Template\Compiler');
+
+    /**
      * @param $class_name
      * @param $template_directory
      * @param $default_extension

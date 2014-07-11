@@ -20,6 +20,7 @@ abstract class AbstractView implements Interfaces\View
     use Dependency\Injection\Request;
 
     use Helper\Arrays;
+    use Helper\GetUrl;
     use Helper\IsCallable;
     use Helper\IsIterable;
     use Helper\String\EndsWith;
@@ -80,6 +81,14 @@ abstract class AbstractView implements Interfaces\View
     }
 
     /**
+     * @param $name
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
+
+    /**
      * @inheritdoc
      */
     public function getTemplateDirectory()
@@ -98,14 +107,14 @@ abstract class AbstractView implements Interfaces\View
     /**
      * @inheritdoc
      */
+    /**
+     * @return Interfaces\Template|Interfaces\TemplateContainer
+     * @throws \Everon\Exception\View
+     */
     public function getContainer()
     {
         if ($this->Container === null) {
-            $this->setContainer('');
-        }
-
-        if ($this->Container === null) {
-            throw new Exception\View('View container not set');
+            $this->Container = $this->getFactory()->buildTemplateContainer('', []);
         }
 
         return $this->Container;
@@ -114,32 +123,32 @@ abstract class AbstractView implements Interfaces\View
     /**
      * @inheritdoc
      */
-    public function setContainer($Container)
+    /**
+     * @param Interfaces\TemplateContainer $Container
+     */
+    public function setContainer(Interfaces\TemplateContainer $Container)
     {
-        if ($Container instanceof Interfaces\TemplateContainer) {
-            if ($this->Container !== null) {
-                $data = $this->arrayMergeDefault($this->Container->getData(), $Container->getData());
-                $Container->setData($data);
-            }
-            $this->Container = $Container;
-        }
-        else if (is_string($Container)) {
-            $data = [];
-            if ($this->Container !== null) {
-                $data = $this->Container->getData();
-            }
-            $this->Container = $this->getFactory()->buildTemplateContainer($Container, $data);
-        }
-
-        if ($this->Container === null) {
-            throw new Exception\Template('Invalid container type');
-        }
-
-        $this->set('View', $this); //todo: meh
+        $this->Container = $Container;
     }
 
     /**
      * @inheritdoc
+     */
+    /**
+     * @param $value
+     */
+    public function setContainerFromString($value)
+    {
+        $this->getContainer()->setTemplateContent($value);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    /**
+     * @param $name
+     * @param $data
+     * @return Interfaces\Template|null
      */
     public function getTemplate($name, $data)
     {
@@ -154,6 +163,10 @@ abstract class AbstractView implements Interfaces\View
     /**
      * @inheritdoc
      */
+    /**
+     * @param $name
+     * @param $value
+     */
     public function set($name, $value)
     {
         $this->getContainer()->set($name, $value);
@@ -161,6 +174,11 @@ abstract class AbstractView implements Interfaces\View
 
     /**
      * @inheritdoc
+     */
+    /**
+     * @param $name
+     * @param null $default
+     * @return null
      */
     public function get($name, $default=null)
     {
@@ -170,6 +188,9 @@ abstract class AbstractView implements Interfaces\View
     /**
      * @inheritdoc
      */
+    /**
+     * @param $name
+     */
     public function delete($name)
     {
         $this->getContainer()->delete($name);
@@ -177,6 +198,9 @@ abstract class AbstractView implements Interfaces\View
 
     /**
      * @inheritdoc
+     */
+    /**
+     * @param array $data
      */
     public function setData(array $data)
     {
@@ -186,6 +210,9 @@ abstract class AbstractView implements Interfaces\View
     /**
      * @inheritdoc
      */
+    /**
+     * @return array
+     */
     public function getData()
     {
         return $this->getContainer()->getData();
@@ -193,6 +220,9 @@ abstract class AbstractView implements Interfaces\View
 
     /**
      * @inheritdoc
+     */
+    /**
+     * @param $extension
      */
     public function setDefaultExtension($extension)
     {
@@ -202,6 +232,9 @@ abstract class AbstractView implements Interfaces\View
     /**
      * @inheritdoc
      */
+    /**
+     * @return string
+     */
     public function getDefaultExtension()
     {
         return $this->default_extension;
@@ -210,6 +243,9 @@ abstract class AbstractView implements Interfaces\View
     /**
      * @inheritdoc
      */
+    /**
+     * @return \SplFileInfo
+     */
     public function getFilename()
     {
         return new \SplFileInfo($this->getTemplateDirectory().$this->getName().$this->getDefaultExtension());
@@ -217,6 +253,10 @@ abstract class AbstractView implements Interfaces\View
 
     /**
      * @inheritdoc
+     */
+    /**
+     * @param $action
+     * @return null
      */
     public function execute($action)
     {
@@ -242,46 +282,7 @@ abstract class AbstractView implements Interfaces\View
      */
     public function templetize(array $data)
     {
+        return $data;
         return new Helper\PopoProps($data);
     }
-
-    /**
-     * @inheritdoc
-     */
-    public function templetizeCollection(array $data)
-    {
-        /**
-         * @var \Everon\Interfaces\Arrayable $Item
-         */
-        foreach ($data as $index => $Item) {
-            $data[$index] = $this->templetize($Item->toArray());
-        }
-        
-        return $data;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getUrl($name, $query=[], $get=[])
-    {
-        $Item = $this->getConfigManager()->getConfigByName('router')->getItemByName($name);
-        if ($Item === null) {
-            throw new Exception\Controller('Invalid router config name: "%s"', $name);
-        }
-
-        $Item->compileUrl($query);
-        $url = $Item->getParsedUrl();
-
-        $get_url = '';
-        if (empty($get) === false) {
-            $get_url = http_build_query($get);
-            if (trim($get_url) !== '') {
-                $get_url = '?'.$get_url;
-            }
-        }
-
-        return $url.$get_url;
-    }
-
 }

@@ -11,6 +11,7 @@ namespace Everon\View\Template\Compiler;
 
 use Everon\Dependency;
 use Everon\Helper;
+use Everon\View\Interfaces;
 use Everon\View\Template\Compiler;
 
 class Php extends Compiler
@@ -20,30 +21,19 @@ class Php extends Compiler
     use Helper\String\Compiler;
     use Helper\String\EndsWith;
     use Helper\RunPhp;
-    
+
     /**
      * @inheritdoc
      */
-    public function compile($scope_name, $template_content, array $data)
+    public function compile(Interfaces\TemplateCompilerContext $Context)
     {
-        $Scope = new Scope();
-        $Scope->setName('View');
-        $Scope->setPhp($template_content);
-
         try {
-            $this->scope_name = $scope_name;
-            $ScopeData = new Helper\PopoProps($data);
-            $code = $this->runPhp($template_content, ['Tpl' => $ScopeData], $this->getFileSystem());
-            $Scope->setCompiled($code);
-            $Scope->setData($data);
-            
-            $this->getLogger()->php($code);
-
-            return $Scope;
+            $this->runPhp($Context, $this->getFileSystem());
         }
         catch (\Exception $e) {
-            $this->getLogger()->error($e);
-            return $Scope;
+            $this->getLogger()->view($e."\n".$Context->getPhp());
+            $Context->setCompiled($e->getMessage());
+            //$content = 'Template error: '.$e->getMessage().' on line '.$e->getLine().' in '.$scope;
         }
     }
 }

@@ -11,20 +11,26 @@ namespace Everon\View\Template\Compiler;
 
 use Everon\View\Interfaces;
 
-class Scope implements Interfaces\TemplateCompilerScope
+class Context implements Interfaces\TemplateCompilerContext
 {
     protected $compiled = null;
     protected $php = null;
-    protected $name = null;
+    protected $scope_name = 'Tpl';
+    
+    /** 
+     * @var mixed 
+     */
+    protected $Scope = null;
 
     /**
      * @var array|null
      */
     protected $data = null;
-    
-    public function setName($name)
+
+
+    public function setScopeName($name)
     {
-        $this->name = $name;
+        $this->scope_name = $name;
     }
 
     public function setCompiled($compiled)
@@ -57,8 +63,24 @@ class Scope implements Interfaces\TemplateCompilerScope
         return $this->data;
     }
     
-    public function getName()
+    public function getScopeName()
     {
-        return $this->name;
+        return $this->scope_name;
+    }
+
+    /**
+     * @param mixed $Scope
+     */
+    public function setScope($Scope)
+    {
+        $this->Scope = $Scope;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getScope()
+    {
+        return $this->Scope;
     }
 }

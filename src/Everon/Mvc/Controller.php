@@ -12,25 +12,47 @@ namespace Everon\Mvc;
 use Everon\Dependency;
 use Everon\Domain;
 use Everon\Exception;
+use Everon\Interfaces;
 use Everon\Helper;
 use Everon\Http;
 use Everon\Module;
+use Everon\Mvc;
 use Everon\View;
 
 /**
  * @method Http\Interfaces\Response getResponse()
  * @method Module\Interfaces\Mvc getModule()
  */
-abstract class Controller extends \Everon\Controller implements Interfaces\Controller
+abstract class Controller extends \Everon\Controller implements Mvc\Interfaces\Controller
 {
     use Dependency\Injection\Factory;
-    use View\Dependency\Injection\ViewManager;
     use Domain\Dependency\Injection\DomainManager;
     use Http\Dependency\Injection\HttpSession;
+    use View\Dependency\Injection\ViewManager;
 
     use Helper\Arrays;
-    
 
+    /**
+     * @var string
+     */
+    protected $view_name = null;
+
+    /**
+     * @var string
+     */
+    protected $layout_name = null;
+
+
+    /**
+     * @param Interfaces\Module $Module
+     */
+    public function __construct(Interfaces\Module $Module)
+    {
+        parent::__construct($Module);
+        $this->view_name = $this->getName();
+        $this->layout_name = $this->getName();
+    }
+    
     /**
      * @param $action
      * @param $result
@@ -41,6 +63,22 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
             $this->executeView($this->getView(), $action);
         }
 
+        $Layout = $this->getViewManager()->createLayout($this->getLayoutName());
+        $data = $this->arrayMergeDefault($Layout->getData(), $this->getView()->getData()); //import view variables into template
+        $ActionTemplate = $this->getView()->getTemplate($action, $data);
+        if ($ActionTemplate !== null) {
+            $this->getView()->setContainer($ActionTemplate);
+        }
+
+        $Layout->set('body', $this->getView());       
+        $this->executeView($Layout, $action);
+
+        $this->getViewManager()->compileView($action, $Layout);
+
+        $content = (string) $Layout->getContainer()->getCompiledContent();
+        $this->getResponse()->setData($content);
+        
+        /*
         $Theme = $this->getViewManager()->getCurrentTheme($this->getName());
         $data = $this->arrayMergeDefault($Theme->getData(), $this->getView()->getData());
 
@@ -59,6 +97,7 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
 
         $content = (string) $this->getView()->getContainer();
         $this->getResponse()->setData($content);
+        */
     }
 
     protected function response()
@@ -97,13 +136,45 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
         $result = ($result !== false) ? true : $result;
         return $result;
     }
+
+    /**
+     * @param string $view_name
+     */
+    public function setViewName($view_name)
+    {
+        $this->view_name = $view_name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getViewName()
+    {
+        return $this->view_name;
+    }
+
+    /**
+     * @param string $layout_name
+     */
+    public function setLayoutName($layout_name)
+    {
+        $this->layout_name = $layout_name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLayoutName()
+    {
+        return $this->layout_name;
+    }
     
     /**
      * @inheritdoc
      */
     public function getView()
     {
-        return $this->getModule()->getViewByName($this->getName());
+        return $this->getModule()->getViewByName($this->getLayoutName(), $this->getViewName());
     }
 
     /**
@@ -111,15 +182,7 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
      */
     public function setView(View\Interfaces\View $View)
     {
-        $this->getModule()->setViewByViewName($View);
-    }
-    
-    /**
-     * @return mixed
-     */
-    public function getModel()
-    {
-        return $this->getDomainManager()->getModel($this->getName());
+        $this->getModule()->setViewByViewName($this->getLayoutName(), $View);
     }
 
     /**
@@ -135,12 +198,7 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
      */
     public function showException(\Exception $Exception)
     {
-        $message = $Exception->getMessage();
-        $code = $Exception->getCode();
-        if ($Exception instanceof Http\Exception) {
-            $code = $Exception->getHttpMessage()->getCode();
-        }
-
+        /*
         $Theme = $this->getViewManager()->getCurrentTheme('Error');
         $this->getView()->set('body', '');
         $Theme->set('error', $message);
@@ -149,10 +207,12 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
         $this->getView()->setContainer($Theme->getContainer());
         $this->getViewManager()->compileView(null, $this->getView());
         $this->getResponse()->setData((string) $this->getView()->getContainer());
+        */
 
-        $this->getResponse()->setStatusCode($code);
-        $this->getResponse()->setStatusMessage($message);
+        sd($Exception);
         $this->response();
+        
+        echo $Exception;
     }
 
     /**

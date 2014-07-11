@@ -9,6 +9,8 @@
  */
 namespace Everon\Interfaces;
 
+use Everon\Exception;
+
 /**
  * Interface Logger
  * 
@@ -26,7 +28,7 @@ interface Logger
     function warn($message, array $parameters=[]);
     function error($message, array $parameters=[]);
     function debug($message, array $parameters=[]);
-    function trace($message, array $parameters=[]);
+    function trace(Exception $Message, array $parameters=[]);
     function setRequestIdentifier($request_identifier);
     function getRequestIdentifier();
 }

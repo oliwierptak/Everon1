@@ -14,7 +14,7 @@ use Everon\Helper;
 use Everon\View\Interfaces;
 
 
-class Container implements Interfaces\TemplateContainer
+class Container implements \Everon\View\Interfaces\TemplateContainer
 {
     use Helper\Arrays;
     use Helper\ToString;
@@ -134,22 +134,6 @@ class Container implements Interfaces\TemplateContainer
     {
         $this->template_content = $content;
     }
-
-    /**
-     * @inheritdoc
-     */
-    public function setScope(Interfaces\TemplateCompilerScope $Scope)
-    {
-        $this->Scope = $Scope;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getScope()
-    {
-        return $this->Scope;
-    }    
     
     /**
      * @return string
@@ -158,5 +142,4 @@ class Container implements Interfaces\TemplateContainer
     {
         return (string) $this->getCompiledContent();
     }
-    
 }

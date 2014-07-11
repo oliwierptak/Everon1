@@ -24,9 +24,16 @@ abstract class Controller implements Interfaces\Controller
     use Helper\IsCallable;
     use Helper\ToString;
     use Helper\String\LastTokenToName;
+    use Helper\GetUrl;
 
+    /**
+     * @var string
+     */
     protected $name = null;
-    
+
+    /**
+     * @var string
+     */
     protected $action = null;
 
     /**
@@ -49,8 +56,10 @@ abstract class Controller implements Interfaces\Controller
     protected abstract function prepareResponse($action, $result);
 
     protected abstract function response();
-    
-    
+
+    /**
+     * @param Interfaces\Module $Module
+     */
     public function __construct(Interfaces\Module $Module)
     {
         $this->Module = $Module;
@@ -91,15 +100,26 @@ abstract class Controller implements Interfaces\Controller
     }
 
     /**
+     * @param string $action
+     */
+    public function setAction($action)
+    {
+        $this->action = $action;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAction()
+    {
+        return $this->action;
+    }
+    
+    /**
      * @inheritdoc
      */
-    public function getUrl($name, $query=[], $get=[])
+    static public function generateUrl(\Everon\Config\Interfaces\ItemRouter $Item, $query=[], $get=[])
     {
-        $Item = $this->getConfigManager()->getConfigByName('router')->getItemByName($name);
-        if ($Item === null) {
-            throw new Exception\Controller('Invalid router config name: "%s"', $name);
-        }
-
         $Item->compileUrl($query);
         $url = $Item->getParsedUrl();
 

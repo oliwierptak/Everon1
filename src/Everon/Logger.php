@@ -138,7 +138,7 @@ class Logger implements Interfaces\Logger
         $size = intval($size / 1024);
         
         //reset the log file if its size exceeded 512 KB
-        if ($size > 512) { //KB, todo: read it from config
+        if ($size > 0) { //KB, todo: read it from config
             $h = fopen($Filename->getPathname(), 'w');
             fclose($h);
         }
@@ -181,9 +181,9 @@ class Logger implements Interfaces\Logger
         return $this->write($message, 'warning', $parameters);
     }
     
-    public function trace($message, array $parameters=[])
+    public function trace(Exception $Message, array $parameters=[])
     {
-        return $this->write($message, 'trace', $parameters);
+        return $this->write($Message, 'trace', $parameters);
     }
     
     public function error($message, array $parameters=[])

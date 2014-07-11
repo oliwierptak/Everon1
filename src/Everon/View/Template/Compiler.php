@@ -20,13 +20,10 @@ abstract class Compiler implements Interfaces\TemplateCompiler
 
     use Helper\Arrays;
     use Helper\IsIterable;
-    
+
 
     /**
-     * @param $scope_name
-     * @param $template_content
-     * @param array $data
-     * @return string
+     * @inheritdoc
      */    
-    abstract public function compile($scope_name, $template_content, array $data);
+    abstract public function compile(Interfaces\TemplateCompilerContext $Context);
 }

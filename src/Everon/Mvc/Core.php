@@ -34,7 +34,7 @@ class Core extends \Everon\Core implements Interfaces\Core
             parent::run($RequestIdentifier);
         }
         catch (Exception\RouteNotDefined $Exception) {
-            $NotFound = new Http\Exception((new Http\Message\NotFound('Page not found')));
+            $NotFound = new Http\Exception((new Http\Message\NotFound('Page not found: '.$Exception->getMessage())));
             $this->showException($NotFound, $this->Controller);
         }
         catch (Exception\InvalidRoute $Exception) {
@@ -48,17 +48,43 @@ class Core extends \Everon\Core implements Interfaces\Core
             $Internal = new Http\Exception((new Http\Message\InternalServerError($Exception->getMessage())));
             $this->showException($Internal, $this->Controller);
         }
-        finally {
-            $this->getLogger()->mvc(
-                sprintf(
-                    '[%d] %s %s (%s)',
-                    $this->getResponse()->getStatusCode(),
-                    $this->getRequest()->getMethod(),
-                    $this->getRequest()->getPath(),
-                    $this->getResponse()->getStatusMessage()
-                )
-            );
+    }
+
+    /**
+     * @param \Exception $Exception
+     * @param \Everon\Mvc\Interfaces\Controller|null $Controller
+     */
+    protected function showException(\Exception $Exception, $Controller)
+    {
+        $message = '';
+        $code = $Exception->getCode();
+        if ($Exception instanceof Http\Exception) {
+            $message = $Exception->getHttpMessage()->getMessage();
+            $code = $Exception->getHttpMessage()->getCode();
         }
+
+        $this->getResponse()->setStatusCode($code);
+        $this->getResponse()->setStatusMessage($message);
+
+        parent::showException($Exception, $Controller);
+    }
+
+    public function shutdown()
+    {
+        $s = parent::shutdown();
+
+        $this->getLogger()->response(
+            sprintf(
+                '[%s] (%d) %s : %s %s',
+                $s,
+                $this->getResponse()->getStatusCode(),
+                $this->getResponse()->getStatusMessage(),
+                $this->getRequest()->getMethod(),
+                $this->getRequest()->getPath()
+            )
+        );
+
+        return $s;
     }
 
 }

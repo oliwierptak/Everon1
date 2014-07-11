@@ -29,10 +29,25 @@ interface Controller extends \Everon\Interfaces\Controller, \Everon\View\Interfa
     function setView(Interfaces\View $View);
 
     /**
-     * @return mixed
+     * @param string $view_name
      */
-    function getModel();
+    function setViewName($view_name);
 
+    /**
+     * @return string
+     */
+    function getViewName();
+
+    /**
+     * @param string $layout_name
+     */
+    function setLayoutName($layout_name);
+
+    /**
+     * @return string
+     */
+    function getLayoutName();
+    
     /**
      * @param \Exception $Exception
      */

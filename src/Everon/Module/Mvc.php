@@ -10,6 +10,7 @@
 namespace Everon\Module;
 
 use Everon\Dependency;
+use Everon\Exception;
 use Everon\Helper;
 use Everon\Interfaces\Config;
 use Everon\Interfaces\Collection;
@@ -36,33 +37,58 @@ abstract class Mvc extends \Everon\Module implements Interfaces\Mvc
     }
 
     /**
-     * @param $name
+     * @param $layout_name
+     * @param $view_name
      * @return View\Interfaces\View
      */
-    protected function createView($name)
+    protected function createView($layout_name, $view_name)
     {
-        $template_directory = $this->getDirectory().'View'.DIRECTORY_SEPARATOR.$name.DIRECTORY_SEPARATOR.'templates'.DIRECTORY_SEPARATOR;
-        return $this->getViewManager()->createView($name, $template_directory, 'Everon\Module\\'.$this->getName().'\View');
+        $TemplateDirectory = new \SplFileInfo(implode(DIRECTORY_SEPARATOR, [
+            $this->getDirectory().'View', $view_name, 'templates'
+        ]));
+        
+        if ($TemplateDirectory->isDir() === false) {
+            $template_directory = null;
+        }
+        else {
+            $template_directory = $TemplateDirectory->getPathname().DIRECTORY_SEPARATOR;
+        }
+        
+        try {
+            $namespace = 'Everon\Module\\'.$this->getName().'\View';
+            $class_name = $this->getFactory()->getFullClassName($namespace, $view_name);
+            $this->getFactory()->classExists($class_name);
+            $View = $this->getViewManager()->createView($view_name, $template_directory, $namespace);
+        }
+        catch (Exception\Factory $e) {
+            //fallback to default in case no view exists
+            $View = $this->getViewManager()->createView('View', $template_directory, 'Everon\Module');
+            $View->setName($view_name);
+        }
+            
+        return $View;
     }
 
     /**
      * @inheritdoc
      */
-    public function getViewByName($name)
-    {
-        if ($this->ViewCollection->has($name) === false) {
-            $View = $this->createView($name);
-            $this->ViewCollection->set($name, $View);
+    public function getViewByName($layout_name, $view_name)
+    {  
+        $key = $layout_name.$view_name;
+        if ($this->ViewCollection->has($key) === false) {
+            $View = $this->createView($layout_name, $view_name);
+            $this->ViewCollection->set($key, $View);
         }
         
-        return $this->ViewCollection->get($name);
+        return $this->ViewCollection->get($key);
     }
 
     /**
-     * @param View\Interfaces\View $View
+     * @inheritdoc
      */
-    public function setViewByViewName(View\Interfaces\View $View)
+    public function setViewByViewName($layout_name, View\Interfaces\View $View)
     {
-        $this->ViewCollection->set($View->getName(), $View);
+        $key = $layout_name.$View->getName();
+        $this->ViewCollection->set($key, $View);
     }
 }
