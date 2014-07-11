@@ -114,25 +114,6 @@ abstract class Controller implements Interfaces\Controller
     {
         return $this->action;
     }
-    
-    /**
-     * @inheritdoc
-     */
-    static public function generateUrl(\Everon\Config\Interfaces\ItemRouter $Item, $query=[], $get=[])
-    {
-        $Item->compileUrl($query);
-        $url = $Item->getParsedUrl();
-
-        $get_url = '';
-        if (empty($get) === false) {
-            $get_url = http_build_query($get);
-            if (trim($get_url) !== '') {
-                $get_url = '?'.$get_url;
-            }
-        }
-
-        return $url.$get_url;
-    }
 
     /**
      * @inheritdoc

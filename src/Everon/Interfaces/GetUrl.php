@@ -7,20 +7,17 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon\Helper;
+namespace Everon\Interfaces\Helper;
 
-trait GetUrl 
+interface GetUrl 
 {
     /**
-     * @inheritdoc
+     * Requires ConfigManager dependency
+     * 
+     * @param $name
+     * @param array $query
+     * @param array $get
+     * @return string
      */
-    public function getUrl($name, $query=[], $get=[])
-    {
-        $Item = $this->getConfigManager()->getConfigByName('router')->getItemByName($name);
-        if ($Item === null) {
-            throw new \Everon\Exception\Application('Invalid router config name: "%s"', $name);
-        }
-
-        return \Everon\Controller::generateUrl($Item, $query, $get);
-    }
+    function getUrl($name, $query=[], $get=[]);
 }

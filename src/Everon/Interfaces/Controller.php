@@ -46,15 +46,6 @@ interface Controller extends \Everon\Interfaces\Dependency\GetUrl
     function execute($action);
 
     /**
-     * @param \Everon\Config\Interfaces\ItemRouter $Item
-     * @param array $query
-     * @param array $get
-     * @return string
-     * @throws Exception\Controller
-     */
-    static function generateUrl(\Everon\Config\Interfaces\ItemRouter $Item, $query=[], $get=[]);
-
-    /**
      * @param ItemRouter $CurrentRoute
      */
     function setCurrentRoute(ItemRouter $CurrentRoute);
