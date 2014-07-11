@@ -40,6 +40,11 @@ class Manager implements Interfaces\Manager
      */
     protected $LayoutCollection = null;
 
+    /**
+     * @var Interfaces\WidgetManager
+     */
+    protected $WidgetManager = null;
+
 
 
     /**
@@ -83,7 +88,9 @@ class Manager implements Interfaces\Manager
             }
         }
 
-        return $this->getFactory()->buildView($view_name, $template_directory, $default_extension, $namespace);
+        $View = $this->getFactory()->buildView($view_name, $template_directory, $default_extension, $namespace);
+        $View->setViewWidgetManager($this->getWidgetManager());
+        return $View;
     }
 
     /**
@@ -268,4 +275,30 @@ class Manager implements Interfaces\Manager
     {
         return $this->view_directory;
     }
+
+    /**
+     * @param \Everon\View\Interfaces\WidgetManager $WidgetManager
+     */
+    public function setWidgetManager(Interfaces\WidgetManager $WidgetManager)
+    {
+        $this->WidgetManager = $WidgetManager;
+    }
+
+    /**
+     * @return \Everon\View\Interfaces\WidgetManager
+     */
+    public function getWidgetManager()
+    {
+        if ($this->WidgetManager === null) {
+            $this->WidgetManager = $this->getFactory()->buildViewWidgetManager($this);
+        }
+        return $this->WidgetManager;
+    }
+
+    public function renderWidget($name)
+    {
+        sd('render', $name);
+        return $this->getWidgetManager()->includeWidget($name);
+    }
+
 }

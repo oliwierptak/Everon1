@@ -491,7 +491,7 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildViewManager(array $compilers_to_init, $view_directory, $cache_directory)
+    public function buildViewManager(array $compilers_to_init, $view_directory, $cache_directory, $namespace='Everon\View')
     {
         try {
             $compilers = [];
@@ -499,8 +499,10 @@ abstract class Factory implements Interfaces\Factory
                 $compilers[$extension][] = $this->buildTemplateCompiler($this->stringUnderscoreToCamel($name));
             }
 
-            $Manager = new View\Manager($compilers, $view_directory, $cache_directory);
-            $this->injectDependencies('Everon\View\Manager', $Manager);
+            $class_name = $this->getFullClassName($namespace, 'Manager');
+            $this->classExists($class_name);
+            $Manager = new $class_name($compilers, $view_directory, $cache_directory);
+            $this->injectDependencies($class_name, $Manager);
             return $Manager;
         }
         catch (\Exception $e) {
@@ -525,6 +527,23 @@ abstract class Factory implements Interfaces\Factory
         }
         catch (\Exception $e) {
             throw new Exception\Factory('ViewWidget: "%s" initialization error', $name, $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildViewWidgetManager(View\Interfaces\Manager $ViewManager, $namespace='Everon\View\Widget')
+    {
+        try {
+            $class_name = $this->getFullClassName($namespace, 'Manager');
+            $this->classExists($class_name);
+            $Manager = new $class_name($ViewManager);
+            $this->injectDependencies($class_name, $Manager);
+            return $Manager;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('ViewWidgetManager initialization error', null, $e);
         }
     }
 

@@ -438,10 +438,11 @@ interface Factory
      * @param array $compilers_to_init
      * @param $view_directory
      * @param $cache_directory
+     * @param string $namespace
      * @return View\Interfaces\Manager
      * @throws Exception\Factory
      */
-    function buildViewManager(array $compilers_to_init, $view_directory, $cache_directory);
+    function buildViewManager(array $compilers_to_init, $view_directory, $cache_directory, $namespace='Everon\View');
 
     /**
      * @param string $name
@@ -451,6 +452,13 @@ interface Factory
      * @throws Exception\Factory
      */
     function buildViewWidget($name, View\Interfaces\View $View, $namespace='Everon\View');
+
+    /**
+     * @param \Everon\View\Interfaces\Manager $ViewManager
+     * @param string $namespace
+     * @return View\Interfaces\WidgetManager
+     */
+    function buildViewWidgetManager(View\Interfaces\Manager $ViewManager, $namespace = 'Everon\View\Widget');
 
     /**
      * @param $directory

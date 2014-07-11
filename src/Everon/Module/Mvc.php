@@ -62,7 +62,7 @@ abstract class Mvc extends \Everon\Module implements Interfaces\Mvc
         }
         catch (Exception\Factory $e) {
             //fallback to default in case no view exists
-            $View = $this->getViewManager()->createView('View', $template_directory, 'Everon\Module');
+            $View = $this->getViewManager()->createView('Base', $template_directory, 'Everon\View');
             $View->setName($view_name);
         }
             

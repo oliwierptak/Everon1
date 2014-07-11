@@ -12,12 +12,13 @@ namespace Everon\View;
 use Everon\Helper;
 use Everon\Exception;
 use Everon\Dependency;
+use \Everon\View\Dependency\ViewWidgetManager as ViewWidgetManagerDependency;
 
 abstract class AbstractView implements Interfaces\View
 {
     use Dependency\Injection\ConfigManager;
     use Dependency\Injection\Factory;
-    use Dependency\Injection\Request;
+    use ViewWidgetManagerDependency;
 
     use Helper\Arrays;
     use Helper\GetUrl;
@@ -134,9 +135,6 @@ abstract class AbstractView implements Interfaces\View
     /**
      * @inheritdoc
      */
-    /**
-     * @param $value
-     */
     public function setContainerFromString($value)
     {
         $this->getContainer()->setTemplateContent($value);
@@ -144,11 +142,6 @@ abstract class AbstractView implements Interfaces\View
 
     /**
      * @inheritdoc
-     */
-    /**
-     * @param $name
-     * @param $data
-     * @return Interfaces\Template|null
      */
     public function getTemplate($name, $data)
     {
@@ -163,10 +156,6 @@ abstract class AbstractView implements Interfaces\View
     /**
      * @inheritdoc
      */
-    /**
-     * @param $name
-     * @param $value
-     */
     public function set($name, $value)
     {
         $this->getContainer()->set($name, $value);
@@ -174,11 +163,6 @@ abstract class AbstractView implements Interfaces\View
 
     /**
      * @inheritdoc
-     */
-    /**
-     * @param $name
-     * @param null $default
-     * @return null
      */
     public function get($name, $default=null)
     {
@@ -199,9 +183,6 @@ abstract class AbstractView implements Interfaces\View
     /**
      * @inheritdoc
      */
-    /**
-     * @param array $data
-     */
     public function setData(array $data)
     {
         $this->getContainer()->setData($data);
@@ -209,9 +190,6 @@ abstract class AbstractView implements Interfaces\View
 
     /**
      * @inheritdoc
-     */
-    /**
-     * @return array
      */
     public function getData()
     {
@@ -221,9 +199,6 @@ abstract class AbstractView implements Interfaces\View
     /**
      * @inheritdoc
      */
-    /**
-     * @param $extension
-     */
     public function setDefaultExtension($extension)
     {
         $this->default_extension = $extension;
@@ -231,9 +206,6 @@ abstract class AbstractView implements Interfaces\View
 
     /**
      * @inheritdoc
-     */
-    /**
-     * @return string
      */
     public function getDefaultExtension()
     {
@@ -243,9 +215,6 @@ abstract class AbstractView implements Interfaces\View
     /**
      * @inheritdoc
      */
-    /**
-     * @return \SplFileInfo
-     */
     public function getFilename()
     {
         return new \SplFileInfo($this->getTemplateDirectory().$this->getName().$this->getDefaultExtension());
@@ -253,10 +222,6 @@ abstract class AbstractView implements Interfaces\View
 
     /**
      * @inheritdoc
-     */
-    /**
-     * @param $action
-     * @return null
      */
     public function execute($action)
     {
@@ -276,7 +241,12 @@ abstract class AbstractView implements Interfaces\View
 
         return null;
     }
-
+    
+    public function renderWidget($name)
+    {
+        return $this->getViewWidgetManager()->includeWidget($name);
+    }
+    
     /**
      * @inheritdoc
      */
