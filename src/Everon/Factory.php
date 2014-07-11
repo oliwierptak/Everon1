@@ -548,6 +548,23 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
+    public function buildTemplateCompilerContext($namespace='Everon\View\Template\Compiler')
+    {
+        try {
+            $class_name = $this->getFullClassName($namespace, 'Context');
+            $this->classExists($class_name);
+            $Compiler = new $class_name();
+            $this->injectDependencies($class_name, $Compiler);
+            return $Compiler;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('TemplateCompilerContext initialization error', null, $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function buildPdo($dsn, $username, $password, $options)
     {
         try {

@@ -12,12 +12,12 @@ namespace Everon\Helper;
 trait RunPhp
 {
     /**
-     * @param $php
-     * @param array $scope
+     * Must implement Logger
+     * 
+     * @param \Everon\View\Interfaces\TemplateCompilerContext $Context
      * @param \Everon\Interfaces\FileSystem $FileSystem
-     * @return string
      */
-    protected function runPhp($php, array $scope, \Everon\Interfaces\FileSystem $FileSystem)
+    protected function runPhp(\Everon\View\Interfaces\TemplateCompilerContext $Context, \Everon\Interfaces\FileSystem $FileSystem)
     {
         $handleError = function($errno, $errstr, $errfile, $errline, array $errcontext) {
             // error was suppressed with the @-operator
@@ -31,28 +31,29 @@ trait RunPhp
         $old_error_handler = set_error_handler($handleError);
 
         $TmpPhpFile = $FileSystem->createTmpFile();
-        $content = '';
         try {
-            $TmpPhpFile->write($php);
+            $TmpPhpFile->write($Context->getPhp());
             $php_file = $TmpPhpFile->getFilename();
             
-            // $Context = new TemplateContext($View, $Template, $scope);
-
             ob_start();
-            extract($scope);
+
+
+            $callback = function() use ($php_file, $Context) {
+                extract([
+                    'Tpl' => new PopoProps($Context->getData()),
+                ]);
+                include $php_file;
+            };
             
-            include $php_file;
-            $content = ob_get_contents();
-        }
-        catch (\Exception $e) {
-            $this->getLogger()->error($e."\n".$php);
-            $content = $e->getMessage().' on line '.$e->getLine();
+            $callback = $callback->bindTo($Context->getScope() ?: $this);
+            $callback();
+            
+            $Context->setCompiled(ob_get_contents());
         }
         finally {
             ob_end_clean();
             $TmpPhpFile->close();
             restore_error_handler($old_error_handler);
-            return $content;
         }
     }
 }

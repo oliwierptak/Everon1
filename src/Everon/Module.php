@@ -19,11 +19,6 @@ abstract class Module implements Interfaces\Module
     protected $name = null;
     
     protected $directory = null;
-
-    /**
-     * @var Interfaces\Collection
-     */
-    protected $ViewCollection = null;
     
     /**
      * @var Interfaces\Collection

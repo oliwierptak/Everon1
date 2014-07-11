@@ -39,9 +39,9 @@ class Response extends BasicResponse implements Interfaces\Response
     /**
      * @var int
      */
-    protected $status_code = 200;
+    protected $status_code = 500;
     
-    protected $status_message = 'OK';
+    protected $status_message = 'Internal Server Error';
 
 
     /**
