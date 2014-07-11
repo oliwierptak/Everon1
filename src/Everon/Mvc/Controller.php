@@ -77,27 +77,6 @@ abstract class Controller extends \Everon\Controller implements Mvc\Interfaces\C
 
         $content = (string) $Layout->getContainer()->getCompiledContent();
         $this->getResponse()->setData($content);
-        
-        /*
-        $Theme = $this->getViewManager()->getCurrentTheme($this->getName());
-        $data = $this->arrayMergeDefault($Theme->getData(), $this->getView()->getData());
-
-        if ($result) {
-            $ActionTemplate = $this->getView()->getTemplate($action, $data);
-            if ($ActionTemplate === null) {
-                $ActionTemplate = $this->getView()->getContainer();
-            }
-            $Theme->set('body', $ActionTemplate);
-        }
-
-        $this->executeView($Theme, $action);
-        
-        $this->getView()->setContainer($Theme->getContainer());
-        $this->getViewManager()->compileView($action, $this->getView());
-
-        $content = (string) $this->getView()->getContainer();
-        $this->getResponse()->setData($content);
-        */
     }
 
     protected function response()
@@ -198,21 +177,15 @@ abstract class Controller extends \Everon\Controller implements Mvc\Interfaces\C
      */
     public function showException(\Exception $Exception)
     {
-        /*
-        $Theme = $this->getViewManager()->getCurrentTheme('Error');
-        $this->getView()->set('body', '');
-        $Theme->set('error', $message);
-        $data = $this->arrayMergeDefault($Theme->getData(), $this->getView()->getData());
-        $Theme->setData($data);
-        $this->getView()->setContainer($Theme->getContainer());
-        $this->getViewManager()->compileView(null, $this->getView());
-        $this->getResponse()->setData((string) $this->getView()->getContainer());
-        */
-
-        sd($Exception);
-        $this->response();
+        $Layout = $this->getViewManager()->createLayout('Error');
+        $Layout->set('error', $Exception->getMessage());
         
-        echo $Exception;
+        $this->getViewManager()->compileView('', $Layout);
+
+        $content = (string) $Layout->getContainer()->getCompiledContent();
+        $this->getResponse()->setData($content);
+
+        $this->response();
     }
 
     /**

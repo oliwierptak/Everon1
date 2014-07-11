@@ -90,31 +90,37 @@ class Manager implements Interfaces\Manager
      * @param $name
      * @param string $namespace
      * @return Interfaces\View
+     * @throws \Everon\Exception\ViewManager
      */
     public function createLayout($name, $namespace='Everon\View')
     {
         $default_extension = $this->getConfigManager()->getConfigValue('application.view.default_extension');
         $default_view = $this->getConfigManager()->getConfigValue('application.view.default_view');
         $namespace .= '\\'.$this->getCurrentThemeName();
-
-        try {
+        
+        $makeLayout = function($name) use ($default_extension, $namespace) {
             $template_directory = implode(DIRECTORY_SEPARATOR, [
                 $this->getViewDirectory().$this->getCurrentThemeName(), $name, 'templates'
             ]);
             $TemplateDirectory = new \SplFileInfo($template_directory);
             $Layout = $this->getFactory()->buildView($name, $TemplateDirectory->getPathname().DIRECTORY_SEPARATOR, $default_extension, $namespace);
+
+            $view_data = $this->getConfigManager()->getConfigValue('view.'.$Layout->getName(), []);
+            $IndexTemplate = $Layout->getTemplate('index', $view_data);
+            if ($IndexTemplate === null) {
+                throw new Exception\Factory('Invalid index template for layout: "%s"', $name);
+            }
+
+            $Layout->setContainer($IndexTemplate);
+            return $Layout;
+        };
+
+        try {
+            $Layout = $makeLayout($name);
         }
         catch (Exception\Factory $e) {
-            $template_directory = implode(DIRECTORY_SEPARATOR, [
-                $this->getViewDirectory().$this->getCurrentThemeName(), $default_view, 'templates'
-            ]);
-            $TemplateDirectory = new \SplFileInfo($template_directory);
-            $Layout = $this->getFactory()->buildView($default_view, $TemplateDirectory->getPathname().DIRECTORY_SEPARATOR, $default_extension, $namespace);
+            $Layout = $makeLayout($default_view);
         }
-
-        $view_data = $this->getConfigManager()->getConfigValue('view.'.$Layout->getName(), []);
-        $IndexTemplate = $Layout->getTemplate('index', $view_data);
-        $Layout->setContainer($IndexTemplate);
         
         return $Layout;
     }
