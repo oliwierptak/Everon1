@@ -77,6 +77,10 @@ abstract class Controller extends \Everon\Controller implements Mvc\Interfaces\C
 
         $content = (string) $Layout->getContainer()->getCompiledContent();
         $this->getResponse()->setData($content);
+        if ($this->getResponse()->wasStatusSet() === false) {
+            $this->getResponse()->setStatusCode(200);
+            $this->getResponse()->setStatusMessage('OK');
+        }
     }
 
     protected function response()

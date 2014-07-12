@@ -42,6 +42,8 @@ class Response extends BasicResponse implements Interfaces\Response
     protected $status_code = 500;
     
     protected $status_message = 'Internal Server Error';
+    
+    protected $status_code_set = false;
 
 
     /**
@@ -212,6 +214,7 @@ class Response extends BasicResponse implements Interfaces\Response
      */
     public function setStatusCode($status)
     {
+        $this->status_code_set = true;
         $this->status_code = (int) $status;
     }
 
@@ -263,4 +266,12 @@ class Response extends BasicResponse implements Interfaces\Response
             $this->sendHeaders();
         }
     }
-}
+
+    /**
+     * @return boolean
+     */
+    public function wasStatusSet()
+    {
+        return $this->status_code_set;
+    }
+}   
