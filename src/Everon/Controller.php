@@ -52,6 +52,11 @@ abstract class Controller implements Interfaces\Controller
      */
     protected $were_error_handled = null;
 
+    /**
+     * @var bool
+     */
+    protected $is_redirecting = false;
+
 
     /**
      * @param $action
@@ -187,7 +192,9 @@ abstract class Controller implements Interfaces\Controller
                 $result_on_error = $this->executeOnError($action);
             }
             
-            if ($result_on_error === null && $this->were_error_handled !== true) {
+            if ($result_on_error === null && 
+                $this->were_error_handled !== true &&
+                $this->is_redirecting === false) {
                 throw new Exception\InvalidControllerResponse(
                     'Invalid controller response for: "%s@%s"', [$this->getName(),$action]
                 );

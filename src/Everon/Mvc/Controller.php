@@ -259,6 +259,7 @@ abstract class Controller extends \Everon\Controller implements Mvc\Interfaces\C
      */
     public function redirect($name, $query=[], $get=[])
     {
+        $this->is_redirecting = true;
         $url = $this->getUrl($name, $query, $get);
         $this->getResponse()->setHeader('refresh', '1; url='.$url);
     }
