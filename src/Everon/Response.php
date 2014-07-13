@@ -10,7 +10,6 @@
 namespace Everon;
 
 use Everon\Dependency;
-use Everon\Interfaces\Response2;
 
 class Response implements Interfaces\Response
 {

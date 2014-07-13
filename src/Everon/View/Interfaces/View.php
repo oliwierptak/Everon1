@@ -56,11 +56,6 @@ interface View extends \Everon\Interfaces\Dependency\GetUrl, \Everon\View\Interf
     function execute($action);
 
     /**
-     * @inheritdoc
-     */
-    function templetize(array $data);
-
-    /**
      * @param $name
      */
     function delete($name);
@@ -108,4 +103,16 @@ interface View extends \Everon\Interfaces\Dependency\GetUrl, \Everon\View\Interf
      * @throws \Everon\Exception\View
      */
     function getContainer();
+
+    /**
+     * @param array $data
+     * @return \Everon\Helper\PopoProps
+     */
+    function templetize(array $data);
+
+    /**
+     * @param array $data Array of items implementing Arrayable Interface
+     * @return array Array of Helper\PopoProps objects
+     */
+    function templetizeArrayable(array $data);
 }
