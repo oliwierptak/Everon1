@@ -104,7 +104,7 @@ class Container implements \Everon\View\Interfaces\TemplateContainer
      */
     public function getCompiledContent()
     {
-        return $this->compiled_content;
+        return (string) $this->compiled_content;
     }
 
     /**
@@ -112,7 +112,7 @@ class Container implements \Everon\View\Interfaces\TemplateContainer
      */
     public function setCompiledContent($content)
     {
-        $this->compiled_content = $content;
+        $this->compiled_content = (string) $content;
     }
 
     /**

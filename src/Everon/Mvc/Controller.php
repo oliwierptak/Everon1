@@ -62,21 +62,32 @@ abstract class Controller extends \Everon\Controller implements Mvc\Interfaces\C
         if ($result) {
             $this->executeView($this->getView(), $action);
         }
+        else {
+            $this->executeView($this->getView(), $action.'onError');
+        }
 
         $Layout = $this->getViewManager()->createLayout($this->getLayoutName());
         $data = $this->arrayMergeDefault($Layout->getData(), $this->getView()->getData()); //import view variables into template
-        $ActionTemplate = $this->getView()->getTemplate($action, $data);
-        if ($ActionTemplate !== null) {
-            $this->getView()->setContainer($ActionTemplate);
+        
+        if ($result) {
+            $ActionTemplate = $this->getView()->getTemplate($action, $data);
+            if ($ActionTemplate !== null) {
+                $this->getView()->setContainer($ActionTemplate);
+                $Layout->set('body', $this->getView());
+            }
+            else {
+                $Layout->setData($data);
+            }
+        }
+        else {
+            $Layout->setData($data);
         }
 
-        $Layout->set('body', $this->getView());       
         $this->executeView($Layout, $action);
-
+        
         $this->getViewManager()->compileView($action, $Layout);
-
-        $content = (string) $Layout->getContainer()->getCompiledContent();
-        $this->getResponse()->setData($content);
+        $this->getResponse()->setData($Layout->getContainer()->getCompiledContent());
+        
         if ($this->getResponse()->wasStatusSet() === false) {
             $this->getResponse()->setStatusCode(200);
             $this->getResponse()->setStatusMessage('OK');
@@ -92,6 +103,9 @@ abstract class Controller extends \Everon\Controller implements Mvc\Interfaces\C
      * @param $action
      * @return bool
      */
+    /*
+    
+    call only view onError actions when error has occurred 
     protected function executeOnError($action)
     {
         $result = parent::executeOnError($action);
@@ -106,7 +120,7 @@ abstract class Controller extends \Everon\Controller implements Mvc\Interfaces\C
         }
         
         return null;
-    }
+    }*/
 
     /**
      * @param View\Interfaces\View $View
