@@ -9,17 +9,18 @@
  */
 namespace Everon\View;
 
-use Everon\Dependency;
+use Everon\Dependency as EveronDependency;
 use Everon\Exception;
 use Everon\Helper;
 use Everon\Interfaces\Collection;
 
 class Manager implements Interfaces\Manager
 {
-    use Dependency\Injection\ConfigManager;
-    use Dependency\Injection\Factory;
-    use Dependency\Injection\Logger;
-    use Dependency\Injection\FileSystem;
+    use Dependency\ViewWidgetManager;
+    use EveronDependency\Injection\ConfigManager;
+    use EveronDependency\Injection\Factory;
+    use EveronDependency\Injection\Logger;
+    use EveronDependency\Injection\FileSystem;
 
     use Helper\Arrays;
     use Helper\IsIterable;
@@ -89,7 +90,7 @@ class Manager implements Interfaces\Manager
         }
 
         $View = $this->getFactory()->buildView($view_name, $template_directory, $default_extension, $namespace);
-        $View->setViewWidgetManager($this->getWidgetManager());
+        $View->setViewManager($this);
         return $View;
     }
 
@@ -101,16 +102,15 @@ class Manager implements Interfaces\Manager
      */
     public function createLayout($name, $namespace='Everon\View')
     {
-        $default_extension = $this->getConfigManager()->getConfigValue('application.view.default_extension');
         $default_view = $this->getConfigManager()->getConfigValue('application.view.default_view');
         $namespace .= '\\'.$this->getCurrentThemeName();
         
-        $makeLayout = function($name) use ($default_extension, $namespace) {
+        $makeLayout = function($name) use ($namespace) {
             $template_directory = implode(DIRECTORY_SEPARATOR, [
                 $this->getViewDirectory().$this->getCurrentThemeName(), $name, 'templates'
             ]);
             $TemplateDirectory = new \SplFileInfo($template_directory);
-            $Layout = $this->getFactory()->buildView($name, $TemplateDirectory->getPathname().DIRECTORY_SEPARATOR, $default_extension, $namespace);
+            $Layout = $this->createView($name, $TemplateDirectory->getPathname().DIRECTORY_SEPARATOR, $namespace);
 
             $view_data = $this->getConfigManager()->getConfigValue('view.'.$Layout->getName(), []);
             $IndexTemplate = $Layout->getTemplate('index', $view_data);
@@ -188,6 +188,7 @@ class Manager implements Interfaces\Manager
                     $IncludeContext->setScopeName($name);
                     $IncludeContext->setPhp($Include->getTemplateContent());
                     $IncludeContext->setData($Include->getData());
+                    $IncludeContext->setScope($Context->getScope());
 
                     $Compiler->compile($IncludeContext);
                     $data[$name] = $IncludeContext->getCompiled();

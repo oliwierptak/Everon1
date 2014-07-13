@@ -11,7 +11,7 @@ namespace Everon\View\Interfaces;
 
 use Everon\Exception;
 
-interface Manager 
+interface Manager extends Dependency\WidgetManager 
 {
     /**
      * @param string $cache_directory

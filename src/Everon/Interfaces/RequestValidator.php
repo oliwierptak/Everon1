@@ -29,4 +29,16 @@ interface RequestValidator
      * @return bool
      */
     function isValid();
+
+    /**
+     * @param $name
+     * @param $message
+     */
+    function addError($name, $message);
+    
+    /**
+     * @param $name
+     */
+    public function removeError($name);
+    
 }

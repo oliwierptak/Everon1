@@ -89,8 +89,9 @@ abstract class Controller extends \Everon\Controller implements Mvc\Interfaces\C
         $this->getResponse()->setData($Layout->getContainer()->getCompiledContent());
         
         if ($this->getResponse()->wasStatusSet() === false) {
-            $this->getResponse()->setStatusCode(200);
-            $this->getResponse()->setStatusMessage('OK');
+            $Ok = new Http\Message\Ok();
+            $this->getResponse()->setStatusCode($Ok->getCode());
+            $this->getResponse()->setStatusMessage($Ok->getMessage());
         }
     }
 
@@ -204,6 +205,53 @@ abstract class Controller extends \Everon\Controller implements Mvc\Interfaces\C
         $this->getResponse()->setData($content);
 
         $this->response();
+    }
+
+    public function showValidationErrors()
+    {
+        /**
+         * @var \Everon\View\Interfaces\View $View
+         * @var \Everon\Mvc\Interfaces\Controller $Controller
+         */
+        $error_view = $this->getConfigManager()->getConfigValue('application.error_handler.view', null);
+        $error_form_validation_error_template = $this->getConfigManager()->getConfigValue('application.error_handler.validation_error_template', null);
+        
+        $View = $this->getViewManager()->createLayout($error_view);
+        $View->set('validation_errors', $this->getRouter()->getRequestValidator()->getErrors() ?: []);
+        $Tpl = $View->getTemplate($error_form_validation_error_template, $View->getData());
+
+        $this->getView()->set('error', $Tpl);
+        $BadRequest = new Http\Message\BadRequest();
+        $this->getResponse()->setStatusCode($BadRequest->getCode());
+        $this->getResponse()->setStatusMessage($BadRequest->getMessage());
+        
+        $this->were_error_handled = true;
+    }
+
+    /**
+     * @param $name
+     * @param $message
+     */
+    public function addValidationError($name, $message)
+    {
+        $this->getRouter()->getRequestValidator()->addError($name, $message);
+    }
+
+    /**
+     * @param $name
+     * @param $message
+     */
+    public function removeValidationError($name, $message)
+    {
+        $this->getRouter()->getRequestValidator()->removeError($name, $message);
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasValidationError()
+    {
+        return ($this->getRouter()->getRequestValidator()->isValid() === false);
     }
 
     /**

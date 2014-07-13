@@ -126,9 +126,10 @@ abstract class Core implements Interfaces\Core
          */
         if ($Controller === null) {
             try {
-                $error_handler = $this->getConfigManager()->getConfigValue('application.module.error_handler', null);
-                $Module =  $this->getModuleManager()->getModule($error_handler);
-                $Controller = $Module->getController('Error');
+                $error_module = $this->getConfigManager()->getConfigValue('application.error_handler.module', null);
+                $error_controller = $this->getConfigManager()->getConfigValue('application.error_handler.controller', null);
+                $Module =  $this->getModuleManager()->getModule($error_module);
+                $Controller = $Module->getController($error_controller);
             }
             catch (\Exception $e) {
                 $this->getLogger()->error('Error: '.$e.' while displaying exception: '.$Exception);

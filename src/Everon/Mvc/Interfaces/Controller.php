@@ -53,6 +53,25 @@ interface Controller extends \Everon\Interfaces\Controller, \Everon\View\Interfa
      */
     function showException(\Exception $Exception);
 
+    function showValidationErrors();
+
+    /**
+     * @param $name
+     * @param $message
+     */
+    function addValidationError($name, $message);
+
+    /**
+     * @param $name
+     * @param $message
+     */
+    function removeValidationError($name, $message);
+
+    /**
+     * @return bool
+     */
+    function hasValidationError();
+
     /**
      * @param $name
      * @param array $query

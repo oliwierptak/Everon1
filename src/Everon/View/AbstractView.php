@@ -12,13 +12,13 @@ namespace Everon\View;
 use Everon\Helper;
 use Everon\Exception;
 use Everon\Dependency;
-use \Everon\View\Dependency\ViewWidgetManager as ViewWidgetManagerDependency;
+use \Everon\View\Dependency\ViewManager as ViewManagerDependency;
 
 abstract class AbstractView implements Interfaces\View
 {
     use Dependency\Injection\ConfigManager;
     use Dependency\Injection\Factory;
-    use ViewWidgetManagerDependency;
+    use ViewManagerDependency;
 
     use Helper\Arrays;
     use Helper\GetUrl;
@@ -244,7 +244,8 @@ abstract class AbstractView implements Interfaces\View
     
     public function renderWidget($name)
     {
-        return $this->getViewWidgetManager()->includeWidget($name);
+        $WidgetManager = $this->getViewManager()->getWidgetManager();
+        return $WidgetManager->includeWidget($name);
     }
     
     /**

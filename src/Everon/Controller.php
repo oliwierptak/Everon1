@@ -47,6 +47,11 @@ abstract class Controller implements Interfaces\Controller
      */
     protected $CurrentRoute = null;
 
+    /**
+     * @var bool
+     */
+    protected $were_error_handled = null;
+
 
     /**
      * @param $action
@@ -182,7 +187,7 @@ abstract class Controller implements Interfaces\Controller
                 $result_on_error = $this->executeOnError($action);
             }
             
-            if ($result_on_error === null) {
+            if ($result_on_error === null && $this->were_error_handled !== true) {
                 throw new Exception\InvalidControllerResponse(
                     'Invalid controller response for: "%s@%s"', [$this->getName(),$action]
                 );

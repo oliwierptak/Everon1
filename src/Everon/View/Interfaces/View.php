@@ -10,7 +10,8 @@
 namespace Everon\View\Interfaces;
 
 
-interface View extends \Everon\Interfaces\Dependency\GetUrl, \Everon\View\Interfaces\Dependency\WidgetManager
+interface View extends \Everon\Interfaces\Dependency\GetUrl, 
+    \Everon\View\Interfaces\Dependency\Manager
 {
     /**
      * @inheritdoc
