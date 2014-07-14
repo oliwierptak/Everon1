@@ -76,6 +76,8 @@ class Server extends \Everon\Core implements Rest\Interfaces\Server
  
     public function showException(Http\Exception $Exception, $Controller)
     {
+        $this->getLogger()->trace($Exception);
+        
         $message = $Exception->getMessage();
         $code = $Exception->getCode();
         if ($Exception instanceof Http\Exception) {
