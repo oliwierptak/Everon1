@@ -22,25 +22,27 @@ use Everon\Rest;
  */
 class Server extends \Everon\Core implements Rest\Interfaces\Server
 {
+    
     /**
      * @inheritdoc
      */
     public function run(RequestIdentifier $RequestIdentifier)
     {
         try {
-            $response_headers = $this->getConfigManager()->getConfigValue('rest.response_headers', null);
-            if ($response_headers !== null) {
-                foreach ($response_headers as $name => $values) {
-                    $origin = $this->getRequest()->getHeader('HTTP_ORIGIN', null);
-                    if (strcasecmp($values['Access-Control-Allow-Origin'], $origin) === 0) {
-                        foreach ($values as $header_name => $header_value) {
-                            $this->getResponse()->setHeader($header_name, $header_value);
-                        }
+            $response_headers = $this->getConfigManager()->getConfigValue('rest.response_headers', []);
+            foreach ($response_headers as $name => $values) {
+                $origin = $this->getRequest()->getHeader('HTTP_ORIGIN', null);
+                if (strcasecmp($values['Access-Control-Allow-Origin'], $origin) === 0) {
+                    foreach ($values as $header_name => $header_value) {
+                        $this->getResponse()->setHeader($header_name, $header_value);
                     }
                 }
             }
             
             if ($this->getRequest()->getMethod() === \Everon\Request::METHOD_OPTIONS) {
+                $Ok = new Http\Message\Ok();//DRY
+                $this->getResponse()->setStatusCode($Ok->getCode());
+                $this->getResponse()->setStatusMessage($Ok->getMessage());
                 echo $this->getResponse()->toJson(); //xxx
             }
             else {
@@ -70,20 +72,7 @@ class Server extends \Everon\Core implements Rest\Interfaces\Server
             $InternalServerError = new Http\Exception((new Http\Message\InternalServerError($Exception->getMessage())));
             $this->showException($InternalServerError, $this->Controller);
         }
-        finally {
-            $url = $this->getConfigManager()->getConfigValue('rest.server.url');
-            $this->getLogger()->rest(
-                sprintf(
-                    '[%d] %s %s (%s)',
-                    $this->getResponse()->getStatusCode(),
-                    $this->getRequest()->getMethod(), 
-                    $url.$this->getRequest()->getFullPath(), 
-                    $this->getResponse()->getStatusMessage()
-                )
-            );
-        }
     }
-    
  
     public function showException(Http\Exception $Exception, $Controller)
     {
@@ -103,5 +92,19 @@ class Server extends \Everon\Core implements Rest\Interfaces\Server
 
     public function shutdown()
     {
+        $s = parent::shutdown();
+
+        $this->getLogger()->response(
+            sprintf(
+                '[%s] (%d) %s : %s %s',
+                $s,
+                $this->getResponse()->getStatusCode(),
+                $this->getResponse()->getStatusMessage(),
+                $this->getRequest()->getMethod(),
+                $this->getRequest()->getPath()
+            )
+        );
+
+        return $s;
     }
 }
