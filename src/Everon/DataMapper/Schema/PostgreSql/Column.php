@@ -35,7 +35,7 @@ class Column extends Schema\Column
             case 'text':
                 $this->length = (int) $ColumnInfo->character_maximum_length;
                 $this->encoding = $ColumnInfo->character_set_name;
-                $this->validation_rules = [$this->name => \FILTER_SANITIZE_STRING];
+                $this->validation_rules = \FILTER_SANITIZE_STRING;
                 $this->type = static::TYPE_STRING;
                 break;
 
@@ -44,7 +44,7 @@ class Column extends Schema\Column
             case 'smallint':
                 $this->length = (int) $ColumnInfo->numeric_precision;
                 $this->precision = (int) $ColumnInfo->numeric_scale;
-                $this->validation_rules = [$this->name => \FILTER_VALIDATE_INT];
+                $this->validation_rules = \FILTER_VALIDATE_INT;
                 $this->type = static::TYPE_INTEGER;
                 break;
 
@@ -52,7 +52,7 @@ class Column extends Schema\Column
             case 'double precision':
                 $this->length = (int) $ColumnInfo->numeric_precision;
                 $this->precision = (int) $ColumnInfo->numeric_scale;
-                $this->validation_rules = [$this->name => \FILTER_VALIDATE_FLOAT];
+                $this->validation_rules = \FILTER_VALIDATE_FLOAT;
                 $this->type = static::TYPE_FLOAT;
                 break;
 
@@ -60,7 +60,7 @@ class Column extends Schema\Column
             case 'timestamp without time zone':
             case 'timestamp with time zone':
                 $this->length = 19;
-                $this->validation_rules = [$this->name => \FILTER_SANITIZE_STRING];
+                $this->validation_rules = \FILTER_SANITIZE_STRING;
                 $this->type = static::TYPE_TIMESTAMP;
                 break;
             
@@ -72,7 +72,7 @@ class Column extends Schema\Column
             
             case 'boolean':
                 $this->length = 1;
-                $this->validation_rules = [$this->name => \FILTER_VALIDATE_BOOLEAN];
+                $this->validation_rules = FILTER_VALIDATE_BOOLEAN;
                 $this->type = static::TYPE_BOOLEAN;
                 break;
 

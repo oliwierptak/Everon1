@@ -276,14 +276,14 @@ abstract class Column implements Schema\Column
                 return $value;
             }
             
-            $validation_result = filter_var_array([$this->getName() => $value], $this->getValidationRules());
+            $validation_result = filter_var_array(['field' => $value], $this->getValidationRules());
             $display_value = $value === null ? 'NULL' : $value;
 
             if (($validation_result === false || $validation_result === null)) {
                 throw new Exception\Column('Column: "%s" failed to validate with value: "%s"', [$this->getName(), $display_value]);
             }
 
-            $value = $validation_result[$this->getName()];
+            $value = $validation_result['field'];
             if ($value === null) {
                 throw new Exception\Column('Column: "%s" failed to validate with value: "%s"', [$this->getName(), $display_value]);
             }
