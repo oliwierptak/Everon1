@@ -27,7 +27,7 @@ class Column extends Schema\Column
         $this->is_nullable = ($ColumnInfo->is_nullable == 'YES');
         $this->default = $ColumnInfo->column_default;
         $this->schema = $ColumnInfo->table_schema;
-        $this->table = $ColumnInfo->table_name_without_schema;
+        $this->table = $ColumnInfo->__table_name_without_schema;
         
         switch ($type = $ColumnInfo->data_type) {
             case 'char':
