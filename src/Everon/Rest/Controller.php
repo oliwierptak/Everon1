@@ -67,6 +67,12 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
             $Resource = $Resource->toArray();
             $this->getResponse()->setData($Resource);
         }
+
+        if ($this->getResponse()->wasStatusSet() === false) {//DRY
+            $Ok = new Http\Message\Ok();
+            $this->getResponse()->setStatusCode($Ok->getCode());
+            $this->getResponse()->setStatusMessage($Ok->getMessage());
+        }
     }
 
     protected function response()

@@ -88,7 +88,7 @@ abstract class Controller extends \Everon\Controller implements Mvc\Interfaces\C
         $this->getViewManager()->compileView($action, $Layout);
         $this->getResponse()->setData($Layout->getContainer()->getCompiledContent());
         
-        if ($this->getResponse()->wasStatusSet() === false) {
+        if ($this->getResponse()->wasStatusSet() === false) {//DRY
             $Ok = new Http\Message\Ok();
             $this->getResponse()->setStatusCode($Ok->getCode());
             $this->getResponse()->setStatusMessage($Ok->getMessage());
