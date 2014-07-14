@@ -16,6 +16,8 @@ use Everon\Rest\Interfaces;
 
 class Href implements Interfaces\ResourceHref
 {
+    use Helper\ToString;
+    
     protected $url = null;
     protected $version = null;
     protected $resource_name = null;
@@ -35,6 +37,11 @@ class Href implements Interfaces\ResourceHref
         $this->url = $url;
         $this->version = $version;
         $this->versioning = $versioning;
+    }
+    
+    protected function getToString()
+    {
+        return $this->getLink();
     }
 
     /**
@@ -168,11 +175,6 @@ class Href implements Interfaces\ResourceHref
         return $this->versioning;
     }
     
-    protected function getToString()
-    {
-        return $this->getLink();
-    }
-
     /**
      * @return string
      */
