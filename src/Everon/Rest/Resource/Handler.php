@@ -122,7 +122,7 @@ class Handler implements Interfaces\ResourceHandler
             $this->assertIsNull($Entity, sprintf('Domain Entity: "%s" with id: "%s" not found', $domain_name, $resource_id), 'Domain');
             $data = $this->arrayMergeDefault($Entity->toArray(), $data);
             $Model = $this->getDomainManager()->getModel($domain_name);
-            $Entity = $Model->save($data, $user_id);
+            $Entity = $Model->{'save'.$domain_name}($data, $user_id);
             return $this->buildResourceFromEntity($Entity, $version, $resource_name);
         }
         catch (EveronException\Domain $e) {
@@ -142,7 +142,7 @@ class Handler implements Interfaces\ResourceHandler
             $Entity = $Repository->getEntityById($id);
             $this->assertIsNull($Entity, sprintf('Domain Entity: "%s" with id: "%s" not found', $domain_name, $resource_id), 'Domain');
             $Model = $this->getDomainManager()->getModel($domain_name);
-            $Model->delete($Entity, $user_id);
+            $Model->{'delete'.$domain_name}($Entity, $user_id);
             return $this->buildResourceFromEntity($Entity, $version, $resource_name);
         }
         catch (EveronException\Domain $e) {
