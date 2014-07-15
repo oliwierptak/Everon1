@@ -58,31 +58,24 @@ abstract class Model implements Interfaces\Model
         return $this->getDomainManager()->getRepository($this->getName());
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function beforeAdd(Interfaces\Entity $Entity, $user_id)
+    protected function beforeAdd(Interfaces\Entity $Entity, $user_id)
+    {
+    }
+
+    protected function beforeSave(Interfaces\Entity $Entity, $user_id)
+    {
+    }
+
+    protected function beforeDelete(Interfaces\Entity $Entity, $user_id)
     {
     }
 
     /**
-     * @inheritdoc
+     * @param array $data
+     * @param null $user_id
+     * @return Interfaces\Entity
      */
-    public function beforeSave(Interfaces\Entity $Entity, $user_id)
-    {
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function beforeDelete(Interfaces\Entity $Entity, $user_id)
-    {
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function add(array $data, $user_id=null)
+    protected function add(array $data, $user_id=null)
     {
         $this->validateEntityData($data);
         $Entity = $this->getRepository()->buildFromArray($data);
@@ -92,9 +85,11 @@ abstract class Model implements Interfaces\Model
     }
 
     /**
-     * @inheritdoc
+     * @param array $data
+     * @param null $user_id
+     * @return Interfaces\Entity
      */
-    public function save(array $data, $user_id=null)
+    protected function save(array $data, $user_id=null)
     {
         $this->validateEntityData($data);
         $Entity = $this->getRepository()->buildFromArray($data);
@@ -104,9 +99,10 @@ abstract class Model implements Interfaces\Model
     }
 
     /**
-     * @inheritdoc
+     * @param $id
+     * @param null $user_id
      */
-    public function delete($id, $user_id=null)
+    protected function delete($id, $user_id=null)
     {
         $Entity = $this->getRepository()->getEntityById($id);
         $this->beforeDelete($Entity, $user_id);

@@ -27,48 +27,6 @@ interface Model
     function getRepository();
 
     /**
-     * @param Entity $Entity
-     * @param int $user_id
-     * @return Entity
-     */
-    function beforeAdd(Entity $Entity, $user_id);
-
-    /**
-     * @param Entity $Entity
-     * @param int $user_id
-     * @return Entity
-     */
-    function beforeSave(Entity $Entity, $user_id);
-
-    /**
-     * @param Entity $Entity
-     * @param int $user_id
-     * @return Entity
-     */
-    function beforeDelete(Entity $Entity, $user_id);
-
-    /**
-     * @param array $data
-     * @param int $user_id
-     * @return Entity
-     */
-    function add(array $data, $user_id=null);
-
-    /**
-     * @param array $data
-     * @param int $user_id
-     * @return mixed
-     */
-    function save(array $data, $user_id=null);
-
-    /**
-     * @param $id
-     * @param int $user_id
-     * @return mixed
-     */
-    function delete($id, $user_id=null);
-
-    /**
      * @param array $data
      */
     function validateEntityData(array $data);
