@@ -26,7 +26,8 @@ interface Handler extends \Everon\Interfaces\Dependency\Factory, \Everon\DataMap
 
     /**
      * @param $domain_name
-     * @return mixed
+     * @return \Everon\Domain\Interfaces\Model
+     * @throws \Everon\Exception\Domain
      */
     function getModel($domain_name);
 

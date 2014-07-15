@@ -763,15 +763,16 @@ abstract class Factory implements Interfaces\Factory
      */
     public function buildDomainModel($class_name, $namespace='Everon\Domain')
     {
+        $name = $class_name;
         try {
             $class_name = $this->getFullClassName($namespace, $class_name.'\Model');
             $this->classExists($class_name);
-            $Model = new $class_name();
+            $Model = new $class_name($name);
             $this->injectDependencies($class_name, $Model);
             return $Model;
         }
         catch (\Exception $e) {
-            throw new Exception\Factory('DomainModel: "%s" initialization error', $class_name, $e);
+            throw new Exception\Factory('DomainModel: "%s" initialization error', $name, $e);
         }
     }
 

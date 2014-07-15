@@ -100,8 +100,8 @@ class Handler implements Interfaces\ResourceHandler
     {
         try {
             $domain_name = $this->getDomainNameFromMapping($resource_name);
-            $Repository = $this->getDomainManager()->getRepository($domain_name);
-            $Entity = $Repository->persistFromArray($data, $user_id);
+            $Model = $this->getDomainManager()->getModel($domain_name);
+            $Entity = $Model->add($data, $user_id);
             return $this->buildResourceFromEntity($Entity, $version, $resource_name);
         }
         catch (EveronException\Domain $e) {
@@ -121,7 +121,8 @@ class Handler implements Interfaces\ResourceHandler
             $Entity = $Repository->getEntityById($id);
             $this->assertIsNull($Entity, sprintf('Domain Entity: "%s" with id: "%s" not found', $domain_name, $resource_id), 'Domain');
             $data = $this->arrayMergeDefault($Entity->toArray(), $data);
-            $Entity = $Repository->persistFromArray($data, $user_id);
+            $Model = $this->getDomainManager()->getModel($domain_name);
+            $Entity = $Model->save($data, $user_id);
             return $this->buildResourceFromEntity($Entity, $version, $resource_name);
         }
         catch (EveronException\Domain $e) {
@@ -140,7 +141,8 @@ class Handler implements Interfaces\ResourceHandler
             $id = $this->generateEntityId($resource_id, $domain_name);
             $Entity = $Repository->getEntityById($id);
             $this->assertIsNull($Entity, sprintf('Domain Entity: "%s" with id: "%s" not found', $domain_name, $resource_id), 'Domain');
-            $Repository->remove($Entity, $user_id);
+            $Model = $this->getDomainManager()->getModel($domain_name);
+            $Model->delete($Entity, $user_id);
             return $this->buildResourceFromEntity($Entity, $version, $resource_name);
         }
         catch (EveronException\Domain $e) {
