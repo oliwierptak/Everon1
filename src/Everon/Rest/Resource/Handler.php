@@ -101,7 +101,7 @@ class Handler implements Interfaces\ResourceHandler
         try {
             $domain_name = $this->getDomainNameFromMapping($resource_name);
             $Model = $this->getDomainManager()->getModel($domain_name);
-            $Entity = $Model->add($data, $user_id);
+            $Entity = $Model->{'add'.$domain_name}($data, $user_id);
             return $this->buildResourceFromEntity($Entity, $version, $resource_name);
         }
         catch (EveronException\Domain $e) {
