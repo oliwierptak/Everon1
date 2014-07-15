@@ -15,6 +15,7 @@ use Everon\Helper;
 abstract class Model implements Interfaces\Model
 {
     use Domain\Dependency\Injection\DomainManager;
+    use Helper\Arrays;
     use Helper\Asserts\IsArrayKey;
     use Helper\Exceptions;
 
