@@ -93,7 +93,7 @@ abstract class Handler implements Interfaces\Handler
         }
 
         if (isset($this->models[$domain_name]) === false) {
-            throw new SchemaException('Invalid model name: "%s"', $domain_name);
+            throw new Exception\Domain('Invalid model name: "%s"', $domain_name);
         }
 
         return $this->models[$domain_name];
