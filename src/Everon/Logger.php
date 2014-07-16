@@ -183,6 +183,7 @@ class Logger implements Interfaces\Logger
     
     public function trace(Exception $Message, array $parameters=[])
     {
+        $Message = $Message->getTraceAsString();
         return $this->write($Message, 'trace', $parameters);
     }
     
