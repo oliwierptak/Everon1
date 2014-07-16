@@ -88,7 +88,7 @@ abstract class DataMapper implements Interfaces\DataMapper
                 continue;
             }
             
-            $values[$delimiter.$name] = $Column->getDataValue($data[$name]);
+            $values[$delimiter.$name] = $Column->getDataForSql($data[$name]);
         }
 
         return $values;

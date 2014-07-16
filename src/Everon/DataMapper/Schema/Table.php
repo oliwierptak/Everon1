@@ -16,6 +16,7 @@ use Everon\Helper;
 class Table implements Interfaces\Schema\Table
 {
     use Helper\Asserts\IsNumericAndNotZero;
+    use Helper\Asserts\IsStringAndNotEmpty;
     use Helper\Exceptions;
     use Helper\Immutable;
     
@@ -169,11 +170,19 @@ class Table implements Interfaces\Schema\Table
         $PrimaryKey = current($this->getPrimaryKeys()); //todo: make fix for composite keys
         $Column = $this->getColumnByName($PrimaryKey->getName());
         $id = $Column->validateColumnValue($id);
+        
         if (is_integer($id)) {
             $this->assertIsNumericAndNonZero($id, sprintf(
-                'Invalid ID value: "%s" for column: "%s" in table: "%s"', $id, $Column->getName(), $this->getFullName()
+                'Invalid numeric ID value: "%s" for column: "%s" in table: "%s"', $id, $Column->getName(), $this->getFullName()
             ), 'Everon\DataMapper\Exception\Table');
         }
+
+        if (is_string($id)) {
+            $this->assertIsStringAndNonEmpty($id, sprintf(
+                'Invalid string ID value: "%s" for column: "%s" in table: "%s"', $id, $Column->getName(), $this->getFullName()
+            ), 'Everon\DataMapper\Exception\Table');
+        }
+        
         return $id;
     }
 

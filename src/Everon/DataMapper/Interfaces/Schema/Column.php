@@ -69,7 +69,13 @@ interface Column extends Arrayable
      * @param $value
      * @return string
      */
-    function getDataValue($value);
+    function getDataForSql($value);
+
+    /**
+     * @param $value
+     * @return mixed
+     */
+    function getDataForEntity($value);
 
     /**
      * @return string

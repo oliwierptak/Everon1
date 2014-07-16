@@ -52,7 +52,11 @@ abstract class Repository implements Interfaces\Repository
         $this->name = $name;
         $this->Mapper = $Mapper;
     }
-    
+
+    /**
+     * @param Interfaces\Entity $Entity
+     * @param Criteria $RelationCriteria
+     */
     protected function buildRelations(Interfaces\Entity $Entity, Criteria $RelationCriteria=null)
     {
         $RelationCriteria = $RelationCriteria ?: (new \Everon\DataMapper\Criteria())->limit(20)->offset(0);
@@ -98,24 +102,49 @@ abstract class Repository implements Interfaces\Repository
         $this->persist($Entity, $user_id);
         return $Entity;
     }
-      
+
+    /**
+     * @param array $data
+     * @return array
+     */
+    protected function prepareDataForEntity(array $data)
+    {
+        $result = [];
+        $columns = $this->getMapper()->getTable()->getColumns();
+        /**
+         * @var \Everon\DataMapper\Interfaces\Schema\Column $Column
+         */
+        foreach ($columns as $name => $Column) {
+            $result[$name] = $Column->getDataForEntity($data[$name]);
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param array $data
+     * @param Criteria $RelationCriteria
+     * @return Interfaces\Entity
+     */
     protected function buildEntity(array $data, Criteria $RelationCriteria=null)
     {
+        $data = $this->prepareDataForEntity($data);
         $Entity = $this->getFactory()->buildDomainEntity($this->getName(), $this->getMapper()->getTable()->getPk(), $data);
         $this->buildRelations($Entity, $RelationCriteria);
         return $Entity;
-    } 
-    
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function validateEntityData(Interfaces\Entity $Entity)
     {
         $data = $Entity->toArray();
         return $this->getMapper()->getTable()->validateData($data, $Entity->isNew() === false);
     }
-    
+
     /**
-     * @param $id
-     * @param Criteria $RelationCriteria
-     * @return Interfaces\Entity|null
+     * @inheritdoc
      */
     public function getEntityById($id, Criteria $RelationCriteria=null)
     {

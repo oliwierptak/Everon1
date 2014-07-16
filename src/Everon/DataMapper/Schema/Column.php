@@ -52,9 +52,21 @@ abstract class Column implements Schema\Column
     protected $table = null;
 
 
+    /**
+     * @param array $data
+     * @param array $primary_key_list
+     * @param array $unique_key_list
+     * @param array $foreign_key_list
+     * @return mixed
+     */
     abstract protected function init(array $data, array $primary_key_list, array $unique_key_list, array $foreign_key_list);
-    
 
+    /**
+     * @param array $data
+     * @param array $primary_key_list
+     * @param array $unique_key_list
+     * @param array $foreign_key_list
+     */
     public function __construct(array $data, array $primary_key_list, array $unique_key_list, array $foreign_key_list)
     {
         $this->init($data, $primary_key_list, $unique_key_list, $foreign_key_list);
@@ -65,6 +77,11 @@ abstract class Column implements Schema\Column
         return (string) $this->name;
     }
 
+    /**
+     * @param $name
+     * @param $data
+     * @return bool
+     */
     protected function hasInfo($name, $data)
     {
         return isset($data[$name]);
@@ -167,15 +184,15 @@ abstract class Column implements Schema\Column
     }
 
     /**
-     * @param mixed $default
+     * @inheritdoc
      */
     public function setDefault($default)
     {
         $this->default = $default;
     }
-
+    
     /**
-     * @param string $encoding
+     * @inheritdoc
      */
     public function setEncoding($encoding)
     {
@@ -183,7 +200,7 @@ abstract class Column implements Schema\Column
     }
 
     /**
-     * @param boolean $is_nullable
+     * @inheritdoc
      */
     public function setIsNullable($is_nullable)
     {
@@ -191,7 +208,7 @@ abstract class Column implements Schema\Column
     }
 
     /**
-     * @param boolean $is_pk
+     * @inheritdoc
      */
     public function setIsPk($is_pk)
     {
@@ -199,7 +216,7 @@ abstract class Column implements Schema\Column
     }
 
     /**
-     * @param boolean $is_unique
+     * @inheritdoc
      */
     public function setIsUnique($is_unique)
     {
@@ -207,7 +224,7 @@ abstract class Column implements Schema\Column
     }
 
     /**
-     * @param int $length
+     * @inheritdoc
      */
     public function setLength($length)
     {
@@ -215,7 +232,7 @@ abstract class Column implements Schema\Column
     }
 
     /**
-     * @param string $name
+     * @inheritdoc
      */
     public function setName($name)
     {
@@ -223,7 +240,7 @@ abstract class Column implements Schema\Column
     }
 
     /**
-     * @param int $precision
+     * @inheritdoc
      */
     public function setPrecision($precision)
     {
@@ -231,7 +248,7 @@ abstract class Column implements Schema\Column
     }
 
     /**
-     * @param string $schema
+     * @inheritdoc
      */
     public function setSchema($schema)
     {
@@ -239,7 +256,7 @@ abstract class Column implements Schema\Column
     }
 
     /**
-     * @param string $table
+     * @inheritdoc
      */
     public function setTable($table)
     {
@@ -247,7 +264,7 @@ abstract class Column implements Schema\Column
     }
 
     /**
-     * @param string $type
+     * @inheritdoc
      */
     public function setType($type)
     {
@@ -255,7 +272,7 @@ abstract class Column implements Schema\Column
     }
 
     /**
-     * @param string $validation_rules
+     * @inheritdoc
      */
     public function setValidationRules($validation_rules)
     {
@@ -296,25 +313,61 @@ abstract class Column implements Schema\Column
     }
 
     /**
-     * @param $value
-     * @return string
+     * @inheritdoc
      */
-    public function getDataValue($value)
+    public function getDataForSql($value)
     {
         switch ($this->type) {
+            case self::TYPE_INTEGER:
+                return (int) $value;
+                break;
+
+            case self::TYPE_FLOAT:
+                return (float) $value;
+                break;
+            
             case self::TYPE_BOOLEAN:
                 return ((bool) $value) ? 't' : 'f';
                 break;
 
-            /*
             case self::TYPE_TIMESTAMP:
+                /**
+                 * @var \DateTime $value
+                 */
                 return $value->format(\DateTime::ISO8601);
                 break;
-            */
 
             default:
                 return $value;
                 break;           
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getDataForEntity($value)
+    {
+        switch ($this->type) {
+            case self::TYPE_INTEGER:
+                return (int) $value;
+                break;
+
+            case self::TYPE_FLOAT:
+                return (float) $value;
+                break;
+            
+            case self::TYPE_BOOLEAN:
+                return $value === 't';
+                break;
+
+            case self::TYPE_TIMESTAMP:
+                return new \DateTime($value);
+                break;
+
+            default:
+                return $value;
+                break;
         }
     }
 }
