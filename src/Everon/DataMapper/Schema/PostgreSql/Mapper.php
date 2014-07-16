@@ -22,6 +22,7 @@ abstract class Mapper extends DataMapper
      */
     protected function getInsertSql(array $data)
     {
+        $data = $this->getTable()->prepareDataForSql($data, false);
         $values_str = rtrim(implode(',', $this->getPlaceholderForQuery()), ',');
         $columns = $this->getPlaceholderForQuery('');
         array_walk($columns, function(&$item) {
@@ -33,12 +34,16 @@ abstract class Mapper extends DataMapper
     }
 
     /**
-     * @param array $id
      * @param array $data
+     * @internal param array $id
      * @return array
      */
-    protected function getUpdateSql($id, array $data)
+    protected function getUpdateSql(array $data)
     {
+        $data = $this->getTable()->prepareDataForSql($data, true);
+        $id = $this->getTable()->getIdFromData($data);
+        $id = $this->getTable()->validateId($id);
+        
         $pk_name = $this->getTable()->getPk();
         $values_str = '';
         $columns = $this->getTable()->getColumns();

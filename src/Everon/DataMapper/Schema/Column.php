@@ -44,8 +44,11 @@ abstract class Column implements Schema\Column
     protected $default = null;
     
     protected $encoding = null;
-    
-    protected $validation_rules = null;
+
+    /**
+     * @var \Closure
+     */
+    protected $Validator = null;
 
     protected $schema = null;
     
@@ -53,11 +56,14 @@ abstract class Column implements Schema\Column
 
 
     /**
+     * Validators should ensure that the values can be passed to sql
+     * 
      * @param array $data
      * @param array $primary_key_list
      * @param array $unique_key_list
      * @param array $foreign_key_list
-     * @return mixed
+     * @return mixed|void
+     * @throws \Everon\DataMapper\Exception\Column
      */
     abstract protected function init(array $data, array $primary_key_list, array $unique_key_list, array $foreign_key_list);
 
@@ -162,9 +168,9 @@ abstract class Column implements Schema\Column
     /**
      * @inheritdoc
      */
-    public function getValidationRules()
+    public function getValidator()
     {
-        return $this->validation_rules;
+        return $this->Validator;
     }
 
     /**
@@ -274,9 +280,9 @@ abstract class Column implements Schema\Column
     /**
      * @inheritdoc
      */
-    public function setValidationRules($validation_rules)
+    public function setValidator($validation_rules)
     {
-        $this->validation_rules = $validation_rules;
+        $this->Validator = $validation_rules;
     }
 
     /**
@@ -285,23 +291,19 @@ abstract class Column implements Schema\Column
     public function validateColumnValue($value)
     {
         try {
-            if ($this->getValidationRules() === null) {
+            if ($this->getValidator() === null) {
                 return $value; //validation is disabled
             }
 
             if ($this->isNullable() && $value === null) {
-                return $value;
+                return $value; //no need to validate anything
             }
+
+            $display_value = ($value === null) ? 'NULL' : $value;
             
-            $validation_result = filter_var_array(['field' => $value], $this->getValidationRules());
-            $display_value = $value === null ? 'NULL' : $value;
-
-            if (($validation_result === false || $validation_result === null)) {
-                throw new Exception\Column('Column: "%s" failed to validate with value: "%s"', [$this->getName(), $display_value]);
-            }
-
-            $value = $validation_result['field'];
-            if ($value === null) {
+            $Validator = $this->getValidator();
+            $validation_result = $Validator($value);
+            if ($validation_result !== true) {
                 throw new Exception\Column('Column: "%s" failed to validate with value: "%s"', [$this->getName(), $display_value]);
             }
 
@@ -317,6 +319,10 @@ abstract class Column implements Schema\Column
      */
     public function getDataForSql($value)
     {
+        if ($this->isNullable() && $value === null) {
+            return $value;
+        }
+        
         switch ($this->type) {
             case self::TYPE_INTEGER:
                 return (int) $value;
@@ -334,7 +340,7 @@ abstract class Column implements Schema\Column
                 /**
                  * @var \DateTime $value
                  */
-                return $value->format(\DateTime::ISO8601);
+                return $value->format('Y-m-d H:i:s.se');
                 break;
 
             default:
@@ -348,6 +354,14 @@ abstract class Column implements Schema\Column
      */
     public function getDataForEntity($value)
     {
+        if ($this->isNullable() && $value === null) {
+            return $value;
+        }
+
+        if ($this->isPk() && $value === null) {
+            return $value;
+        }
+        
         switch ($this->type) {
             case self::TYPE_INTEGER:
                 return (int) $value;
@@ -362,6 +376,10 @@ abstract class Column implements Schema\Column
                 break;
 
             case self::TYPE_TIMESTAMP:
+                if ($value instanceof \DateTime) {
+                    return $value;
+                }
+                
                 return new \DateTime($value);
                 break;
 

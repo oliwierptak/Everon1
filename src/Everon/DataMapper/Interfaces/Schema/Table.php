@@ -31,6 +31,12 @@ interface Table extends Arrayable, Immutable
      * @throws \Everon\DataMapper\Exception\Table
      */
     function getColumnByName($name);
+
+    /**
+     * @param $name
+     * @return bool
+     */
+    function hasColumn($name);
     
     /**
      * @return array
@@ -68,7 +74,7 @@ interface Table extends Arrayable, Immutable
      * @return array
      * @throws \Everon\DataMapper\Exception\Table
      */
-    function validateData(array $data, $validate_id);
+    function prepareDataForSql(array $data, $validate_id);
 
     /**
      * @param $data

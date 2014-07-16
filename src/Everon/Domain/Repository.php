@@ -13,6 +13,7 @@ use Everon\DataMapper\Interfaces\Criteria;
 use Everon\Dependency;
 use Everon\Domain;
 use Everon\Domain\Interfaces;
+use Everon\Exception;
 use Everon\Interfaces\Collection;
 use Everon\Interfaces\DataMapper;
 use Everon\Helper;
@@ -104,21 +105,28 @@ abstract class Repository implements Interfaces\Repository
     }
 
     /**
+     * Makes sure data defined in the Entity is in proper format
+     * 
      * @param array $data
      * @return array
+     * @throws \Everon\Exception\Domain
      */
     protected function prepareDataForEntity(array $data)
     {
-        $result = [];
-        $columns = $this->getMapper()->getTable()->getColumns();
         /**
          * @var \Everon\DataMapper\Interfaces\Schema\Column $Column
          */
-        foreach ($columns as $name => $Column) {
-            $result[$name] = $Column->getDataForEntity($data[$name]);
+        foreach ($data as $name => $value) {
+            if ($this->getMapper()->getTable()->hasColumn($name)) {
+                if (array_key_exists($name, $data) === false) {
+                    throw new Exception\Domain('Missing Entity data: "%s" for "%s"', [$name, $this->getMapper()->getTable()->getName()]);
+                }
+                $Column = $this->getMapper()->getTable()->getColumnByName($name);
+                $data[$name] = $Column->getDataForEntity($data[$name]);
+            }
         }
 
-        return $result;
+        return $data;
     }
 
     /**
@@ -140,7 +148,7 @@ abstract class Repository implements Interfaces\Repository
     public function validateEntityData(Interfaces\Entity $Entity)
     {
         $data = $Entity->toArray();
-        return $this->getMapper()->getTable()->validateData($data, $Entity->isNew() === false);
+        return $this->getMapper()->getTable()->prepareDataForSql($data, $Entity->isNew() === false);
     }
 
     /**

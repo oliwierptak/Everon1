@@ -111,6 +111,14 @@ class Table implements Interfaces\Schema\Table
     /**
      * @inheritdoc
      */
+    public function hasColumn($name)
+    {
+        return isset($this->columns[$name]);
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function getForeignKeys()
     {
         return $this->foreign_keys;
@@ -189,7 +197,7 @@ class Table implements Interfaces\Schema\Table
     /**
      * @inheritdoc
      */
-    public function validateData(array $data, $validate_id)
+    public function prepareDataForSql(array $data, $validate_id)
     {
         $entity_data = [];
         /**
@@ -205,7 +213,8 @@ class Table implements Interfaces\Schema\Table
                 throw new Exception\Table('Invalid data value for column: "%s"', $name);
             }
 
-            $value = $Column->validateColumnValue($data[$name]);
+            $value = $Column->getDataForSql($data[$name]);
+            $value = $Column->validateColumnValue($value); //order of execution matters: getDataForSql() before validateColumnValue()
             $entity_data[$name] = $value;
         }
 
