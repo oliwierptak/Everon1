@@ -198,6 +198,7 @@ abstract class Controller extends \Everon\Controller implements Mvc\Interfaces\C
     {
         $Layout = $this->getViewManager()->createLayout('Error');
         $Layout->set('error', $Exception->getMessage());
+        $Layout->execute('show');
         
         $this->getViewManager()->compileView('', $Layout);
 
@@ -210,17 +211,20 @@ abstract class Controller extends \Everon\Controller implements Mvc\Interfaces\C
     public function showValidationErrors()
     {
         /**
-         * @var \Everon\View\Interfaces\View $View
+         * @var \Everon\View\Interfaces\View $ErrorView
          * @var \Everon\Mvc\Interfaces\Controller $Controller
          */
         $error_view = $this->getConfigManager()->getConfigValue('application.error_handler.view', null);
         $error_form_validation_error_template = $this->getConfigManager()->getConfigValue('application.error_handler.validation_error_template', null);
         
-        $View = $this->getViewManager()->createLayout($error_view);
-        $View->set('validation_errors', $this->getRouter()->getRequestValidator()->getErrors() ?: []);
-        $Tpl = $View->getTemplate($error_form_validation_error_template, $View->getData());
+        $ErrorView = $this->getViewManager()->createLayout($error_view);
+        $ErrorView->set('validation_errors', $this->getRouter()->getRequestValidator()->getErrors() ?: []);
+        $ErrorView->execute('show');
+        
+        $Tpl = $ErrorView->getTemplate($error_form_validation_error_template, $ErrorView->getData());
 
         $this->getView()->set('error', $Tpl);
+        
         $BadRequest = new Http\Message\BadRequest();
         $this->getResponse()->setStatusCode($BadRequest->getCode());
         $this->getResponse()->setStatusMessage($BadRequest->getMessage());
