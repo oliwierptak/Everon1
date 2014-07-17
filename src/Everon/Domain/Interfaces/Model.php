@@ -12,6 +12,11 @@ namespace Everon\Domain\Interfaces;
 interface Model
 {
     /**
+     * @return Entity
+     */
+    function create();
+        
+    /**
      * @param string $name
      */
     function setName($name);

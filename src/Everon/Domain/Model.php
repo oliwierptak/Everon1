@@ -59,6 +59,15 @@ abstract class Model implements Interfaces\Model
         return $this->getDomainManager()->getRepository($this->getName());
     }
 
+    /**
+     * @return Interfaces\Entity
+     */
+    public function create()
+    {
+        $Entity = $this->getRepository()->buildFromArray([]);
+        return $Entity;
+    }
+
     protected function beforeAdd(Interfaces\Entity $Entity, $user_id)
     {
     }
