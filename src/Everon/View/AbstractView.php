@@ -145,11 +145,15 @@ abstract class AbstractView implements Interfaces\View
      */
     public function getTemplate($name, $data)
     {
+        if ((new \SplFileInfo($this->getTemplateDirectory()))->isDir() === false) {
+            throw new Exception\Template('Template directory does not exists in "%s@%s"', [$this->getName(), $name]);
+        }
+        
         $Filename = $this->getTemplateFilename($name);
         if ($Filename->isFile() === false) {
             return null;
         }
-
+        
         return $this->getFactory()->buildTemplate($Filename, $data);
     }
 
