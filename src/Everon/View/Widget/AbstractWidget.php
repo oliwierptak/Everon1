@@ -9,16 +9,19 @@
  */
 namespace Everon\View\Widget;
 
+use Everon\Application;
 use Everon\Dependency;
+use Everon\Domain;
 use Everon\Helper;
-use Everon\View\Interfaces;
-use Everon\View\Dependency\Injection\ViewManager as ViewManagerDependencyInjection;
+use Everon\View;
 use Everon\Exception;
 
-abstract class AbstractWidget implements Interfaces\Widget
+abstract class AbstractWidget implements View\Interfaces\Widget
 {
+    use Application\Dependency\Injection\ApplicationCore;
     use Dependency\Injection\ConfigManager;
-    use ViewManagerDependencyInjection;
+    use Domain\Dependency\Injection\DomainManager;
+    use View\Dependency\Injection\ViewManager;
     
     use Helper\GetUrl;
     use Helper\String\LastTokenToName;
@@ -31,7 +34,7 @@ abstract class AbstractWidget implements Interfaces\Widget
     protected $has_data = false;
 
     /**
-     * @var Interfaces\View
+     * @var View\Interfaces\View
      */
     protected $View;
 
@@ -41,14 +44,14 @@ abstract class AbstractWidget implements Interfaces\Widget
     protected abstract function populate();
     
 
-    public function __construct(Interfaces\View $View)
+    public function __construct(View\Interfaces\View $View)
     {
         $this->name = $this->stringLastTokenToName(get_called_class());
         $this->View = $View;
     }
 
     /**
-     * @param Interfaces\View $View
+     * @param View\Interfaces\View $View
      */
     public function setView($View)
     {
@@ -56,7 +59,7 @@ abstract class AbstractWidget implements Interfaces\Widget
     }
 
     /**
-     * @return Interfaces\View
+     * @return View\Interfaces\View
      */
     public function getView()
     {
