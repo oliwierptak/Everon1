@@ -68,6 +68,7 @@ abstract class Controller extends \Everon\Controller implements Mvc\Interfaces\C
 
         $Layout = $this->getViewManager()->createLayout($this->getLayoutName());
         $data = $this->arrayMergeDefault($Layout->getData(), $this->getView()->getData()); //import view variables into template
+        $Layout->setData($data);
         
         if ($result) {
             $ActionTemplate = $this->getView()->getTemplate($action, $data);
@@ -75,16 +76,9 @@ abstract class Controller extends \Everon\Controller implements Mvc\Interfaces\C
                 $this->getView()->setContainer($ActionTemplate);
                 $Layout->set('body', $this->getView());
             }
-            else {
-                $Layout->setData($data);
-            }
-        }
-        else {
-            $Layout->setData($data);
         }
 
         $this->executeView($Layout, $action);
-        
         $this->getViewManager()->compileView($action, $Layout);
         $this->getResponse()->setData($Layout->getContainer()->getCompiledContent());
         
