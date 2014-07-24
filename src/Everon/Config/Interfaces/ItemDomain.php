@@ -70,4 +70,14 @@ interface ItemDomain extends Item
      * @return array
      */
     function getColumns();
+
+    /**
+     * @param array $nullable
+     */
+    function setNullable(array $nullable);
+
+    /**
+     * @return array
+     */
+    function getNullable();
 }

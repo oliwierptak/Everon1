@@ -380,7 +380,7 @@ abstract class Column implements Schema\Column
                     return $value;
                 }
                 
-                return new \DateTime($value);
+                return new \DateTime($value, new \DateTimeZone(date_default_timezone_get()));
                 break;
 
             default:

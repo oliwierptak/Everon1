@@ -118,6 +118,7 @@ class Schema implements Interfaces\Schema
                 $Column = clone $Table->getColumnByName($column_name);
                 $Column->setName($view_column_name);
                 $Column->unMarkAsPk();
+                $Column->setIsNullable(in_array($view_column_name, $Item->getNullable()));
                 $view_columns[$view_column_name] = $Column;
             }
 
