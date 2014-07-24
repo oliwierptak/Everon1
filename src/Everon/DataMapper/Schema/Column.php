@@ -328,6 +328,10 @@ abstract class Column implements Schema\Column
         if ($this->isNullable() && $value === null) {
             return $value;
         }
+
+        if ($this->isPk() && $value === null) {
+            return $value;
+        }
         
         switch ($this->type) {
             case self::TYPE_INTEGER:
@@ -346,7 +350,8 @@ abstract class Column implements Schema\Column
                 /**
                  * @var \DateTime $value
                  */
-                return $value->format('Y-m-d H:i:s.se');
+                $value->setTimezone(new \DateTimeZone($this->database_timezone));
+                return $value->format('Y-m-d H:i:s');
                 break;
 
             default:
