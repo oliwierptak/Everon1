@@ -10,8 +10,9 @@
 namespace Everon\DataMapper;
 
 use Everon\Config;
-use Everon\Dependency\Injection\Factory as FactoryDependency;
+use Everon\Dependency\Injection\Factory as FactoryDependencyInjection;
 use Everon\DataMapper\Dependency;
+use Everon\Dependency\Injection\ConfigManager as ConfigManagerDependencyInjection;
 use Everon\Domain\Dependency\DomainMapper as DomainMapperDependency;
 use Everon\Domain;
 use Everon\Helper;
@@ -20,7 +21,8 @@ class Schema implements Interfaces\Schema
 {
     use Dependency\SchemaReader;
     use DomainMapperDependency;
-    use FactoryDependency;
+    use FactoryDependencyInjection;
+    use ConfigManagerDependencyInjection;
     
     use Helper\ToArray;
 
@@ -39,6 +41,10 @@ class Schema implements Interfaces\Schema
      */
     protected $pdo_adapters = null;
 
+    /**
+     * @var string
+     */
+    protected $database_timezone = null;
 
     /**
      * @param Interfaces\Schema\Reader $SchemaReader
@@ -70,6 +76,7 @@ class Schema implements Interfaces\Schema
         
         foreach ($table_list as $name => $table_data) {
             $this->tables[$name] = $this->getFactory()->buildSchemaTableAndDependencies(
+                $this->getDatabaseTimezone(),
                 $table_data['__TABLE_NAME_WITHOUT_SCHEMA'],
                 $table_data['table_schema'],
                 $this->getAdapterName(),
@@ -228,5 +235,24 @@ class Schema implements Interfaces\Schema
         }
 
         return $this->pdo_adapters[$name];
+    }
+
+    /**
+     * @param string $database_locale
+     */
+    public function setDatabaseTimezone($database_locale)
+    {
+        $this->database_timezone = $database_locale;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDatabaseTimezone()
+    {
+        if ($this->database_timezone === null) {
+            $this->database_timezone = $this->getConfigManager()->getConfigValue('application.locale.database_timezone', 'UTC');
+        }
+        return $this->database_timezone;
     }
 }

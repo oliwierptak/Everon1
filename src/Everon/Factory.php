@@ -816,7 +816,7 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildSchemaTableAndDependencies($name, $schema, $adapter_name, array $columns, array $primary_keys,  array $unique_keys, array $foreign_keys, Domain\Interfaces\Mapper $DomainMapper, $namespace='Everon\DataMapper')
+    public function buildSchemaTableAndDependencies($database_timezone, $name, $schema, $adapter_name, array $columns, array $primary_keys,  array $unique_keys, array $foreign_keys, Domain\Interfaces\Mapper $DomainMapper, $namespace='Everon\DataMapper')
     {
         try {
             $primary_key_list = [];
@@ -859,7 +859,7 @@ abstract class Factory implements Interfaces\Factory
                 /**
                  * @var DataMapper\Schema\Column $Column
                  */
-                $Column = new $class_name($column_data, $primary_key_list, $unique_key_list, $foreign_key_list);
+                $Column = new $class_name($database_timezone, $column_data, $primary_key_list, $unique_key_list, $foreign_key_list);
                 $column_list[$Column->getName()] = $Column;
             }
             

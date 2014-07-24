@@ -9,9 +9,9 @@
  */
 namespace Everon\DataMapper\Schema;
 
-use Everon\Helper;
 use Everon\DataMapper\Exception;
 use Everon\DataMapper\Interfaces\Schema;
+use Everon\Helper;
 
 abstract class Column implements Schema\Column 
 {
@@ -54,6 +54,10 @@ abstract class Column implements Schema\Column
     
     protected $table = null;
 
+    /**
+     * @var string
+     */
+    protected $database_timezone = null;
 
     /**
      * Validators should ensure that the values can be passed to sql
@@ -68,13 +72,15 @@ abstract class Column implements Schema\Column
     abstract protected function init(array $data, array $primary_key_list, array $unique_key_list, array $foreign_key_list);
 
     /**
+     * @param $database_timezone
      * @param array $data
      * @param array $primary_key_list
      * @param array $unique_key_list
      * @param array $foreign_key_list
      */
-    public function __construct(array $data, array $primary_key_list, array $unique_key_list, array $foreign_key_list)
+    public function __construct($database_timezone, array $data, array $primary_key_list, array $unique_key_list, array $foreign_key_list)
     {
+        $this->database_timezone = $database_timezone;
         $this->init($data, $primary_key_list, $unique_key_list, $foreign_key_list);
     }
 
@@ -380,7 +386,9 @@ abstract class Column implements Schema\Column
                     return $value;
                 }
                 
-                return new \DateTime($value, new \DateTimeZone(date_default_timezone_get()));
+                $D =  new \DateTime($value, new \DateTimeZone($this->database_timezone));
+                $D->setTimezone(new \DateTimeZone(date_default_timezone_get()));
+                return $D;
                 break;
 
             default:

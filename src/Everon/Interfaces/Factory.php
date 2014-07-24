@@ -298,6 +298,7 @@ interface Factory
     function buildSchemaConstraint(array $data, $namespace='Everon\DataMapper');
 
     /**
+     * @param $database_timezone
      * @param $name
      * @param $schema
      * @param $adapter_name
@@ -310,7 +311,7 @@ interface Factory
      * @return mixed
      * @throws Exception\Factory
      */
-    function buildSchemaTableAndDependencies($name, $schema, $adapter_name, array $columns, array $primary_keys,  array $unique_keys, array $foreign_keys, Domain\Interfaces\Mapper $DomainMapper, $namespace='Everon\DataMapper');
+    function buildSchemaTableAndDependencies($database_timezone, $name, $schema, $adapter_name, array $columns, array $primary_keys,  array $unique_keys, array $foreign_keys, Domain\Interfaces\Mapper $DomainMapper, $namespace='Everon\DataMapper');
 
     /**
      * @param $name
