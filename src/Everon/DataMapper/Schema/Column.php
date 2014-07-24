@@ -350,7 +350,7 @@ abstract class Column implements Schema\Column
                 /**
                  * @var \DateTime $value
                  */
-                $value->setTimezone(new \DateTimeZone($this->database_timezone));
+                //$value->setTimezone(new \DateTimeZone($this->database_timezone));
                 return $value->format('Y-m-d H:i:s');
                 break;
 
@@ -391,8 +391,9 @@ abstract class Column implements Schema\Column
                     return $value;
                 }
                 
-                $D =  new \DateTime($value, new \DateTimeZone($this->database_timezone));
-                $D->setTimezone(new \DateTimeZone(date_default_timezone_get()));
+                $Tz = new \DateTimeZone($this->database_timezone);
+                $D =  new \DateTime($value, $Tz);
+                $D->setTimezone($Tz);
                 return $D;
                 break;
 
