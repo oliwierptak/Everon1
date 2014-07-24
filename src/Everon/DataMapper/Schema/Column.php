@@ -15,6 +15,7 @@ use Everon\Helper;
 
 abstract class Column implements Schema\Column 
 {
+    use Helper\DateFormatter;
     use Helper\ToString;
 
     const TYPE_STRING = 'string';
@@ -350,8 +351,8 @@ abstract class Column implements Schema\Column
                 /**
                  * @var \DateTime $value
                  */
-                //$value->setTimezone(new \DateTimeZone($this->database_timezone));
-                return $value->format('Y-m-d H:i:s');
+                //$value->setTimezone();
+                return $this->dateAsPostgreSql($value, new \DateTimeZone($this->database_timezone));
                 break;
 
             default:
@@ -391,10 +392,7 @@ abstract class Column implements Schema\Column
                     return $value;
                 }
                 
-                $Tz = new \DateTimeZone($this->database_timezone);
-                $D =  new \DateTime($value, $Tz);
-                $D->setTimezone($Tz);
-                return $D;
+                return $this->getDateTime($value, $this->database_timezone);
                 break;
 
             default:

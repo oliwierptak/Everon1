@@ -16,7 +16,7 @@ namespace Everon;
  */
 class Logger implements Interfaces\Logger
 {
-    use Helper\Date;
+    use Helper\DateFormatter;
     
     protected $log_files = [
         'critical' => '500.log',
@@ -88,7 +88,7 @@ class Logger implements Interfaces\Logger
             $message = (string) $message; //casting to string will append exception name
         }
         
-        $LogDate = (new \DateTime('@'.time()))->setTimezone($this->getLogDateTimeZone());
+        $LogDate = (new \DateTime(null, $this->getLogDateTimeZone()));
         $Filename = $this->getFilenameByLevel($level);
         $Dir = new \SplFileInfo($Filename->getPath());
         

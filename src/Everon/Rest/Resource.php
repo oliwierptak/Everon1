@@ -16,6 +16,7 @@ use Everon\Interfaces\Collection;
 
 abstract class Resource extends Resource\Basic implements Interfaces\Resource
 {
+    use Helper\DateFormatter;
     use Helper\String\LastTokenToName;
     
     /**
@@ -84,12 +85,26 @@ abstract class Resource extends Resource\Basic implements Interfaces\Resource
         return $this->RelationCollection->get($name);
     }
 
+    /**
+     * @inheritdoc
+     */
     protected function getToArray()
     {
-        $data = parent::getToArray();
-        $data = array_merge($data, $this->DomainEntity->toArray());
-        $data = array_merge($data, $this->RelationCollection->toArray(true));
+        $entity_data = $this->DomainEntity->toArray();
         
+        //make \DateTime useful, must be in timezone_type 3
+        array_walk_recursive($entity_data, function(&$value) {
+            if ($value instanceof \DateTime) {
+                $value->setTimezone((new \DateTime(null))->getTimezone()); //convert to server timezone
+                $offset = $value->format('P');
+                $value = (array) $value;
+                $value['offset'] = $offset;
+            }
+        });
+
+        $data = parent::getToArray();
+        $data = array_merge($data, $entity_data);
+        $data = array_merge($data, $this->RelationCollection->toArray(true));
         return $data;
     }
 }
