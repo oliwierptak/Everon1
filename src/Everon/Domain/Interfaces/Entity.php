@@ -109,6 +109,12 @@ interface Entity extends Interfaces\Arrayable
 
     /**
      * @param $name
+     * @return Entity|null
+     */
+    function getOneToOneRelation($name);
+
+    /**
+     * @param $name
      * @return array
      */
     function getManyToManyRelation($name);

@@ -254,6 +254,19 @@ class Entity extends Helper\Popo implements Interfaces\Entity
     /**
      * @inheritdoc
      */
+    public function getOneToOneRelation($name)
+    {
+        $data = $this->getRelationCollectionByName($name)->toArray();
+        if (empty($data)) {
+            return null;
+        }
+
+        return current($data);
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function getManyToManyRelation($name)
     {
         return $this->getRelationCollectionByName($name)->toArray();
