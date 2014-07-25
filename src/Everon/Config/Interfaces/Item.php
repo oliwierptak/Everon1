@@ -37,4 +37,10 @@ interface Item extends \Everon\Interfaces\Arrayable
      * @return null
      */
     function getValueByName($name, $default=null);
+
+    /**
+     * @param array $data
+     * @throws \Everon\Exception\ConfigItem
+     */
+    function validateData(array $data);
 }
