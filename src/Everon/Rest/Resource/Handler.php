@@ -223,13 +223,14 @@ class Handler implements Interfaces\ResourceHandler
             $Href = $this->getResourceUrl($version, $resource_name);
             $Repository = $this->getDomainManager()->getRepository($domain_name);
 
-            $Paginator = $this->getFactory()->buildPaginator($Repository->count(), $Navigator->getOffset(), $Navigator->getLimit());
             
             $EntityRelationCriteria = new Criteria();
             $EntityRelationCriteria->limit($Navigator->getLimit());
             $EntityRelationCriteria->offset($Navigator->getOffset());
             $EntityRelationCriteria->orderBy($Navigator->getOrderBy());
             $EntityRelationCriteria->sort($Navigator->getSort());
+            
+            $Paginator = $this->getFactory()->buildPaginator($Repository->count($EntityRelationCriteria), $Navigator->getOffset(), $Navigator->getLimit());
             
             $entity_list = $Repository->getByCriteria($EntityRelationCriteria);
     
