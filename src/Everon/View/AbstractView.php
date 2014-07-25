@@ -263,6 +263,17 @@ abstract class AbstractView implements Interfaces\View
     /**
      * @inheritdoc
      */
+    public function templetizeArray(array $data)
+    {
+        foreach ($data as $name => $item) {
+            $data[$name] = $this->templetize($item);
+        }
+        return $data;
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function templetizeArrayable(array $data)
     {
         /**

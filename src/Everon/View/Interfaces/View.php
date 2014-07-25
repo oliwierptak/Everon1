@@ -112,6 +112,12 @@ interface View extends \Everon\Interfaces\Dependency\GetUrl,
     function templetize(array $data);
 
     /**
+     * @param array $data
+     * @return array
+     */
+    function templetizeArray(array $data);
+
+    /**
      * @param array $data Array of items implementing Arrayable Interface
      * @return array Array of Helper\PopoProps objects
      */
