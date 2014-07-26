@@ -112,10 +112,14 @@ class Manager implements Interfaces\Manager
             $TemplateDirectory = new \SplFileInfo($template_directory);
             $Layout = $this->createView($name, $TemplateDirectory->getPathname().DIRECTORY_SEPARATOR, $namespace);
 
-            $view_data = $this->getConfigManager()->getConfigValue('view.'.$Layout->getName(), []);
+            $view_data = $this->getConfigManager()->getConfigValue('view.'.$Layout->getName(), null);
+            if ($view_data === null) {
+                throw new Exception\ConfigItem('Undefined view data for: "%s"', $name);
+            }
+            
             $IndexTemplate = $Layout->getTemplate('index', $view_data);
             if ($IndexTemplate === null) {
-                throw new Exception\Factory('Invalid index template for layout: "%s"', $name);
+                throw new Exception\ViewManager('Invalid index template for layout: "%s"', $name);
             }
 
             $Layout->setContainer($IndexTemplate);
@@ -125,7 +129,7 @@ class Manager implements Interfaces\Manager
         try {
             $Layout = $makeLayout($name);
         }
-        catch (Exception\Factory $e) {
+        catch (Exception $e) {
             $Layout = $makeLayout($default_view);
         }
         
@@ -298,7 +302,6 @@ class Manager implements Interfaces\Manager
 
     public function renderWidget($name)
     {
-        sd('render', $name);
         return $this->getWidgetManager()->includeWidget($name);
     }
 
