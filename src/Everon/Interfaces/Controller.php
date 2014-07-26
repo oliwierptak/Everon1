@@ -59,4 +59,14 @@ interface Controller extends \Everon\Interfaces\Dependency\GetUrl
      * @param \Exception $Exception
      */
     function showException(\Exception $Exception);
+
+    /**
+     * @param \Everon\Module\Interfaces\Module $Module
+     */
+    function setModule(\Everon\Module\Interfaces\Module $Module);
+
+    /**
+     * @return \Everon\Module\Interfaces\Module
+     */
+    function getModule();
 }

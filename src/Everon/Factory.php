@@ -417,7 +417,7 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildController($class_name, Interfaces\Module $Module, $namespace='Everon\Controller')
+    public function buildController($class_name, Module\Interfaces\Module $Module, $namespace='Everon\Controller')
     {
         try {
             $class_name = $this->getFullClassName($namespace, $class_name);

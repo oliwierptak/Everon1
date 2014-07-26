@@ -186,12 +186,12 @@ interface Factory
 
     /**
      * @param $class_name
-     * @param Interfaces\Module $Module
+     * @param Module\Interfaces\Module $Module
      * @param string $namespace
      * @return Interfaces\Controller
      * @throws Exception\Factory
      */
-    function buildController($class_name, Interfaces\Module $Module, $namespace='Everon\Controller');
+    function buildController($class_name, Module\Interfaces\Module $Module, $namespace='Everon\Controller');
 
     /**
      * @param array $data
@@ -575,14 +575,14 @@ interface Factory
      * @param Interfaces\Config $module_directory
      * @param Interfaces\Config $Config
      * @param string $namespace
-     * @return Module
+     * @return \Everon\Module\Interfaces\Module
      * @throws Exception\Factory
      */
     function buildModule($name, $module_directory, Interfaces\Config $Config, $namespace='Everon\Module');
 
     /**
      * @param string $namespace
-     * @return Module\Manager
+     * @return \Everon\Module\Interfaces\Manager
      * @throws Exception\Factory
      */
     function buildModuleManager($namespace='Everon\Module');

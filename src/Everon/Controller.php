@@ -37,7 +37,7 @@ abstract class Controller implements Interfaces\Controller
     protected $action = null;
 
     /**
-     * @var Interfaces\Module
+     * @var Module\Interfaces\Module
      */
     protected $Module = null;
 
@@ -68,23 +68,23 @@ abstract class Controller implements Interfaces\Controller
     protected abstract function response();
 
     /**
-     * @param Interfaces\Module $Module
+     * @param Module\Interfaces\Module $Module
      */
-    public function __construct(Interfaces\Module $Module)
+    public function __construct(Module\Interfaces\Module $Module)
     {
         $this->Module = $Module;
     }
 
     /**
-     * @param \Everon\Interfaces\Module $Module
+     * @param \Everon\Module\Interfaces\Module $Module
      */
-    public function setModule($Module)
+    public function setModule(Module\Interfaces\Module $Module)
     {
         $this->Module = $Module;
     }
 
     /**
-     * @return \Everon\Interfaces\Module
+     * @return \Everon\Module\Interfaces\Module
      */
     public function getModule()
     {

@@ -28,7 +28,7 @@ abstract class Core implements Interfaces\Core
     protected $Controller = null;
 
     /**
-     * @var Interfaces\Module
+     * @var Module\Interfaces\Module
      */
     protected $Module = null;
 

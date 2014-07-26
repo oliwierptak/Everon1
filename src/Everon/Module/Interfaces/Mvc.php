@@ -10,7 +10,6 @@
 namespace Everon\Module\Interfaces;
 
 use Everon\Interfaces\Dependency;
-use Everon\Interfaces\Module;
 use Everon\View;
 
 interface Mvc extends Module, View\Interfaces\Dependency\Manager

@@ -9,8 +9,6 @@
  */
 namespace Everon\Module\Interfaces;
 
-use Everon\Interfaces\Module;
-
 interface Rest extends Module
 {
 }
