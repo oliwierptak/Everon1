@@ -21,6 +21,7 @@ class Manager implements Interfaces\Manager
     use EveronDependency\Injection\Factory;
     use EveronDependency\Injection\Logger;
     use EveronDependency\Injection\FileSystem;
+    use EveronDependency\Injection\Router;
 
     use Helper\Arrays;
     use Helper\IsIterable;
@@ -80,6 +81,12 @@ class Manager implements Interfaces\Manager
      */
     public function createView($view_name, $template_directory = null, $namespace = 'Everon\View')
     {
+        /*
+        $view_data = $this->getConfigManager()->getConfigValue('view.'.$request_name, null);
+        if ($view_data === null) {
+            throw new Exception\ConfigItem('Undefined view layout data for: "%s"', $name);
+        }*/
+        
         $default_extension = $this->getConfigManager()->getConfigValue('application.view.default_extension');
 
         if ($template_directory !== null) {
@@ -88,7 +95,7 @@ class Manager implements Interfaces\Manager
                 $template_directory = null;
             }
         }
-
+        
         $View = $this->getFactory()->buildView($view_name, $template_directory, $default_extension, $namespace);
         $View->setViewManager($this);
         return $View;
@@ -114,7 +121,7 @@ class Manager implements Interfaces\Manager
 
             $view_data = $this->getConfigManager()->getConfigValue('view.'.$Layout->getName(), null);
             if ($view_data === null) {
-                throw new Exception\ConfigItem('Undefined view data for: "%s"', $name);
+                throw new Exception\ConfigItem('Undefined view layout data for: "%s"', $name);
             }
             
             $IndexTemplate = $Layout->getTemplate('index', $view_data);
