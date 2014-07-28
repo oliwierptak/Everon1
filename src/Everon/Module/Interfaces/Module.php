@@ -22,7 +22,7 @@ interface Module
     function setFactoryWorker(Interfaces\FactoryWorker $FactoryWorker);
 
     /**
-     * @return null
+     * @return string
      */
     function getName();
 
@@ -40,12 +40,12 @@ interface Module
 
     /**
      * @param $name
-     * @return null
+     * @return string
      */
     function getController($name);
 
     /**
-     * @return null
+     * @return string
      */
     function getDirectory();
 }
