@@ -21,4 +21,13 @@ interface Controller extends \Everon\Interfaces\Controller
      */
     function getJsonData();
 
+    /**
+     * @return bool
+     */
+    function getJsonResult();
+
+    /**
+     * @param bool $json_result
+     */
+    function setJsonResult($json_result);
 }
