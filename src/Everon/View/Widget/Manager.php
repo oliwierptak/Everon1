@@ -77,6 +77,7 @@ class Manager implements View\Interfaces\WidgetManager
             $this->WidgetCollection->set($name, $Widget);
         }
 
-        return $this->WidgetCollection->get($name)->render();
+        return $this->WidgetCollection->get($name)
+            ->render();
     }
 }

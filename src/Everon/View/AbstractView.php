@@ -248,8 +248,13 @@ abstract class AbstractView implements Interfaces\View
     
     public function renderWidget($name)
     {
-        $WidgetManager = $this->getViewManager()->getWidgetManager();
-        return $WidgetManager->includeWidget($name);
+        try {
+            $WidgetManager = $this->getViewManager()->getWidgetManager();
+            return $WidgetManager->includeWidget($name);
+        }
+        catch (\Exception $e) {
+            return '';
+        }
     }
     
     /**

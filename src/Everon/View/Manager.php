@@ -163,7 +163,7 @@ class Manager implements Interfaces\Manager
             
             $View->getContainer()->setCompiledContent($Context->getCompiled());
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
             throw new Exception\ViewManager($e);
         }
     }
@@ -209,7 +209,7 @@ class Manager implements Interfaces\Manager
             $Context->setData($data);
             $Compiler->compile($Context);
         }
-        catch (Exception $e) {
+        catch (\Exception $e) {
             throw new Exception\ViewManager($e);
         }
     }
