@@ -50,7 +50,6 @@ interface ResourceHandler
      * @param Resource|Resource $Resource |Resource $Resource $Resource
      * @param ResourceNavigator $Navigator
      * @return
-     * @internal param array $resources_to_expand
      */
     function expandResource(Resource $Resource, ResourceNavigator $Navigator);
 
