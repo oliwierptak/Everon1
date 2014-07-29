@@ -169,8 +169,7 @@ class Handler implements Interfaces\ResourceHandler
             $Resource = $this->buildResourceFromEntity($Entity, $version, $resource_name);
             $Href = $this->getResourceUrl($version, $resource_name, $resource_id);
             $Resource->setHref($Href);
-            $resources_to_expand = $Navigator->getExpand();
-            $this->expandResource($Resource, $resources_to_expand, $Navigator);
+            $this->expandResource($Resource, $Navigator);
             
             return $Resource;
         }
@@ -182,9 +181,9 @@ class Handler implements Interfaces\ResourceHandler
     /**
      * @inheritdoc
      */
-    public function expandResource(Interfaces\Resource $Resource, array $resources_to_expand, Interfaces\ResourceNavigator $Navigator)
+    public function expandResource(Interfaces\Resource $Resource, Interfaces\ResourceNavigator $Navigator)
     {
-        foreach ($resources_to_expand as $collection_name) {
+        foreach ($Navigator->getExpand() as $collection_name) {
             $domain_name = $this->getDomainNameFromMapping($collection_name);
             $Repository = $this->getDomainManager()->getRepository($domain_name);
             $Paginator = $this->getFactory()->buildPaginator($Repository->count(), $Navigator->getOffset(), $Navigator->getLimit());

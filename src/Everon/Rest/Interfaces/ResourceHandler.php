@@ -47,11 +47,12 @@ interface ResourceHandler
     function delete($version, $resource_name, $resource_id, $user_id);
 
     /**
-     * @param Resource $Resource
-     * @param array $resources_to_expand
+     * @param Resource|Resource $Resource |Resource $Resource $Resource
      * @param ResourceNavigator $Navigator
+     * @return
+     * @internal param array $resources_to_expand
      */
-    function expandResource(Resource $Resource, array $resources_to_expand, ResourceNavigator $Navigator);
+    function expandResource(Resource $Resource, ResourceNavigator $Navigator);
 
     /**
      * @param Entity $Entity
