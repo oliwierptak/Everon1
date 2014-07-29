@@ -191,17 +191,10 @@ class Handler implements Interfaces\ResourceHandler
             /**
              * @var \Everon\Interfaces\Collection $RelationCollection
              */
-            $RelationCollection = $Resource->getDomainEntity()->getRelationCollectionByName($domain_name);
-            $entity_collection = $RelationCollection->toArray();
-
-            $RelationCollection = new Helper\Collection([]);
-            if (is_array($entity_collection)) {
-                for ($a=0; $a<count($entity_collection); $a++) {
-                    $RelationCollection->set($a, $this->buildResourceFromEntity($entity_collection[$a], $Resource->getVersion(), $collection_name));
-                }
-            }
-            else {
-                $RelationCollection->set(0, $this->buildResourceFromEntity($entity_collection, $Resource->getVersion(), $collection_name));
+            $a = 0;
+            $RelationCollection = clone $Resource->getDomainEntity()->getRelationCollectionByName($domain_name);
+            foreach ($RelationCollection as $Entity) {
+                $RelationCollection->set($a++, $this->buildResourceFromEntity($Entity, $Resource->getVersion(), $collection_name));
             }
 
             $CollectionResource = $this->getFactory()->buildRestCollectionResource($domain_name, $Resource->getHref(), $RelationCollection, $Paginator);
