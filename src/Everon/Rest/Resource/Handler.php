@@ -186,24 +186,28 @@ class Handler implements Interfaces\ResourceHandler
         $resources_to_expand = $Navigator->getExpand() ?: [];
         sort($resources_to_expand);
         foreach ($resources_to_expand as $collection_name) {
+            /**
+             * @var \Everon\Interfaces\Collection $ResourceCollection
+             * @var \Everon\Interfaces\Collection $EntityCollection
+             */
             $extra_expand = null;
             if (strpos($collection_name, '.') !== false) {
                 $tokens = explode('.', $collection_name);
-                $collection_name = current($tokens);
-                $extra_expand = end($tokens);
+                $collection_name = array_shift($tokens);
+                $extra_expand = implode('.', $tokens);
                 $Navigator->setExpand([$collection_name]);
             }
-
             $domain_name = $this->getDomainNameFromMapping($collection_name);
-            $Repository = $this->getDomainManager()->getRepository($domain_name);
-            $Paginator = $this->getFactory()->buildPaginator($Repository->count(), $Navigator->getOffset(), $Navigator->getLimit());
-            /**
-             * @var \Everon\Interfaces\Collection $ResourceCollection
-             */
             $EntityCollection = $Resource->getDomainEntity()->getRelationCollectionByName($domain_name);
             if ($EntityCollection === null) {
                 continue;
             }
+
+            $Paginator = $this->getFactory()->buildPaginator(
+                $this->getDomainManager()->getRepository($domain_name)->count(), 
+                $Navigator->getOffset(), 
+                $Navigator->getLimit()
+            );
 
             $a = 0;
             $ResourceCollection = new Helper\Collection([]);
