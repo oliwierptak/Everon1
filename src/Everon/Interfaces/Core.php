@@ -28,4 +28,18 @@ interface Core
      * @param \Exception $Exception
      */
     function handleExceptions(\Exception $Exception);
+
+    /**
+     * @inheritdoc
+     */
+
+    /**
+     * @param Interfaces\Controller $Controller
+     */
+    function setController(\Everon\Interfaces\Controller $Controller);
+
+    /**
+     * @return Interfaces\Controller
+     */
+    function getController();
 }

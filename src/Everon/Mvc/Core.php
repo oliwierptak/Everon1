@@ -87,4 +87,20 @@ class Core extends \Everon\Core implements Interfaces\Core
         return $s;
     }
 
+    /**
+     * @inheritdoc
+     */
+    public function setController(\Everon\Interfaces\Controller $Controller)
+    {
+        $this->Controller = $Controller;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getController()
+    {
+        return $this->Controller;
+    }
+
 }
