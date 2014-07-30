@@ -187,7 +187,7 @@ class Handler implements Interfaces\ResourceHandler
         sort($resources_to_expand);
         foreach ($resources_to_expand as $collection_name) {
             /**
-             * @var \Everon\Interfaces\Collection $ResourceCollection
+             * @var \Everon\Rest\Interfaces\ResourceCollection $ResourceCollection
              * @var \Everon\Interfaces\Collection $EntityCollection
              */
             $extra_expand = null;
@@ -199,16 +199,31 @@ class Handler implements Interfaces\ResourceHandler
             }
             
             $domain_name = $this->getDomainNameFromMapping($collection_name);
+            
+            $Paginator = $this->getFactory()->buildPaginator(
+                $this->getDomainManager()->getRepository($domain_name)->count(),
+                $Navigator->getOffset(),
+                $Navigator->getLimit()
+            );
+            
+            $ResourceCollection = $Resource->getRelationCollectionByName($collection_name);
+            
+            if ($ResourceCollection instanceof Interfaces\ResourceCollection) {
+                if ($extra_expand !== null) {
+                    foreach ($ResourceCollection->getItemCollection() as $ResourceItemToExpand) {
+                        $NavigatorToExpand = clone $Navigator;
+                        $NavigatorToExpand->setLimit($Paginator->getLimit());
+                        $NavigatorToExpand->setOffset($Paginator->getOffset());
+                        $NavigatorToExpand->setExpand([$extra_expand]);
+                        $this->expandResource($ResourceItemToExpand, $NavigatorToExpand);
+                    }
+                }
+                continue;
+            }
             $EntityCollection = $Resource->getDomainEntity()->getRelationCollectionByName($domain_name);
             if ($EntityCollection === null) {
                 continue;
             }
-
-            $Paginator = $this->getFactory()->buildPaginator(
-                $this->getDomainManager()->getRepository($domain_name)->count(), 
-                $Navigator->getOffset(), 
-                $Navigator->getLimit()
-            );
 
             $a = 0;
             $ResourceCollection = new Helper\Collection([]);
