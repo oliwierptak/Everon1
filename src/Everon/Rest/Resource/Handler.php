@@ -208,18 +208,17 @@ class Handler implements Interfaces\ResourceHandler
             
             $ResourceCollection = $Resource->getRelationCollectionByName($collection_name);
             
-            if ($ResourceCollection instanceof Interfaces\ResourceCollection) {
-                if ($extra_expand !== null) {
-                    foreach ($ResourceCollection->getItemCollection() as $ResourceItemToExpand) {
-                        $NavigatorToExpand = clone $Navigator;
-                        $NavigatorToExpand->setLimit($Paginator->getLimit());
-                        $NavigatorToExpand->setOffset($Paginator->getOffset());
-                        $NavigatorToExpand->setExpand([$extra_expand]);
-                        $this->expandResource($ResourceItemToExpand, $NavigatorToExpand);
-                    }
+            if ($extra_expand !== null && $ResourceCollection instanceof Interfaces\ResourceCollection) {
+                foreach ($ResourceCollection->getItemCollection() as $ResourceItemToExpand) {
+                    $NavigatorToExpand = clone $Navigator;
+                    $NavigatorToExpand->setLimit($Paginator->getLimit());
+                    $NavigatorToExpand->setOffset($Paginator->getOffset());
+                    $NavigatorToExpand->setExpand([$extra_expand]);
+                    $this->expandResource($ResourceItemToExpand, $NavigatorToExpand);
                 }
                 continue;
             }
+            
             $EntityCollection = $Resource->getDomainEntity()->getRelationCollectionByName($domain_name);
             if ($EntityCollection === null) {
                 continue;
@@ -241,7 +240,7 @@ class Handler implements Interfaces\ResourceHandler
                 }
             }
 
-            $CollectionResource = $this->getFactory()->buildRestCollectionResource($domain_name, $Resource->getHref(), $ResourceCollection, $Paginator);
+            $CollectionResource = $this->getFactory()->buildRestCollectionResource($domain_name, clone $Resource->getHref(), $ResourceCollection, $Paginator);
             $CollectionResource->getHref()->setCollectionName($collection_name);
             $CollectionResource->setLimit($Paginator->getLimit());
             $CollectionResource->setOffset($Paginator->getOffset());
@@ -260,7 +259,6 @@ class Handler implements Interfaces\ResourceHandler
             $Href = $this->getResourceUrl($version, $resource_name);
             $Repository = $this->getDomainManager()->getRepository($domain_name);
 
-            
             $EntityRelationCriteria = new Criteria();
             $EntityRelationCriteria->limit($Navigator->getLimit());
             $EntityRelationCriteria->offset($Navigator->getOffset());
@@ -274,7 +272,9 @@ class Handler implements Interfaces\ResourceHandler
             $ResourceList = new Helper\Collection([]);
             for ($a=0; $a<count($entity_list); $a++) {
                 $CollectionEntity = $entity_list[$a];
-                $ResourceList->set($a, $this->buildResourceFromEntity($CollectionEntity, $version, $resource_name));
+                $Resource = $this->buildResourceFromEntity($CollectionEntity, $version, $resource_name);
+                $this->expandResource($Resource, clone $Navigator);
+                $ResourceList->set($a, $Resource);
             }
             
             $CollectionResource = $this->getFactory()->buildRestCollectionResource($domain_name, $Href, $ResourceList, $Paginator);
