@@ -192,11 +192,12 @@ class Handler implements Interfaces\ResourceHandler
              */
             $extra_expand = null;
             if (strpos($collection_name, '.') !== false) {
-                $tokens = explode('.', $collection_name);
+                $tokens = explode('.', $collection_name); //eg. foo.bar.zzz
                 $collection_name = array_shift($tokens);
                 $extra_expand = implode('.', $tokens);
                 $Navigator->setExpand([$collection_name]);
             }
+            
             $domain_name = $this->getDomainNameFromMapping($collection_name);
             $EntityCollection = $Resource->getDomainEntity()->getRelationCollectionByName($domain_name);
             if ($EntityCollection === null) {
