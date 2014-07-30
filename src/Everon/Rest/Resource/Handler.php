@@ -183,24 +183,49 @@ class Handler implements Interfaces\ResourceHandler
      */
     public function expandResource(Interfaces\Resource $Resource, Interfaces\ResourceNavigator $Navigator)
     {
-        foreach ($Navigator->getExpand() as $collection_name) {
+        $resources_to_expand = $Navigator->getExpand() ?: [];
+        sort($resources_to_expand);
+        foreach ($resources_to_expand as $collection_name) {
+            $extra_expand = null;
+            if (strpos($collection_name, '.') !== false) {
+                $tokens = explode('.', $collection_name);
+                $collection_name = current($tokens);
+                $extra_expand = end($tokens);
+                $Navigator->setExpand([$collection_name]);
+            }
+
             $domain_name = $this->getDomainNameFromMapping($collection_name);
             $Repository = $this->getDomainManager()->getRepository($domain_name);
             $Paginator = $this->getFactory()->buildPaginator($Repository->count(), $Navigator->getOffset(), $Navigator->getLimit());
             /**
-             * @var \Everon\Interfaces\Collection $RelationCollection
+             * @var \Everon\Interfaces\Collection $ResourceCollection
              */
-            $a = 0;
-            $RelationCollection = clone $Resource->getDomainEntity()->getRelationCollectionByName($domain_name);
-            foreach ($RelationCollection as $Entity) {
-                $RelationCollection->set($a++, $this->buildResourceFromEntity($Entity, $Resource->getVersion(), $collection_name));
+            $EntityCollection = $Resource->getDomainEntity()->getRelationCollectionByName($domain_name);
+            if ($EntityCollection === null) {
+                continue;
             }
 
-            $CollectionResource = $this->getFactory()->buildRestCollectionResource($domain_name, $Resource->getHref(), $RelationCollection, $Paginator);
+            $a = 0;
+            $ResourceCollection = new Helper\Collection([]);
+            foreach ($EntityCollection as $Entity) {
+                $ResourceCollection->set($a++, $this->buildResourceFromEntity($Entity, $Resource->getVersion(), $collection_name));
+            }
+
+            if ($extra_expand !== null) {
+                foreach ($ResourceCollection as $ResourceItemToExpand) {
+                    $NavigatorToExpand = clone $Navigator;
+                    $NavigatorToExpand->setLimit($Paginator->getLimit());
+                    $NavigatorToExpand->setOffset($Paginator->getOffset());
+                    $NavigatorToExpand->setExpand([$extra_expand]);
+                    $this->expandResource($ResourceItemToExpand, $NavigatorToExpand);
+                }
+            }
+
+            $CollectionResource = $this->getFactory()->buildRestCollectionResource($domain_name, $Resource->getHref(), $ResourceCollection, $Paginator);
             $CollectionResource->getHref()->setCollectionName($collection_name);
-            $CollectionResource->setLimit($Navigator->getLimit());
-            $CollectionResource->setOffset($Navigator->getOffset());
-            
+            $CollectionResource->setLimit($Paginator->getLimit());
+            $CollectionResource->setOffset($Paginator->getOffset());
+
             $Resource->setRelationCollectionByName($collection_name, $CollectionResource);
         }
     }
