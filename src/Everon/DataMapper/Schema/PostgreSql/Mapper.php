@@ -105,6 +105,18 @@ abstract class Mapper extends DataMapper
         return $sql;
     }
 
+    protected function getJoinSql($select, $a, $b, $on_a, $on_b, Interfaces\Criteria $Criteria)
+    {
+        $sql = "
+            SELECT %s FROM %s
+            JOIN %s ON %s = %s 
+            ";
+        $sql .= $Criteria;
+
+        $sql = sprintf($sql, $select, $a, $b, $on_a, $on_b);
+        return $sql;
+    }
+
     protected function getCountSql(Interfaces\Criteria $Criteria)
     {
         $table_name = sprintf('%s.%s', $this->getTable()->getSchema(), $this->getTable()->getName());
