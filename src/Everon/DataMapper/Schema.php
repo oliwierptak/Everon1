@@ -206,7 +206,7 @@ class Schema implements Interfaces\Schema
     /**
      * @inheritdoc
      */
-    public function getTable($name)
+    public function getTableByName($name)
     {
         $this->initTables();
         $name = mb_strtolower($name);
