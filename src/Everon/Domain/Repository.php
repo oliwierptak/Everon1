@@ -36,13 +36,6 @@ abstract class Repository implements Interfaces\Repository
      */
     protected $RelationCollection = null;
 
-    /**
-     * @param Interfaces\Entity $Entity
-     * @param Criteria $Criteria
-     * @return mixed
-     */
-    abstract public function buildEntityRelations(Interfaces\Entity $Entity, Criteria $Criteria);
-
 
     /**
      * @param $name
@@ -63,50 +56,10 @@ abstract class Repository implements Interfaces\Repository
         $RelationCriteria = $RelationCriteria ?: (new \Everon\DataMapper\Criteria())->limit(20)->offset(0);
         $this->buildEntityRelations($Entity, $RelationCriteria);
     }
-    
-    /**
-     * @inheritdoc
-     */
-    public function getMapper()
-    {
-        return $this->Mapper;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function setMapper(DataMapper $Mapper)
-    {
-        $this->Mapper = $Mapper;
-    }
-    
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function buildFromArray(array $data)
-    {
-        $Entity = $this->buildEntity($data);
-        return $Entity;
-    }
-   
-    /**
-     * @inheritdoc
-     */
-    public function persistFromArray(array $data, $user_id=null)
-    {
-        $Entity = $this->buildFromArray($data);
-        $this->persist($Entity, $user_id);
-        return $Entity;
-    }
 
     /**
      * Makes sure data defined in the Entity is in proper format
-     * 
+     *
      * @param array $data
      * @return array
      * @throws \Everon\Exception\Domain
@@ -143,9 +96,65 @@ abstract class Repository implements Interfaces\Repository
     }
 
     /**
+     * @param Interfaces\Entity $Entity
+     * @param Criteria $Criteria
+     * @return mixed
+     */
+    public function buildEntityRelations(Interfaces\Entity $Entity, Criteria $Criteria)
+    {
+        $RelationCollection = new Helper\Collection([]);
+        foreach ($Entity->getRelationDefinition() as $relation_domain_name => $type) {
+            $Relation = $this->getFactory()->buildDomainRelation($relation_domain_name, $this->getName(), $Entity);
+            $Relation->setRelationCriteria(clone $Criteria);
+            $RelationCollection->set($relation_domain_name, $Relation);
+        }
+
+        $Entity->setRelationCollection($RelationCollection);
+    }
+
+    /**
      * @inheritdoc
      */
-    public function validateEntityData(Interfaces\Entity $Entity)
+    public function getMapper()
+    {
+        return $this->Mapper;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setMapper(DataMapper $Mapper)
+    {
+        $this->Mapper = $Mapper;
+    }
+
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildFromArray(array $data, Criteria $RelationCriteria=null)
+    {
+        return $this->buildEntity($data, $RelationCriteria);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function persistFromArray(array $data, $user_id=null)
+    {
+        $Entity = $this->buildFromArray($data);
+        $this->persist($Entity, $user_id);
+        return $Entity;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function validateEntity(Interfaces\Entity $Entity)
     {
         $data = $Entity->toArray();
         return $this->getMapper()->getTable()->prepareDataForSql($data, $Entity->isNew() === false);

@@ -38,6 +38,11 @@ class Entity extends Helper\Popo implements Interfaces\Entity
      * @var string
      */
     protected $domain_name = null;
+
+    /**
+     * @var array
+     */
+    protected $relation_definition = [];
     
 
     public function __construct($id_name, array $data=[])
@@ -225,15 +230,15 @@ class Entity extends Helper\Popo implements Interfaces\Entity
     /**
      * @inheritdoc
      */
-    public function setRelationCollectionByName($name, Collection $CollectionResource)
+    public function setRelationByName($name, Interfaces\Relation $Relation)
     {
-        $this->RelationCollection->set($name, $CollectionResource);
+        $this->RelationCollection->set($name, $Relation);
     }
 
     /**
      * @inheritdoc
      */
-    public function getRelationCollectionByName($name)
+    public function getRelationByName($name)
     {
         return $this->RelationCollection->get($name);
     }
@@ -241,35 +246,9 @@ class Entity extends Helper\Popo implements Interfaces\Entity
     /**
      * @inheritdoc
      */
-    public function getOneToManyRelation($name) 
+    public function hasRelation($name)
     {
-        $data = $this->getRelationCollectionByName($name)->toArray();
-        if (empty($data)) {
-            return null;
-        }
-        
-        return $data;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getOneToOneRelation($name)
-    {
-        $data = $this->getRelationCollectionByName($name)->toArray();
-        if (empty($data)) {
-            return null;
-        }
-
-        return current($data);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getManyToManyRelation($name)
-    {
-        return $this->getRelationCollectionByName($name)->toArray();
+        return $this->RelationCollection->has($name);
     }
 
     /**
@@ -284,6 +263,22 @@ class Entity extends Helper\Popo implements Interfaces\Entity
         return $this->domain_name;
     }
 
+    /**
+     * @return array
+     */
+    public function getRelationDefinition()
+    {
+        return $this->relation_definition;
+    }
+
+    /**
+     * @param array $relation_definition
+     */
+    public function setRelationDefinition(array $relation_definition)
+    {
+        $this->relation_definition = $relation_definition;
+    }
+    
     /**
      * Does the usual call but also marks properties as modified when setter is used
      * 

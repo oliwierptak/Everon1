@@ -188,7 +188,7 @@ class Handler implements Interfaces\ResourceHandler
         foreach ($resources_to_expand as $collection_name) {
             /**
              * @var \Everon\Rest\Interfaces\ResourceCollection $ResourceCollection
-             * @var \Everon\Interfaces\Collection $EntityCollection
+             * @var \Everon\Domain\Interfaces\Relation $EntityRelation
              */
             $extra_expand = null;
             if (strpos($collection_name, '.') !== false) {
@@ -199,9 +199,13 @@ class Handler implements Interfaces\ResourceHandler
             }
             
             $domain_name = $this->getDomainNameFromMapping($collection_name);
+            $EntityRelation = $Resource->getDomainEntity()->getRelationByName($domain_name);
+            if ($EntityRelation === null) {
+                throw new Exception\Resource('Invalid entity relation for: "%s"', $domain_name);
+            }
             
             $Paginator = $this->getFactory()->buildPaginator(
-                $this->getDomainManager()->getRepository($domain_name)->count(),
+                $EntityRelation->getCount(),
                 $Navigator->getOffset(),
                 $Navigator->getLimit()
             );
@@ -219,14 +223,14 @@ class Handler implements Interfaces\ResourceHandler
                 continue;
             }
             
-            $EntityCollection = $Resource->getDomainEntity()->getRelationCollectionByName($domain_name);
-            if ($EntityCollection === null) {
+            if ($EntityRelation === null) {
                 continue;
             }
 
             $a = 0;
             $ResourceCollection = new Helper\Collection([]);
-            foreach ($EntityCollection as $Entity) {
+            $data = $EntityRelation->getData()->toArray();
+            foreach ($data as $Entity) {
                 $ResourceCollection->set($a++, $this->buildResourceFromEntity($Entity, $Resource->getVersion(), $collection_name));
             }
 

@@ -80,4 +80,5 @@ interface ItemDomain extends Item
      * @return array
      */
     function getNullable();
+
 }

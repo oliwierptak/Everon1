@@ -113,9 +113,9 @@ abstract class Handler implements Interfaces\Handler
     public function getRepository($domain_name)
     {
         if (isset($this->repositories[$domain_name]) === false) {
-            $data_mapper_name = $this->getDataMapperManager()->getDomainMapper()->getByDomainName($domain_name);
+            $data_mapper_name = $this->getDataMapperManager()->getDomainMapper()->getTableName($domain_name);
             $this->assertIsNull($data_mapper_name, 'Invalid mapper definition for domain: "'.$domain_name.'"', 'Everon\Domain\Exception\Mapper');
-
+            
             $Schema = $this->getDataMapperManager()->getSchema();
             $DataMapper = $this->getFactory()->buildDataMapper($domain_name, $Schema->getTable($data_mapper_name), $Schema);
             $this->repositories[$domain_name] = $this->getFactory()->buildDomainRepository($domain_name, $DataMapper);

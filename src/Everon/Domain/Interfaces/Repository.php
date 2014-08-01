@@ -19,7 +19,7 @@ interface Repository
      * @param Entity $Entity
      * @return array
      */
-    function validateEntityData(Entity $Entity);
+    function validateEntity(Entity $Entity);
         
     /**
      * @param Entity $Entity

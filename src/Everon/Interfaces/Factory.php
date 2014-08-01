@@ -272,6 +272,16 @@ interface Factory
     function buildDomainManager(DataMapper\Interfaces\Manager $Manager, $namespace='Everon\Domain');
 
     /**
+     * @param $name
+     * @param $parent_name
+     * @param Domain\Interfaces\Entity $Entity
+     * @param string $namespace
+     * @return
+     * @internal param DataMapper $Mapper
+     */
+    function buildDomainRelation($name, $parent_name, Domain\Interfaces\Entity $Entity, $namespace = 'Everon\Domain');
+
+    /**
      * @param DataMapper\Interfaces\Schema\Reader $Reader
      * @param DataMapper\Interfaces\ConnectionManager $ConnectionManager
      * @param Domain\Interfaces\Mapper $DomainMapper

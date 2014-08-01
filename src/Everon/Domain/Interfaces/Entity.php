@@ -91,36 +91,35 @@ interface Entity extends Interfaces\Arrayable
 
     /**
      * @param $name
-     * @param Collection $CollectionResource
+     * @param Relation $Relation
+     * @return mixed
      */
-    function setRelationCollectionByName($name, Collection $CollectionResource);
+    function setRelationByName($name, Relation $Relation);
 
     /**
      * @param $name
-     * @return Collection
+     * @return Relation
      */
-    function getRelationCollectionByName($name);
+    function getRelationByName($name);
 
     /**
      * @param $name
-     * @return array|null
+     * @return bool
      */
-    function getOneToManyRelation($name);
-
-    /**
-     * @param $name
-     * @return Entity|null
-     */
-    function getOneToOneRelation($name);
-
-    /**
-     * @param $name
-     * @return array
-     */
-    function getManyToManyRelation($name);
+    function hasRelation($name);
 
     /**
      * @return string
      */
     function getDomainName();
+
+    /**
+     * @return array
+     */
+    function getRelationDefinition();
+
+    /**
+     * @param array $relation_definition
+     */
+    function setRelationDefinition(array $relation_definition);
 }

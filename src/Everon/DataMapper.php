@@ -31,14 +31,37 @@ abstract class DataMapper implements Interfaces\DataMapper
     
     protected $write_connection_name = 'write';
     protected $read_connection_name = 'read';
-    
-    abstract protected function getInsertSql(array $data);
-    abstract protected function getUpdateSql(array $data);
-    abstract protected function getDeleteSql($id);
-    abstract protected function getFetchAllSql(Criteria $Criteria);
-    abstract protected function getCountSql(Criteria $Criteria);
-    
 
+    /**
+     * @inheritdoc
+     */
+    abstract public function getInsertSql(array $data);
+    
+    /**
+     * @inheritdoc
+     */
+    abstract public function getUpdateSql(array $data);
+
+    /**
+     * @inheritdoc
+     */
+    abstract public function getDeleteSql($id);
+
+    /**
+     * @inheritdoc
+     */
+    abstract public function getFetchAllSql(Criteria $Criteria=null);
+
+    /**
+     * @inheritdoc
+     */
+    abstract public function getJoinSql($select, $a, $b, $on_a, $on_b, Criteria $Criteria=null, $type='');
+
+    /**
+     * @inheritdoc
+     */
+    abstract public function getCountSql(Criteria $Criteria=null);
+    
 
     /**
      * @param Table $Table

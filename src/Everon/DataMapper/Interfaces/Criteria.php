@@ -9,7 +9,7 @@
  */
 namespace Everon\DataMapper\Interfaces;
 
-interface Criteria extends \Everon\Interfaces\Arrayable
+interface Criteria extends \Everon\Interfaces\Arrayable, \Everon\Interfaces\Stringable 
 {
     /**
      * @param $offset
@@ -92,5 +92,4 @@ interface Criteria extends \Everon\Interfaces\Arrayable
      * @return array
      */
     function getWhere();
-
 }

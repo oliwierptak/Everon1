@@ -779,6 +779,23 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
+    public function buildDomainRelation($name, $parent_name, Domain\Interfaces\Entity $Entity, $namespace='Everon\Domain')
+    {
+        try {
+            $class_name = $this->getFullClassName($namespace.'\\'.$parent_name, 'Relation\\'.$name);
+            $this->classExists($class_name);
+            $Relation = new $class_name($Entity);
+            $this->injectDependencies($class_name, $Relation);
+            return $Relation;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('DomainRelation: "%s" initialization error', $name, $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function buildSchema(DataMapper\Interfaces\Schema\Reader $Reader, DataMapper\Interfaces\Connectionmanager $ConnectionManager, Domain\Interfaces\Mapper $DomainMapper, $namespace='Everon\DataMapper')
     {
         try {

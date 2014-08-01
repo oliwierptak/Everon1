@@ -189,5 +189,5 @@ class Domain extends Config\Item implements Config\Interfaces\ItemDomain
     public function getNullable()
     {
         return $this->nullable;
-    }   
+    }
 }

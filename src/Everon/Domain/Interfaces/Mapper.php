@@ -17,11 +17,11 @@ interface Mapper extends Interfaces\Arrayable
      * @param $domain_name
      * @return string|null
      */
-    function getByDomainName($domain_name);
+    function getTableName($domain_name);
 
     /**
      * @param $data_mapper_name
      * @return string|null
      */
-    function getByDataMapperName($data_mapper_name);
+    function getDomainName($data_mapper_name);
 }
