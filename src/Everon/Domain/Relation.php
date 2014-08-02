@@ -272,6 +272,7 @@ abstract class Relation implements Interfaces\Relation
 
     public function setOne(Domain\Interfaces\Entity $Entity)
     {
+        $this->loaded = true;
         $this->Data = new Helper\Collection([$Entity]);
     }
 
@@ -288,6 +289,7 @@ abstract class Relation implements Interfaces\Relation
      */
     public function setMany(array $data)
     {
+        $this->loaded = true;
         $this->Data = new Helper\Collection($data);
     }
 
