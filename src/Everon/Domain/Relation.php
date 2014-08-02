@@ -22,6 +22,7 @@ abstract class Relation implements Interfaces\Relation
     const ONE_TO_ONE = 'OneToOne';
     const ONE_TO_MANY = 'OneToMany';
     const MANY_TO_MANY = 'ManyToMany';
+    const MANY_TO_ONE = 'ManyToOne';
     
     protected $type = self::ONE_TO_ONE;
 

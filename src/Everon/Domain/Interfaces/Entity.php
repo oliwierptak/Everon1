@@ -42,7 +42,7 @@ interface Entity extends Interfaces\Arrayable
     function isPropertyModified($name);
 
     /**
-     * @inheritdoc
+     * @return mixed
      */
     function getId();
 
