@@ -90,4 +90,24 @@ interface Relation extends \Everon\Interfaces\Arrayable
     function getData();
 
     function getCount();
+
+    /**
+     * @param Entity $Entity
+     */
+    function setOne(Domain\Interfaces\Entity $Entity);
+
+    /**
+     * @return Entity
+     */
+    function getOne();
+
+    /**
+     * @param array $data
+     */
+    function setMany(array $data);
+
+    /**
+     * @return array
+     */
+    function getMany();
 }

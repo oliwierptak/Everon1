@@ -270,7 +270,7 @@ abstract class Relation implements Interfaces\Relation
         return $this->count;
     }
 
-    public function setOneToOne(Domain\Interfaces\Entity $Entity)
+    public function setOne(Domain\Interfaces\Entity $Entity)
     {
         $this->Data = new Helper\Collection([$Entity]);
     }
@@ -278,18 +278,25 @@ abstract class Relation implements Interfaces\Relation
     /**
      * @return Domain\Interfaces\Entity
      */
-    public function getOneToOne()
+    public function getOne()
     {
-        return current($this->getData());
+        return current($this->getData()->toArray());
     }
 
-    public function setOneToMany(array $data)
+    /**
+     * @param array $data
+     */
+    public function setMany(array $data)
     {
         $this->Data = new Helper\Collection($data);
     }
 
-    public function setManyToMany(array $data)
+    /**
+     * @return array
+     */
+    public function getMany()
     {
-        $this->Data = new Helper\Collection($data);
+        return $this->getData()->toArray();
     }
+
 }
