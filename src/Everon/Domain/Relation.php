@@ -18,12 +18,12 @@ abstract class Relation implements Interfaces\Relation
     use Domain\Dependency\Injection\DomainManager;
     use Helper\String\LastTokenToName;
     use Helper\ToArray;
-    
+
     const ONE_TO_ONE = 'OneToOne';
     const ONE_TO_MANY = 'OneToMany';
     const MANY_TO_MANY = 'ManyToMany';
     const MANY_TO_ONE = 'ManyToOne';
-    
+
     protected $type = self::ONE_TO_ONE;
 
     /**
@@ -80,6 +80,16 @@ abstract class Relation implements Interfaces\Relation
     }
 
     abstract protected function setupRelationParameters();
+
+    protected function reset()
+    {
+        $this->loaded = false;
+    }
+
+    protected function getToArray()
+    {
+        return $this->getData()->toArray();
+    }
 
     /**
      * @return Domain\Interfaces\Entity
@@ -193,7 +203,7 @@ abstract class Relation implements Interfaces\Relation
     {
         $this->type = $type;
     }
-    
+
     /**
      * @param \Everon\Interfaces\Collection $Collection
      */
@@ -211,12 +221,11 @@ abstract class Relation implements Interfaces\Relation
         $this->setupRelationParameters();
 
         if ($this->loaded === false) {
-            $Loader = function() {
+            $Loader = function () {
                 if ($this->sql !== null) {
                     $sql = $this->sql.$this->getCriteria();
                     $data = $this->getDataMapper()->getSchema()->getPdoAdapterByName('read')->execute($sql, $this->getCriteria()->getWhere())->fetchAll();
-                }
-                else {
+                } else {
                     $data = $this->getDataMapper()->fetchAll($this->getCriteria());
                 }
 
@@ -233,7 +242,7 @@ abstract class Relation implements Interfaces\Relation
 
                 return $entities;
             };
-            
+
             $this->Data = new Helper\LazyCollection($Loader);
             $this->loaded = true;
         }
@@ -245,27 +254,42 @@ abstract class Relation implements Interfaces\Relation
     {
         $this->setupRelationParameters();
 
+        $Criteria = clone $this->getCriteria();
+        $Criteria->orderBy(null);
+
         if ($this->loaded === false) {
             if ($this->sql_count !== null) {
-                $sql = $this->sql_count.' '.$this->getCriteria();
-                $PdoStatement = $this->getDataMapper()->getSchema()->getPdoAdapterByName('read')->execute($sql, $this->getCriteria()->getWhere());
+                $sql = $this->sql_count.' '.$Criteria;
+                $PdoStatement = $this->getDataMapper()->getSchema()->getPdoAdapterByName('read')->execute($sql, $Criteria->getWhere());
                 $this->count = (int) $PdoStatement->fetchColumn();
-            }
-            else {
-                return $this->getDomainManager()->getRepository($this->getName())->count($this->getCriteria());
+            } else {
+                return $this->getDomainManager()->getRepository($this->getName())->count($Criteria);
             }
         }
 
         return $this->count;
     }
-    
-    protected function reset()
+
+    public function setOneToOne(Domain\Interfaces\Entity $Entity)
     {
-        $this->loaded = false;
+        $this->Data = new Helper\Collection([$Entity]);
     }
-    
-    protected function getToArray()
+
+    /**
+     * @return Domain\Interfaces\Entity
+     */
+    public function getOneToOne()
     {
-        return $this->getData()->toArray();
+        return current($this->getData());
+    }
+
+    public function setOneToMany(array $data)
+    {
+        $this->Data = new Helper\Collection($data);
+    }
+
+    public function setManyToMany(array $data)
+    {
+        $this->Data = new Helper\Collection($data);
     }
 }
