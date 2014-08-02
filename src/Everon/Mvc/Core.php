@@ -65,7 +65,7 @@ class Core extends \Everon\Core implements Interfaces\Core
 
         $this->getResponse()->setStatusCode($code);
         $this->getResponse()->setStatusMessage($message);
-
+        
         parent::showException($Exception, $Controller);
     }
 
