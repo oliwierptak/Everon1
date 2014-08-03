@@ -145,6 +145,9 @@ class Criteria implements Interfaces\Criteria
         if (empty($this->in) === false) {
             $where_str .= ' ';
             foreach ($this->in as $field => $values) {
+                if (is_array($values) === false) {
+                    continue;
+                }
                 $values = array_filter($values);
                 $ilike_str = implode(',', $values);
                 $where_str .= " AND ${field} IN (${ilike_str})";
