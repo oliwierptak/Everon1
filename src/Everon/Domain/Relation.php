@@ -220,7 +220,7 @@ abstract class Relation implements Interfaces\Relation
     {
         $this->setupRelationParameters();
 
-        if ($this->loaded === false && $this->sql !== null) {
+        if ($this->loaded === false) {
             $Loader = function () {
                 if ($this->sql !== null) {
                     $sql = $this->sql.$this->getCriteria();
