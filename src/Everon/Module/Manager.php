@@ -96,7 +96,7 @@ class Manager implements Interfaces\Manager
     /**
      * @inheritdoc
      */
-    public function getModule($name)
+    public function getModuleByName($name)
     {
         if ($this->modules === null) {
             $this->initModules();

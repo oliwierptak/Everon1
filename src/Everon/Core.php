@@ -64,7 +64,7 @@ abstract class Core implements Interfaces\Core
 
         $this->getModuleManager()->loadModuleDependencies();
         $this->Route = $this->getRouter()->getRouteByRequest($this->getRequest());
-        $this->Module = $this->getModuleManager()->getModule($this->Route->getModule());
+        $this->Module = $this->getModuleManager()->getModuleByName($this->Route->getModule());
 
         if ($this->Module === null) {
             throw new Exception\Core('No module defined for this request');
@@ -129,7 +129,7 @@ abstract class Core implements Interfaces\Core
             try {
                 $error_module = $this->getConfigManager()->getConfigValue('application.error_handler.module', null);
                 $error_controller = $this->getConfigManager()->getConfigValue('application.error_handler.controller', null);
-                $Module = $this->getModuleManager()->getModule($error_module);
+                $Module = $this->getModuleManager()->getModuleByName($error_module);
                 $Controller = $Module->getController($error_controller);
             } catch (\Exception $e) {
                 $this->getLogger()->error('Error: ' . $e . ' while displaying exception: ' . $Exception);

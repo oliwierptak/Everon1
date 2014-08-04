@@ -245,7 +245,11 @@ abstract class AbstractView implements Interfaces\View
 
         return null;
     }
-    
+
+    /**
+     * @param $name
+     * @return string
+     */
     public function renderWidget($name)
     {
         try {

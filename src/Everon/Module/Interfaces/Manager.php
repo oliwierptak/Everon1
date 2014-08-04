@@ -17,7 +17,7 @@ interface Manager extends Config\Interfaces\Dependency\Manager
      * @param $name
      * @return \Everon\Module\Interfaces\Module
      */
-    function getModule($name);
+    function getModuleByName($name);
 
     /**
      * @return array
