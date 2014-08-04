@@ -231,8 +231,7 @@ abstract class Relation implements Interfaces\Relation
 
 
                 if ($data === false || empty($data)) {
-                    $this->Data = new Helper\Collection([]);
-                    return $this->Data;
+                    return [];
                 }
 
                 $entities = [];
@@ -281,7 +280,20 @@ abstract class Relation implements Interfaces\Relation
      */
     public function getOne()
     {
-        return current($this->getData()->toArray());
+        if ($this->getData()->isEmpty()) {
+            return null;
+        }
+        
+        $data = $this->getData()->toArray();
+        if (empty($data)) {
+            return null;
+        }
+        
+        if (is_array($data)) {
+            return current($data);
+        }
+        
+        return null;
     }
 
     /**
