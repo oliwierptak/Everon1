@@ -18,7 +18,6 @@ use Everon\Helper;
  */
 class Form extends \Everon\View\Element
 {
-
     public function __construct($data=null)
     {
         parent::__construct([
@@ -27,5 +26,4 @@ class Form extends \Everon\View\Element
             'enctype' => 'multipart/form-data',
         ], $data);
     }
-
 }

@@ -11,15 +11,5 @@ namespace Everon\View\Interfaces;
 
 interface Element extends \Everon\Interfaces\Arrayable
 {
-    /**
-     * @param $name
-     * @param mixed $data
-     */
-    function set($name, $data);
-
-    /**
-     * @param $name
-     * @return mixed|null
-     */
-    function get($name);    
+    
 }
