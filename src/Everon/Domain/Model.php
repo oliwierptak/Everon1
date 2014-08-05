@@ -11,6 +11,7 @@ namespace Everon\Domain;
 
 use Everon\Domain;
 use Everon\Helper;
+use Everon\Rest;
 
 abstract class Model implements Interfaces\Model
 {
@@ -117,5 +118,15 @@ abstract class Model implements Interfaces\Model
         $Entity = $this->getRepository()->getEntityById($id);
         $this->beforeDelete($Entity, $user_id);
         $this->getRepository()->remove($Entity, $user_id);
+    }
+    
+    public function addCollection(Rest\Interfaces\Resource $Resource, array $data, $user_id=null)
+    {
+        /**
+         * @var Domain\Interfaces\Entity
+         */
+        foreach ($data as $Entity) {
+            $this->add($Entity->toArray(), $user_id);
+        }
     }
 }   
