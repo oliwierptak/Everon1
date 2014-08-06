@@ -49,8 +49,14 @@ abstract class Controller extends \Everon\Controller implements Mvc\Interfaces\C
     public function __construct(Module\Interfaces\Module $Module)
     {
         parent::__construct($Module);
-        $this->view_name = $this->getName();
-        $this->layout_name = $this->getName();
+        
+        if ($this->view_name === null) {
+            $this->view_name = $this->getName();
+        }
+        
+        if ($this->layout_name === null) {
+            $this->layout_name = $this->getName();
+        }
     }
     
     /**
