@@ -100,6 +100,9 @@ abstract class Controller implements Interfaces\Controller
         $this->name = $name;
     }
 
+    /**
+     * @return string
+     */
     public function getName()
     {
         if ($this->name === null) {
