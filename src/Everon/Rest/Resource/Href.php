@@ -24,6 +24,7 @@ class Href implements Interfaces\ResourceHref
     protected $resource_id = null;
     protected $request_path = null;
     protected $collection_name = null;
+    protected $item_id = null;
     protected $versioning = null;
 
 
@@ -64,7 +65,7 @@ class Href implements Interfaces\ResourceHref
             $request_path = '?'.$request_path;
         }
                 
-        $params = '/'.rtrim(implode('/', [$this->resource_name, $this->resource_id, $this->collection_name]),'/').$request_path;
+        $params = '/'.rtrim(implode('/', [$this->resource_name, $this->resource_id, $this->collection_name, $this->item_id]),'/').$request_path;
         
         switch ($this->versioning) {
             case Handler::VERSIONING_URL:
@@ -190,4 +191,21 @@ class Href implements Interfaces\ResourceHref
     {
         $this->request_path = $request_path;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getItemId()
+    {
+        return $this->item_id;
+    }
+
+    /**
+     * @param mixed $item_id
+     */
+    public function setItemId($item_id)
+    {
+        $this->item_id = $item_id;
+    }
+    
 }
