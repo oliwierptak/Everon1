@@ -257,7 +257,13 @@ class Handler implements Interfaces\ResourceHandler
             $ResourceCollection = new Helper\Collection([]);
             $data = $EntityRelation->getData()->toArray();
             foreach ($data as $Entity) {
-                $ResourceCollection->set($a++, $this->buildResourceFromEntity($Entity, $Resource->getVersion(), $collection_name));
+                $Item = $this->buildResourceFromEntity($Entity, $Resource->getVersion(), $collection_name);
+                $resource_id = $this->generateResourceId($Entity->getId(), $domain_name);
+                $Href = clone $Resource->getHref();
+                $Href->setCollectionName($collection_name);
+                $Href->setItemId($resource_id);
+                $Item->setHref($Href);
+                $ResourceCollection->set($a++, $Item);
             }
 
             if ($extra_expand !== null) {
@@ -311,6 +317,42 @@ class Handler implements Interfaces\ResourceHandler
             $CollectionResource->setLimit($EntityRelationCriteria->getLimit());
             $CollectionResource->setOffset($EntityRelationCriteria->getOffset());
             return $CollectionResource;
+        }
+        catch (EveronException\Domain $e) {
+            throw new Exception\Resource($e->getMessage());
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getCollectionItemResource($version, $resource_name, $resource_id, $collection, $item_id, Interfaces\ResourceNavigator $Navigator)
+    {
+        try {
+            $EntityRelationCriteria = new Criteria();
+            $EntityRelationCriteria->limit($Navigator->getLimit());
+            $EntityRelationCriteria->offset($Navigator->getOffset());
+
+            $domain_name = $this->getDomainNameFromMapping($collection);
+            $id = $this->generateEntityId($item_id, $domain_name);
+
+            $Entity = $this->getDomainManager()->getRepository($domain_name)->getEntityById($id, $EntityRelationCriteria);
+            $this->assertIsNull($Entity, sprintf('Domain Entity: "%s" with id: "%s" not found', $domain_name, $item_id), 'Domain');
+
+            $Resource = $this->buildResourceFromEntity($Entity, $version, $collection);
+            $Href = $this->getResourceUrl($version, $resource_name, $resource_id, $collection);
+            $Href->setItemId($item_id);
+            $Resource->setHref($Href);
+            $expand = $Navigator->getExpand();
+            foreach ($expand as $index => $item_name) {
+                if ($item_name === $collection) {
+                    unset($expand[$index]);
+                }
+            }
+            $Navigator->setExpand($expand);
+            $this->expandResource($Resource, $Navigator);
+
+            return $Resource;
         }
         catch (EveronException\Domain $e) {
             throw new Exception\Resource($e->getMessage());

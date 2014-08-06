@@ -91,6 +91,17 @@ interface ResourceHandler
     function getCollectionResource($version, $resource_name, ResourceNavigator $Navigator);
 
     /**
+     * @param $version
+     * @param $resource_name
+     * @param $resource_id
+     * @param $collection
+     * @param $item_id
+     * @param ResourceNavigator $Navigator
+     * @throws \Everon\Rest\Exception\Resource
+     */
+    function getCollectionItemResource($version, $resource_name, $resource_id, $collection, $item_id, ResourceNavigator $Navigator);
+
+    /**
      * @param $resource_id
      * @param $domain_name
      * @return mixed

@@ -135,6 +135,20 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
         $Resource = $this->getResourceFromRequest();
         $this->getResponse()->setData($Resource);
     }
+    
+    public function serveCollectionItemFromRequest()
+    {
+        $version = $this->getRequest()->getVersion();
+        $resource_name = $this->getRequest()->getQueryParameter('resource', null);
+        $resource_id = $this->getRequest()->getQueryParameter('resource_id', null);
+        $collection = $this->getRequest()->getQueryParameter('collection', null);
+        $item_id = $this->getRequest()->getQueryParameter('item_id', null);
+        $Navigator = $this->getFactory()->buildRestResourceNavigator($this->getRequest());
+        $Resource = $this->getResourceManager()->getCollectionItemResource($version, $resource_name, $resource_id, $collection, $item_id, $Navigator);
+
+        $this->getResponse()->setData($Resource);
+        $this->getResponse()->setStatusCode(200);
+    }
 
     /**
      * @inheritdoc
