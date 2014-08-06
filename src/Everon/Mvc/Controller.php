@@ -196,7 +196,8 @@ abstract class Controller extends \Everon\Controller implements Mvc\Interfaces\C
      */
     public function showException(\Exception $Exception)
     {
-        $Layout = $this->getViewManager()->createLayout('Error');
+        $layout_name = $this->getConfigManager()->getConfigValue('application.error_handler.view');
+        $Layout = $this->getViewManager()->createLayout($layout_name);
         $Layout->set('error', $Exception->getMessage());
         $Layout->execute('show');
         
