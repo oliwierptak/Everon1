@@ -77,17 +77,13 @@ class Handler implements Interfaces\ResourceHandler
      */
     public function buildResourceFromEntity(Domain\Interfaces\Entity $Entity, $version, $resource_name)
     {
-        $this->assertIsInArray($version, $this->supported_versions, 'Unsupported version: "%s"', 'Domain');
+        $this->assertIsInArray($version, $this->supported_versions, 'Unsupported version: "%s"', 'Everon\Rest\Exception\Request');
         
         $domain_name = $this->getDomainNameFromMapping($resource_name);
         $resource_id = $this->generateResourceId($Entity->getId(), $domain_name);
         
-        $Href = new Href($this->url, $version, $this->versioning);
-        $Href->setCollectionName('');
-        $Href->setResourceName($resource_name);
-        $Href->setResourceId($resource_id);
-        
-        $Resource = $this->getFactory()->buildRestResource($domain_name, $version, $Href, $resource_name, $Entity); //todo: change version to href
+        $Href = $this->getResourceUrl($version, $resource_name, $resource_id);
+        $Resource = $this->getFactory()->buildRestResource($domain_name, $version, $Href, $resource_name, $Entity);
         $this->buildResourceRelations($Resource);
 
         return $Resource;
@@ -252,16 +248,20 @@ class Handler implements Interfaces\ResourceHandler
             if ($EntityRelation === null) {
                 continue;
             }
-
+            
             $a = 0;
             $ResourceCollection = new Helper\Collection([]);
             $data = $EntityRelation->getData()->toArray();
             foreach ($data as $Entity) {
                 $Item = $this->buildResourceFromEntity($Entity, $Resource->getVersion(), $collection_name);
-                $resource_id = $this->generateResourceId($Entity->getId(), $domain_name);
-                $Href = clone $Resource->getHref();
-                $Href->setCollectionName($collection_name);
-                $Href->setItemId($resource_id);
+                $resource_id = $this->generateResourceId($Entity->getId(), $collection_name);
+                $Href = $this->getResourceUrl($Item->getVersion(), $Item->getName(), $resource_id);
+
+                if ($Resource->getHref()->getItemId() === null) { //revert to base resource url without relations when not null
+                    $Href->setCollectionName($Resource->getName());
+                    $Href->setItemId($resource_id);
+                }
+                
                 $Item->setHref($Href);
                 $ResourceCollection->set($a++, $Item);
             }
@@ -276,7 +276,8 @@ class Handler implements Interfaces\ResourceHandler
                 }
             }
 
-            $CollectionResource = $this->getFactory()->buildRestCollectionResource($domain_name, clone $Resource->getHref(), $ResourceCollection, $Paginator);
+            $Href = clone $Resource->getHref();
+            $CollectionResource = $this->getFactory()->buildRestCollectionResource($domain_name, $Href, $ResourceCollection, $Paginator);
             $CollectionResource->getHref()->setCollectionName($collection_name);
             $CollectionResource->setLimit($Paginator->getLimit());
             $CollectionResource->setOffset($Paginator->getOffset());
@@ -312,7 +313,7 @@ class Handler implements Interfaces\ResourceHandler
                 $this->expandResource($Resource, clone $Navigator);
                 $ResourceList->set($a, $Resource);
             }
-            
+
             $CollectionResource = $this->getFactory()->buildRestCollectionResource($domain_name, $Href, $ResourceList, $Paginator);
             $CollectionResource->setLimit($EntityRelationCriteria->getLimit());
             $CollectionResource->setOffset($EntityRelationCriteria->getOffset());
@@ -335,7 +336,7 @@ class Handler implements Interfaces\ResourceHandler
 
             $domain_name = $this->getDomainNameFromMapping($collection);
             $id = $this->generateEntityId($item_id, $domain_name);
-
+            
             $Entity = $this->getDomainManager()->getRepository($domain_name)->getEntityById($id, $EntityRelationCriteria);
             $this->assertIsNull($Entity, sprintf('Domain Entity: "%s" with id: "%s" not found', $domain_name, $item_id), 'Domain');
 
