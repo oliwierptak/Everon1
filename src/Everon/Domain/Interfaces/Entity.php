@@ -122,4 +122,9 @@ interface Entity extends Interfaces\Arrayable
      * @param array $relation_definition
      */
     function setRelationDefinition(array $relation_definition);
+
+    /**
+     * @param $name
+     */
+    function resetRelationState($name);
 }

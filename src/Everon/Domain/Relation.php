@@ -71,7 +71,10 @@ abstract class Relation implements Interfaces\Relation
      */
     protected $loaded = false;
 
-
+    
+    /**
+     * @param Interfaces\Entity $Entity
+     */
     public function __construct(Domain\Interfaces\Entity $Entity)
     {
         $this->Entity = $Entity;
@@ -81,11 +84,14 @@ abstract class Relation implements Interfaces\Relation
 
     abstract protected function setupRelationParameters();
 
-    protected function reset()
+    public function reset()
     {
         $this->loaded = false;
     }
 
+    /**
+     * @return array
+     */
     protected function getToArray()
     {
         return $this->getData()->toArray();

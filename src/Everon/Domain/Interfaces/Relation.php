@@ -110,4 +110,6 @@ interface Relation extends \Everon\Interfaces\Arrayable
      * @return array
      */
     function getMany();
+
+    function reset();
 }

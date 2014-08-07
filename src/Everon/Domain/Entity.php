@@ -278,6 +278,14 @@ class Entity extends Helper\Popo implements Interfaces\Entity
     {
         $this->relation_definition = $relation_definition;
     }
+
+    /**
+     * @param $name
+     */
+    public function resetRelationState($name)
+    {
+        $this->getRelationByName($name)->reset();
+    }
     
     /**
      * Does the usual call but also marks properties as modified when setter is used
