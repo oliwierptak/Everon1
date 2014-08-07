@@ -119,7 +119,12 @@ abstract class Model implements Interfaces\Model
         $this->beforeDelete($Entity, $user_id);
         $this->getRepository()->remove($Entity, $user_id);
     }
-    
+
+    /**
+     * @param Rest\Interfaces\Resource $Resource
+     * @param array $data
+     * @param null $user_id
+     */
     public function addCollection(Rest\Interfaces\Resource $Resource, array $data, $user_id=null)
     {
         /**
