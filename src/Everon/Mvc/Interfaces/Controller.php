@@ -17,6 +17,11 @@ interface Controller extends \Everon\Interfaces\Controller, \Everon\View\Interfa
      * @return Interfaces\TemplateContainer
      */
     function getActionTemplate();
+
+    /**
+     * @param Interfaces\TemplateContainer $Template
+     */
+    function setActionTemplate(Interfaces\TemplateContainer $Template);
         
     /**
      * @return Interfaces\View

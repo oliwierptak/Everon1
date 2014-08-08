@@ -9,8 +9,6 @@
  */
 namespace Everon;
 
-use Everon\Config;
-use Everon\Exception;
 
 abstract class Core implements Interfaces\Core
 {
@@ -21,6 +19,8 @@ abstract class Core implements Interfaces\Core
     use Dependency\Injection\Request;
     use Dependency\Injection\Response;
     use Module\Dependency\Injection\ModuleManager;
+
+    use Helper\GetUrl;
 
     /**
      * @var Interfaces\Controller
@@ -131,8 +131,9 @@ abstract class Core implements Interfaces\Core
                 $error_controller = $this->getConfigManager()->getConfigValue('application.error_handler.controller', null);
                 $Module = $this->getModuleManager()->getModuleByName($error_module);
                 $Controller = $Module->getController($error_controller);
-            } catch (\Exception $e) {
-                $this->getLogger()->error('Error: ' . $e . ' while displaying exception: ' . $Exception);
+            } 
+            catch (\Exception $e) {
+                $this->getLogger()->error('Error: '.$e.' while displaying exception: '.$Exception);
             }
         }
 

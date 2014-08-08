@@ -42,6 +42,11 @@ abstract class Controller extends \Everon\Controller implements Mvc\Interfaces\C
      */
     protected $layout_name = null;
 
+    /**
+     * @var View\Interfaces\TemplateContainer
+     */
+    protected $ActionTemplate = null;
+
 
     /**
      * @param Module\Interfaces\Module $Module
@@ -188,7 +193,18 @@ abstract class Controller extends \Everon\Controller implements Mvc\Interfaces\C
      */
     public function getActionTemplate()
     {
-        return $this->getView()->getTemplate($this->action, $this->getView()->getData());
+        if ($this->ActionTemplate === null) {
+            $this->ActionTemplate = $this->getView()->getTemplate($this->action, $this->getView()->getData()); 
+        }
+        return $this->ActionTemplate;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setActionTemplate(View\Interfaces\TemplateContainer $Template)
+    {
+        $this->ActionTemplate = $Template;
     }
 
     /**
@@ -232,7 +248,10 @@ abstract class Controller extends \Everon\Controller implements Mvc\Interfaces\C
         
         $this->were_error_handled = true;
     }
-    
+
+    /**
+     * @param $msg
+     */
     public function error($msg)
     {
         $this->showValidationErrors(['error' => $msg]);
@@ -257,7 +276,7 @@ abstract class Controller extends \Everon\Controller implements Mvc\Interfaces\C
     }
 
     /**
-     * @return bool
+     * @inheritdoc
      */
     public function hasValidationError()
     {
@@ -271,6 +290,6 @@ abstract class Controller extends \Everon\Controller implements Mvc\Interfaces\C
     {
         $this->is_redirecting = true;
         $url = $this->getUrl($name, $query, $get);
-        $this->getResponse()->setHeader('refresh', '1; url='.$url);
+        $this->getResponse()->setHeader('refresh', '0; url='.$url);
     }
 }

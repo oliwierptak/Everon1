@@ -9,9 +9,9 @@
  */
 namespace Everon\Mvc;
 
-use Everon\Interfaces;
 use Everon\RequestIdentifier;
 use Everon\Exception;
+use Everon\Helper;
 use Everon\Mvc;
 use Everon\Http;
 
@@ -101,6 +101,24 @@ class Core extends \Everon\Core implements Interfaces\Core
     public function getController()
     {
         return $this->Controller;
+    }
+
+    /**
+     * @param $name
+     * @param array $query
+     * @param array $get
+     */
+    public function redirect($name, $query=[], $get=[])
+    {
+        if ($this->getController() !== null) {
+            $this->getController()->redirect($name, $query, $get);
+        }
+        else {
+            $url = $this->getUrl($name, $query, $get);
+            $this->getResponse()->setHeader('refresh', '0; url='.$url);
+            $this->shutdown();
+            die();
+        }
     }
 
 }
