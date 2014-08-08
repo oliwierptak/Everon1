@@ -365,7 +365,7 @@ interface Factory
     /**
      * @param $root
      * @param string $namespace
-     * @return FileSystem
+     * @return Interfaces\FileSystem
      * @throws Exception\Factory
      */
     function buildFileSystem($root, $namespace='Everon\View');

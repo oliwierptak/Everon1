@@ -215,6 +215,18 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
             return $this->RequestIdentifier;
         });
 
+
+        $ConfigLoader = $Factory->buildConfigLoader($TestEnvironment->getConfig(), $TestEnvironment->getCacheConfig());
+        $ConfigLoader->setFactory($Factory);
+
+        $ConfigManager = $Factory->buildConfigManager($ConfigLoader);
+        $ConfigManager->setFactory($Factory);
+        $ConfigManager->setFileSystem($FileSystem);
+
+        $Container->register('ConfigManager', function() use ($ConfigManager) {
+            return $ConfigManager;
+        });
+
         require($this->FrameworkBootstrap->getEnvironment()->getEveronConfig().'_dependencies.php');
 
         //register global unique (request) identifier with Logger
