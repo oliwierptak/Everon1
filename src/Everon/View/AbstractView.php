@@ -17,6 +17,7 @@ use \Everon\View\Dependency\ViewManager as ViewManagerDependency;
 abstract class AbstractView implements Interfaces\View
 {
     use Dependency\Injection\ConfigManager;
+    use Dependency\Injection\Logger;
     use Dependency\Injection\Factory;
     use ViewManagerDependency;
 
@@ -257,6 +258,7 @@ abstract class AbstractView implements Interfaces\View
             return $WidgetManager->includeWidget($name);
         }
         catch (\Exception $e) {
+            $this->getLogger()->error($e);
             return '';
         }
     }
