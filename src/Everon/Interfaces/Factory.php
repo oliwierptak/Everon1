@@ -276,7 +276,7 @@ interface Factory
      * @param $parent_name
      * @param Domain\Interfaces\Entity $Entity
      * @param string $namespace
-     * @return
+     * @return Domain\Interfaces\Relation
      * @internal param DataMapper $Mapper
      */
     function buildDomainRelation($name, $parent_name, Domain\Interfaces\Entity $Entity, $namespace = 'Everon\Domain');
