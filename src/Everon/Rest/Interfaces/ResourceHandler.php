@@ -75,11 +75,12 @@ interface ResourceHandler
      * @param $version
      * @param $resource_name
      * @param $resource_id
+     * @param $collection_name
      * @param array $data
-     * @param $user_id
-     * @throws \Everon\Rest\Exception\Resource
+     * @param int $user_id
+     * @return ResourceInterface
      */
-    function addCollection($version, $resource_name, $resource_id, array $data, $user_id);
+    function addCollection($version, $resource_name, $resource_id, $collection_name, array $data, $user_id);
 
     /**
      * @param $version

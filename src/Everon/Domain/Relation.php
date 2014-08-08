@@ -157,7 +157,7 @@ abstract class Relation implements Interfaces\Relation
      */
     public function getDataMapper()
     {
-        return $this->getDomainManager()->getRepository($this->getName())->getMapper();
+        return $this->getDomainManager()->getRepositoryByName($this->getName())->getMapper();
     }
 
     /**
@@ -165,7 +165,7 @@ abstract class Relation implements Interfaces\Relation
      */
     public function setDataMapper(\Everon\Interfaces\DataMapper $DataMapper)
     {
-        $this->getDomainManager()->getRepository($this->getName())->setMapper($DataMapper);
+        $this->getDomainManager()->getRepositoryByName($this->getName())->setMapper($DataMapper);
         $this->reset();
     }
 
@@ -191,7 +191,7 @@ abstract class Relation implements Interfaces\Relation
      */
     public function getRepository()
     {
-        return $this->getDomainManager()->getRepository($this->getName());
+        return $this->getDomainManager()->getRepositoryByName($this->getName());
     }
 
     /**
@@ -268,7 +268,7 @@ abstract class Relation implements Interfaces\Relation
                 $PdoStatement = $this->getDataMapper()->getSchema()->getPdoAdapterByName('read')->execute($sql, $Criteria->getWhere());
                 $this->count = (int) $PdoStatement->fetchColumn();
             } else {
-                return $this->getDomainManager()->getRepository($this->getName())->count($Criteria);
+                return $this->getDomainManager()->getRepositoryByName($this->getName())->count($Criteria);
             }
         }
 

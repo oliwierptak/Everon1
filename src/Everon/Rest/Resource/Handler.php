@@ -96,7 +96,7 @@ class Handler implements Interfaces\ResourceHandler
     {
         try {
             $domain_name = $this->getDomainNameFromMapping($resource_name);
-            $Model = $this->getDomainManager()->getModel($domain_name);
+            $Model = $this->getDomainManager()->getModelByName($domain_name);
             $Entity = $Model->{'add'.$domain_name}($data, $user_id);
             return $this->buildResourceFromEntity($Entity, $version, $resource_name);
         }
@@ -112,12 +112,12 @@ class Handler implements Interfaces\ResourceHandler
     {
         try {
             $domain_name = $this->getDomainNameFromMapping($resource_name);
-            $Repository = $this->getDomainManager()->getRepository($domain_name);
+            $Repository = $this->getDomainManager()->getRepositoryByName($domain_name);
             $id = $this->generateEntityId($resource_id, $domain_name);
             $Entity = $Repository->getEntityById($id);
             $this->assertIsNull($Entity, sprintf('Domain Entity: "%s" with id: "%s" not found', $domain_name, $resource_id), 'Domain');
             $data = $this->arrayMergeDefault($Entity->toArray(), $data);
-            $Model = $this->getDomainManager()->getModel($domain_name);
+            $Model = $this->getDomainManager()->getModelByName($domain_name);
             $Entity = $Model->{'save'.$domain_name}($data, $user_id);
             return $this->buildResourceFromEntity($Entity, $version, $resource_name);
         }
@@ -133,11 +133,11 @@ class Handler implements Interfaces\ResourceHandler
     {
         try {
             $domain_name = $this->getDomainNameFromMapping($resource_name);
-            $Repository = $this->getDomainManager()->getRepository($domain_name);
+            $Repository = $this->getDomainManager()->getRepositoryByName($domain_name);
             $id = $this->generateEntityId($resource_id, $domain_name);
             $Entity = $Repository->getEntityById($id);
             $this->assertIsNull($Entity, sprintf('Domain Entity: "%s" with id: "%s" not found', $domain_name, $resource_id), 'Domain');
-            $Model = $this->getDomainManager()->getModel($domain_name);
+            $Model = $this->getDomainManager()->getModelByName($domain_name);
             $Model->{'delete'.$domain_name}($Entity, $user_id);
             return $this->buildResourceFromEntity($Entity, $version, $resource_name);
         }
@@ -147,25 +147,21 @@ class Handler implements Interfaces\ResourceHandler
     }
 
     /**
-     * @param $version
-     * @param $resource_name
-     * @param $resource_id
-     * @param array $data
-     * @param $user_id
-     * @throws \Everon\Rest\Exception\Resource
+     * @inheritdoc
      */
-    public function addCollection($version, $resource_name, $resource_id, array $data, $user_id)
+    public function addCollection($version, $resource_name, $resource_id, $collection_name, array $data, $user_id)
     {
         try {
             $domain_name = $this->getDomainNameFromMapping($resource_name);
-            $Repository = $this->getDomainManager()->getRepository($domain_name);
+            $relation_domain_name = $this->getDomainNameFromMapping($collection_name);
+            $Repository = $this->getDomainManager()->getRepositoryByName($domain_name);
             $id = $this->generateEntityId($resource_id, $domain_name);
             $Entity = $Repository->getEntityById($id);
             $this->assertIsNull($Entity, sprintf('Domain Entity: "%s" with id: "%s" not found', $domain_name, $resource_id), 'Domain');
-            $Model = $this->getDomainManager()->getModel($domain_name);
+            $Model = $this->getDomainManager()->getModelByName($domain_name);
             //$Entity = $Model->{'addCollection'.$domain_name}($data, $user_id);
             $Resource =  $this->buildResourceFromEntity($Entity, $version, $resource_name);
-            $Model->addCollection($Resource, $data, $user_id);
+            $Model->addCollection($Resource->getDomainEntity(), $relation_domain_name, $data, $user_id);
         }
         catch (EveronException\Domain $e) {
             throw new Exception\Resource($e->getMessage());
@@ -185,7 +181,7 @@ class Handler implements Interfaces\ResourceHandler
             $domain_name = $this->getDomainNameFromMapping($resource_name);
             $id = $this->generateEntityId($resource_id, $domain_name);
 
-            $Entity = $this->getDomainManager()->getRepository($domain_name)->getEntityById($id, $EntityRelationCriteria);
+            $Entity = $this->getDomainManager()->getRepositoryByName($domain_name)->getEntityById($id, $EntityRelationCriteria);
             $this->assertIsNull($Entity, sprintf('Domain Entity: "%s" with id: "%s" not found', $domain_name, $resource_id), 'Domain');
             
             $Resource = $this->buildResourceFromEntity($Entity, $version, $resource_name);
@@ -255,10 +251,10 @@ class Handler implements Interfaces\ResourceHandler
             foreach ($data as $Entity) {
                 $Item = $this->buildResourceFromEntity($Entity, $Resource->getVersion(), $collection_name);
                 $resource_id = $this->generateResourceId($Entity->getId(), $collection_name);
-                $Href = $this->getResourceUrl($Item->getVersion(), $Item->getName(), $resource_id);
+                $Href = $this->getResourceUrl($Item->getVersion(), $Resource->getName(), $resource_id);
 
                 if ($Resource->getHref()->getItemId() === null) { //revert to base resource url without relations when not null
-                    $Href->setCollectionName($Resource->getName());
+                    $Href->setCollectionName($collection_name);
                     $Href->setItemId($resource_id);
                 }
                 
@@ -294,7 +290,7 @@ class Handler implements Interfaces\ResourceHandler
         try {
             $domain_name = $this->getDomainNameFromMapping($resource_name);
             $Href = $this->getResourceUrl($version, $resource_name);
-            $Repository = $this->getDomainManager()->getRepository($domain_name);
+            $Repository = $this->getDomainManager()->getRepositoryByName($domain_name);
 
             $EntityRelationCriteria = new Criteria();
             $EntityRelationCriteria->limit($Navigator->getLimit());
@@ -337,7 +333,7 @@ class Handler implements Interfaces\ResourceHandler
             $domain_name = $this->getDomainNameFromMapping($collection);
             $id = $this->generateEntityId($item_id, $domain_name);
             
-            $Entity = $this->getDomainManager()->getRepository($domain_name)->getEntityById($id, $EntityRelationCriteria);
+            $Entity = $this->getDomainManager()->getRepositoryByName($domain_name)->getEntityById($id, $EntityRelationCriteria);
             $this->assertIsNull($Entity, sprintf('Domain Entity: "%s" with id: "%s" not found', $domain_name, $item_id), 'Domain');
 
             $Resource = $this->buildResourceFromEntity($Entity, $version, $collection);

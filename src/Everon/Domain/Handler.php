@@ -70,11 +70,11 @@ abstract class Handler implements Interfaces\Handler
             else if (strcasecmp($action, 'get') === 0) {
                 switch ($domain_type) {
                     case 'Model':
-                        return $this->getModel($domain_name);
+                        return $this->getModelByName($domain_name);
                         break;
 
                     case 'Repository':
-                        return $this->getRepository($domain_name);
+                        return $this->getRepositoryByName($domain_name);
                         break;
                 }
             }
@@ -86,7 +86,7 @@ abstract class Handler implements Interfaces\Handler
     /**
      * @inheritdoc
      */
-    public function getModel($domain_name)
+    public function getModelByName($domain_name)
     {
         if (isset($this->models[$domain_name]) === false) {
             $this->models[$domain_name] = $this->getFactory()->buildDomainModel($domain_name);
@@ -110,7 +110,7 @@ abstract class Handler implements Interfaces\Handler
     /**
      * @inheritdoc
      */
-    public function getRepository($domain_name)
+    public function getRepositoryByName($domain_name)
     {
         if (isset($this->repositories[$domain_name]) === false) {
             $data_mapper_name = $this->getDataMapperManager()->getDomainMapper()->getTableName($domain_name);
@@ -141,7 +141,7 @@ abstract class Handler implements Interfaces\Handler
      */
     public function buildEntityFromArray($domain_name, array $data)
     {
-        $Repository = $this->getRepository($domain_name);
+        $Repository = $this->getRepositoryByName($domain_name);
         return $Repository->buildFromArray($data);
     }
 }

@@ -57,7 +57,7 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
      */
     public function getModel()
     {
-        return $this->getDomainManager()->getModel($this->getName());
+        return $this->getDomainManager()->getModelByName($this->getName());
     }
     
     protected function prepareResponse($action, $result)
@@ -93,7 +93,7 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
         
         $this->getResponse()->setData($Resource);
         $this->getResponse()->setStatusCode(201);
-        $this->getResponse()->setHeader('Location', $Resource->getHref());
+        $this->getResponse()->setHeader('Location', $Resource->getHref()->getUrl());
     }
 
     /**
@@ -153,18 +153,19 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
     /**
      * @inheritdoc
      */
-    public function addCollectionFromRequest()
+    public function addResourceCollectionFromRequest()
     {
         $user_id = 1;
         $version = $this->getRequest()->getVersion();
         $data = $this->getRequest()->getPostCollection()->toArray(true);
         $resource_name = $this->getRequest()->getQueryParameter('resource', null);
         $resource_id = $this->getRequest()->getQueryParameter('resource_id', null);
-        $Resource = $this->getResourceManager()->addCollection($version, $resource_name, $resource_id, $data, $user_id);
+        $collection = $this->getRequest()->getQueryParameter('collection', null);
+        $Resource = $this->getResourceManager()->addCollection($version, $resource_name, $resource_id, $collection, $data, $user_id);
 
         $this->getResponse()->setData($Resource);
         $this->getResponse()->setStatusCode(201);
-        $this->getResponse()->setHeader('Location', $Resource->getHref());
+        $this->getResponse()->setHeader('Location', $Resource->getHref()->getUrl());
     }
     
     /**

@@ -16,7 +16,7 @@ interface Handler extends \Everon\Interfaces\Dependency\Factory, \Everon\DataMap
      * @return Repository
      * @throws \Everon\DataMapper\Exception\Schema
      */
-    function getRepository($domain_name);
+    function getRepositoryByName($domain_name);
 
     /**
      * @param $name
@@ -29,7 +29,7 @@ interface Handler extends \Everon\Interfaces\Dependency\Factory, \Everon\DataMap
      * @return \Everon\Domain\Interfaces\Model
      * @throws \Everon\Exception\Domain
      */
-    function getModel($domain_name);
+    function getModelByName($domain_name);
 
     /**
      * @param $name

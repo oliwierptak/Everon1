@@ -57,7 +57,7 @@ abstract class Model implements Interfaces\Model
      */
     public function getRepository()
     {
-        return $this->getDomainManager()->getRepository($this->getName());
+        return $this->getDomainManager()->getRepositoryByName($this->getName());
     }
 
     /**
@@ -121,17 +121,23 @@ abstract class Model implements Interfaces\Model
     }
 
     /**
-     * @param Rest\Interfaces\Resource $Resource
+     * @param Domain\Interfaces\Entity $Entity
+     * @param $relation_name
      * @param array $data
      * @param null $user_id
      */
-    public function addCollection(Rest\Interfaces\Resource $Resource, array $data, $user_id=null)
+    public function addCollection(Domain\Interfaces\Entity $Entity, $relation_name, array $data, $user_id = null)
     {
         /**
-         * @var Domain\Interfaces\Entity
+         * @var Domain\Interfaces\Entity $EntityToAdd
          */
-        foreach ($data as $Entity) {
-            $this->add($Entity->toArray(), $user_id);
+        $relation_name_formatted = strtolower($relation_name);
+        $method = "add{$relation_name_formatted}";
+        
+        foreach ($data as $item_data) {
+            $EntityToAdd = $this->getDomainManager()->getRepositoryByName($relation_name)->buildFromArray($item_data);
+            
+            $this->getDomainManager()->getModelByName($relation_name)->{$method}($EntityToAdd->toArray(), $user_id);
         }
     }
 }   
