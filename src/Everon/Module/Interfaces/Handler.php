@@ -11,13 +11,19 @@ namespace Everon\Module\Interfaces;
 
 use Everon\Config;
 
-interface Manager extends Config\Interfaces\Dependency\Manager
+interface Handler extends Config\Interfaces\Dependency\Manager
 {
     /**
      * @param $name
-     * @return \Everon\Module\Interfaces\Module
+     * @return Module
      */
     function getModuleByName($name);
+
+    /**
+     * @param $name
+     * @param Module $Module
+     */
+    function setModuleByName($name, Module $Module);
 
     /**
      * @return array

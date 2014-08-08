@@ -14,7 +14,7 @@ use Everon\Interfaces\Config;
 use Everon\Exception;
 use Everon\Helper;
 
-class Manager implements Interfaces\Manager
+abstract class Handler implements Interfaces\Handler
 {
     use Dependency\Injection\ConfigManager;
     use Dependency\Injection\Factory;
@@ -106,6 +106,14 @@ class Manager implements Interfaces\Manager
         }
         
         return $this->modules[$name];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setModuleByName($name, Interfaces\Module $Module)
+    {
+        $this->modules[$name] = $Module;
     }
     
     /**

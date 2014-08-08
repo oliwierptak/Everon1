@@ -104,9 +104,7 @@ class Core extends \Everon\Core implements Interfaces\Core
     }
 
     /**
-     * @param $name
-     * @param array $query
-     * @param array $get
+     * @inheritdoc
      */
     public function redirect($name, $query=[], $get=[])
     {

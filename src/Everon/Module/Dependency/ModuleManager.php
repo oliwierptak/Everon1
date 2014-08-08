@@ -29,7 +29,7 @@ trait ModuleManager
     /**
      * @param \Everon\Module\Interfaces\Manager $Manager
      */
-    public function setModuleManager(\Everon\Module\Interfaces\Manager $Manager)
+    public function setModuleManager(\Everon\Module\Interfaces\Handler $Manager)
     {
         $this->ModuleManager = $Manager;
     }

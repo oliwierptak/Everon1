@@ -19,5 +19,5 @@ interface Manager
     /**
      * @param \Everon\Module\Interfaces\Manager $Manager
      */
-    function setModuleManager(\Everon\Module\Interfaces\Manager $Manager);
+    function setModuleManager(\Everon\Module\Interfaces\Handler $Manager);
 }
