@@ -9,21 +9,19 @@
  */
 namespace Everon\Module\Interfaces;
 
-use Everon\Config;
-
-interface Handler extends Config\Interfaces\Dependency\Manager
+interface Handler extends \Everon\Config\Interfaces\Dependency\Manager
 {
     /**
      * @param $name
-     * @return Module
+     * @return \Everon\Module\Interfaces\Module
      */
     function getModuleByName($name);
 
     /**
      * @param $name
-     * @param Module $Module
+     * @param \Everon\Module\Interfaces\Module $Module
      */
-    function setModuleByName($name, Module $Module);
+    function setModuleByName($name, \Everon\Module\Interfaces\Module $Module);
 
     /**
      * @return array
