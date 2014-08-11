@@ -225,6 +225,9 @@ abstract class Controller extends \Everon\Controller implements Mvc\Interfaces\C
         $this->response();
     }
 
+    /**
+     * @inheritdoc
+     */
     public function showValidationErrors($errors=null)
     {
         /**
@@ -250,16 +253,18 @@ abstract class Controller extends \Everon\Controller implements Mvc\Interfaces\C
     }
 
     /**
-     * @param $msg
+     * @inheritdoc
      */
-    public function error($msg)
+    public function error($msg, array $parameters=[]) //xxx
     {
+        if (empty($parameters) === false) {
+            $msg = vsprintf($msg, $parameters);
+        }
         $this->showValidationErrors(['error' => $msg]);
     }
 
     /**
-     * @param $name
-     * @param $message
+     * @inheritdoc
      */
     public function addValidationError($name, $message)
     {
@@ -267,8 +272,7 @@ abstract class Controller extends \Everon\Controller implements Mvc\Interfaces\C
     }
 
     /**
-     * @param $name
-     * @param $message
+     * @inheritdoc
      */
     public function removeValidationError($name, $message)
     {
