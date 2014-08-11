@@ -41,6 +41,10 @@ abstract class AbstractView implements Interfaces\View
     protected $default_extension = '.php';
 
     protected $index_executed = false;
+    
+    protected $resources_js = [];
+    
+    protected $resources_css = [];
 
 
     /**
@@ -295,5 +299,60 @@ abstract class AbstractView implements Interfaces\View
         }
 
         return $data;
+    }
+
+    /**
+     * @param \Everon\Interfaces\FileSystem $FileSystem
+     * @param $path
+     * @param $ext
+     * @return array
+     */
+    protected function generateFileList(\Everon\Interfaces\FileSystem $FileSystem, $path, $ext)
+    {
+        $url = $this->getConfigManager()->getConfigValue('application.static.url_min');
+        $files = [];
+        
+        $resource_path = $FileSystem->listPath('//'.$path.'/');
+        foreach ($resource_path as $File) {
+            /**
+             * @var \SplFileInfo $File
+             */
+            if ($File->getExtension() === $ext) {
+                $files[] = $url.$path.$File->getFileName();
+            }
+        }
+
+        return $files;
+    }
+
+    protected function includeResources()
+    {
+        /**
+         * @var \Everon\Interfaces\FileSystem $FileSystem
+         */
+        $root = $this->getConfigManager()->getConfigValue('application.static.directory_min');
+        $FileSystem = $this->getFactory()->buildFileSystem($root);
+        $Config = $this->getConfigManager()->getConfigByName('minify');
+
+        foreach ($this->resources_js as $name => $items_to_minify) {
+            $files = [];
+            foreach ($items_to_minify as $resource_name) {
+                $files = array_merge($files, $this->generateFileList($FileSystem, $Config->getItemByName($resource_name)->getValueByName('path'), 'js'));
+            }
+            $this->set($name, $files);
+        }
+
+        foreach ($this->resources_css as $name => $items_to_minify) {
+            $files = [];
+            foreach ($items_to_minify as $resource_name) {
+                $files = array_merge($files, $this->generateFileList($FileSystem, $Config->getItemByName($resource_name)->getValueByName('path'), 'css'));
+            }
+            $this->set($name, $files);
+        }
+    } 
+    
+    public function index()
+    {
+        $this->includeResources();
     }
 }
