@@ -22,7 +22,7 @@ interface Handler extends \Everon\Interfaces\Dependency\Factory, \Everon\DataMap
      * @param $name
      * @param Repository $Repository
      */
-    function setRepository($name, Repository $Repository);
+    function setRepositoryByName($name, Repository $Repository);
 
     /**
      * @param $domain_name
@@ -35,7 +35,7 @@ interface Handler extends \Everon\Interfaces\Dependency\Factory, \Everon\DataMap
      * @param $name
      * @param $Model
      */
-    function setModel($name, $Model);
+    function setModelByName($name, $Model);
 
     /**
      * @param $domain_name

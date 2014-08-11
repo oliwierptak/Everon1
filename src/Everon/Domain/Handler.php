@@ -102,7 +102,7 @@ abstract class Handler implements Interfaces\Handler
     /**
      * @inheritdoc
      */
-    public function setModel($name, $Model)
+    public function setModelByName($name, $Model)
     {
         $this->repositories[$name] = $Model;
     }
@@ -131,7 +131,7 @@ abstract class Handler implements Interfaces\Handler
     /**
      * @inheritdoc
      */
-    public function setRepository($name, Interfaces\Repository $Repository)
+    public function setRepositoryByName($name, Interfaces\Repository $Repository)
     {
         $this->repositories[$name] = $Repository;
     }

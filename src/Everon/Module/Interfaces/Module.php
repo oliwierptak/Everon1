@@ -7,9 +7,13 @@
  */
 namespace Everon\Module\Interfaces;
 
-use Everon\Interfaces;
+use Everon\Interfaces\FactoryWorker;
 
-interface Module
+interface Module extends 
+    Dependency\Manager,
+    \Everon\Config\Interfaces\Dependency\Config,
+    \Everon\Interfaces\Dependency\Factory,
+    \Everon\Domain\Interfaces\Dependency\DomainManager
 {
     /**
      * @param $directory
@@ -17,9 +21,9 @@ interface Module
     function setDirectory($directory);
 
     /**
-     * @param Interfaces\FactoryWorker $FactoryWorker
+     * @param FactoryWorker $FactoryWorker
      */
-    function setFactoryWorker(Interfaces\FactoryWorker $FactoryWorker);
+    function setFactoryWorker(FactoryWorker $FactoryWorker);
 
     /**
      * @return string
@@ -27,7 +31,7 @@ interface Module
     function getName();
 
     /**
-     * @return Interfaces\FactoryWorker
+     * @return FactoryWorker
      */
     function getFactoryWorker();
 
