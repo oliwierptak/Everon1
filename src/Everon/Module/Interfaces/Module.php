@@ -12,8 +12,7 @@ use Everon\Interfaces\FactoryWorker;
 interface Module extends 
     Dependency\Manager,
     \Everon\Config\Interfaces\Dependency\Config,
-    \Everon\Interfaces\Dependency\Factory,
-    \Everon\Domain\Interfaces\Dependency\DomainManager
+    \Everon\Interfaces\Dependency\Factory
 {
     /**
      * @param $directory
