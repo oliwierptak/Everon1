@@ -114,6 +114,7 @@ class Core extends \Everon\Core implements Interfaces\Core
         else {
             $url = $this->getUrl($name, $query, $get);
             $this->getResponse()->setHeader('refresh', '0; url='.$url);
+            $this->getResponse()->send();
             $this->shutdown();
             die();
         }
