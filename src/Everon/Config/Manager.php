@@ -337,6 +337,15 @@ EOF;
     }
 
     /**
+     * @param $name
+     * @return bool
+     */
+    public function hasConfig($name) 
+    {
+        return isset($this->configs[$name]);
+    }
+
+    /**
      * @inheritdoc
      */
     public function getConfigValue($expression, $default=null)

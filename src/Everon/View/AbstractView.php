@@ -327,6 +327,10 @@ abstract class AbstractView implements Interfaces\View
 
     protected function includeResources()
     {
+        if ($this->getConfigManager()->hasConfig('minify') === false) {
+            return;
+        }
+        
         /**
          * @var \Everon\Interfaces\FileSystem $FileSystem
          */
