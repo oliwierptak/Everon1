@@ -61,23 +61,24 @@ abstract class Model implements Interfaces\Model
     }
 
     /**
+     * @param array $data
      * @return Interfaces\Entity
      */
-    public function create()
+    public function create(array $data=[])
     {
-        $Entity = $this->getRepository()->buildFromArray([]);
-        return $Entity;
+        return $this->getRepository()->buildFromArray($data);
     }
 
-    protected function beforeAdd(Interfaces\Entity $Entity, $user_id)
+    protected function beforeAdd(Interfaces\Entity $Entity, $user_id=null)
+    {
+        
+    }
+
+    protected function beforeSave(Interfaces\Entity $Entity, $user_id=null)
     {
     }
 
-    protected function beforeSave(Interfaces\Entity $Entity, $user_id)
-    {
-    }
-
-    protected function beforeDelete(Interfaces\Entity $Entity, $user_id)
+    protected function beforeDelete(Interfaces\Entity $Entity, $user_id=null)
     {
     }
 

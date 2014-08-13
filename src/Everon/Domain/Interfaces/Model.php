@@ -12,9 +12,10 @@ namespace Everon\Domain\Interfaces;
 interface Model
 {
     /**
+     * @param array $data
      * @return Entity
      */
-    function create();
+    function create(array $data=[]);
         
     /**
      * @param string $name
