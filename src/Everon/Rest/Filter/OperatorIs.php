@@ -13,6 +13,11 @@ namespace Everon\Rest\Filter;
 
 class OperatorIs extends Operator
 {
+    /**
+     * @var array
+     */
+    protected $allowed_value_types = ['string','integer','double','object','boolean','null'];
+
     public function __construct($column, $value=null, $glue=null)
     {
         parent::__construct(\Everon\Rest\Filter::OPERATOR_TYPE_IS, $column, $value, $glue);

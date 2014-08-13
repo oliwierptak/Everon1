@@ -57,7 +57,7 @@ abstract class Operator implements FilterOperator
     {
         $this->operator = $operator;
         $this->column = $column;
-        $this->value = $value;
+        $this->value = ($value === null) ? 'NULL' : $value;
         $this->glue = $glue;
 
         $this->assertValue();
@@ -141,7 +141,7 @@ abstract class Operator implements FilterOperator
      */
     protected function assertValueType() {
         $valueType = gettype($this->value);
-        if (in_array($valueType,$this->allowed_value_types) != true) {
+        if (in_array(strtolower($valueType),$this->allowed_value_types) != true) {
             throw new Exception\Filter('"%s" is not allowed for operator "%s"',[$valueType,$this->operator]);
         }
     }
@@ -151,7 +151,7 @@ abstract class Operator implements FilterOperator
      */
     protected function assertValueCount() {
         if ($this->min_value_count != 0 || $this->max_value_count != 0) {
-            $valueCount = (int) count($this->value);
+            $valueCount = ($this->value === null) ? 1 : (int) count($this->value);
             if ($this->min_value_count > $valueCount || $this->max_value_count < $valueCount) {
                 throw new Exception\Filter('"%s" number of values is incorrect, add a minimum of "%s" and a maximum of "%s"!',[$valueCount,$this->min_value_count,$this->max_value_count]);
             }

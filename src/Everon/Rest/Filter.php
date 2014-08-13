@@ -29,7 +29,7 @@ class Filter implements Interfaces\Filter
     const OPERATOR_TYPE_SMALLER_OR_EQUAL        = '<=';
     const OPERATOR_TYPE_NOT_EQUAL               = '!=';
     const OPERATOR_TYPE_IS                      = 'IS';
-    const OPERATOR_TYPE_NOT_IS                  = 'NOT IS';
+    const OPERATOR_TYPE_IS_NOT                  = 'IS NOT';
     const OPERATOR_TYPE_IN                      = 'IN';
     const OPERATOR_TYPE_NOT_IN                  = 'NOT IN';
     const OPERATOR_TYPE_NOT_BETWEEN             = 'NOT BETWEEN';
@@ -46,7 +46,7 @@ class Filter implements Interfaces\Filter
         self::OPERATOR_TYPE_SMALLER_OR_EQUAL    =>  'OperatorSmallerOrEqual',
         self::OPERATOR_TYPE_NOT_EQUAL           =>  'OperatorNotEqual',
         self::OPERATOR_TYPE_IS                  =>  'OperatorIs',
-        self::OPERATOR_TYPE_NOT_IS              =>  'OperatorNotIs',
+        self::OPERATOR_TYPE_IS_NOT              =>  'OperatorIsNot',
         self::OPERATOR_TYPE_IN                  =>  'OperatorIn',
         self::OPERATOR_TYPE_NOT_IN              =>  'OperatorNotIn'
     ];

@@ -11,7 +11,7 @@ namespace Everon\Rest\Filter;
 
 
 
-class OperatorNotIs extends Operator
+class OperatorIsNot extends Operator
 {
 
     /**
@@ -21,6 +21,6 @@ class OperatorNotIs extends Operator
 
     public function __construct($column, $value=null, $glue=null)
     {
-        parent::__construct(\Everon\Rest\Filter::OPERATOR_TYPE_NOT_IS, $column, $value, $glue);
+        parent::__construct(\Everon\Rest\Filter::OPERATOR_TYPE_IS_NOT, $column, $value, $glue);
     }
 }
