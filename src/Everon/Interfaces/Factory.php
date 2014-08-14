@@ -70,12 +70,31 @@ interface Factory
     function buildRestCurlAdapter();
 
     /**
+     * @param Interfaces\Collection $FilterDefinition
+     * @param string $namespace
+     * @return mixed
+     * @throws Exception\Factory
+     */
+    function buildRestFilter(Interfaces\Collection $FilterDefinition, $namespace='Everon\Rest');
+
+    /**
      * @param $Href
      * @param Rest\Interfaces\CurlAdapter $CurlAdapter
      * @return Interfaces\Core|Rest\Client
      * @throws Exception\Factory
      */
     function buildRestClient($Href, Rest\Interfaces\CurlAdapter $CurlAdapter);
+
+    /**
+     * @param $class_name
+     * @param $column
+     * @param $value
+     * @param null $glue
+     * @param string $namespace
+     * @return Rest\Interfaces\FilterOperator
+     * @throws Exception\Factory
+     */
+    function buildRestFilterOperator($class_name, $column, $value, $glue=null, $namespace='Everon\Rest\Filter');
 
     /**
      * @return Interfaces\Core
