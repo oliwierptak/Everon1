@@ -9,13 +9,14 @@
  */
 namespace Everon\Rest;
 
-
+use Everon\Helper;
 use Everon\DataMapper\Interfaces\Criteria;
 use Everon\Rest\Exception;
 
 
 class Filter implements Interfaces\Filter
 {
+    use Helper\DateFormatter;
     use \Everon\Dependency\Injection\Factory;
 
 
@@ -165,8 +166,11 @@ class Filter implements Interfaces\Filter
     {
         if ($this->FilterColumnArrayList === null) {
             $list = [];
-            foreach($this->getFilterCollection() as $filter) {
-                list($operator,$column,$value,$glue) = [$filter->getOperator(),$filter->getColumn(),$filter->getValue(),$filter->getGlue()];
+            /**
+             * @var \Everon\Rest\Interfaces\FilterOperator $FilterOperator
+             */
+            foreach($this->getFilterCollection() as $FilterOperator) {
+                list($operator, $column, $value, $glue) = array_values($FilterOperator->toArray());
                 $columnPrefix  = $operator;
                 $valueType = gettype($value);
 
@@ -174,23 +178,27 @@ class Filter implements Interfaces\Filter
                     $columnPrefix = $list[':'.$column] . ' '.$glue.' ' . $columnPrefix;
                 }
 
-                if ($valueType == 'array') {
+                if ($valueType === 'array') {
                     foreach($value as $k => &$v) {
                         if ($v instanceof \DateTime) {
-                            $v = $v->format('Y-m-d H:i:s');
+                            //$v = $v->format('Y-m-d H:i:s');
+                            $v = $this->dateAsPostgreSql($v);
                         }
                     }
-                    if (in_array($operator,['BETWEEN','NOT BETWEEN'])) {
+                    if (in_array($operator, [self::OPERATOR_TYPE_BETWEEN, self::OPERATOR_TYPE_NOT_BETWEEN])) {
                         $value = implode(' AND ',$value);
-                    } else {
+                    } 
+                    else {
                         $value = "('".implode("','",$value)."')";
                     }
-                } else {
+                } 
+                else {
                     if ($value instanceof \DateTime) {
-                        $value = $value->format('Y-m-d H:i:s');
+                        $value = $this->dateAsPostgreSql($value);
+                        //$value = $value->format();
                     }
                 }
-                $list[':'.$column] = $columnPrefix . ' '.$value;
+                $list[$column] = $columnPrefix . ' '.$value;
             }
             $this->FilterColumnArrayList = new \Everon\Helper\Collection($list);
         }
@@ -214,17 +222,21 @@ class Filter implements Interfaces\Filter
      * @param array $data
      * @throws Exception\Filter
      */
-    protected function assertColumnCombinations(array &$data=[])
+    protected function assertColumnCombinations(array $data)
     {
         $columnOperators = [];
         if (empty($data) !== true) {
-            foreach($data as $filter) {
-                $columnName = $filter->getColumn();
-                if (isset($columnOperators[$columnName]) != true) {
-                    $columnOperators[$columnName] = $filter->getOperator();
-                } else {
-                    if (($columnOperators[$columnName] == $filter->getOperator()) && ($filter->getGlue() == null)) {
-                        throw new Exception\Filter('Duplicate operator "%s"  on column "%s" without a valid glue property',$filter->getOperator(),$columnName);
+            /**
+             * @var \Everon\Rest\Interfaces\FilterOperator $FilterOperator
+             */
+            foreach($data as $FilterOperator) {
+                $columnName = $FilterOperator->getColumn();
+                if (isset($columnOperators[$columnName]) !== true) {
+                    $columnOperators[$columnName] = $FilterOperator->getOperator();
+                }
+                else {
+                    if (($columnOperators[$columnName] === $FilterOperator->getOperator()) && ($FilterOperator->getGlue() === null)) {
+                        throw new Exception\Filter('Duplicate operator "%s"  on column "%s" without a valid glue property', [$FilterOperator->getOperator(), $columnName]);
                     }
                 }
             }
@@ -236,26 +248,19 @@ class Filter implements Interfaces\Filter
      */
     protected function assertFilterItem(array $item=[])
     {
-        $this->assertArrayKeyValues($item,['column','operator','value']);
-        $this->assertColumnName($item['column']);
+        $this->assertArrayKeyValues($item, ['column', 'operator', 'value']);
     }
 
     /**
      * @param array $array
-     * @param array $keyvalues
+     * @param array $key_values
      * @throws \Exception
      */
-    protected function assertArrayKeyValues(array $array=[],array $keyvalues=[])
+    protected function assertArrayKeyValues(array $array, array $key_values)
     {
-        $missing = array_diff($keyvalues,array_keys($array));
-        if (empty($missing) != true) {
-            throw new Exception\Filter('Missing the following key value(s): "%s"',implode("','",$missing));
+        $missing = array_diff($key_values,array_keys($array));
+        if (empty($missing) !== true) {
+            throw new Exception\Filter('Missing the following key value(s): "%s"', implode("','", $missing));
         }
     }
-
-    /**
-     * @param $columnName
-     * @todo implementation
-     */
-    protected  function assertColumnName($columnName) {}
 }
