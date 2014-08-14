@@ -17,7 +17,6 @@ use Everon\Rest\Exception;
 class Filter implements Interfaces\Filter
 {
     use \Everon\Dependency\Injection\Factory;
-    use \Everon\Helper\DateFormatter;
 
 
     const OPERATOR_TYPE_LIKE                    = 'LIKE';
@@ -178,7 +177,7 @@ class Filter implements Interfaces\Filter
                 if ($valueType == 'array') {
                     foreach($value as $k => &$v) {
                         if ($v instanceof \DateTime) {
-                            $v = $v->format('Y-m-d H:i:s');     //@todo replace with proper datetime format function (timezone, etc)
+                            $v = $v->format('Y-m-d H:i:s');
                         }
                     }
                     if (in_array($operator,['BETWEEN','NOT BETWEEN'])) {
@@ -188,7 +187,7 @@ class Filter implements Interfaces\Filter
                     }
                 } else {
                     if ($value instanceof \DateTime) {
-                        $value = $value->format('Y-m-d H:i:s'); //@todo replace with proper datetime format function (timezone, etc)
+                        $value = $value->format('Y-m-d H:i:s');
                     }
                 }
                 $list[':'.$column] = $columnPrefix . ' '.$value;
