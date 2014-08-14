@@ -34,11 +34,6 @@ interface Filter
     function getFilterDefinition();
 
     /**
-     * @return array
-     */
-    function convertToCriteriaCollection();
-
-    /**
      * @param Criteria $Criteria
      * @return mixed
      */

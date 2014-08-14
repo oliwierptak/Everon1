@@ -9,12 +9,14 @@
  */
 namespace Everon\Rest\Filter;
 
-
+use Everon\Helper;
 use Everon\Rest\Interfaces\FilterOperator;
 use Everon\Rest\Exception;
 
 abstract class Operator implements FilterOperator
 {
+    use Helper\ToArray;
+    
     /**
      * @var string
      */
@@ -156,6 +158,16 @@ abstract class Operator implements FilterOperator
                 throw new Exception\Filter('"%s" number of values is incorrect, add a minimum of "%s" and a maximum of "%s"!',[$valueCount,$this->min_value_count,$this->max_value_count]);
             }
         }
+    }
+    
+    protected function getToArray()
+    {
+        return [
+            'operator' => $this->getOperator(),
+            'column' => $this->getColumn(),
+            'value' => $this->getValue(),
+            'glue' => $this->getGlue()  
+        ];
     }
 
 }

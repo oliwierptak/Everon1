@@ -62,11 +62,6 @@ class Filter implements Interfaces\Filter
      */
     protected $FilterCollection = null;
 
-    /**
-     * @var \Everon\Helper\Collection
-     */
-    protected $FilterColumnArrayList = null;
-
 
     /**
      * @param \Everon\Helper\Collection $Collection
@@ -106,9 +101,6 @@ class Filter implements Interfaces\Filter
         return $this->FilterCollection;
     }
 
-
-
-
     /**
      * @param \Everon\Helper\Collection $Collection
      */
@@ -136,17 +128,8 @@ class Filter implements Interfaces\Filter
     }
 
     /**
-     * @return array
-     */
-    public function convertToCriteriaCollection()
-    {
-        return $this->castFilterCollectionIntoArray();
-    }
-
-
-    /**
      * @param Criteria $Criteria
-     * @return mixed|void
+     * @return void
      */
     public function assignToCriteria(Criteria $Criteria)
     {
@@ -158,51 +141,47 @@ class Filter implements Interfaces\Filter
         }
     }
 
-
     /**
-     * @return array
+     * @return \Everon\Interfaces\Collection
      */
     protected function castFilterCollectionIntoArray()
     {
-        if ($this->FilterColumnArrayList === null) {
-            $list = [];
-            /**
-             * @var \Everon\Rest\Interfaces\FilterOperator $FilterOperator
-             */
-            foreach($this->getFilterCollection() as $FilterOperator) {
-                list($operator, $column, $value, $glue) = array_values($FilterOperator->toArray());
-                $columnPrefix  = $operator;
-                $valueType = gettype($value);
+        $list = [];
+        /**
+         * @var \Everon\Rest\Interfaces\FilterOperator $FilterOperator
+         */
+        foreach($this->getFilterCollection() as $FilterOperator) {
+            list($operator, $column, $value, $glue) = array_values($FilterOperator->toArray());
+            $columnPrefix  = $operator;
+            $valueType = gettype($value);
 
-                if (isset($list[':'.$column]) == true) {
-                    $columnPrefix = $list[':'.$column] . ' '.$glue.' ' . $columnPrefix;
+            if (isset($list[':'.$column]) == true) {
+                $columnPrefix = $list[':'.$column] . ' '.$glue.' ' . $columnPrefix;
+            }
+
+            if ($valueType === 'array') {
+                foreach($value as $k => &$v) {
+                    if ($v instanceof \DateTime) {
+                        //$v = $v->format('Y-m-d H:i:s');
+                        $v = $this->dateAsPostgreSql($v);
+                    }
                 }
-
-                if ($valueType === 'array') {
-                    foreach($value as $k => &$v) {
-                        if ($v instanceof \DateTime) {
-                            //$v = $v->format('Y-m-d H:i:s');
-                            $v = $this->dateAsPostgreSql($v);
-                        }
-                    }
-                    if (in_array($operator, [self::OPERATOR_TYPE_BETWEEN, self::OPERATOR_TYPE_NOT_BETWEEN])) {
-                        $value = implode(' AND ',$value);
-                    } 
-                    else {
-                        $value = "('".implode("','",$value)."')";
-                    }
+                if (in_array($operator, [self::OPERATOR_TYPE_BETWEEN, self::OPERATOR_TYPE_NOT_BETWEEN])) {
+                    $value = implode(' AND ',$value);
                 } 
                 else {
-                    if ($value instanceof \DateTime) {
-                        $value = $this->dateAsPostgreSql($value);
-                        //$value = $value->format();
-                    }
+                    $value = "('".implode("','",$value)."')";
                 }
-                $list[$column] = $columnPrefix . ' '.$value;
+            } 
+            else {
+                if ($value instanceof \DateTime) {
+                    $value = $this->dateAsPostgreSql($value);
+                    //$value = $value->format();
+                }
             }
-            $this->FilterColumnArrayList = new \Everon\Helper\Collection($list);
+            $list[$column] = $columnPrefix . ' '.$value;
         }
-        return $this->FilterColumnArrayList;
+        return new \Everon\Helper\Collection($list);
     }
 
     /**

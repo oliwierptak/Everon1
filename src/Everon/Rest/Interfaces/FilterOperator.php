@@ -7,7 +7,7 @@
  */
 namespace Everon\Rest\Interfaces;
 
-interface FilterOperator
+interface FilterOperator extends \Everon\Interfaces\Arrayable
 {
     /**
      * @return string
