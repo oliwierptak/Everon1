@@ -79,7 +79,7 @@ abstract class Handler implements Interfaces\Handler
          * @var \DirectoryIterator $Dir
          */
         $result = [];
-        foreach ($module_list as $Dir) {
+        foreach ($module_list as $Dir) {            
             if ($Dir->isDot()) {
                 continue;
             }

@@ -20,9 +20,19 @@ interface Module extends
     function setDirectory($directory);
 
     /**
+     * @return string
+     */
+    function getDirectory();
+
+    /**
      * @param FactoryWorker $FactoryWorker
      */
     function setFactoryWorker(FactoryWorker $FactoryWorker);
+
+    /**
+     * @return FactoryWorker
+     */
+    function getFactoryWorker();
 
     /**
      * @return string
@@ -30,25 +40,15 @@ interface Module extends
     function getName();
 
     /**
-     * @return FactoryWorker
-     */
-    function getFactoryWorker();
-
-    function setup();
-
-    /**
      * @param $name
      */
     function setName($name);
+
+    function setup();
 
     /**
      * @param $name
      * @return string
      */
     function getController($name);
-
-    /**
-     * @return string
-     */
-    function getDirectory();
 }

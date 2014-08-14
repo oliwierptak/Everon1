@@ -190,7 +190,7 @@ class Entity extends Helper\Popo implements Interfaces\Entity
     {
         $this->markDeleted();
         $this->modified_properties = null;
-        $this->data = null;
+        $this->data = [];
     }
 
     /**
