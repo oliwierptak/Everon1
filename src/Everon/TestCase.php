@@ -42,7 +42,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         parent::__construct($name, $data, $dataName);
         $this->RequestIdentifier = $GLOBALS['REQUEST_IDENTIFIER'];
         $Environment = new Environment($GLOBALS['EVERON_ROOT'], $GLOBALS['EVERON_SOURCE_ROOT']); //xxx
-        $this->FrameworkBootstrap = new Bootstrap($Environment, EVERON_ENVIRONMENT);
+        $this->FrameworkBootstrap = new Bootstrap($Environment, 'development');
         $this->includeDoubles($this->getDoublesDirectory());
     }
 
@@ -135,7 +135,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
 
     public function getConfigDirectory()
     {
-        return $this->getFixtureDirectory().'config'.DIRECTORY_SEPARATOR.EVERON_ENVIRONMENT.DIRECTORY_SEPARATOR;
+        return $this->getFixtureDirectory().'config'.DIRECTORY_SEPARATOR.'development'.DIRECTORY_SEPARATOR;
     }
     
     public function getTemplateDirectory()
@@ -195,7 +195,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         $TestEnvironment->setCacheConfig($this->getConfigCacheDirectory());
         $TestEnvironment->setTmp($this->getTmpDirectory());
         
-        $Bootstrap = new \Everon\Bootstrap($TestEnvironment, EVERON_ENVIRONMENT); //xxx
+        $Bootstrap = new \Everon\Bootstrap($TestEnvironment, 'development'); //tests are hardcoded to development environment
         $Bootstrap->setEnvironment($TestEnvironment);
 
         $Container->register('Bootstrap', function() use ($Bootstrap) {
