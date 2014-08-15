@@ -222,12 +222,12 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildRestFilterOperator($class_name, $column, $value=null, $glue=null, $namespace='Everon\Rest\Filter')
+    public function buildRestFilterOperator($class_name, $column, $value=null, $column_glue=null, $glue=null, $namespace='Everon\Rest\Filter')
     {
         try {
             $class_name = $this->getFullClassName($namespace, $class_name);
             $this->classExists($class_name);
-            $Operator = new $class_name($column, $value, $glue);
+            $Operator = new $class_name($column, $value, $column_glue, $glue);
             $this->injectDependencies($class_name, $Operator);
             return $Operator;
         }
