@@ -187,5 +187,20 @@ class Navigator implements Interfaces\ResourceNavigator
     {
         return $this->limit;
     }
-    
+
+    /**
+     * @inheritdoc
+     */
+    public function getFilters()
+    {
+        return $this->filters;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setFilters(array $filters)
+    {
+        $this->filters = $filters;
+    }
 }

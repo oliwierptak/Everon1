@@ -72,20 +72,15 @@ interface ResourceNavigator extends Dependency\Request
      */
     function getLimit();
 
-    /**
-     * @inheritdoc
-     */
-    public function getFilters()
-    {
-        return $this->filters;
-    }
 
     /**
-     * @inheritdoc
+     * @return array
+     */
+    public function getFilters();
+
+
+    /**
+     * @param array $filters
      */
     public function setFilters(array $filters)
-    {
-        $this->filters = $filters;
-    }
-
 }
