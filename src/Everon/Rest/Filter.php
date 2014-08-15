@@ -163,7 +163,6 @@ class Filter implements Interfaces\Filter
 
             $valueType = gettype($value);
 
-
             if ($valueType === 'array') {
                 foreach($value as $k => &$v) {
                     if ($v instanceof \DateTime) {
@@ -186,6 +185,7 @@ class Filter implements Interfaces\Filter
                 $values = array_merge($values,$value);
             } 
             else {
+                $queryString .= $this->createUniqueAssignBindKey($keyBindValues,$operatorAssigns);
                 if ($value instanceof \DateTime) {
                     $values = array_merge($values,[$this->dateAsPostgreSql($value)]);
                 } else {
