@@ -181,7 +181,7 @@ class Logger implements Interfaces\Logger
         return $this->write($message, 'warning', $parameters);
     }
     
-    public function trace(Exception $Message, array $parameters=[])
+    public function trace(\Exception $Message, array $parameters=[])
     {
         $Message = $Message->getTraceAsString();
         return $this->write($Message, 'trace', $parameters);

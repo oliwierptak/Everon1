@@ -19,6 +19,7 @@ trait DateFormatter
      */
     protected function dateFormat($value=null, $format, \DateTimeZone $TimeZone=null)
     {
+        $value = ($value === null) ? new \DateTime() : $value;
         return (new \DateTime($value->format(\DateTime::ATOM), $TimeZone ?: (new \DateTimeZone(date_default_timezone_get()))))->format($format);
     }
 
