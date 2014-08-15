@@ -89,12 +89,13 @@ interface Factory
      * @param $class_name
      * @param $column
      * @param $value
+     * @param null $column_glue
      * @param null $glue
      * @param string $namespace
      * @return Rest\Interfaces\FilterOperator
      * @throws Exception\Factory
      */
-    function buildRestFilterOperator($class_name, $column, $value, $glue=null, $namespace='Everon\Rest\Filter');
+    function buildRestFilterOperator($class_name, $column, $value, $column_glue=null, $glue=null, $namespace='Everon\Rest\Filter');
 
     /**
      * @return Interfaces\Core
