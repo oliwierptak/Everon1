@@ -17,6 +17,7 @@ use Everon\Interfaces\Collection;
 class Entity extends Helper\Popo implements Interfaces\Entity 
 {
     use Helper\IsCallable;
+    use Helper\String\LastTokenToName;
     
     const STATE_NEW = 1;
     const STATE_MODIFIED = 2;
@@ -257,7 +258,11 @@ class Entity extends Helper\Popo implements Interfaces\Entity
     public function getDomainName()
     {
         if ($this->domain_name === null) {
-            $this->domain_name = get_class($this);
+            $tokens = explode('\\', get_class($this));
+            $this->domain_name = trim(@$tokens[2]);
+            if ($this->domain_name === '') {
+                throw new \Everon\Exception\Domain('Could not determine the domain name for entity: "%s"', get_class($this));
+            }
         }
         
         return $this->domain_name;

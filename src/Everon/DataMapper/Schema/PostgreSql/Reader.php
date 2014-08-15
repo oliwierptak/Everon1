@@ -110,6 +110,7 @@ class Reader extends Schema\Reader implements Interfaces\Schema\Reader
             SELECT
                 tc.constraint_type, tc.constraint_name, tc.table_name, kcu.column_name,
                 ccu.table_name AS foreign_table_name,
+                ccu.table_schema AS foreign_schema_name,
                 ccu.column_name AS foreign_column_name,
                 ccu.constraint_schema,
                 tc.constraint_catalog, 

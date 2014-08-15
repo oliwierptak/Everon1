@@ -13,7 +13,7 @@ use Everon\DataMapper;
 use Everon\Domain;
 use Everon\Helper;
 
-abstract class Relation implements Interfaces\Relation
+class Relation implements Interfaces\Relation
 {
     use Domain\Dependency\Injection\DomainManager;
     use Helper\String\LastTokenToName;
@@ -44,7 +44,7 @@ abstract class Relation implements Interfaces\Relation
     /**
      * @var DataMapper\Interfaces\Criteria
      */
-    protected $RelationCriteria = null;
+    protected $EntityRelationCriteria = null;
 
     /**
      * @var Domain\Interfaces\Repository
@@ -81,8 +81,11 @@ abstract class Relation implements Interfaces\Relation
         $this->name = $this->stringLastTokenToName(get_class($this));
         $this->Data = new Helper\Collection([]);
     }
-
-    abstract protected function setupRelationParameters();
+    
+    protected function setupRelationParameters()
+    {
+        
+    }
 
     public function reset()
     {
@@ -138,17 +141,17 @@ abstract class Relation implements Interfaces\Relation
     /**
      * @return DataMapper\Interfaces\Criteria
      */
-    public function getRelationCriteria()
+    public function getEntityRelationCriteria()
     {
-        return $this->RelationCriteria;
+        return $this->EntityRelationCriteria;
     }
 
     /**
      * @param DataMapper\Interfaces\Criteria $RelationCriteria
      */
-    public function setRelationCriteria(DataMapper\Interfaces\Criteria $RelationCriteria)
+    public function setEntityRelationCriteria(DataMapper\Interfaces\Criteria $RelationCriteria)
     {
-        $this->RelationCriteria = $RelationCriteria;
+        $this->EntityRelationCriteria = $RelationCriteria;
         $this->reset();
     }
 
@@ -208,6 +211,7 @@ abstract class Relation implements Interfaces\Relation
     public function setType($type)
     {
         $this->type = $type;
+        $this->reset();
     }
 
     /**
@@ -231,10 +235,10 @@ abstract class Relation implements Interfaces\Relation
                 if ($this->sql !== null) {
                     $sql = $this->sql.$this->getCriteria();
                     $data = $this->getDataMapper()->getSchema()->getPdoAdapterByName('read')->execute($sql, $this->getCriteria()->getWhere())->fetchAll();
-                } else {
+                } 
+                else {
                     $data = $this->getDataMapper()->fetchAll($this->getCriteria());
                 }
-
 
                 if ($data === false || empty($data)) {
                     return [];
@@ -242,7 +246,7 @@ abstract class Relation implements Interfaces\Relation
 
                 $entities = [];
                 foreach ($data as $item) {
-                    $entities[] = $this->getRepository()->buildFromArray($item, $this->getRelationCriteria());
+                    $entities[] = $this->getRepository()->buildFromArray($item, $this->getEntityRelationCriteria());
                 }
 
                 return $entities;
@@ -267,7 +271,8 @@ abstract class Relation implements Interfaces\Relation
                 $sql = $this->sql_count.' '.$Criteria;
                 $PdoStatement = $this->getDataMapper()->getSchema()->getPdoAdapterByName('read')->execute($sql, $Criteria->getWhere());
                 $this->count = (int) $PdoStatement->fetchColumn();
-            } else {
+            } 
+            else {
                 return $this->getDomainManager()->getRepositoryByName($this->getName())->count($Criteria);
             }
         }

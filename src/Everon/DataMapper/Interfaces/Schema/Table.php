@@ -42,6 +42,19 @@ interface Table extends Arrayable, Immutable
      * @return array
      */
     function getForeignKeys();
+
+    /**
+     * @param $name
+     * @return \Everon\DataMapper\Interfaces\Schema\ForeignKey
+     * @throws \Everon\DataMapper\Exception\Table
+     */
+    function getForeignKeyByName($name);
+
+    /**
+     * @param $foreign_table_name
+     * @return \Everon\DataMapper\Interfaces\Schema\ForeignKey
+     */
+    function getForeignKeyByTableName($foreign_table_name);
     
     /**
      * @return array
@@ -50,7 +63,7 @@ interface Table extends Arrayable, Immutable
 
     /**
      * @param $name
-     * @return mixed
+     * @return \Everon\DataMapper\Interfaces\Schema\PrimaryKey
      * @throws \Everon\DataMapper\Exception\Table
      */
     function getPrimaryKeyByName($name);
@@ -81,5 +94,21 @@ interface Table extends Arrayable, Immutable
      * @return mixed
      */
     function getIdFromData($data);
+
+    /**
+     * Original table name in case this is a view 
+     * 
+     * @todo remove this
+     * @param string $original_name
+     */
+    function setOriginalName($original_name);
+
+    /**
+     * Original table name in case this is a view
+     *
+     * @todo remove this
+     * @return string
+     */
+    function getOriginalName();
 
 }

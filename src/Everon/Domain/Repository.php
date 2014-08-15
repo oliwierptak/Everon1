@@ -98,18 +98,61 @@ abstract class Repository implements Interfaces\Repository
     /**
      * @param Interfaces\Entity $Entity
      * @param Criteria $Criteria
-     * @return mixed
+     * @throws \Everon\Exception\Domain
      */
     public function buildEntityRelations(Interfaces\Entity $Entity, Criteria $Criteria)
     {
         $RelationCollection = new Helper\Collection([]);
-        foreach ($Entity->getRelationDefinition() as $relation_domain_name => $type) {
-            $Relation = $this->getFactory()->buildDomainRelation($relation_domain_name, $this->getName(), $Entity);
-            $Relation->setRelationCriteria(clone $Criteria);
-            $RelationCollection->set($relation_domain_name, $Relation);
+        
+        foreach ($Entity->getRelationDefinition() as $column_name => $relation_data) {
+            foreach ($relation_data as $relation_domain_name => $type) {
+                if (array_key_exists($column_name, $this->getMapper()->getTable()->getForeignKeys()) === false) {
+                    throw new Exception\Domain('Invalid relation mapping for: "%s@%s', [$relation_domain_name, $column_name]);
+                }
+                
+                /**
+                 * @var \Everon\DataMapper\Interfaces\Schema\ForeignKey $ForeignKey
+                 */
+                $ForeignKey = $this->getMapper()->getTable()->getForeignKeys()[$column_name];
+                $table = $ForeignKey->getForeignFullTableName();
+                $id_field = $ForeignKey->getForeignColumnName();
+                $RelationCriteria = clone $Criteria;
+                $RelationCriteria->where([
+                    't.'.$id_field => $this->getMapper()->getSchema()->getTableByName($table)->validateId($Entity->getValueByName($column_name))
+                ]);
+                
+                //d($column, $table, $id_field, $RelationCriteria);
+                
+                $Relation = $this->getFactory()->buildDomainRelation($relation_domain_name, $this->getName(), $Entity);
+                $Relation->setCriteria($RelationCriteria);
+                $Relation->setEntityRelationCriteria(clone $Criteria);
+                $RelationCollection->set($relation_domain_name, $Relation);
+            }
         }
 
         $Entity->setRelationCollection($RelationCollection);
+    }
+
+    protected function setupRelations(Interfaces\Entity $Entity)
+    {
+        /**
+         * @var \Everon\DataMapper\Interfaces\Schema\ForeignKey $ForeignKey
+         */
+        $domain_name = $this->getDomainManager()->getDataMapperManager()->getDomainMapper()->getDomainName($this->getMapper()->getTable()->getOriginalName());
+        //$foreign_keys = $Repository->getMapper()->getTable()->getForeignKeyByTableName($Repository->getMapper()->getTable()->getOriginalName());
+        $foreign_keys = $this->getMapper()->getTable()->getForeignKeys();
+        dd($domain_name, $foreign_keys, $this->getMapper()->getTable()->getOriginalName(), $this->getMapper()->getTable()->getName());
+        foreach ($foreign_keys as $column_name => $ForeignKey) {
+            $column = $ForeignKey->getColumnName();
+            $table = $ForeignKey->getForeignFullTableName();
+            $id_field = $ForeignKey->getForeignColumnName();
+
+            $this->getCriteria()->where([
+                't.'.$column => $this->getDataMapper()->getSchema()->getTableByName($table)->validateId($Entity->getValueByName($id_field))
+            ]);
+        }
+
+        dd($this->getCriteria()->getWhere());
     }
 
     /**

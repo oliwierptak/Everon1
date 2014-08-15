@@ -150,6 +150,27 @@ class Schema implements Interfaces\Schema
                 $view_primary_keys[$view_key_name] = $Table->getPrimaryKeyByName($column_name);
             }
 
+            $foreign_keys = $Item->getForeignKeys();
+            $view_foreign_keys = [];
+            foreach ($foreign_keys as $view_key_name => $source) {
+                $tokens = explode('.', $source);
+                $column_name = array_pop($tokens);
+                $item_table_name = implode('.', $tokens);
+
+                if (isset($this->tables[$item_table_name]) === false) {
+                    throw new Exception\Schema('Invalid target table name: "%s"', $item_table_name);
+                }
+
+                /**
+                 * @var \Everon\DataMapper\Interfaces\Schema\Table $Table
+                 * @var \Everon\DataMapper\Interfaces\Schema\Column $Column
+                 */
+                $Table = $this->tables[$Item->getTableOriginal()];
+                $view_foreign_keys[$view_key_name] = $Table->getForeignKeyByTableName($item_table_name);
+            }
+            
+            //todo unique keys are missing
+
             $tokens = explode('.', $Item->getTable());
             $table = array_pop($tokens);
             $schema_name = implode('.', $tokens);
@@ -160,9 +181,11 @@ class Schema implements Interfaces\Schema
                 $view_columns,
                 $view_primary_keys,
                 [],
-                [],
+                $view_foreign_keys,
                 $this->getDomainMapper()
             );
+
+            $this->tables[$Item->getTable()]->setOriginalName($Item->getTableOriginal());
         }
     }
     

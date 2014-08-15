@@ -37,12 +37,12 @@ interface Relation extends \Everon\Interfaces\Arrayable
     /**
      * @return DataMapper\Interfaces\Criteria
      */
-     function getRelationCriteria();
+     function getEntityRelationCriteria();
 
     /**
      * @param DataMapper\Interfaces\Criteria $RelationCriteria
      */
-     function setRelationCriteria(DataMapper\Interfaces\Criteria $RelationCriteria);
+     function setEntityRelationCriteria(DataMapper\Interfaces\Criteria $RelationCriteria);
 
     /**
      * @return \Everon\Interfaces\DataMapper

@@ -282,6 +282,17 @@ interface Factory
     function buildDomainRelation($name, $parent_name, Domain\Interfaces\Entity $Entity, $namespace = 'Everon\Domain');
 
     /**
+     * @param $target_entity
+     * @param $column
+     * @param null $mapped_by
+     * @param null $inversed_by
+     * @param string $namespace
+     * @return Domain\Interfaces\RelationMapper
+     * @throws Exception\Factory
+     */
+    function buildDomainRelationMapper($target_entity, $column, $mapped_by=null, $inversed_by=null, $namespace='Everon\Domain\Relation');
+
+    /**
      * @param DataMapper\Interfaces\Schema\Reader $Reader
      * @param DataMapper\Interfaces\ConnectionManager $ConnectionManager
      * @param Domain\Interfaces\Mapper $DomainMapper

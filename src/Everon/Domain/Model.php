@@ -25,8 +25,6 @@ abstract class Model implements Interfaces\Model
      */
     protected $name = null;
     
-    public abstract function validateEntityData(array $data);
-    
     
     /**
      * @param $name
@@ -83,14 +81,14 @@ abstract class Model implements Interfaces\Model
     }
 
     /**
-     * @param array $data
+     * @param Interfaces\Entity $Entity
      * @param null $user_id
+     * @internal param array $data
      * @return Interfaces\Entity
      */
-    protected function add(array $data, $user_id=null)
+    protected function add(Domain\Interfaces\Entity $Entity, $user_id=null)
     {
-        $this->validateEntityData($data);
-        $Entity = $this->getRepository()->buildFromArray($data);
+        $this->getRepository()->validateEntity($Entity);
         $this->beforeAdd($Entity, $user_id);
         $this->getRepository()->persist($Entity, $user_id);
         return $Entity;

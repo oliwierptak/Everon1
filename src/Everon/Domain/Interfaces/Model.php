@@ -31,9 +31,4 @@ interface Model
      * @return Repository
      */
     function getRepository();
-
-    /**
-     * @param array $data
-     */
-    function validateEntityData(array $data);
 }

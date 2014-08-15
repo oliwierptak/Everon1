@@ -63,6 +63,30 @@ abstract class Constraint implements Schema\Constraint
     {
         return $this->table_name;
     }
+
+    /**
+     * @param string $schema
+     */
+    public function setSchema($schema)
+    {
+        $this->schema = $schema;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSchema()
+    {
+        return $this->schema;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFullTableName()
+    {
+        return $this->getSchema().'.'.$this->getTableName();
+    }
     
     public function toArray($deep=false)
     {
