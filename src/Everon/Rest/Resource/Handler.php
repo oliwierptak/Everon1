@@ -297,6 +297,8 @@ class Handler implements Interfaces\ResourceHandler
             $EntityRelationCriteria->offset($Navigator->getOffset());
             $EntityRelationCriteria->orderBy($Navigator->getOrderBy());
             $EntityRelationCriteria->sort($Navigator->getSort());
+
+            $this->assignNavigatorFiltersToCriteria($Navigator,$EntityRelationCriteria);
             
             $Paginator = $this->getFactory()->buildPaginator($Repository->count($EntityRelationCriteria), $Navigator->getOffset(), $Navigator->getLimit());
             
@@ -329,6 +331,8 @@ class Handler implements Interfaces\ResourceHandler
             $EntityRelationCriteria = new Criteria();
             $EntityRelationCriteria->limit($Navigator->getLimit());
             $EntityRelationCriteria->offset($Navigator->getOffset());
+
+            $this->assignNavigatorFiltersToCriteria($Navigator,$EntityRelationCriteria);
 
             $domain_name = $this->getDomainNameFromMapping($collection);
             $id = $this->generateEntityId($item_id, $domain_name);
@@ -431,6 +435,18 @@ class Handler implements Interfaces\ResourceHandler
             }
         }
         throw new Exception\Resource('Invalid rest mapping resource: "%s"', $domain_name);
+    }
+
+    /**
+     * @param Interfaces\ResourceNavigator $Navigator
+     * @param Criteria $Criteria
+     */
+    protected function assignNavigatorFiltersToCriteria(Interfaces\ResourceNavigator $Navigator, Criteria $Criteria)
+    {
+        $navigatorFilters = $Navigator->getFilters();
+        $navigatorFilters = (is_array($navigatorFilters) === true) ? $navigatorFilters : [];
+        $Filter = $this->getFactory()->buildRestFilter(new Helper\Collection($navigatorFilters));
+        $Filter->assignToCriteria($Criteria);
     }
 
 }

@@ -26,6 +26,7 @@ class Navigator implements Interfaces\ResourceNavigator
     protected $sort = null;
     protected $offset = null;
     protected $limit = null;
+    protected $filters = null;
     
 
     /**
@@ -68,6 +69,10 @@ class Navigator implements Interfaces\ResourceNavigator
         $this->order_by = $this->getParameterValue('order_by', []);
         $this->limit = $this->getRequest()->getGetParameter('limit', 10);
         $this->offset = $this->getRequest()->getGetParameter('offset', 0);
+
+        $this->filters = $this->getRequest()->getGetParameter('filters');
+        $this->filters = json_decode($this->filters,true);
+
         $this->sort = [];
 
         $collection = $this->getRequest()->getQueryParameter('collection', null);
