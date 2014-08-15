@@ -232,4 +232,24 @@ trait Arrays
         }
         return $data;
     }
+
+
+    /**
+     * @param array $search
+     * @param array $replace
+     * @return array
+     */
+    protected function arrayReplaceKeysByArrayValues(array $search,array $replace)
+    {
+
+        if ((sizeof($search) !== sizeof($replace)) || (sizeof($search) == 0)) {
+            return $search;
+        }
+        foreach($search as $k => $v) {
+            $search[$replace[$k]] = $v;
+            unset($search[$k]);
+        }
+
+        return $search;
+    }
 }
