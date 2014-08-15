@@ -82,5 +82,5 @@ interface ResourceNavigator extends Dependency\Request
     /**
      * @param array $filters
      */
-    public function setFilters(array $filters)
+    public function setFilters(array $filters);
 }
