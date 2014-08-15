@@ -35,6 +35,11 @@ abstract class Operator implements FilterOperator
     /**
      * @var string
      */
+    protected $column_glue = null;
+
+    /**
+     * @var string
+     */
     protected $glue = null;
 
 
@@ -55,14 +60,22 @@ abstract class Operator implements FilterOperator
     protected $allowed_value_types = ['string','integer','double','object','boolean'];
 
 
-    public function __construct($operator, $column, $value=null, $glue=null)
+    const GLUE_TYPE_AND = 'AND';
+    const GLUE_TYPE_OR = 'OR';
+    const GLUE_TYPE_NULL = null;
+
+
+    public function __construct($operator, $column, $value=null, $column_glue=null, $glue=null)
     {
         $this->operator = $operator;
         $this->column = $column;
         $this->value = ($value === null) ? 'NULL' : $value;
+        $this->column_glue = $column_glue;
         $this->glue = $glue;
 
         $this->assertValue();
+        $this->assertColumnGlue();
+        $this->assertGlue();
     }
 
     /**
@@ -130,18 +143,56 @@ abstract class Operator implements FilterOperator
     }
 
     /**
+     * @param string $column_glue
+     */
+    public function setColumnGlue($column_glue)
+    {
+        $this->column_glue = $column_glue;
+    }
+
+    /**
+     * @return string
+     */
+    public function getColumnGlue()
+    {
+        return $this->column_glue;
+    }
+
+    /**
      * @brief assertion of value
      */
-    protected function assertValue() {
+    protected function assertValue()
+    {
         $this->assertValueType();
         $this->assertValueCount();
     }
 
+    /**
+     * assertion of $glue
+     * @throws \Everon\Rest\Exception\Filter
+     */
+    protected function assertGlue()
+    {
+        if (($this->glue !== self::GLUE_TYPE_AND) && ($this->glue !== self::GLUE_TYPE_OR) && ($this->glue !== self::GLUE_TYPE_NULL)) {
+            throw new Exception\Filter('"%s" is not allowed for as a glue on "%s"',[$this->glue,$this->column]);
+        }
+    }
 
+    /**
+     * assertion of $column_glue
+     * @throws \Everon\Rest\Exception\Filter
+     */
+    protected function assertColumnGlue()
+    {
+        if (($this->column_glue !== self::GLUE_TYPE_AND) && ($this->column_glue !== self::GLUE_TYPE_OR) && ($this->column_glue !== self::GLUE_TYPE_NULL)) {
+            throw new Exception\Filter('"%s" is not allowed for as a column_glue on "%s"',[$this->glue,$this->column]);
+        }
+    }
     /**
      * @throws \Everon\Rest\Exception\Filter
      */
-    protected function assertValueType() {
+    protected function assertValueType()
+    {
         $valueType = gettype($this->value);
         if (in_array(strtolower($valueType),$this->allowed_value_types) != true) {
             throw new Exception\Filter('"%s" is not allowed for operator "%s"',[$valueType,$this->operator]);
@@ -151,7 +202,8 @@ abstract class Operator implements FilterOperator
     /**
      * @throws \Everon\Rest\Exception\Filter
      */
-    protected function assertValueCount() {
+    protected function assertValueCount()
+    {
         if ($this->min_value_count != 0 || $this->max_value_count != 0) {
             $valueCount = ($this->value === null) ? 1 : (int) count($this->value);
             if ($this->min_value_count > $valueCount || $this->max_value_count < $valueCount) {
@@ -166,6 +218,7 @@ abstract class Operator implements FilterOperator
             'operator' => $this->getOperator(),
             'column' => $this->getColumn(),
             'value' => $this->getValue(),
+            'column_glue' => $this->getColumnGlue(),
             'glue' => $this->getGlue()  
         ];
     }

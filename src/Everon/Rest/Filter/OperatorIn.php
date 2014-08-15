@@ -27,8 +27,8 @@ class OperatorIn extends Operator
      */
     protected $allowed_value_types = ['array'];
 
-    public function __construct($column, $value=null, $glue=null)
+    public function __construct($column, $value=null, $column_glue=null, $glue=null)
     {
-        parent::__construct(\Everon\Rest\Filter::OPERATOR_TYPE_IN, $column, $value, $glue);
+        parent::__construct(\Everon\Rest\Filter::OPERATOR_TYPE_IN, $column, $value, $column_glue, $glue);
     }
 }

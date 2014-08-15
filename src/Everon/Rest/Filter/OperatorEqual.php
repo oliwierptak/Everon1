@@ -14,8 +14,8 @@ namespace Everon\Rest\Filter;
 class OperatorEqual extends Operator
 {
 
-    public function __construct($column, $value=null, $glue=null)
+    public function __construct($column, $value=null, $column_glue=null, $glue=null)
     {
-        parent::__construct(\Everon\Rest\Filter::OPERATOR_TYPE_EQUAL, $column, $value, $glue);
+        parent::__construct(\Everon\Rest\Filter::OPERATOR_TYPE_EQUAL, $column, $value, $column_glue, $glue);
     }
 }
