@@ -18,6 +18,8 @@ class Filter implements Interfaces\Filter
 {
     use Helper\DateFormatter;
     use \Everon\Dependency\Injection\Factory;
+    use Helper\AlphaId;
+    use Helper\Arrays;
 
 
     const OPERATOR_TYPE_LIKE                    = 'LIKE';
@@ -89,9 +91,8 @@ class Filter implements Interfaces\Filter
         if ($this->FilterCollection->isEmpty()) {
             foreach ($this->FilterDefinition as $item) {
                 $this->assertFilterItem($item);
-                list($class_name,$column,$value,$glue) = $this->resolveClassNameColumnValueAndGlueFromItem($item);
-
-                $Operator = $this->getFactory()->buildRestFilterOperator($class_name, $column,$value,$glue);
+                list($class_name,$column,$value,$column_glue,$glue) = $this->resolveClassNameColumnValueAndGlueFromItem($item);
+                $Operator = $this->getFactory()->buildRestFilterOperator($class_name, $column,$value,$column_glue,$glue);
                 $data[] = $Operator;
             }
             $this->assertColumnCombinations($data);
@@ -133,10 +134,10 @@ class Filter implements Interfaces\Filter
      */
     public function assignToCriteria(Criteria $Criteria)
     {
-        $list = $this->castFilterCollectionIntoArray();
+        $list = $this->castFilterCollectionIntoColumnGroupCollection();
         if (empty($list) !== true) {
             foreach($list as $column => $value) {
-                $Criteria->where([$column=>$value]);
+                $Criteria->filter([$column=>$value]);
             }
         }
     }
@@ -144,44 +145,95 @@ class Filter implements Interfaces\Filter
     /**
      * @return \Everon\Interfaces\Collection
      */
-    protected function castFilterCollectionIntoArray()
+    protected function castFilterCollectionIntoColumnGroupCollection()
     {
-        $list = [];
+        $col = [];
+        $keyBindValues = [];
+
         /**
          * @var \Everon\Rest\Interfaces\FilterOperator $FilterOperator
          */
-        foreach($this->getFilterCollection() as $FilterOperator) {
-            list($operator, $column, $value, $glue) = array_values($FilterOperator->toArray());
-            $columnPrefix  = $operator;
+        foreach($this->getFilterCollection() as $index => $FilterOperator) {
+
+            $operatorAssigns = [];
+            list($operator, $column, $value, $column_glue, $glue) = array_values($FilterOperator->toArray());
+            $values = [];
+
+            $queryString = '(';
+
             $valueType = gettype($value);
 
-            if (isset($list[':'.$column]) == true) {
-                $columnPrefix = $list[':'.$column] . ' '.$glue.' ' . $columnPrefix;
-            }
 
             if ($valueType === 'array') {
                 foreach($value as $k => &$v) {
                     if ($v instanceof \DateTime) {
-                        //$v = $v->format('Y-m-d H:i:s');
                         $v = $this->dateAsPostgreSql($v);
                     }
                 }
+
                 if (in_array($operator, [self::OPERATOR_TYPE_BETWEEN, self::OPERATOR_TYPE_NOT_BETWEEN])) {
-                    $value = implode(' AND ',$value);
-                } 
-                else {
-                    $value = "('".implode("','",$value)."')";
+                    $queryString .= $this->createUniqueAssignBindKey($keyBindValues,$operatorAssigns) . ' AND ' . $this->createUniqueAssignBindKey($keyBindValues,$operatorAssigns);
                 }
+                else {
+                    $queryString .= '(';
+                    foreach($value as $k) {
+                        $queryString .= $this->createUniqueAssignBindKey($keyBindValues,$operatorAssigns).',';
+
+                    }
+                    $queryString  = (substr($queryString,-1,1) == ',') ? substr($queryString,0,-1) : $queryString;
+                    $queryString .= ')';
+                }
+                $values = array_merge($values,$value);
             } 
             else {
                 if ($value instanceof \DateTime) {
-                    $value = $this->dateAsPostgreSql($value);
-                    //$value = $value->format();
+                    $values = array_merge($values,[$this->dateAsPostgreSql($value)]);
+                } else {
+                    $values = array_merge($values,[$value]);
                 }
             }
-            $list[$column] = $columnPrefix . ' '.$value;
+            $values = $this->arrayReplaceKeysByArrayValues($values,$operatorAssigns);
+
+            $col[$column]['query']  = (isset($col[$column]['query']) === true)  ?   ($col[$column]['query']." {$column_glue} {$column} {$operator} {$queryString})") : "{$operator} {$queryString})";
+            $col[$column]['values'] = (isset($col[$column]['values']) === true) ?   array_merge($col[$column]['values'], $values) : $values;
+            $col[$column]['glue']   = ((isset($col[$column]['glue']) === true) && ($glue === null)) ?  $col[$column]['glue']  : $glue;
         }
-        return new \Everon\Helper\Collection($list);
+
+       return  new \Everon\Helper\Collection($col);
+    }
+
+
+    /**
+     * @param array $assign
+     * @param array $iteratorContainer
+     * @return string
+     */
+    protected function createUniqueAssignBindKey(array &$assign, array &$iteratorContainer = [])
+    {
+        $key = ':'.$this->calculateRandomAssignKey();
+        while (in_array($key,$assign)) {
+            $key = ':'.$this->calculateRandomAssignKey();
+        }
+        $assign[] = $key;
+        $iteratorContainer[] = $key;
+        return $key;
+    }
+
+    /**
+     * @todo move to different class, perhaps?
+     */
+    protected function calculateRandomAssignKey($length=6)
+    {
+        $length = abs((int) $length);
+        // Available chars
+        $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        // Make the code
+        $code = '';
+        for ($i=0; $i<$length; $i++) {
+            $code .= substr($chars, rand(0, strlen($chars)), 1);
+        }
+        return $code;
+
     }
 
     /**
@@ -190,11 +242,12 @@ class Filter implements Interfaces\Filter
      */
     protected function resolveClassNameColumnValueAndGlueFromItem(array $item=[])
     {
-        $class_name = $this->getClassNameByType($item['operator']);
-        $column = (isset($item['column']) ? $item['column'] : null);
-        $value = (isset($item['value']) ? $item['value'] : null);
-        $glue = (isset($item['glue']) ? $item['glue'] : null);
-        return [$class_name,$column,$value,$glue];
+        $class_name     = $this->getClassNameByType($item['operator']);
+        $column         = (isset($item['column']) ? $item['column'] : null);
+        $value          = (isset($item['value']) ? $item['value'] : null);
+        $column_glue    = (isset($item['column_glue']) ? $item['column_glue'] : null);
+        $glue           = (isset($item['glue']) ? $item['glue'] : null);
+        return [$class_name, $column, $value,$column_glue,  $glue];
     }
 
     /**
@@ -214,8 +267,8 @@ class Filter implements Interfaces\Filter
                     $columnOperators[$columnName] = $FilterOperator->getOperator();
                 }
                 else {
-                    if (($columnOperators[$columnName] === $FilterOperator->getOperator()) && ($FilterOperator->getGlue() === null)) {
-                        throw new Exception\Filter('Duplicate operator "%s"  on column "%s" without a valid glue property', [$FilterOperator->getOperator(), $columnName]);
+                    if ($FilterOperator->getColumnGlue() === null) {
+                        throw new Exception\Filter('Duplicate operator  on column "%s" without a valid "column_glue" property', $columnName);
                     }
                 }
             }
