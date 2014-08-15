@@ -36,6 +36,9 @@ class Criteria implements Interfaces\Criteria
     protected $group_by = null;
 
     protected $sort = 'ASC';
+
+
+    protected $filter = [];
     
 
     /**
@@ -115,14 +118,36 @@ class Criteria implements Interfaces\Criteria
         $this->sort = $sort;
         return $this;
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function filter(array $filter)
+    {
+        $this->filter = array_merge($this->filter,$filter);
+        return $this;
+    }
     
     public function getWhereSql()
     {
-        if (empty($this->where) && empty($this->where_or) && empty($this->in) && empty($this->ilike)) {
+        if (empty($this->where) && empty($this->where_or) && empty($this->in) && empty($this->ilike) && empty($this->filter)) {
             return '';
         }
-        
+
+
         $where_str = '1=1';
+
+        if (empty($this->filter) === false) {
+            foreach($this->filter as $column => $data) {
+                if (isset($data['query']) && (empty($data['query']) === false)) {
+                    $operator = (isset($data['glue']) === true) ? $data['glue'] : 'AND';
+                    $where_str .= ((empty($where_str) === true) ? ((isset($data['glue']) === true) ? $operator : '') : " {$operator} ") . "({$column} {$data['query']})";
+                }
+
+
+            }
+        }
+
         foreach ($this->where as $field => $value) {
             $field_ok = str_replace('.', '_', $field); //replace z.id with z_id
             $where_str .= " AND ${field} = :${field_ok}";
@@ -162,7 +187,7 @@ class Criteria implements Interfaces\Criteria
             }
             $this->where = $this->arrayMergeDefault($this->where, $this->ilike);
         }
-        
+
         return $where_str;
     }
     
@@ -266,12 +291,20 @@ class Criteria implements Interfaces\Criteria
      */
     public function getWhere()
     {
+
+        if (empty($this->filter) !== true) {
+            foreach($this->filter as $column => $data) {
+                $this->where = $this->arrayMergeDefault($this->where, $data['values']);
+            }
+        }
+
+
         $where = [];
         foreach ($this->where as $field => $value) {
             $field_ok = str_replace('.', '_', $field); //replace z.id with z_id
             $where[$field_ok] = $value;
         }
-        
+
         return $where;
     }
     

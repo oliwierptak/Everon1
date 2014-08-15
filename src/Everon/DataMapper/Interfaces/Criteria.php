@@ -62,6 +62,12 @@ interface Criteria extends \Everon\Interfaces\Arrayable, \Everon\Interfaces\Stri
     function sort($sort);
 
     /**
+     * @param array $filter
+     * @return $this
+     */
+    function filter(array $filter);
+
+    /**
      * @param $limit
      * @return \Everon\DataMapper\Interfaces\Criteria
      */
