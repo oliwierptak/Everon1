@@ -136,10 +136,16 @@ abstract class Repository implements Interfaces\Repository
                 $ForeignKey = $this->getMapper()->getTable()->getForeignKeys()[$RelationMapper->getMappedBy()];
                 $table = $ForeignKey->getForeignFullTableName();
                 $target_column = $RelationMapper->getColumn() ?: $ForeignKey->getForeignColumnName();
+                
+                $value = $Entity->getValueByName($RelationMapper->getMappedBy());
+                $Column = $this->getMapper()->getTable()->getColumnByName($RelationMapper->getMappedBy());
+                if ($Column->isNullable() && $value === null) {
+                    continue;
+                }
 
                 $RelationCriteria = clone $Criteria;
                 $RelationCriteria->where([
-                    't.'.$target_column => $this->getMapper()->getSchema()->getTableByName($table)->validateId($Entity->getValueByName($RelationMapper->getMappedBy()))
+                    't.'.$target_column => $this->getMapper()->getSchema()->getTableByName($table)->validateId($value)
                 ]);
 
                 $Relation->setCriteria($RelationCriteria);
