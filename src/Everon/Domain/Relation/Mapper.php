@@ -17,12 +17,17 @@ class Mapper implements Interfaces\RelationMapper
     /**
      * @var string
      */
-    protected $column = null;
+    protected $type = null;
+    
+    /**
+     * @var string
+     */
+    protected $domain_name = null;
 
     /**
      * @var string
      */
-    protected $target_entity = null;
+    protected $column = null;
 
     /**
      * @var string
@@ -33,14 +38,21 @@ class Mapper implements Interfaces\RelationMapper
      * @var string
      */
     protected $inversed_by = null;
+
+    /**
+     * @var boolean
+     */
+    protected $is_virtual = false;
     
     
-    public function __construct($target_entity, $column, $mapped_by=null, $inversed_by=null)
+    public function __construct($type, $domain_name, $column=null, $mapped_by=null, $inversed_by=null, $is_virtual=false)
     {
-        $this->target_entity = $target_entity;
+        $this->type = $type;
+        $this->domain_name = $domain_name;
         $this->column = $column;
         $this->mapped_by = $mapped_by;
-        $this->inversed_by = null;
+        $this->inversed_by = $inversed_by;
+        $this->is_virtual = $is_virtual;
     }
 
     /**
@@ -94,16 +106,49 @@ class Mapper implements Interfaces\RelationMapper
     /**
      * @param string $target_entity
      */
-    public function setTargetEntity($target_entity)
+    public function setDomainName($target_entity)
     {
-        $this->target_entity = $target_entity;
+        $this->domain_name = $target_entity;
     }
 
     /**
      * @return string
      */
-    public function getTargetEntity()
+    public function getDomainName()
     {
-        return $this->target_entity;
+        return $this->domain_name;
     }
+
+    /**
+     * @param string $type
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+    }
+
+    /**
+     * @return string
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * @param boolean $is_virtual
+     */
+    public function setIsVirtual($is_virtual)
+    {
+        $this->is_virtual = $is_virtual;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isVirtual()
+    {
+        return $this->is_virtual;
+    }
+    
 }

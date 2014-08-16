@@ -23,6 +23,7 @@ abstract class Repository implements Interfaces\Repository
     use Domain\Dependency\Injection\DomainManager;
     use Dependency\Injection\Factory;
     use Helper\Arrays;
+    use Helper\Asserts\IsArrayKey;
     
     /**
      * @var DataMapper
@@ -103,31 +104,49 @@ abstract class Repository implements Interfaces\Repository
     public function buildEntityRelations(Interfaces\Entity $Entity, Criteria $Criteria)
     {
         $RelationCollection = new Helper\Collection([]);
-        
-        foreach ($Entity->getRelationDefinition() as $column_name => $relation_data) {
-            foreach ($relation_data as $relation_domain_name => $type) {
-                if (array_key_exists($column_name, $this->getMapper()->getTable()->getForeignKeys()) === false) {
-                    throw new Exception\Domain('Invalid relation mapping for: "%s@%s', [$relation_domain_name, $column_name]);
+        //buildDomainRelationMapper
+        foreach ($Entity->getRelationDefinition() as $relation_domain_name => $relation_data) {
+            $relation_data = $this->arrayMergeDefault([
+                'type' => null,
+                'column' => null,
+                'mapped_by' => null,
+                'inversed_by' => null,
+                'virtual' => false,
+            ], $relation_data);
+            
+            $RelationMapper = $this->getFactory()->buildDomainRelationMapper(
+                $relation_data['type'], 
+                $relation_domain_name, 
+                $relation_data['column'], 
+                $relation_data['mapped_by'], 
+                $relation_data['inversed_by'], 
+                $relation_data['virtual']
+            );
+
+            $Relation = $this->getFactory()->buildDomainRelation($relation_domain_name, $this->getName(), $Entity, $RelationMapper);
+            
+            if ($RelationMapper->isVirtual() === false) {//virtual relations handle their data on their own
+                if (array_key_exists($RelationMapper->getMappedBy(), $this->getMapper()->getTable()->getForeignKeys()) === false) {
+                    throw new Exception\Domain('Invalid relation mapping for: "%s@%s', [$relation_domain_name, $RelationMapper->getMappedBy()]);
                 }
-                
+
                 /**
                  * @var \Everon\DataMapper\Interfaces\Schema\ForeignKey $ForeignKey
                  */
-                $ForeignKey = $this->getMapper()->getTable()->getForeignKeys()[$column_name];
+                $ForeignKey = $this->getMapper()->getTable()->getForeignKeys()[$RelationMapper->getMappedBy()];
                 $table = $ForeignKey->getForeignFullTableName();
-                $id_field = $ForeignKey->getForeignColumnName();
+                $target_column = $RelationMapper->getColumn() ?: $ForeignKey->getForeignColumnName();
+
                 $RelationCriteria = clone $Criteria;
                 $RelationCriteria->where([
-                    't.'.$id_field => $this->getMapper()->getSchema()->getTableByName($table)->validateId($Entity->getValueByName($column_name))
+                    't.'.$target_column => $this->getMapper()->getSchema()->getTableByName($table)->validateId($Entity->getValueByName($RelationMapper->getMappedBy()))
                 ]);
-                
-                //d($column, $table, $id_field, $RelationCriteria);
-                
-                $Relation = $this->getFactory()->buildDomainRelation($relation_domain_name, $this->getName(), $Entity);
+
                 $Relation->setCriteria($RelationCriteria);
-                $Relation->setEntityRelationCriteria(clone $Criteria);
-                $RelationCollection->set($relation_domain_name, $Relation);
             }
+            
+            $Relation->setEntityRelationCriteria(clone $Criteria);
+            $RelationCollection->set($relation_domain_name, $Relation);
         }
 
         $Entity->setRelationCollection($RelationCollection);

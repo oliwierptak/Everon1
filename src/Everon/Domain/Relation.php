@@ -71,18 +71,32 @@ class Relation implements Interfaces\Relation
      */
     protected $loaded = false;
 
+    /**
+     * @var Domain\Interfaces\RelationMapper
+     */
+    protected $RelationMapper = null;
+
     
     /**
      * @param Interfaces\Entity $Entity
+     * @param Interfaces\RelationMapper $RelationMapper
      */
-    public function __construct(Domain\Interfaces\Entity $Entity)
+    public function __construct(Domain\Interfaces\Entity $Entity, Domain\Interfaces\RelationMapper $RelationMapper)
     {
         $this->Entity = $Entity;
         $this->name = $this->stringLastTokenToName(get_class($this));
         $this->Data = new Helper\Collection([]);
+        $this->RelationMapper = $RelationMapper;
     }
     
     protected function setupRelationParameters()
+    {
+        if ($this->getRelationMapper()->isVirtual() === false) {
+            $this->validate();
+        }
+    }
+    
+    protected function validate()
     {
         
     }
@@ -214,6 +228,22 @@ class Relation implements Interfaces\Relation
         $this->reset();
     }
 
+    /**
+     * @param \Everon\Domain\Interfaces\RelationMapper $RelationMapper
+     */
+    public function setRelationMapper(Domain\Interfaces\RelationMapper $RelationMapper)
+    {
+        $this->RelationMapper = $RelationMapper;
+    }
+
+    /**
+     * @return \Everon\Domain\Interfaces\RelationMapper
+     */
+    public function getRelationMapper()
+    {
+        return $this->RelationMapper;
+    }
+    
     /**
      * @param \Everon\Interfaces\Collection $Collection
      */

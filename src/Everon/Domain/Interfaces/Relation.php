@@ -80,6 +80,16 @@ interface Relation extends \Everon\Interfaces\Arrayable
     function setType($type);
 
     /**
+     * @param \Everon\Domain\Interfaces\RelationMapper $RelationMapper
+     */
+    function setRelationMapper(Domain\Interfaces\RelationMapper $RelationMapper);
+        
+    /**
+     * @return \Everon\Domain\Interfaces\RelationMapper
+     */
+    function getRelationMapper();
+
+    /**
      * @param \Everon\Interfaces\Collection $Collection
      */
     function setData(\Everon\Interfaces\Collection $Collection);

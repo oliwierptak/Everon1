@@ -44,10 +44,30 @@ interface RelationMapper
     /**
      * @param string $target_entity
      */
-    function setTargetEntity($target_entity);
+    function setDomainName($target_entity);
 
     /**
      * @return string
      */
-    function getTargetEntity();
+    function getDomainName();
+
+    /**
+     * @param string $type
+     */
+    function setType($type);
+
+    /**
+     * @return string
+     */
+    function getType();
+
+    /**
+     * @param boolean $is_virtual
+     */
+    function setIsVirtual($is_virtual);
+
+    /**
+     * @return boolean
+     */
+    function isVirtual();
 }

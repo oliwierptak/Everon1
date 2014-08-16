@@ -761,7 +761,7 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildDomainRelation($name, $parent_name, Domain\Interfaces\Entity $Entity, $namespace='Everon\Domain')
+    public function buildDomainRelation($name, $parent_name, Domain\Interfaces\Entity $Entity, Domain\Interfaces\RelationMapper $RelationMapper, $namespace = 'Everon\Domain')
     {
         try {
             $class_name = $this->getFullClassName($namespace.'\\'.$parent_name, 'Relation\\'.$name);
@@ -778,7 +778,8 @@ abstract class Factory implements Interfaces\Factory
             /**
              * @var Domain\Interfaces\Relation $Relation
              */
-            $Relation = new $class_name($Entity);
+            $Relation = new $class_name($Entity, $RelationMapper);
+            
             if ($class_exists === false) {
                 $Relation->setName($name);
             }
@@ -794,17 +795,17 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildDomainRelationMapper($target_entity, $column, $mapped_by=null, $inversed_by=null, $namespace='Everon\Domain\Relation')
+    public function buildDomainRelationMapper($type, $domain_name, $column, $mapped_by = null, $inversed_by = null, $is_virtual=false, $namespace = 'Everon\Domain\Relation')
     {
         try {
             $class_name = $this->getFullClassName($namespace, 'Mapper');
             $this->classExists($class_name);
-            $RelationMapper = new $class_name($target_entity, $column, $mapped_by, $inversed_by);
+            $RelationMapper = new $class_name($type, $domain_name, $column, $mapped_by, $inversed_by, $is_virtual);
             $this->injectDependencies($class_name, $RelationMapper);
             return $RelationMapper;
         }
         catch (\Exception $e) {
-            throw new Exception\Factory('DomainRelationMapper initialization error', null, $e);
+            throw new Exception\Factory('DomainRelationMapper initialization error for: "%s@%s"', [$domain_name, $column], $e);
         }
     }
 

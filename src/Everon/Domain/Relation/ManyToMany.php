@@ -12,4 +12,15 @@ namespace Everon\Domain\Relation;
 abstract class ManyToMany extends \Everon\Domain\Relation implements \Everon\Domain\Interfaces\Relation
 {
     protected $type = self::MANY_TO_MANY;
+
+    protected function validate()
+    {
+        if ($this->getRelationMapper()->getMappedBy() === null) {
+            throw new \Everon\Domain\Exception('The attribute "mapped_by" is required for ManyToMany relations');
+        }
+
+        if ($this->getRelationMapper()->getInversedBy() === null) {
+            throw new \Everon\Domain\Exception('The attribute "inversed_by" is required for ManyToMany relations');
+        }
+    }
 }
