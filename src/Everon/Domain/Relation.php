@@ -123,7 +123,7 @@ abstract class Relation implements Interfaces\Relation
          */
         $ForeignKey = $Repository->getMapper()->getTable()->getForeignKeys()[$this->getRelationMapper()->getMappedBy()];
         $table = $ForeignKey->getForeignFullTableName();
-        $target_column = $this->getRelationMapper()->getColumn() ?: $ForeignKey->getForeignColumnName();
+        $target_column = $this->getRelationMapper()->getInversedBy() ?: $ForeignKey->getForeignColumnName();
 
         $value = $this->getOwnerEntity()->getValueByName($this->getRelationMapper()->getMappedBy());
         $Column = $Repository->getMapper()->getTable()->getColumnByName($this->getRelationMapper()->getMappedBy()); //todo DataMapper leak
@@ -294,33 +294,35 @@ abstract class Relation implements Interfaces\Relation
      */
     public function getData()
     {
-        $this->setupRelationParameters();
-
-        if ($this->loaded === false) {
-            $Loader = function () {
-                if ($this->sql !== null) {
-                    $sql = $this->sql.$this->getCriteria();
-                    $data = $this->getDataMapper()->getSchema()->getPdoAdapterByName('read')->execute($sql, $this->getCriteria()->getWhere())->fetchAll();
-                } 
-                else {
-                    $data = $this->getDataMapper()->fetchAll($this->getCriteria());
-                }
-
-                if ($data === false || empty($data)) {
-                    return [];
-                }
-
-                $entities = [];
-                foreach ($data as $item) {
-                    $entities[] = $this->getRepository()->buildFromArray($item, $this->getEntityRelationCriteria());
-                }
-
-                return $entities;
-            };
-
-            $this->Data = new Helper\LazyCollection($Loader);
-            $this->loaded = true;
+        if ($this->loaded) {
+            return $this->Data;
         }
+        
+        $this->setupRelationParameters();
+        
+        $Loader = function () {
+            if ($this->sql !== null) {
+                $sql = $this->sql.$this->getCriteria();
+                $data = $this->getDataMapper()->getSchema()->getPdoAdapterByName('read')->execute($sql, $this->getCriteria()->getWhere())->fetchAll();
+            } 
+            else {
+                $data = $this->getDataMapper()->fetchAll($this->getCriteria());
+            }
+
+            if ($data === false || empty($data)) {
+                return [];
+            }
+
+            $entities = [];
+            foreach ($data as $item) {
+                $entities[] = $this->getRepository()->buildFromArray($item, $this->getEntityRelationCriteria());
+            }
+
+            return $entities;
+        };
+
+        $this->Data = new Helper\LazyCollection($Loader);
+        $this->loaded = true;
 
         return $this->Data;
     }

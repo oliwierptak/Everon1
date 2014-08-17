@@ -15,10 +15,6 @@ class ManyToOne extends \Everon\Domain\Relation implements \Everon\Domain\Interf
 
     protected function validate()
     {
-        if ($this->getRelationMapper()->getColumn() === null) {
-            throw new \Everon\Domain\Exception('The attribute "column" is required for ManyToOne relations');
-        }
-        
         if ($this->getRelationMapper()->getMappedBy() !== null) {
             throw new \Everon\Domain\Exception('The attribute "mapped_by" is not allowed for ManyToOne relations');
         }
@@ -44,7 +40,7 @@ class ManyToOne extends \Everon\Domain\Relation implements \Everon\Domain\Interf
          */
         $ForeignKey = $this->getDataMapper()->getTable()->getForeignKeys()[$this->getRelationMapper()->getInversedBy()];
         $table = $ForeignKey->getFullTableName();
-        $owner_column = $this->getRelationMapper()->getColumn();
+        $owner_column = $this->getRelationMapper()->getMappedBy();
 
         $value = $this->getOwnerEntity()->getValueByName($owner_column);
         $Column = $Repository->getMapper()->getSchema()->getTableByName($inversed_table)->getColumnByName($this->getRelationMapper()->getInversedBy()); //todo DataMapper leak
