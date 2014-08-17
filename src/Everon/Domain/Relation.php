@@ -136,6 +136,13 @@ abstract class Relation implements Interfaces\Relation
             't.'.$target_column => $this->getDataMapper()->getSchema()->getTableByName($table)->validateId($value)
         ]);
     }
+    
+    protected function resetRelationCriteriaParameters()
+    {
+        $this->setCriteria(new \Everon\DataMapper\Criteria());
+        $this->sql = null;
+        $this->sql_count = null;
+    }
 
     public function reset()
     {

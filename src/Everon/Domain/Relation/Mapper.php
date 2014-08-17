@@ -40,9 +40,14 @@ class Mapper implements Interfaces\RelationMapper
     protected $inversed_by = null;
 
     /**
-     * @var boolean
+     * @var bool
      */
     protected $is_virtual = false;
+
+    /**
+     * @var bool
+     */
+    protected $is_owning_side = null;
     
     
     public function __construct($type, $domain_name, $column=null, $mapped_by=null, $inversed_by=null, $is_virtual=false)
@@ -149,6 +154,43 @@ class Mapper implements Interfaces\RelationMapper
     public function isVirtual()
     {
         return $this->is_virtual;
+    }
+
+    /**
+     * @param boolean $is_owning_side
+     */
+    public function setIsOwningSide($is_owning_side)
+    {
+        $this->is_owning_side = $is_owning_side;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isOwningSide()
+    {
+        if ($this->is_owning_side === null) {
+            switch ($this->getType()) {
+                case \Everon\Domain\Relation::ONE_TO_ONE:
+                    $this->is_owning_side = $this->getMappedBy() !== null && $this->getInversedBy() === null;
+                    break;
+                
+                case \Everon\Domain\Relation::ONE_TO_MANY:
+                    $this->is_owning_side = false;
+                    break;
+
+                case \Everon\Domain\Relation::MANY_TO_ONE:
+                    $this->is_owning_side = true;
+                    break;
+
+                case \Everon\Domain\Relation::MANY_TO_MANY:
+                    $this->is_owning_side = false;
+                    break;
+            }
+             
+        }
+        
+        return $this->is_owning_side;
     }
     
 }

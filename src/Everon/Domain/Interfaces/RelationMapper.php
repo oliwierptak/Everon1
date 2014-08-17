@@ -70,4 +70,14 @@ interface RelationMapper
      * @return boolean
      */
     function isVirtual();
+
+    /**
+     * @param boolean $is_owning_side
+     */
+    function setIsOwningSide($is_owning_side);
+
+    /**
+     * @return boolean
+     */
+    function isOwningSide();
 }
