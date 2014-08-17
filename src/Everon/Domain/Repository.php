@@ -123,34 +123,8 @@ abstract class Repository implements Interfaces\Repository
                 $relation_data['virtual']
             );
 
-            $Relation = $this->getFactory()->buildDomainRelation($relation_domain_name, $this->getName(), $Entity, $RelationMapper);
-            
-            if ($RelationMapper->isVirtual() === false) {//virtual relations handle their data on their own
-                if (array_key_exists($RelationMapper->getMappedBy(), $this->getMapper()->getTable()->getForeignKeys()) === false) {
-                    throw new Exception\Domain('Invalid relation mapping for: "%s@%s', [$relation_domain_name, $RelationMapper->getMappedBy()]);
-                }
-
-                /**
-                 * @var \Everon\DataMapper\Interfaces\Schema\ForeignKey $ForeignKey
-                 */
-                $ForeignKey = $this->getMapper()->getTable()->getForeignKeys()[$RelationMapper->getMappedBy()];
-                $table = $ForeignKey->getForeignFullTableName();
-                $target_column = $RelationMapper->getColumn() ?: $ForeignKey->getForeignColumnName();
-                
-                $value = $Entity->getValueByName($RelationMapper->getMappedBy());
-                $Column = $this->getMapper()->getTable()->getColumnByName($RelationMapper->getMappedBy());
-                if ($Column->isNullable() && $value === null) {
-                    continue;
-                }
-
-                $RelationCriteria = clone $Criteria;
-                $RelationCriteria->where([
-                    't.'.$target_column => $this->getMapper()->getSchema()->getTableByName($table)->validateId($value)
-                ]);
-
-                $Relation->setCriteria($RelationCriteria);
-            }
-            
+            $Relation = $this->getFactory()->buildDomainRelation($relation_domain_name, $Entity, $RelationMapper);
+            $Relation->setCriteria(clone $Criteria);
             $Relation->setEntityRelationCriteria(clone $Criteria);
             $RelationCollection->set($relation_domain_name, $Relation);
         }
@@ -158,7 +132,7 @@ abstract class Repository implements Interfaces\Repository
         $Entity->setRelationCollection($RelationCollection);
     }
 
-    protected function setupRelations(Interfaces\Entity $Entity)
+    protected function setupRelations2222(Interfaces\Entity $Entity)
     {
         /**
          * @var \Everon\DataMapper\Interfaces\Schema\ForeignKey $ForeignKey

@@ -73,7 +73,7 @@ class Schema implements Interfaces\Schema
         $castToEmptyArrayWhenNull = function($name, $item) {    
             return isset($item[$name]) ? $item[$name] : [];
         };
-        
+
         foreach ($table_list as $name => $table_data) {
             $this->tables[$name] = $this->getFactory()->buildSchemaTableAndDependencies(
                 $this->getDatabaseTimezone(),
@@ -82,7 +82,7 @@ class Schema implements Interfaces\Schema
                 $this->getAdapterName(),
                 $castToEmptyArrayWhenNull($name, $column_list), 
                 $castToEmptyArrayWhenNull($name, $primary_key_list), 
-                $castToEmptyArrayWhenNull($name, $unique_key_list), 
+                $castToEmptyArrayWhenNull($name, $unique_key_list),
                 $castToEmptyArrayWhenNull($name, $foreign_key_list),
                 $this->getDomainMapper()
             );

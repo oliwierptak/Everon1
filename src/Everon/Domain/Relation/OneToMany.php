@@ -9,7 +9,7 @@
  */
 namespace Everon\Domain\Relation;
 
-abstract class OneToMany extends \Everon\Domain\Relation implements \Everon\Domain\Interfaces\Relation
+class OneToMany extends \Everon\Domain\Relation implements \Everon\Domain\Interfaces\Relation
 {
     protected $type = self::ONE_TO_MANY;
 

@@ -9,7 +9,7 @@
  */
 namespace Everon\Domain\Relation;
 
-abstract class ManyToMany extends \Everon\Domain\Relation implements \Everon\Domain\Interfaces\Relation
+class ManyToMany extends \Everon\Domain\Relation implements \Everon\Domain\Interfaces\Relation
 {
     protected $type = self::MANY_TO_MANY;
 

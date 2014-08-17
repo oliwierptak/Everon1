@@ -273,13 +273,13 @@ interface Factory
 
     /**
      * @param $name
-     * @param $parent_name
      * @param Domain\Interfaces\Entity $Entity
      * @param \Everon\Domain\Interfaces\RelationMapper $RelationMapper
      * @param string $namespace
+     * @internal param $parent_name
      * @return Domain\Interfaces\Relation
      */
-    function buildDomainRelation($name, $parent_name, Domain\Interfaces\Entity $Entity, Domain\Interfaces\RelationMapper $RelationMapper, $namespace = 'Everon\Domain');
+    function buildDomainRelation($name, Domain\Interfaces\Entity $Entity, Domain\Interfaces\RelationMapper $RelationMapper, $namespace = 'Everon\Domain');
 
     /**
      * @param $type

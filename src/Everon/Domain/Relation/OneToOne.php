@@ -9,7 +9,7 @@
  */
 namespace Everon\Domain\Relation;
 
-abstract class OneToOne extends \Everon\Domain\Relation implements \Everon\Domain\Interfaces\Relation
+class OneToOne extends \Everon\Domain\Relation implements \Everon\Domain\Interfaces\Relation
 {
     protected $type = self::ONE_TO_ONE;
 

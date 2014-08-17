@@ -13,7 +13,7 @@ use Everon\DataMapper;
 use Everon\Domain;
 use Everon\Helper;
 
-class Relation implements Interfaces\Relation
+abstract class Relation implements Interfaces\Relation
 {
     use Domain\Dependency\Injection\DomainManager;
     use Helper\String\LastTokenToName;
@@ -49,7 +49,7 @@ class Relation implements Interfaces\Relation
     /**
      * @var Domain\Interfaces\Repository
      */
-    protected $Entity = null;
+    protected $OwnerEntity = null;
 
     /**
      * @var \Everon\Interfaces\Collection
@@ -67,6 +67,11 @@ class Relation implements Interfaces\Relation
     protected $name = null;
 
     /**
+     * @var string
+     */
+    protected $owner_name = null;
+
+    /**
      * @var bool
      */
     protected $loaded = false;
@@ -78,12 +83,12 @@ class Relation implements Interfaces\Relation
 
     
     /**
-     * @param Interfaces\Entity $Entity
+     * @param Interfaces\Entity $OwnerEntity
      * @param Interfaces\RelationMapper $RelationMapper
      */
-    public function __construct(Domain\Interfaces\Entity $Entity, Domain\Interfaces\RelationMapper $RelationMapper)
+    public function __construct(Domain\Interfaces\Entity $OwnerEntity, Domain\Interfaces\RelationMapper $RelationMapper)
     {
-        $this->Entity = $Entity;
+        $this->OwnerEntity = $OwnerEntity;
         $this->name = $this->stringLastTokenToName(get_class($this));
         $this->Data = new Helper\Collection([]);
         $this->RelationMapper = $RelationMapper;
@@ -91,14 +96,45 @@ class Relation implements Interfaces\Relation
     
     protected function setupRelationParameters()
     {
-        if ($this->getRelationMapper()->isVirtual() === false) {
-            $this->validate();
+        if ($this->getRelationMapper()->isVirtual()) { //virtual relations handle their data on their own
+            return;
         }
+
+        $this->validate();
+        $this->setupRelation();
     }
     
     protected function validate()
     {
         
+    }
+    
+    protected function setupRelation()
+    {
+        $domain_name = $this->getOwnerEntity()->getDomainName();
+        $Repository = $this->getDomainManager()->getRepositoryByName($domain_name);
+        
+        if (array_key_exists($this->getRelationMapper()->getMappedBy(), $Repository->getMapper()->getTable()->getForeignKeys()) === false) {
+            throw new \Everon\Exception\Domain('Invalid relation "mapped_by" for: "%s@%s', [$this->getName(), $this->getRelationMapper()->getMappedBy()]);
+        }
+
+        /**
+         * @var \Everon\DataMapper\Interfaces\Schema\ForeignKey $ForeignKey
+         */
+        $ForeignKey = $Repository->getMapper()->getTable()->getForeignKeys()[$this->getRelationMapper()->getMappedBy()];
+        $table = $ForeignKey->getForeignFullTableName();
+        $target_column = $this->getRelationMapper()->getColumn() ?: $ForeignKey->getForeignColumnName();
+
+        $value = $this->getOwnerEntity()->getValueByName($this->getRelationMapper()->getMappedBy());
+        $Column = $Repository->getMapper()->getTable()->getColumnByName($this->getRelationMapper()->getMappedBy()); //todo DataMapper leak
+        if ($Column->isNullable() && $value === null) {
+            $this->loaded = true; //xxx the value is null stop loading
+            return;
+        }
+
+        $this->getCriteria()->where([
+            't.'.$target_column => $this->getDataMapper()->getSchema()->getTableByName($table)->validateId($value)
+        ]);
     }
 
     public function reset()
@@ -117,17 +153,17 @@ class Relation implements Interfaces\Relation
     /**
      * @return Domain\Interfaces\Entity
      */
-    public function getEntity()
+    public function getOwnerEntity()
     {
-        return $this->Entity;
+        return $this->OwnerEntity;
     }
 
     /**
      * @param Domain\Interfaces\Entity $Entity
      */
-    public function setEntity(Domain\Interfaces\Entity $Entity)
+    public function setOwnerEntity(Domain\Interfaces\Entity $Entity)
     {
-        $this->Entity = $Entity;
+        $this->OwnerEntity = $Entity;
         $this->reset();
     }
 

@@ -760,11 +760,17 @@ abstract class Factory implements Interfaces\Factory
 
     /**
      * @inheritdoc
+     * @param $name
+     * @param Domain\Interfaces\Entity $Entity
+     * @param Domain\Interfaces\RelationMapper $RelationMapper
+     * @param string $namespace
+     * @throws Exception\Factory
+     * @return \Everon\Domain\Interfaces\Relation
      */
-    public function buildDomainRelation($name, $parent_name, Domain\Interfaces\Entity $Entity, Domain\Interfaces\RelationMapper $RelationMapper, $namespace = 'Everon\Domain')
+    public function buildDomainRelation($name, Domain\Interfaces\Entity $Entity, Domain\Interfaces\RelationMapper $RelationMapper, $namespace = 'Everon\Domain')
     {
         try {
-            $class_name = $this->getFullClassName($namespace.'\\'.$parent_name, 'Relation\\'.$name);
+            $class_name = $this->getFullClassName($namespace.'\\'.$Entity->getDomainName(), 'Relation\\'.$name);
             
             try {
                 $this->classExists($class_name);
@@ -772,7 +778,7 @@ abstract class Factory implements Interfaces\Factory
             }
             catch (Exception\Factory $e) {
                 $class_exists = false;
-                $class_name = $this->getFullClassName('Everon\Domain', 'Relation'); //fallback to default
+                $class_name = $this->getFullClassName('Everon\Domain\Relation', $RelationMapper->getType()); //fallback to default
             }
 
             /**
@@ -892,14 +898,14 @@ abstract class Factory implements Interfaces\Factory
             }
             
             $foreign_key_list = [];
-            foreach ($foreign_keys as $foreign_key_data) {
+            foreach ($foreign_keys as $column_name => $foreign_key_data) {
                 /**
                  * @var \Everon\DataMapper\Interfaces\Schema\ForeignKey $ForeignKey
                  */
                 $class_name = $this->getFullClassName($namespace, 'Schema\ForeignKey');
                 $this->classExists($class_name);
                 $ForeignKey = new $class_name($foreign_key_data);
-                $foreign_key_list[$ForeignKey->getName()] = new $class_name($foreign_key_data);
+                $foreign_key_list[$ForeignKey->getColumnName()] = new $class_name($foreign_key_data);
             }
 
             $column_list = [];

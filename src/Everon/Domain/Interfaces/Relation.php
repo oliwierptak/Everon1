@@ -17,12 +17,12 @@ interface Relation extends \Everon\Interfaces\Arrayable
     /**
      * @return Domain\Interfaces\Entity
      */
-     function getEntity();
+     function getOwnerEntity();
 
     /**
      * @param Domain\Interfaces\Entity $Entity
      */
-     function setEntity(Domain\Interfaces\Entity $Entity);
+     function setOwnerEntity(Domain\Interfaces\Entity $Entity);
 
     /**
      * @return DataMapper\Interfaces\Criteria
