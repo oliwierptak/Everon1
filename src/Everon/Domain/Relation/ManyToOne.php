@@ -15,12 +15,12 @@ class ManyToOne extends \Everon\Domain\Relation implements \Everon\Domain\Interf
 
     protected function validate()
     {
-        if ($this->getRelationMapper()->getMappedBy() !== null) {
-            throw new \Everon\Domain\Exception('The attribute "mapped_by" is not allowed for ManyToOne relations');
+        if ($this->getRelationMapper()->getMappedBy() === null) {
+            throw new \Everon\Domain\Exception('The attribute "mapped_by" is required for ManyToMany relations');
         }
 
         if ($this->getRelationMapper()->getInversedBy() === null) {
-            throw new \Everon\Domain\Exception('The attribute "inversed_by" is required for ManyToOne relations');
+            throw new \Everon\Domain\Exception('The attribute "inversed_by" is required for ManyToMany relations');
         }
     }
 
