@@ -132,28 +132,6 @@ abstract class Repository implements Interfaces\Repository
         $Entity->setRelationCollection($RelationCollection);
     }
 
-    protected function setupRelations2222(Interfaces\Entity $Entity)
-    {
-        /**
-         * @var \Everon\DataMapper\Interfaces\Schema\ForeignKey $ForeignKey
-         */
-        $domain_name = $this->getDomainManager()->getDataMapperManager()->getDomainMapper()->getDomainName($this->getMapper()->getTable()->getOriginalName());
-        //$foreign_keys = $Repository->getMapper()->getTable()->getForeignKeyByTableName($Repository->getMapper()->getTable()->getOriginalName());
-        $foreign_keys = $this->getMapper()->getTable()->getForeignKeys();
-        dd($domain_name, $foreign_keys, $this->getMapper()->getTable()->getOriginalName(), $this->getMapper()->getTable()->getName());
-        foreach ($foreign_keys as $column_name => $ForeignKey) {
-            $column = $ForeignKey->getColumnName();
-            $table = $ForeignKey->getForeignFullTableName();
-            $id_field = $ForeignKey->getForeignColumnName();
-
-            $this->getCriteria()->where([
-                't.'.$column => $this->getDataMapper()->getSchema()->getTableByName($table)->validateId($Entity->getValueByName($id_field))
-            ]);
-        }
-
-        dd($this->getCriteria()->getWhere());
-    }
-
     /**
      * @inheritdoc
      */
