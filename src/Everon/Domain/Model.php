@@ -95,14 +95,13 @@ abstract class Model implements Interfaces\Model
     }
 
     /**
-     * @param array $data
+     * @param Interfaces\Entity $Entity
      * @param null $user_id
      * @return Interfaces\Entity
      */
-    protected function save(array $data, $user_id=null)
+    protected function save(Domain\Interfaces\Entity $Entity, $user_id=null)
     {
-        $this->validateEntityData($data);
-        $Entity = $this->getRepository()->buildFromArray($data);
+        $this->getRepository()->validateEntity($Entity);
         $this->beforeSave($Entity, $user_id);
         $this->getRepository()->persist($Entity, $user_id);
         return $Entity;
@@ -120,10 +119,7 @@ abstract class Model implements Interfaces\Model
     }
 
     /**
-     * @param Interfaces\Entity $Entity
-     * @param $relation_name
-     * @param array $data
-     * @param null $user_id
+     * @inheritdoc
      */
     public function addCollection(Domain\Interfaces\Entity $Entity, $relation_name, array $data, $user_id=null)
     {
@@ -134,13 +130,42 @@ abstract class Model implements Interfaces\Model
         
         foreach ($data as $item_data) {
             $EntityToAdd = $this->getDomainManager()->getModelByName($relation_name)->create($item_data);
+            if ($EntityToAdd->isNew() === false) {
+                throw new Domain\Exception('Only new entities can be added. Entity: "%s" is not marked as "NEW"', $EntityToAdd->getDomainName());
+            }
+            
             $Relation = $EntityToAdd->getRelationByName($Entity->getDomainName());
             if ($Relation->getRelationMapper()->isOwningSide() === false) {
                 //make sure the referenced column in child entity is set to parent entity's assigned values, eg. TicketConversation.ticket_id = Ticket.id
-                $EntityToAdd->getRelationByName($Relation->getName())->setOne($Entity); //update relation
                 $EntityToAdd->setValueByName($Relation->getRelationMapper()->getMappedBy(), $Entity->getValueByName($Relation->getRelationMapper()->getInversedBy()));
             }
             $this->getDomainManager()->getModelByName($relation_name)->{$method}($EntityToAdd, $user_id);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function saveCollection(Domain\Interfaces\Entity $Entity, $relation_name, array $data, $user_id=null)
+    {
+        /**
+         * @var Domain\Interfaces\Entity $EntityToSave
+         */
+        $method = "save{$relation_name}";
+
+        foreach ($data as $item_data) {
+            $EntityToSave = $this->getDomainManager()->getModelByName($relation_name)->create($item_data);
+
+            if ($EntityToSave->isPersisted() === false) {
+                throw new Domain\Exception('Only existing entities can be saved. Entity: "%s" is not marked as "PERSISTED"', $EntityToSave->getDomainName());
+            }
+            
+            $Relation = $EntityToSave->getRelationByName($Entity->getDomainName());
+            if ($Relation->getRelationMapper()->isOwningSide() === false) {
+                //make sure the referenced column in child entity is set to parent entity's assigned values, eg. TicketConversation.ticket_id = Ticket.id
+                $EntityToSave->setValueByName($Relation->getRelationMapper()->getMappedBy(), $Entity->getValueByName($Relation->getRelationMapper()->getInversedBy()));
+            }
+            $this->getDomainManager()->getModelByName($relation_name)->{$method}($EntityToSave, $user_id);
         }
     }
 }   

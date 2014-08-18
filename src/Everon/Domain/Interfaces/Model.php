@@ -18,6 +18,14 @@ interface Model
      * @param null $user_id
      */
     function addCollection(Entity $Entity, $relation_name, array $data, $user_id=null);
+
+    /**
+     * @param Entity $Entity
+     * @param $relation_name
+     * @param array $data
+     * @param null $user_id
+     */
+    function saveCollection(Entity $Entity, $relation_name, array $data, $user_id=null);
         
     /**
      * @param array $data
