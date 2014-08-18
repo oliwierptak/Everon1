@@ -155,9 +155,13 @@ abstract class Model implements Interfaces\Model
 
         foreach ($data as $item_data) {
             $EntityToSave = $this->getDomainManager()->getModelByName($relation_name)->create($item_data);
-
             if ($EntityToSave->isPersisted() === false) {
                 throw new Domain\Exception('Only existing entities can be saved. Entity: "%s" is not marked as "PERSISTED"', $EntityToSave->getDomainName());
+            }
+            
+            $EntityToCheck = $this->getDomainManager()->getRepositoryByName($relation_name)->getEntityById($EntityToSave->getId());
+            if ($EntityToCheck === null) {
+                throw new Domain\Exception('Entity: "%s" with id: "%s" does not exist', [$EntityToSave->getDomainName(), $EntityToSave->getId()]);
             }
             
             $Relation = $EntityToSave->getRelationByName($Entity->getDomainName());
