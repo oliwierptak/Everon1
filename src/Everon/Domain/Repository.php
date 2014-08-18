@@ -296,6 +296,10 @@ abstract class Repository implements Interfaces\Repository
      */
     public function remove(Interfaces\Entity $Entity, $user_id=null)
     {
+        if ($Entity->isNew() || $Entity->isDeleted()) {
+            throw new \Everon\Exception\Domain('Invalid entity state when attempting to delete entity: "%s@%s"', [$Entity->getDomainName(), $Entity->getId()]);
+        }
+        
         $this->getMapper()->delete($Entity->getId(), $user_id);
         $Entity->delete();
     }

@@ -195,6 +195,29 @@ class Handler implements Interfaces\ResourceHandler
     /**
      * @inheritdoc
      */
+    public function deleteCollection($version, $resource_name, $resource_id, $collection_name, array $data, $user_id)
+    {
+        try {
+            $domain_name = $this->getDomainNameFromMapping($resource_name);
+            $relation_domain_name = $this->getDomainNameFromMapping($collection_name);
+            $Repository = $this->getDomainManager()->getRepositoryByName($domain_name);
+            $id = $this->generateEntityId($resource_id, $domain_name);
+            $Entity = $Repository->getEntityById($id);
+            $this->assertIsNull($Entity, sprintf('Domain Entity: "%s" with id: "%s" not found', $domain_name, $resource_id), 'Domain');
+            $Resource =  $this->buildResourceFromEntity($Entity, $version, $resource_name);
+
+            $Model = $this->getDomainManager()->getModelByName($domain_name);
+            $Model->deleteCollection($Resource->getDomainEntity(), $relation_domain_name, $data, $user_id);
+            return $Resource;
+        }
+        catch (EveronException\Domain $e) {
+            throw new Exception\Resource($e->getMessage());
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function getResource($version, $resource_name, $resource_id, Interfaces\ResourceNavigator $Navigator)
     {
         try {
