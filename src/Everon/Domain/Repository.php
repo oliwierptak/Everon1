@@ -132,6 +132,36 @@ abstract class Repository implements Interfaces\Repository
         $Entity->setRelationCollection($RelationCollection);
     }
 
+    protected function resolveRelationsIntoData(Interfaces\Entity $Entity)
+    {
+        /**
+         * @var \Everon\Domain\Interfaces\Relation $Relation
+         */
+        foreach ($Entity->getRelationCollection() as $domain_name => $Relation) {
+            if ($Relation->getRelationMapper()->isOwningSide() === false) {
+                $value = $Entity->getValueByName($Relation->getRelationMapper()->getMappedBy());
+                $Column = $this->getMapper()->getTable()->getColumnByName($Relation->getRelationMapper()->getMappedBy());
+                $Column->validateColumnValue($value);
+                if ($Column->isNullable() && $value === null) {
+                    $Entity->getRelationByName($Relation->getName())->setOne(null); //update relation
+                    $Entity->setValueByName($Relation->getRelationMapper()->getMappedBy(), null);
+                    continue;
+                }
+                
+                $ChildEntity = $this->getDomainManager()->getRepositoryByName($Relation->getName())->getEntityByPropertyValue([
+                    $Relation->getRelationMapper()->getInversedBy() => $value
+                ]);
+                
+                if ($ChildEntity === null) {
+                    throw new Exception\Domain('RelationEntity: "%s" could not be resolved for "%s@%s" with value "%s"', [$Entity->getDomainName(), $Relation->getName(), $Relation->getRelationMapper()->getInversedBy(), $value]);
+                }
+                
+                $Entity->getRelationByName($Relation->getName())->setOne($ChildEntity); //update relation
+                $Entity->setValueByName($Relation->getRelationMapper()->getMappedBy(), $ChildEntity->getValueByName($Relation->getRelationMapper()->getInversedBy())); //update fields represented in relations eg. user_id -> User->getId()
+            }
+        }
+    }
+
     /**
      * @inheritdoc
      */
@@ -176,6 +206,7 @@ abstract class Repository implements Interfaces\Repository
      */
     public function validateEntity(Interfaces\Entity $Entity)
     {
+        $this->resolveRelationsIntoData($Entity);
         $data = $Entity->toArray();
         return $this->getMapper()->getTable()->prepareDataForSql($data, $Entity->isNew() === false);
     }
@@ -196,6 +227,9 @@ abstract class Repository implements Interfaces\Repository
      */
     public function getEntityByPropertyValue(array $property_criteria, Criteria $RelationCriteria=null)
     {
+        if (empty($property_criteria)) {
+            return null;
+        }
         $Criteria = (new \Everon\DataMapper\Criteria())->where($property_criteria);
         return $this->getOneByCriteria($Criteria, $RelationCriteria);
     }

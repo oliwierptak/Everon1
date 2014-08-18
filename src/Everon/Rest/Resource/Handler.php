@@ -158,10 +158,11 @@ class Handler implements Interfaces\ResourceHandler
             $id = $this->generateEntityId($resource_id, $domain_name);
             $Entity = $Repository->getEntityById($id);
             $this->assertIsNull($Entity, sprintf('Domain Entity: "%s" with id: "%s" not found', $domain_name, $resource_id), 'Domain');
-            $Model = $this->getDomainManager()->getModelByName($domain_name);
-            //$Entity = $Model->{'addCollection'.$domain_name}($data, $user_id);
             $Resource =  $this->buildResourceFromEntity($Entity, $version, $resource_name);
+            
+            $Model = $this->getDomainManager()->getModelByName($domain_name);
             $Model->addCollection($Resource->getDomainEntity(), $relation_domain_name, $data, $user_id);
+            return $Resource;
         }
         catch (EveronException\Domain $e) {
             throw new Exception\Resource($e->getMessage());

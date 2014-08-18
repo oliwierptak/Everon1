@@ -89,16 +89,16 @@ class Router implements Interfaces\Router
 
         $RouteItem->compileUrl($query);
 
-        $Request->setQueryCollection(
-            array_merge($Request->getQueryCollection()->toArray(), $query)
+        $Request->setQueryCollection($query
+            //array_merge($Request->getQueryCollection()->toArray(), $query)
         );
 
-        $Request->setGetCollection(
-            array_merge($Request->getGetCollection()->toArray(), $get)
+        $Request->setGetCollection($get
+            //array_merge($Request->getGetCollection()->toArray(), $get)
         );
 
-        $Request->setPostCollection(
-            array_merge($Request->getPostCollection()->toArray(), $post)
+        $Request->setPostCollection($post
+            //array_merge($Request->getPostCollection()->toArray(), $post)
         );
     }
     
