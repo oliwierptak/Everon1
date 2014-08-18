@@ -278,8 +278,11 @@ class Filter implements Interfaces\Filter
     /**
      * @param array $item
      */
-    protected function assertFilterItem(array $item=[])
+    protected function assertFilterItem(array &$item=[])
     {
+        if (isset($item['operator']) === false) {
+            $item['operator'] = '=';
+        }
         $this->assertArrayKeyValues($item, ['column', 'operator', 'value']);
     }
 
