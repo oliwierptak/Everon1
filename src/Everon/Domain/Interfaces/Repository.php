@@ -20,11 +20,11 @@ interface Repository
      * @return array
      */
     function validateEntity(Entity $Entity);
-        
+
     /**
      * @param Entity $Entity
      * @param Criteria $Criteria
-     * @return void
+     * @throws \Everon\Exception\Domain
      */
     function buildEntityRelations(Entity $Entity, Criteria $Criteria);
 

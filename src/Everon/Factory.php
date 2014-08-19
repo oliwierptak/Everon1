@@ -740,24 +740,6 @@ abstract class Factory implements Interfaces\Factory
             throw new Exception\Factory('DomainEntity: "%s" initialization error', $class_name, $e);
         }
     }
-
-    /**
-     * @inheritdoc
-     */
-    public function buildDomainRepository($name, Interfaces\DataMapper $DataMapper, $namespace='Everon\Domain')
-    {
-        try {
-            $class_name = $this->getFullClassName($namespace, $name.'\Repository');
-            $this->classExists($class_name);
-            $Repository = new $class_name($name, $DataMapper);
-            $this->injectDependencies($class_name, $Repository);
-            return $Repository;
-        }
-        catch (\Exception $e) {
-            throw new Exception\Factory('DomainRepository: "%s" initialization error', $name, $e);
-        }
-    }
-
     /**
      * @inheritdoc
      */
@@ -812,18 +794,75 @@ abstract class Factory implements Interfaces\Factory
 
     /**
      * @inheritdoc
+     * @param $name
+     * @param Domain\Interfaces\Entity $Entity
+     * @param Domain\Interfaces\RelationMapper $RelationMapper
+     * @param string $namespace
+     * @throws Exception\Factory
+     * @return \Everon\Domain\Interfaces\Relation
      */
-    public function buildDomainRelation($name, $parent_name, Domain\Interfaces\Entity $Entity, $namespace='Everon\Domain')
+    public function buildDomainRelation($name, Domain\Interfaces\Entity $Entity, Domain\Interfaces\RelationMapper $RelationMapper, $namespace = 'Everon\Domain')
     {
         try {
-            $class_name = $this->getFullClassName($namespace.'\\'.$parent_name, 'Relation\\'.$name);
-            $this->classExists($class_name);
-            $Relation = new $class_name($Entity);
+            $class_name = $this->getFullClassName($namespace.'\\'.$Entity->getDomainName(), 'Relation\\'.$name);
+            
+            try {
+                $this->classExists($class_name);
+                $class_exists = true;
+            }
+            catch (Exception\Factory $e) {
+                $class_exists = false;
+                $class_name = $this->getFullClassName('Everon\Domain\Relation', $RelationMapper->getType()); //fallback to default
+            }
+
+            /**
+             * @var Domain\Interfaces\Relation $Relation
+             */
+            $Relation = new $class_name($Entity, $RelationMapper);
+            
+            if ($class_exists === false) {
+                $Relation->setName($name);
+            }
+
             $this->injectDependencies($class_name, $Relation);
             return $Relation;
         }
         catch (\Exception $e) {
             throw new Exception\Factory('DomainRelation: "%s" initialization error', $name, $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildDomainRelationMapper($type, $domain_name, $column, $mapped_by = null, $inversed_by = null, $is_virtual=false, $namespace = 'Everon\Domain\Relation')
+    {
+        try {
+            $class_name = $this->getFullClassName($namespace, 'Mapper');
+            $this->classExists($class_name);
+            $RelationMapper = new $class_name($type, $domain_name, $column, $mapped_by, $inversed_by, $is_virtual);
+            $this->injectDependencies($class_name, $RelationMapper);
+            return $RelationMapper;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('DomainRelationMapper initialization error for: "%s@%s"', [$domain_name, $column], $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildDomainRepository($name, Interfaces\DataMapper $DataMapper, $namespace='Everon\Domain')
+    {
+        try {
+            $class_name = $this->getFullClassName($namespace, $name.'\Repository');
+            $this->classExists($class_name);
+            $Repository = new $class_name($name, $DataMapper);
+            $this->injectDependencies($class_name, $Repository);
+            return $Repository;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('DomainRepository: "%s" initialization error', $name, $e);
         }
     }
 
@@ -893,14 +932,14 @@ abstract class Factory implements Interfaces\Factory
             }
             
             $foreign_key_list = [];
-            foreach ($foreign_keys as $foreign_key_data) {
+            foreach ($foreign_keys as $column_name => $foreign_key_data) {
                 /**
                  * @var \Everon\DataMapper\Interfaces\Schema\ForeignKey $ForeignKey
                  */
                 $class_name = $this->getFullClassName($namespace, 'Schema\ForeignKey');
                 $this->classExists($class_name);
                 $ForeignKey = new $class_name($foreign_key_data);
-                $foreign_key_list[$ForeignKey->getName()] = new $class_name($foreign_key_data);
+                $foreign_key_list[$ForeignKey->getColumnName()] = new $class_name($foreign_key_data);
             }
 
             $column_list = [];

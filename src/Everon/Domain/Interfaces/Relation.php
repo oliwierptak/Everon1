@@ -17,12 +17,12 @@ interface Relation extends \Everon\Interfaces\Arrayable
     /**
      * @return Domain\Interfaces\Entity
      */
-     function getEntity();
+     function getOwnerEntity();
 
     /**
      * @param Domain\Interfaces\Entity $Entity
      */
-     function setEntity(Domain\Interfaces\Entity $Entity);
+     function setOwnerEntity(Domain\Interfaces\Entity $Entity);
 
     /**
      * @return DataMapper\Interfaces\Criteria
@@ -37,12 +37,12 @@ interface Relation extends \Everon\Interfaces\Arrayable
     /**
      * @return DataMapper\Interfaces\Criteria
      */
-     function getRelationCriteria();
+     function getEntityRelationCriteria();
 
     /**
      * @param DataMapper\Interfaces\Criteria $RelationCriteria
      */
-     function setRelationCriteria(DataMapper\Interfaces\Criteria $RelationCriteria);
+     function setEntityRelationCriteria(DataMapper\Interfaces\Criteria $RelationCriteria);
 
     /**
      * @return \Everon\Interfaces\DataMapper
@@ -78,6 +78,16 @@ interface Relation extends \Everon\Interfaces\Arrayable
      * @param string $type
      */
     function setType($type);
+
+    /**
+     * @param \Everon\Domain\Interfaces\RelationMapper $RelationMapper
+     */
+    function setRelationMapper(Domain\Interfaces\RelationMapper $RelationMapper);
+        
+    /**
+     * @return \Everon\Domain\Interfaces\RelationMapper
+     */
+    function getRelationMapper();
 
     /**
      * @param \Everon\Interfaces\Collection $Collection

@@ -57,7 +57,7 @@ class Mapper implements Interfaces\Mapper
          */
         $data = $this->MappingCollection->toArray();
         foreach ($data as $domain_name => $Item) {
-            if (strcasecmp($data_mapper_name, $Item->getTable()) === 0) {
+            if (strcasecmp($data_mapper_name, $Item->getTable()) === 0 || strcasecmp($data_mapper_name, $Item->getTableOriginal()) === 0) {
                 return $domain_name;
             }
         }

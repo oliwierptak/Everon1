@@ -16,6 +16,7 @@ class Router implements Interfaces\Router
     use Dependency\Config;
     use Dependency\RequestValidator;
 
+    use Helper\Arrays;
     use Helper\Asserts\IsArrayKey;
     use Helper\Regex;
 
@@ -90,15 +91,15 @@ class Router implements Interfaces\Router
         $RouteItem->compileUrl($query);
 
         $Request->setQueryCollection(
-            array_merge($Request->getQueryCollection()->toArray(), $query)
+            $this->arrayMergeDefault($Request->getQueryCollection()->toArray(), $query)
         );
 
         $Request->setGetCollection(
-            array_merge($Request->getGetCollection()->toArray(), $get)
+            $this->arrayMergeDefault($Request->getGetCollection()->toArray(), $get)
         );
 
         $Request->setPostCollection(
-            array_merge($Request->getPostCollection()->toArray(), $post)
+            $this->arrayMergeDefault($Request->getPostCollection()->toArray(), $post)
         );
     }
     

@@ -167,6 +167,40 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
         $this->getResponse()->setStatusCode(201);
         $this->getResponse()->setHeader('Location', $Resource->getHref()->getUrl());
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function saveResourceCollectionFromRequest()
+    {
+        $user_id = 1;
+        $version = $this->getRequest()->getVersion();
+        $data = $this->getRequest()->getPostCollection()->toArray(true);
+        $resource_name = $this->getRequest()->getQueryParameter('resource', null);
+        $resource_id = $this->getRequest()->getQueryParameter('resource_id', null);
+        $collection = $this->getRequest()->getQueryParameter('collection', null);
+        $Resource = $this->getResourceManager()->saveCollection($version, $resource_name, $resource_id, $collection, $data, $user_id);
+
+        $this->getResponse()->setData($Resource);
+        $this->getResponse()->setStatusCode(200);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function deleteResourceCollectionFromRequest()
+    {
+        $user_id = 1;
+        $version = $this->getRequest()->getVersion();
+        $data = $this->getRequest()->getPostCollection()->toArray(true);
+        $resource_name = $this->getRequest()->getQueryParameter('resource', null);
+        $resource_id = $this->getRequest()->getQueryParameter('resource_id', null);
+        $collection = $this->getRequest()->getQueryParameter('collection', null);
+        $Resource = $this->getResourceManager()->deleteCollection($version, $resource_name, $resource_id, $collection, $data, $user_id);
+
+        $this->getResponse()->setData($Resource);
+        $this->getResponse()->setStatusCode(204);
+    }
     
     /**
      * @inheritdoc

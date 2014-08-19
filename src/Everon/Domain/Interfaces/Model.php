@@ -12,6 +12,30 @@ namespace Everon\Domain\Interfaces;
 interface Model
 {
     /**
+     * @param Entity $Entity
+     * @param $relation_name
+     * @param array $data
+     * @param null $user_id
+     */
+    function addCollection(Entity $Entity, $relation_name, array $data, $user_id=null);
+
+    /**
+     * @param Entity $Entity
+     * @param $relation_name
+     * @param array $data
+     * @param null $user_id
+     */
+    function saveCollection(Entity $Entity, $relation_name, array $data, $user_id=null);
+
+    /**
+     * @param Entity $Entity
+     * @param $relation_name
+     * @param array $data
+     * @param null $user_id
+     */
+    function deleteCollection(Entity $Entity, $relation_name, array $data, $user_id=null);
+        
+    /**
      * @param array $data
      * @return Entity
      */
@@ -31,9 +55,4 @@ interface Model
      * @return Repository
      */
     function getRepository();
-
-    /**
-     * @param array $data
-     */
-    function validateEntityData(array $data);
 }

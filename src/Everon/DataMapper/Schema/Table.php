@@ -22,6 +22,8 @@ class Table implements Interfaces\Schema\Table
     
     protected $name = null;
     
+    protected $original_name = null; //todo view_only
+    
     protected $schema = null;
     
     protected $pk = null;
@@ -122,6 +124,34 @@ class Table implements Interfaces\Schema\Table
     public function getForeignKeys()
     {
         return $this->foreign_keys;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getForeignKeyByName($name)
+    {
+        if (isset($this->foreign_keys[$name]) === false) {
+            throw new Exception\Table('Invalid foreign key name: "%s" in table: "%s"', [$name, $this->getFullName()]);
+        }
+        return $this->foreign_keys[$name];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getForeignKeyByTableName($foreign_table_name)
+    {
+        /**
+         * @var \Everon\DataMapper\Interfaces\Schema\ForeignKey $ForeignKey 
+         */
+        foreach ($this->foreign_keys as $column_name => $ForeignKey) {
+            if (strcasecmp($ForeignKey->getForeignFullTableName(), $foreign_table_name) === 0) {
+                return $ForeignKey;
+            }
+        }
+        
+        return null;
     }
 
     /**
@@ -239,6 +269,22 @@ class Table implements Interfaces\Schema\Table
         }
 
         return $data[$pk_name];
+    }
+
+    /**
+     * @param string $original_name
+     */
+    public function setOriginalName($original_name)
+    {
+        $this->original_name = $original_name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getOriginalName()
+    {
+        return $this->original_name;
     }
     
     public function __toString()

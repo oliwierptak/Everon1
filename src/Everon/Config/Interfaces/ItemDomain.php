@@ -30,6 +30,16 @@ interface ItemDomain extends Item
      * @param string $table
      */
     function setTable($table);
+
+    /**
+     * @inheritdoc
+     */
+    function setTableOriginal($table_original);
+
+    /**
+     * @inheritdoc
+     */
+    function getTableOriginal();
     
     /**
      * @return string
@@ -60,6 +70,16 @@ interface ItemDomain extends Item
      * @return array
      */
     function getPrimaryKeys();
+
+    /**
+     * @param array $foreign_keys
+     */
+    function setForeignKeys(array $foreign_keys);
+
+    /**
+     * @return array
+     */
+    function getForeignKeys();
 
     /**
      * @param array $columns
