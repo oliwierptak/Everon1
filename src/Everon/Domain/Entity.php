@@ -59,8 +59,10 @@ class Entity extends Helper\Popo implements Interfaces\Entity
     
     protected function markPropertyAsModified($property)
     {
-        $this->modified_properties[$property] = true;
-        $this->markModified();
+        if ($this->isIdSet()) { //NEW overrules MODIFIED
+            $this->modified_properties[$property] = true;
+            $this->markModified();
+        }
     }
 
     /**
@@ -99,7 +101,7 @@ class Entity extends Helper\Popo implements Interfaces\Entity
      */
     protected function isIdSet()
     {
-        if (array_key_exists($this->id_name, $this->data)) {
+        if (array_key_exists($this->id_name, $this->data) && $this->data[$this->id_name] !== null) {
             $id = trim($this->data[$this->id_name]);
             return mb_strlen($id) > 0;
         }

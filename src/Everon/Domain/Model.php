@@ -88,7 +88,6 @@ abstract class Model implements Interfaces\Model
      */
     protected function add(Domain\Interfaces\Entity $Entity, $user_id=null)
     {
-        $this->getRepository()->validateEntity($Entity);
         $this->beforeAdd($Entity, $user_id);
         $this->getRepository()->persist($Entity, $user_id);
         return $Entity;
@@ -101,7 +100,6 @@ abstract class Model implements Interfaces\Model
      */
     protected function save(Domain\Interfaces\Entity $Entity, $user_id=null)
     {
-        $this->getRepository()->validateEntity($Entity);
         $this->beforeSave($Entity, $user_id);
         $this->getRepository()->persist($Entity, $user_id);
         return $Entity;

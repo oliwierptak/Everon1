@@ -311,7 +311,7 @@ abstract class Column implements Schema\Column
             $Validator = $this->getValidator();
             $validation_result = $Validator($value);
             if ($validation_result !== true) {
-                throw new Exception\Column('Column: "%s" failed to validate with value: "%s"', [$this->getName(), $display_value]);
+                throw new Exception\Column('Column: "%s@%s" failed to validate with value: "%s"', [$this->getTable(), $this->getName(), $display_value]);
             }
 
             return $value;

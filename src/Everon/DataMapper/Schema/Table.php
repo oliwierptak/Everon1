@@ -235,14 +235,18 @@ class Table implements Interfaces\Schema\Table
          */
         foreach ($this->getColumns() as $name => $Column) {
             if ($Column->isPk()) {
-                $entity_data[$name] = null;
+                $entity_data[$Column->getName()] = null;
                 continue;
             }
             
-            if (array_key_exists($name, $data) === false) {
-                throw new Exception\Table('Invalid data value for column: "%s@%s"', [$this->getName(), $name]);
+            if ($Column->isNullable() === false && array_key_exists($name, $data) === false) {
+                throw new Exception\Table('Missing data value for column: "%s@%s"', [$this->getName(), $name]);
             }
 
+            if (array_key_exists($name, $data) === false) {
+                $data[$name] = null;
+            }
+            
             $value = $Column->getDataForSql($data[$name]);
             $value = $Column->validateColumnValue($value); //order of execution matters: getDataForSql() before validateColumnValue()
             $entity_data[$name] = $value;

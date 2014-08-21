@@ -222,8 +222,7 @@ abstract class Repository implements Interfaces\Repository
      */
     public function validateEntity(Interfaces\Entity $Entity)
     {
-        $data = $Entity->toArray();
-        return $this->getMapper()->getTable()->prepareDataForSql($data, $Entity->isNew() === false);
+        return $this->getMapper()->getTable()->prepareDataForSql($Entity->toArray(), $Entity->isNew() === false);
     }
 
     /**
@@ -295,6 +294,8 @@ abstract class Repository implements Interfaces\Repository
      */
     public function persist(Interfaces\Entity $Entity, $user_id=null)
     {
+        $this->validateEntity($Entity);
+        
         $data = $Entity->toArray();
         if ($Entity->isNew()) {
             $data = $this->getMapper()->add($data, $user_id);
