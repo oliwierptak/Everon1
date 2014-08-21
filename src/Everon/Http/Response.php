@@ -60,7 +60,7 @@ class Response extends BasicResponse implements Interfaces\Response
     
     protected function sendHeaders()
     {
-        $this->HeaderCollection->set('HTTP/1.1 '.$this->status_code, '');
+        http_response_code($this->status_code);
         $this->HeaderCollection->set('EVRID', $this->guid);
 
         /**
@@ -86,6 +86,8 @@ class Response extends BasicResponse implements Interfaces\Response
                 header($name, false);
             }
         }
+        
+        //sd($this->HeaderCollection->toArray());
     }
 
     /**

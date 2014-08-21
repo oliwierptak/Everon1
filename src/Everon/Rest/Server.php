@@ -40,10 +40,10 @@ class Server extends \Everon\Core implements Rest\Interfaces\Server
             }
             
             if ($this->getRequest()->getMethod() === \Everon\Request::METHOD_OPTIONS) {
-                $Ok = new Http\Message\Ok();//DRY
-                $this->getResponse()->setStatusCode($Ok->getCode());
-                $this->getResponse()->setStatusMessage($Ok->getMessage());
-                echo $this->getResponse()->toJson(); //xxx
+                $OkNoContent = new Http\Message\OkNoContent();//DRY
+                $this->getResponse()->setStatusCode($OkNoContent->getCode());
+                $this->getResponse()->setStatusMessage($OkNoContent->getMessage());
+                $this->getResponse()->toJson(); //xxx
             }
             else {
                 parent::run($RequestIdentifier);
