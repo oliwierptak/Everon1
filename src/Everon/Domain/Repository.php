@@ -138,12 +138,12 @@ abstract class Repository implements Interfaces\Repository
          * @var \Everon\Domain\Interfaces\Relation $Relation
          */
         foreach ($Entity->getRelationCollection() as $domain_name => $Relation) {
-            if ($Relation->getRelationMapper()->isOwningSide() === false) {
+            if ($Relation->getRelationMapper()->isOwningSide() === false && $Relation->getRelationMapper()->isVirtual() === false) {
                 $value = $Entity->getValueByName($Relation->getRelationMapper()->getMappedBy());
                 $Column = $this->getMapper()->getTable()->getColumnByName($Relation->getRelationMapper()->getMappedBy());
                 $Column->validateColumnValue($value);
                 if ($Column->isNullable() && $value === null) {
-                    $Entity->getRelationByName($Relation->getName())->setOne(null); //update relation
+                    $Entity->getRelationByName($Relation->getName())->reset();
                     $Entity->setValueByName($Relation->getRelationMapper()->getMappedBy(), null);
                     continue;
                 }
