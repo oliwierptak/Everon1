@@ -20,10 +20,10 @@ interface Criteria extends \Everon\Interfaces\Arrayable, \Everon\Interfaces\Stri
     function getOrderByAndSortSql();
 
     /**
-     * @param $order_by
+     * @param array $order_by ['field' => 'ASC', 'another_field' => 'DESC']
      * @return \Everon\DataMapper\Interfaces\Criteria
      */
-    function orderBy($order_by);
+    function orderBy(array $order_by);
 
     /**
      * @param $group_by
@@ -59,8 +59,6 @@ interface Criteria extends \Everon\Interfaces\Arrayable, \Everon\Interfaces\Stri
      */
     function ilike(array $ilike);
 
-    function sort($sort);
-
     /**
      * @param array $filter
      * @return $this
@@ -72,7 +70,6 @@ interface Criteria extends \Everon\Interfaces\Arrayable, \Everon\Interfaces\Stri
      * @return \Everon\DataMapper\Interfaces\Criteria
      */
     function limit($limit);
-
 
     /**
      * @return int
@@ -88,11 +85,6 @@ interface Criteria extends \Everon\Interfaces\Arrayable, \Everon\Interfaces\Stri
      * @return string
      */
     function getOrderBy();
-
-    /**
-     * @return string
-     */
-    function getSort();
 
     /**
      * @return array

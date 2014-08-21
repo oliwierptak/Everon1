@@ -31,12 +31,9 @@ class Criteria implements Interfaces\Criteria
 
     protected $limit = null;
 
-    protected $order_by = null;
+    protected $order_by = [];
 
     protected $group_by = null;
-
-    protected $sort = 'ASC';
-
 
     protected $filter = [];
     
@@ -98,7 +95,7 @@ class Criteria implements Interfaces\Criteria
     /**
      * @inheritdoc
      */
-    public function orderBy($order_by)
+    public function orderBy(array $order_by)
     {
         $this->order_by = $order_by;
         return $this;
@@ -113,12 +110,6 @@ class Criteria implements Interfaces\Criteria
         return $this;
     }
     
-    public function sort($sort)
-    {
-        $this->sort = $sort;
-        return $this;
-    }
-
     /**
      * @inheritdoc
      */
@@ -206,28 +197,21 @@ class Criteria implements Interfaces\Criteria
 
     public function getOrderByAndSortSql()
     {
-        if (empty($this->order_by)) {
+        if (is_array($this->order_by) === false || empty($this->order_by)) {
             return '';
         }
 
-        if (is_array($this->order_by)) {
-            $order_by = implode(',', $this->order_by);
-            
-            if (is_array($this->sort)) {
-                $order_by = '';
-                foreach ($this->order_by as $order_field) {
-                    $dir = isset($this->sort[$order_field]) ? $this->sort[$order_field] : 'ASC';
-                    $order_by .= "${order_field} ".$dir.',';
-                }
-            }
-        }
-        else {
-            $order_by = $this->order_by.' '.$this->sort;
+        $order_by = '';
+        foreach ($this->order_by as $name => $sort) {
+            $order_by .= "${name} ".$sort.',';
         }
         
-        $order_by = trim($order_by, ',');
-
-        return 'ORDER BY '.$order_by;
+        if ($order_by !== '') {
+            $order_by = trim($order_by, ',');
+            $order_by = 'ORDER BY '.$order_by;
+        }
+        
+        return $order_by;
     }
     
     public function getGroupBy()
@@ -244,7 +228,6 @@ class Criteria implements Interfaces\Criteria
         return [
             'where' => $this->where,
             'order_by' => $this->order_by,
-            'sort' => $this->sort,
             'offset' => $this->offset,
             'limit' => $this->limit,
         ];
@@ -272,14 +255,6 @@ class Criteria implements Interfaces\Criteria
     public function getOrderBy()
     {
         return $this->order_by;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getSort()
-    {
-        return $this->sort;
     }
 
     /**

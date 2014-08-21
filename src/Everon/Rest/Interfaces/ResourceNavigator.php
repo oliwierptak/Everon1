@@ -43,16 +43,6 @@ interface ResourceNavigator extends Dependency\Request
     function getOrderBy();
 
     /**
-     * @param array $sort
-     */
-    function setSort($sort);
-
-    /**
-     * @return array
-     */
-    function getSort();
-
-    /**
      * @param int $offset
      */
     function setOffset($offset);

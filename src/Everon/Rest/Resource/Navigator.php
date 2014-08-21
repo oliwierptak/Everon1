@@ -39,11 +39,6 @@ class Navigator implements Interfaces\ResourceNavigator
     /**
      * @var string
      */
-    protected $sort = null;
-
-    /**
-     * @var string
-     */
     protected $offset = null;
 
     /**
@@ -94,29 +89,25 @@ class Navigator implements Interfaces\ResourceNavigator
     {
         $this->fields = $this->getParameterValue('fields', []);
         $this->expand = $this->getParameterValue('expand', []);
-        $this->order_by = $this->getParameterValue('order_by', []);
         $this->limit = $this->getRequest()->getGetParameter('limit', 10);
         $this->offset = $this->getRequest()->getGetParameter('offset', 0);
-
         $this->filters = $this->getRequest()->getGetParameter('filters');
-        $this->filters = json_decode($this->filters,true);
-
-        $this->sort = [];
+        $this->filters = json_decode($this->filters, true);
+        
+        $order_by_data = $this->getParameterValue('order_by', []);
 
         $collection = $this->getRequest()->getQueryParameter('collection', null);
         if ($collection !== null) {
             $this->expand = array_merge($this->expand, [$collection]);
         }
 
-        for ($a=0; $a<count($this->order_by); $a++) { //eg. -date_added, user_name //show recently added users
-            $name = $this->order_by[$a];
+        for ($a=0; $a<count($order_by_data); $a++) { //eg. -date_added, user_name //show recently added users
+            $name = $order_by_data[$a];
             $field_name = ltrim($name, '-');
-            $this->sort[$field_name] = 'ASC';
+            $this->order_by[$field_name] = 'ASC';
             if ($name[0] === '-') {
-                $this->sort[$field_name] = 'DESC';
+                $this->order_by[$field_name] = 'DESC';
             }
-            
-            $this->order_by[$a] = $field_name;
         }
     }
 
@@ -166,22 +157,6 @@ class Navigator implements Interfaces\ResourceNavigator
     public function getOrderBy()
     {
         return $this->order_by;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function setSort($sort)
-    {
-        $this->sort = $sort;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getSort()
-    {
-        return $this->sort;
     }
 
     /**
@@ -240,14 +215,13 @@ class Navigator implements Interfaces\ResourceNavigator
         $Criteria = new \Everon\DataMapper\Criteria();
         $Criteria->limit($this->getLimit());
         $Criteria->offset($this->getOffset());
-        $Criteria->orderBy($this->getOrderBy());
-        $Criteria->sort($this->getSort());
+        $Criteria->orderBy($this->getOrderBy() ?: []);
         
         if (is_array($this->getFilters())) {
             $Filter = $this->getFactory()->buildRestFilter(new Helper\Collection($this->getFilters()));
             $Filter->assignToCriteria($Criteria);
         }
-
+        
         return $Criteria;
     }
 }

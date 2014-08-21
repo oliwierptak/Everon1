@@ -251,6 +251,7 @@ class Handler implements Interfaces\ResourceHandler
             /**
              * @var \Everon\Rest\Interfaces\ResourceCollection $ResourceCollection
              * @var \Everon\Domain\Interfaces\Relation $EntityRelation
+             * @var \Everon\Domain\Interfaces\Entity $Entity
              */
             $extra_expand = null;
             if (strpos($collection_name, '.') !== false) {
