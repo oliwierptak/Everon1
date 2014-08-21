@@ -48,7 +48,7 @@ interface Module extends
 
     /**
      * @param $name
-     * @return string
+     * @return \Everon\Interfaces\Controller
      */
     function getController($name);
 }

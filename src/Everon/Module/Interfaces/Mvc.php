@@ -12,6 +12,9 @@ namespace Everon\Module\Interfaces;
 use Everon\Interfaces\Dependency;
 use Everon\View;
 
+/**
+ * @method \Everon\Mvc\Interfaces\Controller getController($name)
+ */
 interface Mvc extends Module, View\Interfaces\Dependency\Manager
 {
     /**
