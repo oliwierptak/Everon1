@@ -93,6 +93,7 @@ abstract class Repository implements Interfaces\Repository
         $data = $this->prepareDataForEntity($data);
         $Entity = $this->getFactory()->buildDomainEntity($this->getName(), $this->getMapper()->getTable()->getPk(), $data);
         $this->buildRelations($Entity, $RelationCriteria);
+        $this->resolveRelationsIntoData($Entity);
         return $Entity;
     }
 
@@ -139,14 +140,29 @@ abstract class Repository implements Interfaces\Repository
          */
         foreach ($Entity->getRelationCollection() as $domain_name => $Relation) {
             if ($Relation->getRelationMapper()->isOwningSide() === false && $Relation->getRelationMapper()->isVirtual() === false) {
-                $value = $Entity->getValueByName($Relation->getRelationMapper()->getMappedBy());
-                $Column = $this->getMapper()->getTable()->getColumnByName($Relation->getRelationMapper()->getMappedBy());
-                $Column->validateColumnValue($value);
+                switch ($Relation->getType()) {
+                    case Domain\Relation::ONE_TO_ONE:
+                        $value = $Entity->getValueByName($Relation->getRelationMapper()->getColumn());
+                        $Column = $this->getMapper()->getTable()->getColumnByName($Relation->getRelationMapper()->getColumn());
+                        break;
+
+                    default:
+                        $value = $Entity->getValueByName($Relation->getRelationMapper()->getMappedBy());
+                        $Column = $this->getMapper()->getTable()->getColumnByName($Relation->getRelationMapper()->getMappedBy());
+                        break;
+                }
+
+                if ($Column->isPk() && $Entity->isNew() && $value === null) {
+                    continue;
+                }
+
+
                 if ($Column->isNullable() && $value === null) {
                     $Entity->getRelationByName($Relation->getName())->reset();
                     $Entity->setValueByName($Relation->getRelationMapper()->getMappedBy(), null);
                     continue;
                 }
+
                 
                 $ChildEntity = $this->getDomainManager()->getRepositoryByName($Relation->getName())->getEntityByPropertyValue([
                     $Relation->getRelationMapper()->getInversedBy() => $value
@@ -206,7 +222,6 @@ abstract class Repository implements Interfaces\Repository
      */
     public function validateEntity(Interfaces\Entity $Entity)
     {
-        $this->resolveRelationsIntoData($Entity);
         $data = $Entity->toArray();
         return $this->getMapper()->getTable()->prepareDataForSql($data, $Entity->isNew() === false);
     }
