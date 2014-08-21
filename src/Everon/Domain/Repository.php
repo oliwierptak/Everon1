@@ -24,12 +24,12 @@ abstract class Repository implements Interfaces\Repository
     use Dependency\Injection\Factory;
     use Helper\Arrays;
     use Helper\Asserts\IsArrayKey;
-
+    
     /**
      * @var DataMapper
      */
     protected $Mapper = null;
-
+    
     protected $name = null;
 
     /**
@@ -114,13 +114,13 @@ abstract class Repository implements Interfaces\Repository
                 'inversed_by' => null,
                 'virtual' => false,
             ], $relation_data);
-
+            
             $RelationMapper = $this->getFactory()->buildDomainRelationMapper(
-                $relation_data['type'],
-                $relation_domain_name,
-                $relation_data['column'],
-                $relation_data['mapped_by'],
-                $relation_data['inversed_by'],
+                $relation_data['type'], 
+                $relation_domain_name, 
+                $relation_data['column'], 
+                $relation_data['mapped_by'], 
+                $relation_data['inversed_by'], 
                 $relation_data['virtual']
             );
 
@@ -163,15 +163,15 @@ abstract class Repository implements Interfaces\Repository
                     continue;
                 }
 
-
+                
                 $ChildEntity = $this->getDomainManager()->getRepositoryByName($Relation->getName())->getEntityByPropertyValue([
                     $Relation->getRelationMapper()->getInversedBy() => $value
                 ]);
-
+                
                 if ($ChildEntity === null) {
                     throw new Exception\Domain('RelationEntity: "%s" could not be resolved for "%s@%s" with value "%s"', [$Entity->getDomainName(), $Relation->getName(), $Relation->getRelationMapper()->getInversedBy(), $value]);
                 }
-
+                
                 $Entity->getRelationByName($Relation->getName())->setOne($ChildEntity); //update relation
                 $Entity->setValueByName($Relation->getRelationMapper()->getMappedBy(), $ChildEntity->getValueByName($Relation->getRelationMapper()->getInversedBy())); //update fields represented in relations eg. user_id -> User->getId()
             }
@@ -273,12 +273,12 @@ abstract class Repository implements Interfaces\Repository
         if (empty($data)) {
             return null;
         }
-
+        
         $result = [];
         foreach ($data as $item) {
             $result[] = $this->buildEntity($item, $RelationCriteria);
         }
-
+        
         return $result;
     }
 
@@ -314,7 +314,7 @@ abstract class Repository implements Interfaces\Repository
         if ($Entity->isNew() || $Entity->isDeleted()) {
             throw new \Everon\Exception\Domain('Invalid entity state when attempting to delete entity: "%s@%s"', [$Entity->getDomainName(), $Entity->getId()]);
         }
-
+        
         $this->getMapper()->delete($Entity->getId(), $user_id);
         $Entity->delete();
     }
