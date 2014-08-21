@@ -9,12 +9,15 @@
  */
 namespace Everon\DataMapper\Schema;
 
+use Everon\Dependency;
 use Everon\DataMapper\Interfaces;
 use Everon\DataMapper\Exception;
 use Everon\Helper;
 
 class Table implements Interfaces\Schema\Table
 {
+    use Dependency\Injection\Logger;
+    
     use Helper\Asserts\IsNumericAndNotZero;
     use Helper\Asserts\IsStringAndNotEmpty;
     use Helper\Exceptions;
@@ -244,6 +247,7 @@ class Table implements Interfaces\Schema\Table
             }
 
             if (array_key_exists($name, $data) === false) {
+                $this->getLogger()->warning('Entity property not set. Using null for: "%s@%s"', [$Column->getTable(), $name]);
                 $data[$name] = null;
             }
             

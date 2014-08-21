@@ -969,6 +969,7 @@ abstract class Factory implements Interfaces\Factory
             $class_name = $this->getFullClassName($namespace,'Schema\Table');
             $this->classExists($class_name);
             $Table = new $class_name($name, $schema, $column_list, $primary_key_list, $unique_key_list, $foreign_key_list, $DomainMapper);
+            $this->injectDependencies($class_name, $Table);
             return $Table;
         }
         catch (\Exception $e) {
@@ -986,6 +987,7 @@ abstract class Factory implements Interfaces\Factory
             $this->classExists($class_name);
             $constraint_list[] = $class_name($data);
             $Constraint = new $class_name($data);
+            $this->injectDependencies($class_name, $Constraint);
             return $Constraint;
         }
         catch (\Exception $e) {
