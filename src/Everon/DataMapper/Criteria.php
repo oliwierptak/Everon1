@@ -134,17 +134,13 @@ class Criteria implements Interfaces\Criteria
             return '';
         }
 
-
         $where_str = '1=1';
-
         if (empty($this->filter) === false) {
             foreach($this->filter as $column => $data) {
                 if (isset($data['query']) && (empty($data['query']) === false)) {
                     $operator = (isset($data['glue']) === true) ? $data['glue'] : 'AND';
                     $where_str .= ((empty($where_str) === true) ? ((isset($data['glue']) === true) ? $operator : '') : " {$operator} ") . "({$column} {$data['query']})";
                 }
-
-
             }
         }
 
@@ -291,13 +287,11 @@ class Criteria implements Interfaces\Criteria
      */
     public function getWhere()
     {
-
         if (empty($this->filter) !== true) {
             foreach($this->filter as $column => $data) {
                 $this->where = $this->arrayMergeDefault($this->where, $data['values']);
             }
         }
-
 
         $where = [];
         foreach ($this->where as $field => $value) {

@@ -16,16 +16,44 @@ use Everon\Rest\Interfaces;
 class Navigator implements Interfaces\ResourceNavigator
 {
     use Dependency\Request;
+    use \Everon\Dependency\Injection\Factory;
 
     const PARAM_SEPARATOR = ',';
 
-    
+
+    /**
+     * @var string
+     */
     protected $expand = null;
+
+    /**
+     * @var string
+     */
     protected $fields = null;
+
+    /**
+     * @var string
+     */
     protected $order_by = null;
+
+    /**
+     * @var string
+     */
     protected $sort = null;
+
+    /**
+     * @var string
+     */
     protected $offset = null;
+
+    /**
+     * @var string
+     */
     protected $limit = null;
+
+    /**
+     * @var string
+     */
     protected $filters = null;
     
 
@@ -202,5 +230,24 @@ class Navigator implements Interfaces\ResourceNavigator
     public function setFilters(array $filters)
     {
         $this->filters = $filters;
+    }
+
+    /**
+     * @return \Everon\DataMapper\Interfaces\Criteria
+     */
+    public function toCriteria()
+    {
+        $Criteria = new \Everon\DataMapper\Criteria();
+        $Criteria->limit($this->getLimit());
+        $Criteria->offset($this->getOffset());
+        $Criteria->orderBy($this->getOrderBy());
+        $Criteria->sort($this->getSort());
+        
+        if (is_array($this->getFilters())) {
+            $Filter = $this->getFactory()->buildRestFilter(new Helper\Collection($this->getFilters()));
+            $Filter->assignToCriteria($Criteria);
+        }
+
+        return $Criteria;
     }
 }

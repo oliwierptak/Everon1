@@ -221,10 +221,7 @@ class Handler implements Interfaces\ResourceHandler
     public function getResource($version, $resource_name, $resource_id, Interfaces\ResourceNavigator $Navigator)
     {
         try {
-            $EntityRelationCriteria = new Criteria();
-            $EntityRelationCriteria->limit($Navigator->getLimit());
-            $EntityRelationCriteria->offset($Navigator->getOffset());
-            
+            $EntityRelationCriteria = $Navigator->toCriteria();            
             $domain_name = $this->getDomainNameFromMapping($resource_name);
             $id = $this->generateEntityId($resource_id, $domain_name);
 
@@ -294,7 +291,7 @@ class Handler implements Interfaces\ResourceHandler
             
             $a = 0;
             $ResourceCollection = new Helper\Collection([]);
-            $data = $EntityRelation->getData()->toArray();
+            $data = $EntityRelation->getData($Navigator->toCriteria())->toArray();
             foreach ($data as $Entity) {
                 $Item = $this->buildResourceFromEntity($Entity, $Resource->getVersion(), $collection_name);
                 $resource_id = $this->generateResourceId($Entity->getId(), $collection_name);
@@ -338,17 +335,8 @@ class Handler implements Interfaces\ResourceHandler
             $domain_name = $this->getDomainNameFromMapping($resource_name);
             $Href = $this->getResourceUrl($version, $resource_name);
             $Repository = $this->getDomainManager()->getRepositoryByName($domain_name);
-
-            $EntityRelationCriteria = new Criteria();
-            $EntityRelationCriteria->limit($Navigator->getLimit());
-            $EntityRelationCriteria->offset($Navigator->getOffset());
-            $EntityRelationCriteria->orderBy($Navigator->getOrderBy());
-            $EntityRelationCriteria->sort($Navigator->getSort());
-
-            $this->assignNavigatorFiltersToCriteria($Navigator,$EntityRelationCriteria);
-            
+            $EntityRelationCriteria = $Navigator->toCriteria();
             $Paginator = $this->getFactory()->buildPaginator($Repository->count($EntityRelationCriteria), $Navigator->getOffset(), $Navigator->getLimit());
-            
             $entity_list = $Repository->getByCriteria($EntityRelationCriteria);
     
             $ResourceList = new Helper\Collection([]);
@@ -375,12 +363,7 @@ class Handler implements Interfaces\ResourceHandler
     public function getCollectionItemResource($version, $resource_name, $resource_id, $collection, $item_id, Interfaces\ResourceNavigator $Navigator)
     {
         try {
-            $EntityRelationCriteria = new Criteria();
-            $EntityRelationCriteria->limit($Navigator->getLimit());
-            $EntityRelationCriteria->offset($Navigator->getOffset());
-
-            $this->assignNavigatorFiltersToCriteria($Navigator,$EntityRelationCriteria);
-
+            $EntityRelationCriteria = $Navigator->toCriteria();
             $domain_name = $this->getDomainNameFromMapping($collection);
             $id = $this->generateEntityId($item_id, $domain_name);
             
@@ -482,18 +465,6 @@ class Handler implements Interfaces\ResourceHandler
             }
         }
         throw new Exception\Resource('Invalid rest mapping resource: "%s"', $domain_name);
-    }
-
-    /**
-     * @param Interfaces\ResourceNavigator $Navigator
-     * @param Criteria $Criteria
-     */
-    protected function assignNavigatorFiltersToCriteria(Interfaces\ResourceNavigator $Navigator, Criteria $Criteria)
-    {
-        $navigatorFilters = $Navigator->getFilters();
-        $navigatorFilters = (is_array($navigatorFilters) === true) ? $navigatorFilters : [];
-        $Filter = $this->getFactory()->buildRestFilter(new Helper\Collection($navigatorFilters));
-        $Filter->assignToCriteria($Criteria);
     }
 
 }

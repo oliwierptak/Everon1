@@ -95,9 +95,10 @@ interface Relation extends \Everon\Interfaces\Arrayable
     function setData(\Everon\Interfaces\Collection $Collection);
 
     /**
+     * @param DataMapper\Interfaces\Criteria $Criteria 
      * @return \Everon\Interfaces\Collection
      */
-    function getData();
+    function getData(DataMapper\Interfaces\Criteria $Criteria=null);
 
     function getCount();
 

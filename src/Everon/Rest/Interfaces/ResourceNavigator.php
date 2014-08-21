@@ -76,11 +76,15 @@ interface ResourceNavigator extends Dependency\Request
     /**
      * @return array
      */
-    public function getFilters();
-
+    function getFilters();
 
     /**
      * @param array $filters
      */
-    public function setFilters(array $filters);
+    function setFilters(array $filters);
+
+    /**
+     * @return \Everon\DataMapper\Interfaces\Criteria
+     */
+    function toCriteria();
 }

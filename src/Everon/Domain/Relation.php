@@ -16,6 +16,7 @@ use Everon\Helper;
 abstract class Relation implements Interfaces\Relation
 {
     use Domain\Dependency\Injection\DomainManager;
+    use Helper\Arrays;
     use Helper\String\LastTokenToName;
     use Helper\ToArray;
 
@@ -299,14 +300,26 @@ abstract class Relation implements Interfaces\Relation
     /**
      * @inheritdoc
      */
-    public function getData()
+    public function getData(DataMapper\Interfaces\Criteria $Criteria=null)
     {
         if ($this->loaded) {
             return $this->Data;
         }
-        
+
         $this->setupRelationParameters();
         
+        if ($Criteria !== null) { //todo: woah refactor
+            $shit = $this->getCriteria()->toArray();
+            $where = $this->arrayMergeDefault($shit['where'], $Criteria->getWhere());
+            $NewCriteria = new \Everon\DataMapper\Criteria();
+            $NewCriteria->where($where);
+            $NewCriteria->sort($this->getCriteria()->getSort() ?: $Criteria->getSort());
+            $NewCriteria->orderBy($this->getCriteria()->getOrderBy() ?: $Criteria->getOrderBy());
+            $NewCriteria->limit($this->getCriteria()->getLimit() ?: $Criteria->getLimit());
+            $NewCriteria->offset($this->getCriteria()->getOffset() ?: $Criteria->getOffset());
+            $this->setCriteria($NewCriteria);
+        }
+
         $Loader = function () {
             if ($this->sql !== null) {
                 $sql = $this->sql.$this->getCriteria();
@@ -338,10 +351,13 @@ abstract class Relation implements Interfaces\Relation
     {
         $this->setupRelationParameters();
 
-        $Criteria = clone $this->getCriteria();
-        $Criteria->orderBy(null);
-
         if ($this->loaded === false) {
+            $Criteria = clone $this->getCriteria();
+            $Criteria->sort(null);
+            $Criteria->orderBy(null);
+            $Criteria->limit(0);
+            $Criteria->offset(0);
+            
             if ($this->sql_count !== null) {
                 $sql = $this->sql_count.' '.$Criteria;
                 $PdoStatement = $this->getDataMapper()->getSchema()->getPdoAdapterByName('read')->execute($sql, $Criteria->getWhere());
