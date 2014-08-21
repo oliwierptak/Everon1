@@ -240,7 +240,7 @@ class Table implements Interfaces\Schema\Table
             }
             
             if (array_key_exists($name, $data) === false) {
-                throw new Exception\Table('Invalid data value for column: "%s"', $name);
+                throw new Exception\Table('Invalid data value for column: "%s@%s"', [$this->getName(), $name]);
             }
 
             $value = $Column->getDataForSql($data[$name]);
