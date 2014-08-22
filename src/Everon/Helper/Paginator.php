@@ -132,10 +132,10 @@ class Paginator implements Interfaces\Arrayable, \Everon\Interfaces\Paginator
     {
         return $this->offset;
     }
-    
+
     protected function calculateCurrentPage()
     {
-        $current_page = (int) ceil($this->getOffset() / $this->getLimit());
+        $current_page = (int) ceil($this->getTotal() / $this->getLimit());
         $this->current_page = ($current_page <= 0) ? 1 : $current_page;
     }
-}   
+}
