@@ -67,15 +67,27 @@ abstract class Model implements Interfaces\Model
         return $this->getRepository()->buildFromArray($data);
     }
 
+    /**
+     * @param Interfaces\Entity $Entity
+     * @param null $user_id
+     */
     protected function beforeAdd(Interfaces\Entity $Entity, $user_id=null)
     {
         
     }
 
+    /**
+     * @param Interfaces\Entity $Entity
+     * @param null $user_id
+     */
     protected function beforeSave(Interfaces\Entity $Entity, $user_id=null)
     {
     }
 
+    /**
+     * @param Interfaces\Entity $Entity
+     * @param null $user_id
+     */
     protected function beforeDelete(Interfaces\Entity $Entity, $user_id=null)
     {
     }
