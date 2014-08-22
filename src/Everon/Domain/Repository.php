@@ -90,11 +90,33 @@ abstract class Repository implements Interfaces\Repository
      */
     protected function buildEntity(array $data, Criteria $RelationCriteria=null)
     {
+        $defaults = $this->getDefaultColumns();
+        $data = $this->arrayMergeDefault($defaults, $data);
         $data = $this->prepareDataForEntity($data);
         $Entity = $this->getFactory()->buildDomainEntity($this->getName(), $this->getMapper()->getTable()->getPk(), $data);
         $this->buildRelations($Entity, $RelationCriteria);
         $this->resolveRelationsIntoData($Entity);
         return $Entity;
+    }
+
+    /**
+     * @return array
+     */
+    protected function getDefaultColumns()
+    {
+        /**
+         * @var \Everon\DataMapper\Interfaces\Schema\Column $Column
+         */
+        $default = [];
+        $columns = $this->getMapper()->getTable()->getColumns();
+        foreach ($columns as $Column) {
+            if ($Column->isPk()) {
+                continue;
+            }
+            $default[$Column->getName()] = null;
+        }
+        
+        return $default;
     }
 
     /**
@@ -133,8 +155,16 @@ abstract class Repository implements Interfaces\Repository
         $Entity->setRelationCollection($RelationCollection);
     }
 
+    /**
+     * @param Interfaces\Entity $Entity
+     * @throws \Everon\Exception\Domain
+     */
     protected function resolveRelationsIntoData(Interfaces\Entity $Entity)
     {
+        if ($Entity->isNew()) {
+            return;
+        }
+        
         /**
          * @var \Everon\Domain\Interfaces\Relation $Relation
          */
@@ -142,6 +172,7 @@ abstract class Repository implements Interfaces\Repository
             if ($Relation->getRelationMapper()->isOwningSide() === false && $Relation->getRelationMapper()->isVirtual() === false) {
                 switch ($Relation->getType()) {
                     case Domain\Relation::ONE_TO_ONE:
+                        //d($Entity->getId(), $Entity->getDomainName(), $Relation->getRelationMapper()->getColumn());
                         $value = $Entity->getValueByName($Relation->getRelationMapper()->getColumn());
                         $Column = $this->getMapper()->getTable()->getColumnByName($Relation->getRelationMapper()->getColumn());
                         break;
@@ -169,11 +200,14 @@ abstract class Repository implements Interfaces\Repository
                 ]);
                 
                 if ($ChildEntity === null) {
-                    throw new Exception\Domain('RelationEntity: "%s" could not be resolved for "%s@%s" with value "%s"', [$Entity->getDomainName(), $Relation->getName(), $Relation->getRelationMapper()->getInversedBy(), $value]);
+                    //throw new Exception\Domain('RelationEntity: "%s" could not be resolved for "%s@%s" with value "%s"', [$Entity->getDomainName(), $Relation->getName(), $Relation->getRelationMapper()->getInversedBy(), $value]);
+                    $Entity->getRelationByName($Relation->getName())->reset();
                 }
-                
-                $Entity->getRelationByName($Relation->getName())->setOne($ChildEntity); //update relation
-                $Entity->setValueByName($Relation->getRelationMapper()->getMappedBy(), $ChildEntity->getValueByName($Relation->getRelationMapper()->getInversedBy())); //update fields represented in relations eg. user_id -> User->getId()
+                else {
+                    $Entity->getRelationByName($Relation->getName())->setOne($ChildEntity); //update relation
+                    $Entity->setValueByName($Relation->getRelationMapper()->getMappedBy(), $ChildEntity->getValueByName($Relation->getRelationMapper()->getInversedBy())); //update fields represented in relations eg. user_id -> User->getId()
+                }
+
             }
         }
     }
@@ -305,6 +339,7 @@ abstract class Repository implements Interfaces\Repository
         }
 
         $Entity->persist($data);
+        $this->resolveRelationsIntoData($Entity);
     }
 
     /**
