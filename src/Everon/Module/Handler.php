@@ -102,7 +102,7 @@ abstract class Handler implements Interfaces\Handler
             $this->initModules();
         }
         if (isset($this->modules[$name]) === false) {
-            throw new Exception\Module('Module: "%s" not found', $name);
+            throw new Exception\Module('Module: "%s" is not active', $name);
         }
         
         return $this->modules[$name];
