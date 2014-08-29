@@ -10,6 +10,16 @@ namespace Everon\Rest\Interfaces;
 interface FilterOperator extends \Everon\Interfaces\Arrayable
 {
     /**
+     * @param string $column_glue
+     */
+    function setColumnGlue($column_glue);
+
+    /**
+     * @return string
+     */
+    function getColumnGlue();
+        
+    /**
      * @return string
      */
     function getValue();
