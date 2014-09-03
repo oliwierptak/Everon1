@@ -183,6 +183,10 @@ class Entity extends Helper\Popo implements Interfaces\Entity
      */
     public function setValueByName($name, $value)
     {
+        $name = trim($name);
+        if ($name === '') {
+            throw new \Everon\Domain\Exception('Property name cannot be empty');
+        }
         $this->data[$name] = $value;
     }
 
