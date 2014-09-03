@@ -9,10 +9,15 @@
  */
 namespace Everon\DataMapper\Interfaces;
 
-interface Handler extends \Everon\Domain\Interfaces\Dependency\DomainMapper
+interface Handler extends \Everon\Domain\Interfaces\Dependency\DomainMapper, \Everon\DataMapper\Interfaces\Dependency\ConnectionManager
 {
     /**
      * @return Schema
      */
     function getSchema();
+
+    /**
+     * @param Schema $Schema
+     */
+    function setSchema(Schema $Schema);
 }

@@ -9,7 +9,7 @@
  */
 namespace Everon\Domain\Interfaces;
 
-interface Model
+interface Model extends \Everon\Domain\Interfaces\Dependency\DomainManager
 {
     /**
      * @param Entity $Entity
@@ -55,4 +55,9 @@ interface Model
      * @return Repository
      */
     function getRepository();
+
+    /**
+     * @param Repository $Repository
+     */
+    function setRepository(Repository $Repository);
 }

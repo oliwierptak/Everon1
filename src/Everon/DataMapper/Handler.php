@@ -9,26 +9,23 @@
  */
 namespace Everon\DataMapper;
 
-use Everon\Dependency\Injection\Factory as FactoryDependency;
-use Everon\DataMapper\Dependency;
-use Everon\DataMapper\Interfaces\ConnectionManager;
-use Everon\DataMapper\Interfaces\Schema;
-use Everon\Domain\Dependency\DomainMapper as DomainMapperDependency;
+use Everon\DataMapper;
+use Everon\Dependency;
+use Everon\Domain;
 use Everon\Helper;
-use Everon\Domain\Interfaces\Mapper as DomainMapper;
 
 abstract class Handler implements Interfaces\Handler
 {
-    use Dependency\ConnectionManager;
-    use Dependency\Schema;
-    use FactoryDependency;
-    use DomainMapperDependency;
+    use DataMapper\Dependency\ConnectionManager;
+    use DataMapper\Dependency\Schema;
+    use Dependency\Injection\Factory;
+    use Domain\Dependency\DomainMapper;
     
     /**
-     * @param ConnectionManager $ConnectionManager
-     * @param DomainMapper $DomainMapper
+     * @param DataMapper\Interfaces\ConnectionManager $ConnectionManager
+     * @param Domain\Interfaces\Mapper $DomainMapper
      */
-    public function __construct(ConnectionManager $ConnectionManager, DomainMapper $DomainMapper)
+    public function __construct(DataMapper\Interfaces\ConnectionManager $ConnectionManager, Domain\Interfaces\Mapper $DomainMapper)
     {
         $this->ConnectionManager = $ConnectionManager;
         $this->DomainMapper = $DomainMapper;
@@ -49,5 +46,13 @@ abstract class Handler implements Interfaces\Handler
         }
 
         return $this->Schema;
+    }
+
+    /**
+     * @param Interfaces\Schema $Schema
+     */
+    public function setSchema(DataMapper\Interfaces\Schema $Schema)
+    {
+        $this->Schema = $Schema;
     }
 }

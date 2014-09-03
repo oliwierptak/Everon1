@@ -59,6 +59,14 @@ abstract class Model implements Interfaces\Model
     }
 
     /**
+     * @inheritdoc
+     */
+    public function setRepository(Domain\Interfaces\Repository $Repository)
+    {
+        $this->getDomainManager()->setRepositoryByName($this->getName(), $Repository);
+    }
+
+    /**
      * @param array $data
      * @return Interfaces\Entity
      */
