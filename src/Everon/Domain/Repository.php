@@ -205,9 +205,8 @@ abstract class Repository implements Interfaces\Repository
                 }
                 else {
                     $Entity->getRelationByName($Relation->getName())->setOne($ChildEntity); //update relation
-                    $Entity->setValueByName($Relation->getRelationMapper()->getMappedBy(), $ChildEntity->getValueByName($Relation->getRelationMapper()->getInversedBy())); //update fields represented in relations eg. user_id -> User->getId()
+                    $Entity->setValueByName($Relation->getRelationMapper()->getInversedBy(), $ChildEntity->getValueByName($Relation->getRelationMapper()->getInversedBy())); //update fields represented in relations eg. user_id -> User->getId()
                 }
-
             }
         }
     }

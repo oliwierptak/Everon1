@@ -185,7 +185,7 @@ class Entity extends Helper\Popo implements Interfaces\Entity
     {
         $name = trim($name);
         if ($name === '') {
-            //throw new \Everon\Domain\Exception('Property name cannot be empty');
+            throw new \Everon\Domain\Exception('Property name cannot be empty in: "%s"', $this->getDomainName());
         }
         $this->data[$name] = $value;
     }
