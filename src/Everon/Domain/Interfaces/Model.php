@@ -28,6 +28,8 @@ interface Model extends \Everon\Domain\Interfaces\Dependency\DomainManager
     function saveCollection(Entity $Entity, $relation_name, array $data, $user_id=null);
 
     /**
+     * Send an array with ids of items to delete, eg [{id: 2}, {id: 3}]
+     * 
      * @param Entity $Entity
      * @param $relation_name
      * @param array $data
