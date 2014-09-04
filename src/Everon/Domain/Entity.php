@@ -247,6 +247,9 @@ class Entity extends Helper\Popo implements Interfaces\Entity
      */
     public function getRelationByName($name)
     {
+        if ($this->RelationCollection->has($name) === false) {
+            throw new Exception('Missing relation: "%s" for "%s"', [$name, $this->getDomainName()]);
+        }
         return $this->RelationCollection->get($name);
     }
 
