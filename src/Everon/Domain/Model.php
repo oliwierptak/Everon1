@@ -155,6 +155,10 @@ abstract class Model implements Interfaces\Model
                 }
                 
                 $Relation = $EntityToAdd->getRelationByName($Entity->getDomainName());
+                if ($Relation === null) {
+                    throw new Domain\Exception('Missing relation: "%s" for "%s"', [$Entity->getDomainName(), $EntityToAdd->getDomainName()]);
+                }
+                
                 if ($Relation->getRelationMapper()->isOwningSide() === false) {
                     //make sure the referenced column in child entity is set to parent entity's assigned values, eg. TicketConversation.ticket_id = Ticket.id
                     $EntityToAdd->setValueByName($Relation->getRelationMapper()->getMappedBy(), $Entity->getValueByName($Relation->getRelationMapper()->getInversedBy()));
