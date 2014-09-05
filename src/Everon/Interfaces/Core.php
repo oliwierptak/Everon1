@@ -42,4 +42,6 @@ interface Core
      * @return Interfaces\Controller
      */
     function getController();
+
+    function terminate();
 }
