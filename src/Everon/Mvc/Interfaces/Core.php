@@ -18,5 +18,5 @@ interface Core extends \Everon\Interfaces\Core
      * @param array $query
      * @param array $get
      */
-    function redirect($name, $query=[], $get=[]);
+    function redirectAndTerminate($name, $query=[], $get=[]);
 }

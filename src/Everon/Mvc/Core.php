@@ -106,7 +106,7 @@ class Core extends \Everon\Core implements Interfaces\Core
     /**
      * @inheritdoc
      */
-    public function redirect($name, $query=[], $get=[])
+    public function redirectAndTerminate($name, $query=[], $get=[])
     {
         $url = $this->getUrl($name, $query, $get);
         $this->getResponse()->setHeader('refresh', '0; url='.$url);
