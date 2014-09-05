@@ -125,13 +125,35 @@ class Criteria implements Interfaces\Criteria
             return '';
         }
 
+/*        $shit = [];
+        foreach($this->filter as $column => $data) {
+            foreach ($data['values'] as $item_name => $item_value) {
+                $item_name = str_replace(':', '', $item_name);
+                $data['values'][$item_name] = $item_value;
+                unset($data['values'][':'.$item_name]);
+            }
+            $shit = $this->arrayMergeDefault($shit, $data['values']);
+        }
+        $this->where = $this->arrayMergeDefault($this->where, $shit);
+        s($this->where);*/
+
         $where_str = '1=1';
         if (empty($this->filter) === false) {
             foreach($this->filter as $column => $data) {
                 if (isset($data['query']) && (empty($data['query']) === false)) {
                     $operator = (isset($data['glue']) === true) ? $data['glue'] : 'AND';
-                    $where_str .= ((empty($where_str) === true) ? ((isset($data['glue']) === true) ? $operator : '') : " {$operator} ") . "({$column} {$data['query']})";
+                    //$where_str .= ((empty($where_str) === true) ? ((isset($data['glue']) === true) ? $operator : '') : " {$operator} ") . "({$column} {$data['query']})";
                 }
+
+                $f = [];
+                foreach ($data['values'] as $item_name => $item_value) {
+                    $item_name = str_replace(':', '', $item_name);
+                    $data['values'][$item_name] = $item_value;
+                    unset($data['values'][':'.$item_name]);
+                    $f[$column] = $item_value;  //$this->arrayMergeDefault($shit, $data['values']);
+                }
+                
+                $this->where = $this->arrayMergeDefault($this->where, $f);
             }
         }
 
@@ -262,12 +284,6 @@ class Criteria implements Interfaces\Criteria
      */
     public function getWhere()
     {
-        if (empty($this->filter) !== true) {
-            foreach($this->filter as $column => $data) {
-                $this->where = $this->arrayMergeDefault($this->where, $data['values']);
-            }
-        }
-
         $where = [];
         foreach ($this->where as $field => $value) {
             $field_ok = str_replace('.', '_', $field); //replace z.id with z_id
