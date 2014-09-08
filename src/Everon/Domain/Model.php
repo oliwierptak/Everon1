@@ -138,6 +138,14 @@ abstract class Model implements Interfaces\Model
     /**
      * @inheritdoc
      */
+    public function getById($id)
+    {
+        return $this->getRepository()->getEntityById($id);
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function addCollection(Domain\Interfaces\Entity $Entity, $relation_name, array $data, $user_id=null)
     {
         $Repository = $this->getDomainManager()->getRepositoryByName($relation_name);

@@ -12,6 +12,12 @@ namespace Everon\Domain\Interfaces;
 interface Model extends \Everon\Domain\Interfaces\Dependency\DomainManager
 {
     /**
+     * @param $id
+     * @return Entity|null
+     */
+    function getById($id);
+    
+    /**
      * @param Entity $Entity
      * @param $relation_name
      * @param array $data
