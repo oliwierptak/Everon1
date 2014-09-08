@@ -122,4 +122,9 @@ interface Entity extends Interfaces\Arrayable
      * @param $name
      */
     function resetRelationState($name);
+
+    /**
+     * @param array $data
+     */
+    function updateValues(array $data);
 }

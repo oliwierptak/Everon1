@@ -16,6 +16,7 @@ use Everon\Interfaces\Collection;
 
 class Entity extends Helper\Popo implements Interfaces\Entity 
 {
+    use Helper\Arrays;
     use Helper\IsCallable;
     use Helper\String\LastTokenToName;
     
@@ -299,6 +300,15 @@ class Entity extends Helper\Popo implements Interfaces\Entity
     public function resetRelationState($name)
     {
         $this->getRelationByName($name)->reset();
+    }
+
+    /**
+     * @param array $data
+     */
+    public function updateValues(array $data)
+    {
+        $data = $this->arrayMergeDefault($this->getData(), $data);
+        $this->setData($data);
     }
     
     /**
