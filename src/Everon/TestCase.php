@@ -25,7 +25,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
      * @var \Everon\RequestIdentifier
      */
     protected $RequestIdentifier = null;
-
+    
 
     public function __construct($name = NULL, array $data=[], $dataName='')
     {
@@ -85,6 +85,12 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
                 @unlink($File->getPathname());
             }
         }
+    }
+
+    protected function tearDown()
+    {
+        parent::tearDown();
+        \Mockery::close();
     }
 
     /**
