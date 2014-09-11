@@ -24,9 +24,9 @@ interface Repository
     /**
      * @param Entity $Entity
      * @param Criteria $Criteria
-     * @throws \Everon\Exception\Domain
+     * @return
      */
-    function buildEntityRelations(Entity $Entity, Criteria $Criteria);
+    function buildEntityRelations(Entity $Entity, Criteria $Criteria = null);
 
     /**
      * @param $id

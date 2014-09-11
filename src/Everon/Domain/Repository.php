@@ -49,16 +49,6 @@ abstract class Repository implements Interfaces\Repository
     }
 
     /**
-     * @param Interfaces\Entity $Entity
-     * @param Criteria $RelationCriteria
-     */
-    protected function buildRelations(Interfaces\Entity $Entity, Criteria $RelationCriteria=null)
-    {
-        $RelationCriteria = $RelationCriteria ?: (new \Everon\DataMapper\Criteria())->limit(20)->offset(0);
-        $this->buildEntityRelations($Entity, $RelationCriteria);
-    }
-
-    /**
      * Makes sure data defined in the Entity is in proper format
      *
      * @param array $data
@@ -76,7 +66,7 @@ abstract class Repository implements Interfaces\Repository
                     throw new Exception\Domain('Missing Entity data: "%s" for "%s"', [$name, $this->getMapper()->getTable()->getName()]);
                 }
                 $Column = $this->getMapper()->getTable()->getColumnByName($name);
-                $data[$name] = $Column->getDataForEntity($data[$name]);
+                $data[$name] = $Column->getColumnDataForEntity($data[$name]);
             }
         }
 
@@ -94,8 +84,8 @@ abstract class Repository implements Interfaces\Repository
         $data = $this->arrayMergeDefault($defaults, $data);
         $data = $this->prepareDataForEntity($data);
         $Entity = $this->getFactory()->buildDomainEntity($this->getName(), $this->getMapper()->getTable()->getPk(), $data);
-        $this->buildRelations($Entity, $RelationCriteria);
-        $this->resolveRelationsIntoData($Entity);
+        $this->buildEntityRelations($Entity, $RelationCriteria);
+        //$this->resolveRelationsIntoData($Entity);
         return $Entity;
     }
 
@@ -122,10 +112,11 @@ abstract class Repository implements Interfaces\Repository
     /**
      * @param Interfaces\Entity $Entity
      * @param Criteria $Criteria
-     * @throws \Everon\Exception\Domain
      */
-    public function buildEntityRelations(Interfaces\Entity $Entity, Criteria $Criteria)
+    public function buildEntityRelations(Interfaces\Entity $Entity, Criteria $Criteria = null)
     {
+        $Criteria = $Criteria ?: (new \Everon\DataMapper\Criteria())->limit(20)->offset(0);
+        
         $RelationCollection = new Helper\Collection([]);
         //buildDomainRelationMapper
         foreach ($Entity->getRelationDefinition() as $relation_domain_name => $relation_data) {
@@ -138,12 +129,7 @@ abstract class Repository implements Interfaces\Repository
             ], $relation_data);
             
             $RelationMapper = $this->getFactory()->buildDomainRelationMapper(
-                $relation_data['type'], 
-                $relation_domain_name, 
-                $relation_data['column'], 
-                $relation_data['mapped_by'], 
-                $relation_data['inversed_by'], 
-                $relation_data['virtual']
+                $relation_data['type'], $relation_domain_name, $relation_data['column'], $relation_data['mapped_by'], $relation_data['inversed_by'], $relation_data['virtual']
             );
 
             $Relation = $this->getFactory()->buildDomainRelation($relation_domain_name, $Entity, $RelationMapper);
@@ -159,11 +145,17 @@ abstract class Repository implements Interfaces\Repository
      * @param Interfaces\Entity $Entity
      * @throws \Everon\Exception\Domain
      */
-    protected function resolveRelationsIntoData(Interfaces\Entity $Entity)
+    protected function AAAresolveRelationsIntoData(Interfaces\Entity $Entity)
     {
         if ($Entity->isNew()) {
             return;
         }
+
+        foreach ($Entity->getRelationCollection() as $domain_name => $Relation) {
+            $Relation->resolveRelationsIntoData($Entity);
+        }
+
+        return;
         
         /**
          * @var \Everon\Domain\Interfaces\Relation $Relation
@@ -327,6 +319,10 @@ abstract class Repository implements Interfaces\Repository
      */
     public function persist(Interfaces\Entity $Entity, $user_id=null)
     {
+        if ($Entity->isDeleted()) {
+            throw new \Everon\Exception\Domain('Invalid entity state when attempting to persist entity: "%s@%s"', [$Entity->getDomainName(), $Entity->getId()]);
+        }
+        
         $this->validateEntity($Entity);
         
         $data = $Entity->toArray();
@@ -338,7 +334,7 @@ abstract class Repository implements Interfaces\Repository
         }
 
         $Entity->persist($data);
-        $this->resolveRelationsIntoData($Entity);
+        //$this->resolveRelationsIntoData($Entity);
     }
 
     /**

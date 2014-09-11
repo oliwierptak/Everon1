@@ -835,7 +835,7 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildDomainRelationMapper($type, $domain_name, $column, $mapped_by = null, $inversed_by = null, $is_virtual=false, $namespace = 'Everon\Domain\Relation')
+    public function buildDomainRelationMapper($type, $domain_name, $column = null, $mapped_by = null, $inversed_by = null, $is_virtual=false, $namespace = 'Everon\Domain\Relation')
     {
         try {
             $class_name = $this->getFullClassName($namespace, 'Mapper');

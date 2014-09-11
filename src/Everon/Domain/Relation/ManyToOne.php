@@ -9,18 +9,20 @@
  */
 namespace Everon\Domain\Relation;
 
-class ManyToOne extends \Everon\Domain\Relation implements \Everon\Domain\Interfaces\Relation
+use Everon\Domain;
+
+class ManyToOne extends Domain\Relation implements Domain\Interfaces\Relation
 {
     protected $type = self::MANY_TO_ONE;
 
     protected function validate()
     {
         if ($this->getRelationMapper()->getMappedBy() === null) {
-            throw new \Everon\Domain\Exception('The attribute "mapped_by" is required for ManyToOne relations');
+            throw new Domain\Exception('The attribute "mapped_by" is required for ManyToOne relations');
         }
 
         if ($this->getRelationMapper()->getInversedBy() === null) {
-            throw new \Everon\Domain\Exception('The attribute "inversed_by" is required for ManyToOne relations');
+            throw new Domain\Exception('The attribute "inversed_by" is required for ManyToOne relations');
         }
     }
 
@@ -52,5 +54,39 @@ class ManyToOne extends \Everon\Domain\Relation implements \Everon\Domain\Interf
         $this->getCriteria()->where([
             't.'.$this->getRelationMapper()->getInversedBy() => $this->getDataMapper()->getSchema()->getTableByName($table)->validateId($value)
         ]);
+    }
+
+    public function AAAresolveRelationsIntoData(Domain\Interfaces\Entity $Entity)
+    {
+        die('no no');
+        if ($this->getRelationMapper()->isVirtual()) {
+            return;
+        }
+
+        $value = $this->getOwnerEntity()->getValueByName($this->getRelationMapper()->getMappedBy());
+        $Column = $this->getDataMapper()->getTable()->getColumnByName($this->getRelationMapper()->getMappedBy());
+
+        if ($Column->isPk() && $this->getOwnerEntity()->isNew() && $value === null) {
+            return;
+        }
+
+        if ($Column->isNullable() && $value === null) {
+            $this->getOwnerEntity()->getRelationByName($this->getName())->reset();
+            $this->getOwnerEntity()->setValueByName($this->getRelationMapper()->getMappedBy(), null);
+            $this->getOwnerEntity()->getRelationByName($this->getName())->reset();
+            return;
+        }
+
+        $ChildEntity = $this->getDomainManager()->getRepositoryByName($this->getName())->getEntityByPropertyValue([
+            $this->getRelationMapper()->getInversedBy() => $value
+        ]);
+
+        if ($ChildEntity === null) {
+            $this->getOwnerEntity()->getRelationByName($this->getName())->reset();
+        }
+        else {
+            $this->getOwnerEntity()->getRelationByName($this->getName())->setOne($ChildEntity); //update relation
+            $this->getOwnerEntity()->setValueByName($this->getRelationMapper()->getInversedBy(), $ChildEntity->getValueByName($this->getRelationMapper()->getInversedBy())); //update fields represented in relations eg. user_id -> User->getId()
+        }
     }
 }

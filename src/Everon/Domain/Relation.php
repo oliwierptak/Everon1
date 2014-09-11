@@ -68,11 +68,6 @@ abstract class Relation implements Interfaces\Relation
     protected $name = null;
 
     /**
-     * @var string
-     */
-    protected $owner_name = null;
-
-    /**
      * @var bool
      */
     protected $loaded = false;
@@ -137,6 +132,44 @@ abstract class Relation implements Interfaces\Relation
         $this->getCriteria()->where([
             't.'.$target_column => $this->getDataMapper()->getSchema()->getTableByName($table)->validateId($value)
         ]);
+    }
+
+    /**
+     * @throws \Everon\Exception\Domain
+     */
+    public function AAresolveRelationsIntoData(Interfaces\Entity $Entity)
+    {
+        die('implment me: '.$this->getName());
+        if ($this->getRelationMapper()->isOwningSide() || $this->getRelationMapper()->isVirtual()) {
+            return;
+        }
+        
+        $value = $this->getOwnerEntity()->getValueByName($this->getRelationMapper()->getMappedBy());
+        $Column = $this->getDataMapper()->getTable()->getColumnByName($this->getRelationMapper()->getMappedBy());
+
+        if ($Column->isPk() && $this->getOwnerEntity()->isNew() && $value === null) {
+            return;
+        }
+
+        if ($Column->isNullable() && $value === null) {
+            $this->getOwnerEntity()->getRelationByName($this->getName())->reset();
+            $this->getOwnerEntity()->setValueByName($this->getRelationMapper()->getMappedBy(), null);
+            $this->getOwnerEntity()->getRelationByName($this->getName())->reset();
+            return;
+        }
+
+        $ChildEntity = $this->getDomainManager()->getRepositoryByName($this->getName())->getEntityByPropertyValue([
+            $this->getRelationMapper()->getInversedBy() => $value
+        ]);
+
+        if ($ChildEntity === null) {
+            //throw new Exception\Domain('RelationEntity: "%s" could not be resolved for "%s@%s" with value "%s"', [$this->getOwnerEntity()->getDomainName(), $this->getName(), $this->getRelationMapper()->getInversedBy(), $value]);
+            $this->getOwnerEntity()->getRelationByName($this->getName())->reset();
+        }
+        else {
+            $this->getOwnerEntity()->getRelationByName($this->getName())->setOne($ChildEntity); //update relation
+            $this->getOwnerEntity()->setValueByName($this->getRelationMapper()->getMappedBy(), $ChildEntity->getValueByName($this->getRelationMapper()->getMappedBy())); //update fields represented in relations eg. user_id -> User->getId()
+        }
     }
     
     protected function resetRelationCriteriaParameters()

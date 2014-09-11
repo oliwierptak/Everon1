@@ -302,16 +302,16 @@ interface Factory
     function buildDomainRelation($name, Domain\Interfaces\Entity $Entity, Domain\Interfaces\RelationMapper $RelationMapper, $namespace = 'Everon\Domain');
 
     /**
-     * @param $type
-     * @param $domain_name
-     * @param $column
-     * @param null $mapped_by
-     * @param null $inversed_by
+     * @param string $type
+     * @param string $domain_name
+     * @param string $column
+     * @param string $mapped_by
+     * @param string $inversed_by
      * @param bool $is_virtual
      * @param string $namespace
      * @return Domain\Interfaces\RelationMapper
      */
-    function buildDomainRelationMapper($type, $domain_name, $column, $mapped_by = null, $inversed_by = null, $is_virtual = false, $namespace = 'Everon\Domain\Relation');
+    function buildDomainRelationMapper($type, $domain_name, $column = null, $mapped_by = null, $inversed_by = null, $is_virtual = false, $namespace = 'Everon\Domain\Relation');
 
     /**
      * @param DataMapper\Interfaces\Schema\Reader $Reader

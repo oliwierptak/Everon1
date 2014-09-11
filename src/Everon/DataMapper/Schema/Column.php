@@ -364,7 +364,7 @@ abstract class Column implements Schema\Column
     /**
      * @inheritdoc
      */
-    public function getDataForEntity($value)
+    public function getColumnDataForEntity($value)
     {
         if ($this->isNullable() && $value === null) {
             return $value;

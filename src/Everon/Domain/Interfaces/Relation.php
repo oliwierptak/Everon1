@@ -12,7 +12,7 @@ namespace Everon\Domain\Interfaces;
 use Everon\DataMapper;
 use Everon\Domain;
 
-interface Relation extends \Everon\Interfaces\Arrayable
+interface Relation extends \Everon\Interfaces\Arrayable, Dependency\DomainManager
 {
     /**
      * @return Domain\Interfaces\Entity
