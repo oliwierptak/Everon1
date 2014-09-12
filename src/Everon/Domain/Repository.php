@@ -22,6 +22,7 @@ abstract class Repository implements Interfaces\Repository
 {
     use Domain\Dependency\Injection\DomainManager;
     use Dependency\Injection\Factory;
+    use Dependency\Injection\Logger;
     use Helper\Arrays;
     use Helper\Asserts\IsArrayKey;
     
@@ -350,18 +351,45 @@ abstract class Repository implements Interfaces\Repository
         $Entity->delete();
     }
 
-    public function beginTransaction()
+    /**
+     * @inheritdoc
+     */
+    public function beginTransaction($point=null)
     {
         $this->getMapper()->getSchema()->getPdoAdapterByName($this->getMapper()->getWriteConnectionName())->beginTransaction();
+        if ($point !== null) {
+            $this->getLogger()->transaction('begin: '.$point);
+        }
+        else {
+            $this->getLogger()->transaction('begin');
+        }
     }
 
-    public function commitTransaction()
+    /**
+     * @inheritdoc
+     */
+    public function commitTransaction($point=null)
     {
         $this->getMapper()->getSchema()->getPdoAdapterByName($this->getMapper()->getWriteConnectionName())->commitTransaction();
+        if ($point !== null) {
+            $this->getLogger()->transaction('commit: '.$point);
+        }
+        else {
+            $this->getLogger()->transaction('commit');
+        }
     }
 
-    public function rollbackTransaction()
+    /**
+     * @inheritdoc
+     */
+    public function rollbackTransaction($point=null)
     {
         $this->getMapper()->getSchema()->getPdoAdapterByName($this->getMapper()->getWriteConnectionName())->rollbackTransaction();
+        if ($point !== null) {
+            $this->getLogger()->transaction('rollback: '.$point);
+        }
+        else {
+            $this->getLogger()->transaction('rollback');
+        }
     }
 }
