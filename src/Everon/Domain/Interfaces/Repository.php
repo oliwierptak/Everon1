@@ -60,7 +60,7 @@ interface Repository
      * @return int
      */
     function count(Criteria $Criteria=null);
-        
+
     /**
      * @param Entity $Entity
      * @param int $user_id
@@ -82,12 +82,12 @@ interface Repository
 
     /**
      * @return DataMapper
-     */    
+     */
     function getMapper();
 
     /**
      * @param DataMapper $Mapper
-     */    
+     */
     function setMapper(DataMapper $Mapper);
 
     function getName();
@@ -98,9 +98,18 @@ interface Repository
      */
     function buildFromArray(array $data);
 
-    function beginTransaction();
+    /**
+     * @param $point null
+     */
+    function beginTransaction($point=null);
 
-    function commitTransaction();
+    /**
+     * @param $point null
+     */
+    function commitTransaction($point=null);
 
-    function rollbackTransaction();
+    /**
+     * @param $point null
+     */
+    function rollbackTransaction($point=null);
 }
