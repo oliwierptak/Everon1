@@ -109,4 +109,16 @@ class Server extends \Everon\Core implements Rest\Interfaces\Server
 
         return $s;
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function redirectAndTerminate($name, $query=[], $get=[])
+    {
+        $url = $this->getUrl($name, $query, $get);
+        $this->getResponse()->setHeader('refresh', '0; url='.$url);
+        $this->getResponse()->send();
+        $this->shutdown();
+        $this->terminate();
+    }
 }

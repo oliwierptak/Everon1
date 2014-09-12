@@ -13,10 +13,5 @@ use Everon\View\Interfaces;
 
 interface Core extends \Everon\Interfaces\Core
 {
-    /**
-     * @param $name
-     * @param array $query
-     * @param array $get
-     */
-    function redirectAndTerminate($name, $query=[], $get=[]);
+
 }
