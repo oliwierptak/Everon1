@@ -99,6 +99,7 @@ class Manager implements Interfaces\Manager
         
         $View = $this->getFactory()->buildView($view_name, $template_directory, $default_extension, $namespace);
         $View->setViewManager($this);
+        $View->setData($this->getConfigManager()->getConfigValue('view.Index'));
         return $View;
     }
 
