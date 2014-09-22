@@ -131,7 +131,8 @@ class FileSystem implements Interfaces\FileSystem
         foreach ($Iterator as $Item) {
             if ($Item->isDir()) {
                 $this->createPath($destination . DIRECTORY_SEPARATOR . $Iterator->getSubPathName());
-            } else {
+            }
+            else {
                 copy($Item, $destination. DIRECTORY_SEPARATOR . $Iterator->getSubPathName());
             }
         }
