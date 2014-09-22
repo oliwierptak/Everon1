@@ -286,4 +286,43 @@ class FileSystem implements Interfaces\FileSystem
     {
         return new FileSystem\TmpFile();
     }
+
+
+    /**
+     * @inheritdoc
+     */
+    public function moveUploadedFile($file_path, $destination, $create_directory = true)
+    {
+        $directory = pathinfo($destination, PATHINFO_DIRNAME);
+
+        if ($this->directoryExists($directory) === false && $create_directory === true) {
+            $this->createPath($directory);
+        }
+
+        return move_uploaded_file($file_path, $destination);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function renameFile($source, $target)
+    {
+        if ($this->fileExists($source) === false) {
+            return false;
+        }
+
+        return rename($source, $target);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function copyFile($sourcePath, $targetPath)
+    {
+        if ($this->fileExists($sourcePath) === false) {
+            return false;
+        }
+
+        return copy($sourcePath, $targetPath);
+    }
 }
