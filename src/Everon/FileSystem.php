@@ -92,6 +92,7 @@ class FileSystem implements Interfaces\FileSystem
         if ((new \SplFileInfo($root))->isDir() === false) {
             throw new Exception\FileSystem('Root directory does not exist: "%s"', $root);
         }
+
         $this->root = $Dir->getPathname().DIRECTORY_SEPARATOR;
     }
 
