@@ -7,9 +7,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon\DataMapper\Interfaces;
+namespace Everon\DataMapper\Interfaces\Criteria;
 
-interface Criteria extends \Everon\Interfaces\Arrayable, \Everon\Interfaces\Stringable 
+interface Builder extends \Everon\Interfaces\Arrayable, \Everon\Interfaces\Stringable 
 {
-    
+
 }
