@@ -23,48 +23,70 @@ class Builder implements Interfaces\Criteria\Builder
     use Helper\ToString;
 
     /**
-     * @var \Everon\Interfaces\Collection
+     * @var Interfaces\Criteria
      */
-    protected $CriteriaCollection = null;
+    protected $CriteriaOr = null;
+
+    /**
+     * @var Interfaces\Criteria
+     */
+    protected $CriteriaAnd = null;
     
-    protected $glue = 'AND';
     
-    public function _and($column, $operator, $value)//Interfaces\Criteria $Criteria)
+    public function _and($column, $operator, $value)
     {
-        $Criteria->setGlue('AND');
-        $this->getCriteriaCollection()->get('AND')->append($Criteria);
+        $Criterium = $this->getFactory()->buildCriterium($column, $operator, $value);
+        $this->getCriteriaAnd()->_and($Criterium);
         return $this;
     }
     
-    public function _or($column, $operator, $value)//Interfaces\Criteria $Criteria)
+    public function _or($column, $operator, $value)
     {
-        $Criteria = $this->getFactory()->buildCriteria($column, $operator, $value);
-        $Criteria->setGlue('OR');
-        $this->getCriteriaCollection()->get('OR')->append($Criteria);
+        $Criterium = $this->getFactory()->buildCriterium($column, $operator, $value);
+        $this->getCriteriaAnd()->_or($Criterium);
         return $this;
     }
 
     /**
-     * @return \Everon\Interfaces\Collection
+     * @return Interfaces\Criteria
      */
-    public function getCriteriaCollection()
+    public function getCriteriaAnd()
     {
-        if ($this->CriteriaCollection === null) {
-            $this->CriteriaCollection = new Helper\Collection([
-                'AND' => new Helper\Collection([]),
-                'OR' => new Helper\Collection([]),
-            ]);
+        if ($this->CriteriaAnd === null) {
+            $this->CriteriaAnd = $this->getFactory()->buildCriteria();
+            $this->CriteriaAnd->setGlue('AND');
         }
 
-        return $this->CriteriaCollection;
+        return $this->CriteriaAnd;
     }
 
     /**
-     * @param \Everon\Interfaces\Collection $CriteriaCollection
+     * @param Interfaces\Criteria $CriteriaAnd
      */
-    public function setCriteriaCollection($CriteriaCollection)
+    public function setCriteriaAnd(Interfaces\Criteria $CriteriaAnd)
     {
-        $this->CriteriaCollection = $CriteriaCollection;
+        $this->CriteriaAnd = $CriteriaAnd;
     }
 
+    /**
+     * @return Interfaces\Criteria
+     */
+    public function getCriteriaOr()
+    {
+        if ($this->CriteriaOr === null) {
+            $this->CriteriaOr = $this->getFactory()->buildCriteria();
+            $this->CriteriaOr->setGlue('OR');
+        }
+        
+        return $this->CriteriaOr;
+    }
+
+    /**
+     * @param Interfaces\Criteria $CriteriaOr
+     */
+    public function setCriteriaOr(Interfaces\Criteria $CriteriaOr)
+    {
+        $this->CriteriaOr = $CriteriaOr;
+    }
+    
 }

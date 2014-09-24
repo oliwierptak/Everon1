@@ -9,7 +9,45 @@
  */
 namespace Everon\DataMapper\Interfaces\Criteria;
 
-interface Criterium //extends \Everon\Interfaces\Arrayable, \Everon\Interfaces\Stringable 
+interface Criterium extends \Everon\Interfaces\Arrayable
 {
+    /**
+     * @return string
+     */
+    function getColumn();
 
+    /**
+     * @param string $column
+     */
+    function setColumn($column);
+
+    /**
+     * @return string
+     */
+    function getGlue();
+
+    /**
+     * @param string $glue
+     */
+    function setGlue($glue);
+
+    /**
+     * @return string
+     */
+    function getOperator();
+
+    /**
+     * @param string $operator
+     */
+    function setOperator($operator);
+
+    /**
+     * @return string
+     */
+    function getValue();
+
+    /**
+     * @param string $value
+     */
+    function setValue($value);
 }

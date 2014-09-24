@@ -727,6 +727,40 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
+    public function buildCriteria($namespace='Everon\DataMapper')
+    {
+        try {
+            $class_name = $this->getFullClassName($namespace, 'Criteria');
+            $this->classExists($class_name);
+            $Criteria = new $class_name();
+            $this->injectDependencies($class_name, $Criteria);
+            return $Criteria;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('Criteria initialization error', null, $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildCriterium($column, $operator, $value, $namespace='Everon\DataMapper\Criteria')
+    {
+        try {
+            $class_name = $this->getFullClassName($namespace, 'Criterium');
+            $this->classExists($class_name);
+            $Criterium = new $class_name($column, $operator, $value);
+            $this->injectDependencies($class_name, $Criterium);
+            return $Criterium;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('Criterium initialization error', null, $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function buildDomainEntity($class_name, $id_field, array $data, $namespace='Everon\Domain')
     {
         try {

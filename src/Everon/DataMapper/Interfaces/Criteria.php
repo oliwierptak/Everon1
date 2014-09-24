@@ -9,7 +9,29 @@
  */
 namespace Everon\DataMapper\Interfaces;
 
-interface Criteria extends \Everon\Interfaces\Arrayable, \Everon\Interfaces\Stringable 
+interface Criteria extends \Everon\Interfaces\Arrayable 
 {
-    
+    function _and(Criteria\Criterium $Criterium);
+
+    function _or(Criteria\Criterium $Criterium);
+
+    /**
+     * @return \Everon\Interfaces\Collection
+     */
+    function getCriteriumCollection();
+
+    /**
+     * @param \Everon\Interfaces\Collection $CriteriumCollection
+     */
+    function setCriteriumCollection($CriteriumCollection);
+
+    /**
+     * @return string
+     */
+    function getGlue();
+
+    /**
+     * @param string $glue
+     */
+    function setGlue($glue);
 }

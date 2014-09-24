@@ -13,19 +13,30 @@ use Everon\Helper;
 use Everon\DataMapper\Exception;
 use Everon\DataMapper\Interfaces;
 
-class Criterium implements Interfaces\Criteria
+class Criterium implements Interfaces\Criteria\Criterium
 {
     use Helper\Arrays;
     use Helper\ToArray;
-    use Helper\ToString;
 
 
+    /**
+     * @var string
+     */
     protected $column = null;
-    
+
+    /**
+     * @var string
+     */
     protected $operator = '=';
-    
+
+    /**
+     * @var string
+     */
     protected $value = null;
-    
+
+    /**
+     * @var string
+     */
     protected $glue = null;
     
     
@@ -35,4 +46,69 @@ class Criterium implements Interfaces\Criteria
         $this->operator = $operator;
         $this->value = $value;
     }
+
+    /**
+     * @return string
+     */
+    public function getColumn()
+    {
+        return $this->column;
+    }
+
+    /**
+     * @param string $column
+     */
+    public function setColumn($column)
+    {
+        $this->column = $column;
+    }
+
+    /**
+     * @return string
+     */
+    public function getGlue()
+    {
+        return $this->glue;
+    }
+
+    /**
+     * @param string $glue
+     */
+    public function setGlue($glue)
+    {
+        $this->glue = $glue;
+    }
+
+    /**
+     * @return string
+     */
+    public function getOperator()
+    {
+        return $this->operator;
+    }
+
+    /**
+     * @param string $operator
+     */
+    public function setOperator($operator)
+    {
+        $this->operator = $operator;
+    }
+
+    /**
+     * @return string
+     */
+    public function getValue()
+    {
+        return $this->value;
+    }
+
+    /**
+     * @param string $value
+     */
+    public function setValue($value)
+    {
+        $this->value = $value;
+    }
+    
 }

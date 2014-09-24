@@ -16,26 +16,28 @@ class Criteria implements Interfaces\Criteria
 {
     use Helper\Arrays;
     use Helper\ToArray;
-    use Helper\ToString;
 
     /**
      * @var \Everon\Interfaces\Collection
      */
     protected $CriteriumCollection = null;
-    
+
+    /**
+     * @var string
+     */
     protected $glue = 'AND';
 
 
-    public function _and($column, $operator, $value)
+    public function _and(Interfaces\Criteria\Criterium $Criterium)
     {
-        $Criterium = $this->getFactory()->buildCriterium($column, $operator, $value);
-        $this->getCriteria()->append($Criterium);
+        $Criterium->setGlue('AND');
+        
+        $this->getCriteriumCollection()->append($Criterium);
         return $this;
     }
 
-    public function _or($column, $operator, $value)
+    public function _or(Interfaces\Criteria\Criterium $Criterium)
     {
-        $Criterium = $this->getFactory()->buildCriterium($column, $operator, $value);
         $Criterium->setGlue('OR');
 
         $this->getCriteriumCollection()->append($Criterium);
@@ -60,5 +62,21 @@ class Criteria implements Interfaces\Criteria
     public function setCriteriumCollection($CriteriumCollection)
     {
         $this->CriteriumCollection = $CriteriumCollection;
+    }
+
+    /**
+     * @return string
+     */
+    public function getGlue()
+    {
+        return $this->glue;
+    }
+
+    /**
+     * @param string $glue
+     */
+    public function setGlue($glue)
+    {
+        $this->glue = $glue;
     }
 }
