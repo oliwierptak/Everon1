@@ -15,10 +15,6 @@ use Everon\DataMapper\Interfaces;
 
 class Criterium implements Interfaces\Criteria\Criterium
 {
-    use Helper\Arrays;
-    use Helper\ToArray;
-
-
     /**
      * @var string
      */
@@ -33,11 +29,6 @@ class Criterium implements Interfaces\Criteria\Criterium
      * @var string
      */
     protected $value = null;
-
-    /**
-     * @var string
-     */
-    protected $glue = null;
     
     
     public function __construct($column, $operator, $value)
@@ -61,22 +52,6 @@ class Criterium implements Interfaces\Criteria\Criterium
     public function setColumn($column)
     {
         $this->column = $column;
-    }
-
-    /**
-     * @return string
-     */
-    public function getGlue()
-    {
-        return $this->glue;
-    }
-
-    /**
-     * @param string $glue
-     */
-    public function setGlue($glue)
-    {
-        $this->glue = $glue;
     }
 
     /**

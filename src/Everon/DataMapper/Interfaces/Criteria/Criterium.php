@@ -9,7 +9,7 @@
  */
 namespace Everon\DataMapper\Interfaces\Criteria;
 
-interface Criterium extends \Everon\Interfaces\Arrayable
+interface Criterium
 {
     /**
      * @return string
@@ -20,16 +20,6 @@ interface Criterium extends \Everon\Interfaces\Arrayable
      * @param string $column
      */
     function setColumn($column);
-
-    /**
-     * @return string
-     */
-    function getGlue();
-
-    /**
-     * @param string $glue
-     */
-    function setGlue($glue);
 
     /**
      * @return string

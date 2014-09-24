@@ -9,7 +9,43 @@
  */
 namespace Everon\DataMapper\Interfaces\Criteria;
 
+use Everon\DataMapper\Interfaces;
+
 interface Builder extends \Everon\Interfaces\Arrayable, \Everon\Interfaces\Stringable 
 {
+    /**
+     * @param $column
+     * @param $operator
+     * @param $value
+     * @return Builder
+     */
+    function _and($column, $operator, $value);
 
+    /**
+     * @param $column
+     * @param $operator
+     * @param $value
+     * @return Builder
+     */
+    function _or($column, $operator, $value);
+
+    /**
+     * @return Interfaces\Criteria
+     */
+    function getCriteriaAnd();
+
+    /**
+     * @param Interfaces\Criteria $CriteriaAnd
+     */
+    function setCriteriaAnd(Interfaces\Criteria $CriteriaAnd);
+
+    /**
+     * @return Interfaces\Criteria
+     */
+    function getCriteriaOr();
+
+    /**
+     * @param Interfaces\Criteria $CriteriaOr
+     */
+    function setCriteriaOr(Interfaces\Criteria $CriteriaOr);
 }

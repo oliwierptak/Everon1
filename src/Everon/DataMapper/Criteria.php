@@ -30,16 +30,12 @@ class Criteria implements Interfaces\Criteria
 
     public function _and(Interfaces\Criteria\Criterium $Criterium)
     {
-        $Criterium->setGlue('AND');
-        
         $this->getCriteriumCollection()->append($Criterium);
         return $this;
     }
 
     public function _or(Interfaces\Criteria\Criterium $Criterium)
     {
-        $Criterium->setGlue('OR');
-
         $this->getCriteriumCollection()->append($Criterium);
         return $this;
     }
@@ -78,5 +74,10 @@ class Criteria implements Interfaces\Criteria
     public function setGlue($glue)
     {
         $this->glue = $glue;
+    }
+    
+    protected function getToArray()
+    {
+        return $this->getCriteriumCollection()->toArray();
     }
 }

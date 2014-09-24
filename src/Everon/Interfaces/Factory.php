@@ -250,6 +250,13 @@ interface Factory
 
     /**
      * @param string $namespace
+     * @returns DataMapper\Interfaces\Criteria\Builder
+     * @throws Exception\Factory
+     */
+    function buildCriteriaBuilder($namespace='Everon\DataMapper\Criteria');
+
+    /**
+     * @param string $namespace
      * @return DataMapper\Interfaces\Criteria
      * @throws Exception\Factory
      */

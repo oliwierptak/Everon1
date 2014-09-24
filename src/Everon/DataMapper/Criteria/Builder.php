@@ -31,22 +31,28 @@ class Builder implements Interfaces\Criteria\Builder
      * @var Interfaces\Criteria
      */
     protected $CriteriaAnd = null;
-    
-    
+
+
+    /**
+     * @inheritdoc
+     */
     public function _and($column, $operator, $value)
     {
         $Criterium = $this->getFactory()->buildCriterium($column, $operator, $value);
         $this->getCriteriaAnd()->_and($Criterium);
         return $this;
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public function _or($column, $operator, $value)
     {
         $Criterium = $this->getFactory()->buildCriterium($column, $operator, $value);
-        $this->getCriteriaAnd()->_or($Criterium);
+        $this->getCriteriaOr()->_or($Criterium);
         return $this;
     }
-
+    
     /**
      * @return Interfaces\Criteria
      */
@@ -89,4 +95,12 @@ class Builder implements Interfaces\Criteria\Builder
         $this->CriteriaOr = $CriteriaOr;
     }
     
+    public function toSql()
+    {
+        $or_sql = '';
+        $and_sql = '';
+        $and_criteria = $this->getCriteriaAnd()
+        
+        foreach ($and_criteria)
+    }
 }
