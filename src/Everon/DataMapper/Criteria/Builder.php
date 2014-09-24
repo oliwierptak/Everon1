@@ -99,8 +99,10 @@ class Builder implements Interfaces\Criteria\Builder
     {
         $or_sql = '';
         $and_sql = '';
-        $and_criteria = $this->getCriteriaAnd()
+        $and_criteria = $this->getCriteriaAnd();
         
-        foreach ($and_criteria)
+        foreach ($this->getCriteriaAnd()->getCriteriumCollection() as $Criterium) {
+            s($Criterium);
+        }
     }
 }
