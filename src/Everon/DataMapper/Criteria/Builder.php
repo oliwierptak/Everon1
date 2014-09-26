@@ -22,6 +22,9 @@ class Builder implements Interfaces\Criteria\Builder
     use Helper\ToArray;
     use Helper\ToString;
 
+    const OPERATOR_TYPE_IN = 'IN';
+    const OPERATOR_TYPE_EQUAL = '=';
+
     /**
      * @var Interfaces\Criteria
      */
@@ -32,11 +35,16 @@ class Builder implements Interfaces\Criteria\Builder
      */
     protected $CriteriaAnd = null;
 
+    /**
+     * @var string
+     */
+    protected $glue = 'AND';
+
 
     /**
      * @inheritdoc
      */
-    public function _and($column, $operator, $value)
+    public function andWhere($column, $operator, $value)
     {
         $Criterium = $this->getFactory()->buildCriterium($column, $operator, $value);
         $this->getCriteriaAnd()->_and($Criterium);
@@ -46,7 +54,7 @@ class Builder implements Interfaces\Criteria\Builder
     /**
      * @inheritdoc
      */
-    public function _or($column, $operator, $value)
+    public function orWhere($column, $operator, $value)
     {
         $Criterium = $this->getFactory()->buildCriterium($column, $operator, $value);
         $this->getCriteriaOr()->_or($Criterium);
@@ -95,14 +103,38 @@ class Builder implements Interfaces\Criteria\Builder
         $this->CriteriaOr = $CriteriaOr;
     }
     
+    /**
+     * @return string
+     */
+    public function getGlue()
+    {
+        return $this->glue;
+    }
+
+    /**
+     * @param string $glue
+     */
+    public function setGlue($glue)
+    {
+        $this->glue = $glue;
+    }
+    
     public function toSql()
     {
-        $or_sql = '';
-        $and_sql = '';
-        $and_criteria = $this->getCriteriaAnd();
+        $and_sql = $this->criteriaToSql($this->getCriteriaAnd());
+        $or_sql = $this->criteriaToSql($this->getCriteriaOr());
         
-        foreach ($this->getCriteriaAnd()->getCriteriumCollection() as $Criterium) {
-            s($Criterium);
+        sd($and_sql, $or_sql);
+    }
+    
+    protected function criteriaToSql(Interfaces\Criteria $Criteria)
+    {
+        $and_sql = '';
+        foreach ($Criteria->getCriteriumCollection() as $Criterium) {
+            $Operator = $this->getFactory()->buildCriteriaOperator($Criterium);
+            $and_sql .= $Operator->toSql() . ' '.$Criteria->getGlue().' ';
         }
+        
+        return '('.rtrim($and_sql, ' '.$Criteria->getGlue()).')';
     }
 }

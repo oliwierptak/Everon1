@@ -19,7 +19,7 @@ interface Builder extends \Everon\Interfaces\Arrayable, \Everon\Interfaces\Strin
      * @param $value
      * @return Builder
      */
-    function _and($column, $operator, $value);
+    function andWhere($column, $operator, $value);
 
     /**
      * @param $column
@@ -27,7 +27,7 @@ interface Builder extends \Everon\Interfaces\Arrayable, \Everon\Interfaces\Strin
      * @param $value
      * @return Builder
      */
-    function _or($column, $operator, $value);
+    function orWhere($column, $operator, $value);
 
     /**
      * @return Interfaces\Criteria
@@ -48,4 +48,14 @@ interface Builder extends \Everon\Interfaces\Arrayable, \Everon\Interfaces\Strin
      * @param Interfaces\Criteria $CriteriaOr
      */
     function setCriteriaOr(Interfaces\Criteria $CriteriaOr);
+
+    /**
+     * @return string
+     */
+    function getGlue();
+
+    /**
+     * @param string $glue
+     */
+    function setGlue($glue);
 }

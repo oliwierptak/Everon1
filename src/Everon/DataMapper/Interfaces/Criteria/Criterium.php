@@ -9,7 +9,7 @@
  */
 namespace Everon\DataMapper\Interfaces\Criteria;
 
-interface Criterium
+interface Criterium extends \Everon\Interfaces\Stringable
 {
     /**
      * @return string
@@ -40,4 +40,14 @@ interface Criterium
      * @param string $value
      */
     function setValue($value);
+
+    /**
+     * @return mixed
+     */
+    function getPlaceholder();
+
+    /**
+     * @param mixed $placeholder
+     */
+    function setPlaceholder($placeholder);
 }

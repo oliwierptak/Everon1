@@ -15,6 +15,8 @@ use Everon\DataMapper\Interfaces;
 
 class Criterium implements Interfaces\Criteria\Criterium
 {
+    use Helper\ToString;
+    
     /**
      * @var string
      */
@@ -29,6 +31,11 @@ class Criterium implements Interfaces\Criteria\Criterium
      * @var string
      */
     protected $value = null;
+
+    /**
+     * @var mixed
+     */
+    protected $placeholder = null;
     
     
     public function __construct($column, $operator, $value)
@@ -36,6 +43,14 @@ class Criterium implements Interfaces\Criteria\Criterium
         $this->column = $column;
         $this->operator = $operator;
         $this->value = $value;
+    }
+    
+    protected function format()
+    {
+        //todo: other way around put criterium into operator and move format there, where to put values?
+        //$Operator = new...
+        //$Operator->getSqlPart()
+        return sprintf("%s %s %s", $this->getColumn(), $this->getOperator(), $this->getPlaceholder());
     }
 
     /**
@@ -84,6 +99,31 @@ class Criterium implements Interfaces\Criteria\Criterium
     public function setValue($value)
     {
         $this->value = $value;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPlaceholder()
+    {
+        if ($this->placeholder === null) {
+            $this->placeholder = ':'.$this->getColumn();
+        }
+        
+        return $this->placeholder;
+    }
+
+    /**
+     * @param mixed $placeholder
+     */
+    public function setPlaceholder($placeholder)
+    {
+        $this->placeholder = $placeholder;
+    }
+    
+    protected function getToString()
+    {
+        return $this->format();
     }
     
 }
