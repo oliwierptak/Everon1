@@ -15,12 +15,11 @@ use Everon\Rest\Dependency as RestDependency;
 use Everon\Exception;
 use Everon\Helper;
 use Everon\Http;
-use Everon\Module;
 
 /**
  * @method Http\Interfaces\Response getResponse()
  * @method Interfaces\Request getRequest()
- * @method Module\Interfaces\Rest getModule()
+ * @method \Everon\Module\Interfaces\Rest getModule()
  */
 abstract class Controller extends \Everon\Controller implements Interfaces\Controller
 {

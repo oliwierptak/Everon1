@@ -15,13 +15,12 @@ use Everon\Exception;
 use Everon\Interfaces;
 use Everon\Helper;
 use Everon\Http;
-use Everon\Module;
 use Everon\Mvc;
 use Everon\View;
 
 /**
  * @method Http\Interfaces\Response getResponse()
- * @method Module\Interfaces\Mvc getModule()
+ * @method \Everon\Module\Interfaces\Mvc getModule()
  */
 abstract class Controller extends \Everon\Controller implements Mvc\Interfaces\Controller
 {
@@ -49,9 +48,9 @@ abstract class Controller extends \Everon\Controller implements Mvc\Interfaces\C
 
 
     /**
-     * @param Module\Interfaces\Module $Module
+     * @param \Everon\Module\Interfaces\Module $Module
      */
-    public function __construct(Module\Interfaces\Module $Module)
+    public function __construct(\Everon\Module\Interfaces\Module $Module)
     {
         parent::__construct($Module);
         
