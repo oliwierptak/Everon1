@@ -36,10 +36,26 @@ class Loader implements Interfaces\Loader
     {
         return $this->config_directory;
     }
+
+    /**
+     * @param $config_directory
+     */
+    public function setConfigDirectory($config_directory)
+    {
+        $this->config_directory = $config_directory;
+    }
     
     public function getCacheDirectory()
     {
         return $this->cache_directory;
+    }
+
+    /**
+     * @param $cache_directory
+     */
+    public function setCacheDirectory($cache_directory)
+    {
+        $this->cache_directory = $cache_directory;
     }
 
     /**

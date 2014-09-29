@@ -155,6 +155,14 @@ class Manager implements \Everon\Config\Interfaces\Manager
     protected function loadAndRegisterAllConfigs()
     {
         $configs_data = $this->getConfigDataFromLoader($this->getConfigLoader());
+
+        //load domain.ini from Domain directory
+        $old_dir = $this->getConfigLoader()->getConfigDirectory();
+        $this->getConfigLoader()->setConfigDirectory($this->getBootstrap()->getEnvironment()->getDomain());
+        $domain_data = $this->getConfigDataFromLoader($this->getConfigLoader());
+        $this->getConfigLoader()->setConfigDirectory($old_dir);
+        
+        $configs_data['domain'] = $domain_data['domain'];
         list($Compiler, $config_items_data) = $this->getAllConfigsDataAndCompiler($configs_data);
 
         /**
