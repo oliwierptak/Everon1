@@ -11,9 +11,9 @@ namespace Everon\DataMapper\Interfaces;
 
 interface Criteria extends \Everon\Interfaces\Arrayable 
 {
-    function _and(Criteria\Criterium $Criterium);
+    function andWhere(Criteria\Criterium $Criterium);
 
-    function _or(Criteria\Criterium $Criterium);
+    function orWhere(Criteria\Criterium $Criterium);
 
     /**
      * @return \Everon\Interfaces\Collection

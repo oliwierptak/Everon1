@@ -18,14 +18,14 @@ class Criterium implements Interfaces\Criteria\Criterium
     use Helper\ToString;
     
     /**
-     * @var string
+     * @var Interfaces\Criteria\Operator
      */
-    protected $column = null;
-
+    protected $Operator = '=';
+    
     /**
      * @var string
      */
-    protected $operator = '=';
+    protected $column = null;
 
     /**
      * @var string
@@ -36,23 +36,20 @@ class Criterium implements Interfaces\Criteria\Criterium
      * @var mixed
      */
     protected $placeholder = null;
+
+    /**
+     * @var string
+     */
+    protected $glue = 'AND';
     
     
-    public function __construct($column, $operator, $value)
+    public function __construct(Interfaces\Criteria\Operator $Operator, $column, $value)
     {
         $this->column = $column;
-        $this->operator = $operator;
+        $this->Operator = $Operator;
         $this->value = $value;
     }
     
-    protected function format()
-    {
-        //todo: other way around put criterium into operator and move format there, where to put values?
-        //$Operator = new...
-        //$Operator->getSqlPart()
-        return sprintf("%s %s %s", $this->getColumn(), $this->getOperator(), $this->getPlaceholder());
-    }
-
     /**
      * @return string
      */
@@ -74,7 +71,7 @@ class Criterium implements Interfaces\Criteria\Criterium
      */
     public function getOperator()
     {
-        return $this->operator;
+        return $this->Operator;
     }
 
     /**
@@ -82,7 +79,7 @@ class Criterium implements Interfaces\Criteria\Criterium
      */
     public function setOperator($operator)
     {
-        $this->operator = $operator;
+        $this->Operator = $operator;
     }
 
     /**
@@ -120,10 +117,16 @@ class Criterium implements Interfaces\Criteria\Criterium
     {
         $this->placeholder = $placeholder;
     }
+
+    public function toSql()
+    {
+        return sprintf("%s %s %s", $Criterium->getColumn(), $Criterium->getOperator(), $Criterium->getPlaceholder());
+    }
     
     protected function getToString()
     {
         return $this->format();
+        
     }
     
 }

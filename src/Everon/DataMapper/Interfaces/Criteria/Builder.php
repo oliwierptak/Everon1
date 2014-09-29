@@ -32,22 +32,12 @@ interface Builder extends \Everon\Interfaces\Arrayable, \Everon\Interfaces\Strin
     /**
      * @return Interfaces\Criteria
      */
-    function getCriteriaAnd();
+    function getCriteria();
 
     /**
-     * @param Interfaces\Criteria $CriteriaAnd
+     * @param Interfaces\Criteria $Criteria
      */
-    function setCriteriaAnd(Interfaces\Criteria $CriteriaAnd);
-
-    /**
-     * @return Interfaces\Criteria
-     */
-    function getCriteriaOr();
-
-    /**
-     * @param Interfaces\Criteria $CriteriaOr
-     */
-    function setCriteriaOr(Interfaces\Criteria $CriteriaOr);
+    function setCriteria(Interfaces\Criteria $Criteria);
 
     /**
      * @return string

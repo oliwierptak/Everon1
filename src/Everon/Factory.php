@@ -744,6 +744,23 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
+    public function buildCriteriaOperator($type, $namespace='Everon\DataMapper\Criteria\Operator')
+    {
+        try {
+            $class_name = $this->getFullClassName($namespace, $type);
+            $this->classExists($class_name);
+            $CriteriaOperator = new $class_name();
+            $this->injectDependencies($class_name, $CriteriaOperator);
+            return $CriteriaOperator;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('CriteriaOperator: "%s" initialization error', $type, $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function buildCriteria($namespace='Everon\DataMapper')
     {
         try {

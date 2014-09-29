@@ -22,19 +22,37 @@ class Builder implements Interfaces\Criteria\Builder
     use Helper\ToArray;
     use Helper\ToString;
 
-    const OPERATOR_TYPE_IN = 'IN';
-    const OPERATOR_TYPE_EQUAL = '=';
+    const GLUE_AND = 'AND';
+    const GLUE_OR = 'OR';
+
+    protected $operator_mapper = [
+        Operator::TYPE_EQUAL => 'Equal',
+        Operator::TYPE_LIKE => 'Like',
+        /*
+        self::TYPE_BETWEEN => 'OperatorBetween',
+        self::TYPE_NOT_BETWEEN => 'OperatorNotBetween',
+        self::TYPE_SMALLER_THAN => 'OperatorSmallerThan',
+        self::TYPE_GREATER_THAN => 'OperatorGreaterThan',
+        self::TYPE_GREATER_OR_EQUAL => 'OperatorGreaterOrEqual',
+        self::TYPE_SMALLER_OR_EQUAL => 'OperatorSmallerOrEqual',
+        self::TYPE_NOT_EQUAL => 'OperatorNotEqual',
+        self::TYPE_IS => 'OperatorIs',
+        self::TYPE_IS_NOT => 'OperatorIsNot',
+        self::TYPE_IN => 'OperatorIn',
+        self::TYPE_NOT_IN => 'OperatorNotIn'
+        */
+    ];
+    
+    /**
+     * @var string
+     */
+    protected $current = null;
 
     /**
-     * @var Interfaces\Criteria
+     * @var \Everon\Interfaces\Collection
      */
-    protected $CriteriaOr = null;
-
-    /**
-     * @var Interfaces\Criteria
-     */
-    protected $CriteriaAnd = null;
-
+    protected $CriteriaCollection = null;
+    
     /**
      * @var string
      */
@@ -47,7 +65,7 @@ class Builder implements Interfaces\Criteria\Builder
     public function andWhere($column, $operator, $value)
     {
         $Criterium = $this->getFactory()->buildCriterium($column, $operator, $value);
-        $this->getCriteriaAnd()->_and($Criterium);
+        $this->getCriteria()->andWhere($Criterium);
         return $this;
     }
 
@@ -57,50 +75,30 @@ class Builder implements Interfaces\Criteria\Builder
     public function orWhere($column, $operator, $value)
     {
         $Criterium = $this->getFactory()->buildCriterium($column, $operator, $value);
-        $this->getCriteriaOr()->_or($Criterium);
+        $this->getCriteria()->orWhere($Criterium);
         return $this;
     }
-    
-    /**
-     * @return Interfaces\Criteria
-     */
-    public function getCriteriaAnd()
-    {
-        if ($this->CriteriaAnd === null) {
-            $this->CriteriaAnd = $this->getFactory()->buildCriteria();
-            $this->CriteriaAnd->setGlue('AND');
-        }
-
-        return $this->CriteriaAnd;
-    }
-
-    /**
-     * @param Interfaces\Criteria $CriteriaAnd
-     */
-    public function setCriteriaAnd(Interfaces\Criteria $CriteriaAnd)
-    {
-        $this->CriteriaAnd = $CriteriaAnd;
-    }
 
     /**
      * @return Interfaces\Criteria
      */
-    public function getCriteriaOr()
+    public function getCriteria()
     {
-        if ($this->CriteriaOr === null) {
-            $this->CriteriaOr = $this->getFactory()->buildCriteria();
-            $this->CriteriaOr->setGlue('OR');
+        if ($this->CriteriaCollection === null) {
+            $Criteria = $this->getFactory()->buildCriteria();
+            $this->CriteriaCollection = new Helper\Collection([$Criteria]);
+            $this->current = 0;
         }
         
-        return $this->CriteriaOr;
+        return $this->CriteriaCollection[$this->current];
     }
 
     /**
-     * @param Interfaces\Criteria $CriteriaOr
+     * @param Interfaces\Criteria $Criteria
      */
-    public function setCriteriaOr(Interfaces\Criteria $CriteriaOr)
+    public function setCriteria(Interfaces\Criteria $Criteria)
     {
-        $this->CriteriaOr = $CriteriaOr;
+        $this->Criteria = $Criteria;
     }
     
     /**
@@ -118,23 +116,54 @@ class Builder implements Interfaces\Criteria\Builder
     {
         $this->glue = $glue;
     }
+
+    /**
+     * @return \Everon\Interfaces\Collection
+     */
+    public function getCriteriaCollection()
+    {
+        return $this->CriteriaCollection;
+    }
+
+    /**
+     * @param \Everon\Interfaces\Collection $CriteriaCollection
+     */
+    public function setCriteriaCollection(\Everon\Interfaces\Collection $CriteriaCollection)
+    {
+        $this->CriteriaCollection = $CriteriaCollection;
+    }
     
     public function toSql()
     {
-        $and_sql = $this->criteriaToSql($this->getCriteriaAnd());
-        $or_sql = $this->criteriaToSql($this->getCriteriaOr());
+        $sql = $this->criteriaToSql($this->getCriteria());
         
-        sd($and_sql, $or_sql);
+        sd($or_sql);
     }
     
     protected function criteriaToSql(Interfaces\Criteria $Criteria)
     {
         $and_sql = '';
         foreach ($Criteria->getCriteriumCollection() as $Criterium) {
-            $Operator = $this->getFactory()->buildCriteriaOperator($Criterium);
+            $Operator = $this->buildOperator($Criterium);
             $and_sql .= $Operator->toSql() . ' '.$Criteria->getGlue().' ';
         }
         
         return '('.rtrim($and_sql, ' '.$Criteria->getGlue()).')';
+    }
+
+    /**
+     * @param Interfaces\Criteria\Criterium $Criterium
+     * @return Interfaces\Criteria\Operator
+     * @throws Exception\CriteriaBuilder
+     */
+    protected function buildOperator(Interfaces\Criteria\Criterium $Criterium)
+    {
+        $operator = strtoupper($Criterium->getOperator());
+        if (isset($this->operator_mapper[$operator]) === false) {
+            throw new \Everon\DataMapper\Exception\CriteriaBuilder('Unsupported criteria operator for: "%s"', $operator);
+        }
+        
+        $type = $this->operator_mapper[$operator];
+        return $this->getFactory()->buildCriteriaOperator($type);
     }
 }

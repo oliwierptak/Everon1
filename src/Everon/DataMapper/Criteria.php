@@ -22,19 +22,14 @@ class Criteria implements Interfaces\Criteria
      */
     protected $CriteriumCollection = null;
 
-    /**
-     * @var string
-     */
-    protected $glue = 'AND';
 
-
-    public function _and(Interfaces\Criteria\Criterium $Criterium)
+    public function andWhere(Interfaces\Criteria\Criterium $Criterium)
     {
         $this->getCriteriumCollection()->append($Criterium);
         return $this;
     }
 
-    public function _or(Interfaces\Criteria\Criterium $Criterium)
+    public function orWhere(Interfaces\Criteria\Criterium $Criterium)
     {
         $this->getCriteriumCollection()->append($Criterium);
         return $this;
