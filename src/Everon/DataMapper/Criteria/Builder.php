@@ -46,7 +46,7 @@ class Builder implements Interfaces\Criteria\Builder
     /**
      * @var string
      */
-    protected $current = null;
+    protected $current = 0;
 
     /**
      * @var \Everon\Interfaces\Collection
@@ -57,7 +57,19 @@ class Builder implements Interfaces\Criteria\Builder
      * @var string
      */
     protected $glue = 'AND';
+    
+    public function __construct()
+    {
+        $this->CriteriaCollection = new Helper\Collection([]);
+    }
 
+    public function where($column, $operator, $value)
+    {
+        $Criterium = $this->getFactory()->buildCriterium($column, $operator, $value);
+        $this->getCriteria()->where($Criterium);
+        $this->current++;
+        return $this;
+    }
 
     /**
      * @inheritdoc
@@ -84,10 +96,9 @@ class Builder implements Interfaces\Criteria\Builder
      */
     public function getCriteria()
     {
-        if ($this->CriteriaCollection === null) {
-            $Criteria = $this->getFactory()->buildCriteria();
-            $this->CriteriaCollection = new Helper\Collection([$Criteria]);
-            $this->current = 0;
+        $Criteria = $this->getFactory()->buildCriteria();
+        if ($this->CriteriaCollection->has($this->current) === false) {
+            $this->CriteriaCollection[$this->current] = new Helper\Collection([$Criteria]); 
         }
         
         return $this->CriteriaCollection[$this->current];
@@ -98,7 +109,7 @@ class Builder implements Interfaces\Criteria\Builder
      */
     public function setCriteria(Interfaces\Criteria $Criteria)
     {
-        $this->Criteria = $Criteria;
+        $this->getCriteria()[$this->current] = $Criteria;
     }
     
     /**
