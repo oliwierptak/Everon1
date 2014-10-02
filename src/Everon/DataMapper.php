@@ -159,6 +159,8 @@ abstract class DataMapper implements Interfaces\DataMapper
         else {
             $Criteria = clone $Criteria;
             $Criteria->orderBy([]);
+            $Criteria->offset(0);
+            $Criteria->limit(0);
         }
         
         list($sql, $parameters) = $this->getCountSql($Criteria);
