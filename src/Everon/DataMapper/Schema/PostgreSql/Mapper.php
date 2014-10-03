@@ -11,7 +11,6 @@ namespace Everon\DataMapper\Schema\PostgreSql;
 
 use Everon\DataMapper;
 use Everon\DataMapper\Interfaces;
-use Everon\Domain\Interfaces\Entity;
 
 
 abstract class Mapper extends DataMapper 
@@ -68,6 +67,20 @@ abstract class Mapper extends DataMapper
         $pk_name = $this->getTable()->getPk();
         $sql = sprintf('DELETE FROM %s.%s t WHERE %s = :%s', $this->getTable()->getSchema(), $this->getTable()->getName(), $pk_name, $pk_name);
         $params = [$pk_name => $id];
+        return [$sql, $params];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getDeleteByCriteriaSql(Interfaces\Criteria $Criteria)
+    {
+        $params = $Criteria->getWhere();
+        if (empty($params)) {
+            throw new \Everon\Exception\DataMapper('No criteria conditions defined');
+        }
+        
+        $sql = sprintf('DELETE FROM %s.%s t %s', $this->getTable()->getSchema(), $this->getTable()->getName(), $Criteria->getWhereSql());
         return [$sql, $params];
     }
 

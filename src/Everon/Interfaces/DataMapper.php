@@ -36,6 +36,12 @@ interface DataMapper
 
     /**
      * @param Criteria $Criteria
+     * @return bool
+     */
+    function deleteByCriteria(Criteria $Criteria);
+
+    /**
+     * @param Criteria $Criteria
      * @return int
      */
     function count(Criteria $Criteria=null);
@@ -122,6 +128,13 @@ interface DataMapper
      * @return array
      */
     function getDeleteSql($id);
+
+    /**
+     * @param Criteria $Criteria
+     * @return array
+     * @throws \Everon\Exception\DataMapper
+     */
+    function getDeleteByCriteriaSql(Criteria $Criteria);
 
     /**
      * @param Criteria $Criteria

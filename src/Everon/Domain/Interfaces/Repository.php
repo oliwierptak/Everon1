@@ -75,6 +75,11 @@ interface Repository
 
     /**
      * @param Criteria $Criteria
+     */
+    function removeByCriteria(Criteria $Criteria);
+
+    /**
+     * @param Criteria $Criteria
      * @param Criteria $RelationCriteria
      * @return Entity|null
      */

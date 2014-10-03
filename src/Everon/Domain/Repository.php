@@ -306,7 +306,7 @@ abstract class Repository implements Interfaces\Repository
         
         return $result;
     }
-
+    
     /**
      * @inheritdoc
      */
@@ -349,6 +349,14 @@ abstract class Repository implements Interfaces\Repository
         
         $this->getMapper()->delete($Entity->getId(), $user_id);
         $Entity->delete();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function removeByCriteria(Criteria $Criteria)
+    {
+        $this->getMapper()->deleteByCriteria($Criteria);
     }
 
     /**

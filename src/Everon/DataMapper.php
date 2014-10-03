@@ -50,6 +50,11 @@ abstract class DataMapper implements Interfaces\DataMapper
     /**
      * @inheritdoc
      */
+    abstract public function getDeleteByCriteriaSql(Criteria $Criteria);
+
+    /**
+     * @inheritdoc
+     */
     abstract public function getFetchAllSql(Criteria $Criteria=null);
 
     /**
@@ -145,6 +150,19 @@ abstract class DataMapper implements Interfaces\DataMapper
     {
         $id = $this->getTable()->validateId($id);
         list($sql, $parameters) = $this->getDeleteSql($id);
+        return $this->getSchema()->getPdoAdapterByName($this->write_connection_name)->delete($sql, $parameters);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    /**
+     * @param Criteria $Criteria
+     * @return int
+     */
+    public function deleteByCriteria(Criteria $Criteria)
+    {
+        list($sql, $parameters) = $this->getDeleteByCriteriaSql($Criteria);
         return $this->getSchema()->getPdoAdapterByName($this->write_connection_name)->delete($sql, $parameters);
     }
 
