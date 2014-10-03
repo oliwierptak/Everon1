@@ -44,7 +44,7 @@ trait Arrays
                 $data[$name] = $this->arrayMergeDefault($default[$name], (array) $value_data);
             }
             else {
-                if (isset($data[$name]) === false) {
+                if (array_key_exists($name, $data) === false) {
                     $data[$name] = $default[$name];
                 }
             }
