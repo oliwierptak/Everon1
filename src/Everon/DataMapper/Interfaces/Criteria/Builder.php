@@ -32,12 +32,12 @@ interface Builder extends \Everon\Interfaces\Arrayable, \Everon\Interfaces\Strin
     /**
      * @return Interfaces\Criteria
      */
-    function getCriteria();
+    function getCurrentCriteria();
 
     /**
      * @param Interfaces\Criteria $Criteria
      */
-    function setCriteria(Interfaces\Criteria $Criteria);
+    function setCurrentCriteria(Interfaces\Criteria $Criteria);
 
     /**
      * @return string
@@ -48,4 +48,22 @@ interface Builder extends \Everon\Interfaces\Arrayable, \Everon\Interfaces\Strin
      * @param string $glue
      */
     function setGlue($glue);
+
+    /**
+     * @return \Everon\Interfaces\Collection
+     */
+    function getCriteriaCollection();
+
+    /**
+     * @param \Everon\Interfaces\Collection $CriteriaCollection
+     */
+    function setCriteriaCollection(\Everon\Interfaces\Collection $CriteriaCollection);
+
+
+    /**
+     * @param $operator
+     * @return string
+     * @throws \Everon\DataMapper\Exception\CriteriaBuilder
+     */
+    static function getOperatorClassName($operator);
 }

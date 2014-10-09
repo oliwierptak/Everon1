@@ -12,8 +12,23 @@ namespace Everon\DataMapper\Interfaces\Criteria;
 interface Operator //extends \Everon\Interfaces\Arrayable, \Everon\Interfaces\Stringable 
 {
     /**
-     * @param Criterium $Criterium
      * @return string
      */
-    function toSql(Criterium $Criterium);
+    function getType();
+
+    /**
+     * @param string $type
+     */
+    function setType($type);
+        
+    /**
+     * @return string
+     */
+    function getTypeAsSql();
+
+    /**
+     * @param Criterium $Criterium
+     * @return array
+     */
+    function toSqlPartData(Criterium $Criterium);
 }

@@ -11,13 +11,13 @@ namespace Everon\DataMapper\Criteria\Operator;
 
 use Everon\DataMapper\Interfaces;
 
-class Equal extends \Everon\DataMapper\Criteria\Operator implements Interfaces\Criteria\Operator
+class NotEqual extends \Everon\DataMapper\Criteria\Operator implements Interfaces\Criteria\Operator
 {
-    protected $type = self::TYPE_EQUAL;
+    protected $type = self::TYPE_NOT_EQUAL;
     
     public function getTypeAsSql()
     {
-        return '=';
+        return '!=';
     }
 
 }

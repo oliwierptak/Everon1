@@ -9,7 +9,7 @@
  */
 namespace Everon\DataMapper\Interfaces\Criteria;
 
-interface Criterium extends \Everon\Interfaces\Stringable
+interface Criterium
 {
     /**
      * @return string
@@ -24,12 +24,12 @@ interface Criterium extends \Everon\Interfaces\Stringable
     /**
      * @return string
      */
-    function getOperator();
+    function getOperatorType();
 
     /**
-     * @param string $operator
+     * @param string
      */
-    function setOperator($operator);
+    function setOperatorType($operator);
 
     /**
      * @return string
@@ -42,6 +42,16 @@ interface Criterium extends \Everon\Interfaces\Stringable
     function setValue($value);
 
     /**
+     * @return string
+     */
+    function getGlue();
+
+    /**
+     * @param string $glue
+     */
+    function setGlue($glue);
+
+    /**
      * @return mixed
      */
     function getPlaceholder();
@@ -50,4 +60,9 @@ interface Criterium extends \Everon\Interfaces\Stringable
      * @param mixed $placeholder
      */
     function setPlaceholder($placeholder);
+
+    /**
+     * @return \Everon\DataMapper\Interfaces\SqlPart
+     */
+    function toSqlPart();
 }

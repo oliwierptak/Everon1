@@ -15,11 +15,25 @@ class In extends \Everon\DataMapper\Criteria\Operator implements Interfaces\Crit
 {
     protected $type = self::TYPE_IN;
 
+    public function getTypeAsSql()
+    {
+        return 'IN';
+    }
+
     /**
      * @inheritdoc
      */
-    public function toSql(Interfaces\Criteria\Criterium $Criterium)
+    public function toSqlPartData(Interfaces\Criteria\Criterium $Criterium)
     {
-        return sprintf("%s IN (%s)", $Criterium->getColumn(), $Criterium->getOperator(), $Criterium->getPlaceholder());
+        $params = [];
+        
+        foreach ($Criterium->getValue() as $value) {
+            $rand = $Criterium->getColumn().'_'.rand(100, time());
+            $params[$rand] = $value;
+        }
+
+        $placeholder_sql = ':'.rtrim(implode(',:', array_keys($params)), ',');
+        $sql = sprintf("%s %s (%s)", $Criterium->getColumn(), $this->getTypeAsSql(), $placeholder_sql);
+        return [$sql, $params];
     }
 }

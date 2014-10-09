@@ -276,9 +276,16 @@ interface Factory
      * @param $value
      * @param string $namespace
      * @return DataMapper\Interfaces\Criteria\Criterium
-     * @throws Exception\Factory
      */
-    function buildCriterium($column, $operator, $value, $namespace='Everon\DataMapper\Criteria');
+    function buildCriterium($column, $operator, $value, $namespace = 'Everon\DataMapper\Criteria');
+
+    /**
+     * @param $sql
+     * @param array $parameters
+     * @param string $namespace
+     * @return DataMapper\Interfaces\SqlPart
+     */
+    function buildDataMapperSqlPart($sql, array $parameters, $namespace = 'Everon\DataMapper\Criteria');
 
     /**
      * @param $name

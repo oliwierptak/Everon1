@@ -16,9 +16,16 @@ use Everon\Rest\Exception;
 abstract class Operator implements Interfaces\Criteria\Operator
 {
     const TYPE_EQUAL = '=';
+    const TYPE_NOT_EQUAL = '!=';
     const TYPE_LIKE = 'LIKE';
     const TYPE_IN = 'IN';
-    
+    const TYPE_NOT_IN = 'NOT IN';
+    const TYPE_IS = 'IS';
+    const TYPE_NOT_IS = 'IS NOT';
+
+    /**
+     * @var string
+     */
     protected $type = null;
     
     /*
@@ -29,7 +36,7 @@ abstract class Operator implements Interfaces\Criteria\Operator
     const TYPE_SMALLER_OR_EQUAL = '< = ';
     const TYPE_NOT_EQUAL = '! = ';
     const TYPE_IS = 'IS';
-    const TYPE_IS_NOT = 'ISNOT';
+    const TYPE_NOT_IS = 'ISNOT';
     const TYPE_IN = 'IN';
     const TYPE_NOT_IN = 'NOTIN';
     const TYPE_NOT_BETWEEN = 'NOTBETWEEN';
@@ -38,8 +45,35 @@ abstract class Operator implements Interfaces\Criteria\Operator
     /**
      * @inheritdoc
      */
-    public function toSql(Interfaces\Criteria\Criterium $Criterium)
+    abstract public function getTypeAsSql();
+
+    /**
+     * @inheritdoc
+     */
+    public function getType()
     {
-        return sprintf("%s %s %s", $Criterium->getColumn(), $Criterium->getOperator(), $Criterium->getPlaceholder());
+        return $this->type;
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function toSqlPartData(Interfaces\Criteria\Criterium $Criterium)
+    {
+        $sql = sprintf("%s %s %s", $Criterium->getColumn(), $this->getTypeAsSql(), $Criterium->getPlaceholder());
+        $params = [
+            $Criterium->getColumn() => $Criterium->getValue() 
+        ];
+        
+        return [$sql, $params];
+    }
+    
 }
