@@ -70,8 +70,12 @@ abstract class Operator implements Interfaces\Criteria\Operator
     {
         $sql = sprintf("%s %s %s", $Criterium->getColumn(), $this->getTypeAsSql(), $Criterium->getPlaceholder());
         $params = [
-            $Criterium->getColumn() => $Criterium->getValue() 
+            $Criterium->getPlaceholderAsParameter() => $Criterium->getValue() 
         ];
+        
+        if ($Criterium->getValue() === null) {
+            $params = [];
+        }
         
         return [$sql, $params];
     }

@@ -131,8 +131,12 @@ class Criterium implements Interfaces\Criteria\Criterium
      */
     public function getPlaceholder()
     {
+        if ($this->value === null) {
+            return 'NULL';
+        }
+        
         if ($this->placeholder === null) {
-            $this->placeholder = ':'.$this->getColumn();
+            $this->placeholder = ':'.Builder::randomizeParameterName($this->getColumn());
         }
         
         return $this->placeholder;
@@ -144,6 +148,14 @@ class Criterium implements Interfaces\Criteria\Criterium
     public function setPlaceholder($placeholder)
     {
         $this->placeholder = $placeholder;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getPlaceholderAsParameter()
+    {
+        return ltrim($this->getPlaceholder(), ':');
     }
 
     /**
@@ -185,8 +197,8 @@ class Criterium implements Interfaces\Criteria\Criterium
     {
         if ($this->SqlPart === null) {
             $Operator = $this->buildOperator($this->getColumn(), $this->getOperatorType(), $this->getValue());
-            list($sql, $parmetes) = $Operator->toSqlPartData($this);
-            $this->SqlPart = $this->getFactory()->buildDataMapperSqlPart($sql, $parmetes);
+            list($sql, $parameters) = $Operator->toSqlPartData($this);
+            $this->SqlPart = $this->getFactory()->buildDataMapperSqlPart($sql, $parameters);
         }
         
         return $this->SqlPart;

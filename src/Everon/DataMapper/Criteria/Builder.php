@@ -68,7 +68,46 @@ class Builder implements Interfaces\Criteria\Builder
     {
         $this->CriteriaCollection = new Helper\Collection([]);
     }
-    
+
+    /**
+     * @param Interfaces\Criteria $Criteria
+     * @return string
+     */
+    protected function criteriaToSql(Interfaces\Criteria $Criteria)
+    {
+        /**
+         * @var \Everon\DataMapper\Interfaces\Criteria\Criterium $Criterium
+         */
+        $sql = '';
+        foreach ($Criteria->getCriteriumCollection() as $Criterium) {
+            $SqlPart = $Criterium->toSqlPart();
+            $sql .= $SqlPart->getSql() . ' '.$Criteria->getGlue().' ';
+        }
+
+        return '('.rtrim($sql, ' '.$Criteria->getGlue()).')';
+    }
+
+    /**
+     * @param Interfaces\Criteria $Criteria
+     * @return array
+     */
+    protected function criteriaToParameters(Interfaces\Criteria $Criteria)
+    {
+        /**
+         * @var \Everon\DataMapper\Interfaces\Criteria\Criterium $Criterium
+         */
+        $parameters = [];
+        foreach ($Criteria->getCriteriumCollection() as $Criterium) {
+            $SqlPart = $Criterium->toSqlPart();
+            $parameters[] = $SqlPart->getParameters();
+        }
+
+        return $parameters;
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function where($column, $operator, $value)
     {
         $this->current++;
@@ -98,7 +137,7 @@ class Builder implements Interfaces\Criteria\Builder
     }
 
     /**
-     * @return Interfaces\Criteria
+     * @inheritdoc
      */
     public function getCurrentCriteria()
     {
@@ -111,15 +150,15 @@ class Builder implements Interfaces\Criteria\Builder
     }
 
     /**
-     * @param Interfaces\Criteria $Criteria
+     * @inheritdoc
      */
     public function setCurrentCriteria(Interfaces\Criteria $Criteria)
     {
         $this->CriteriaCollection[$this->current] = $Criteria;
     }
-    
+
     /**
-     * @return string
+     * @inheritdoc
      */
     public function getGlue()
     {
@@ -127,7 +166,7 @@ class Builder implements Interfaces\Criteria\Builder
     }
 
     /**
-     * @param string $glue
+     * @inheritdoc
      */
     public function setGlue($glue)
     {
@@ -135,7 +174,7 @@ class Builder implements Interfaces\Criteria\Builder
     }
 
     /**
-     * @return \Everon\Interfaces\Collection
+     * @inheritdoc
      */
     public function getCriteriaCollection()
     {
@@ -143,26 +182,37 @@ class Builder implements Interfaces\Criteria\Builder
     }
 
     /**
-     * @param \Everon\Interfaces\Collection $CriteriaCollection
+     * @inheritdoc
      */
     public function setCriteriaCollection(\Everon\Interfaces\Collection $CriteriaCollection)
     {
         $this->CriteriaCollection = $CriteriaCollection;
     }
-    
-    public function toSql()
+
+    /**
+     * @return Interfaces\SqlPart
+     */
+    public function toSqlPart()
     {
         $sql = [];
-        $params = [];
+        $parameters = [];
         
         foreach ($this->getCriteriaCollection() as $Criteria) {
             $sql[] = $this->criteriaToSql($Criteria);
-            $params[] = $this->criteriaToParameters($Criteria);
+            $criteria_parameters = $this->criteriaToParameters($Criteria);
+            $tmp = [];
+            
+            foreach ($criteria_parameters as $cp_value) {
+                $tmp = $this->arrayMergeDefault($tmp, $cp_value);
+            }
+
+            $parameters = $this->arrayMergeDefault($tmp, $parameters);
         }
         
+        $sql = implode(' '.$this->getGlue().' ', $sql);
+        $sql = rtrim($sql, $this->getGlue().' ');
         
-        
-        sd($sql, $params);
+        return $this->getFactory()->buildDataMapperSqlPart($sql, $parameters);
     }
 
     public function glueByAnd()
@@ -173,34 +223,6 @@ class Builder implements Interfaces\Criteria\Builder
     public function glueByOr()
     {
         $this->glue = self::GLUE_OR;
-    }
-
-    protected function criteriaToSql(Interfaces\Criteria $Criteria)
-    {
-        /**
-         * @var \Everon\DataMapper\Interfaces\Criteria\Criterium $Criterium
-         */
-        $sql = '';
-        foreach ($Criteria->getCriteriumCollection() as $Criterium) {
-            $SqlPart = $Criterium->toSqlPart();
-            $sql .= $SqlPart->getSql() . ' '.$Criteria->getGlue().' ';
-        }
-        
-        return '('.rtrim($sql, ' '.$Criteria->getGlue()).')';
-    }
-
-    protected function criteriaToParameters(Interfaces\Criteria $Criteria)
-    {
-        /**
-         * @var \Everon\DataMapper\Interfaces\Criteria\Criterium $Criterium
-         */
-        $parameters = [];
-        foreach ($Criteria->getCriteriumCollection() as $Criterium) {
-            $SqlPart = $Criterium->toSqlPart();
-            $parameters[] = $SqlPart->getParameters();
-        }
-
-        return $parameters;
     }
 
     /**
@@ -217,4 +239,10 @@ class Builder implements Interfaces\Criteria\Builder
         
         return static::$operator_mappers[$operator];
     }
+    
+    public static function randomizeParameterName($name)
+    {
+        return $name.'_'.mt_rand(100, time());
+    }
+    
 }

@@ -14,6 +14,18 @@ use Everon\DataMapper\Interfaces;
 interface Builder extends \Everon\Interfaces\Arrayable, \Everon\Interfaces\Stringable 
 {
     /**
+     * Starts new subquery
+     * 
+     * @param $column
+     * @param $operator
+     * @param $value
+     * @return $this
+     */
+    function where($column, $operator, $value);
+        
+    /**
+     * Appends to current subquery
+     * 
      * @param $column
      * @param $operator
      * @param $value
@@ -22,6 +34,8 @@ interface Builder extends \Everon\Interfaces\Arrayable, \Everon\Interfaces\Strin
     function andWhere($column, $operator, $value);
 
     /**
+     * Appends to current subquery
+     * 
      * @param $column
      * @param $operator
      * @param $value
@@ -59,6 +73,14 @@ interface Builder extends \Everon\Interfaces\Arrayable, \Everon\Interfaces\Strin
      */
     function setCriteriaCollection(\Everon\Interfaces\Collection $CriteriaCollection);
 
+    /**
+     * @return Interfaces\SqlPart
+     */
+    public function toSqlPart();
+
+    function glueByAnd();
+
+    function glueByOr();
 
     /**
      * @param $operator

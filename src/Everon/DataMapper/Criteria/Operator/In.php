@@ -9,6 +9,7 @@
  */
 namespace Everon\DataMapper\Criteria\Operator;
 
+use Everon\DataMapper\Criteria\Builder;
 use Everon\DataMapper\Interfaces;
 
 class In extends \Everon\DataMapper\Criteria\Operator implements Interfaces\Criteria\Operator
@@ -26,9 +27,17 @@ class In extends \Everon\DataMapper\Criteria\Operator implements Interfaces\Crit
     public function toSqlPartData(Interfaces\Criteria\Criterium $Criterium)
     {
         $params = [];
+        $data = $Criterium->getValue();
         
-        foreach ($Criterium->getValue() as $value) {
-            $rand = $Criterium->getColumn().'_'.rand(100, time());
+        if (is_array($data) === false) {
+            throw new \Everon\DataMapper\Exception\Operator('Value must be an array');
+        }
+
+        /**
+         * @var array $data
+         */
+        foreach ($data as $value) {
+            $rand = Builder::randomizeParameterName($Criterium->getColumn());
             $params[$rand] = $value;
         }
 

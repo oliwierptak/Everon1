@@ -62,6 +62,11 @@ interface Criterium
     function setPlaceholder($placeholder);
 
     /**
+     * @return string
+     */
+    function getPlaceholderAsParameter();
+
+    /**
      * @return \Everon\DataMapper\Interfaces\SqlPart
      */
     function toSqlPart();
