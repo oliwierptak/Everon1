@@ -59,11 +59,6 @@ interface Builder extends \Everon\Interfaces\Arrayable, \Everon\Interfaces\Strin
     function getGlue();
 
     /**
-     * @param string $glue
-     */
-    function setGlue($glue);
-
-    /**
      * @return \Everon\Interfaces\Collection
      */
     function getCriteriaCollection();
@@ -76,7 +71,7 @@ interface Builder extends \Everon\Interfaces\Arrayable, \Everon\Interfaces\Strin
     /**
      * @return Interfaces\SqlPart
      */
-    public function toSqlPart();
+    function toSqlPart();
 
     function glueByAnd();
 
@@ -88,4 +83,10 @@ interface Builder extends \Everon\Interfaces\Arrayable, \Everon\Interfaces\Strin
      * @throws \Everon\DataMapper\Exception\CriteriaBuilder
      */
     static function getOperatorClassName($operator);
+
+    /**
+     * @param $name
+     * @return string
+     */
+    static function randomizeParameterName($name);
 }

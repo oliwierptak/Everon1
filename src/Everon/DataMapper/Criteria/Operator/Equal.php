@@ -19,5 +19,4 @@ class Equal extends \Everon\DataMapper\Criteria\Operator implements Interfaces\C
     {
         return '=';
     }
-
 }

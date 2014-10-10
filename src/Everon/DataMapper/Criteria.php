@@ -14,7 +14,6 @@ use Everon\DataMapper\Exception;
 
 class Criteria implements Interfaces\Criteria
 {
-    use Helper\Arrays;
     use Helper\ToArray;
 
     /**
@@ -25,7 +24,16 @@ class Criteria implements Interfaces\Criteria
     /**
      * @var string
      */
-    protected $glue = 'AND';
+    protected $glue = Criteria\Builder::GLUE_AND;
+
+    
+    /**
+     * @return array
+     */
+    protected function getToArray()
+    {
+        return $this->getCriteriumCollection()->toArray();
+    }
 
     /**
      * @param Interfaces\Criteria\Criterium $Criterium
@@ -33,21 +41,21 @@ class Criteria implements Interfaces\Criteria
      */
     public function where(Interfaces\Criteria\Criterium $Criterium)
     {
-        $Criterium->setGlue(null);
+        $Criterium->resetGlue(null);
         $this->getCriteriumCollection()->append($Criterium);
         return $this;
     }
 
     public function andWhere(Interfaces\Criteria\Criterium $Criterium)
     {
-        $Criterium->setGlue('AND');
+        $Criterium->glueByAnd();
         $this->getCriteriumCollection()->append($Criterium);
         return $this;
     }
 
     public function orWhere(Interfaces\Criteria\Criterium $Criterium)
     {
-        $Criterium->setGlue('OR');
+        $Criterium->glueByOr();
         $this->getCriteriumCollection()->append($Criterium);
         return $this;
     }
@@ -87,9 +95,5 @@ class Criteria implements Interfaces\Criteria
     {
         $this->glue = $glue;
     }
-    
-    protected function getToArray()
-    {
-        return $this->getCriteriumCollection()->toArray();
-    }
+
 }

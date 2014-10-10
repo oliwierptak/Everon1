@@ -46,10 +46,11 @@ interface Criterium
      */
     function getGlue();
 
-    /**
-     * @param string $glue
-     */
-    function setGlue($glue);
+    function glueByAnd();
+
+    function glueByOr();
+
+    function resetGlue();
 
     /**
      * @return mixed
@@ -65,6 +66,16 @@ interface Criterium
      * @return string
      */
     function getPlaceholderAsParameter();
+
+    /**
+     * @return \Everon\DataMapper\Interfaces\SqlPart
+     */
+    function getSqlPart();
+
+    /**
+     * @param \Everon\DataMapper\Interfaces\SqlPart $SqlPart
+     */
+    function setSqlPart(\Everon\DataMapper\Interfaces\SqlPart $SqlPart);
 
     /**
      * @return \Everon\DataMapper\Interfaces\SqlPart

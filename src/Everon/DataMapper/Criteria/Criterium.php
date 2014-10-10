@@ -17,7 +17,8 @@ use Everon\DataMapper\Interfaces;
 class Criterium implements Interfaces\Criteria\Criterium
 {
     use Dependency\Injection\Factory;
-    
+
+    use Helper\ToArray;
     use Helper\ToString;
     
     /**
@@ -43,14 +44,19 @@ class Criterium implements Interfaces\Criteria\Criterium
     /**
      * @var string
      */
-    protected $glue = 'AND';
+    protected $glue = null;
 
     /**
      * @var \Everon\DataMapper\Interfaces\SqlPart
      */
     protected $SqlPart = null;
-    
-    
+
+
+    /**
+     * @param $column
+     * @param $value
+     * @param $operator_type
+     */
     public function __construct($column, $value, $operator_type)
     {
         $this->column = $column;
@@ -58,6 +64,13 @@ class Criterium implements Interfaces\Criteria\Criterium
         $this->operator_type = $operator_type;
     }
 
+    /**
+     * @param $column
+     * @param $operator
+     * @param $value
+     * @return Interfaces\Criteria\Operator
+     * @throws Exception\CriteriaBuilder
+     */
     protected function buildOperator($column, $operator, $value)
     {
         $class = Builder::getOperatorClassName($operator);
@@ -121,9 +134,25 @@ class Criterium implements Interfaces\Criteria\Criterium
     /**
      * @inheritdoc
      */
-    public function setGlue($glue)
+    public function glueByAnd()
     {
-        $this->glue = $glue;
+        $this->glue = Builder::GLUE_AND;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function glueByOr()
+    {
+        $this->glue = Builder::GLUE_OR;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function resetGlue()
+    {
+        $this->glue = null;
     }
 
     /**
@@ -173,9 +202,9 @@ class Criterium implements Interfaces\Criteria\Criterium
     {
         $this->operator_type = $operator;
     }
-    
+
     /**
-     * @return Interfaces\SqlPart
+     * @inheritdoc
      */
     public function getSqlPart()
     {
@@ -183,7 +212,7 @@ class Criterium implements Interfaces\Criteria\Criterium
     }
 
     /**
-     * @param Interfaces\SqlPart $SqlPart
+     * @inheritdoc
      */
     public function setSqlPart(Interfaces\SqlPart $SqlPart)
     {

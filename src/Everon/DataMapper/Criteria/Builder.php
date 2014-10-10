@@ -51,7 +51,7 @@ class Builder implements Interfaces\Criteria\Builder
     /**
      * @var string
      */
-    public $current = -1;
+    protected $current = -1;
 
     /**
      * @var \Everon\Interfaces\Collection
@@ -67,6 +67,14 @@ class Builder implements Interfaces\Criteria\Builder
     public function __construct()
     {
         $this->CriteriaCollection = new Helper\Collection([]);
+    }
+
+    /**
+     * @return array
+     */
+    protected function getToArray()
+    {
+        return $this->getCriteriaCollection()->toArray();
     }
 
     /**
@@ -164,15 +172,7 @@ class Builder implements Interfaces\Criteria\Builder
     {
         return $this->glue;
     }
-
-    /**
-     * @inheritdoc
-     */
-    public function setGlue($glue)
-    {
-        $this->glue = $glue;
-    }
-
+    
     /**
      * @inheritdoc
      */
@@ -190,7 +190,7 @@ class Builder implements Interfaces\Criteria\Builder
     }
 
     /**
-     * @return Interfaces\SqlPart
+     * @inheritdoc
      */
     public function toSqlPart()
     {
@@ -215,20 +215,24 @@ class Builder implements Interfaces\Criteria\Builder
         return $this->getFactory()->buildDataMapperSqlPart($sql, $parameters);
     }
 
+    /**
+     * @inheritdoc
+     */
     public function glueByAnd()
     {
         $this->glue = self::GLUE_AND;
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public function glueByOr()
     {
         $this->glue = self::GLUE_OR;
     }
 
     /**
-     * @param $operator
-     * @return string
-     * @throws Exception\CriteriaBuilder
+     * @inheritdoc
      */
     public static function getOperatorClassName($operator)
     {
@@ -239,7 +243,10 @@ class Builder implements Interfaces\Criteria\Builder
         
         return static::$operator_mappers[$operator];
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public static function randomizeParameterName($name)
     {
         return $name.'_'.mt_rand(100, time());

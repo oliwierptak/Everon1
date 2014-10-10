@@ -19,5 +19,4 @@ class NotEqual extends \Everon\DataMapper\Criteria\Operator implements Interface
     {
         return '!=';
     }
-
 }
