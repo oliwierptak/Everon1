@@ -48,6 +48,11 @@ class Criteria implements Interfaces\Criteria
 
     public function andWhere(Interfaces\Criteria\Criterium $Criterium)
     {
+        if ($this->getCriteriumCollection()->isEmpty()) {
+            throw new \Everon\DataMapper\Exception\Criteria('No subquery found, use where() to start new subqury');
+        }
+            
+            
         $Criterium->glueByAnd();
         $this->getCriteriumCollection()->append($Criterium);
         return $this;
@@ -55,6 +60,10 @@ class Criteria implements Interfaces\Criteria
 
     public function orWhere(Interfaces\Criteria\Criterium $Criterium)
     {
+        if ($this->getCriteriumCollection()->isEmpty()) {
+            throw new \Everon\DataMapper\Exception\Criteria('No subquery found, use where() to start new subqury');
+        }
+
         $Criterium->glueByOr();
         $this->getCriteriumCollection()->append($Criterium);
         return $this;
