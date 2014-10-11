@@ -11,12 +11,12 @@ namespace Everon\DataMapper\Criteria\Operator;
 
 use Everon\DataMapper\Interfaces;
 
-class NotIn extends \Everon\DataMapper\Criteria\Operator\In implements Interfaces\Criteria\Operator
+class NotIn extends \Everon\DataMapper\Criteria\Operator\In
 {
     protected $type = self::TYPE_NOT_IN;
 
     public function getTypeAsSql()
     {
-        return 'NOT IN';
+        return self::SQL_NOT_IN;
     }
 }

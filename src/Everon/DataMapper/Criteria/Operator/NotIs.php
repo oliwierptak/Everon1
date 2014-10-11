@@ -17,6 +17,6 @@ class NotIs extends \Everon\DataMapper\Criteria\Operator implements Interfaces\C
 
     public function getTypeAsSql()
     {
-        return 'IS NOT';
+        return self::SQL_NOT_IS;
     }
 }

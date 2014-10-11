@@ -11,12 +11,12 @@ namespace Everon\DataMapper\Criteria\Operator;
 
 use Everon\DataMapper\Interfaces;
 
-class SmallerOrEqual extends \Everon\DataMapper\Criteria\Operator implements Interfaces\Criteria\Operator
+class NotBetween extends \Everon\DataMapper\Criteria\Operator\Between
 {
-    protected $type = self::TYPE_SMALLER_OR_EQUAL;
-    
+    protected $type = self::TYPE_NOT_BETWEEN;
+
     public function getTypeAsSql()
     {
-        return self::SQL_SMALLER_OR_EQUAL;
+        return self::SQL_NOT_BETWEEN;
     }
 }

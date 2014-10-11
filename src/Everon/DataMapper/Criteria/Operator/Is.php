@@ -17,6 +17,6 @@ class Is extends \Everon\DataMapper\Criteria\Operator implements Interfaces\Crit
 
     public function getTypeAsSql()
     {
-        return 'IS';
+        return self::SQL_IS;
     }
 }

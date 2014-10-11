@@ -17,6 +17,6 @@ class NotEqual extends \Everon\DataMapper\Criteria\Operator implements Interface
     
     public function getTypeAsSql()
     {
-        return '!=';
+        return self::SQL_NOT_EQUAL;
     }
 }

@@ -22,8 +22,12 @@ abstract class Operator implements Interfaces\Criteria\Operator
     const TYPE_NOT_IN = 'NotIn';
     const TYPE_IS = 'Is';
     const TYPE_NOT_IS = 'NotIs';
+    const TYPE_GREATER_THEN = 'GreaterThen';
     const TYPE_GREATER_OR_EQUAL = 'GreaterOrEqual';
-    //const TYPE_SMALLER_OR_EQUAL = '<= ';
+    const TYPE_SMALLER_THEN = 'SmallerThen';
+    const TYPE_SMALLER_OR_EQUAL = 'SmallerOrEqual';
+    const TYPE_BETWEEN = 'Between';
+    const TYPE_NOT_BETWEEN = 'NotBetween';
 
     const SQL_EQUAL = '=';
     const SQL_NOT_EQUAL = '!=';
@@ -32,8 +36,12 @@ abstract class Operator implements Interfaces\Criteria\Operator
     const SQL_NOT_IN = 'NOT IN';
     const SQL_IS = 'IS';
     const SQL_NOT_IS = 'IS NOT';
+    const SQL_GREATER_THEN = '>';
     const SQL_GREATER_OR_EQUAL = '>=';
-    //const SQL_SMALLER_OR_EQUAL = '<= ';
+    const SQL_SMALLER_THEN = '<';
+    const SQL_SMALLER_OR_EQUAL = '<=';
+    const SQL_BETWEEN = 'BETWEEN';
+    const SQL_NOT_BETWEEN = 'NOT BETWEEN';
 
     /**
      * @var string
@@ -42,14 +50,6 @@ abstract class Operator implements Interfaces\Criteria\Operator
     
     /*
     const TYPE_BETWEEN = 'BETWEEN';
-    const TYPE_SMALLER_THAN = '<';
-    const TYPE_GREATER_THAN = '>';
-    const TYPE_SMALLER_OR_EQUAL = '< = ';
-    const TYPE_NOT_EQUAL = '! = ';
-    const TYPE_IS = 'IS';
-    const TYPE_NOT_IS = 'ISNOT';
-    const TYPE_IN = 'IN';
-    const TYPE_NOT_IN = 'NOTIN';
     const TYPE_NOT_BETWEEN = 'NOTBETWEEN';
     */
 

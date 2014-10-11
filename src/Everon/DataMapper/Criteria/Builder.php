@@ -33,15 +33,12 @@ class Builder implements Interfaces\Criteria\Builder
         Operator::SQL_NOT_IN => Operator::TYPE_NOT_IN,
         Operator::SQL_IS => Operator::TYPE_IS,
         Operator::SQL_NOT_IS => Operator::TYPE_NOT_IS,
+        Operator::SQL_GREATER_THEN => Operator::TYPE_GREATER_THEN,
         Operator::SQL_GREATER_OR_EQUAL => Operator::TYPE_GREATER_OR_EQUAL,
-        
-        /*
-        self::TYPE_BETWEEN => 'OperatorBetween',
-        self::TYPE_NOT_BETWEEN => 'OperatorNotBetween',
-        self::TYPE_SMALLER_THAN => 'OperatorSmallerThan',
-        self::TYPE_GREATER_THAN => 'OperatorGreaterThan',
-        self::TYPE_SMALLER_OR_EQUAL => 'OperatorSmallerOrEqual',
-        */
+        Operator::SQL_SMALLER_THEN => Operator::TYPE_SMALLER_THEN,
+        Operator::SQL_SMALLER_OR_EQUAL => Operator::TYPE_SMALLER_OR_EQUAL,
+        Operator::SQL_BETWEEN => Operator::TYPE_BETWEEN,
+        Operator::SQL_BETWEEN => Operator::TYPE_NOT_BETWEEN
     ];
     
     /**

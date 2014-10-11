@@ -12,13 +12,13 @@ namespace Everon\DataMapper\Criteria\Operator;
 use Everon\DataMapper\Criteria\Builder;
 use Everon\DataMapper\Interfaces;
 
-class In extends \Everon\DataMapper\Criteria\Operator implements Interfaces\Criteria\Operator
+class Between extends \Everon\DataMapper\Criteria\Operator implements Interfaces\Criteria\Operator
 {
-    protected $type = self::TYPE_IN;
+    protected $type = self::TYPE_BETWEEN;
 
     public function getTypeAsSql()
     {
-        return self::SQL_IN;
+        return self::SQL_BETWEEN;
     }
 
     /**
@@ -32,6 +32,10 @@ class In extends \Everon\DataMapper\Criteria\Operator implements Interfaces\Crit
         if (is_array($data) === false) {
             throw new \Everon\DataMapper\Exception\Operator('Value must be an array');
         }
+        
+        if (count($data) !== 2) {
+            throw new \Everon\DataMapper\Exception\Operator('Value must contain 2 parameters');
+        }
 
         /**
          * @var array $data
@@ -41,8 +45,8 @@ class In extends \Everon\DataMapper\Criteria\Operator implements Interfaces\Crit
             $params[$rand] = $value;
         }
 
-        $placeholder_sql = ':'.rtrim(implode(',:', array_keys($params)), ',');
-        $sql = sprintf("%s %s (%s)", $Criterium->getColumn(), $this->getTypeAsSql(), $placeholder_sql);
+        $placeholder_sql = ':'.rtrim(implode(' AND :', array_keys($params)), ',');
+        $sql = sprintf("%s %s", $this->getTypeAsSql(), $placeholder_sql);
         return [$sql, $params];
     }
 }

@@ -17,6 +17,6 @@ class GreaterOrEqual extends \Everon\DataMapper\Criteria\Operator implements Int
     
     public function getTypeAsSql()
     {
-        return '>=';
+        return self::SQL_GREATER_OR_EQUAL;
     }
 }
