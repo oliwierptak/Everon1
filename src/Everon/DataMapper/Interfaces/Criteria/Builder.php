@@ -82,7 +82,7 @@ interface Builder extends \Everon\Interfaces\Arrayable, \Everon\Interfaces\Strin
      * @return string
      * @throws \Everon\DataMapper\Exception\CriteriaBuilder
      */
-    static function getOperatorClassName($operator);
+    static function getOperatorClassNameBySqlOperator($operator);
 
     /**
      * @param $name

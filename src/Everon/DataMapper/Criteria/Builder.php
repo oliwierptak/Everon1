@@ -26,25 +26,21 @@ class Builder implements Interfaces\Criteria\Builder
     const GLUE_OR = 'OR';
 
     protected static $operator_mappers = [
-        Operator::TYPE_EQUAL => 'Equal',
-        Operator::TYPE_NOT_EQUAL => 'NotEqual',
-        Operator::TYPE_LIKE => 'Like',
-        Operator::TYPE_IN => 'In',
-        Operator::TYPE_NOT_IN => 'NotIn',
-        Operator::TYPE_IS => 'Is',
-        Operator::TYPE_NOT_IS => 'NotIs',
+        Operator::SQL_EQUAL => Operator::TYPE_EQUAL,
+        Operator::SQL_NOT_EQUAL => Operator::TYPE_NOT_EQUAL,
+        Operator::SQL_LIKE => Operator::TYPE_LIKE,
+        Operator::SQL_IN => Operator::TYPE_IN,
+        Operator::SQL_NOT_IN => Operator::TYPE_NOT_IN,
+        Operator::SQL_IS => Operator::TYPE_IS,
+        Operator::SQL_NOT_IS => Operator::TYPE_NOT_IS,
+        Operator::SQL_GREATER_OR_EQUAL => Operator::TYPE_GREATER_OR_EQUAL,
+        
         /*
         self::TYPE_BETWEEN => 'OperatorBetween',
         self::TYPE_NOT_BETWEEN => 'OperatorNotBetween',
         self::TYPE_SMALLER_THAN => 'OperatorSmallerThan',
         self::TYPE_GREATER_THAN => 'OperatorGreaterThan',
-        self::TYPE_GREATER_OR_EQUAL => 'OperatorGreaterOrEqual',
         self::TYPE_SMALLER_OR_EQUAL => 'OperatorSmallerOrEqual',
-        self::TYPE_NOT_EQUAL => 'OperatorNotEqual',
-        self::TYPE_IS => 'OperatorIs',
-        self::TYPE_NOT_IS => 'OperatorIsNot',
-        self::TYPE_IN => 'OperatorIn',
-        self::TYPE_NOT_IN => 'OperatorNotIn'
         */
     ];
     
@@ -234,7 +230,7 @@ class Builder implements Interfaces\Criteria\Builder
     /**
      * @inheritdoc
      */
-    public static function getOperatorClassName($operator)
+    public static function getOperatorClassNameBySqlOperator($operator)
     {
         $operator = strtoupper(trim($operator));
         if (isset(static::$operator_mappers[$operator]) === false) {

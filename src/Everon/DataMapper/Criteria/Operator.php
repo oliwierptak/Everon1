@@ -15,13 +15,25 @@ use Everon\Rest\Exception;
 
 abstract class Operator implements Interfaces\Criteria\Operator
 {
-    const TYPE_EQUAL = '=';
-    const TYPE_NOT_EQUAL = '!=';
-    const TYPE_LIKE = 'LIKE';
-    const TYPE_IN = 'IN';
-    const TYPE_NOT_IN = 'NOT IN';
-    const TYPE_IS = 'IS';
-    const TYPE_NOT_IS = 'IS NOT';
+    const TYPE_EQUAL = 'Equal';
+    const TYPE_NOT_EQUAL = 'NotEqual';
+    const TYPE_LIKE = 'Like';
+    const TYPE_IN = 'In';
+    const TYPE_NOT_IN = 'NotIn';
+    const TYPE_IS = 'Is';
+    const TYPE_NOT_IS = 'NotIs';
+    const TYPE_GREATER_OR_EQUAL = 'GreaterOrEqual';
+    //const TYPE_SMALLER_OR_EQUAL = '<= ';
+
+    const SQL_EQUAL = '=';
+    const SQL_NOT_EQUAL = '!=';
+    const SQL_LIKE = 'LIKE';
+    const SQL_IN = 'IN';
+    const SQL_NOT_IN = 'NOT IN';
+    const SQL_IS = 'IS';
+    const SQL_NOT_IS = 'IS NOT';
+    const SQL_GREATER_OR_EQUAL = '>=';
+    //const SQL_SMALLER_OR_EQUAL = '<= ';
 
     /**
      * @var string
@@ -32,7 +44,6 @@ abstract class Operator implements Interfaces\Criteria\Operator
     const TYPE_BETWEEN = 'BETWEEN';
     const TYPE_SMALLER_THAN = '<';
     const TYPE_GREATER_THAN = '>';
-    const TYPE_GREATER_OR_EQUAL = '> = ';
     const TYPE_SMALLER_OR_EQUAL = '< = ';
     const TYPE_NOT_EQUAL = '! = ';
     const TYPE_IS = 'IS';

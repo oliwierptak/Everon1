@@ -73,18 +73,16 @@ class Criterium implements Interfaces\Criteria\Criterium
      */
     protected function buildOperator($column, $operator, $value)
     {
-        $class = Builder::getOperatorClassName($operator);
+        $class = Builder::getOperatorClassNameBySqlOperator($operator);
         $Operator = $this->getFactory()->buildCriteriaOperator($class);
 
         //replace null values with IS NULL / IS NOT NULL
         if ($value === null) {
             if ($Operator->getType() === Operator::TYPE_EQUAL) {
-                $class = Builder::getOperatorClassName(Operator::TYPE_IS);
-                $Operator = $this->getFactory()->buildCriteriaOperator($class);
+                $Operator = $this->getFactory()->buildCriteriaOperator(Operator::TYPE_IS);
             }
             else if ($Operator->getType() === Operator::TYPE_NOT_EQUAL) {
-                $class = Builder::getOperatorClassName(Operator::TYPE_NOT_IS);
-                $Operator = $this->getFactory()->buildCriteriaOperator($class);
+                $Operator = $this->getFactory()->buildCriteriaOperator(Operator::TYPE_NOT_IS);
             }
         }
 
