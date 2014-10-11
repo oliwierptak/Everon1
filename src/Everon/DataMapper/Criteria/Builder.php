@@ -119,7 +119,7 @@ class Builder implements Interfaces\Criteria\Builder
     public function where($column, $operator, $value)
     {
         $this->current++;
-        $Criterium = $this->getFactory()->buildCriterium($column, $operator, $value);
+        $Criterium = $this->getFactory()->buildDataMapperCriterium($column, $operator, $value);
         $this->getCurrentCriteria()->where($Criterium);
         return $this;
     }
@@ -129,7 +129,7 @@ class Builder implements Interfaces\Criteria\Builder
      */
     public function andWhere($column, $operator, $value)
     {
-        $Criterium = $this->getFactory()->buildCriterium($column, $operator, $value);
+        $Criterium = $this->getFactory()->buildDataMapperCriterium($column, $operator, $value);
         $this->getCurrentCriteria()->andWhere($Criterium);
         return $this;
     }
@@ -139,7 +139,7 @@ class Builder implements Interfaces\Criteria\Builder
      */
     public function orWhere($column, $operator, $value)
     {
-        $Criterium = $this->getFactory()->buildCriterium($column, $operator, $value);
+        $Criterium = $this->getFactory()->buildDataMapperCriterium($column, $operator, $value);
         $this->getCurrentCriteria()->orWhere($Criterium);
         return $this;
     }
@@ -150,7 +150,7 @@ class Builder implements Interfaces\Criteria\Builder
     public function getCurrentCriteria()
     {
         if ($this->CriteriaCollection->has($this->current) === false) {
-            $Criteria = $this->getFactory()->buildCriteria();
+            $Criteria = $this->getFactory()->buildDataMapperCriteria();
             $this->CriteriaCollection[$this->current] = $Criteria; 
         }
         

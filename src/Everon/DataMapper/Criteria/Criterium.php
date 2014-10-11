@@ -57,11 +57,11 @@ class Criterium implements Interfaces\Criteria\Criterium
      * @param $value
      * @param $operator_type
      */
-    public function __construct($column, $value, $operator_type)
+    public function __construct($column, $operator_type, $value)
     {
         $this->column = $column;
-        $this->value = $value;
         $this->operator_type = $operator_type;
+        $this->value = $value;
     }
 
     /**

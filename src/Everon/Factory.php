@@ -761,7 +761,7 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildCriteria($namespace='Everon\DataMapper')
+    public function buildDataMapperCriteria($namespace='Everon\DataMapper')
     {
         try {
             $class_name = $this->getFullClassName($namespace, 'Criteria');
@@ -778,12 +778,12 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildCriterium($column, $operator, $value, $namespace = 'Everon\DataMapper\Criteria')
+    public function buildDataMapperCriterium($column, $operator, $value, $namespace = 'Everon\DataMapper\Criteria')
     {
         try {
             $class_name = $this->getFullClassName($namespace, 'Criterium');
             $this->classExists($class_name);
-            $Criterium = new $class_name($column, $value, $operator);
+            $Criterium = new $class_name($column, $operator, $value);
             $this->injectDependencies($class_name, $Criterium);
             return $Criterium;
         }

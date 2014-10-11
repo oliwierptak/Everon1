@@ -9,7 +9,7 @@
  */
 namespace Everon\DataMapper\Interfaces\Criteria;
 
-interface Criterium
+interface Criterium extends \Everon\Interfaces\Dependency\Factory
 {
     /**
      * @return string
