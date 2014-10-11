@@ -82,7 +82,7 @@ class Builder implements Interfaces\Criteria\Builder
         $sql = '';
         foreach ($Criteria->getCriteriumCollection() as $Criterium) {
             $SqlPart = $Criterium->toSqlPart();
-            $sql .= $SqlPart->getSql() . ' '.$Criteria->getGlue().' ';
+            $sql .= ltrim($Criterium->getGlue().' '.$SqlPart->getSql().' ');
         }
 
         return '('.rtrim($sql, ' '.$Criteria->getGlue()).')';
