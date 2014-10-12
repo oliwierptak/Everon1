@@ -73,7 +73,7 @@ abstract class Mapper extends DataMapper
     /**
      * @inheritdoc
      */
-    public function getDeleteByCriteriaSql(Interfaces\Criteria $Criteria)
+    public function getDeleteByCriteriaSql(Interfaces\CriteriaOLD $Criteria)
     {
         $params = $Criteria->getWhere();
         if (empty($params)) {
@@ -87,7 +87,7 @@ abstract class Mapper extends DataMapper
     /**
      * @inheritdoc
      */
-    public function getFetchAllSql(Interfaces\Criteria $Criteria=null)
+    public function getFetchAllSql(Interfaces\CriteriaOLD $Criteria=null)
     {
         $pk_name = $this->getTable()->getPk();
 
@@ -104,7 +104,7 @@ abstract class Mapper extends DataMapper
     /**
      * @inheritdoc
      */
-    public function getJoinSql($select, $a, $b, $on_a, $on_b, Interfaces\Criteria $Criteria=null, $type='')
+    public function getJoinSql($select, $a, $b, $on_a, $on_b, Interfaces\CriteriaOLD $Criteria=null, $type='')
     {
         $sql = "
             SELECT %s FROM %s t
@@ -119,7 +119,7 @@ abstract class Mapper extends DataMapper
     /**
      * @inheritdoc
      */
-    public function getCountSql(Interfaces\Criteria $Criteria=null)
+    public function getCountSql(Interfaces\CriteriaOLD $Criteria=null)
     {
         $table_name = sprintf('%s.%s', $this->getTable()->getSchema(), $this->getTable()->getName());
 /*        

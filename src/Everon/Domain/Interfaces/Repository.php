@@ -9,7 +9,7 @@
  */
 namespace Everon\Domain\Interfaces;
 
-use Everon\DataMapper\Interfaces\Criteria;
+use Everon\DataMapper\Interfaces\CriteriaOLD;
 use Everon\Interfaces\DataMapper;
 use Everon\Domain\Exception;
 
@@ -23,24 +23,24 @@ interface Repository
 
     /**
      * @param Entity $Entity
-     * @param Criteria $Criteria
+     * @param CriteriaOLD $Criteria
      * @return
      */
-    function buildEntityRelations(Entity $Entity, Criteria $Criteria = null);
+    function buildEntityRelations(Entity $Entity, CriteriaOLD $Criteria = null);
 
     /**
      * @param $id
-     * @param Criteria $RelationCriteria
+     * @param CriteriaOLD $RelationCriteria
      * @return Entity|null
      */
-    function getEntityById($id, Criteria $RelationCriteria=null);
+    function getEntityById($id, CriteriaOLD $RelationCriteria=null);
 
     /**
      * @param array $property_criteria
-     * @param Criteria $RelationCriteria
+     * @param CriteriaOLD $RelationCriteria
      * @return Entity|null
      */
-    function getEntityByPropertyValue(array $property_criteria, Criteria $RelationCriteria=null);
+    function getEntityByPropertyValue(array $property_criteria, CriteriaOLD $RelationCriteria=null);
 
     /**
      * @param array $data
@@ -50,16 +50,16 @@ interface Repository
     function persistFromArray(array $data, $user_id=null);
 
     /**
-     * @param Criteria $Criteria
+     * @param CriteriaOLD $Criteria
      * @return array|null
      */
-    function getByCriteria(Criteria $Criteria);
+    function getByCriteria(CriteriaOLD $Criteria);
 
     /**
-     * @param Criteria $Criteria
+     * @param CriteriaOLD $Criteria
      * @return int
      */
-    function count(Criteria $Criteria=null);
+    function count(CriteriaOLD $Criteria=null);
 
     /**
      * @param Entity $Entity
@@ -74,16 +74,16 @@ interface Repository
     function remove(Entity $Entity, $user_id=null);
 
     /**
-     * @param Criteria $Criteria
+     * @param CriteriaOLD $Criteria
      */
-    function removeByCriteria(Criteria $Criteria);
+    function removeByCriteria(CriteriaOLD $Criteria);
 
     /**
-     * @param Criteria $Criteria
-     * @param Criteria $RelationCriteria
+     * @param CriteriaOLD $Criteria
+     * @param CriteriaOLD $RelationCriteria
      * @return Entity|null
      */
-    function getOneByCriteria(Criteria $Criteria, Criteria $RelationCriteria=null);
+    function getOneByCriteria(CriteriaOLD $Criteria, CriteriaOLD $RelationCriteria=null);
 
     /**
      * @return DataMapper

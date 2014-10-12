@@ -10,7 +10,7 @@
 namespace Everon\Rest;
 
 use Everon\Helper;
-use Everon\DataMapper\Interfaces\Criteria;
+use Everon\DataMapper\Interfaces\CriteriaOLD;
 use Everon\Rest\Exception;
 
 
@@ -129,10 +129,10 @@ class Filter implements Interfaces\Filter
     }
 
     /**
-     * @param Criteria $Criteria
+     * @param CriteriaOLD $Criteria
      * @return void
      */
-    public function assignToCriteria(Criteria $Criteria)
+    public function assignToCriteria(CriteriaOLD $Criteria)
     {
         $list = $this->castFilterCollectionIntoColumnGroupCollection();
         if (empty($list) !== true) {

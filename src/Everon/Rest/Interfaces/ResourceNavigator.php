@@ -74,7 +74,7 @@ interface ResourceNavigator extends Dependency\Request
     function setFilters(array $filters);
 
     /**
-     * @return \Everon\DataMapper\Interfaces\Criteria
+     * @return \Everon\DataMapper\Interfaces\CriteriaOLD
      */
     function toCriteria();
 }
