@@ -12,6 +12,11 @@ namespace Everon\Interfaces;
 interface Collection extends Arrayable
 {
     /**
+     * @param mixed $item
+     */
+    function append($item);
+        
+    /**
      * @param $name
      * @return bool
      */

@@ -9,85 +9,35 @@
  */
 namespace Everon\DataMapper\Interfaces;
 
-interface Criteria extends \Everon\Interfaces\Arrayable, \Everon\Interfaces\Stringable 
+interface Criteria extends \Everon\Interfaces\Arrayable 
 {
     /**
-     * @param $offset
-     * @return \Everon\DataMapper\Interfaces\Criteria
-     */
-    function offset($offset);
-
-    function getOrderByAndSortSql();
-
-    /**
-     * @param array $order_by ['field' => 'ASC', 'another_field' => 'DESC']
-     * @return \Everon\DataMapper\Interfaces\Criteria
-     */
-    function orderBy(array $order_by);
-
-    /**
-     * @param $group_by
+     * @param Criteria\Criterium $Criterium
      * @return $this
      */
-    function groupBy($group_by);
+    function where(Criteria\Criterium $Criterium);
+        
+    function andWhere(Criteria\Criterium $Criterium);
 
-    function getOffsetLimitSql();
-
-    function getWhereSql();
-
-    /**
-     * @param array $where
-     * @return \Everon\DataMapper\Interfaces\Criteria
-     */
-    function where(array $where);
+    function orWhere(Criteria\Criterium $Criterium);
 
     /**
-     * @param array $where_or
-     * @return \Everon\DataMapper\Interfaces\Criteria
+     * @return \Everon\Interfaces\Collection
      */
-    function whereOr(array $where_or);
+    function getCriteriumCollection();
 
     /**
-     * @param array $in
-     * @return $this
+     * @param \Everon\Interfaces\Collection $CriteriumCollection
      */
-    function in(array $in);
-
-    /**
-     * @param array $ilike
-     * @return $this
-     */
-    function ilike(array $ilike);
-
-    /**
-     * @param array $filter
-     * @return $this
-     */
-    function filter(array $filter);
-
-    /**
-     * @param $limit
-     * @return \Everon\DataMapper\Interfaces\Criteria
-     */
-    function limit($limit);
-
-    /**
-     * @return int
-     */
-    function getLimit();
-
-    /**
-     * @return int
-     */
-    function getOffset();
+    function setCriteriumCollection($CriteriumCollection);
 
     /**
      * @return string
      */
-    function getOrderBy();
+    function getGlue();
 
     /**
-     * @return array
+     * @param string $glue
      */
-    function getWhere();
+    function setGlue($glue);
 }

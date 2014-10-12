@@ -727,6 +727,91 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
+    public function buildCriteriaBuilder($namespace='Everon\DataMapper\Criteria')
+    {
+        try {
+            $class_name = $this->getFullClassName($namespace, 'Builder');
+            $this->classExists($class_name);
+            $Builder = new $class_name();
+            $this->injectDependencies($class_name, $Builder);
+            return $Builder;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('CriteriaBuilder initialization error', null, $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildCriteriaOperator($type, $namespace='Everon\DataMapper\Criteria\Operator')
+    {
+        try {
+            $class_name = $this->getFullClassName($namespace, $type);
+            $this->classExists($class_name);
+            $CriteriaOperator = new $class_name();
+            $this->injectDependencies($class_name, $CriteriaOperator);
+            return $CriteriaOperator;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('CriteriaOperator: "%s" initialization error', $type, $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildDataMapperCriteria($namespace='Everon\DataMapper')
+    {
+        try {
+            $class_name = $this->getFullClassName($namespace, 'Criteria');
+            $this->classExists($class_name);
+            $Criteria = new $class_name();
+            $this->injectDependencies($class_name, $Criteria);
+            return $Criteria;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('Criteria initialization error', null, $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildDataMapperCriterium($column, $operator, $value, $namespace = 'Everon\DataMapper\Criteria')
+    {
+        try {
+            $class_name = $this->getFullClassName($namespace, 'Criterium');
+            $this->classExists($class_name);
+            $Criterium = new $class_name($column, $operator, $value);
+            $this->injectDependencies($class_name, $Criterium);
+            return $Criterium;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('Criterium initialization error', null, $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildDataMapperSqlPart($sql, array $parameters, $namespace = 'Everon\DataMapper')
+    {
+        try {
+            $class_name = $this->getFullClassName($namespace, 'SqlPart');
+            $this->classExists($class_name);
+            $SqlPart = new $class_name($sql, $parameters);
+            $this->injectDependencies($class_name, $SqlPart);
+            return $SqlPart;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('SqlPart initialization error', null, $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function buildDomainEntity($class_name, $id_field, array $data, $namespace='Everon\Domain')
     {
         try {
