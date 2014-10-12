@@ -13,7 +13,7 @@ use Everon\Helper;
 use Everon\DataMapper\Exception;
 use Everon\DataMapper\Interfaces;
 
-class Criteria implements Interfaces\Criteria
+class CriteriaOLD implements Interfaces\Criteria
 {
     use Helper\Arrays;
     use Helper\ToArray;

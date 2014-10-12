@@ -212,7 +212,7 @@ class Navigator implements Interfaces\ResourceNavigator
      */
     public function toCriteria()
     {
-        $Criteria = new \Everon\DataMapper\Criteria();
+        $Criteria = new \Everon\DataMapper\CriteriaOLD();
         $Criteria->limit($this->getLimit());
         $Criteria->offset($this->getOffset());
         $Criteria->orderBy($this->getOrderBy() ?: []);

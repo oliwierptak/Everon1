@@ -116,7 +116,7 @@ abstract class Repository implements Interfaces\Repository
      */
     public function buildEntityRelations(Interfaces\Entity $Entity, Criteria $Criteria = null)
     {
-        $Criteria = $Criteria ?: (new \Everon\DataMapper\Criteria())->limit(20)->offset(0);
+        $Criteria = $Criteria ?: (new \Everon\DataMapper\CriteriaOLD())->limit(20)->offset(0);
         
         $RelationCollection = new Helper\Collection([]);
         //buildDomainRelationMapper
@@ -256,7 +256,7 @@ abstract class Repository implements Interfaces\Repository
      */
     public function getEntityById($id, Criteria $RelationCriteria=null)
     {
-        $Criteria = (new \Everon\DataMapper\Criteria())->where([
+        $Criteria = (new \Everon\DataMapper\CriteriaOLD())->where([
             $this->getMapper()->getTable()->getPk() => $id
         ]);
         return $this->getOneByCriteria($Criteria, $RelationCriteria);
@@ -270,7 +270,7 @@ abstract class Repository implements Interfaces\Repository
         if (empty($property_criteria)) {
             return null;
         }
-        $Criteria = (new \Everon\DataMapper\Criteria())->where($property_criteria);
+        $Criteria = (new \Everon\DataMapper\CriteriaOLD())->where($property_criteria);
         return $this->getOneByCriteria($Criteria, $RelationCriteria);
     }
 

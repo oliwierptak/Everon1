@@ -172,7 +172,7 @@ abstract class DataMapper implements Interfaces\DataMapper
     public function count(Criteria $Criteria=null)
     {
         if ($Criteria === null) {
-            $Criteria = new DataMapper\Criteria();
+            $Criteria = new DataMapper\CriteriaOLD();
         }
         else {
             $Criteria = clone $Criteria;
@@ -191,7 +191,7 @@ abstract class DataMapper implements Interfaces\DataMapper
      */
     public function fetchOneById($id)
     {
-        $Criteria = new DataMapper\Criteria();
+        $Criteria = new DataMapper\CriteriaOLD();
         $id = $this->getTable()->validateId($id);
         $Criteria->where([$this->getTable()->getPk() => $id]);
         return $this->fetchOneByCriteria($Criteria);

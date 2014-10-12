@@ -88,7 +88,7 @@ abstract class Relation implements Interfaces\Relation
         $this->name = $this->stringLastTokenToName(get_class($this));
         $this->Data = new Helper\Collection([]);
         $this->RelationMapper = $RelationMapper;
-        $this->Criteria = (new \Everon\DataMapper\Criteria())->limit(10)->offset(0);
+        $this->Criteria = (new \Everon\DataMapper\CriteriaOLD())->limit(10)->offset(0);
     }
     
     protected function setupRelationParameters()
@@ -174,7 +174,7 @@ abstract class Relation implements Interfaces\Relation
     
     protected function resetRelationCriteriaParameters()
     {
-        $this->setCriteria(new \Everon\DataMapper\Criteria());
+        $this->setCriteria(new \Everon\DataMapper\CriteriaOLD());
         $this->sql = null;
         $this->sql_count = null;
     }
@@ -341,7 +341,7 @@ abstract class Relation implements Interfaces\Relation
         if ($Criteria !== null) { //todo: woah refactor
             $shit = $this->getCriteria()->toArray();
             $where = $this->arrayMergeDefault($shit['where'], $Criteria->getWhere());
-            $NewCriteria = new \Everon\DataMapper\Criteria();
+            $NewCriteria = new \Everon\DataMapper\CriteriaOLD();
             $NewCriteria->where($where);
             $NewCriteria->orderBy($this->getCriteria()->getOrderBy() ?: $Criteria->getOrderBy());
             $NewCriteria->limit($this->getCriteria()->getLimit() ?: $Criteria->getLimit());
