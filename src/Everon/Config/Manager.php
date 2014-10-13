@@ -158,7 +158,7 @@ class Manager implements \Everon\Config\Interfaces\Manager
 
         //load domain.ini from Domain directory
         $old_dir = $this->getConfigLoader()->getConfigDirectory();
-        $this->getConfigLoader()->setConfigDirectory($this->getBootstrap()->getEnvironment()->getDomain());
+        $this->getConfigLoader()->setConfigDirectory($this->getBootstrap()->getEnvironment()->getDomainConfig());
         $domain_data = $this->getConfigDataFromLoader($this->getConfigLoader());
         $this->getConfigLoader()->setConfigDirectory($old_dir);
         

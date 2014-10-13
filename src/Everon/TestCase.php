@@ -192,6 +192,9 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
      */
     public function buildFactory()
     {
+        /**
+         * @var \Everon\Interfaces\Factory $Factory
+         */
         $Factory = new Application\Factory(new Application\Dependency\Container());
         $Container = $Factory->getDependencyContainer();
 
@@ -200,6 +203,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         $TestEnvironment->setConfig($this->getFixtureDirectory().'config'.DIRECTORY_SEPARATOR);
         $TestEnvironment->setCacheConfig($this->getConfigCacheDirectory());
         $TestEnvironment->setTmp($this->getTmpDirectory());
+        $TestEnvironment->setDomainConfig($this->getFixtureDirectory().'Domain/');
         
         $Bootstrap = new \Everon\Bootstrap($TestEnvironment, 'development'); //tests are hardcoded to development environment
         $Bootstrap->setEnvironment($TestEnvironment);
@@ -228,7 +232,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         $ConfigManager = $Factory->buildConfigManager($ConfigLoader);
         $ConfigManager->setFactory($Factory);
         $ConfigManager->setFileSystem($FileSystem);
-
+        
         $Container->register('ConfigManager', function() use ($ConfigManager) {
             return $ConfigManager;
         });

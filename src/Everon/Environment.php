@@ -30,6 +30,7 @@ class Environment implements Interfaces\Environment
             'controller' => $this->getRoot().'Controller'.DIRECTORY_SEPARATOR,
             'data_mapper' => $this->getRoot().'DataMapper'.DIRECTORY_SEPARATOR,
             'domain' => $this->getRoot().'Domain'.DIRECTORY_SEPARATOR,
+            'domain_config' => $this->getRoot().'Domain'.DIRECTORY_SEPARATOR,
             'module' => $this->getRoot().'Module'.DIRECTORY_SEPARATOR,
             'tests' => $this->getRoot().'Tests'.DIRECTORY_SEPARATOR,
             'tmp' => $this->getRoot().'Tmp'.DIRECTORY_SEPARATOR,
@@ -100,10 +101,20 @@ class Environment implements Interfaces\Environment
     {
         return $this->resources['domain'];
     }
-    
+
     function setDomain($domain)
     {
         $this->resources['domain'] = $domain;
+    }
+    
+    function getDomainConfig()
+    {
+        return $this->resources['domain_config'];
+    }
+
+    function setDomainConfig($domain_config)
+    {
+        $this->resources['domain_config'] = $domain_config;
     }
 
     function getDataMapper()
