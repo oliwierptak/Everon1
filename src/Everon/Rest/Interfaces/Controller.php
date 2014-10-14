@@ -19,18 +19,33 @@ interface Controller extends
 {
     function addResourceFromRequest();
 
-    function serveResourceFromRequest();
+    function saveResourceFromRequest();
 
     function deleteResourceFromRequest();
-    
-    /**
-     * @return mixed
-     */
-    function getModel();
+
+    function addResourceCollectionFromRequest();
+
+    function saveResourceCollectionFromRequest();
+
+    function deleteResourceCollectionFromRequest();
 
     /**
      * @return Interfaces\Resource
      */
     function getResourceFromRequest();
+
+    function serveResourceFromRequest();
+
+    function serveCollectionItemFromRequest();
+
+    /**
+     * @param \Exception $Exception
+     */
+    function showException(\Exception $Exception);
+
+    /**
+     * @return mixed
+     */
+    function getModel();
 
 }

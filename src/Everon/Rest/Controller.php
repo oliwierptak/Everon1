@@ -134,7 +134,27 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
         $Resource = $this->getResourceFromRequest();
         $this->getResponse()->setData($Resource);
     }
-    
+
+    /**
+     * @inheritdoc
+     */
+    public function getResourceFromRequest()
+    {
+        $version = $this->getRequest()->getVersion();
+        $resource_id = $this->getRequest()->getQueryParameter('resource_id', null);
+        $resource_name = $this->getRequest()->getQueryParameter('resource', null);
+        $Navigator = $this->getFactory()->buildRestResourceNavigator($this->getRequest());
+
+        if ($resource_id === null) {
+            $Resource = $this->getResourceManager()->getCollectionResource($version, $resource_name, $Navigator);
+        }
+        else {
+            $Resource = $this->getResourceManager()->getResource($version, $resource_name, $resource_id, $Navigator);
+        }
+
+        return $Resource;
+    }
+
     public function serveCollectionItemFromRequest()
     {
         $version = $this->getRequest()->getVersion();
@@ -201,26 +221,6 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
         $this->getResponse()->setStatusCode(204);
     }
     
-    /**
-     * @inheritdoc
-     */
-    public function getResourceFromRequest()
-    {
-        $version = $this->getRequest()->getVersion();
-        $resource_id = $this->getRequest()->getQueryParameter('resource_id', null);
-        $resource_name = $this->getRequest()->getQueryParameter('resource', null);
-        $Navigator = $this->getFactory()->buildRestResourceNavigator($this->getRequest());
-
-        if ($resource_id === null) {
-            $Resource = $this->getResourceManager()->getCollectionResource($version, $resource_name, $Navigator);
-        }
-        else {
-            $Resource = $this->getResourceManager()->getResource($version, $resource_name, $resource_id, $Navigator);
-        }
-
-        return $Resource;
-    }
-
     /**
      * @inheritdoc
      */
