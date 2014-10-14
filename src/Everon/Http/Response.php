@@ -276,4 +276,28 @@ class Response extends BasicResponse implements Interfaces\Response
     {
         return $this->status_code_set;
     }
+
+    /**
+     * @return bool
+     */
+    public function isError()
+    {
+        return $this->isClientError() || $this->isServerError();
+    }
+
+    /**
+     * @return bool
+     */
+    public function isClientError()
+    {
+        return $this->status_code >= 400 && $this->status_code < 500;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isServerError()
+    {
+        return $this->status_code >= 500 && $this->status_code < 600;
+    }
 }   

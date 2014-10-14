@@ -11,10 +11,10 @@ namespace Everon\Rest;
 
 use Everon\Dependency;
 use Everon\Domain;
-use Everon\Rest\Dependency as RestDependency;
 use Everon\Exception;
 use Everon\Helper;
 use Everon\Http;
+use Everon\Rest\Dependency as RestDependency;
 
 /**
  * @method Http\Interfaces\Response getResponse()
@@ -23,16 +23,36 @@ use Everon\Http;
  */
 abstract class Controller extends \Everon\Controller implements Interfaces\Controller
 {
-    use Domain\Dependency\Injection\DomainManager;
     use Dependency\Injection\Factory;
+    use Domain\Dependency\Injection\DomainManager;
     use RestDependency\Injection\ResourceManager;
 
     
     /**
      * @param $action
-     * @return void
-     * @throws Exception\InvalidControllerMethod
-     * @throws Exception\InvalidControllerResponse
+     * @param $result
+     */
+    protected function prepareResponse($action, $result)
+    {
+        $Resource = $this->getResponse()->getData();
+        if ($Resource instanceof Interfaces\ResourceBasic) {
+            $this->getResponse()->setData($Resource->toArray());
+        }
+
+        if ($this->getResponse()->wasStatusSet() === false) {//DRY
+            $Ok = new Http\Message\Ok();
+            $this->getResponse()->setStatusCode($Ok->getCode());
+            $this->getResponse()->setStatusMessage($Ok->getMessage());
+        }
+    }
+
+    protected function response()
+    {
+        echo $this->getResponse()->toJson();
+    }
+
+    /**
+     * @inheritdoc
      */
     public function execute($action)
     {
@@ -50,33 +70,13 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
         $this->prepareResponse($action, $result);
         $this->response();
     }
-    
+
     /**
-     * @return mixed
+     * @inheritdoc
      */
     public function getModel()
     {
         return $this->getDomainManager()->getModelByName($this->getName());
-    }
-    
-    protected function prepareResponse($action, $result)
-    {
-        $Resource = $this->getResponse()->getData();
-        if ($Resource instanceof Interfaces\ResourceBasic) {
-            $Resource = $Resource->toArray();
-            $this->getResponse()->setData($Resource);
-        }
-
-        if ($this->getResponse()->wasStatusSet() === false) {//DRY
-            $Ok = new Http\Message\Ok();
-            $this->getResponse()->setStatusCode($Ok->getCode());
-            $this->getResponse()->setStatusMessage($Ok->getMessage());
-        }
-    }
-
-    protected function response()
-    {
-        echo $this->getResponse()->toJson();
     }
 
     /**

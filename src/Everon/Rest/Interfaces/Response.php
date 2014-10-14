@@ -11,18 +11,5 @@ namespace Everon\Rest\Interfaces;
 
 interface Response extends \Everon\Http\Interfaces\Response
 {
-    /**
-     * @return bool
-     */
-    function isError();
 
-    /**
-     * @return bool
-     */
-    function isClientError();
-
-    /**
-     * @return bool
-     */
-    function isServerError();
 }

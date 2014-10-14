@@ -41,7 +41,6 @@ interface Controller extends \Everon\Interfaces\Dependency\GetUrl
      * @param $action
      * @return void
      * @throws Exception\InvalidControllerMethod
-     * @throws Exception\InvalidControllerResponse
      */
     function execute($action);
 
