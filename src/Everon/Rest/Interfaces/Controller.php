@@ -11,7 +11,11 @@ namespace Everon\Rest\Interfaces;
 
 use Everon\Interfaces;
 
-interface Controller extends Interfaces\Controller
+interface Controller extends 
+    Interfaces\Controller, 
+    Interfaces\Dependency\Factory, 
+    \Everon\Rest\Interfaces\Dependency\ResourceManager,
+    \Everon\Domain\Interfaces\Dependency\DomainManager
 {
     function addResourceFromRequest();
 

@@ -89,7 +89,7 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
         $data = $this->getRequest()->getPostCollection()->toArray(true);
         $resource_name = $this->getRequest()->getQueryParameter('resource', null);
         $Resource = $this->getResourceManager()->add($version, $resource_name, $data, $user_id);
-        
+
         $this->getResponse()->setData($Resource);
         $this->getResponse()->setStatusCode(201);
         $this->getResponse()->setHeader('Location', $Resource->getHref()->getUrl());

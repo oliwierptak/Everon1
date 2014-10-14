@@ -17,7 +17,15 @@ use Everon\Http;
  * @method Response getResponse()
  * @method void setResponse(Response $Response)
  */
-interface Controller extends \Everon\Interfaces\Dependency\GetUrl
+interface Controller extends 
+    \Everon\Config\Interfaces\Dependency\Manager, 
+    \Everon\Interfaces\Dependency\GetUrl, 
+    \Everon\Interfaces\Dependency\Logger, 
+    \Everon\Interfaces\Dependency\Request, 
+    \Everon\Interfaces\Dependency\Response, 
+    \Everon\Interfaces\Dependency\Router,
+    \Everon\Event\Interfaces\Dependency\EventManager,
+    \Everon\Module\Interfaces\Dependency\ModuleManager
 {
     /**
      * @param string $action
