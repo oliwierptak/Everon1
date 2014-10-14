@@ -54,10 +54,10 @@ class Paginator implements Interfaces\Arrayable, \Everon\Interfaces\Paginator
         $current_page = (int) $current_page;
         $current_page = ($current_page > $page_count) ? $page_count : $current_page;
         $current_page = ($current_page <= 0) ? 0 : $current_page - 1;
+        $offset = (int) ($current_page) * $this->getLimit();
         
         $this->current_page = $current_page + 1;
         
-        $offset = (int) ($current_page) * $this->getLimit();
         $this->setOffset($offset);
     }
 
@@ -119,6 +119,7 @@ class Paginator implements Interfaces\Arrayable, \Everon\Interfaces\Paginator
     public function setOffset($offset)
     {
         $max = $this->getTotal() - $this->getLimit();
+        $max = ($max < 0) ? 0 : $max;
         $offset = ($offset < 0) ? 0 : $offset;
         $offset = ($offset > $max) ? $max : $offset;
         

@@ -10,7 +10,7 @@
 namespace Everon;
 
 use Everon\DataMapper\Interfaces\Schema;
-use Everon\DataMapper\Interfaces\Criteria;
+use Everon\DataMapper\Interfaces\CriteriaOLD;
 use Everon\DataMapper\Interfaces\Schema\Table;
 use Everon\DataMapper\Dependency;
 use Everon\Interfaces;
@@ -50,17 +50,22 @@ abstract class DataMapper implements Interfaces\DataMapper
     /**
      * @inheritdoc
      */
-    abstract public function getFetchAllSql(Criteria $Criteria=null);
+    abstract public function getDeleteByCriteriaSql(CriteriaOLD $Criteria);
 
     /**
      * @inheritdoc
      */
-    abstract public function getJoinSql($select, $a, $b, $on_a, $on_b, Criteria $Criteria=null, $type='');
+    abstract public function getFetchAllSql(CriteriaOLD $Criteria=null);
 
     /**
      * @inheritdoc
      */
-    abstract public function getCountSql(Criteria $Criteria=null);
+    abstract public function getJoinSql($select, $a, $b, $on_a, $on_b, CriteriaOLD $Criteria=null, $type='');
+
+    /**
+     * @inheritdoc
+     */
+    abstract public function getCountSql(CriteriaOLD $Criteria=null);
     
 
     /**
@@ -151,14 +156,29 @@ abstract class DataMapper implements Interfaces\DataMapper
     /**
      * @inheritdoc
      */
-    public function count(Criteria $Criteria=null)
+    /**
+     * @param CriteriaOLD $Criteria
+     * @return int
+     */
+    public function deleteByCriteria(CriteriaOLD $Criteria)
+    {
+        list($sql, $parameters) = $this->getDeleteByCriteriaSql($Criteria);
+        return $this->getSchema()->getPdoAdapterByName($this->write_connection_name)->delete($sql, $parameters);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function count(CriteriaOLD $Criteria=null)
     {
         if ($Criteria === null) {
-            $Criteria = new DataMapper\Criteria();
+            $Criteria = new DataMapper\CriteriaOLD();
         }
         else {
             $Criteria = clone $Criteria;
             $Criteria->orderBy([]);
+            $Criteria->offset(0);
+            $Criteria->limit(0);
         }
         
         list($sql, $parameters) = $this->getCountSql($Criteria);
@@ -171,7 +191,7 @@ abstract class DataMapper implements Interfaces\DataMapper
      */
     public function fetchOneById($id)
     {
-        $Criteria = new DataMapper\Criteria();
+        $Criteria = new DataMapper\CriteriaOLD();
         $id = $this->getTable()->validateId($id);
         $Criteria->where([$this->getTable()->getPk() => $id]);
         return $this->fetchOneByCriteria($Criteria);
@@ -180,7 +200,7 @@ abstract class DataMapper implements Interfaces\DataMapper
     /**
      * @inheritdoc
      */
-    public function fetchOneByCriteria(Criteria $Criteria)
+    public function fetchOneByCriteria(CriteriaOLD $Criteria)
     {
         $Criteria->limit(1);
         $sql = $this->getFetchAllSql($Criteria);
@@ -190,7 +210,7 @@ abstract class DataMapper implements Interfaces\DataMapper
     /**
      * @inheritdoc
      */
-    public function fetchAll(Criteria $Criteria)
+    public function fetchAll(CriteriaOLD $Criteria)
     {
         $sql = $this->getFetchAllSql($Criteria);
         return $this->getSchema()->getPdoAdapterByName($this->read_connection_name)->execute($sql, $Criteria->getWhere())->fetchAll();

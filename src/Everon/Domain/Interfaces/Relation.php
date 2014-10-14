@@ -25,24 +25,24 @@ interface Relation extends \Everon\Interfaces\Arrayable, Dependency\DomainManage
      function setOwnerEntity(Domain\Interfaces\Entity $Entity);
 
     /**
-     * @return DataMapper\Interfaces\Criteria
+     * @return DataMapper\Interfaces\CriteriaOLD
      */
      function getCriteria();
 
     /**
-     * @param DataMapper\Interfaces\Criteria $Criteria
+     * @param DataMapper\Interfaces\CriteriaOLD $Criteria
      */
-     function setCriteria(DataMapper\Interfaces\Criteria $Criteria);
+     function setCriteria(DataMapper\Interfaces\CriteriaOLD $Criteria);
 
     /**
-     * @return DataMapper\Interfaces\Criteria
+     * @return DataMapper\Interfaces\CriteriaOLD
      */
      function getEntityRelationCriteria();
 
     /**
-     * @param DataMapper\Interfaces\Criteria $RelationCriteria
+     * @param DataMapper\Interfaces\CriteriaOLD $RelationCriteria
      */
-     function setEntityRelationCriteria(DataMapper\Interfaces\Criteria $RelationCriteria);
+     function setEntityRelationCriteria(DataMapper\Interfaces\CriteriaOLD $RelationCriteria);
 
     /**
      * @return \Everon\Interfaces\DataMapper
@@ -95,10 +95,10 @@ interface Relation extends \Everon\Interfaces\Arrayable, Dependency\DomainManage
     function setData(\Everon\Interfaces\Collection $Collection);
 
     /**
-     * @param DataMapper\Interfaces\Criteria $Criteria 
+     * @param DataMapper\Interfaces\CriteriaOLD $Criteria 
      * @return \Everon\Interfaces\Collection
      */
-    function getData(DataMapper\Interfaces\Criteria $Criteria=null);
+    function getData(DataMapper\Interfaces\CriteriaOLD $Criteria=null);
 
     function getCount();
 

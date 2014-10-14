@@ -9,7 +9,7 @@
  */
 namespace Everon\Rest\Interfaces;
 
-use Everon\DataMapper\Interfaces\Criteria;
+use Everon\DataMapper\Interfaces\CriteriaOLD;
 
 interface Filter
 {
@@ -34,8 +34,8 @@ interface Filter
     function getFilterDefinition();
 
     /**
-     * @param Criteria $Criteria
+     * @param CriteriaOLD $Criteria
      * @return mixed
      */
-    function assignToCriteria(Criteria $Criteria);
+    function assignToCriteria(CriteriaOLD $Criteria);
 }

@@ -12,12 +12,10 @@ namespace Everon\Rest;
 use Everon\Exception;
 use Everon\Rest\Interfaces;
 use Everon\Dependency;
-use Everon\Rest\Dependency\Injection\ResourceManager as InjectResourceManager;
 
 class Client implements Interfaces\Client
 {
     use \Everon\Domain\Dependency\Injection\DomainManager;
-    use InjectResourceManager;
     
     /**
      * @var \Everon\Rest\Interfaces\CurlAdapter

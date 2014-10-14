@@ -57,6 +57,14 @@ class Collection implements \Countable, \ArrayAccess, \IteratorAggregate, Interf
     }
 
     /**
+     * @param mixed $item
+     */
+    public function append($item)
+    {
+        $this->offsetSet($this->count(), $item);
+    }
+
+    /**
      * @inheritdoc
      */
     public function has($name)

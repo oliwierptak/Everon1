@@ -241,6 +241,9 @@ abstract class Controller extends \Everon\Controller implements Mvc\Interfaces\C
         $ErrorView->execute('show');
         
         $Tpl = $ErrorView->getTemplate($error_form_validation_error_template, $ErrorView->getData());
+        if ($Tpl === null) {
+            $this->getLogger()->error('Invalid error template: '.$error_view.'@'.$error_form_validation_error_template);
+        }
 
         $this->getView()->set('error', $Tpl);
         

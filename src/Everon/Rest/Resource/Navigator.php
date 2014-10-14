@@ -208,11 +208,11 @@ class Navigator implements Interfaces\ResourceNavigator
     }
 
     /**
-     * @return \Everon\DataMapper\Interfaces\Criteria
+     * @return \Everon\DataMapper\Interfaces\CriteriaOLD
      */
     public function toCriteria()
     {
-        $Criteria = new \Everon\DataMapper\Criteria();
+        $Criteria = new \Everon\DataMapper\CriteriaOLD();
         $Criteria->limit($this->getLimit());
         $Criteria->offset($this->getOffset());
         $Criteria->orderBy($this->getOrderBy() ?: []);

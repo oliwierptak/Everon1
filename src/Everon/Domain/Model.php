@@ -103,7 +103,6 @@ abstract class Model implements Interfaces\Model
     /**
      * @param Interfaces\Entity $Entity
      * @param null $user_id
-     * @internal param array $data
      * @return Interfaces\Entity
      */
     protected function add(Domain\Interfaces\Entity $Entity, $user_id=null)

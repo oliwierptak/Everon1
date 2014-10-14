@@ -38,12 +38,12 @@ abstract class Relation implements Interfaces\Relation
     protected $sql_count = null;
 
     /**
-     * @var DataMapper\Interfaces\Criteria
+     * @var DataMapper\Interfaces\CriteriaOLD
      */
     protected $Criteria = null;
 
     /**
-     * @var DataMapper\Interfaces\Criteria
+     * @var DataMapper\Interfaces\CriteriaOLD
      */
     protected $EntityRelationCriteria = null;
 
@@ -88,7 +88,7 @@ abstract class Relation implements Interfaces\Relation
         $this->name = $this->stringLastTokenToName(get_class($this));
         $this->Data = new Helper\Collection([]);
         $this->RelationMapper = $RelationMapper;
-        $this->Criteria = (new \Everon\DataMapper\Criteria())->limit(10)->offset(0);
+        $this->Criteria = (new \Everon\DataMapper\CriteriaOLD())->limit(10)->offset(0);
     }
     
     protected function setupRelationParameters()
@@ -174,7 +174,7 @@ abstract class Relation implements Interfaces\Relation
     
     protected function resetRelationCriteriaParameters()
     {
-        $this->setCriteria(new \Everon\DataMapper\Criteria());
+        $this->setCriteria(new \Everon\DataMapper\CriteriaOLD());
         $this->sql = null;
         $this->sql_count = null;
     }
@@ -210,7 +210,7 @@ abstract class Relation implements Interfaces\Relation
     }
 
     /**
-     * @return DataMapper\Interfaces\Criteria
+     * @return DataMapper\Interfaces\CriteriaOLD
      */
     public function getCriteria()
     {
@@ -218,16 +218,16 @@ abstract class Relation implements Interfaces\Relation
     }
 
     /**
-     * @param DataMapper\Interfaces\Criteria $Criteria
+     * @param DataMapper\Interfaces\CriteriaOLD $Criteria
      */
-    public function setCriteria(DataMapper\Interfaces\Criteria $Criteria)
+    public function setCriteria(DataMapper\Interfaces\CriteriaOLD $Criteria)
     {
         $this->Criteria = $Criteria;
         $this->reset();
     }
 
     /**
-     * @return DataMapper\Interfaces\Criteria
+     * @return DataMapper\Interfaces\CriteriaOLD
      */
     public function getEntityRelationCriteria()
     {
@@ -235,9 +235,9 @@ abstract class Relation implements Interfaces\Relation
     }
 
     /**
-     * @param DataMapper\Interfaces\Criteria $RelationCriteria
+     * @param DataMapper\Interfaces\CriteriaOLD $RelationCriteria
      */
-    public function setEntityRelationCriteria(DataMapper\Interfaces\Criteria $RelationCriteria)
+    public function setEntityRelationCriteria(DataMapper\Interfaces\CriteriaOLD $RelationCriteria)
     {
         $this->EntityRelationCriteria = $RelationCriteria;
         $this->reset();
@@ -330,7 +330,7 @@ abstract class Relation implements Interfaces\Relation
     /**
      * @inheritdoc
      */
-    public function getData(DataMapper\Interfaces\Criteria $Criteria=null)
+    public function getData(DataMapper\Interfaces\CriteriaOLD $Criteria=null)
     {
         if ($this->loaded) {
             return $this->Data;
@@ -341,7 +341,7 @@ abstract class Relation implements Interfaces\Relation
         if ($Criteria !== null) { //todo: woah refactor
             $shit = $this->getCriteria()->toArray();
             $where = $this->arrayMergeDefault($shit['where'], $Criteria->getWhere());
-            $NewCriteria = new \Everon\DataMapper\Criteria();
+            $NewCriteria = new \Everon\DataMapper\CriteriaOLD();
             $NewCriteria->where($where);
             $NewCriteria->orderBy($this->getCriteria()->getOrderBy() ?: $Criteria->getOrderBy());
             $NewCriteria->limit($this->getCriteria()->getLimit() ?: $Criteria->getLimit());

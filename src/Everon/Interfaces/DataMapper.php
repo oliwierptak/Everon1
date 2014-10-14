@@ -10,7 +10,7 @@
 namespace Everon\Interfaces;
 
 use Everon\Domain\Interfaces\Entity;
-use Everon\DataMapper\Interfaces\Criteria;
+use Everon\DataMapper\Interfaces\CriteriaOLD;
 use Everon\DataMapper\Interfaces\Schema;
 use Everon\DataMapper\Interfaces\Schema\Table;
 
@@ -35,10 +35,16 @@ interface DataMapper
     function delete($id);
 
     /**
-     * @param Criteria $Criteria
+     * @param CriteriaOLD $Criteria
+     * @return bool
+     */
+    function deleteByCriteria(CriteriaOLD $Criteria);
+
+    /**
+     * @param CriteriaOLD $Criteria
      * @return int
      */
-    function count(Criteria $Criteria=null);
+    function count(CriteriaOLD $Criteria=null);
 
     /**
      * @param int $id
@@ -47,16 +53,16 @@ interface DataMapper
     function fetchOneById($id);
 
     /**
-     * @param Criteria $Criteria
+     * @param CriteriaOLD $Criteria
      * @return array
      */
-    function fetchOneByCriteria(Criteria $Criteria);
+    function fetchOneByCriteria(CriteriaOLD $Criteria);
 
     /**
-     * @param Criteria $Criteria
+     * @param CriteriaOLD $Criteria
      * @return array
      */
-    function fetchAll(Criteria $Criteria);
+    function fetchAll(CriteriaOLD $Criteria);
 
     /**
      * @return string
@@ -124,10 +130,17 @@ interface DataMapper
     function getDeleteSql($id);
 
     /**
-     * @param Criteria $Criteria
+     * @param CriteriaOLD $Criteria
+     * @return array
+     * @throws \Everon\Exception\DataMapper
+     */
+    function getDeleteByCriteriaSql(CriteriaOLD $Criteria);
+
+    /**
+     * @param CriteriaOLD $Criteria
      * @return array
      */
-    function getFetchAllSql(Criteria $Criteria=null);
+    function getFetchAllSql(CriteriaOLD $Criteria=null);
 
     /**
      * @param $select
@@ -135,16 +148,16 @@ interface DataMapper
      * @param $b
      * @param $on_a
      * @param $on_b
-     * @param Criteria $Criteria
+     * @param CriteriaOLD $Criteria
      * @param string $type (left, right, ...)
      * @return string
      */
-    function getJoinSql($select, $a, $b, $on_a, $on_b, Criteria $Criteria=null, $type='');
+    function getJoinSql($select, $a, $b, $on_a, $on_b, CriteriaOLD $Criteria=null, $type='');
 
     /**
-     * @param Criteria $Criteria
+     * @param CriteriaOLD $Criteria
      * @return string
      */
-    function getCountSql(Criteria $Criteria=null);
+    function getCountSql(CriteriaOLD $Criteria=null);
 
 }

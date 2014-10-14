@@ -110,7 +110,7 @@ interface Factory
      * @param array $files
      * @param $versioning
      * @param string $namespace
-     * @return mixed
+     * @return Rest\Interfaces\Request
      * @throws Exception\Factory
      */
     function buildRestRequest(array $server, array $get, array $post, array $files, $versioning, $namespace='Everon\Rest');
@@ -150,7 +150,7 @@ interface Factory
     /**
      * @param Rest\Interfaces\Request $Request
      * @param string $namespace
-     * @return mixed
+     * @return Rest\Interfaces\ResourceNavigator
      * @throws Exception\Factory
      */
     function buildRestResourceNavigator(Rest\Interfaces\Request $Request, $namespace='Everon\Rest\Resource');
@@ -216,7 +216,7 @@ interface Factory
     /**
      * @param array $data
      * @param string $namespace
-     * @return mixed
+     * @return DataMapper\Interfaces\ConnectionItem
      * @throws Exception\Factory
      */
     function buildConnectionItem(array $data, $namespace='Everon\DataMapper');
@@ -243,16 +243,55 @@ interface Factory
      * @param DataMapper\Interfaces\ConnectionManager $ConnectionManager
      * @param Domain\Interfaces\Mapper $DomainMapper
      * @param string $namespace
-     * @return mixed
+     * @return DataMapper\Interfaces\Manager
      * @throws Exception\Factory
      */
     function buildDataMapperManager(DataMapper\Interfaces\ConnectionManager $ConnectionManager, Domain\Interfaces\Mapper $DomainMapper, $namespace='Everon\DataMapper');
 
     /**
+     * @param string $namespace
+     * @returns DataMapper\Interfaces\Criteria\Builder
+     * @throws Exception\Factory
+     */
+    function buildCriteriaBuilder($namespace='Everon\DataMapper\Criteria');
+
+    /**
+     * @param $type
+     * @param string $namespace
+     * @returns DataMapper\Interfaces\Criteria\Operator
+     * @throws Exception\Factory
+     */
+    function buildCriteriaOperator($type, $namespace='Everon\DataMapper\Criteria\Operator');
+
+    /**
+     * @param string $namespace
+     * @return DataMapper\Interfaces\CriteriaOLD
+     * @throws Exception\Factory
+     */
+    function buildDataMapperCriteria($namespace='Everon\DataMapper');
+
+    /**
+     * @param $column
+     * @param $operator
+     * @param $value
+     * @param string $namespace
+     * @return DataMapper\Interfaces\Criteria\Criterium
+     */
+    function buildDataMapperCriterium($column, $operator, $value, $namespace = 'Everon\DataMapper\Criteria');
+
+    /**
+     * @param $sql
+     * @param array $parameters
+     * @param string $namespace
+     * @return DataMapper\Interfaces\SqlPart
+     */
+    function buildDataMapperSqlPart($sql, array $parameters, $namespace = 'Everon\DataMapper\Criteria');
+
+    /**
      * @param $name
      * @param Interfaces\DataMapper $DataMapper
      * @param string $namespace
-     * @return mixed
+     * @return Domain\Interfaces\Repository
      * @throws Exception\Factory
      */
     function buildDomainRepository($name, Interfaces\DataMapper $DataMapper, $namespace='Everon\Domain');
@@ -270,7 +309,7 @@ interface Factory
     /**
      * @param array $mappings
      * @param string $namespace
-     * @return mixed
+     * @return Domain\Interfaces\Mapper
      * @throws Exception\Factory
      */
     function buildDomainMapper(array $mappings, $namespace='Everon\Domain');
@@ -278,7 +317,7 @@ interface Factory
     /**
      * @param $class_name
      * @param string $namespace
-     * @return mixed
+     * @return Domain\Interfaces\Model
      * @throws Exception\Factory
      */
     function buildDomainModel($class_name, $namespace='Everon\Domain');
@@ -296,7 +335,6 @@ interface Factory
      * @param Domain\Interfaces\Entity $Entity
      * @param \Everon\Domain\Interfaces\RelationMapper $RelationMapper
      * @param string $namespace
-     * @internal param $parent_name
      * @return Domain\Interfaces\Relation
      */
     function buildDomainRelation($name, Domain\Interfaces\Entity $Entity, Domain\Interfaces\RelationMapper $RelationMapper, $namespace = 'Everon\Domain');
@@ -318,7 +356,7 @@ interface Factory
      * @param DataMapper\Interfaces\ConnectionManager $ConnectionManager
      * @param Domain\Interfaces\Mapper $DomainMapper
      * @param string $namespace
-     * @return mixed
+     * @return DataMapper\Interfaces\Schema
      * @throws Exception\Factory
      */
     function buildSchema(DataMapper\Interfaces\Schema\Reader $Reader, DataMapper\Interfaces\ConnectionManager $ConnectionManager, Domain\Interfaces\Mapper $DomainMapper, $namespace='Everon\DataMapper');
@@ -350,7 +388,7 @@ interface Factory
      * @param array $foreign_keys
      * @param Domain\Interfaces\Mapper $DomainMapper
      * @param string $namespace
-     * @return mixed
+     * @return DataMapper\Interfaces\Schema\Table
      * @throws Exception\Factory
      */
     function buildSchemaTableAndDependencies($database_timezone, $name, $schema, $adapter_name, array $columns, array $primary_keys,  array $unique_keys, array $foreign_keys, Domain\Interfaces\Mapper $DomainMapper, $namespace='Everon\DataMapper');
@@ -364,7 +402,7 @@ interface Factory
      * @param array $foreign_key_list
      * @param Domain\Interfaces\Mapper $DomainMapper
      * @param string $namespace
-     * @return mixed
+     * @return DataMapper\Interfaces\Schema\Table
      * @throws Exception\Factory
      */
     function buildSchemaTable($name, $schema, array $column_list, array $primary_key_list,  array $unique_key_list, array $foreign_key_list, Domain\Interfaces\Mapper $DomainMapper, $namespace='Everon\DataMapper');
@@ -635,7 +673,7 @@ interface Factory
      * @param $versioning
      * @param array $mapping
      * @param $namespace
-     * @return mixed
+     * @return Rest\Interfaces\ResourceManager
      * @throws Exception\Factory
      */
     function buildRestResourceManager($url, array $supported_versions, $versioning, array $mapping, $namespace='Everon\Rest\Resource');
@@ -657,7 +695,6 @@ interface Factory
      */
     function buildEmailAddress($email, $name, $namespace='Everon\Email');
 
-
     /**
      * @param Email\Interfaces\Recipient $Recipient
      * @param Email\Interfaces\Address $FromAddress
@@ -676,7 +713,7 @@ interface Factory
      * @param $name
      * @param Email\Interfaces\Credential $Credentials
      * @param string $namespace
-     * @return mixed
+     * @return Email\Interfaces\Sender
      * @throws Exception\Factory
      */
     function buildEmailSender($name, Email\Interfaces\Credential $Credentials, $namespace='Everon\Email');
@@ -725,8 +762,6 @@ interface Factory
      * @param int $offset
      * @param int $limit
      * @param string $namespace
-     * @internal param $total_count
-     * @internal param $items_per_page
      * @return Paginator
      */
     function buildPaginator($total, $offset, $limit, $namespace='Everon\Helper');
