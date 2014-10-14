@@ -181,4 +181,24 @@ interface Request extends Arrayable
      * @return string
      */
     function getUserAgent();
+
+    /**
+     * @return resource
+     */
+    function getPhpInputContext();
+
+    /**
+     * @param \resource $php_input_context
+     */
+    function setPhpInputContext($php_input_context);
+
+    /**
+     * @return boolean
+     */
+    function getPhpInputFlags();
+
+    /**
+     * @param boolean $php_input_flags
+     */
+    function setPhpInputFlags($php_input_flags);
 }

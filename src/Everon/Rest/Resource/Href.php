@@ -17,14 +17,45 @@ use Everon\Rest\Interfaces;
 class Href implements Interfaces\ResourceHref
 {
     use Helper\ToString;
-    
+
+    /**
+     * @return string
+     */
     protected $url = null;
+
+    /**
+     * @return string
+     */
     protected $version = null;
+
+    /**
+     * @return string
+     */
     protected $resource_name = null;
+
+    /**
+     * @return string
+     */
     protected $resource_id = null;
+
+    /**
+     * @return string
+     */
     protected $request_path = null;
+
+    /**
+     * @return string
+     */
     protected $collection_name = null;
+
+    /**
+     * @return string
+     */
     protected $item_id = null;
+
+    /**
+     * @return string
+     */
     protected $versioning = null;
 
 
@@ -65,7 +96,12 @@ class Href implements Interfaces\ResourceHref
             $request_path = '?'.$request_path;
         }
                 
-        $params = '/'.rtrim(implode('/', [$this->resource_name, $this->resource_id, $this->collection_name, $this->item_id]),'/').$request_path;
+        $params = '/'.rtrim(implode('/', [
+                $this->resource_name, 
+                $this->resource_id, 
+                $this->collection_name, 
+                $this->item_id
+            ]), '/').$request_path;
         
         switch ($this->versioning) {
             case Handler::VERSIONING_URL:
@@ -81,7 +117,7 @@ class Href implements Interfaces\ResourceHref
     }
 
     /**
-     * @param $collection
+     * @inheritdoc
      */
     public function setCollectionName($collection)
     {
@@ -89,7 +125,7 @@ class Href implements Interfaces\ResourceHref
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
     public function getCollectionName()
     {
@@ -97,7 +133,7 @@ class Href implements Interfaces\ResourceHref
     }
 
     /**
-     * @param $resource
+     * @inheritdoc
      */
     public function setResourceName($resource)
     {
@@ -105,7 +141,7 @@ class Href implements Interfaces\ResourceHref
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
     public function getResourceName()
     {
@@ -113,7 +149,7 @@ class Href implements Interfaces\ResourceHref
     }
 
     /**
-     * @param $resource_id
+     * @inheritdoc
      */
     public function setResourceId($resource_id)
     {
@@ -121,7 +157,7 @@ class Href implements Interfaces\ResourceHref
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
     public function getResourceId()
     {
@@ -129,7 +165,7 @@ class Href implements Interfaces\ResourceHref
     }
 
     /**
-     * @param $url
+     * @inheritdoc
      */
     public function setUrl($url)
     {
@@ -137,7 +173,7 @@ class Href implements Interfaces\ResourceHref
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
     public function getUrl()
     {
@@ -145,7 +181,7 @@ class Href implements Interfaces\ResourceHref
     }
 
     /**
-     * @param string $version
+     * @inheritdoc
      */
     public function setVersion($version)
     {
@@ -153,7 +189,7 @@ class Href implements Interfaces\ResourceHref
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
     public function getVersion()
     {
@@ -161,7 +197,7 @@ class Href implements Interfaces\ResourceHref
     }
 
     /**
-     * @param string $versioning
+     * @inheritdoc
      */
     public function setVersioning($versioning)
     {
@@ -169,15 +205,15 @@ class Href implements Interfaces\ResourceHref
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
     public function getVersioning()
     {
         return $this->versioning;
     }
-    
+
     /**
-     * @return string
+     * @inheritdoc
      */
     public function getRequestPath()
     {
@@ -185,7 +221,7 @@ class Href implements Interfaces\ResourceHref
     }
 
     /**
-     * @param string $request_path
+     * @inheritdoc
      */
     public function setRequestPath($request_path)
     {
@@ -193,7 +229,7 @@ class Href implements Interfaces\ResourceHref
     }
 
     /**
-     * @return mixed
+     * @inheritdoc
      */
     public function getItemId()
     {
@@ -201,7 +237,7 @@ class Href implements Interfaces\ResourceHref
     }
 
     /**
-     * @param mixed $item_id
+     * @inheritdoc
      */
     public function setItemId($item_id)
     {
