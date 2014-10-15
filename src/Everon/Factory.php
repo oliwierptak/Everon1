@@ -190,7 +190,7 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildRestClient($Href, Rest\Interfaces\CurlAdapter $CurlAdapter)
+    public function buildRestClient(Rest\Interfaces\ResourceHref $Href, Rest\Interfaces\CurlAdapter $CurlAdapter)
     {
         try {
             $Client = new Rest\Client($Href, $CurlAdapter);
@@ -307,6 +307,23 @@ abstract class Factory implements Interfaces\Factory
         }
         catch (\Exception $e) {
             throw new Exception\Factory('RestCollectionResource initialization error', null, $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildRestResourceHref($url, $version, $versioning, $namespace='Everon\Rest\Resource')
+    {
+        try {
+            $class_name = $this->getFullClassName($namespace, 'Href');
+            $this->classExists($class_name);
+            $Resource = new $class_name($url, $version, $versioning);
+            $this->injectDependencies($class_name, $Resource);
+            return $Resource;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('RestResourceHref initialization error for: "%s"', $url, $e);
         }
     }
     

@@ -12,7 +12,7 @@ namespace Everon\Rest\Interfaces;
 use Everon\Domain\Interfaces\Entity;
 use Everon\Rest\Interfaces\Resource as ResourceInterface;
 
-interface ResourceHandler
+interface ResourceHandler extends \Everon\Interfaces\Dependency\Factory, \Everon\Domain\Interfaces\Dependency\DomainManager
 {
 
     /**
@@ -162,4 +162,14 @@ interface ResourceHandler
      * @throws \Everon\Rest\Exception\Manager
      */
     function getResourceNameFromMapping($domain_name);
+
+    /**
+     * @return \Everon\Interfaces\Collection
+     */
+    function getMappingCollection();
+
+    /**
+     * @param \Everon\Interfaces\Collection $MappingCollection
+     */
+    function setMappingCollection(\Everon\Interfaces\Collection $MappingCollection);
 }

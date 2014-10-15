@@ -28,8 +28,6 @@ interface Environment
     function setDataMapper($data_mapper);
     function getView();
     function setView($theme);
-    function getController();
-    function setController($controller);
     function getTest();
     function setTest($test);
     function getEveronConfig();

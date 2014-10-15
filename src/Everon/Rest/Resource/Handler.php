@@ -22,7 +22,7 @@ class Handler implements Interfaces\ResourceHandler
 {
     use Dependency\Injection\Factory;
     use Domain\Dependency\Injection\DomainManager;
-    use Dependency\Injection\Request; //todo meh
+    
     use Helper\AlphaId;
     use Helper\Arrays;
     use Helper\Asserts\IsInArray;
@@ -437,11 +437,13 @@ class Handler implements Interfaces\ResourceHandler
     public function getResourceUrl($version, $resource_name, $resource_id=null, $collection=null, $request_path=null)
     {
         $version = $version ?: $this->current_version;
-        $Href = new Href($this->url, $version, $this->versioning);
+        
+        $Href = $this->getFactory()->buildRestResourceHref($this->url, $version, $this->versioning);
         $Href->setCollectionName($collection);
         $Href->setResourceName($resource_name);
         $Href->setResourceId($resource_id);
         $Href->setRequestPath($request_path);
+        
         return $Href;
     }
     
@@ -450,10 +452,11 @@ class Handler implements Interfaces\ResourceHandler
      */
     public function getDomainNameFromMapping($resource_name)
     {
-        $domain_name = $this->MappingCollection->get($resource_name, null);
+        $domain_name = $this->getMappingCollection()->get($resource_name, null);
         if ($domain_name === null) {
             throw new Exception\Resource('Invalid rest mapping domain: "%s"', $resource_name);
         }
+        
         return $domain_name;
     }
 
@@ -462,12 +465,29 @@ class Handler implements Interfaces\ResourceHandler
      */
     public function getResourceNameFromMapping($domain_name)
     {
-         foreach ($this->MappingCollection as $name => $value) {
+        foreach ($this->MappingCollection as $name => $value) {
             if ($domain_name === $value) {
                 return $name;
             }
         }
+        
         throw new Exception\Resource('Invalid rest mapping resource: "%s"', $domain_name);
     }
 
+    /**
+     * @inheritdoc
+     */
+    public function getMappingCollection()
+    {
+        return $this->MappingCollection;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setMappingCollection(\Everon\Interfaces\Collection $MappingCollection)
+    {
+        $this->MappingCollection = $MappingCollection;
+    }
+    
 }

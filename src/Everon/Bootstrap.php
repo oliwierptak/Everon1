@@ -43,6 +43,7 @@ class Bootstrap
         $os = substr($os, 0, 3);
         $this->os_name = $os === 'WIN' ? 'win' : 'unix';
         
+        
         //define config directory based on EVERON_ENVIRONMENT
         $ConfigDir = new \SplFileInfo($this->Environment->getConfig().$this->environment_name);
         if ($ConfigDir->isDir() === false) {

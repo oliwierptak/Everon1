@@ -78,12 +78,11 @@ interface Factory
     function buildRestFilter(Interfaces\Collection $FilterDefinition, $namespace='Everon\Rest');
 
     /**
-     * @param $Href
+     * @param Rest\Interfaces\ResourceHref $Href
      * @param Rest\Interfaces\CurlAdapter $CurlAdapter
      * @return Interfaces\Core|Rest\Client
-     * @throws Exception\Factory
      */
-    function buildRestClient($Href, Rest\Interfaces\CurlAdapter $CurlAdapter);
+    function buildRestClient(Rest\Interfaces\ResourceHref $Href, Rest\Interfaces\CurlAdapter $CurlAdapter);
 
     /**
      * @param $class_name
@@ -146,6 +145,16 @@ interface Factory
      * @return Rest\Interfaces\ResourceCollection
      */
     function buildRestCollectionResource($name, Rest\Interfaces\ResourceHref $Href, Interfaces\Collection $Collection, Interfaces\Paginator $Paginator, $namespace='Everon\Rest\Resource');
+
+    /**
+     * @param $url
+     * @param $version
+     * @param $versioning
+     * @param string $namespace
+     * @return Rest\Interfaces\ResourceHref
+     * @throws Exception\Factory
+     */
+    function buildRestResourceHref($url, $version, $versioning, $namespace='Everon\Rest\Resource');
 
     /**
      * @param Rest\Interfaces\Request $Request

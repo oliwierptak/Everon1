@@ -9,7 +9,7 @@
  */
 namespace Everon\Rest\Interfaces;
 
-interface Client
+interface Client extends \Everon\Domain\Interfaces\Dependency\DomainManager
 {
     /**
      * @param $resource_name

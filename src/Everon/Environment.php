@@ -17,7 +17,7 @@ class Environment implements Interfaces\Environment
     protected $resources = [];
 
 
-    function __construct($root, $everon_source_root)
+    function __construct($root, $everon_source_root, $custom_paths=[])
     {
         $this->resources = [
             'root' => $root,
@@ -27,7 +27,6 @@ class Environment implements Interfaces\Environment
         $this->resources += [
             'application' => $this->getRoot().'Application'.DIRECTORY_SEPARATOR,
             'config' => $this->getRoot().'Config'.DIRECTORY_SEPARATOR,
-            'controller' => $this->getRoot().'Controller'.DIRECTORY_SEPARATOR,
             'data_mapper' => $this->getRoot().'DataMapper'.DIRECTORY_SEPARATOR,
             'domain' => $this->getRoot().'Domain'.DIRECTORY_SEPARATOR,
             'domain_config' => $this->getRoot().'Domain'.DIRECTORY_SEPARATOR,
@@ -54,6 +53,8 @@ class Environment implements Interfaces\Environment
             'cache_config' => $this->getCache().'config'.DIRECTORY_SEPARATOR,
             'cache_view' => $this->getCache().'view'.DIRECTORY_SEPARATOR,
         ];
+        
+        $this->resources = array_merge($this->resources, $custom_paths);
     }
 
     function getApplication()
@@ -135,16 +136,6 @@ class Environment implements Interfaces\Environment
     function setView($view)
     {
         $this->resources['view'] = $view;
-    }
-
-    function getController()
-    {
-        return $this->resources['controller'];
-    }
-
-    function setController($controller)
-    {
-        $this->resources['controller'] = $controller;
     }
 
     function getTest()
