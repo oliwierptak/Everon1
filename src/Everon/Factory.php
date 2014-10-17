@@ -10,6 +10,7 @@
 namespace Everon;
 
 use Everon\Email;
+use Everon\DataMapper;
 use Everon\Helper;
 use Everon\Interfaces;
 
@@ -755,6 +756,23 @@ abstract class Factory implements Interfaces\Factory
         }
         catch (\Exception $e) {
             throw new Exception\Factory('CriteriaBuilder initialization error', null, $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildCriteriaContainer(DataMapper\Interfaces\Criteria $Criteria, $glue, $namespace='Everon\DataMapper\Criteria')
+    {
+        try {
+            $class_name = $this->getFullClassName($namespace, 'Container');
+            $this->classExists($class_name);
+            $Container = new $class_name($Criteria, $glue);
+            $this->injectDependencies($class_name, $Container);
+            return $Container;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('CriteriaContainer: "%s" initialization error', null, $e);
         }
     }
 

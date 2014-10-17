@@ -187,9 +187,9 @@ abstract class Relation implements Interfaces\Relation
     /**
      * @return array
      */
-    protected function getToArray()
+    protected function getToArray($deep=false)
     {
-        return $this->getData()->toArray();
+        return $this->getData()->toArray($deep);
     }
 
     /**

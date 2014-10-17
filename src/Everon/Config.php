@@ -207,9 +207,9 @@ class Config implements \Everon\Interfaces\Config
     /**
      * @return array
      */
-    protected function getToArray()
+    protected function getToArray($deep=false)
     {
-        return $this->getItems();
+        return $this->getItems($deep);
     }
 
     /**

@@ -65,8 +65,8 @@ class Mapper implements Interfaces\Mapper
         return null;
     }
     
-    protected function getToArray()
+    protected function getToArray($deep=false)
     {
-        return $this->MappingCollection->toArray();
+        return $this->MappingCollection->toArray($deep);
     }
 }

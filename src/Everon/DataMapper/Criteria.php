@@ -30,14 +30,13 @@ class Criteria implements Interfaces\Criteria
     /**
      * @return array
      */
-    protected function getToArray()
+    protected function getToArray($deep=false)
     {
-        return $this->getCriteriumCollection()->toArray();
+        return $this->getCriteriumCollection()->toArray($deep);
     }
 
     /**
-     * @param Interfaces\Criteria\Criterium $Criterium
-     * @return $this
+     * @inheritdoc
      */
     public function where(Interfaces\Criteria\Criterium $Criterium)
     {
@@ -46,18 +45,23 @@ class Criteria implements Interfaces\Criteria
         return $this;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function andWhere(Interfaces\Criteria\Criterium $Criterium)
     {
         if ($this->getCriteriumCollection()->isEmpty()) {
             throw new \Everon\DataMapper\Exception\Criteria('No subquery found, use where() to start new subqury');
         }
             
-            
         $Criterium->glueByAnd();
         $this->getCriteriumCollection()->append($Criterium);
         return $this;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function orWhere(Interfaces\Criteria\Criterium $Criterium)
     {
         if ($this->getCriteriumCollection()->isEmpty()) {
@@ -70,7 +74,7 @@ class Criteria implements Interfaces\Criteria
     }
 
     /**
-     * @return \Everon\Interfaces\Collection
+     * @inheritdoc
      */
     public function getCriteriumCollection()
     {
@@ -82,7 +86,7 @@ class Criteria implements Interfaces\Criteria
     }
 
     /**
-     * @param \Everon\Interfaces\Collection $CriteriumCollection
+     * @inheritdoc
      */
     public function setCriteriumCollection($CriteriumCollection)
     {
@@ -90,7 +94,7 @@ class Criteria implements Interfaces\Criteria
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
     public function getGlue()
     {
@@ -98,11 +102,26 @@ class Criteria implements Interfaces\Criteria
     }
 
     /**
-     * @param string $glue
+     * @inheritdoc
      */
-    public function setGlue($glue)
+    public function resetGlue()
     {
-        $this->glue = $glue;
+        $this->glue = null;
     }
 
+    /**
+     * @inheritdoc
+     */
+    public function glueByAnd()
+    {
+        $this->glue = Criteria\Builder::GLUE_AND;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function glueByOr()
+    {
+        $this->glue = Criteria\Builder::GLUE_OR;
+    }
 }

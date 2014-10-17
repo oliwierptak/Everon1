@@ -65,6 +65,21 @@ class Criterium implements Interfaces\Criteria\Criterium
     }
 
     /**
+     * @return array
+     */
+    protected function getToArray()
+    {
+        return [
+            'column' => $this->getColumn(),
+            'value' => $this->getValue(),
+            'operator_type' => $this->getOperatorType(),
+            'placeholder' => $this->getPlaceholder(),
+            'glue' => $this->getGlue(),
+            'SqlPart' => $this->getSqlPart()
+        ];
+    }
+
+    /**
      * @param $column
      * @param $operator
      * @param $value
@@ -204,14 +219,6 @@ class Criterium implements Interfaces\Criteria\Criterium
     /**
      * @inheritdoc
      */
-    public function getSqlPart()
-    {
-        return $this->SqlPart;
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function setSqlPart(Interfaces\SqlPart $SqlPart)
     {
         $this->SqlPart = $SqlPart;
@@ -220,7 +227,7 @@ class Criterium implements Interfaces\Criteria\Criterium
     /**
      * @inheritdoc
      */
-    public function toSqlPart()
+    public function getSqlPart()
     {
         if ($this->SqlPart === null) {
             $Operator = $this->buildOperator($this->getColumn(), $this->getOperatorType(), $this->getValue());

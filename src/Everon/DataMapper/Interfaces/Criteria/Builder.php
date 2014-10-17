@@ -44,38 +44,40 @@ interface Builder extends \Everon\Interfaces\Arrayable, \Everon\Interfaces\Strin
     function orWhere($column, $operator, $value);
 
     /**
-     * @return Interfaces\Criteria
+     * @return Interfaces\Criteria\Container
      */
-    function getCurrentCriteria();
+    function getCurrentContainer();
 
     /**
-     * @param Interfaces\Criteria $Criteria
+     * @param Interfaces\Criteria\Container $Container
      */
-    function setCurrentCriteria(Interfaces\Criteria $Criteria);
+    function setCurrentCriteria(Interfaces\Criteria\Container $Container);
+
+    /**
+     * @return \Everon\Interfaces\Collection
+     */
+    function getContainerCollection();
+
+    /**
+     * @param \Everon\Interfaces\Collection $ContainerCollection
+     */
+    function setContainerCollection(\Everon\Interfaces\Collection $ContainerCollection);
 
     /**
      * @return string
      */
     function getGlue();
 
-    /**
-     * @return \Everon\Interfaces\Collection
-     */
-    function getCriteriaCollection();
-
-    /**
-     * @param \Everon\Interfaces\Collection $CriteriaCollection
-     */
-    function setCriteriaCollection(\Everon\Interfaces\Collection $CriteriaCollection);
-
-    /**
-     * @return Interfaces\SqlPart
-     */
-    function toSqlPart();
+    function resetGlue();
 
     function glueByAnd();
 
     function glueByOr();
+    
+    /**
+     * @return Interfaces\SqlPart
+     */
+    function toSqlPart();
 
     /**
      * @param $operator

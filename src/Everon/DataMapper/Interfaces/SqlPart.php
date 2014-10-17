@@ -9,7 +9,7 @@
  */
 namespace Everon\DataMapper\Interfaces;
 
-interface SqlPart 
+interface SqlPart extends \Everon\Interfaces\Arrayable 
 {
     /**
      * @return array

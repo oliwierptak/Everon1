@@ -265,6 +265,15 @@ interface Factory
     function buildCriteriaBuilder($namespace='Everon\DataMapper\Criteria');
 
     /**
+     * @param DataMapper\Interfaces\Criteria $Criteria
+     * @param $glue
+     * @param string $namespace
+     * @return DataMapper\Interfaces\Criteria\Container
+     * @throws Exception\Factory
+     */
+    function buildCriteriaContainer(DataMapper\Interfaces\Criteria $Criteria, $glue, $namespace='Everon\DataMapper\Criteria');
+
+    /**
      * @param $type
      * @param string $namespace
      * @returns DataMapper\Interfaces\Criteria\Operator

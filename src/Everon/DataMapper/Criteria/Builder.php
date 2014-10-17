@@ -49,8 +49,8 @@ class Builder implements Interfaces\Criteria\Builder
     /**
      * @var \Everon\Interfaces\Collection
      */
-    protected $CriteriaCollection = null;
-    
+    protected $ContainerCollection = null;
+
     /**
      * @var string
      */
@@ -59,47 +59,47 @@ class Builder implements Interfaces\Criteria\Builder
     
     public function __construct()
     {
-        $this->CriteriaCollection = new Helper\Collection([]);
+        $this->ContainerCollection = new Helper\Collection([]);
     }
 
     /**
      * @return array
      */
-    protected function getToArray()
+    protected function getToArray($deep=false)
     {
-        return $this->getCriteriaCollection()->toArray();
+        return $this->getContainerCollection()->toArray($deep);
     }
 
     /**
-     * @param Interfaces\Criteria $Criteria
+     * @param Interfaces\Criteria\Container $Container
      * @return string
      */
-    protected function criteriaToSql(Interfaces\Criteria $Criteria)
+    protected function criteriaToSql(Interfaces\Criteria\Container $Container)
     {
         /**
-         * @var \Everon\DataMapper\Interfaces\Criteria\Criterium $Criterium
+         * @var Interfaces\Criteria\Criterium $Criterium
          */
         $sql = '';
-        foreach ($Criteria->getCriteriumCollection() as $Criterium) {
-            $SqlPart = $Criterium->toSqlPart();
+        foreach ($Container->getCriteria()->getCriteriumCollection() as $Criterium) {
+            $SqlPart = $Criterium->getSqlPart();
             $sql .= ltrim($Criterium->getGlue().' '.$SqlPart->getSql().' ');
         }
 
-        return '('.rtrim($sql, ' '.$Criteria->getGlue()).')';
+        return '('.rtrim($sql).')';
     }
 
     /**
-     * @param Interfaces\Criteria $Criteria
+     * @param Interfaces\Criteria\Container $Container
      * @return array
      */
-    protected function criteriaToParameters(Interfaces\Criteria $Criteria)
+    protected function criteriaToParameters(Interfaces\Criteria\Container $Container)
     {
         /**
-         * @var \Everon\DataMapper\Interfaces\Criteria\Criterium $Criterium
+         * @var Interfaces\Criteria\Criterium $Criterium
          */
         $parameters = [];
-        foreach ($Criteria->getCriteriumCollection() as $Criterium) {
-            $SqlPart = $Criterium->toSqlPart();
+        foreach ($Container->getCriteria()->getCriteriumCollection() as $Criterium) {
+            $SqlPart = $Criterium->getSqlPart();
             $parameters[] = $SqlPart->getParameters();
         }
 
@@ -113,7 +113,8 @@ class Builder implements Interfaces\Criteria\Builder
     {
         $this->current++;
         $Criterium = $this->getFactory()->buildDataMapperCriterium($column, $operator, $value);
-        $this->getCurrentCriteria()->where($Criterium);
+        $this->getCurrentContainer()->getCriteria()->where($Criterium);
+        $this->getCurrentContainer()->setGlue(null);
         return $this;
     }
 
@@ -123,7 +124,8 @@ class Builder implements Interfaces\Criteria\Builder
     public function andWhere($column, $operator, $value)
     {
         $Criterium = $this->getFactory()->buildDataMapperCriterium($column, $operator, $value);
-        $this->getCurrentCriteria()->andWhere($Criterium);
+        $this->getCurrentContainer()->getCriteria()->andWhere($Criterium);
+        $this->getCurrentContainer()->setGlue(self::GLUE_AND);
         return $this;
     }
 
@@ -133,29 +135,47 @@ class Builder implements Interfaces\Criteria\Builder
     public function orWhere($column, $operator, $value)
     {
         $Criterium = $this->getFactory()->buildDataMapperCriterium($column, $operator, $value);
-        $this->getCurrentCriteria()->orWhere($Criterium);
+        $this->getCurrentContainer()->getCriteria()->orWhere($Criterium);
+        $this->getCurrentContainer()->setGlue(self::GLUE_OR);
         return $this;
     }
 
     /**
      * @inheritdoc
      */
-    public function getCurrentCriteria()
+    public function getCurrentContainer()
     {
-        if ($this->CriteriaCollection->has($this->current) === false) {
+        if ($this->ContainerCollection->has($this->current) === false) {
             $Criteria = $this->getFactory()->buildDataMapperCriteria();
-            $this->CriteriaCollection[$this->current] = $Criteria; 
+            $Container = $this->getFactory()->buildCriteriaContainer($Criteria, null);
+            $this->ContainerCollection[$this->current] = $Container; 
         }
         
-        return $this->CriteriaCollection[$this->current];
+        return $this->ContainerCollection[$this->current];
     }
 
     /**
      * @inheritdoc
      */
-    public function setCurrentCriteria(Interfaces\Criteria $Criteria)
+    public function setCurrentCriteria(Interfaces\Criteria\Container $Container)
     {
-        $this->CriteriaCollection[$this->current] = $Criteria;
+        $this->ContainerCollection[$this->current] = $Container;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getContainerCollection()
+    {
+        return $this->ContainerCollection;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setContainerCollection(\Everon\Interfaces\Collection $ContainerCollection)
+    {
+        $this->ContainerCollection = $ContainerCollection;
     }
 
     /**
@@ -163,23 +183,31 @@ class Builder implements Interfaces\Criteria\Builder
      */
     public function getGlue()
     {
-        return $this->glue;
-    }
-    
-    /**
-     * @inheritdoc
-     */
-    public function getCriteriaCollection()
-    {
-        return $this->CriteriaCollection;
+        return $this->getCurrentContainer()->getGlue();
     }
 
     /**
      * @inheritdoc
      */
-    public function setCriteriaCollection(\Everon\Interfaces\Collection $CriteriaCollection)
+    public function resetGlue()
     {
-        $this->CriteriaCollection = $CriteriaCollection;
+        $this->getCurrentContainer()->setGlue(null);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function glueByAnd()
+    {
+        $this->getCurrentContainer()->setGlue(self::GLUE_AND);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function glueByOr()
+    {
+        $this->getCurrentContainer()->setGlue(self::GLUE_OR);
     }
 
     /**
@@ -189,10 +217,15 @@ class Builder implements Interfaces\Criteria\Builder
     {
         $sql = [];
         $parameters = [];
-        
-        foreach ($this->getCriteriaCollection() as $Criteria) {
-            $sql[] = $this->criteriaToSql($Criteria);
-            $criteria_parameters = $this->criteriaToParameters($Criteria);
+        $glue = null;
+
+        /**
+         * @var Interfaces\Criteria $Container
+         */
+        foreach ($this->getContainerCollection() as $Container) {
+            $glue = $Container->getGlue();
+            $sql[] = $this->criteriaToSql($Container).' '.$glue;
+            $criteria_parameters = $this->criteriaToParameters($Container);
             $tmp = [];
             
             foreach ($criteria_parameters as $cp_value) {
@@ -201,27 +234,11 @@ class Builder implements Interfaces\Criteria\Builder
 
             $parameters = $this->arrayMergeDefault($tmp, $parameters);
         }
-        
-        $sql = implode(' '.$this->getGlue().' ', $sql);
-        $sql = rtrim($sql, $this->getGlue().' ');
+
+        $sql = implode("\n", $sql);
+        $sql = rtrim($sql, $glue.' ');
         
         return $this->getFactory()->buildDataMapperSqlPart($sql, $parameters);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function glueByAnd()
-    {
-        $this->glue = self::GLUE_AND;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function glueByOr()
-    {
-        $this->glue = self::GLUE_OR;
     }
 
     /**

@@ -9,8 +9,12 @@
  */
 namespace Everon\DataMapper;
 
+use Everon\Helper;
+
 class SqlPart implements Interfaces\SqlPart
 {
+    use Helper\ToArray;
+    
     /**
      * @var string
      */
@@ -22,10 +26,25 @@ class SqlPart implements Interfaces\SqlPart
     protected $parameters = null;
 
     
+    /**
+     * @param $sql
+     * @param $parameters
+     */
     public function __construct($sql, $parameters)
     {
         $this->sql = $sql;
         $this->parameters = $parameters;
+    }
+
+    /**
+     * @return array
+     */
+    protected function getToArray()
+    {
+        return [
+            'sql' => $this->getSql(),
+            'parameters' => $this->getParameters()
+        ];
     }
 
     /**

@@ -9,7 +9,7 @@
  */
 namespace Everon\DataMapper\Interfaces\Criteria;
 
-interface Criterium extends \Everon\Interfaces\Dependency\Factory
+interface Criterium extends \Everon\Interfaces\Dependency\Factory, \Everon\Interfaces\Arrayable
 {
     /**
      * @return string
@@ -76,9 +76,4 @@ interface Criterium extends \Everon\Interfaces\Dependency\Factory
      * @param \Everon\DataMapper\Interfaces\SqlPart $SqlPart
      */
     function setSqlPart(\Everon\DataMapper\Interfaces\SqlPart $SqlPart);
-
-    /**
-     * @return \Everon\DataMapper\Interfaces\SqlPart
-     */
-    function toSqlPart();
 }

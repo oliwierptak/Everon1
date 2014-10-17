@@ -13,12 +13,22 @@ interface Criteria extends \Everon\Interfaces\Arrayable
 {
     /**
      * @param Criteria\Criterium $Criterium
-     * @return $this
+     * @return Criteria
      */
     function where(Criteria\Criterium $Criterium);
-        
+
+    /**
+     * @param Criteria\Criterium $Criterium
+     * @return Criteria
+     * @throws \Everon\DataMapper\Exception\Criteria
+     */
     function andWhere(Criteria\Criterium $Criterium);
 
+    /**
+     * @param Criteria\Criterium $Criterium
+     * @return Criteria
+     * @throws \Everon\DataMapper\Exception\Criteria
+     */
     function orWhere(Criteria\Criterium $Criterium);
 
     /**
@@ -36,8 +46,9 @@ interface Criteria extends \Everon\Interfaces\Arrayable
      */
     function getGlue();
 
-    /**
-     * @param string $glue
-     */
-    function setGlue($glue);
+    function resetGlue();
+
+    function glueByAnd();
+
+    function glueByOr();
 }
