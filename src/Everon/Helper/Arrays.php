@@ -41,7 +41,7 @@ trait Arrays
         foreach ($default as $name => $value) {
             if (is_array($value)) {
                 $value_data = isset($data[$name]) ? $data[$name] : [];
-                $data[$name] = $this->arrayMergeDefault($default[$name], $value_data);
+                $data[$name] = $this->arrayMergeDefault($default[$name], (array) $value_data);
             }
             else {
                 if (isset($data[$name]) === false) {

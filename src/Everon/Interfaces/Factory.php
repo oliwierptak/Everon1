@@ -186,12 +186,12 @@ interface Factory
 
     /**
      * @param $class_name
-     * @param Interfaces\Module $Module
+     * @param Module\Interfaces\Module $Module
      * @param string $namespace
      * @return Interfaces\Controller
      * @throws Exception\Factory
      */
-    function buildController($class_name, Interfaces\Module $Module, $namespace='Everon\Controller');
+    function buildController($class_name, Module\Interfaces\Module $Module, $namespace='Everon\Controller');
 
     /**
      * @param array $data
@@ -272,6 +272,16 @@ interface Factory
     function buildDomainManager(DataMapper\Interfaces\Manager $Manager, $namespace='Everon\Domain');
 
     /**
+     * @param $name
+     * @param $parent_name
+     * @param Domain\Interfaces\Entity $Entity
+     * @param string $namespace
+     * @return Domain\Interfaces\Relation
+     * @internal param DataMapper $Mapper
+     */
+    function buildDomainRelation($name, $parent_name, Domain\Interfaces\Entity $Entity, $namespace = 'Everon\Domain');
+
+    /**
      * @param DataMapper\Interfaces\Schema\Reader $Reader
      * @param DataMapper\Interfaces\ConnectionManager $ConnectionManager
      * @param Domain\Interfaces\Mapper $DomainMapper
@@ -298,6 +308,7 @@ interface Factory
     function buildSchemaConstraint(array $data, $namespace='Everon\DataMapper');
 
     /**
+     * @param $database_timezone
      * @param $name
      * @param $schema
      * @param $adapter_name
@@ -310,7 +321,7 @@ interface Factory
      * @return mixed
      * @throws Exception\Factory
      */
-    function buildSchemaTableAndDependencies($name, $schema, $adapter_name, array $columns, array $primary_keys,  array $unique_keys, array $foreign_keys, Domain\Interfaces\Mapper $DomainMapper, $namespace='Everon\DataMapper');
+    function buildSchemaTableAndDependencies($database_timezone, $name, $schema, $adapter_name, array $columns, array $primary_keys,  array $unique_keys, array $foreign_keys, Domain\Interfaces\Mapper $DomainMapper, $namespace='Everon\DataMapper');
 
     /**
      * @param $name
@@ -354,7 +365,7 @@ interface Factory
     /**
      * @param $root
      * @param string $namespace
-     * @return FileSystem
+     * @return Interfaces\FileSystem
      * @throws Exception\Factory
      */
     function buildFileSystem($root, $namespace='Everon\View');
@@ -404,6 +415,12 @@ interface Factory
     function buildTemplateCompiler($class_name, $namespace='Everon\View\Template\Compiler');
 
     /**
+     * @param string $namespace
+     * @return View\Interfaces\TemplateCompilerContext
+     */
+    function buildTemplateCompilerContext($namespace='Everon\View\Template\Compiler');
+
+    /**
      * @param $class_name
      * @param $template_directory
      * @param $default_extension
@@ -432,10 +449,11 @@ interface Factory
      * @param array $compilers_to_init
      * @param $view_directory
      * @param $cache_directory
+     * @param string $namespace
      * @return View\Interfaces\Manager
      * @throws Exception\Factory
      */
-    function buildViewManager(array $compilers_to_init, $view_directory, $cache_directory);
+    function buildViewManager(array $compilers_to_init, $view_directory, $cache_directory, $namespace='Everon\View');
 
     /**
      * @param string $name
@@ -445,6 +463,13 @@ interface Factory
      * @throws Exception\Factory
      */
     function buildViewWidget($name, View\Interfaces\View $View, $namespace='Everon\View');
+
+    /**
+     * @param \Everon\View\Interfaces\Manager $ViewManager
+     * @param string $namespace
+     * @return View\Interfaces\WidgetManager
+     */
+    function buildViewWidgetManager(View\Interfaces\Manager $ViewManager, $namespace = 'Everon\View\Widget');
 
     /**
      * @param $directory
@@ -560,14 +585,14 @@ interface Factory
      * @param Interfaces\Config $module_directory
      * @param Interfaces\Config $Config
      * @param string $namespace
-     * @return Module
+     * @return \Everon\Module\Interfaces\Module
      * @throws Exception\Factory
      */
     function buildModule($name, $module_directory, Interfaces\Config $Config, $namespace='Everon\Module');
 
     /**
      * @param string $namespace
-     * @return Module\Manager
+     * @return \Everon\Module\Interfaces\Manager
      * @throws Exception\Factory
      */
     function buildModuleManager($namespace='Everon\Module');

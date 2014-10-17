@@ -56,7 +56,7 @@ interface Column extends Arrayable
     /**
      * @return array
      */
-    function getValidationRules();
+    function getValidator();
 
     /**
      * @param $value
@@ -66,10 +66,21 @@ interface Column extends Arrayable
     function validateColumnValue($value);
 
     /**
+     * Converts all values so they can be consumed in a sql query, 
+     * eg. DateTime into its text representation in proper format.
+     * 
      * @param $value
      * @return string
      */
-    function getDataValue($value);
+    function getDataForSql($value);
+
+    /**
+     * Converts values fro SQL into PHP, eg. timestamp into DateTime, 't' into true, etc...
+     * 
+     * @param $value
+     * @return mixed
+     */
+    function getDataForEntity($value);
 
     /**
      * @return string
@@ -134,5 +145,5 @@ interface Column extends Arrayable
     /**
      * @param string $validation_rules
      */
-    function setValidationRules($validation_rules);
+    function setValidator($validation_rules);
 }

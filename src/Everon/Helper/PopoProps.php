@@ -21,10 +21,10 @@ use Everon\Helper;
 class PopoProps implements Interfaces\Arrayable
 {
     use Helper\ToArray;
-    
+
     /**
      * When set to true, accessing unset property will throw exception
-     * 
+     *
      * @var bool
      */
     protected $strict = false;
@@ -42,7 +42,7 @@ class PopoProps implements Interfaces\Arrayable
         $this->data = $data;
         $this->updateLookup();
     }
-    
+
     protected function updateLookup()
     {
         $this->lookup = array_combine(
@@ -50,7 +50,7 @@ class PopoProps implements Interfaces\Arrayable
             array_keys($this->data)
         );
     }
-       
+
     public function __get($property)
     {
         $property_to_lookup = mb_strtolower($property);
@@ -58,7 +58,7 @@ class PopoProps implements Interfaces\Arrayable
             if ($this->strict) {
                 throw new Exception\Popo('Unknown public property: "%s" in "%s"', [$property, get_called_class()]);
             }
-            
+
             return null;
         }
 
@@ -76,28 +76,27 @@ class PopoProps implements Interfaces\Arrayable
 
     public function __set($name, $value)
     {
-        //$this->data[mb_strtolower($name)] = $value;
-        $this->data[$name] = $value;
-        $this->lookup[mb_strtolower($name)] = $name;
+        $property = mb_strtolower($name);
+        $this->data[$property] = $value;
+        $this->lookup[$property] = $name;
     }
-    
+
     public function __call($name, $arguments)
     {
         throw new Exception\Popo('Call by method: "%s" is not allowed in: "%"', [$name, 'PopoProps']);
     }
-    
+
     public function __sleep()
     {
         //todo: test me xxx
         return ['data', 'strict'];
     }
-    
-    public static function __set_state(array $array) 
+
+    public static function __set_state(array $array)
     {
         //todo: test me
         $S = new static($array['data']);
         $S->strict = (bool) $array['strict'];
         return $S;
     }
-        
 }

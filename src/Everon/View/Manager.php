@@ -9,25 +9,24 @@
  */
 namespace Everon\View;
 
-use Everon\Dependency;
+use Everon\Dependency as EveronDependency;
 use Everon\Exception;
 use Everon\Helper;
 use Everon\Interfaces\Collection;
-use Everon\View\Interfaces;
-use Everon\View\Template\Compiler\Scope;
 
 class Manager implements Interfaces\Manager
 {
-    use Dependency\Injection\ConfigManager;
-    use Dependency\Injection\Factory;
-    use Dependency\Injection\Logger;
-    use Dependency\Injection\FileSystem;
+    use Dependency\ViewWidgetManager;
+    use EveronDependency\Injection\ConfigManager;
+    use EveronDependency\Injection\Factory;
+    use EveronDependency\Injection\Logger;
+    use EveronDependency\Injection\FileSystem;
+    use EveronDependency\Injection\Router;
 
     use Helper\Arrays;
     use Helper\IsIterable;
     use Helper\String\LastTokenToName;
     use Helper\String\EndsWith;
-    use Helper\RunPhp;
 
 
     protected $current_theme_name = 'Main';
@@ -38,17 +37,16 @@ class Manager implements Interfaces\Manager
 
     protected $compilers = [];
 
-    protected $Cache = null;
-
     /**
      * @var Collection
      */
-    protected $ThemeCollection = [];
+    protected $LayoutCollection = null;
 
     /**
-     * @var Collection
+     * @var Interfaces\WidgetManager
      */
-    protected $WidgetCollection = [];
+    protected $WidgetManager = null;
+
 
 
     /**
@@ -58,109 +56,12 @@ class Manager implements Interfaces\Manager
      */
     public function __construct(array $compilers, $view_directory, $cache_directory)
     {
-        //$this->compilers = $compilers;
-        $this->compilers = ['.php' => [$this]]; //todo: quick hack
+        $this->compilers = $compilers;
         $this->view_directory = $view_directory;
         $this->cache_directory = $cache_directory;
-        $this->ThemeCollection = new Helper\Collection([]);
-        $this->WidgetCollection = new Helper\Collection([]);
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function compile($scope_name, $template_content, array $data)
-    {
-        $Scope = new Scope();
-        $Scope->setName($scope_name);
-        $Scope->setPhp($template_content);
-
-        try {
-            $this->scope_name = $scope_name;
-            $ScopeData = new Helper\PopoProps($data);
-            $code = $this->runPhp($template_content, ['Tpl' => $ScopeData], $this->getFileSystem());
-            $Scope->setCompiled($code);
-            $Scope->setData($data);
-
-            $this->getLogger()->view($code);
-
-            return $Scope;
-        }
-        catch (\Exception $e) {
-            $this->getLogger()->error($e);
-            return $Scope;
-        }
-    }
-
-    public function getCache()
-    {
-        if (is_dir($this->cache_directory) === false) {
-            throw new Exception\ViewManager('Cache directory does not exist');
-        }
-
-        if ($this->Cache === null) {
-            $FileSystem = $this->getFactory()->buildFileSystem($this->cache_directory);
-            $this->Cache = $this->getFactory()->buildViewCache($FileSystem);
-        }
-
-        return $this->Cache;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function compileView($action, Interfaces\View $View)
-    {
-        /**
-         * @var $Template Interfaces\Template
-         */
-        $Template = $View->getContainer();
-
-        if ($this->getConfigManager()->getConfigValue('application.cache.view')) {
-            $this->getCache()->handle($this, $View, $action);
-        }
-        else {
-            $this->compileTemplate($View->getName(), $Template);
-        }
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function compileTemplate($scope_name, Interfaces\TemplateContainer $Template)
-    {
-        try {
-            $Scope = new Template\Compiler\Scope();
-            $Scope->setName($scope_name);
-
-            if ($Template instanceof Interfaces\Template) {
-                /**
-                 * @var Interfaces\TemplateCompiler $Compiler
-                 */
-                foreach ($this->compilers as $extension => $compiler_list) {
-                    foreach ($compiler_list as $Compiler) {
-                        if ($this->stringEndsWith($Template->getTemplateFile()->getFilename(), $extension)) {
-                            $this->compileTemplateRecursive($Compiler, $Template, $Scope);
-                        }
-                    }
-                }
-            }
-            else {
-                $compiler_list = $this->getDefaultCompilers();
-                foreach ($compiler_list as $Compiler) {
-                    $this->compileTemplateRecursive($Compiler, $Template, $Scope);
-                }
-            }
-
-            $Template->setCompiledContent($Scope->getCompiled());
-            $Template->setScope($Scope);
-        }
-        catch (Exception $e) {
-            throw new Exception\ViewManager($e);
-        }
-    }
-
-    protected function getDefaultCompilers()
+    protected function getDefaultCompiler()
     {
         $default_extension = $this->getConfigManager()->getConfigValue('application.view.default_extension');
         if (isset($this->compilers[$default_extension]) === false) {
@@ -171,53 +72,147 @@ class Manager implements Interfaces\Manager
     }
 
     /**
-     * @param Interfaces\TemplateCompiler $Compiler
-     * @param Interfaces\TemplateContainer $Template
-     * @param $Scope
+     * @param $view_name
+     * @param $template_directory
+     * @param string $namespace
+     * @internal param $layout_name
+     * @internal param $layout_name
+     * @return Interfaces\View
      */
-    protected function compileTemplateRecursive(Interfaces\TemplateCompiler $Compiler, Interfaces\TemplateContainer $Template, Interfaces\TemplateCompilerScope $Scope)
+    public function createView($view_name, $template_directory = null, $namespace = 'Everon\View')
     {
-        /**
-         * @var Interfaces\TemplateContainer $Include
-         * @var Interfaces\TemplateContainer $TemplateInclude
-         */
-        foreach ($Template->getData() as $name => $Include) {
-            if (($Include instanceof Interfaces\TemplateContainer) === false) {
-                if (is_string($Include)) {
-                    $IncludeScope = $Compiler->compile($Scope->getName(), $Include, $Template->getData());
-                    $Template->set($name, $IncludeScope->getCompiled());
-                }
-                continue;
+        /*
+        $view_data = $this->getConfigManager()->getConfigValue('view.'.$request_name, null);
+        if ($view_data === null) {
+            throw new Exception\ConfigItem('Undefined view layout data for: "%s"', $name);
+        }*/
+        
+        $default_extension = $this->getConfigManager()->getConfigValue('application.view.default_extension');
+
+        if ($template_directory !== null) {
+            $TemplateDirectory = new \SplFileInfo($template_directory);
+            if  ($TemplateDirectory->isDir() === false) {
+                $template_directory = null;
             }
-
-            foreach ($Include->getData() as $include_name => $TemplateInclude) {
-                if (($TemplateInclude instanceof Interfaces\TemplateContainer) === false) {
-                    continue;
-                }
-
-                $this->compileTemplateRecursive($Compiler, $TemplateInclude, $Scope);
-                $Include->set($include_name, $TemplateInclude->getScope()->getCompiled());
-            }
-
-            $ContentScope = $Compiler->compile($Scope->getName(), $Include->getTemplateContent(), $Include->getData());
-            $Include->setCompiledContent($ContentScope->getCompiled());
-            $Include->setScope($ContentScope);
-
-            $Template->set($name, $Include->getScope()->getCompiled());
         }
+        
+        $View = $this->getFactory()->buildView($view_name, $template_directory, $default_extension, $namespace);
+        $View->setViewManager($this);
+        return $View;
+    }
 
-        $ContentScope = $Compiler->compile($Scope->getName(), $Template->getTemplateContent(), $Template->getData());
+    /**
+     * @param $name
+     * @param string $namespace
+     * @return Interfaces\View
+     * @throws \Everon\Exception\ViewManager
+     */
+    public function createLayout($name, $namespace='Everon\View')
+    {
+        $default_view = $this->getConfigManager()->getConfigValue('application.view.default_view');
+        $namespace .= '\\'.$this->getCurrentThemeName();
+        
+        $makeLayout = function($name) use ($namespace) {
+            $template_directory = implode(DIRECTORY_SEPARATOR, [
+                $this->getViewDirectory().$this->getCurrentThemeName(), $name, 'templates'
+            ]);
+            $TemplateDirectory = new \SplFileInfo($template_directory);
+            $Layout = $this->createView($name, $TemplateDirectory->getPathname().DIRECTORY_SEPARATOR, $namespace);
 
-        $Scope->setCompiled($ContentScope->getCompiled());
-        $Scope->setPhp($ContentScope->getPhp());
-        $Scope->setData($ContentScope->getData());
+            $view_data = $this->getConfigManager()->getConfigValue('view.'.$Layout->getName(), null);
+            if ($view_data === null) {
+                throw new Exception\ConfigItem('Undefined view layout data for: "%s"', $name);
+            }
+            
+            $IndexTemplate = $Layout->getTemplate('index', $view_data);
+            if ($IndexTemplate === null) {
+                throw new Exception\ViewManager('Invalid index template for layout: "%s"', $name);
+            }
 
-        //compile whole
-        $ContentScope = $Compiler->compile($Scope->getName(), $Scope->getCompiled(), $Scope->getData());
+            $Layout->setContainer($IndexTemplate);
+            return $Layout;
+        };
 
-        $Scope->setCompiled($ContentScope->getCompiled());
-        $Scope->setPhp($ContentScope->getPhp());
-        $Scope->setData($ContentScope->getData());
+        try {
+            $Layout = $makeLayout($name);
+        }
+        catch (Exception $e) {
+            $this->getLogger()->warning($e);
+            $Layout = $makeLayout($default_view);
+        }
+        
+        return $Layout;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function compileView($action, Interfaces\View $View)
+    {
+        $Context = $this->getFactory()->buildTemplateCompilerContext();
+        $Context->setScopeName($View->getName());
+        $Context->setPhp($View->getContainer()->getTemplateContent());
+        $Context->setData($View->getContainer()->getData());
+        $Context->setScope($View);
+        
+        try {
+            /**
+             * @var Interfaces\TemplateCompiler $Compiler
+             */
+            $Compiler = $this->getDefaultCompiler()[0];
+            $this->compile($Compiler, $Context);
+            
+            $View->getContainer()->setCompiledContent($Context->getCompiled());
+        }
+        catch (\Exception $e) {
+            throw new Exception\ViewManager($e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function compile(Interfaces\TemplateCompiler $Compiler, Interfaces\TemplateCompilerContext $Context)
+    {
+        try {
+            /**
+             * @var Interfaces\View $Include
+             * @var Interfaces\TemplateCompilerContext $Context
+             */
+            $data = $Context->getData();
+            foreach ($data as $name => $Include) {
+                if (($Include instanceof Interfaces\View)) {
+                    $IncludeContext = $this->getFactory()->buildTemplateCompilerContext();
+                    $IncludeContext->setScopeName($Include->getName());
+                    $IncludeContext->setPhp($Include->getContainer()->getTemplateContent());
+                    $IncludeContext->setData($Include->getData());
+                    $IncludeContext->setScope($Include);
+                    
+                    $this->compile($Compiler, $IncludeContext);
+                    $data[$name] = $IncludeContext->getCompiled();
+                }
+
+                /**
+                 * @var Interfaces\TemplateContainer $Include
+                 */
+                if (($Include instanceof Interfaces\TemplateContainer)) {
+                    $IncludeContext = $this->getFactory()->buildTemplateCompilerContext();
+                    $IncludeContext->setScopeName($name);
+                    $IncludeContext->setPhp($Include->getTemplateContent());
+                    $IncludeContext->setData($Include->getData());
+                    $IncludeContext->setScope($Context->getScope());
+
+                    $Compiler->compile($IncludeContext);
+                    $data[$name] = $IncludeContext->getCompiled();
+                }
+            }
+
+            $Context->setData($data);
+            $Compiler->compile($Context);
+        }
+        catch (\Exception $e) {
+            throw new Exception\ViewManager($e);
+        }
     }
 
     public function getCompilers()
@@ -226,99 +221,24 @@ class Manager implements Interfaces\Manager
     }
 
     /**
-     * @param $name
+     * @inheritdoc
+     */
+    public function getLayoutByName($name)
+    {
+        if ($this->LayoutCollection->has($name) === false) {
+            $View = $this->createLayout($name);
+            $this->LayoutCollection->set($name, $View);
+        }
+
+        return $this->LayoutCollection->get($name);
+    }
+
+    /**
      * @param Interfaces\View $View
      */
-    public function setTheme($name, Interfaces\View $View)
+    public function setLayoutByLayoutName(Interfaces\View $View)
     {
-        $this->ThemeCollection->set($name, $View);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getTheme($theme_name, $view_name)
-    {
-        if ($this->ThemeCollection->has($theme_name) === false) {
-            $TemplateDirectory = new \SplFileInfo($this->getViewDirectory().$theme_name.DIRECTORY_SEPARATOR.$view_name.DIRECTORY_SEPARATOR.'templates'.DIRECTORY_SEPARATOR);
-            if ($TemplateDirectory->isDir() === false) {
-                $view_name = 'Index';//revert to default
-                $TemplateDirectory = new \SplFileInfo($this->getViewDirectory().$theme_name.DIRECTORY_SEPARATOR.$view_name.DIRECTORY_SEPARATOR.'templates'.DIRECTORY_SEPARATOR);
-                if ($TemplateDirectory->isDir() === false) {
-                    throw new Exception\ViewManager('View: "%s" template directory: "%s" does not exist', [$view_name, $TemplateDirectory->getPathname()]);
-                }
-            }
-
-            $Theme = $this->createView($view_name, $TemplateDirectory->getPathname(), 'Everon\View\\'.$theme_name);
-            $view_variables = $this->getConfigManager()->getConfigValue("view.$view_name", null);
-            if ($view_variables === null) {
-                throw new Exception\ViewManager('View: "%s" not defined in view.ini', $view_name);
-            }
-            $IndexTemplate = $Theme->getTemplate('index', $view_variables);
-
-            if ($IndexTemplate === null) { //fallback to default theme and view
-                $TemplateDirectory = new \SplFileInfo($this->getViewDirectory().$this->getCurrentThemeName().DIRECTORY_SEPARATOR.'Index'.DIRECTORY_SEPARATOR.'templates'.DIRECTORY_SEPARATOR);
-                $Theme = $this->createView('Index', $TemplateDirectory->getPathname(), 'Everon\View\\'.$this->getCurrentThemeName());
-                $IndexTemplate = $Theme->getTemplate('index', $view_variables);
-            }
-
-            $Theme->setContainer($IndexTemplate);
-
-            $this->ThemeCollection->set($theme_name, $Theme);
-        }
-        return $this->ThemeCollection->get($theme_name);
-    }
-
-    /**
-     * @param $name
-     * @param $template_directory
-     * @param $namespace
-     * @return Interfaces\View
-     * @throws \Everon\Exception\ViewManager
-     */
-    public function createView($name, $template_directory, $namespace='Everon\View')
-    {
-        $default_extension = $this->getConfigManager()->getConfigValue('application.view.default_extension');
-
-        $TemplateDirectory = new \SplFileInfo($template_directory);
-        if  ($TemplateDirectory->isDir() === false) {  //fallback to theme dir
-            $theme_dir = $this->view_directory.$this->getCurrentThemeName().DIRECTORY_SEPARATOR.$name.DIRECTORY_SEPARATOR.'templates';
-            $TemplateDirectory = new \SplFileInfo($theme_dir);
-            if  ($TemplateDirectory->isDir() === false) {
-                throw new Exception\ViewManager('View template directory: "%s" does not exist', $template_directory);
-            }
-        }
-
-        try {
-            //try to load module view
-            try {
-                return $this->getFactory()->buildView($name, $TemplateDirectory->getPathname().DIRECTORY_SEPARATOR, $default_extension, $namespace);
-            }
-            catch (Exception\Factory $e) { //fallback to theme view
-                $namespace = 'Everon\View\\'.$this->getCurrentThemeName();
-                return $this->getFactory()->buildView($name, $TemplateDirectory->getPathname().DIRECTORY_SEPARATOR, $default_extension, $namespace);
-            }
-        }
-        catch (Exception\Factory $e) { //fallback to default index theme view
-            $namespace = 'Everon\View\\'.$this->getCurrentThemeName();
-            return $this->getFactory()->buildView('Index', $TemplateDirectory->getPathname().DIRECTORY_SEPARATOR, $default_extension, $namespace);
-        }
-    }
-
-    public function createViewWidget($name, $namespace='Everon\View\Widget')
-    {
-        $template_directory = $this->getViewDirectory().$this->getCurrentThemeName().DIRECTORY_SEPARATOR.'Widget'.DIRECTORY_SEPARATOR.$name.DIRECTORY_SEPARATOR.'templates'.DIRECTORY_SEPARATOR;
-        return $this->createView('Base', $template_directory, $namespace);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function createWidget($name, $namespace='Everon\View')
-    {
-        $ViewWidget = $this->createViewWidget($name);
-        $Widget = $this->getFactory()->buildViewWidget($name, $ViewWidget, $namespace.'\\'.$this->getCurrentThemeName().'\Widget');
-        return $Widget;
+        $this->LayoutCollection->set($View->getName(), $View);
     }
 
     /**
@@ -335,14 +255,6 @@ class Manager implements Interfaces\Manager
     public function getCurrentThemeName()
     {
         return $this->current_theme_name;
-    }
-
-    /**
-     * @return Interfaces\View
-     */
-    public function getCurrentTheme($view_name)
-    {
-        return $this->getTheme($this->getCurrentThemeName(), $view_name);
     }
 
     /**
@@ -378,15 +290,27 @@ class Manager implements Interfaces\Manager
     }
 
     /**
-     * @inheritdoc
+     * @param \Everon\View\Interfaces\WidgetManager $WidgetManager
      */
-    public function includeWidget($name)
+    public function setWidgetManager(Interfaces\WidgetManager $WidgetManager)
     {
-        if ($this->WidgetCollection->has($name) === false) {
-            $Widget = $this->createWidget($name);
-            $this->WidgetCollection->set($name, $Widget);
-        }
-
-        return $this->WidgetCollection->get($name)->render();
+        $this->WidgetManager = $WidgetManager;
     }
+
+    /**
+     * @return \Everon\View\Interfaces\WidgetManager
+     */
+    public function getWidgetManager()
+    {
+        if ($this->WidgetManager === null) {
+            $this->WidgetManager = $this->getFactory()->buildViewWidgetManager($this);
+        }
+        return $this->WidgetManager;
+    }
+
+    public function renderWidget($name)
+    {
+        return $this->getWidgetManager()->includeWidget($name);
+    }
+
 }

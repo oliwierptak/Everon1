@@ -9,12 +9,13 @@
  */
 namespace Everon\DataMapper\Schema;
 
-use Everon\Helper;
 use Everon\DataMapper\Exception;
 use Everon\DataMapper\Interfaces\Schema;
+use Everon\Helper;
 
 abstract class Column implements Schema\Column 
 {
+    use Helper\DateFormatter;
     use Helper\ToString;
 
     const TYPE_STRING = 'string';
@@ -44,19 +45,43 @@ abstract class Column implements Schema\Column
     protected $default = null;
     
     protected $encoding = null;
-    
-    protected $validation_rules = null;
+
+    /**
+     * @var \Closure
+     */
+    protected $Validator = null;
 
     protected $schema = null;
     
     protected $table = null;
 
+    /**
+     * @var string
+     */
+    protected $database_timezone = null;
 
+    /**
+     * Validators should ensure that the values can be passed to sql
+     * 
+     * @param array $data
+     * @param array $primary_key_list
+     * @param array $unique_key_list
+     * @param array $foreign_key_list
+     * @return mixed|void
+     * @throws \Everon\DataMapper\Exception\Column
+     */
     abstract protected function init(array $data, array $primary_key_list, array $unique_key_list, array $foreign_key_list);
-    
 
-    public function __construct(array $data, array $primary_key_list, array $unique_key_list, array $foreign_key_list)
+    /**
+     * @param $database_timezone
+     * @param array $data
+     * @param array $primary_key_list
+     * @param array $unique_key_list
+     * @param array $foreign_key_list
+     */
+    public function __construct($database_timezone, array $data, array $primary_key_list, array $unique_key_list, array $foreign_key_list)
     {
+        $this->database_timezone = $database_timezone;
         $this->init($data, $primary_key_list, $unique_key_list, $foreign_key_list);
     }
 
@@ -65,6 +90,11 @@ abstract class Column implements Schema\Column
         return (string) $this->name;
     }
 
+    /**
+     * @param $name
+     * @param $data
+     * @return bool
+     */
     protected function hasInfo($name, $data)
     {
         return isset($data[$name]);
@@ -145,9 +175,9 @@ abstract class Column implements Schema\Column
     /**
      * @inheritdoc
      */
-    public function getValidationRules()
+    public function getValidator()
     {
-        return $this->validation_rules;
+        return $this->Validator;
     }
 
     /**
@@ -167,15 +197,15 @@ abstract class Column implements Schema\Column
     }
 
     /**
-     * @param mixed $default
+     * @inheritdoc
      */
     public function setDefault($default)
     {
         $this->default = $default;
     }
-
+    
     /**
-     * @param string $encoding
+     * @inheritdoc
      */
     public function setEncoding($encoding)
     {
@@ -183,7 +213,7 @@ abstract class Column implements Schema\Column
     }
 
     /**
-     * @param boolean $is_nullable
+     * @inheritdoc
      */
     public function setIsNullable($is_nullable)
     {
@@ -191,7 +221,7 @@ abstract class Column implements Schema\Column
     }
 
     /**
-     * @param boolean $is_pk
+     * @inheritdoc
      */
     public function setIsPk($is_pk)
     {
@@ -199,7 +229,7 @@ abstract class Column implements Schema\Column
     }
 
     /**
-     * @param boolean $is_unique
+     * @inheritdoc
      */
     public function setIsUnique($is_unique)
     {
@@ -207,7 +237,7 @@ abstract class Column implements Schema\Column
     }
 
     /**
-     * @param int $length
+     * @inheritdoc
      */
     public function setLength($length)
     {
@@ -215,7 +245,7 @@ abstract class Column implements Schema\Column
     }
 
     /**
-     * @param string $name
+     * @inheritdoc
      */
     public function setName($name)
     {
@@ -223,7 +253,7 @@ abstract class Column implements Schema\Column
     }
 
     /**
-     * @param int $precision
+     * @inheritdoc
      */
     public function setPrecision($precision)
     {
@@ -231,7 +261,7 @@ abstract class Column implements Schema\Column
     }
 
     /**
-     * @param string $schema
+     * @inheritdoc
      */
     public function setSchema($schema)
     {
@@ -239,7 +269,7 @@ abstract class Column implements Schema\Column
     }
 
     /**
-     * @param string $table
+     * @inheritdoc
      */
     public function setTable($table)
     {
@@ -247,7 +277,7 @@ abstract class Column implements Schema\Column
     }
 
     /**
-     * @param string $type
+     * @inheritdoc
      */
     public function setType($type)
     {
@@ -255,11 +285,11 @@ abstract class Column implements Schema\Column
     }
 
     /**
-     * @param string $validation_rules
+     * @inheritdoc
      */
-    public function setValidationRules($validation_rules)
+    public function setValidator($validation_rules)
     {
-        $this->validation_rules = $validation_rules;
+        $this->Validator = $validation_rules;
     }
 
     /**
@@ -268,23 +298,19 @@ abstract class Column implements Schema\Column
     public function validateColumnValue($value)
     {
         try {
-            if ($this->getValidationRules() === null) {
+            if ($this->getValidator() === null) {
                 return $value; //validation is disabled
             }
 
             if ($this->isNullable() && $value === null) {
-                return $value;
+                return $value; //no need to validate anything
             }
+
+            $display_value = ($value === null) ? 'NULL' : $value;
             
-            $validation_result = filter_var_array([$this->getName() => $value], $this->getValidationRules());
-            $display_value = $value === null ? 'NULL' : $value;
-
-            if (($validation_result === false || $validation_result === null)) {
-                throw new Exception\Column('Column: "%s" failed to validate with value: "%s"', [$this->getName(), $display_value]);
-            }
-
-            $value = $validation_result[$this->getName()];
-            if ($value === null) {
+            $Validator = $this->getValidator();
+            $validation_result = $Validator($value);
+            if ($validation_result !== true) {
                 throw new Exception\Column('Column: "%s" failed to validate with value: "%s"', [$this->getName(), $display_value]);
             }
 
@@ -296,25 +322,82 @@ abstract class Column implements Schema\Column
     }
 
     /**
-     * @param $value
-     * @return string
+     * @inheritdoc
      */
-    public function getDataValue($value)
+    public function getDataForSql($value)
     {
+        if ($this->isNullable() && $value === null) {
+            return $value;
+        }
+
+        if ($this->isPk() && $value === null) {
+            return $value;
+        }
+        
         switch ($this->type) {
+            case self::TYPE_INTEGER:
+                return (int) $value;
+                break;
+
+            case self::TYPE_FLOAT:
+                return (float) $value;
+                break;
+            
             case self::TYPE_BOOLEAN:
                 return ((bool) $value) ? 't' : 'f';
                 break;
 
-            /*
             case self::TYPE_TIMESTAMP:
-                return $value->format(\DateTime::ISO8601);
+                /**
+                 * @var \DateTime $value
+                 */
+                //$value->setTimezone();
+                return $this->dateAsPostgreSql($value, new \DateTimeZone($this->database_timezone));
                 break;
-            */
 
             default:
                 return $value;
                 break;           
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getDataForEntity($value)
+    {
+        if ($this->isNullable() && $value === null) {
+            return $value;
+        }
+
+        if ($this->isPk() && $value === null) {
+            return $value;
+        }
+        
+        switch ($this->type) {
+            case self::TYPE_INTEGER:
+                return (int) $value;
+                break;
+
+            case self::TYPE_FLOAT:
+                return (float) $value;
+                break;
+            
+            case self::TYPE_BOOLEAN:
+                return $value === true;
+                break;
+
+            case self::TYPE_TIMESTAMP:
+                if ($value instanceof \DateTime) {
+                    return $value;
+                }
+                
+                return $this->getDateTime($value, $this->database_timezone);
+                break;
+
+            default:
+                return $value;
+                break;
         }
     }
 }

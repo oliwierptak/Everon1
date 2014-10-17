@@ -7,8 +7,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon\View\Widget;
+namespace Everon\Domain\Relation;
 
-class Base extends \Everon\View\AbstractView
+abstract class ManyToOne extends \Everon\Domain\Relation implements \Everon\Domain\Interfaces\Relation
 {
+    protected $type = self::MANY_TO_ONE;
 }

@@ -54,9 +54,9 @@ class Item implements Interfaces\Item
         $this->setIsDefault($this->data[static::PROPERTY_DEFAULT]);
         unset($this->data[static::PROPERTY_DEFAULT]);
     }
-    
+
     /**
-     * @param array $data
+     * @inheritdoc
      */
     public function validateData(array $data)
     {

@@ -51,16 +51,6 @@ interface TemplateContainer extends \Everon\Interfaces\Arrayable
     function setTemplateContent($content);
 
     /**
-     * @param TemplateCompilerScope $Scope
-     */
-    function setScope(TemplateCompilerScope $Scope);
-    
-    /**
-     * @return TemplateCompilerScope
-     */
-    function getScope();
-
-    /**
      * @return array
      */
     function getData();

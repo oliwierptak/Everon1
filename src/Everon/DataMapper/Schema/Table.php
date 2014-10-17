@@ -16,6 +16,7 @@ use Everon\Helper;
 class Table implements Interfaces\Schema\Table
 {
     use Helper\Asserts\IsNumericAndNotZero;
+    use Helper\Asserts\IsStringAndNotEmpty;
     use Helper\Exceptions;
     use Helper\Immutable;
     
@@ -110,6 +111,14 @@ class Table implements Interfaces\Schema\Table
     /**
      * @inheritdoc
      */
+    public function hasColumn($name)
+    {
+        return isset($this->columns[$name]);
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function getForeignKeys()
     {
         return $this->foreign_keys;
@@ -169,18 +178,26 @@ class Table implements Interfaces\Schema\Table
         $PrimaryKey = current($this->getPrimaryKeys()); //todo: make fix for composite keys
         $Column = $this->getColumnByName($PrimaryKey->getName());
         $id = $Column->validateColumnValue($id);
+        
         if (is_integer($id)) {
             $this->assertIsNumericAndNonZero($id, sprintf(
-                'Invalid ID value: "%s" for column: "%s" in table: "%s"', $id, $Column->getName(), $this->getFullName()
+                'Invalid numeric ID value: "%s" for column: "%s" in table: "%s"', $id, $Column->getName(), $this->getFullName()
             ), 'Everon\DataMapper\Exception\Table');
         }
+
+        if (is_string($id)) {
+            $this->assertIsStringAndNonEmpty($id, sprintf(
+                'Invalid string ID value: "%s" for column: "%s" in table: "%s"', $id, $Column->getName(), $this->getFullName()
+            ), 'Everon\DataMapper\Exception\Table');
+        }
+        
         return $id;
     }
 
     /**
      * @inheritdoc
      */
-    public function validateData(array $data, $validate_id)
+    public function prepareDataForSql(array $data, $validate_id)
     {
         $entity_data = [];
         /**
@@ -196,7 +213,8 @@ class Table implements Interfaces\Schema\Table
                 throw new Exception\Table('Invalid data value for column: "%s"', $name);
             }
 
-            $value = $Column->validateColumnValue($data[$name]);
+            $value = $Column->getDataForSql($data[$name]);
+            $value = $Column->validateColumnValue($value); //order of execution matters: getDataForSql() before validateColumnValue()
             $entity_data[$name] = $value;
         }
 

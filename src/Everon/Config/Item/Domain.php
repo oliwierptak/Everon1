@@ -47,6 +47,11 @@ class Domain extends Config\Item implements Config\Interfaces\ItemDomain
      */
     protected $primary_keys = null;
 
+    /**
+     * @var array
+     */
+    protected $nullable = null;
+
     
     public function __construct(array $data)
     {
@@ -56,7 +61,8 @@ class Domain extends Config\Item implements Config\Interfaces\ItemDomain
             'type' => static::TYPE_TABLE,
             'connection' => [],
             'columns' => [],
-            'primary_keys' => []
+            'primary_keys' => [],
+            'nullable' => []
         ]);
     }
 
@@ -70,6 +76,7 @@ class Domain extends Config\Item implements Config\Interfaces\ItemDomain
         $this->setType($this->data['type']);
         $this->setColumns($this->data['columns']);
         $this->setPrimaryKeys($this->data['primary_keys']);
+        $this->setNullable($this->data['nullable']);
     }
 
     /**
@@ -167,5 +174,20 @@ class Domain extends Config\Item implements Config\Interfaces\ItemDomain
     {
         return $this->columns;
     }
-    
+
+    /**
+     * @inheritdoc
+     */
+    public function setNullable(array $nullable)
+    {
+        $this->nullable = $nullable;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getNullable()
+    {
+        return $this->nullable;
+    }
 }

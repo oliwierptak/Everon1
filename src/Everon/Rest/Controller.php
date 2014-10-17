@@ -57,7 +57,7 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
      */
     public function getModel()
     {
-        return $this->getDomainManager()->getModel($this->getName());
+        return $this->getDomainManager()->getModelByName($this->getName());
     }
     
     protected function prepareResponse($action, $result)
@@ -66,6 +66,12 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
         if ($Resource instanceof Interfaces\ResourceBasic) {
             $Resource = $Resource->toArray();
             $this->getResponse()->setData($Resource);
+        }
+
+        if ($this->getResponse()->wasStatusSet() === false) {//DRY
+            $Ok = new Http\Message\Ok();
+            $this->getResponse()->setStatusCode($Ok->getCode());
+            $this->getResponse()->setStatusMessage($Ok->getMessage());
         }
     }
 
@@ -87,7 +93,7 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
         
         $this->getResponse()->setData($Resource);
         $this->getResponse()->setStatusCode(201);
-        $this->getResponse()->setHeader('Location', $Resource->getHref());
+        $this->getResponse()->setHeader('Location', $Resource->getHref()->getUrl());
     }
 
     /**
@@ -128,6 +134,38 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
     {
         $Resource = $this->getResourceFromRequest();
         $this->getResponse()->setData($Resource);
+    }
+    
+    public function serveCollectionItemFromRequest()
+    {
+        $version = $this->getRequest()->getVersion();
+        $resource_name = $this->getRequest()->getQueryParameter('resource', null);
+        $resource_id = $this->getRequest()->getQueryParameter('resource_id', null);
+        $collection = $this->getRequest()->getQueryParameter('collection', null);
+        $item_id = $this->getRequest()->getQueryParameter('item_id', null);
+        $Navigator = $this->getFactory()->buildRestResourceNavigator($this->getRequest());
+        $Resource = $this->getResourceManager()->getCollectionItemResource($version, $resource_name, $resource_id, $collection, $item_id, $Navigator);
+
+        $this->getResponse()->setData($Resource);
+        $this->getResponse()->setStatusCode(200);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function addResourceCollectionFromRequest()
+    {
+        $user_id = 1;
+        $version = $this->getRequest()->getVersion();
+        $data = $this->getRequest()->getPostCollection()->toArray(true);
+        $resource_name = $this->getRequest()->getQueryParameter('resource', null);
+        $resource_id = $this->getRequest()->getQueryParameter('resource_id', null);
+        $collection = $this->getRequest()->getQueryParameter('collection', null);
+        $Resource = $this->getResourceManager()->addCollection($version, $resource_name, $resource_id, $collection, $data, $user_id);
+
+        $this->getResponse()->setData($Resource);
+        $this->getResponse()->setStatusCode(201);
+        $this->getResponse()->setHeader('Location', $Resource->getHref()->getUrl());
     }
     
     /**

@@ -7,43 +7,51 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace Everon\View\Widget;
 
-namespace Everon\View;
-
+use Everon\Application;
 use Everon\Dependency;
+use Everon\Domain;
 use Everon\Helper;
-use Everon\View\Interfaces;
-use Everon\View\Dependency\Injection\ViewManager as ViewManagerDependency;
+use Everon\View;
 use Everon\Exception;
 
-abstract class Widget implements Interfaces\Widget
+abstract class AbstractWidget implements View\Interfaces\Widget
 {
-    use ViewManagerDependency;
-
-    use Helper\ToString;
-    use Helper\String\LastTokenToName;
+    use Application\Dependency\Injection\ApplicationCore;
     use Dependency\Injection\ConfigManager;
+    use Domain\Dependency\Injection\DomainManager;
+    use View\Dependency\Injection\ViewManager;
+    
+    use Helper\GetUrl;
+    use Helper\String\LastTokenToName;
+    use Helper\ToString;
 
     protected $name;
 
     protected $populated = null;
+    
+    protected $has_data = false;
 
     /**
-     * @var Interfaces\View
+     * @var View\Interfaces\View
      */
     protected $View;
 
+    /**
+     * @return boolean True if the data was loaded successfully
+     */
     protected abstract function populate();
     
 
-    public function __construct(Interfaces\View $View)
+    public function __construct(View\Interfaces\View $View)
     {
         $this->name = $this->stringLastTokenToName(get_called_class());
         $this->View = $View;
     }
 
     /**
-     * @param Interfaces\View $View
+     * @param View\Interfaces\View $View
      */
     public function setView($View)
     {
@@ -51,7 +59,7 @@ abstract class Widget implements Interfaces\Widget
     }
 
     /**
-     * @return Interfaces\View
+     * @return View\Interfaces\View
      */
     public function getView()
     {
@@ -80,8 +88,12 @@ abstract class Widget implements Interfaces\Widget
     public function render()
     {
         if ($this->populated !== true) {
-            $this->populate();
+            $this->has_data = $this->populate() !== false;
             $this->populated = true;
+        }
+        
+        if ($this->hasData() === false) {
+            return '';
         }
         
         $Tpl = $this->getView()->getTemplate('index', $this->getView()->getData());
@@ -91,24 +103,19 @@ abstract class Widget implements Interfaces\Widget
         return (string) $this->getView()->getContainer();
     }
 
-    public function getUrl($name, $query=[], $get=[])
+    /**
+     * @param boolean $has_data
+     */
+    public function setHasData($has_data)
     {
-        $Item = $this->getConfigManager()->getConfigByName('router')->getItemByName($name);
-        if ($Item === null) {
-            throw new Exception\Controller('Invalid router config name: "%s"', $name);
-        }
+        $this->has_data = $has_data;
+    }
 
-        $Item->compileUrl($query);
-        $url = $Item->getParsedUrl();
-
-        $get_url = '';
-        if (empty($get) === false) {
-            $get_url = http_build_query($get);
-            if (trim($get_url) !== '') {
-                $get_url = '?'.$get_url;
-            }
-        }
-
-        return $url.$get_url;
+    /**
+     * @return boolean
+     */
+    public function hasData()
+    {
+        return $this->has_data;
     }
 }

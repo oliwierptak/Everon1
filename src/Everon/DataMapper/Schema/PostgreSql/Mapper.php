@@ -17,11 +17,11 @@ use Everon\Domain\Interfaces\Entity;
 abstract class Mapper extends DataMapper 
 {
     /**
-     * @param array $data
-     * @return array
+     * @inheritdoc
      */
-    protected function getInsertSql(array $data)
+    public function getInsertSql(array $data)
     {
+        $data = $this->getTable()->prepareDataForSql($data, false);
         $values_str = rtrim(implode(',', $this->getPlaceholderForQuery()), ',');
         $columns = $this->getPlaceholderForQuery('');
         array_walk($columns, function(&$item) {
@@ -33,12 +33,14 @@ abstract class Mapper extends DataMapper
     }
 
     /**
-     * @param array $id
-     * @param array $data
-     * @return array
+     * @inheritdoc
      */
-    protected function getUpdateSql($id, array $data)
+    public function getUpdateSql(array $data)
     {
+        $data = $this->getTable()->prepareDataForSql($data, true);
+        $id = $this->getTable()->getIdFromData($data);
+        $id = $this->getTable()->validateId($id);
+        
         $pk_name = $this->getTable()->getPk();
         $values_str = '';
         $columns = $this->getTable()->getColumns();
@@ -52,35 +54,33 @@ abstract class Mapper extends DataMapper
         }
 
         $values_str = rtrim($values_str, ',');
-        $sql = sprintf('UPDATE %s.%s SET '.$values_str.' WHERE %s = :%s', $this->getTable()->getSchema(), $this->getTable()->getName(), $pk_name, $pk_name);
+        $sql = sprintf('UPDATE %s.%s t SET '.$values_str.' WHERE %s = :%s', $this->getTable()->getSchema(), $this->getTable()->getName(), $pk_name, $pk_name);
         $params = $this->getValuesForQuery($data);
         $params[$pk_name] = $id;
         return [$sql, $params];
     }
 
     /**
-     * @param $id
-     * @return array
+     * @inheritdoc
      */
-    protected function getDeleteSql($id)
+    public function getDeleteSql($id)
     {
         $pk_name = $this->getTable()->getPk();
-        $sql = sprintf('DELETE FROM %s.%s WHERE %s = :%s', $this->getTable()->getSchema(), $this->getTable()->getName(), $pk_name, $pk_name);
+        $sql = sprintf('DELETE FROM %s.%s t WHERE %s = :%s', $this->getTable()->getSchema(), $this->getTable()->getName(), $pk_name, $pk_name);
         $params = [$pk_name => $id];
         return [$sql, $params];
     }
 
     /**
-     * @param Interfaces\Criteria $Criteria
-     * @return array
+     * @inheritdoc
      */
-    protected function getFetchAllSql(Interfaces\Criteria $Criteria)
+    public function getFetchAllSql(Interfaces\Criteria $Criteria=null)
     {
         $pk_name = $this->getTable()->getPk();
 
         $sql = "
             SELECT * 
-            FROM %s.%s
+            FROM %s.%s t
             ";
         $sql .= $Criteria;
         
@@ -88,11 +88,14 @@ abstract class Mapper extends DataMapper
         return $sql;
     }
 
-    protected function getLeftJoinSql($select, $a, $b, $on_a, $on_b, Interfaces\Criteria $Criteria)
+    /**
+     * @inheritdoc
+     */
+    public function getJoinSql($select, $a, $b, $on_a, $on_b, Interfaces\Criteria $Criteria=null, $type='')
     {
         $sql = "
-            SELECT %s FROM %s
-            LEFT JOIN %s ON %s = %s 
+            SELECT %s FROM %s t
+            ${type} JOIN %s ON %s = %s 
             ";
         $sql .= $Criteria;
         
@@ -100,7 +103,10 @@ abstract class Mapper extends DataMapper
         return $sql;
     }
 
-    protected function getCountSql(Interfaces\Criteria $Criteria)
+    /**
+     * @inheritdoc
+     */
+    public function getCountSql(Interfaces\Criteria $Criteria=null)
     {
         $table_name = sprintf('%s.%s', $this->getTable()->getSchema(), $this->getTable()->getName());
 /*        
@@ -111,7 +117,7 @@ abstract class Mapper extends DataMapper
         
         //do slow count
         $pk = $this->getTable()->getPk();
-        $sql = "SELECT COUNT(${pk}) FROM ${table_name}";
+        $sql = "SELECT COUNT(${pk}) FROM ${table_name} t ".$Criteria;
 
         return [$sql, $Criteria->getWhere()];
     }

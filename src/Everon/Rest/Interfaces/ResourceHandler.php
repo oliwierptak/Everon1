@@ -47,11 +47,11 @@ interface ResourceHandler
     function delete($version, $resource_name, $resource_id, $user_id);
 
     /**
-     * @param Resource $Resource
-     * @param array $resources_to_expand
+     * @param Resource|Resource $Resource |Resource $Resource $Resource
      * @param ResourceNavigator $Navigator
+     * @return
      */
-    function expandResource(Resource $Resource, array $resources_to_expand, ResourceNavigator $Navigator);
+    function expandResource(Resource $Resource, ResourceNavigator $Navigator);
 
     /**
      * @param Entity $Entity
@@ -74,11 +74,33 @@ interface ResourceHandler
     /**
      * @param $version
      * @param $resource_name
+     * @param $resource_id
+     * @param $collection_name
+     * @param array $data
+     * @param int $user_id
+     * @return ResourceInterface
+     */
+    function addCollection($version, $resource_name, $resource_id, $collection_name, array $data, $user_id);
+
+    /**
+     * @param $version
+     * @param $resource_name
      * @return ResourceCollection
      * @param ResourceNavigator $Navigator
      * @throws \Exception
      */
     function getCollectionResource($version, $resource_name, ResourceNavigator $Navigator);
+
+    /**
+     * @param $version
+     * @param $resource_name
+     * @param $resource_id
+     * @param $collection
+     * @param $item_id
+     * @param ResourceNavigator $Navigator
+     * @throws \Everon\Rest\Exception\Resource
+     */
+    function getCollectionItemResource($version, $resource_name, $resource_id, $collection, $item_id, ResourceNavigator $Navigator);
 
     /**
      * @param $resource_id

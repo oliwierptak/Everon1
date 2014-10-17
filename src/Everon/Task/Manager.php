@@ -35,7 +35,6 @@ class Manager implements Interfaces\Manager
     public function processOne(Interfaces\Item $Task)
     {
         $result = false;
-        $ExecutedAt = new \DateTime();
         
         try {
             $Task->markAsProcessing();
@@ -54,7 +53,7 @@ class Manager implements Interfaces\Manager
             }
             
             $Task->setResult($result);
-            $Task->setExecutedAt($ExecutedAt);
+            $Task->setExecutedAt(new \DateTime());
         }
     }
 }

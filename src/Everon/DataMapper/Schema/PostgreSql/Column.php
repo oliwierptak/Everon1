@@ -16,8 +16,11 @@ use Everon\DataMapper\Schema;
 class Column extends Schema\Column
 {
     use Helper\Arrays;
-    
 
+
+    /**
+     * @inheritdoc
+     */
     protected function init(array $data, array $primary_key_list, array $unique_key_list, array $foreign_key_list)
     {
         $ColumnInfo = new Helper\PopoProps($data);
@@ -27,7 +30,7 @@ class Column extends Schema\Column
         $this->is_nullable = ($ColumnInfo->is_nullable == 'YES');
         $this->default = $ColumnInfo->column_default;
         $this->schema = $ColumnInfo->table_schema;
-        $this->table = $ColumnInfo->table_name_without_schema;
+        $this->table = $ColumnInfo->__table_name_without_schema;
         
         switch ($type = $ColumnInfo->data_type) {
             case 'char':
@@ -35,8 +38,10 @@ class Column extends Schema\Column
             case 'text':
                 $this->length = (int) $ColumnInfo->character_maximum_length;
                 $this->encoding = $ColumnInfo->character_set_name;
-                $this->validation_rules = [$this->name => \FILTER_SANITIZE_STRING];
                 $this->type = static::TYPE_STRING;
+                $this->Validator = function($value) {
+                    return is_string($value);
+                };
                 break;
 
             case 'bigint':
@@ -44,48 +49,63 @@ class Column extends Schema\Column
             case 'smallint':
                 $this->length = (int) $ColumnInfo->numeric_precision;
                 $this->precision = (int) $ColumnInfo->numeric_scale;
-                $this->validation_rules = [$this->name => \FILTER_VALIDATE_INT];
                 $this->type = static::TYPE_INTEGER;
+                $this->Validator = function($value) {
+                    return is_numeric($value);
+                };
                 break;
 
             case 'decimal':
             case 'double precision':
                 $this->length = (int) $ColumnInfo->numeric_precision;
                 $this->precision = (int) $ColumnInfo->numeric_scale;
-                $this->validation_rules = [$this->name => \FILTER_VALIDATE_FLOAT];
                 $this->type = static::TYPE_FLOAT;
+                $this->Validator = function($value) {
+                    return is_float($value);
+                };
                 break;
 
             case 'timestamp':
             case 'timestamp without time zone':
             case 'timestamp with time zone':
                 $this->length = 19;
-                $this->validation_rules = [$this->name => \FILTER_SANITIZE_STRING];
                 $this->type = static::TYPE_TIMESTAMP;
+                $this->Validator = function($value) {
+                    $dt = new \DateTime('@'.strtotime($value));
+                    return $dt !== false && !array_sum($dt->getLastErrors());
+                };
                 break;
             
             case 'json':
                 $this->length = null;
-                $this->validation_rules = null;
                 $this->type = static::TYPE_JSON;
+                $this->Validator = function($value) {
+                    return is_string($value);
+                };
                 break;
             
             case 'boolean':
                 $this->length = 1;
-                $this->validation_rules = [$this->name => \FILTER_VALIDATE_BOOLEAN];
                 $this->type = static::TYPE_BOOLEAN;
+                $this->Validator = function($value) {
+                    return is_string($value) && ($value === 'f' || $value === 't');
+                };
                 break;
 
             case 'point':
                 $this->length = null;
-                $this->validation_rules = null;
                 $this->type = static::TYPE_POINT;
+                $this->Validator = function($value) {
+                    return is_string($value);
+                };
                 break;
             
             case 'polygon':
                 $this->length = null;
-                $this->validation_rules = null;
                 $this->type = static::TYPE_POLYGON;
+                $this->Validator = function($value) {
+                    return is_string($value);
+                };
                 break;
 
             default:

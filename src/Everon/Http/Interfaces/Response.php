@@ -92,4 +92,9 @@ interface Response extends \Everon\Interfaces\Response
     function send();
     
     function toHtml();
+
+    /**
+     * @return boolean
+     */
+    function wasStatusSet();
 }

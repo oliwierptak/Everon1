@@ -18,7 +18,7 @@ use Everon\Interfaces\FactoryWorker;
  * @method FactoryWorker getFactoryWorker()
  * @method Http\Interfaces\Response getResponse()
  */
-abstract class Rest extends \Everon\Module implements Interfaces\Rest
+abstract class Rest extends \Everon\Module\AbstractModule implements Interfaces\Rest
 {
 
     public function setup()

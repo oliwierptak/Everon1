@@ -118,7 +118,7 @@ class Criteria implements Interfaces\Criteria
     
     public function getWhereSql()
     {
-        if (empty($this->where) && empty($this->in) && empty($this->ilike)) {
+        if (empty($this->where) && empty($this->where_or) && empty($this->in) && empty($this->ilike)) {
             return '';
         }
         
@@ -130,17 +130,25 @@ class Criteria implements Interfaces\Criteria
         $where_str = (empty($this->where) === false) ? '('.$where_str.')' : $where_str;
 
         $where_or_str = '';
-        foreach ($this->where_or as $field => $value) {
-            $field_ok = str_replace('.', '_', $field);
-            $where_or_str .= " OR ${field} = :${field_ok}";
+        if (empty($this->where_or) === false) {
+            $where_or_str = '';
+            foreach ($this->where_or as $field => $value) {
+                $field_ok = str_replace('.', '_', $field);
+                $where_or_str .= " ${field} = :${field_ok} OR ";
+            }
+            $this->where = $this->arrayMergeDefault($this->where, $this->where_or);
+            $where_or_str = substr($where_or_str, 0, strlen($where_or_str)-3);
+            $where_or_str = ' OR ('.$where_or_str.')';
         }
-        $where_or_str = (empty($this->where_or) === false) ? '('.$where_or_str.')' : $where_or_str;
-        
         $where_str = 'WHERE '.$where_str.$where_or_str;
         
         if (empty($this->in) === false) {
             $where_str .= ' ';
             foreach ($this->in as $field => $values) {
+                if (is_array($values) === false) {
+                    continue;
+                }
+                $values = array_filter($values);
                 $ilike_str = implode(',', $values);
                 $where_str .= " AND ${field} IN (${ilike_str})";
             }
@@ -152,9 +160,8 @@ class Criteria implements Interfaces\Criteria
                 $field_ok = str_replace('.', '_', $field); //replace z.id with z_id
                 $where_str .= " AND ${field} ILIKE :${field_ok}";
             }
+            $this->where = $this->arrayMergeDefault($this->where, $this->ilike);
         }
-        
-        $this->where = $this->arrayMergeDefault($this->where, $this->ilike);
         
         return $where_str;
     }
@@ -194,7 +201,7 @@ class Criteria implements Interfaces\Criteria
             }
         }
         else {
-            $order_by = $this->order_by;
+            $order_by = $this->order_by.' '.$this->sort;
         }
         
         $order_by = trim($order_by, ',');

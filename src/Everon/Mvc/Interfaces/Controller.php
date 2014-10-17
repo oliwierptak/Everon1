@@ -17,6 +17,11 @@ interface Controller extends \Everon\Interfaces\Controller, \Everon\View\Interfa
      * @return Interfaces\TemplateContainer
      */
     function getActionTemplate();
+
+    /**
+     * @param Interfaces\TemplateContainer $Template
+     */
+    function setActionTemplate(Interfaces\TemplateContainer $Template);
         
     /**
      * @return Interfaces\View
@@ -29,14 +34,57 @@ interface Controller extends \Everon\Interfaces\Controller, \Everon\View\Interfa
     function setView(Interfaces\View $View);
 
     /**
-     * @return mixed
+     * @param string $view_name
      */
-    function getModel();
+    function setViewName($view_name);
 
+    /**
+     * @return string
+     */
+    function getViewName();
+
+    /**
+     * @param string $layout_name
+     */
+    function setLayoutName($layout_name);
+
+    /**
+     * @return string
+     */
+    function getLayoutName();
+    
     /**
      * @param \Exception $Exception
      */
     function showException(\Exception $Exception);
+
+    /**
+     * @param null $errors
+     */
+    function showValidationErrors($errors=null);
+
+    /**
+     * @param $msg
+     * @param array $parameters
+     */
+    function error($msg, array $parameters=[]);
+
+    /**
+     * @param $name
+     * @param $message
+     */
+    function addValidationError($name, $message);
+
+    /**
+     * @param $name
+     * @param $message
+     */
+    function removeValidationError($name, $message);
+
+    /**
+     * @return bool
+     */
+    function hasValidationError();
 
     /**
      * @param $name

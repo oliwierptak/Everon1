@@ -417,7 +417,7 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildController($class_name, Interfaces\Module $Module, $namespace='Everon\Controller')
+    public function buildController($class_name, Module\Interfaces\Module $Module, $namespace='Everon\Controller')
     {
         try {
             $class_name = $this->getFullClassName($namespace, $class_name);
@@ -491,7 +491,7 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildViewManager(array $compilers_to_init, $view_directory, $cache_directory)
+    public function buildViewManager(array $compilers_to_init, $view_directory, $cache_directory, $namespace='Everon\View')
     {
         try {
             $compilers = [];
@@ -499,8 +499,10 @@ abstract class Factory implements Interfaces\Factory
                 $compilers[$extension][] = $this->buildTemplateCompiler($this->stringUnderscoreToCamel($name));
             }
 
-            $Manager = new View\Manager($compilers, $view_directory, $cache_directory);
-            $this->injectDependencies('Everon\View\Manager', $Manager);
+            $class_name = $this->getFullClassName($namespace, 'Manager');
+            $this->classExists($class_name);
+            $Manager = new $class_name($compilers, $view_directory, $cache_directory);
+            $this->injectDependencies($class_name, $Manager);
             return $Manager;
         }
         catch (\Exception $e) {
@@ -531,6 +533,23 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
+    public function buildViewWidgetManager(View\Interfaces\Manager $ViewManager, $namespace='Everon\View\Widget')
+    {
+        try {
+            $class_name = $this->getFullClassName($namespace, 'Manager');
+            $this->classExists($class_name);
+            $Manager = new $class_name($ViewManager);
+            $this->injectDependencies($class_name, $Manager);
+            return $Manager;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('ViewWidgetManager initialization error', null, $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function buildTemplateCompiler($class_name, $namespace='Everon\View\Template\Compiler')
     {
         try {
@@ -542,6 +561,23 @@ abstract class Factory implements Interfaces\Factory
         }
         catch (\Exception $e) {
             throw new Exception\Factory('TemplateCompiler: "%s" initialization error', $class_name, $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildTemplateCompilerContext($namespace='Everon\View\Template\Compiler')
+    {
+        try {
+            $class_name = $this->getFullClassName($namespace, 'Context');
+            $this->classExists($class_name);
+            $Compiler = new $class_name();
+            $this->injectDependencies($class_name, $Compiler);
+            return $Compiler;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('TemplateCompilerContext initialization error', null, $e);
         }
     }
 
@@ -727,15 +763,33 @@ abstract class Factory implements Interfaces\Factory
      */
     public function buildDomainModel($class_name, $namespace='Everon\Domain')
     {
+        $name = $class_name;
         try {
             $class_name = $this->getFullClassName($namespace, $class_name.'\Model');
             $this->classExists($class_name);
-            $Model = new $class_name();
+            $Model = new $class_name($name);
             $this->injectDependencies($class_name, $Model);
             return $Model;
         }
         catch (\Exception $e) {
-            throw new Exception\Factory('DomainModel: "%s" initialization error', $class_name, $e);
+            throw new Exception\Factory('DomainModel: "%s" initialization error', $name, $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildDomainRelation($name, $parent_name, Domain\Interfaces\Entity $Entity, $namespace='Everon\Domain')
+    {
+        try {
+            $class_name = $this->getFullClassName($namespace.'\\'.$parent_name, 'Relation\\'.$name);
+            $this->classExists($class_name);
+            $Relation = new $class_name($Entity);
+            $this->injectDependencies($class_name, $Relation);
+            return $Relation;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('DomainRelation: "%s" initialization error', $name, $e);
         }
     }
 
@@ -779,7 +833,7 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildSchemaTableAndDependencies($name, $schema, $adapter_name, array $columns, array $primary_keys,  array $unique_keys, array $foreign_keys, Domain\Interfaces\Mapper $DomainMapper, $namespace='Everon\DataMapper')
+    public function buildSchemaTableAndDependencies($database_timezone, $name, $schema, $adapter_name, array $columns, array $primary_keys,  array $unique_keys, array $foreign_keys, Domain\Interfaces\Mapper $DomainMapper, $namespace='Everon\DataMapper')
     {
         try {
             $primary_key_list = [];
@@ -822,7 +876,7 @@ abstract class Factory implements Interfaces\Factory
                 /**
                  * @var DataMapper\Schema\Column $Column
                  */
-                $Column = new $class_name($column_data, $primary_key_list, $unique_key_list, $foreign_key_list);
+                $Column = new $class_name($database_timezone, $column_data, $primary_key_list, $unique_key_list, $foreign_key_list);
                 $column_list[$Column->getName()] = $Column;
             }
             

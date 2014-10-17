@@ -9,91 +9,117 @@
  */
 namespace Everon\View\Interfaces;
 
-use Everon\Exception;
 
-interface View
-{        
+interface View extends \Everon\Interfaces\Dependency\GetUrl, 
+    \Everon\View\Interfaces\Dependency\Manager
+{
+    /**
+     * @inheritdoc
+     */
     function getName();
 
     /**
-     * @return Template
-     * @throws \Everon\Exception\View
+     * @param $value
      */
-    function getContainer();
+    function setContainerFromString($value);
 
     /**
-     * @param mixed $Container Instance of Interfaces\TemplateContainer, string or array
-     * @throws Exception\Template
-     */
-    function setContainer($Container);
-    
-    function getTemplateDirectory();
-
-    /**
-     * @param $directory
+     * @inheritdoc
      */
     function setTemplateDirectory($directory);
 
     /**
-     * @param $name
-     * @param $data
-     * @return Template
-     */    
-    function getTemplate($name, $data);
-
-    /**
-     * @param $name
-     * @param mixed $value
-     */    
-    function set($name, $value);
-
-    /**
-     * @param $name
-     * @param mixed|null $default
-     * @return null
-     */
-    function get($name, $default=null);
-
-    /**
-     * @param $name
-     */    
-    function delete($name);
-
-    /**
      * @return array
-     */    
+     */
     function getData();
 
     /**
-     * @param array $data
-     */    
-    function setData(array $data);
+     * @return string
+     */
+    function getDefaultExtension();
 
     /**
      * @param $extension
-     */    
+     */
     function setDefaultExtension($extension);
-    
-    function getDefaultExtension();
+
+    /**
+     * @param $name
+     * @param null $default
+     * @return null
+     */
+    function get($name, $default = null);
+
+    /**
+     * @param $action
+     * @return null
+     */
+    function execute($action);
+
+    /**
+     * @param $name
+     */
+    function delete($name);
+
+    /**
+     * @param $name
+     */
+    function setName($name);
+
+    /**
+     * @param array $data
+     */
+    function setData(array $data);
+
+    /**
+     * @param $name
+     * @param $data
+     * @return Template|null
+     */
+    function getTemplate($name, $data);
 
     /**
      * @return \SplFileInfo
      */
     function getFilename();
 
+    /**
+     * @inheritdoc
+     */
+    function getTemplateDirectory();
 
     /**
-     * @param $action
-     * @return mixed
+     * @param TemplateContainer $Container
      */
-    function execute($action);
+    function setContainer(TemplateContainer $Container);
 
     /**
      * @param $name
-     * @param array $query
-     * @param array $get
-     * @return string
-     * @throws \Everon\Exception\Controller
+     * @param $value
      */
-    function getUrl($name, $query=[], $get=[]);
+    function set($name, $value);
+
+    /**
+     * @return Template|TemplateContainer
+     * @throws \Everon\Exception\View
+     */
+    function getContainer();
+
+    /**
+     * @param array $data
+     * @return \Everon\Helper\PopoProps
+     */
+    function templetize(array $data);
+
+    /**
+     * @param array $data
+     * @return array
+     */
+    function templetizeArray(array $data);
+
+    /**
+     * @param array $data Array of items implementing Arrayable Interface
+     * @return array Array of Helper\PopoProps objects
+     */
+    function templetizeArrayable(array $data);
 }

@@ -88,6 +88,12 @@ interface Manager
     function setConfigByName(\Everon\Interfaces\Config $Config);
 
     /**
+     * @param $name
+     * @return bool
+     */
+    function hasConfig($name);
+
+    /**
      * @param $expression
      * @param mixed $default
      * @return mixed|null Returns $default in case nothing was found

@@ -39,9 +39,11 @@ class Response extends BasicResponse implements Interfaces\Response
     /**
      * @var int
      */
-    protected $status_code = 200;
+    protected $status_code = null;
+
+    protected $status_message = null;
     
-    protected $status_message = 'OK';
+    protected $status_code_set = false;
 
 
     /**
@@ -212,6 +214,7 @@ class Response extends BasicResponse implements Interfaces\Response
      */
     public function setStatusCode($status)
     {
+        $this->status_code_set = true;
         $this->status_code = (int) $status;
     }
 
@@ -263,4 +266,12 @@ class Response extends BasicResponse implements Interfaces\Response
             $this->sendHeaders();
         }
     }
-}
+
+    /**
+     * @return boolean
+     */
+    public function wasStatusSet()
+    {
+        return $this->status_code_set;
+    }
+}   

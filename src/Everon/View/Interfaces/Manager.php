@@ -10,75 +10,23 @@
 namespace Everon\View\Interfaces;
 
 use Everon\Exception;
-use Everon\Interfaces;
 
-interface Manager extends TemplateCompiler
+interface Manager extends Dependency\WidgetManager 
 {
     /**
-     * @param Template $scope_name
-     * @param TemplateContainer $Template
-     * @throws \Everon\Exception\ViewManager
+     * @param string $cache_directory
      */
-    function compileTemplate($scope_name, TemplateContainer $Template);
+    function setCacheDirectory($cache_directory);
 
-    /**
-     * @param $action
-     * @param View $View
-     */
-    function compileView($action, View $View);
-
-    /**
-     * @param $name
-     * @param $template_directory
-     * @param $namespace
-     * @return View
-     * @throws \Everon\Exception\ViewManager
-     */
-    function createView($name, $template_directory, $namespace);
+    function getCompilers();
 
     /**
      * @param $name
      * @param string $namespace
-     * @return Widget
-     */
-    function createWidget($name, $namespace='Everon\View');
-
-    /**
-     * @return array
-     */
-    function getCompilers();
-
-    /**
-     * @param string $view_name
-     * @return View
-     */
-    function getCurrentTheme($view_name);
-
-    /**
-     * @param $theme_name
-     * @param $view_name
      * @return View
      * @throws \Everon\Exception\ViewManager
      */
-    function getTheme($theme_name, $view_name);
-
-    /**
-     * @param $name
-     * @param View $View
-     */
-    function setTheme($name, View $View);
-
-    /**
-     * @param string $theme
-     */
-    function setCurrentThemeName($theme);
-        
-    function getCurrentThemeName();
-
-    /**
-     * @param string $theme_directory
-     */
-    function setViewDirectory($theme_directory);
+    function createLayout($name, $namespace = 'Everon\View');
 
     /**
      * @return string
@@ -86,9 +34,32 @@ interface Manager extends TemplateCompiler
     function getViewDirectory();
 
     /**
-     * @param string $cache_directory
+     * @param View $View
      */
-    function setCacheDirectory($cache_directory);
+    function setLayoutByLayoutName(View $View);
+
+    /**
+     * @return string
+     */
+    function getCurrentThemeName();
+
+    /**
+     * @inheritdoc
+     */
+    function setViewDirectory($theme_directory);
+
+    /**
+     * @param $view_name
+     * @param $template_directory
+     * @param string $namespace
+     * @return View
+     */
+    function createView($view_name, $template_directory=null, $namespace='Everon\View');
+
+    /**
+     * @inheritdoc
+     */
+    function getLayoutByName($name);
 
     /**
      * @return string
@@ -96,8 +67,22 @@ interface Manager extends TemplateCompiler
     function getCacheDirectory();
 
     /**
-     * @param $name
+     * @param string $theme
      */
-    function includeWidget($name);
+    function setCurrentThemeName($theme);
 
+    /**
+     * @inheritdoc
+     */
+    function compileView($action, View $View);
+
+    /**
+     * @param WidgetManager $WidgetManager
+     */
+    function setWidgetManager(WidgetManager $WidgetManager);
+
+    /**
+     * @return WidgetManager
+     */
+    function getWidgetManager();
 }

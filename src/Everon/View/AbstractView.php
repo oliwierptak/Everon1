@@ -12,14 +12,17 @@ namespace Everon\View;
 use Everon\Helper;
 use Everon\Exception;
 use Everon\Dependency;
+use \Everon\View\Dependency\ViewManager as ViewManagerDependency;
 
 abstract class AbstractView implements Interfaces\View
 {
     use Dependency\Injection\ConfigManager;
+    use Dependency\Injection\Logger;
     use Dependency\Injection\Factory;
-    use Dependency\Injection\Request;
+    use ViewManagerDependency;
 
     use Helper\Arrays;
+    use Helper\GetUrl;
     use Helper\IsCallable;
     use Helper\IsIterable;
     use Helper\String\EndsWith;
@@ -38,6 +41,10 @@ abstract class AbstractView implements Interfaces\View
     protected $default_extension = '.php';
 
     protected $index_executed = false;
+    
+    protected $resources_js = [];
+    
+    protected $resources_css = [];
 
 
     /**
@@ -80,6 +87,14 @@ abstract class AbstractView implements Interfaces\View
     }
 
     /**
+     * @param $name
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
+
+    /**
      * @inheritdoc
      */
     public function getTemplateDirectory()
@@ -98,14 +113,14 @@ abstract class AbstractView implements Interfaces\View
     /**
      * @inheritdoc
      */
+    /**
+     * @return Interfaces\Template|Interfaces\TemplateContainer
+     * @throws \Everon\Exception\View
+     */
     public function getContainer()
     {
         if ($this->Container === null) {
-            $this->setContainer('');
-        }
-
-        if ($this->Container === null) {
-            throw new Exception\View('View container not set');
+            $this->Container = $this->getFactory()->buildTemplateContainer('', []);
         }
 
         return $this->Container;
@@ -114,28 +129,20 @@ abstract class AbstractView implements Interfaces\View
     /**
      * @inheritdoc
      */
-    public function setContainer($Container)
+    /**
+     * @param Interfaces\TemplateContainer $Container
+     */
+    public function setContainer(Interfaces\TemplateContainer $Container)
     {
-        if ($Container instanceof Interfaces\TemplateContainer) {
-            if ($this->Container !== null) {
-                $data = $this->arrayMergeDefault($this->Container->getData(), $Container->getData());
-                $Container->setData($data);
-            }
-            $this->Container = $Container;
-        }
-        else if (is_string($Container)) {
-            $data = [];
-            if ($this->Container !== null) {
-                $data = $this->Container->getData();
-            }
-            $this->Container = $this->getFactory()->buildTemplateContainer($Container, $data);
-        }
+        $this->Container = $Container;
+    }
 
-        if ($this->Container === null) {
-            throw new Exception\Template('Invalid container type');
-        }
-
-        $this->set('View', $this); //todo: meh
+    /**
+     * @inheritdoc
+     */
+    public function setContainerFromString($value)
+    {
+        $this->getContainer()->setTemplateContent($value);
     }
 
     /**
@@ -143,11 +150,15 @@ abstract class AbstractView implements Interfaces\View
      */
     public function getTemplate($name, $data)
     {
+        if ((new \SplFileInfo($this->getTemplateDirectory()))->isDir() === false) {
+            throw new Exception\Template('Template directory does not exists in "%s@%s"', [$this->getName(), $name]);
+        }
+        
         $Filename = $this->getTemplateFilename($name);
         if ($Filename->isFile() === false) {
             return null;
         }
-
+        
         return $this->getFactory()->buildTemplate($Filename, $data);
     }
 
@@ -169,6 +180,9 @@ abstract class AbstractView implements Interfaces\View
 
     /**
      * @inheritdoc
+     */
+    /**
+     * @param $name
      */
     public function delete($name)
     {
@@ -237,29 +251,112 @@ abstract class AbstractView implements Interfaces\View
         return null;
     }
 
+    /**
+     * @param $name
+     * @return string
+     */
+    public function renderWidget($name)
+    {
+        try {
+            $WidgetManager = $this->getViewManager()->getWidgetManager();
+            return $WidgetManager->includeWidget($name);
+        }
+        catch (\Exception $e) {
+            $this->getLogger()->error($e);
+            return '';
+        }
+    }
+    
+    /**
+     * @inheritdoc
+     */
+    public function templetize(array $data)
+    {
+        return new Helper\PopoProps($data);
+    }
 
     /**
      * @inheritdoc
      */
-    public function getUrl($name, $query=[], $get=[])
+    public function templetizeArray(array $data)
     {
-        $Item = $this->getConfigManager()->getConfigByName('router')->getItemByName($name);
-        if ($Item === null) {
-            throw new Exception\Controller('Invalid router config name: "%s"', $name);
+        foreach ($data as $name => $item) {
+            $data[$name] = $this->templetize($item);
+        }
+        return $data;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function templetizeArrayable(array $data)
+    {
+        /**
+         * @var \Everon\Interfaces\Arrayable $Item
+         */
+        foreach ($data as $index => $Item) {
+            $data[$index] = $this->templetize($Item->toArray());
         }
 
-        $Item->compileUrl($query);
-        $url = $Item->getParsedUrl();
+        return $data;
+    }
 
-        $get_url = '';
-        if (empty($get) === false) {
-            $get_url = http_build_query($get);
-            if (trim($get_url) !== '') {
-                $get_url = '?'.$get_url;
+    /**
+     * @param \Everon\Interfaces\FileSystem $FileSystem
+     * @param $path
+     * @param $ext
+     * @return array
+     */
+    protected function generateFileList(\Everon\Interfaces\FileSystem $FileSystem, $path, $ext)
+    {
+        $url = $this->getConfigManager()->getConfigValue('application.static.url_min');
+        $files = [];
+        
+        $resource_path = $FileSystem->listPath('//'.$path.'/');
+        foreach ($resource_path as $File) {
+            /**
+             * @var \SplFileInfo $File
+             */
+            if ($File->getExtension() === $ext) {
+                $files[] = $url.$path.$File->getFileName();
             }
         }
 
-        return $url.$get_url;
+        return $files;
     }
 
+    protected function includeResources()
+    {
+        if ($this->getConfigManager()->hasConfig('minify') === false) {
+            return;
+        }
+        
+        /**
+         * @var \Everon\Interfaces\FileSystem $FileSystem
+         */
+        $root = $this->getConfigManager()->getConfigValue('application.static.directory_min');
+        $FileSystem = $this->getFactory()->buildFileSystem($root);
+        $Config = $this->getConfigManager()->getConfigByName('minify');
+
+        foreach ($this->resources_js as $name => $items_to_minify) {
+            $files = [];
+            foreach ($items_to_minify as $resource_name) {
+                $files = array_merge($files, $this->generateFileList($FileSystem, $Config->getItemByName($resource_name)->getValueByName('path'), 'js'));
+            }
+            $this->set($name, $files);
+        }
+
+        foreach ($this->resources_css as $name => $items_to_minify) {
+            $files = [];
+            foreach ($items_to_minify as $resource_name) {
+                $files = array_merge($files, $this->generateFileList($FileSystem, $Config->getItemByName($resource_name)->getValueByName('path'), 'css'));
+            }
+            $this->set($name, $files);
+        }
+    } 
+    
+    public function index()
+    {
+        $this->includeResources();
+    }
 }

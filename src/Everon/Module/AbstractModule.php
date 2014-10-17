@@ -7,23 +7,20 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon;
+namespace Everon\Module;
 
+use Everon\Helper;
+use Everon\Interfaces;
 
-abstract class Module implements Interfaces\Module
+abstract class AbstractModule implements \Everon\Module\Interfaces\Module
 {
-    use Dependency\Config;
-    use Dependency\Injection\Factory;
-    use Module\Dependency\Injection\ModuleManager;
+    use \Everon\Dependency\Config;
+    use \Everon\Dependency\Injection\Factory;
+    use Dependency\Injection\ModuleManager;
     
     protected $name = null;
     
     protected $directory = null;
-
-    /**
-     * @var Interfaces\Collection
-     */
-    protected $ViewCollection = null;
     
     /**
      * @var Interfaces\Collection
@@ -34,7 +31,6 @@ abstract class Module implements Interfaces\Module
      * @var Interfaces\FactoryWorker
      */
     protected $FactoryWorker = null;
-    
     
     
     /**

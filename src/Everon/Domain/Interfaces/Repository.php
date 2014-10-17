@@ -17,17 +17,23 @@ interface Repository
 {
     /**
      * @param Entity $Entity
+     * @return array
+     */
+    function validateEntity(Entity $Entity);
+        
+    /**
+     * @param Entity $Entity
      * @param Criteria $Criteria
      * @return void
      */
     function buildEntityRelations(Entity $Entity, Criteria $Criteria);
-    
+
     /**
      * @param $id
-     * @return Entity
-     * @throws Exception\Repository
+     * @param Criteria $RelationCriteria
+     * @return Entity|null
      */
-    function getEntityById($id);
+    function getEntityById($id, Criteria $RelationCriteria=null);
 
     /**
      * @param array $property_criteria

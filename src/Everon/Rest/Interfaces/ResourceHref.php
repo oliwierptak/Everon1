@@ -90,4 +90,14 @@ interface ResourceHref
      * @param string $request_path
      */
     function setRequestPath($request_path);
+
+    /**
+     * @return mixed
+     */
+    function getItemId();
+
+    /**
+     * @param mixed $item_id
+     */
+    function setItemId($item_id);
 }

@@ -10,7 +10,7 @@
 namespace Everon\View\Interfaces;
 
 
-interface Widget extends Dependency\Manager
+interface Widget extends Dependency\Manager, \Everon\Interfaces\Dependency\GetUrl
 {
     /**
      * @param \Everon\View\Interfaces\View $View
@@ -36,4 +36,14 @@ interface Widget extends Dependency\Manager
      * @return string
      */
     function render();
+
+    /**
+     * @param boolean $has_data
+     */
+    function setHasData($has_data);
+
+    /**
+     * @return boolean
+     */
+    function hasData();
 }

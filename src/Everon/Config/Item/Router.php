@@ -43,7 +43,14 @@ class Router extends Config\Item implements Config\Interfaces\ItemRouter
     
     protected $parsed_url = null;
 
-    
+    /**
+     * @var boolean
+     */
+    protected $secure = false;
+
+    /**
+     * @param array $data
+     */
     public function __construct(array $data)
     {
         $section_name = @$data[static::PROPERTY_NAME];
@@ -60,7 +67,8 @@ class Router extends Config\Item implements Config\Interfaces\ItemRouter
             'method' => null,
             'get' => [],
             'query' => [],
-            'post' => []
+            'post' => [],
+            'secure' => false
         ]);
     }
 
@@ -78,6 +86,7 @@ class Router extends Config\Item implements Config\Interfaces\ItemRouter
         $this->setQueryRegex($this->data['query']);
         $this->setPostRegex($this->data['post']);
         $this->setMethod($this->data['method']);
+        $this->setIsSecure($this->data['secure']);
     }
 
     /**
@@ -98,13 +107,7 @@ class Router extends Config\Item implements Config\Interfaces\ItemRouter
     }
 
     /**
-     * Takes login/submit/session/{sid}/redirect/{location}?and=something
-     * and returns @^login/submit/session/([a-z0-9]+)/redirect/([a-zA-Z0-9|%]+)$@
-     * according to router.ini
-     *
-     * @param $pattern
-     * @param array $data
-     * @return string
+     * @inheritdoc
      */
     public function replaceCurlyParametersWithRegex($pattern, array $data)
     {
@@ -116,11 +119,7 @@ class Router extends Config\Item implements Config\Interfaces\ItemRouter
     }
 
     /**
-     * Removes everything after ? (eg. ?param1=1&param2=2)
-     *
-     * @param $str
-     * @param string $marker
-     * @return mixed
+     * @inheritdoc
      */
     public function getCleanUrl($str, $marker='?')
     {
@@ -129,8 +128,7 @@ class Router extends Config\Item implements Config\Interfaces\ItemRouter
     }
 
     /**
-     * @param $get_data
-     * @return mixed
+     * @inheritdoc
      */
     public function filterQueryKeys($get_data)
     {
@@ -139,8 +137,7 @@ class Router extends Config\Item implements Config\Interfaces\ItemRouter
     }
 
     /**
-     * @param $get_data
-     * @return mixed
+     * @inheritdoc
      */
     public function filterGetKeys($get_data)
     {
@@ -149,8 +146,7 @@ class Router extends Config\Item implements Config\Interfaces\ItemRouter
     }
 
     /**
-     * @param $request_path
-     * @return bool
+     * @inheritdoc
      */
     public function matchesByPath($request_path)
     {
@@ -173,8 +169,7 @@ class Router extends Config\Item implements Config\Interfaces\ItemRouter
     }
 
     /**
-     * @param array $data
-     * @throws Exception\ConfigItem
+     * @inheritdoc
      */
     public function validateData(array $data)
     {
@@ -201,13 +196,16 @@ class Router extends Config\Item implements Config\Interfaces\ItemRouter
         return $this->module;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function getUrl()
     {
         return $this->url;
     }
 
     /**
-     * @param $url
+     * @inheritdoc
      */
     public function setUrl($url)
     {
@@ -215,13 +213,16 @@ class Router extends Config\Item implements Config\Interfaces\ItemRouter
         $this->data['url'] = $url;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function getController()
     {
         return $this->controller;
     }
-
+    
     /**
-     * @param $controller
+     * @inheritdoc
      */
     public function setController($controller)
     {
@@ -229,13 +230,16 @@ class Router extends Config\Item implements Config\Interfaces\ItemRouter
         $this->data['controller'] = $controller;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function getAction()
     {
         return $this->action;
     }
 
     /**
-     * @param $action
+     * @inheritdoc
      */
     public function setAction($action)
     {
@@ -244,23 +248,23 @@ class Router extends Config\Item implements Config\Interfaces\ItemRouter
     }
 
     /**
-     * @return array
-     */    
+     * @inheritdoc
+     */
     public function getGetRegex()
     {
         return $this->regex_get;
     }
 
     /**
-     * @param $regex
-     */   
+     * @inheritdoc
+     */ 
     public function setGetRegex($regex)
     {
         $this->regex_get = $regex;
     }
 
     /**
-     * @return array
+     * @inheritdoc
      */
     public function getQueryRegex()
     {
@@ -268,7 +272,7 @@ class Router extends Config\Item implements Config\Interfaces\ItemRouter
     }
 
     /**
-     * @param $regex
+     * @inheritdoc
      */
     public function setQueryRegex($regex)
     {
@@ -276,7 +280,7 @@ class Router extends Config\Item implements Config\Interfaces\ItemRouter
     }
 
     /**
-     * @return array
+     * @inheritdoc
      */
     public function getPostRegex()
     {
@@ -284,7 +288,7 @@ class Router extends Config\Item implements Config\Interfaces\ItemRouter
     }
 
     /**
-     * @param $regex
+     * @inheritdoc
      */
     public function setPostRegex($regex)
     {
@@ -307,16 +311,41 @@ class Router extends Config\Item implements Config\Interfaces\ItemRouter
         return $this->method;
     }
 
+    /**
+     * @param boolean $secure
+     */
+    public function setIsSecure($secure)
+    {
+        $this->secure = $secure;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isSecure()
+    {
+        return $this->secure;
+    }
+    
+    /**
+     * @inheritdoc
+     */    
     public function getParsedUrl()
     {
         return $this->parsed_url;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function setParsedUrl($parsed_url)
     {
         $this->parsed_url = $parsed_url;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function compileUrl($parts)
     {
         $parsed_url = $this->stringCompilerRun($this->getUrl(), $parts);

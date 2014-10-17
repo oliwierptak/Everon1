@@ -31,14 +31,37 @@ abstract class DataMapper implements Interfaces\DataMapper
     
     protected $write_connection_name = 'write';
     protected $read_connection_name = 'read';
-    
-    abstract protected function getInsertSql(array $data);
-    abstract protected function getUpdateSql($id, array $data);
-    abstract protected function getDeleteSql($id);
-    abstract protected function getFetchAllSql(Criteria $Criteria);
-    abstract protected function getCountSql(Criteria $Criteria);
-    
 
+    /**
+     * @inheritdoc
+     */
+    abstract public function getInsertSql(array $data);
+    
+    /**
+     * @inheritdoc
+     */
+    abstract public function getUpdateSql(array $data);
+
+    /**
+     * @inheritdoc
+     */
+    abstract public function getDeleteSql($id);
+
+    /**
+     * @inheritdoc
+     */
+    abstract public function getFetchAllSql(Criteria $Criteria=null);
+
+    /**
+     * @inheritdoc
+     */
+    abstract public function getJoinSql($select, $a, $b, $on_a, $on_b, Criteria $Criteria=null, $type='');
+
+    /**
+     * @inheritdoc
+     */
+    abstract public function getCountSql(Criteria $Criteria=null);
+    
 
     /**
      * @param Table $Table
@@ -72,7 +95,7 @@ abstract class DataMapper implements Interfaces\DataMapper
     }
 
     /**
-     * @param array $data
+     * @param array $data should be in format required by db, all DateTime objects and alike should be gone
      * @param string $delimiter
      * @return array
      */
@@ -88,7 +111,7 @@ abstract class DataMapper implements Interfaces\DataMapper
                 continue;
             }
             
-            $values[$delimiter.$name] = $Column->getDataValue($data[$name]);
+            $values[$delimiter.$name] = $data[$name];
         }
 
         return $values;
@@ -99,10 +122,8 @@ abstract class DataMapper implements Interfaces\DataMapper
      */
     public function add(array $data)
     {
-        $data = $this->getTable()->validateData($data, false);
         list($sql, $parameters) = $this->getInsertSql($data);
-        $PdoAdapter = $this->getSchema()->getPdoAdapterByName($this->write_connection_name);
-        $id = $PdoAdapter->insert($sql, $parameters);
+        $id = $this->getSchema()->getPdoAdapterByName($this->write_connection_name)->insert($sql, $parameters);
         $id = $this->getTable()->validateId($id);
         $data[$this->getTable()->getPk()] = $id;
         return $data;
@@ -113,11 +134,7 @@ abstract class DataMapper implements Interfaces\DataMapper
      */
     public function save(array $data)
     {
-        $data = $this->getTable()->validateData($data, true);
-        $id = $this->getTable()->getIdFromData($data);
-        $id = $this->getTable()->validateId($id);
-
-        list($sql, $parameters) = $this->getUpdateSql($id, $data);
+        list($sql, $parameters) = $this->getUpdateSql($data);
         return $this->getSchema()->getPdoAdapterByName($this->write_connection_name)->update($sql, $parameters);
     }
 
@@ -136,7 +153,14 @@ abstract class DataMapper implements Interfaces\DataMapper
      */
     public function count(Criteria $Criteria=null)
     {
-        $Criteria = $Criteria ?: new DataMapper\Criteria();
+        if ($Criteria === null) {
+            $Criteria = new DataMapper\Criteria();
+        }
+        else {
+            $Criteria = clone $Criteria;
+            $Criteria->orderBy(null);
+        }
+        
         list($sql, $parameters) = $this->getCountSql($Criteria);
         $PdoStatement = $this->getSchema()->getPdoAdapterByName($this->read_connection_name)->execute($sql, $parameters);
         return (int) $PdoStatement->fetchColumn();

@@ -12,10 +12,11 @@ namespace Everon\View\Interfaces;
 interface TemplateCompiler
 {
     /**
-     * @param $scope_name
-     * @param $template_content
-     * @param array $data
-     * @return TemplateCompilerScope
+     * @param TemplateCompilerContext $Context
+     * @internal param \Everon\View\Interfaces\View $View
+     * @internal param $scope_name
+     * @internal param $template_content
+     * @internal param array $data
      */    
-    function compile($scope_name, $template_content, array $data);
+    function compile(TemplateCompilerContext $Context);
 }

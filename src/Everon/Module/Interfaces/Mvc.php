@@ -10,19 +10,22 @@
 namespace Everon\Module\Interfaces;
 
 use Everon\Interfaces\Dependency;
-use Everon\Interfaces\Module;
 use Everon\View;
 
 interface Mvc extends Module, View\Interfaces\Dependency\Manager
 {
     /**
-     * @param $name
+     * @param $layout_name
+     * @param $view_name
+     * @internal param $name
      * @return View\Interfaces\View
      */
-    function getViewByName($name);
+    function getViewByName($layout_name, $view_name);
 
     /**
+     * @param $layout_name
      * @param View\Interfaces\View $View
+     * @return void
      */
-    function setViewByViewName(View\Interfaces\View $View);
+    function setViewByViewName($layout_name, View\Interfaces\View $View);
 }

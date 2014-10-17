@@ -34,7 +34,7 @@ class Mapper implements Interfaces\Mapper
     /**
      * @inheritdoc
      */
-    public function getByDomainName($domain_name)
+    public function getTableName($domain_name)
     {
         /**
          * @var \Everon\Config\Interfaces\ItemDomain $Item
@@ -50,7 +50,7 @@ class Mapper implements Interfaces\Mapper
     /**
      * @inheritdoc
      */
-    public function getByDataMapperName($data_mapper_name)
+    public function getDomainName($data_mapper_name)
     {
         /**
          * @var \Everon\Config\Interfaces\ItemDomain $Item

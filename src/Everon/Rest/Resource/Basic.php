@@ -84,7 +84,7 @@ abstract class Basic implements Interfaces\ResourceBasic
      */
     public function setName($resource_name)
     {
-        return $this->getHref()->setResourceName($resource_name);
+        $this->getHref()->setResourceName($resource_name);
     }
 
     /**
@@ -92,7 +92,7 @@ abstract class Basic implements Interfaces\ResourceBasic
      */
     public function getName()
     {
-        $this->getHref()->getResourceName();
+        return $this->getHref()->getResourceName();
     }
     /**
      * @inheritdoc

@@ -14,7 +14,7 @@ use Everon\Interfaces\Config;
 use Everon\Exception;
 use Everon\Helper;
 
-class Manager implements Interfaces\Manager
+abstract class Handler implements Interfaces\Handler
 {
     use Dependency\Injection\ConfigManager;
     use Dependency\Injection\Factory;
@@ -79,7 +79,7 @@ class Manager implements Interfaces\Manager
          * @var \DirectoryIterator $Dir
          */
         $result = [];
-        foreach ($module_list as $Dir) {
+        foreach ($module_list as $Dir) {            
             if ($Dir->isDot()) {
                 continue;
             }
@@ -96,7 +96,7 @@ class Manager implements Interfaces\Manager
     /**
      * @inheritdoc
      */
-    public function getModule($name)
+    public function getModuleByName($name)
     {
         if ($this->modules === null) {
             $this->initModules();
@@ -106,6 +106,14 @@ class Manager implements Interfaces\Manager
         }
         
         return $this->modules[$name];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setModuleByName($name, Interfaces\Module $Module)
+    {
+        $this->modules[$name] = $Module;
     }
     
     /**

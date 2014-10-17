@@ -104,4 +104,47 @@ interface DataMapper
 
     function rollbackTransaction();
 
+    /**
+     * @param array $data
+     * @return array
+     */
+    function getInsertSql(array $data);
+
+    /**
+     * @param array $data
+     * @internal param array $id
+     * @return array
+     */
+    function getUpdateSql(array $data);
+
+    /**
+     * @param $id
+     * @return array
+     */
+    function getDeleteSql($id);
+
+    /**
+     * @param Criteria $Criteria
+     * @return array
+     */
+    function getFetchAllSql(Criteria $Criteria=null);
+
+    /**
+     * @param $select
+     * @param $a
+     * @param $b
+     * @param $on_a
+     * @param $on_b
+     * @param Criteria $Criteria
+     * @param string $type (left, right, ...)
+     * @return string
+     */
+    function getJoinSql($select, $a, $b, $on_a, $on_b, Criteria $Criteria=null, $type='');
+
+    /**
+     * @param Criteria $Criteria
+     * @return string
+     */
+    function getCountSql(Criteria $Criteria=null);
+
 }

@@ -43,5 +43,15 @@ interface Schema  extends \Everon\DataMapper\Interfaces\Dependency\SchemaReader
      * @return \Everon\DataMapper\Interfaces\Schema\Table
      * @throws \Everon\DataMapper\Exception\Schema
      */
-    function getTable($name);
+    function getTableByName($name);
+
+    /**
+     * @param string $database_locale
+     */
+    function setDatabaseTimezone($database_locale);
+
+    /**
+     * @return string
+     */
+    function getDatabaseTimezone();
 }

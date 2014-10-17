@@ -12,6 +12,8 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
      * @var array
      */
     protected $json_data = null;
+    
+    protected $json_result = null;
 
 
     /**
@@ -21,7 +23,7 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
     protected function prepareResponse($action, $result)
     {
         $this->getResponse()->setData([
-            'result' => $result,
+            'result' => ($this->json_result !== null) ? $this->json_result : $result,
             'data' => $this->json_data
         ]);
     }
@@ -45,5 +47,21 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
     public function getJsonData()
     {
         return $this->json_data;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getJsonResult()
+    {
+        return $this->json_result;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setJsonResult($json_result)
+    {
+        $this->json_result = (bool) $json_result;
     }
 }

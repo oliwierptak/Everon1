@@ -55,19 +55,24 @@ class CurlAdapter implements Interfaces\CurlAdapter
         $response = null;
         try {
             $response = curl_exec($curl);
+            if ($response === false) {
+                return null;
+            }
+            
             $this->http_response_code = (int) curl_getinfo($curl, CURLINFO_HTTP_CODE);
             if ($this->http_response_code !== 200 && $this->http_response_code !== 201 && $this->http_response_code !== 204) {
                 $error = json_decode($response, true);
                 $str = $error['data']['error'];
                 throw new Exception\Resource($str);
             }
+            
+            return $response;
         }
         catch (\Exception $e) {
             throw new Exception\Curl($e);
         }
         finally {
             curl_close($curl);
-            return $response;
         }
     }
 

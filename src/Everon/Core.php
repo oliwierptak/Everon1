@@ -9,8 +9,6 @@
  */
 namespace Everon;
 
-use Everon\Config;
-use Everon\Exception;
 
 abstract class Core implements Interfaces\Core
 {
@@ -22,13 +20,15 @@ abstract class Core implements Interfaces\Core
     use Dependency\Injection\Response;
     use Module\Dependency\Injection\ModuleManager;
 
+    use Helper\GetUrl;
+
     /**
      * @var Interfaces\Controller
      */
     protected $Controller = null;
 
     /**
-     * @var Interfaces\Module
+     * @var Module\Interfaces\Module
      */
     protected $Module = null;
 
@@ -41,9 +41,9 @@ abstract class Core implements Interfaces\Core
      * @var RequestIdentifier
      */
     protected $RequestIdentifier = null;
-    
+
     protected $previous_exception_handler = null;
-    
+
 
     /**
      * @param RequestIdentifier $RequestIdentifier
@@ -54,17 +54,17 @@ abstract class Core implements Interfaces\Core
         if ($this->RequestIdentifier !== null) {
             return;
         }
-        
+
         register_shutdown_function([$this, 'shutdown']);
-        
+
         $this->RequestIdentifier = $RequestIdentifier;
         $this->getLogger()->setRequestIdentifier($this->RequestIdentifier->getValue());
-        
+
         $this->previous_exception_handler = set_exception_handler([$this, 'handleExceptions']);
 
         $this->getModuleManager()->loadModuleDependencies();
         $this->Route = $this->getRouter()->getRouteByRequest($this->getRequest());
-        $this->Module = $this->getModuleManager()->getModule($this->Route->getModule());
+        $this->Module = $this->getModuleManager()->getModuleByName($this->Route->getModule());
 
         if ($this->Module === null) {
             throw new Exception\Core('No module defined for this request');
@@ -85,7 +85,7 @@ abstract class Core implements Interfaces\Core
     public function run(RequestIdentifier $RequestIdentifier)
     {
         $this->runOnce($RequestIdentifier);
-        
+
         $this->Controller = $this->Module->getController($this->Route->getController());
         $this->Controller->setCurrentRoute($this->Route);
         $this->Controller->execute($this->Route->getAction());
@@ -94,12 +94,12 @@ abstract class Core implements Interfaces\Core
     public function shutdown()
     {
         $data = $this->getRequestIdentifier()->getStats();
-        $sbs = vsprintf('%0dkb', $data['memory_at_start'] / 1024); 
+        $sbs = vsprintf('%0dkb', $data['memory_at_start'] / 1024);
         $sas = vsprintf('%0dkb', $data['memory_total'] / 1024);
         $mu = vsprintf('%0dkb', ($data['memory_total'] - $data['memory_at_start']) / 1024);
         $time = vsprintf('%.3f', round($data['time'], 3));
-        $s = "${time}s $mu $sbs/$sas"; 
-        
+        $s = "${time}s $mu $sbs/$sas";
+
         return $s;
     }
 
@@ -119,22 +119,24 @@ abstract class Core implements Interfaces\Core
      */
     protected function showException(\Exception $Exception, $Controller)
     {
-        $this->getLogger()->error($Exception->getMessage());
+        $this->getLogger()->error($Exception);
+        $this->getLogger()->trace($Exception);
 
         /**
          * @var \Everon\Mvc\Interfaces\Controller $Controller
          */
         if ($Controller === null) {
             try {
-                $error_handler = $this->getConfigManager()->getConfigValue('application.module.error_handler', null);
-                $Module =  $this->getModuleManager()->getModule($error_handler);
-                $Controller = $Module->getController('Error');
-            }
+                $error_module = $this->getConfigManager()->getConfigValue('application.error_handler.module', null);
+                $error_controller = $this->getConfigManager()->getConfigValue('application.error_handler.controller', null);
+                $Module = $this->getModuleManager()->getModuleByName($error_module);
+                $Controller = $Module->getController($error_controller);
+            } 
             catch (\Exception $e) {
                 $this->getLogger()->error('Error: '.$e.' while displaying exception: '.$Exception);
             }
         }
-        
+
         if ($Controller instanceof Interfaces\Controller) {
             $Controller->showException($Exception);
         }
@@ -146,4 +148,20 @@ abstract class Core implements Interfaces\Core
             restore_exception_handler($this->previous_exception_handler);
         }
     }
-}
+
+    /**
+     * @return Interfaces\Controller
+     */
+    public function getController()
+    {
+        return $this->Controller;
+    }
+
+    /**
+     * @param Interfaces\Controller $Controller
+     */
+    public function setController(Interfaces\Controller $Controller)
+    {
+        $this->Controller = $Controller;
+    }
+}   

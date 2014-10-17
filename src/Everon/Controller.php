@@ -24,13 +24,20 @@ abstract class Controller implements Interfaces\Controller
     use Helper\IsCallable;
     use Helper\ToString;
     use Helper\String\LastTokenToName;
+    use Helper\GetUrl;
 
+    /**
+     * @var string
+     */
     protected $name = null;
-    
+
+    /**
+     * @var string
+     */
     protected $action = null;
 
     /**
-     * @var Interfaces\Module
+     * @var Module\Interfaces\Module
      */
     protected $Module = null;
 
@@ -39,6 +46,16 @@ abstract class Controller implements Interfaces\Controller
      * @var Config\Interfaces\ItemRouter
      */
     protected $CurrentRoute = null;
+
+    /**
+     * @var bool
+     */
+    protected $were_error_handled = null;
+
+    /**
+     * @var bool
+     */
+    protected $is_redirecting = false;
 
 
     /**
@@ -49,23 +66,25 @@ abstract class Controller implements Interfaces\Controller
     protected abstract function prepareResponse($action, $result);
 
     protected abstract function response();
-    
-    
-    public function __construct(Interfaces\Module $Module)
-    {
-        $this->Module = $Module;
-    }
 
     /**
-     * @param \Everon\Interfaces\Module $Module
+     * @param Module\Interfaces\Module $Module
      */
-    public function setModule($Module)
+    public function __construct(Module\Interfaces\Module $Module)
     {
         $this->Module = $Module;
     }
 
     /**
-     * @return \Everon\Interfaces\Module
+     * @param \Everon\Module\Interfaces\Module $Module
+     */
+    public function setModule(Module\Interfaces\Module $Module)
+    {
+        $this->Module = $Module;
+    }
+
+    /**
+     * @return \Everon\Module\Interfaces\Module
      */
     public function getModule()
     {
@@ -81,6 +100,9 @@ abstract class Controller implements Interfaces\Controller
         $this->name = $name;
     }
 
+    /**
+     * @return string
+     */
     public function getName()
     {
         if ($this->name === null) {
@@ -91,27 +113,19 @@ abstract class Controller implements Interfaces\Controller
     }
 
     /**
-     * @inheritdoc
+     * @param string $action
      */
-    public function getUrl($name, $query=[], $get=[])
+    public function setAction($action)
     {
-        $Item = $this->getConfigManager()->getConfigByName('router')->getItemByName($name);
-        if ($Item === null) {
-            throw new Exception\Controller('Invalid router config name: "%s"', $name);
-        }
+        $this->action = $action;
+    }
 
-        $Item->compileUrl($query);
-        $url = $Item->getParsedUrl();
-
-        $get_url = '';
-        if (empty($get) === false) {
-            $get_url = http_build_query($get);
-            if (trim($get_url) !== '') {
-                $get_url = '?'.$get_url;
-            }
-        }
-
-        return $url.$get_url;
+    /**
+     * @return string
+     */
+    public function getAction()
+    {
+        return $this->action;
     }
 
     /**
@@ -181,7 +195,9 @@ abstract class Controller implements Interfaces\Controller
                 $result_on_error = $this->executeOnError($action);
             }
             
-            if ($result_on_error === null) {
+            if ($result_on_error === null && 
+                $this->were_error_handled !== true &&
+                $this->is_redirecting === false) {
                 throw new Exception\InvalidControllerResponse(
                     'Invalid controller response for: "%s@%s"', [$this->getName(),$action]
                 );

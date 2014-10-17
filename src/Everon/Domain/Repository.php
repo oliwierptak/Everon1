@@ -13,6 +13,7 @@ use Everon\DataMapper\Interfaces\Criteria;
 use Everon\Dependency;
 use Everon\Domain;
 use Everon\Domain\Interfaces;
+use Everon\Exception;
 use Everon\Interfaces\Collection;
 use Everon\Interfaces\DataMapper;
 use Everon\Helper;
@@ -35,13 +36,6 @@ abstract class Repository implements Interfaces\Repository
      */
     protected $RelationCollection = null;
 
-    /**
-     * @param Interfaces\Entity $Entity
-     * @param Criteria $Criteria
-     * @return mixed
-     */
-    abstract public function buildEntityRelations(Interfaces\Entity $Entity, Criteria $Criteria);
-
 
     /**
      * @param $name
@@ -52,13 +46,72 @@ abstract class Repository implements Interfaces\Repository
         $this->name = $name;
         $this->Mapper = $Mapper;
     }
-    
+
+    /**
+     * @param Interfaces\Entity $Entity
+     * @param Criteria $RelationCriteria
+     */
     protected function buildRelations(Interfaces\Entity $Entity, Criteria $RelationCriteria=null)
     {
         $RelationCriteria = $RelationCriteria ?: (new \Everon\DataMapper\Criteria())->limit(20)->offset(0);
         $this->buildEntityRelations($Entity, $RelationCriteria);
     }
-    
+
+    /**
+     * Makes sure data defined in the Entity is in proper format
+     *
+     * @param array $data
+     * @return array
+     * @throws \Everon\Exception\Domain
+     */
+    protected function prepareDataForEntity(array $data)
+    {
+        /**
+         * @var \Everon\DataMapper\Interfaces\Schema\Column $Column
+         */
+        foreach ($data as $name => $value) {
+            if ($this->getMapper()->getTable()->hasColumn($name)) {
+                if (array_key_exists($name, $data) === false) {
+                    throw new Exception\Domain('Missing Entity data: "%s" for "%s"', [$name, $this->getMapper()->getTable()->getName()]);
+                }
+                $Column = $this->getMapper()->getTable()->getColumnByName($name);
+                $data[$name] = $Column->getDataForEntity($data[$name]);
+            }
+        }
+
+        return $data;
+    }
+
+    /**
+     * @param array $data
+     * @param Criteria $RelationCriteria
+     * @return Interfaces\Entity
+     */
+    protected function buildEntity(array $data, Criteria $RelationCriteria=null)
+    {
+        $data = $this->prepareDataForEntity($data);
+        $Entity = $this->getFactory()->buildDomainEntity($this->getName(), $this->getMapper()->getTable()->getPk(), $data);
+        $this->buildRelations($Entity, $RelationCriteria);
+        return $Entity;
+    }
+
+    /**
+     * @param Interfaces\Entity $Entity
+     * @param Criteria $Criteria
+     * @return mixed
+     */
+    public function buildEntityRelations(Interfaces\Entity $Entity, Criteria $Criteria)
+    {
+        $RelationCollection = new Helper\Collection([]);
+        foreach ($Entity->getRelationDefinition() as $relation_domain_name => $type) {
+            $Relation = $this->getFactory()->buildDomainRelation($relation_domain_name, $this->getName(), $Entity);
+            $Relation->setRelationCriteria(clone $Criteria);
+            $RelationCollection->set($relation_domain_name, $Relation);
+        }
+
+        $Entity->setRelationCollection($RelationCollection);
+    }
+
     /**
      * @inheritdoc
      */
@@ -74,7 +127,7 @@ abstract class Repository implements Interfaces\Repository
     {
         $this->Mapper = $Mapper;
     }
-    
+
     public function getName()
     {
         return $this->name;
@@ -83,12 +136,11 @@ abstract class Repository implements Interfaces\Repository
     /**
      * @inheritdoc
      */
-    public function buildFromArray(array $data)
+    public function buildFromArray(array $data, Criteria $RelationCriteria=null)
     {
-        $Entity = $this->buildEntity($data);
-        return $Entity;
+        return $this->buildEntity($data, $RelationCriteria);
     }
-   
+
     /**
      * @inheritdoc
      */
@@ -98,24 +150,18 @@ abstract class Repository implements Interfaces\Repository
         $this->persist($Entity, $user_id);
         return $Entity;
     }
-      
-    protected function buildEntity(array $data, Criteria $RelationCriteria=null)
-    {
-        $Entity = $this->getFactory()->buildDomainEntity($this->getName(), $this->getMapper()->getTable()->getPk(), $data);
-        $this->buildRelations($Entity, $RelationCriteria);
-        return $Entity;
-    } 
-    
-    public function validateEntityData(Interfaces\Entity $Entity)
+
+    /**
+     * @inheritdoc
+     */
+    public function validateEntity(Interfaces\Entity $Entity)
     {
         $data = $Entity->toArray();
-        return $this->getMapper()->getTable()->validateData($data, $Entity->isNew() === false);
+        return $this->getMapper()->getTable()->prepareDataForSql($data, $Entity->isNew() === false);
     }
-    
+
     /**
-     * @param $id
-     * @param Criteria $RelationCriteria
-     * @return Interfaces\Entity|null
+     * @inheritdoc
      */
     public function getEntityById($id, Criteria $RelationCriteria=null)
     {

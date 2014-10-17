@@ -70,11 +70,11 @@ abstract class Handler implements Interfaces\Handler
             else if (strcasecmp($action, 'get') === 0) {
                 switch ($domain_type) {
                     case 'Model':
-                        return $this->getModel($domain_name);
+                        return $this->getModelByName($domain_name);
                         break;
 
                     case 'Repository':
-                        return $this->getRepository($domain_name);
+                        return $this->getRepositoryByName($domain_name);
                         break;
                 }
             }
@@ -86,14 +86,14 @@ abstract class Handler implements Interfaces\Handler
     /**
      * @inheritdoc
      */
-    public function getModel($domain_name)
+    public function getModelByName($domain_name)
     {
         if (isset($this->models[$domain_name]) === false) {
             $this->models[$domain_name] = $this->getFactory()->buildDomainModel($domain_name);
         }
 
         if (isset($this->models[$domain_name]) === false) {
-            throw new SchemaException('Invalid model name: "%s"', $domain_name);
+            throw new Exception\Domain('Invalid model name: "%s"', $domain_name);
         }
 
         return $this->models[$domain_name];
@@ -102,7 +102,7 @@ abstract class Handler implements Interfaces\Handler
     /**
      * @inheritdoc
      */
-    public function setModel($name, $Model)
+    public function setModelByName($name, $Model)
     {
         $this->repositories[$name] = $Model;
     }
@@ -110,14 +110,14 @@ abstract class Handler implements Interfaces\Handler
     /**
      * @inheritdoc
      */
-    public function getRepository($domain_name)
+    public function getRepositoryByName($domain_name)
     {
         if (isset($this->repositories[$domain_name]) === false) {
-            $data_mapper_name = $this->getDataMapperManager()->getDomainMapper()->getByDomainName($domain_name);
+            $data_mapper_name = $this->getDataMapperManager()->getDomainMapper()->getTableName($domain_name);
             $this->assertIsNull($data_mapper_name, 'Invalid mapper definition for domain: "'.$domain_name.'"', 'Everon\Domain\Exception\Mapper');
-
+            
             $Schema = $this->getDataMapperManager()->getSchema();
-            $DataMapper = $this->getFactory()->buildDataMapper($domain_name, $Schema->getTable($data_mapper_name), $Schema);
+            $DataMapper = $this->getFactory()->buildDataMapper($domain_name, $Schema->getTableByName($data_mapper_name), $Schema);
             $this->repositories[$domain_name] = $this->getFactory()->buildDomainRepository($domain_name, $DataMapper);
         }
         
@@ -131,7 +131,7 @@ abstract class Handler implements Interfaces\Handler
     /**
      * @inheritdoc
      */
-    public function setRepository($name, Interfaces\Repository $Repository)
+    public function setRepositoryByName($name, Interfaces\Repository $Repository)
     {
         $this->repositories[$name] = $Repository;
     }
@@ -141,7 +141,7 @@ abstract class Handler implements Interfaces\Handler
      */
     public function buildEntityFromArray($domain_name, array $data)
     {
-        $Repository = $this->getRepository($domain_name);
+        $Repository = $this->getRepositoryByName($domain_name);
         return $Repository->buildFromArray($data);
     }
 }

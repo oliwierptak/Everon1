@@ -13,7 +13,7 @@ use Everon\Helper;
 use Everon\View\Interfaces;
 
 
-abstract class Element extends Helper\Popo implements Interfaces\Element
+abstract class Element extends Helper\PopoProps implements Interfaces\Element
 {
     /**
      * @param array $defaults
@@ -25,27 +25,5 @@ abstract class Element extends Helper\Popo implements Interfaces\Element
         $data = array_merge($defaults, $data);
 
         parent::__construct($data);
-    }
-
-    /**
-     * @param $name
-     * @param $data
-     */
-    public function set($name, $data)
-    {
-        $this->data[$name] = $data;
-    }
-
-    /**
-     * @param $name
-     * @return null
-     */
-    public function get($name)
-    {
-        if (isset($this->data[$name]) === false) {
-            return null;
-        }
-        
-        return $this->data[$name];
     }
 }

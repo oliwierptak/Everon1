@@ -9,14 +9,24 @@
  */
 namespace Everon\View\Interfaces;
 
-interface TemplateCompilerScope
+interface TemplateCompilerContext
 {
-    function setName($name);
-    function getName();
+    function setScopeName($name);
+    function getScopeName();
     function setCompiled($compiled);
     function getCompiled();
     function setPhp($php);
     function getPhp();
     function getData();
-    function setData(array $data);    
+    function setData(array $data);
+    
+    /**
+     * @param mixed $Scope
+     */
+    function setScope($Scope);
+
+    /**
+     * @return mixed
+     */
+    function getScope();
 }

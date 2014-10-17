@@ -68,9 +68,9 @@ class ExpressionMatcher implements Interfaces\ExpressionMatcher
             $this->values[$item] = $data[$config_section][$config_section_variable];
         }
         
-        if (empty($this->values)) { //todo fix this madness
-            foreach ($configs_data as $name => $items) { //remove inheritance info from section names in order to prepare values, eg. 'myitem < default'
-                foreach ($items as $section_name => $section_items) {
+        foreach ($configs_data as $name => $items) { //remove inheritance info from section names in order to prepare values, eg. 'myitem < default'
+            foreach ($items as $section_name => $section_items) {
+                if (strpos($section_name, '<') !== false) {
                     $tokens = explode('<', $section_name);
                     if (count($tokens) === 2) {
                         $new_section_name = trim($tokens[0]);
@@ -79,12 +79,12 @@ class ExpressionMatcher implements Interfaces\ExpressionMatcher
                     }
                 }
             }
-            
-            $this->values = $this->arrayDotKeysFlattern($configs_data);
-            $this->values = $this->arrayDotKeysFlattern($this->values);
-            $this->values = $this->arrayDotKeysFlattern($this->values);
-            $this->values = $this->arrayPrefixKey('%', $this->values, '%');
         }
+
+        $this->values = $this->arrayDotKeysFlattern($configs_data);
+        $this->values = $this->arrayDotKeysFlattern($this->values);
+        $this->values = $this->arrayDotKeysFlattern($this->values);
+        $this->values = $this->arrayPrefixKey('%', $this->values, '%');
         
         //compile to update self references, eg.
         //'%application.assets.themes%' => string (34) "%application.env.url_statc%themes/"
@@ -110,7 +110,6 @@ class ExpressionMatcher implements Interfaces\ExpressionMatcher
             array_walk_recursive($config_data, $SetExpressions);
         }
 
-        $this->expressions = array_keys($this->expressions);
         $this->expressions = array_merge($this->expressions, $custom_expressions);
     }
 }

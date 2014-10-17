@@ -198,5 +198,22 @@ class RequestValidator implements Interfaces\RequestValidator
     {
         return $this->errors === null;
     }
-    
+
+    /**
+     * @param $name
+     * @param $message
+     */
+    public function addError($name, $message)
+    {
+        $this->errors[$name] = $message;
+    }
+
+    /**
+     * @param $name
+     */
+    public function removeError($name)
+    {
+        $this->errors[$name] = null;
+        unset($this->errors[$name]);
+    }
 }
