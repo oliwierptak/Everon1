@@ -267,7 +267,7 @@ abstract class Request implements Interfaces\Request
     protected function sanitizeInputToken(&$value, $index)
     {
         if ($value !== null) {
-            $value = strip_tags($value, '<p><a><br/><img><b><strong><i><em><u><ul><li><span><h1><h2><h3><h4><h5><hr/>');
+            $value = strip_tags($value, '<p><a><br><img><b><strong><i><em><u><ul><li><span><h1><h2><h3><h4><h5><hr>');
         }
     }
 
