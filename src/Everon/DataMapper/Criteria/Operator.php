@@ -28,6 +28,7 @@ abstract class Operator implements Interfaces\Criteria\Operator
     const TYPE_SMALLER_OR_EQUAL = 'SmallerOrEqual';
     const TYPE_BETWEEN = 'Between';
     const TYPE_NOT_BETWEEN = 'NotBetween';
+    const TYPE_RAW = 'Raw';
 
     const SQL_EQUAL = '=';
     const SQL_NOT_EQUAL = '!=';
@@ -42,6 +43,7 @@ abstract class Operator implements Interfaces\Criteria\Operator
     const SQL_SMALLER_OR_EQUAL = '<=';
     const SQL_BETWEEN = 'BETWEEN';
     const SQL_NOT_BETWEEN = 'NOT BETWEEN';
+    const SQL_RAW = 'RAW';
 
     /**
      * @var string

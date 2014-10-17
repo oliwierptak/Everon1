@@ -38,7 +38,8 @@ class Builder implements Interfaces\Criteria\Builder
         Operator::SQL_SMALLER_THEN => Operator::TYPE_SMALLER_THEN,
         Operator::SQL_SMALLER_OR_EQUAL => Operator::TYPE_SMALLER_OR_EQUAL,
         Operator::SQL_BETWEEN => Operator::TYPE_BETWEEN,
-        Operator::SQL_BETWEEN => Operator::TYPE_NOT_BETWEEN
+        Operator::SQL_BETWEEN => Operator::TYPE_NOT_BETWEEN,
+        Operator::SQL_RAW => Operator::TYPE_RAW
     ];
     
     /**
@@ -140,6 +141,34 @@ class Builder implements Interfaces\Criteria\Builder
         return $this;
     }
 
+    /**
+     * @inheritdoc
+     */
+    public function whereRaw($sql)
+    {
+        $this->current++;
+        $Criterium = $this->getFactory()->buildDataMapperCriterium($sql, 'raw', null);
+        $this->getCurrentContainer()->getCriteria()->where($Criterium);
+        $this->getCurrentContainer()->setGlue(null);
+        return $this;
+    }
+    
+    public function andWhereRaw($sql)
+    {
+        $Criterium = $this->getFactory()->buildDataMapperCriterium($sql, 'raw', null);
+        $this->getCurrentContainer()->getCriteria()->andWhere($Criterium);
+        $this->getCurrentContainer()->setGlue(self::GLUE_AND);
+        return $this;
+    }
+
+    public function orWhereRaw($sql)
+    {
+        $Criterium = $this->getFactory()->buildDataMapperCriterium($sql, 'raw', null);
+        $this->getCurrentContainer()->getCriteria()->orWhere($Criterium);
+        $this->getCurrentContainer()->setGlue(self::GLUE_OR);
+        return $this;
+    }
+    
     /**
      * @inheritdoc
      */

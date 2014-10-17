@@ -44,6 +44,24 @@ interface Builder extends \Everon\Interfaces\Arrayable, \Everon\Interfaces\Strin
     function orWhere($column, $operator, $value);
 
     /**
+     * @param $sql
+     * @return $this
+     */
+    function whereRaw($sql);
+
+    /**
+     * @param $sql
+     * @return $this
+     */
+    function andWhereRaw($sql);
+
+    /**
+     * @param $sql
+     * @return $this
+     */
+    function orWhereRaw($sql);
+
+    /**
      * @return Interfaces\Criteria\Container
      */
     function getCurrentContainer();
