@@ -44,7 +44,7 @@ trait Arrays
                 $data[$name] = $this->arrayMergeDefault($default[$name], (array) $value_data);
             }
             else {
-                if (isset($data[$name]) === false) {
+                if (array_key_exists($name, $data) === false) {
                     $data[$name] = $default[$name];
                 }
             }
@@ -231,5 +231,25 @@ trait Arrays
             unset($data[$index]);
         }
         return $data;
+    }
+
+
+    /**
+     * @param array $search
+     * @param array $replace
+     * @return array
+     */
+    protected function arrayReplaceKeysByArrayValues(array $search,array $replace)
+    {
+
+        if ((sizeof($search) !== sizeof($replace)) || (sizeof($search) == 0)) {
+            return $search;
+        }
+        foreach($search as $k => $v) {
+            $search[$replace[$k]] = $v;
+            unset($search[$k]);
+        }
+
+        return $search;
     }
 }

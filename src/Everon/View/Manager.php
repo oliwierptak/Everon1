@@ -79,7 +79,7 @@ class Manager implements Interfaces\Manager
      * @internal param $layout_name
      * @return Interfaces\View
      */
-    public function createView($view_name, $template_directory = null, $namespace = 'Everon\View')
+    public function createView($view_name, $template_directory=null, $namespace='Everon\View')
     {
         /*
         $view_data = $this->getConfigManager()->getConfigValue('view.'.$request_name, null);
@@ -91,6 +91,7 @@ class Manager implements Interfaces\Manager
 
         if ($template_directory !== null) {
             $TemplateDirectory = new \SplFileInfo($template_directory);
+            $template_directory = $TemplateDirectory->getPathname().DIRECTORY_SEPARATOR;
             if  ($TemplateDirectory->isDir() === false) {
                 $template_directory = null;
             }
@@ -98,6 +99,7 @@ class Manager implements Interfaces\Manager
         
         $View = $this->getFactory()->buildView($view_name, $template_directory, $default_extension, $namespace);
         $View->setViewManager($this);
+        $View->setData($this->getConfigManager()->getConfigValue('view.Index'));
         return $View;
     }
 

@@ -9,8 +9,40 @@
  */
 namespace Everon\Domain\Interfaces;
 
-interface Model
+interface Model extends \Everon\Domain\Interfaces\Dependency\DomainManager
 {
+    /**
+     * @param $id
+     * @return Entity|null
+     */
+    function getById($id);
+    
+    /**
+     * @param Entity $Entity
+     * @param $relation_name
+     * @param array $data
+     * @param null $user_id
+     */
+    function addCollection(Entity $Entity, $relation_name, array $data, $user_id=null);
+
+    /**
+     * @param Entity $Entity
+     * @param $relation_name
+     * @param array $data
+     * @param null $user_id
+     */
+    function saveCollection(Entity $Entity, $relation_name, array $data, $user_id=null);
+
+    /**
+     * Send an array with ids of items to delete, eg [{id: 2}, {id: 3}]
+     * 
+     * @param Entity $Entity
+     * @param $relation_name
+     * @param array $data
+     * @param null $user_id
+     */
+    function deleteCollection(Entity $Entity, $relation_name, array $data, $user_id=null);
+        
     /**
      * @param array $data
      * @return Entity
@@ -33,7 +65,7 @@ interface Model
     function getRepository();
 
     /**
-     * @param array $data
+     * @param Repository $Repository
      */
-    function validateEntityData(array $data);
+    function setRepository(Repository $Repository);
 }

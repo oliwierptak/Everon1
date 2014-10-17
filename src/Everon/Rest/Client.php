@@ -9,15 +9,14 @@
  */
 namespace Everon\Rest;
 
+use Everon\Dependency;
+use Everon\Domain;
 use Everon\Exception;
 use Everon\Rest\Interfaces;
-use Everon\Dependency;
-use Everon\Rest\Dependency\Injection\ResourceManager as InjectResourceManager;
 
 class Client implements Interfaces\Client
 {
-    use \Everon\Domain\Dependency\Injection\DomainManager;
-    use InjectResourceManager;
+    use Domain\Dependency\Injection\DomainManager;
     
     /**
      * @var \Everon\Rest\Interfaces\CurlAdapter
@@ -29,7 +28,10 @@ class Client implements Interfaces\Client
      */
     protected $ResourceHref = null;
 
-    
+    /**
+     * @param Interfaces\ResourceHref $ResourceHref
+     * @param Interfaces\CurlAdapter $CurlAdapter
+     */
     public function __construct(Interfaces\ResourceHref $ResourceHref, Interfaces\CurlAdapter $CurlAdapter)
     {
         $this->ResourceHref = $ResourceHref;
@@ -66,7 +68,6 @@ class Client implements Interfaces\Client
         return json_decode($result, true);
     }
 
-
     /**
      * @inheritdoc
      */
@@ -89,7 +90,7 @@ class Client implements Interfaces\Client
     }
 
     /**
-     * @param Interfaces\CurlAdapter $CurlAdapter
+     * @inheritdoc
      */
     public function setCurlAdapter($CurlAdapter)
     {
@@ -97,7 +98,7 @@ class Client implements Interfaces\Client
     }
 
     /**
-     * @return Interfaces\CurlAdapter
+     * @inheritdoc
      */
     public function getCurlAdapter()
     {
@@ -105,7 +106,7 @@ class Client implements Interfaces\Client
     }
 
     /**
-     * @param Interfaces\ResourceHref $ResourceHref
+     * @inheritdoc
      */
     public function setResourceHref($ResourceHref)
     {
@@ -113,7 +114,7 @@ class Client implements Interfaces\Client
     }
 
     /**
-     * @return Interfaces\ResourceHref
+     * @inheritdoc
      */
     public function getResourceHref()
     {

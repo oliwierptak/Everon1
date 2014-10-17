@@ -30,10 +30,6 @@ interface Core
     function handleExceptions(\Exception $Exception);
 
     /**
-     * @inheritdoc
-     */
-
-    /**
      * @param Interfaces\Controller $Controller
      */
     function setController(\Everon\Interfaces\Controller $Controller);
@@ -42,4 +38,13 @@ interface Core
      * @return Interfaces\Controller
      */
     function getController();
+
+    function terminate();
+
+    /**
+     * @param $name
+     * @param array $query
+     * @param array $get
+     */
+    function redirectAndTerminate($name, $query=[], $get=[]);
 }

@@ -9,7 +9,7 @@
  */
 namespace Everon\Module\Interfaces;
 
-interface Handler extends \Everon\Config\Interfaces\Dependency\Manager
+interface Handler extends \Everon\Config\Interfaces\Dependency\Manager, \Everon\Interfaces\Dependency\Factory, \Everon\Interfaces\Dependency\FileSystem
 {
     /**
      * @param $name

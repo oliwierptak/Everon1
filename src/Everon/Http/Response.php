@@ -60,7 +60,7 @@ class Response extends BasicResponse implements Interfaces\Response
     
     protected function sendHeaders()
     {
-        $this->HeaderCollection->set('HTTP/1.1 '.$this->status_code, '');
+        http_response_code($this->status_code);
         $this->HeaderCollection->set('EVRID', $this->guid);
 
         /**
@@ -86,6 +86,8 @@ class Response extends BasicResponse implements Interfaces\Response
                 header($name, false);
             }
         }
+        
+        //sd($this->HeaderCollection->toArray());
     }
 
     /**
@@ -273,5 +275,29 @@ class Response extends BasicResponse implements Interfaces\Response
     public function wasStatusSet()
     {
         return $this->status_code_set;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isError()
+    {
+        return $this->isClientError() || $this->isServerError();
+    }
+
+    /**
+     * @return bool
+     */
+    public function isClientError()
+    {
+        return $this->status_code >= 400 && $this->status_code < 500;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isServerError()
+    {
+        return $this->status_code >= 500 && $this->status_code < 600;
     }
 }   

@@ -12,37 +12,37 @@ namespace Everon\Domain\Interfaces;
 use Everon\DataMapper;
 use Everon\Domain;
 
-interface Relation extends \Everon\Interfaces\Arrayable
+interface Relation extends \Everon\Interfaces\Arrayable, Dependency\DomainManager
 {
     /**
      * @return Domain\Interfaces\Entity
      */
-     function getEntity();
+     function getOwnerEntity();
 
     /**
      * @param Domain\Interfaces\Entity $Entity
      */
-     function setEntity(Domain\Interfaces\Entity $Entity);
+     function setOwnerEntity(Domain\Interfaces\Entity $Entity);
 
     /**
-     * @return DataMapper\Interfaces\Criteria
+     * @return DataMapper\Interfaces\CriteriaOLD
      */
      function getCriteria();
 
     /**
-     * @param DataMapper\Interfaces\Criteria $Criteria
+     * @param DataMapper\Interfaces\CriteriaOLD $Criteria
      */
-     function setCriteria(DataMapper\Interfaces\Criteria $Criteria);
+     function setCriteria(DataMapper\Interfaces\CriteriaOLD $Criteria);
 
     /**
-     * @return DataMapper\Interfaces\Criteria
+     * @return DataMapper\Interfaces\CriteriaOLD
      */
-     function getRelationCriteria();
+     function getEntityRelationCriteria();
 
     /**
-     * @param DataMapper\Interfaces\Criteria $RelationCriteria
+     * @param DataMapper\Interfaces\CriteriaOLD $RelationCriteria
      */
-     function setRelationCriteria(DataMapper\Interfaces\Criteria $RelationCriteria);
+     function setEntityRelationCriteria(DataMapper\Interfaces\CriteriaOLD $RelationCriteria);
 
     /**
      * @return \Everon\Interfaces\DataMapper
@@ -80,14 +80,25 @@ interface Relation extends \Everon\Interfaces\Arrayable
     function setType($type);
 
     /**
+     * @param \Everon\Domain\Interfaces\RelationMapper $RelationMapper
+     */
+    function setRelationMapper(Domain\Interfaces\RelationMapper $RelationMapper);
+        
+    /**
+     * @return \Everon\Domain\Interfaces\RelationMapper
+     */
+    function getRelationMapper();
+
+    /**
      * @param \Everon\Interfaces\Collection $Collection
      */
     function setData(\Everon\Interfaces\Collection $Collection);
 
     /**
+     * @param DataMapper\Interfaces\CriteriaOLD $Criteria 
      * @return \Everon\Interfaces\Collection
      */
-    function getData();
+    function getData(DataMapper\Interfaces\CriteriaOLD $Criteria=null);
 
     function getCount();
 

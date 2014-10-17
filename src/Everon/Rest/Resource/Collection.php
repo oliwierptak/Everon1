@@ -47,9 +47,9 @@ class Collection extends Basic implements Interfaces\ResourceCollection
         $this->Paginator = $Paginator;
     }
 
-    protected function getToArray()
+    protected function getToArray($deep=false)
     {
-        $data = parent::getToArray();
+        $data = parent::getToArray($deep);
         //$data = $this->arrayMergeDefault($data, $this->getPaginator()->toArray());
         
         $data['first'] = $this->first;

@@ -9,7 +9,7 @@
  */
 namespace Everon\Module\Interfaces\Dependency;
 
-interface Manager
+interface ModuleManager
 {
     /**
      * @return \Everon\Module\Interfaces\Manager

@@ -14,9 +14,11 @@ use Everon\DataMapper\Interfaces\Schema;
 
 class ForeignKey extends Constraint implements Schema\ForeignKey 
 {
-    protected $referenced_table_name = null;
+    protected $foreign_schema_name = null;
     
-    protected $referenced_column_name = null;
+    protected $foreign_table_name = null;
+    
+    protected $foreign_column_name = null;
     
     protected $column_name = null;
 
@@ -30,9 +32,11 @@ class ForeignKey extends Constraint implements Schema\ForeignKey
         $this->unlock();
 
         $PrimaryKeyInfo = new Helper\PopoProps($data);
-        $this->referenced_table_name = $PrimaryKeyInfo->foreign_table_name;
-        $this->referenced_column_name = $PrimaryKeyInfo->foreign_column_name;
+        $this->foreign_schema_name = $PrimaryKeyInfo->foreign_schema_name;
+        $this->foreign_table_name = $PrimaryKeyInfo->foreign_table_name;
+        $this->foreign_column_name = $PrimaryKeyInfo->foreign_column_name;
         $this->column_name = $PrimaryKeyInfo->column_name;
+        
         $this->lock();
     }
 
@@ -55,32 +59,57 @@ class ForeignKey extends Constraint implements Schema\ForeignKey
     /**
      * @param $referenced_table_name
      */
-    public function setReferencedTableName($referenced_table_name)
+    public function setForeignTableName($referenced_table_name)
     {
-        $this->referenced_table_name = $referenced_table_name;
+        $this->foreign_table_name = $referenced_table_name;
     }
 
     /**
      * @return string
      */
-    public function getReferencedTableName()
+    public function getForeignTableName()
     {
-        return $this->referenced_table_name;
+        return $this->foreign_table_name;
     }
 
     /**
      * @param $referenced_column_name
      */
-    public function setReferencedColumnName($referenced_column_name)
+    public function setForeignColumnName($referenced_column_name)
     {
-        $this->referenced_column_name = $referenced_column_name;
+        $this->foreign_column_name = $referenced_column_name;
     }
 
     /**
      * @return string
      */
-    public function getReferencedColumnName()
+    public function getForeignColumnName()
     {
-        return $this->referenced_column_name;
+        return $this->foreign_column_name;
     }
+
+    /**
+     * @param null $referenced_schema_name
+     */
+    public function setForeignSchemaName($referenced_schema_name)
+    {
+        $this->foreign_schema_name = $referenced_schema_name;
+    }
+
+    /**
+     * @return null
+     */
+    public function getForeignSchemaName()
+    {
+        return $this->foreign_schema_name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getForeignFullTableName()
+    {
+        return $this->getForeignSchemaName().'.'.$this->getForeignTableName();
+    }
+    
 }

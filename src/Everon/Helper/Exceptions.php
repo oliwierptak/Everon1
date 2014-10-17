@@ -26,7 +26,7 @@ trait Exceptions
             $parameters = array($parameters);
         }
 
-        return vsprintf($message, $parameters);
+        return @vsprintf($message, $parameters);
     }
 
     /**

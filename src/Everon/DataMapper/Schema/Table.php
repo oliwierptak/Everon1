@@ -9,18 +9,23 @@
  */
 namespace Everon\DataMapper\Schema;
 
+use Everon\Dependency;
 use Everon\DataMapper\Interfaces;
 use Everon\DataMapper\Exception;
 use Everon\Helper;
 
 class Table implements Interfaces\Schema\Table
 {
+    use Dependency\Injection\Logger;
+    
     use Helper\Asserts\IsNumericAndNotZero;
     use Helper\Asserts\IsStringAndNotEmpty;
     use Helper\Exceptions;
     use Helper\Immutable;
     
     protected $name = null;
+    
+    protected $original_name = null; //todo view_only
     
     protected $schema = null;
     
@@ -127,6 +132,34 @@ class Table implements Interfaces\Schema\Table
     /**
      * @inheritdoc
      */
+    public function getForeignKeyByName($name)
+    {
+        if (isset($this->foreign_keys[$name]) === false) {
+            throw new Exception\Table('Invalid foreign key name: "%s" in table: "%s"', [$name, $this->getFullName()]);
+        }
+        return $this->foreign_keys[$name];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getForeignKeyByTableName($foreign_table_name)
+    {
+        /**
+         * @var \Everon\DataMapper\Interfaces\Schema\ForeignKey $ForeignKey 
+         */
+        foreach ($this->foreign_keys as $column_name => $ForeignKey) {
+            if (strcasecmp($ForeignKey->getForeignFullTableName(), $foreign_table_name) === 0) {
+                return $ForeignKey;
+            }
+        }
+        
+        return null;
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function getPrimaryKeys()
     {
         return $this->primary_keys;
@@ -205,14 +238,19 @@ class Table implements Interfaces\Schema\Table
          */
         foreach ($this->getColumns() as $name => $Column) {
             if ($Column->isPk()) {
-                $entity_data[$name] = null;
+                $entity_data[$Column->getName()] = null;
                 continue;
             }
             
-            if (array_key_exists($name, $data) === false) {
-                throw new Exception\Table('Invalid data value for column: "%s"', $name);
+            if ($Column->isNullable() === false && array_key_exists($name, $data) === false) {
+                throw new Exception\Table('Missing data value for column: "%s@%s"', [$this->getName(), $name]);
             }
 
+            if (array_key_exists($name, $data) === false) {
+                $this->getLogger()->warning('Entity property not set. Using null for: "%s@%s"', [$Column->getTable(), $name]);
+                $data[$name] = null;
+            }
+            
             $value = $Column->getDataForSql($data[$name]);
             $value = $Column->validateColumnValue($value); //order of execution matters: getDataForSql() before validateColumnValue()
             $entity_data[$name] = $value;
@@ -239,6 +277,22 @@ class Table implements Interfaces\Schema\Table
         }
 
         return $data[$pk_name];
+    }
+
+    /**
+     * @param string $original_name
+     */
+    public function setOriginalName($original_name)
+    {
+        $this->original_name = $original_name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getOriginalName()
+    {
+        return $this->original_name;
     }
     
     public function __toString()

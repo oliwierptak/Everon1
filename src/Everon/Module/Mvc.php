@@ -16,6 +16,9 @@ use Everon\Interfaces\Config;
 use Everon\Interfaces\Collection;
 use Everon\View;
 
+/**
+ * @method \Everon\Mvc\Interfaces\Controller getController($name)
+ */
 abstract class Mvc extends \Everon\Module\AbstractModule implements Interfaces\Mvc
 {
     use View\Dependency\Injection\ViewManager;

@@ -15,7 +15,18 @@ use Everon\Interfaces;
 interface Loader
 {
     function getConfigDirectory();
+
+    /**
+     * @param $config_directory
+     */
+    function setConfigDirectory($config_directory);
+    
     function getCacheDirectory();
+
+    /**
+     * @param $cache_directory
+     */
+    function setCacheDirectory($cache_directory);
     
     /**
      * @param $use_cache

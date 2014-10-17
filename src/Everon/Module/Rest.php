@@ -17,14 +17,12 @@ use Everon\Interfaces\FactoryWorker;
 /**
  * @method FactoryWorker getFactoryWorker()
  * @method Http\Interfaces\Response getResponse()
+ * @method \Everon\Rest\Interfaces\Controller getController($name)
  */
 abstract class Rest extends \Everon\Module\AbstractModule implements Interfaces\Rest
 {
-
     public function setup()
     {
 
     }
-
- 
 }

@@ -10,7 +10,7 @@ namespace Everon\Module\Interfaces;
 use Everon\Interfaces\FactoryWorker;
 
 interface Module extends 
-    Dependency\Manager,
+    Dependency\ModuleManager,
     \Everon\Config\Interfaces\Dependency\Config,
     \Everon\Interfaces\Dependency\Factory
 {
@@ -48,7 +48,7 @@ interface Module extends
 
     /**
      * @param $name
-     * @return string
+     * @return \Everon\Interfaces\Controller
      */
     function getController($name);
 }

@@ -43,6 +43,7 @@ class Bootstrap
         $os = substr($os, 0, 3);
         $this->os_name = $os === 'WIN' ? 'win' : 'unix';
         
+        
         //define config directory based on EVERON_ENVIRONMENT
         $ConfigDir = new \SplFileInfo($this->Environment->getConfig().$this->environment_name);
         if ($ConfigDir->isDir() === false) {
@@ -181,7 +182,7 @@ class Bootstrap
             Bootstrap::logException($Exception, $guid_value, $log_filename);
             
             if (php_sapi_name() !== 'cli' || headers_sent() === false) {
-                header("HTTP/1.1 500 Internal Server Error");
+                http_response_code(500);
                 header("EVRID: $guid_value");
             }
         });

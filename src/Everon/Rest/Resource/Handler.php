@@ -9,7 +9,7 @@
  */
 namespace Everon\Rest\Resource;
 
-use Everon\DataMapper\Criteria;
+use Everon\DataMapper\CriteriaOLD;
 use Everon\Dependency;
 use Everon\Domain;
 use Everon\Exception as EveronException;
@@ -22,7 +22,7 @@ class Handler implements Interfaces\ResourceHandler
 {
     use Dependency\Injection\Factory;
     use Domain\Dependency\Injection\DomainManager;
-    use Dependency\Injection\Request; //todo meh
+    
     use Helper\AlphaId;
     use Helper\Arrays;
     use Helper\Asserts\IsInArray;
@@ -97,7 +97,8 @@ class Handler implements Interfaces\ResourceHandler
         try {
             $domain_name = $this->getDomainNameFromMapping($resource_name);
             $Model = $this->getDomainManager()->getModelByName($domain_name);
-            $Entity = $Model->{'add'.$domain_name}($data, $user_id);
+            $Entity = $Model->create($data);
+            $Model->{'add'.$domain_name}($Entity, $user_id);
             return $this->buildResourceFromEntity($Entity, $version, $resource_name);
         }
         catch (EveronException\Domain $e) {
@@ -118,7 +119,8 @@ class Handler implements Interfaces\ResourceHandler
             $this->assertIsNull($Entity, sprintf('Domain Entity: "%s" with id: "%s" not found', $domain_name, $resource_id), 'Domain');
             $data = $this->arrayMergeDefault($Entity->toArray(), $data);
             $Model = $this->getDomainManager()->getModelByName($domain_name);
-            $Entity = $Model->{'save'.$domain_name}($data, $user_id);
+            $Entity = $Model->create($data);
+            $Model->{'save'.$domain_name}($Entity, $user_id);
             return $this->buildResourceFromEntity($Entity, $version, $resource_name);
         }
         catch (EveronException\Domain $e) {
@@ -158,10 +160,11 @@ class Handler implements Interfaces\ResourceHandler
             $id = $this->generateEntityId($resource_id, $domain_name);
             $Entity = $Repository->getEntityById($id);
             $this->assertIsNull($Entity, sprintf('Domain Entity: "%s" with id: "%s" not found', $domain_name, $resource_id), 'Domain');
-            $Model = $this->getDomainManager()->getModelByName($domain_name);
-            //$Entity = $Model->{'addCollection'.$domain_name}($data, $user_id);
             $Resource =  $this->buildResourceFromEntity($Entity, $version, $resource_name);
+            
+            $Model = $this->getDomainManager()->getModelByName($domain_name);
             $Model->addCollection($Resource->getDomainEntity(), $relation_domain_name, $data, $user_id);
+            return $Resource;
         }
         catch (EveronException\Domain $e) {
             throw new Exception\Resource($e->getMessage());
@@ -171,13 +174,56 @@ class Handler implements Interfaces\ResourceHandler
     /**
      * @inheritdoc
      */
+    public function saveCollection($version, $resource_name, $resource_id, $collection_name, array $data, $user_id)
+    {
+        try {
+            $domain_name = $this->getDomainNameFromMapping($resource_name);
+            $relation_domain_name = $this->getDomainNameFromMapping($collection_name);
+            $Repository = $this->getDomainManager()->getRepositoryByName($domain_name);
+            $id = $this->generateEntityId($resource_id, $domain_name);
+            $Entity = $Repository->getEntityById($id);
+            $this->assertIsNull($Entity, sprintf('Domain Entity: "%s" with id: "%s" not found', $domain_name, $resource_id), 'Domain');
+            $Resource =  $this->buildResourceFromEntity($Entity, $version, $resource_name);
+
+            $Model = $this->getDomainManager()->getModelByName($domain_name);
+            $Model->saveCollection($Resource->getDomainEntity(), $relation_domain_name, $data, $user_id);
+            return $Resource;
+        }
+        catch (EveronException\Domain $e) {
+            throw new Exception\Resource($e->getMessage());
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function deleteCollection($version, $resource_name, $resource_id, $collection_name, array $data, $user_id)
+    {
+        try {
+            $domain_name = $this->getDomainNameFromMapping($resource_name);
+            $relation_domain_name = $this->getDomainNameFromMapping($collection_name);
+            $Repository = $this->getDomainManager()->getRepositoryByName($domain_name);
+            $id = $this->generateEntityId($resource_id, $domain_name);
+            $Entity = $Repository->getEntityById($id);
+            $this->assertIsNull($Entity, sprintf('Domain Entity: "%s" with id: "%s" not found', $domain_name, $resource_id), 'Domain');
+            $Resource =  $this->buildResourceFromEntity($Entity, $version, $resource_name);
+
+            $Model = $this->getDomainManager()->getModelByName($domain_name);
+            $Model->deleteCollection($Resource->getDomainEntity(), $relation_domain_name, $data, $user_id);
+            return $Resource;
+        }
+        catch (EveronException\Domain $e) {
+            throw new Exception\Resource($e->getMessage());
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function getResource($version, $resource_name, $resource_id, Interfaces\ResourceNavigator $Navigator)
     {
         try {
-            $EntityRelationCriteria = new Criteria();
-            $EntityRelationCriteria->limit($Navigator->getLimit());
-            $EntityRelationCriteria->offset($Navigator->getOffset());
-            
+            $EntityRelationCriteria = $Navigator->toCriteria();            
             $domain_name = $this->getDomainNameFromMapping($resource_name);
             $id = $this->generateEntityId($resource_id, $domain_name);
 
@@ -207,6 +253,7 @@ class Handler implements Interfaces\ResourceHandler
             /**
              * @var \Everon\Rest\Interfaces\ResourceCollection $ResourceCollection
              * @var \Everon\Domain\Interfaces\Relation $EntityRelation
+             * @var \Everon\Domain\Interfaces\Entity $Entity
              */
             $extra_expand = null;
             if (strpos($collection_name, '.') !== false) {
@@ -247,7 +294,7 @@ class Handler implements Interfaces\ResourceHandler
             
             $a = 0;
             $ResourceCollection = new Helper\Collection([]);
-            $data = $EntityRelation->getData()->toArray();
+            $data = $EntityRelation->getData($Navigator->toCriteria())->toArray();
             foreach ($data as $Entity) {
                 $Item = $this->buildResourceFromEntity($Entity, $Resource->getVersion(), $collection_name);
                 $resource_id = $this->generateResourceId($Entity->getId(), $collection_name);
@@ -291,15 +338,8 @@ class Handler implements Interfaces\ResourceHandler
             $domain_name = $this->getDomainNameFromMapping($resource_name);
             $Href = $this->getResourceUrl($version, $resource_name);
             $Repository = $this->getDomainManager()->getRepositoryByName($domain_name);
-
-            $EntityRelationCriteria = new Criteria();
-            $EntityRelationCriteria->limit($Navigator->getLimit());
-            $EntityRelationCriteria->offset($Navigator->getOffset());
-            $EntityRelationCriteria->orderBy($Navigator->getOrderBy());
-            $EntityRelationCriteria->sort($Navigator->getSort());
-            
+            $EntityRelationCriteria = $Navigator->toCriteria();
             $Paginator = $this->getFactory()->buildPaginator($Repository->count($EntityRelationCriteria), $Navigator->getOffset(), $Navigator->getLimit());
-            
             $entity_list = $Repository->getByCriteria($EntityRelationCriteria);
     
             $ResourceList = new Helper\Collection([]);
@@ -326,10 +366,7 @@ class Handler implements Interfaces\ResourceHandler
     public function getCollectionItemResource($version, $resource_name, $resource_id, $collection, $item_id, Interfaces\ResourceNavigator $Navigator)
     {
         try {
-            $EntityRelationCriteria = new Criteria();
-            $EntityRelationCriteria->limit($Navigator->getLimit());
-            $EntityRelationCriteria->offset($Navigator->getOffset());
-
+            $EntityRelationCriteria = $Navigator->toCriteria();
             $domain_name = $this->getDomainNameFromMapping($collection);
             $id = $this->generateEntityId($item_id, $domain_name);
             
@@ -400,11 +437,13 @@ class Handler implements Interfaces\ResourceHandler
     public function getResourceUrl($version, $resource_name, $resource_id=null, $collection=null, $request_path=null)
     {
         $version = $version ?: $this->current_version;
-        $Href = new Href($this->url, $version, $this->versioning);
+        
+        $Href = $this->getFactory()->buildRestResourceHref($this->url, $version, $this->versioning);
         $Href->setCollectionName($collection);
         $Href->setResourceName($resource_name);
         $Href->setResourceId($resource_id);
         $Href->setRequestPath($request_path);
+        
         return $Href;
     }
     
@@ -413,10 +452,11 @@ class Handler implements Interfaces\ResourceHandler
      */
     public function getDomainNameFromMapping($resource_name)
     {
-        $domain_name = $this->MappingCollection->get($resource_name, null);
+        $domain_name = $this->getMappingCollection()->get($resource_name, null);
         if ($domain_name === null) {
             throw new Exception\Resource('Invalid rest mapping domain: "%s"', $resource_name);
         }
+        
         return $domain_name;
     }
 
@@ -425,12 +465,29 @@ class Handler implements Interfaces\ResourceHandler
      */
     public function getResourceNameFromMapping($domain_name)
     {
-         foreach ($this->MappingCollection as $name => $value) {
+        foreach ($this->MappingCollection as $name => $value) {
             if ($domain_name === $value) {
                 return $name;
             }
         }
+        
         throw new Exception\Resource('Invalid rest mapping resource: "%s"', $domain_name);
     }
 
+    /**
+     * @inheritdoc
+     */
+    public function getMappingCollection()
+    {
+        return $this->MappingCollection;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setMappingCollection(\Everon\Interfaces\Collection $MappingCollection)
+    {
+        $this->MappingCollection = $MappingCollection;
+    }
+    
 }

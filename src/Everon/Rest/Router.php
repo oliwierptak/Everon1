@@ -27,6 +27,10 @@ class Router extends EveronRouter implements Interfaces\Router
         catch (\Exception $e) {
             $DefaultItem = null;
         }
+
+        if ($DefaultItem !== null && $Request->getMethod() === $DefaultItem->getMethod()) {
+            return $DefaultItem;
+        }
         
         foreach ($this->getConfig()->getItems() as $RouteItem) {
             /**
@@ -40,10 +44,6 @@ class Router extends EveronRouter implements Interfaces\Router
             }
         }
         
-        if ($DefaultItem !== null) {
-            return $DefaultItem;
-        }
-
         throw new Exception\RouteNotDefined($Request->getPath());
     }
 }

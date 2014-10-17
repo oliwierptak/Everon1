@@ -26,6 +26,11 @@ class Domain extends Config\Item implements Config\Interfaces\ItemDomain
      * @var string
      */
     protected $table = null;
+
+    /**
+     * @var string
+     */
+    protected $table_original = null;
     
     /**
      * @var array
@@ -50,6 +55,11 @@ class Domain extends Config\Item implements Config\Interfaces\ItemDomain
     /**
      * @var array
      */
+    protected $foreign_keys = null;
+
+    /**
+     * @var array
+     */
     protected $nullable = null;
 
     
@@ -58,10 +68,12 @@ class Domain extends Config\Item implements Config\Interfaces\ItemDomain
         parent::__construct($data, [
             'id_field' => null,
             'table' => null,
+            'table_original' => null,
             'type' => static::TYPE_TABLE,
             'connection' => [],
             'columns' => [],
             'primary_keys' => [],
+            'foreign_keys' => [],
             'nullable' => []
         ]);
     }
@@ -72,10 +84,12 @@ class Domain extends Config\Item implements Config\Interfaces\ItemDomain
         
         $this->setIdField($this->data['id_field']);
         $this->setTable($this->data['table']);
+        $this->setTableOriginal($this->data['table_original']);
         $this->setConnections($this->data['connection']);
         $this->setType($this->data['type']);
         $this->setColumns($this->data['columns']);
         $this->setPrimaryKeys($this->data['primary_keys']);
+        $this->setForeignKeys($this->data['foreign_keys']);
         $this->setNullable($this->data['nullable']);
     }
 
@@ -130,6 +144,22 @@ class Domain extends Config\Item implements Config\Interfaces\ItemDomain
     /**
      * @inheritdoc
      */
+    public function setTableOriginal($table_original)
+    {
+        $this->table_original = $table_original;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getTableOriginal()
+    {
+        return $this->table_original;
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function setType($type)
     {
         $this->type = $type;
@@ -159,6 +189,22 @@ class Domain extends Config\Item implements Config\Interfaces\ItemDomain
         return $this->primary_keys;
     }
 
+    /**
+     * @param array $foreign_keys
+     */
+    public function setForeignKeys(array $foreign_keys)
+    {
+        $this->foreign_keys = $foreign_keys;
+    }
+
+    /**
+     * @return array
+     */
+    public function getForeignKeys()
+    {
+        return $this->foreign_keys;
+    }
+    
     /**
      * @inheritdoc
      */

@@ -16,7 +16,9 @@ use Everon\Interfaces\Collection;
 
 class Entity extends Helper\Popo implements Interfaces\Entity 
 {
+    use Helper\Arrays;
     use Helper\IsCallable;
+    use Helper\String\LastTokenToName;
     
     const STATE_NEW = 1;
     const STATE_MODIFIED = 2;
@@ -58,8 +60,10 @@ class Entity extends Helper\Popo implements Interfaces\Entity
     
     protected function markPropertyAsModified($property)
     {
-        $this->modified_properties[$property] = true;
-        $this->markModified();
+        if ($this->isIdSet()) { //NEW overrules MODIFIED
+            $this->modified_properties[$property] = true;
+            $this->markModified();
+        }
     }
 
     /**
@@ -98,7 +102,7 @@ class Entity extends Helper\Popo implements Interfaces\Entity
      */
     protected function isIdSet()
     {
-        if (array_key_exists($this->id_name, $this->data)) {
+        if (array_key_exists($this->id_name, $this->data) && $this->data[$this->id_name] !== null) {
             $id = trim($this->data[$this->id_name]);
             return mb_strlen($id) > 0;
         }
@@ -167,6 +171,11 @@ class Entity extends Helper\Popo implements Interfaces\Entity
      */
     public function getValueByName($name)
     {
+        $name = trim($name);
+        if ($name === '') {
+            throw new \Everon\Domain\Exception('Property name cannot be empty in: "%s"', $this->getDomainName());
+        }
+        
         try {
             return $this->data[$name];
         }
@@ -180,6 +189,10 @@ class Entity extends Helper\Popo implements Interfaces\Entity
      */
     public function setValueByName($name, $value)
     {
+        $name = trim($name);
+        if ($name === '') {
+            throw new \Everon\Domain\Exception('Property name cannot be empty in: "%s"', $this->getDomainName());
+        }
         $this->data[$name] = $value;
     }
 
@@ -240,6 +253,9 @@ class Entity extends Helper\Popo implements Interfaces\Entity
      */
     public function getRelationByName($name)
     {
+        if ($this->RelationCollection->has($name) === false) {
+            throw new Exception('Missing relation: "%s" for "%s"', [$name, $this->getDomainName()]);
+        }
         return $this->RelationCollection->get($name);
     }
 
@@ -257,7 +273,11 @@ class Entity extends Helper\Popo implements Interfaces\Entity
     public function getDomainName()
     {
         if ($this->domain_name === null) {
-            $this->domain_name = get_class($this);
+            $tokens = explode('\\', get_class($this));
+            $this->domain_name = trim(@$tokens[2]);
+            if ($this->domain_name === '') {
+                throw new \Everon\Exception\Domain('Could not determine the domain name for entity: "%s"', get_class($this));
+            }
         }
         
         return $this->domain_name;
@@ -285,6 +305,15 @@ class Entity extends Helper\Popo implements Interfaces\Entity
     public function resetRelationState($name)
     {
         $this->getRelationByName($name)->reset();
+    }
+
+    /**
+     * @param array $data
+     */
+    public function updateValues(array $data)
+    {
+        $data = $this->arrayMergeDefault($this->getData(), $data);
+        $this->setData($data);
     }
     
     /**

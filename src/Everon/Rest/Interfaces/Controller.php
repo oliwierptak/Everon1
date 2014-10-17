@@ -11,22 +11,41 @@ namespace Everon\Rest\Interfaces;
 
 use Everon\Interfaces;
 
-interface Controller extends Interfaces\Controller
+interface Controller extends 
+    Interfaces\Controller, 
+    Interfaces\Dependency\Factory, 
+    \Everon\Rest\Interfaces\Dependency\ResourceManager,
+    \Everon\Domain\Interfaces\Dependency\DomainManager
 {
     function addResourceFromRequest();
 
-    function serveResourceFromRequest();
+    function saveResourceFromRequest();
 
     function deleteResourceFromRequest();
-    
-    /**
-     * @return mixed
-     */
-    function getModel();
+
+    function addResourceCollectionFromRequest();
+
+    function saveResourceCollectionFromRequest();
+
+    function deleteResourceCollectionFromRequest();
 
     /**
      * @return Interfaces\Resource
      */
     function getResourceFromRequest();
+
+    function serveResourceFromRequest();
+
+    function serveCollectionItemFromRequest();
+
+    /**
+     * @param \Exception $Exception
+     */
+    function showException(\Exception $Exception);
+
+    /**
+     * @return mixed
+     */
+    function getModel();
 
 }

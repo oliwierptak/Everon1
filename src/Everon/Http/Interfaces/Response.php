@@ -97,4 +97,19 @@ interface Response extends \Everon\Interfaces\Response
      * @return boolean
      */
     function wasStatusSet();
+
+    /**
+     * @return bool
+     */
+    function isError();
+
+    /**
+     * @return bool
+     */
+    function isClientError();
+
+    /**
+     * @return bool
+     */
+    function isServerError();
 }

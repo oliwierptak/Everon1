@@ -16,16 +16,40 @@ use Everon\Rest\Interfaces;
 class Navigator implements Interfaces\ResourceNavigator
 {
     use Dependency\Request;
+    use \Everon\Dependency\Injection\Factory;
 
     const PARAM_SEPARATOR = ',';
 
-    
+
+    /**
+     * @var string
+     */
     protected $expand = null;
+
+    /**
+     * @var string
+     */
     protected $fields = null;
+
+    /**
+     * @var string
+     */
     protected $order_by = null;
-    protected $sort = null;
+
+    /**
+     * @var string
+     */
     protected $offset = null;
+
+    /**
+     * @var string
+     */
     protected $limit = null;
+
+    /**
+     * @var string
+     */
+    protected $filters = null;
     
 
     /**
@@ -65,25 +89,25 @@ class Navigator implements Interfaces\ResourceNavigator
     {
         $this->fields = $this->getParameterValue('fields', []);
         $this->expand = $this->getParameterValue('expand', []);
-        $this->order_by = $this->getParameterValue('order_by', []);
         $this->limit = $this->getRequest()->getGetParameter('limit', 10);
         $this->offset = $this->getRequest()->getGetParameter('offset', 0);
-        $this->sort = [];
+        $this->filters = $this->getRequest()->getGetParameter('filters');
+        $this->filters = json_decode($this->filters, true);
+        
+        $order_by_data = $this->getParameterValue('order_by', []);
 
         $collection = $this->getRequest()->getQueryParameter('collection', null);
         if ($collection !== null) {
             $this->expand = array_merge($this->expand, [$collection]);
         }
 
-        for ($a=0; $a<count($this->order_by); $a++) { //eg. -date_added, user_name //show recently added users
-            $name = $this->order_by[$a];
+        for ($a=0; $a<count($order_by_data); $a++) { //eg. -date_added, user_name //show recently added users
+            $name = $order_by_data[$a];
             $field_name = ltrim($name, '-');
-            $this->sort[$field_name] = 'ASC';
+            $this->order_by[$field_name] = 'ASC';
             if ($name[0] === '-') {
-                $this->sort[$field_name] = 'DESC';
+                $this->order_by[$field_name] = 'DESC';
             }
-            
-            $this->order_by[$a] = $field_name;
         }
     }
 
@@ -138,22 +162,6 @@ class Navigator implements Interfaces\ResourceNavigator
     /**
      * @inheritdoc
      */
-    public function setSort($sort)
-    {
-        $this->sort = $sort;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getSort()
-    {
-        return $this->sort;
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function setOffset($offset)
     {
         $this->offset = $offset;
@@ -182,5 +190,38 @@ class Navigator implements Interfaces\ResourceNavigator
     {
         return $this->limit;
     }
-    
+
+    /**
+     * @inheritdoc
+     */
+    public function getFilters()
+    {
+        return $this->filters;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setFilters(array $filters)
+    {
+        $this->filters = $filters;
+    }
+
+    /**
+     * @return \Everon\DataMapper\Interfaces\CriteriaOLD
+     */
+    public function toCriteria()
+    {
+        $Criteria = new \Everon\DataMapper\CriteriaOLD();
+        $Criteria->limit($this->getLimit());
+        $Criteria->offset($this->getOffset());
+        $Criteria->orderBy($this->getOrderBy() ?: []);
+        
+        if (is_array($this->getFilters())) {
+            $Filter = $this->getFactory()->buildRestFilter(new Helper\Collection($this->getFilters()));
+            $Filter->assignToCriteria($Criteria);
+        }
+        
+        return $Criteria;
+    }
 }

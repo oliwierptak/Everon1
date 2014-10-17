@@ -46,13 +46,10 @@ class Manager implements View\Interfaces\WidgetManager
      */
     public function prepareView($name, $namespace='Everon\View')
     {
-        $view_variables = $this->getConfigManager()->getConfigValue("view.Index", []);
         $template_directory = implode(DIRECTORY_SEPARATOR, [
             $this->getViewManager()->getViewDirectory().$this->getViewManager()->getCurrentThemeName(), 'Widget', $name, 'templates'
         ]);
         $View = $this->getViewManager()->createView('Base', $template_directory.DIRECTORY_SEPARATOR, 'Everon\View');
-        $data = $this->arrayMergeDefault($view_variables, $View->getData());
-        $View->setData($data);
         return $View;
     }
 

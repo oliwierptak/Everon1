@@ -25,10 +25,12 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
      * @var \Everon\RequestIdentifier
      */
     protected $RequestIdentifier = null;
-
+    
 
     public function __construct($name = NULL, array $data=[], $dataName='')
     {
+        //todo: remove global state
+        
         $Dir = new \SplFileInfo(@$GLOBALS['EVERON_ROOT']);
         if ($Dir->isDir() === false) {
             throw new Exception\Core('Everon root directory is not defined');
@@ -40,26 +42,22 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         }
 
         parent::__construct($name, $data, $dataName);
-        $this->RequestIdentifier = $GLOBALS['REQUEST_IDENTIFIER'];
-        $Environment = new Environment($GLOBALS['EVERON_ROOT'], $GLOBALS['EVERON_SOURCE_ROOT']); //xxx
+
+        $custom_test_paths = array_merge([
+            'config' => getcwd().'/fixtures/config/',
+            'tmp' => getcwd().'/tmp/',
+        ], @$GLOBALS['EVERON_CUSTOM_PATHS']);
+        
+        $this->RequestIdentifier = @$GLOBALS['REQUEST_IDENTIFIER'];
+        $Environment = new Environment(@$GLOBALS['EVERON_ROOT'], @$GLOBALS['EVERON_SOURCE_ROOT'], $custom_test_paths);
         $this->FrameworkBootstrap = new Bootstrap($Environment, 'development');
-        $this->includeDoubles($this->getDoublesDirectory());
+        
+        $this->includeDoubles();
     }
 
-    /**
-     * @param $dir
-     */
-    protected function includeDoubles($dir)
+    protected function includeDoubles()
     {
-        /**
-         * @var \SplFileInfo $IncludeItem
-         */
-        $It = new \RecursiveIteratorIterator(
-            new \RecursiveDirectoryIterator($dir, \FilesystemIterator::SKIP_DOTS),
-            \RecursiveIteratorIterator::CHILD_FIRST
-        );
-        
-        $includes = iterator_to_array($It);
+        $includes = new \GlobIterator($this->getDoublesDirectory().'*.php');
         foreach ($includes as $filename => $IncludeItem) {
             if ($IncludeItem->isFile() && $IncludeItem->getExtension() === 'php') {
                 require_once($IncludeItem->getPathname());
@@ -70,21 +68,12 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         parent::setUp();
-        $directories = [
-            $this->getTmpDirectory(),
-            $this->getConfigCacheDirectory(),
-            $this->getLogDirectory(),
-        ];
+    }
 
-        /**
-         * @var \SplFileInfo $File
-         */
-        foreach ($directories as $dir) {
-            $TmpFiles = new \GlobIterator($dir.'*.*');
-            foreach ($TmpFiles as $filename => $File) {
-                @unlink($File->getPathname());
-            }
-        }
+    protected function tearDown()
+    {
+        parent::tearDown();
+        \Mockery::close();
     }
 
     /**
@@ -110,44 +99,24 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
     
     public function getTmpDirectory()
     {
-        return $this->FrameworkBootstrap->getEnvironment()->getTest().$this->suite_name.DIRECTORY_SEPARATOR.'tmp'.DIRECTORY_SEPARATOR;
+        return $this->getFrameworkBootstrap()->getEnvironment()->getTest().$this->suite_name.DIRECTORY_SEPARATOR.'tmp'.DIRECTORY_SEPARATOR;
     }
 
     public function getFixtureDirectory()
     {
-        return $this->FrameworkBootstrap->getEnvironment()->getTest().$this->suite_name.DIRECTORY_SEPARATOR.'fixtures'.DIRECTORY_SEPARATOR;
+        return $this->getFrameworkBootstrap()->getEnvironment()->getTest().$this->suite_name.DIRECTORY_SEPARATOR.'fixtures'.DIRECTORY_SEPARATOR;
     }
 
-    public function getDataMapperFixturesDirectory()
-    {
-        return $this->getFixtureDirectory().'data_mapper'.DIRECTORY_SEPARATOR;
-    }
-    
     public function getDoublesDirectory()
     {
-        return $this->FrameworkBootstrap->getEnvironment()->getTest().$this->suite_name.DIRECTORY_SEPARATOR.'doubles'.DIRECTORY_SEPARATOR;
+        return $this->getFrameworkBootstrap()->getEnvironment()->getTest().$this->suite_name.DIRECTORY_SEPARATOR.'doubles'.DIRECTORY_SEPARATOR;
     }
 
-    public function getLogDirectory()
-    {
-        return $this->getTmpDirectory().'logs'.DIRECTORY_SEPARATOR;
-    }
-
-    public function getConfigDirectory()
-    {
-        return $this->getFixtureDirectory().'config'.DIRECTORY_SEPARATOR.'development'.DIRECTORY_SEPARATOR;
-    }
-    
     public function getTemplateDirectory()
     {
         return $this->getFixtureDirectory().'templates'.DIRECTORY_SEPARATOR;
     }
 
-    protected function getConfigCacheDirectory()
-    {
-        return $this->getTmpDirectory().'config'.DIRECTORY_SEPARATOR;
-    }
-    
     protected function getViewCacheDirectory()
     {
         return $this->getTmpDirectory().'view'.DIRECTORY_SEPARATOR;
@@ -182,22 +151,60 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @return Bootstrap
+     */
+    public function getFrameworkBootstrap()
+    {
+        return $this->FrameworkBootstrap;
+    }
+
+    /**
+     * @param Bootstrap $FrameworkBootstrap
+     */
+    public function setFrameworkBootstrap($FrameworkBootstrap)
+    {
+        $this->FrameworkBootstrap = $FrameworkBootstrap;
+    }
+
+    /**
+     * @return RequestIdentifier
+     */
+    public function getRequestIdentifier()
+    {
+        return $this->RequestIdentifier;
+    }
+
+    /**
+     * @param RequestIdentifier $RequestIdentifier
+     */
+    public function setRequestIdentifier($RequestIdentifier)
+    {
+        $this->RequestIdentifier = $RequestIdentifier;
+    }
+    
+    /**
      * @return Interfaces\Factory
      */
     public function buildFactory()
     {
+        /**
+         * @var \Everon\Interfaces\Factory $Factory
+         */
         $Factory = new Application\Factory(new Application\Dependency\Container());
         $Container = $Factory->getDependencyContainer();
 
-        $TestEnvironment = new \Everon\Environment($this->FrameworkBootstrap->getEnvironment()->getRoot(), $this->FrameworkBootstrap->getEnvironment()->getEveronRoot());
+        //$TestEnvironment = new \Everon\Environment($this->FrameworkBootstrap->getEnvironment()->getRoot(), $this->FrameworkBootstrap->getEnvironment()->getEveronRoot());
+        $TestEnvironment = $this->FrameworkBootstrap->getEnvironment();
+        
+        /*
         $TestEnvironment->setLog($this->getLogDirectory());
         $TestEnvironment->setConfig($this->getFixtureDirectory().'config'.DIRECTORY_SEPARATOR);
         $TestEnvironment->setCacheConfig($this->getConfigCacheDirectory());
         $TestEnvironment->setTmp($this->getTmpDirectory());
-        
-        $Bootstrap = new \Everon\Bootstrap($TestEnvironment, 'development'); //tests are hardcoded to development environment
-        $Bootstrap->setEnvironment($TestEnvironment);
+        $TestEnvironment->setDomainConfig($this->getFixtureDirectory().'Domain/');
+        */
 
+        $Bootstrap = $this->FrameworkBootstrap;
         $Container->register('Bootstrap', function() use ($Bootstrap) {
             return $Bootstrap;
         });
@@ -222,7 +229,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         $ConfigManager = $Factory->buildConfigManager($ConfigLoader);
         $ConfigManager->setFactory($Factory);
         $ConfigManager->setFileSystem($FileSystem);
-
+        
         $Container->register('ConfigManager', function() use ($ConfigManager) {
             return $ConfigManager;
         });

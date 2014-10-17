@@ -11,61 +11,32 @@ namespace Everon\Rest;
 
 use Everon\Dependency;
 use Everon\Domain;
-use Everon\Rest\Dependency as RestDependency;
 use Everon\Exception;
 use Everon\Helper;
 use Everon\Http;
-use Everon\Module;
+use Everon\Rest\Dependency as RestDependency;
 
 /**
  * @method Http\Interfaces\Response getResponse()
  * @method Interfaces\Request getRequest()
- * @method Module\Interfaces\Rest getModule()
+ * @method \Everon\Module\Interfaces\Rest getModule()
  */
 abstract class Controller extends \Everon\Controller implements Interfaces\Controller
 {
-    use Domain\Dependency\Injection\DomainManager;
     use Dependency\Injection\Factory;
+    use Domain\Dependency\Injection\DomainManager;
     use RestDependency\Injection\ResourceManager;
 
     
     /**
      * @param $action
-     * @return void
-     * @throws Exception\InvalidControllerMethod
-     * @throws Exception\InvalidControllerResponse
+     * @param $result
      */
-    public function execute($action)
-    {
-        $this->action = $action;
-        if ($this->isCallable($this, $action) === false) {
-            throw new Exception\InvalidControllerMethod(
-                'Controller: "%s@%s" has no action: "%s" defined', [$this->getModule()->getName(), $this->getName(), $action]
-            );
-        }
-
-        $result = $this->{$action}();
-        $result = ($result !== false) ? true : $result;
-        $this->getResponse()->setResult($result);
-
-        $this->prepareResponse($action, $result);
-        $this->response();
-    }
-    
-    /**
-     * @return mixed
-     */
-    public function getModel()
-    {
-        return $this->getDomainManager()->getModelByName($this->getName());
-    }
-    
     protected function prepareResponse($action, $result)
     {
         $Resource = $this->getResponse()->getData();
         if ($Resource instanceof Interfaces\ResourceBasic) {
-            $Resource = $Resource->toArray();
-            $this->getResponse()->setData($Resource);
+            $this->getResponse()->setData($Resource->toArray());
         }
 
         if ($this->getResponse()->wasStatusSet() === false) {//DRY
@@ -83,6 +54,34 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
     /**
      * @inheritdoc
      */
+    public function execute($action)
+    {
+        $this->action = $action;
+        if ($this->isCallable($this, $action) === false) {
+            throw new Exception\InvalidControllerMethod(
+                'Controller: "%s@%s" has no action: "%s" defined', [$this->getModule()->getName(), $this->getName(), $action]
+            );
+        }
+
+        $result = $this->{$action}();
+        $result = ($result !== false) ? true : $result;
+        $this->getResponse()->setResult($result);
+
+        $this->prepareResponse($action, $result);
+        $this->response();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getModel()
+    {
+        return $this->getDomainManager()->getModelByName($this->getName());
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function addResourceFromRequest()
     {
         $user_id = 1;
@@ -90,7 +89,7 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
         $data = $this->getRequest()->getPostCollection()->toArray(true);
         $resource_name = $this->getRequest()->getQueryParameter('resource', null);
         $Resource = $this->getResourceManager()->add($version, $resource_name, $data, $user_id);
-        
+
         $this->getResponse()->setData($Resource);
         $this->getResponse()->setStatusCode(201);
         $this->getResponse()->setHeader('Location', $Resource->getHref()->getUrl());
@@ -135,7 +134,27 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
         $Resource = $this->getResourceFromRequest();
         $this->getResponse()->setData($Resource);
     }
-    
+
+    /**
+     * @inheritdoc
+     */
+    public function getResourceFromRequest()
+    {
+        $version = $this->getRequest()->getVersion();
+        $resource_id = $this->getRequest()->getQueryParameter('resource_id', null);
+        $resource_name = $this->getRequest()->getQueryParameter('resource', null);
+        $Navigator = $this->getFactory()->buildRestResourceNavigator($this->getRequest());
+
+        if ($resource_id === null) {
+            $Resource = $this->getResourceManager()->getCollectionResource($version, $resource_name, $Navigator);
+        }
+        else {
+            $Resource = $this->getResourceManager()->getResource($version, $resource_name, $resource_id, $Navigator);
+        }
+
+        return $Resource;
+    }
+
     public function serveCollectionItemFromRequest()
     {
         $version = $this->getRequest()->getVersion();
@@ -167,27 +186,41 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
         $this->getResponse()->setStatusCode(201);
         $this->getResponse()->setHeader('Location', $Resource->getHref()->getUrl());
     }
-    
+
     /**
      * @inheritdoc
      */
-    public function getResourceFromRequest()
+    public function saveResourceCollectionFromRequest()
     {
+        $user_id = 1;
         $version = $this->getRequest()->getVersion();
-        $resource_id = $this->getRequest()->getQueryParameter('resource_id', null);
+        $data = $this->getRequest()->getPostCollection()->toArray(true);
         $resource_name = $this->getRequest()->getQueryParameter('resource', null);
-        $Navigator = $this->getFactory()->buildRestResourceNavigator($this->getRequest());
+        $resource_id = $this->getRequest()->getQueryParameter('resource_id', null);
+        $collection = $this->getRequest()->getQueryParameter('collection', null);
+        $Resource = $this->getResourceManager()->saveCollection($version, $resource_name, $resource_id, $collection, $data, $user_id);
 
-        if ($resource_id === null) {
-            $Resource = $this->getResourceManager()->getCollectionResource($version, $resource_name, $Navigator);
-        }
-        else {
-            $Resource = $this->getResourceManager()->getResource($version, $resource_name, $resource_id, $Navigator);
-        }
-
-        return $Resource;
+        $this->getResponse()->setData($Resource);
+        $this->getResponse()->setStatusCode(200);
     }
 
+    /**
+     * @inheritdoc
+     */
+    public function deleteResourceCollectionFromRequest()
+    {
+        $user_id = 1;
+        $version = $this->getRequest()->getVersion();
+        $data = $this->getRequest()->getPostCollection()->toArray(true);
+        $resource_name = $this->getRequest()->getQueryParameter('resource', null);
+        $resource_id = $this->getRequest()->getQueryParameter('resource_id', null);
+        $collection = $this->getRequest()->getQueryParameter('collection', null);
+        $Resource = $this->getResourceManager()->deleteCollection($version, $resource_name, $resource_id, $collection, $data, $user_id);
+
+        $this->getResponse()->setData($Resource);
+        $this->getResponse()->setStatusCode(204);
+    }
+    
     /**
      * @inheritdoc
      */

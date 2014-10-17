@@ -33,4 +33,19 @@ interface Constraint extends Arrayable, Immutable
      * @return null
      */
     function getTableName();
+
+    /**
+     * @param string $schema
+     */
+    function setSchema($schema);
+
+    /**
+     * @return string
+     */
+    function getSchema();
+
+    /**
+     * @return string
+     */
+    function getFullTableName();
 }

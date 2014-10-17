@@ -9,6 +9,14 @@
  */
 namespace Everon\Module\Interfaces;
 
+use Everon\Interfaces\FactoryWorker;
+use Everon\Http;
+
+/**
+ * @method FactoryWorker getFactoryWorker()
+ * @method Http\Interfaces\Response getResponse()
+ * @method \Everon\Rest\Interfaces\Controller getController($name)
+ */
 interface Rest extends Module
 {
 }

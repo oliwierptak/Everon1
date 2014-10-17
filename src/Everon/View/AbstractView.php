@@ -301,28 +301,13 @@ abstract class AbstractView implements Interfaces\View
         return $data;
     }
 
-    /**
-     * @param \Everon\Interfaces\FileSystem $FileSystem
-     * @param $path
-     * @param $ext
-     * @return array
-     */
-    protected function generateFileList(\Everon\Interfaces\FileSystem $FileSystem, $path, $ext)
+    protected function appendFilePaths($tmp_files, $url)
     {
-        $url = $this->getConfigManager()->getConfigValue('application.static.url_min');
-        $files = [];
+        array_walk($tmp_files, function(&$item) use ($url){
+            $item =  $url.$item;
+        });
         
-        $resource_path = $FileSystem->listPath('//'.$path.'/');
-        foreach ($resource_path as $File) {
-            /**
-             * @var \SplFileInfo $File
-             */
-            if ($File->getExtension() === $ext) {
-                $files[] = $url.$path.$File->getFileName();
-            }
-        }
-
-        return $files;
+        return $tmp_files;
     }
 
     protected function includeResources()
@@ -331,25 +316,46 @@ abstract class AbstractView implements Interfaces\View
             return;
         }
         
-        /**
-         * @var \Everon\Interfaces\FileSystem $FileSystem
-         */
-        $root = $this->getConfigManager()->getConfigValue('application.static.directory_min');
-        $FileSystem = $this->getFactory()->buildFileSystem($root);
         $Config = $this->getConfigManager()->getConfigByName('minify');
-
+        $url = $this->getConfigManager()->getConfigValue('application.static.url_min');
+        
         foreach ($this->resources_js as $name => $items_to_minify) {
             $files = [];
             foreach ($items_to_minify as $resource_name) {
-                $files = array_merge($files, $this->generateFileList($FileSystem, $Config->getItemByName($resource_name)->getValueByName('path'), 'js'));
+                $ConfigItem = $Config->getItemByName($resource_name);
+                if ($ConfigItem === null) {
+                    throw new Exception\View('Invalid minify resource name: "%s"', $resource_name);
+                }
+                $path = $ConfigItem->getValueByName('path');
+                $tmp_files = $ConfigItem->getValueByName('files');
+                $minify = (bool) $ConfigItem->getValueByName('minify');
+                if ($minify === false) {
+                    $files = array_merge($files, $this->appendFilePaths($tmp_files, $url.$path));
+                }
+                else {
+                    $files = [$url.$path.$Config->getItemByName($resource_name)->getValueByName('filename')];
+                }
             }
             $this->set($name, $files);
         }
 
+
         foreach ($this->resources_css as $name => $items_to_minify) {
             $files = [];
             foreach ($items_to_minify as $resource_name) {
-                $files = array_merge($files, $this->generateFileList($FileSystem, $Config->getItemByName($resource_name)->getValueByName('path'), 'css'));
+                $ConfigItem = $Config->getItemByName($resource_name);
+                if ($ConfigItem === null) {
+                    throw new Exception\View('Invalid minify resource name: "%s"', $resource_name);
+                }
+                $path = $ConfigItem->getValueByName('path');
+                $tmp_files = $ConfigItem->getValueByName('files');
+                $minify = (bool) $ConfigItem->getValueByName('minify');
+                if ($minify === false) {
+                    $files = array_merge($files, $this->appendFilePaths($tmp_files, $url.$path));
+                }
+                else {
+                    $files = [$url.$path.$Config->getItemByName($resource_name)->getValueByName('filename')];
+                }
             }
             $this->set($name, $files);
         }

@@ -83,5 +83,26 @@ interface FileSystem
     /**
      * @return \Everon\Interfaces\FileSystemTmpFile
      */
-    function createTmpFile();    
+    function createTmpFile();
+
+    /**
+     * @param $file_path
+     * @param $destination
+     * @param bool $create_directory
+     * @return bool
+     */
+    function moveUploadedFile($file_path, $destination, $create_directory = true);
+
+    /**
+     * @param $source
+     * @param $target
+     */
+    function renameFile($source, $target);
+
+    /**
+     * @param $sourcePath
+     * @param $targetPath
+     * @return bool
+     */
+    function copyFile($sourcePath, $targetPath);
 }

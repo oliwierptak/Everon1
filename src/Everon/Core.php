@@ -164,4 +164,18 @@ abstract class Core implements Interfaces\Core
     {
         $this->Controller = $Controller;
     }
-}   
+    
+    public function terminate()
+    {
+        die();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function redirectAndTerminate($name, $query=[], $get=[])
+    {
+        $this->shutdown();
+        $this->terminate();
+    }
+}

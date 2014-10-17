@@ -25,7 +25,7 @@ trait ToArray
     public function toArray($deep=false)
     {
         if (method_exists($this, 'getToArray')) {
-            $data = $this->getToArray();
+            $data = $this->getToArray($deep);
         }
         else {
             $data = (property_exists($this, 'data')) ? $this->data : null;

@@ -11,7 +11,6 @@ namespace Everon\DataMapper\Schema\PostgreSql;
 
 use Everon\DataMapper;
 use Everon\DataMapper\Interfaces;
-use Everon\Domain\Interfaces\Entity;
 
 
 abstract class Mapper extends DataMapper 
@@ -74,7 +73,21 @@ abstract class Mapper extends DataMapper
     /**
      * @inheritdoc
      */
-    public function getFetchAllSql(Interfaces\Criteria $Criteria=null)
+    public function getDeleteByCriteriaSql(Interfaces\CriteriaOLD $Criteria)
+    {
+        $params = $Criteria->getWhere();
+        if (empty($params)) {
+            throw new \Everon\Exception\DataMapper('No criteria conditions defined');
+        }
+        
+        $sql = sprintf('DELETE FROM %s.%s t %s', $this->getTable()->getSchema(), $this->getTable()->getName(), $Criteria->getWhereSql());
+        return [$sql, $params];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getFetchAllSql(Interfaces\CriteriaOLD $Criteria=null)
     {
         $pk_name = $this->getTable()->getPk();
 
@@ -91,7 +104,7 @@ abstract class Mapper extends DataMapper
     /**
      * @inheritdoc
      */
-    public function getJoinSql($select, $a, $b, $on_a, $on_b, Interfaces\Criteria $Criteria=null, $type='')
+    public function getJoinSql($select, $a, $b, $on_a, $on_b, Interfaces\CriteriaOLD $Criteria=null, $type='')
     {
         $sql = "
             SELECT %s FROM %s t
@@ -106,13 +119,13 @@ abstract class Mapper extends DataMapper
     /**
      * @inheritdoc
      */
-    public function getCountSql(Interfaces\Criteria $Criteria=null)
+    public function getCountSql(Interfaces\CriteriaOLD $Criteria=null)
     {
         $table_name = sprintf('%s.%s', $this->getTable()->getSchema(), $this->getTable()->getName());
 /*        
         $sql = "SELECT pgc.reltuples AS total_count FROM pg_catalog.pg_class AS pgc "; 
-        $sql .= $Criteria;
-        $where_str = empty($Criteria->getWhere()) ? 'WHERE ' : ''; 
+        $sql .= $CriteriaOLD;
+        $where_str = empty($CriteriaOLD->getWhere()) ? 'WHERE ' : ''; 
         $sql .= $where_str.' pgc.oid = '.sprintf("'${table_name}'::regclass", $this->getTable()->getSchema(), $this->getTable()->getName());*/
         
         //do slow count

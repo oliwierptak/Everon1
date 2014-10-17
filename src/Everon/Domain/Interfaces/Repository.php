@@ -9,7 +9,7 @@
  */
 namespace Everon\Domain\Interfaces;
 
-use Everon\DataMapper\Interfaces\Criteria;
+use Everon\DataMapper\Interfaces\CriteriaOLD;
 use Everon\Interfaces\DataMapper;
 use Everon\Domain\Exception;
 
@@ -20,27 +20,27 @@ interface Repository
      * @return array
      */
     function validateEntity(Entity $Entity);
-        
+
     /**
      * @param Entity $Entity
-     * @param Criteria $Criteria
-     * @return void
+     * @param CriteriaOLD $Criteria
+     * @return
      */
-    function buildEntityRelations(Entity $Entity, Criteria $Criteria);
+    function buildEntityRelations(Entity $Entity, CriteriaOLD $Criteria = null);
 
     /**
      * @param $id
-     * @param Criteria $RelationCriteria
+     * @param CriteriaOLD $RelationCriteria
      * @return Entity|null
      */
-    function getEntityById($id, Criteria $RelationCriteria=null);
+    function getEntityById($id, CriteriaOLD $RelationCriteria=null);
 
     /**
      * @param array $property_criteria
-     * @param Criteria $RelationCriteria
+     * @param CriteriaOLD $RelationCriteria
      * @return Entity|null
      */
-    function getEntityByPropertyValue(array $property_criteria, Criteria $RelationCriteria=null);
+    function getEntityByPropertyValue(array $property_criteria, CriteriaOLD $RelationCriteria=null);
 
     /**
      * @param array $data
@@ -50,17 +50,17 @@ interface Repository
     function persistFromArray(array $data, $user_id=null);
 
     /**
-     * @param Criteria $Criteria
+     * @param CriteriaOLD $Criteria
      * @return array|null
      */
-    function getByCriteria(Criteria $Criteria);
+    function getByCriteria(CriteriaOLD $Criteria);
 
     /**
-     * @param Criteria $Criteria
+     * @param CriteriaOLD $Criteria
      * @return int
      */
-    function count(Criteria $Criteria=null);
-        
+    function count(CriteriaOLD $Criteria=null);
+
     /**
      * @param Entity $Entity
      * @param int $user_id
@@ -74,20 +74,25 @@ interface Repository
     function remove(Entity $Entity, $user_id=null);
 
     /**
-     * @param Criteria $Criteria
-     * @param Criteria $RelationCriteria
+     * @param CriteriaOLD $Criteria
+     */
+    function removeByCriteria(CriteriaOLD $Criteria);
+
+    /**
+     * @param CriteriaOLD $Criteria
+     * @param CriteriaOLD $RelationCriteria
      * @return Entity|null
      */
-    function getOneByCriteria(Criteria $Criteria, Criteria $RelationCriteria=null);
+    function getOneByCriteria(CriteriaOLD $Criteria, CriteriaOLD $RelationCriteria=null);
 
     /**
      * @return DataMapper
-     */    
+     */
     function getMapper();
 
     /**
      * @param DataMapper $Mapper
-     */    
+     */
     function setMapper(DataMapper $Mapper);
 
     function getName();
@@ -98,9 +103,18 @@ interface Repository
      */
     function buildFromArray(array $data);
 
-    function beginTransaction();
+    /**
+     * @param $point null
+     */
+    function beginTransaction($point=null);
 
-    function commitTransaction();
+    /**
+     * @param $point null
+     */
+    function commitTransaction($point=null);
 
-    function rollbackTransaction();
+    /**
+     * @param $point null
+     */
+    function rollbackTransaction($point=null);
 }

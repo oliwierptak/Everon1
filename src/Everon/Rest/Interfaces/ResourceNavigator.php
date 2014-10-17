@@ -43,16 +43,6 @@ interface ResourceNavigator extends Dependency\Request
     function getOrderBy();
 
     /**
-     * @param array $sort
-     */
-    function setSort($sort);
-
-    /**
-     * @return array
-     */
-    function getSort();
-
-    /**
      * @param int $offset
      */
     function setOffset($offset);
@@ -71,4 +61,20 @@ interface ResourceNavigator extends Dependency\Request
      * @return int
      */
     function getLimit();
+
+
+    /**
+     * @return array
+     */
+    function getFilters();
+
+    /**
+     * @param array $filters
+     */
+    function setFilters(array $filters);
+
+    /**
+     * @return \Everon\DataMapper\Interfaces\CriteriaOLD
+     */
+    function toCriteria();
 }

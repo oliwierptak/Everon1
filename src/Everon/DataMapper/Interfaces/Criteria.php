@@ -9,87 +9,46 @@
  */
 namespace Everon\DataMapper\Interfaces;
 
-interface Criteria extends \Everon\Interfaces\Arrayable, \Everon\Interfaces\Stringable 
+interface Criteria extends \Everon\Interfaces\Arrayable 
 {
     /**
-     * @param $offset
-     * @return \Everon\DataMapper\Interfaces\Criteria
+     * @param Criteria\Criterium $Criterium
+     * @return Criteria
      */
-    function offset($offset);
-
-    function getOrderByAndSortSql();
+    function where(Criteria\Criterium $Criterium);
 
     /**
-     * @param $order_by
-     * @return \Everon\DataMapper\Interfaces\Criteria
+     * @param Criteria\Criterium $Criterium
+     * @return Criteria
+     * @throws \Everon\DataMapper\Exception\Criteria
      */
-    function orderBy($order_by);
+    function andWhere(Criteria\Criterium $Criterium);
 
     /**
-     * @param $group_by
-     * @return $this
+     * @param Criteria\Criterium $Criterium
+     * @return Criteria
+     * @throws \Everon\DataMapper\Exception\Criteria
      */
-    function groupBy($group_by);
-
-    function getOffsetLimitSql();
-
-    function getWhereSql();
+    function orWhere(Criteria\Criterium $Criterium);
 
     /**
-     * @param array $where
-     * @return \Everon\DataMapper\Interfaces\Criteria
+     * @return \Everon\Interfaces\Collection
      */
-    function where(array $where);
+    function getCriteriumCollection();
 
     /**
-     * @param array $where_or
-     * @return \Everon\DataMapper\Interfaces\Criteria
+     * @param \Everon\Interfaces\Collection $CriteriumCollection
      */
-    function whereOr(array $where_or);
-
-    /**
-     * @param array $in
-     * @return $this
-     */
-    function in(array $in);
-
-    /**
-     * @param array $ilike
-     * @return $this
-     */
-    function ilike(array $ilike);
-
-    function sort($sort);
-
-    /**
-     * @param $limit
-     * @return \Everon\DataMapper\Interfaces\Criteria
-     */
-    function limit($limit);
-
-
-    /**
-     * @return int
-     */
-    function getLimit();
-
-    /**
-     * @return int
-     */
-    function getOffset();
+    function setCriteriumCollection($CriteriumCollection);
 
     /**
      * @return string
      */
-    function getOrderBy();
+    function getGlue();
 
-    /**
-     * @return string
-     */
-    function getSort();
+    function resetGlue();
 
-    /**
-     * @return array
-     */
-    function getWhere();
+    function glueByAnd();
+
+    function glueByOr();
 }

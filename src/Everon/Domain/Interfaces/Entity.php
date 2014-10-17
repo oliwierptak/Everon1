@@ -75,11 +75,6 @@ interface Entity extends Interfaces\Arrayable
     function delete();
     
     /**
-     * @return array
-     */
-    function getData();
-
-    /**
      * @param Collection $RelationCollection
      */
     function setRelationCollection(Collection $RelationCollection);
@@ -127,4 +122,9 @@ interface Entity extends Interfaces\Arrayable
      * @param $name
      */
     function resetRelationState($name);
+
+    /**
+     * @param array $data
+     */
+    function updateValues(array $data);
 }

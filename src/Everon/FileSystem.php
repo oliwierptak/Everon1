@@ -131,7 +131,8 @@ class FileSystem implements Interfaces\FileSystem
         foreach ($Iterator as $Item) {
             if ($Item->isDir()) {
                 $this->createPath($destination . DIRECTORY_SEPARATOR . $Iterator->getSubPathName());
-            } else {
+            }
+            else {
                 copy($Item, $destination. DIRECTORY_SEPARATOR . $Iterator->getSubPathName());
             }
         }
@@ -284,5 +285,44 @@ class FileSystem implements Interfaces\FileSystem
     public function createTmpFile()
     {
         return new FileSystem\TmpFile();
+    }
+
+
+    /**
+     * @inheritdoc
+     */
+    public function moveUploadedFile($file_path, $destination, $create_directory = true)
+    {
+        $directory = pathinfo($destination, PATHINFO_DIRNAME);
+
+        if ($this->directoryExists($directory) === false && $create_directory === true) {
+            $this->createPath($directory);
+        }
+
+        return move_uploaded_file($file_path, $destination);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function renameFile($source, $target)
+    {
+        if ($this->fileExists($source) === false) {
+            return false;
+        }
+
+        return rename($source, $target);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function copyFile($sourcePath, $targetPath)
+    {
+        if ($this->fileExists($sourcePath) === false) {
+            return false;
+        }
+
+        return copy($sourcePath, $targetPath);
     }
 }

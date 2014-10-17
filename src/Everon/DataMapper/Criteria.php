@@ -11,282 +11,117 @@ namespace Everon\DataMapper;
 
 use Everon\Helper;
 use Everon\DataMapper\Exception;
-use Everon\DataMapper\Interfaces;
 
 class Criteria implements Interfaces\Criteria
 {
-    use Helper\Arrays;
     use Helper\ToArray;
-    use Helper\ToString;
+
+    /**
+     * @var \Everon\Interfaces\Collection
+     */
+    protected $CriteriumCollection = null;
+
+    /**
+     * @var string
+     */
+    protected $glue = Criteria\Builder::GLUE_AND;
+
     
-    protected $where = [];
-    
-    protected $where_or = [];
-
-    protected $in = [];
-
-    protected $ilike = [];
-
-    protected $offset = null;
-
-    protected $limit = null;
-
-    protected $order_by = null;
-
-    protected $group_by = null;
-
-    protected $sort = 'ASC';
-    
+    /**
+     * @return array
+     */
+    protected function getToArray($deep=false)
+    {
+        return $this->getCriteriumCollection()->toArray($deep);
+    }
 
     /**
      * @inheritdoc
      */
-    public function where(array $where)
+    public function where(Interfaces\Criteria\Criterium $Criterium)
     {
-        $this->where = $this->arrayMergeDefault($this->where, $where);
+        $Criterium->resetGlue(null);
+        $this->getCriteriumCollection()->append($Criterium);
         return $this;
     }
 
     /**
      * @inheritdoc
      */
-    public function whereOr(array $where_or)
+    public function andWhere(Interfaces\Criteria\Criterium $Criterium)
     {
-        $this->where_or = $this->arrayMergeDefault($this->where_or, $where_or);
-        return $this;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function in(array $in)
-    {
-        $this->in = $this->arrayMergeDefault($this->in, $in);
-        return $this;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function ilike(array $ilike)
-    {
-        $this->ilike = $this->arrayMergeDefault($this->ilike, $ilike);
-        return $this;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function offset($offset)
-    {
-        $this->offset = (int) $offset;
-        return $this;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function limit($limit)
-    {
-        $this->limit = (int) $limit;
-        return $this;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function orderBy($order_by)
-    {
-        $this->order_by = $order_by;
-        return $this;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function groupBy($group_by)
-    {
-        $this->group_by = $group_by;
-        return $this;
-    }
-    
-    public function sort($sort)
-    {
-        $this->sort = $sort;
-        return $this;
-    }
-    
-    public function getWhereSql()
-    {
-        if (empty($this->where) && empty($this->where_or) && empty($this->in) && empty($this->ilike)) {
-            return '';
+        if ($this->getCriteriumCollection()->isEmpty()) {
+            throw new \Everon\DataMapper\Exception\Criteria('No subquery found, use where() to start new subqury');
         }
-        
-        $where_str = '1=1';
-        foreach ($this->where as $field => $value) {
-            $field_ok = str_replace('.', '_', $field); //replace z.id with z_id
-            $where_str .= " AND ${field} = :${field_ok}";
-        }
-        $where_str = (empty($this->where) === false) ? '('.$where_str.')' : $where_str;
-
-        $where_or_str = '';
-        if (empty($this->where_or) === false) {
-            $where_or_str = '';
-            foreach ($this->where_or as $field => $value) {
-                $field_ok = str_replace('.', '_', $field);
-                $where_or_str .= " ${field} = :${field_ok} OR ";
-            }
-            $this->where = $this->arrayMergeDefault($this->where, $this->where_or);
-            $where_or_str = substr($where_or_str, 0, strlen($where_or_str)-3);
-            $where_or_str = ' OR ('.$where_or_str.')';
-        }
-        $where_str = 'WHERE '.$where_str.$where_or_str;
-        
-        if (empty($this->in) === false) {
-            $where_str .= ' ';
-            foreach ($this->in as $field => $values) {
-                if (is_array($values) === false) {
-                    continue;
-                }
-                $values = array_filter($values);
-                $ilike_str = implode(',', $values);
-                $where_str .= " AND ${field} IN (${ilike_str})";
-            }
-        }
-
-        if (empty($this->ilike) === false) {
-            $where_str .= ' ';
-            foreach ($this->ilike as $field => $value) {
-                $field_ok = str_replace('.', '_', $field); //replace z.id with z_id
-                $where_str .= " AND ${field} ILIKE :${field_ok}";
-            }
-            $this->where = $this->arrayMergeDefault($this->where, $this->ilike);
-        }
-        
-        return $where_str;
-    }
-    
-    public function getOffsetLimitSql()
-    {
-        if ((int) $this->limit === 0 && $this->offset === null) {
-            return '';
-        }
-        
-        if ((int) $this->limit === 0 && $this->offset !== null) {
-            return 'OFFSET '.$this->offset;
-        }
-
-        if ((int) $this->limit !== 0 && $this->offset === null) {
-            return 'LIMIT '.$this->limit;
-        }
-
-        return 'LIMIT '.$this->limit. ' OFFSET '.$this->offset;
-    }
-
-    public function getOrderByAndSortSql()
-    {
-        if (empty($this->order_by)) {
-            return '';
-        }
-
-        if (is_array($this->order_by)) {
-            $order_by = implode(',', $this->order_by);
             
-            if (is_array($this->sort)) {
-                $order_by = '';
-                foreach ($this->order_by as $order_field) {
-                    $dir = isset($this->sort[$order_field]) ? $this->sort[$order_field] : 'ASC';
-                    $order_by .= "${order_field} ".$dir.',';
-                }
-            }
-        }
-        else {
-            $order_by = $this->order_by.' '.$this->sort;
-        }
-        
-        $order_by = trim($order_by, ',');
-
-        return 'ORDER BY '.$order_by;
+        $Criterium->glueByAnd();
+        $this->getCriteriumCollection()->append($Criterium);
+        return $this;
     }
-    
-    public function getGroupBy()
+
+    /**
+     * @inheritdoc
+     */
+    public function orWhere(Interfaces\Criteria\Criterium $Criterium)
     {
-        if ($this->group_by === null) {
-            return '';
+        if ($this->getCriteriumCollection()->isEmpty()) {
+            throw new \Everon\DataMapper\Exception\Criteria('No subquery found, use where() to start new subqury');
         }
 
-        return 'GROUP BY '.$this->group_by;
-    }
-    
-    protected function getToArray()
-    {
-        return [
-            'where' => $this->where,
-            'order_by' => $this->order_by,
-            'sort' => $this->sort,
-            'offset' => $this->offset,
-            'limit' => $this->limit,
-        ];
+        $Criterium->glueByOr();
+        $this->getCriteriumCollection()->append($Criterium);
+        return $this;
     }
 
     /**
      * @inheritdoc
      */
-    public function getLimit()
+    public function getCriteriumCollection()
     {
-        return $this->limit;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getOffset()
-    {
-        return $this->offset;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getOrderBy()
-    {
-        return $this->order_by;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getSort()
-    {
-        return $this->sort;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getWhere()
-    {
-        $where = [];
-        foreach ($this->where as $field => $value) {
-            $field_ok = str_replace('.', '_', $field); //replace z.id with z_id
-            $where[$field_ok] = $value;
+        if ($this->CriteriumCollection === null) {
+            $this->CriteriumCollection = new Helper\Collection([]);
         }
         
-        return $where;
-    }
-    
-    protected function getToString()
-    {
-        $where_str = $this->getWhereSql();
-        $order_by_str = $this->getOrderByAndSortSql();
-        $offset_limit_sql = $this->getOffsetLimitSql();
-        $group_by = $this->getGroupBy();
-        
-        return "$where_str
-            $group_by
-            $order_by_str
-            $offset_limit_sql
-            ";
+        return $this->CriteriumCollection;
     }
 
+    /**
+     * @inheritdoc
+     */
+    public function setCriteriumCollection($CriteriumCollection)
+    {
+        $this->CriteriumCollection = $CriteriumCollection;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getGlue()
+    {
+        return $this->glue;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function resetGlue()
+    {
+        $this->glue = null;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function glueByAnd()
+    {
+        $this->glue = Criteria\Builder::GLUE_AND;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function glueByOr()
+    {
+        $this->glue = Criteria\Builder::GLUE_OR;
+    }
 }

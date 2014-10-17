@@ -80,7 +80,7 @@ interface Column extends Arrayable
      * @param $value
      * @return mixed
      */
-    function getDataForEntity($value);
+    function getColumnDataForEntity($value);
 
     /**
      * @return string

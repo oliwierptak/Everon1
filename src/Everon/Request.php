@@ -105,6 +105,16 @@ abstract class Request implements Interfaces\Request
      * @return string
      */
     protected abstract function getPreferredLanguage($default='en-US');
+
+    /**
+     * @var bool
+     */
+    protected $php_input_flags = false;
+
+    /**
+     * @var \resource
+     */
+    protected $php_input_context = null;
     
 
     /**
@@ -249,6 +259,7 @@ abstract class Request implements Interfaces\Request
 
         return $input;
     }
+    
     /**
      * @param $value
      * @param $index
@@ -256,7 +267,7 @@ abstract class Request implements Interfaces\Request
     protected function sanitizeInputToken(&$value, $index)
     {
         if ($value !== null) {
-            $value = strip_tags($value);
+            $value = strip_tags($value, '<p><a><br><img><b><strong><i><em><u><ul><li><span><h1><h2><h3><h4><h5><hr>');
         }
     }
 
@@ -554,7 +565,7 @@ abstract class Request implements Interfaces\Request
      */
     public function getRawInput()
     {
-        return file_get_contents('php://input');
+        return file_get_contents('php://input', $this->getPhpInputFlags(), $this->getPhpInputContext());
     }
 
     /**
@@ -580,5 +591,36 @@ abstract class Request implements Interfaces\Request
     {
         return $this->ServerCollection->get('HTTP_USER_AGENT', '');
     }
-   
+
+    /**
+     * @return resource
+     */
+    public function getPhpInputContext()
+    {
+        return $this->php_input_context;
+    }
+
+    /**
+     * @param \resource $php_input_context
+     */
+    public function setPhpInputContext($php_input_context)
+    {
+        $this->php_input_context = $php_input_context;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getPhpInputFlags()
+    {
+        return $this->php_input_flags;
+    }
+
+    /**
+     * @param boolean $php_input_flags
+     */
+    public function setPhpInputFlags($php_input_flags)
+    {
+        $this->php_input_flags = $php_input_flags;
+    }
 }

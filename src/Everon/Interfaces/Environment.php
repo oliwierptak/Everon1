@@ -22,12 +22,12 @@ interface Environment
     function setConfig($config);
     function getDomain();
     function setDomain($domain);
+    function getDomainConfig();
+    function setDomainConfig($domain_config);
     function getDataMapper();
     function setDataMapper($data_mapper);
     function getView();
     function setView($theme);
-    function getController();
-    function setController($controller);
     function getTest();
     function setTest($test);
     function getEveronConfig();

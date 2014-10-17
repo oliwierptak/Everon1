@@ -12,7 +12,7 @@ namespace Everon\Rest\Interfaces;
 use Everon\Domain\Interfaces\Entity;
 use Everon\Rest\Interfaces\Resource as ResourceInterface;
 
-interface ResourceHandler
+interface ResourceHandler extends \Everon\Interfaces\Dependency\Factory, \Everon\Domain\Interfaces\Dependency\DomainManager
 {
 
     /**
@@ -85,6 +85,30 @@ interface ResourceHandler
     /**
      * @param $version
      * @param $resource_name
+     * @param $resource_id
+     * @param $collection_name
+     * @param array $data
+     * @param $user_id
+     * @return ResourceInterface
+     * @throws \Everon\Rest\Exception\Resource
+     */
+    function saveCollection($version, $resource_name, $resource_id, $collection_name, array $data, $user_id);
+
+    /**
+     * @param $version
+     * @param $resource_name
+     * @param $resource_id
+     * @param $collection_name
+     * @param array $data
+     * @param $user_id
+     * @return ResourceInterface
+     * @throws \Everon\Rest\Exception\Resource
+     */
+    function deleteCollection($version, $resource_name, $resource_id, $collection_name, array $data, $user_id);
+
+    /**
+     * @param $version
+     * @param $resource_name
      * @return ResourceCollection
      * @param ResourceNavigator $Navigator
      * @throws \Exception
@@ -138,4 +162,14 @@ interface ResourceHandler
      * @throws \Everon\Rest\Exception\Manager
      */
     function getResourceNameFromMapping($domain_name);
+
+    /**
+     * @return \Everon\Interfaces\Collection
+     */
+    function getMappingCollection();
+
+    /**
+     * @param \Everon\Interfaces\Collection $MappingCollection
+     */
+    function setMappingCollection(\Everon\Interfaces\Collection $MappingCollection);
 }
