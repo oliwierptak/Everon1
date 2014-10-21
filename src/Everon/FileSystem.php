@@ -286,20 +286,27 @@ class FileSystem implements Interfaces\FileSystem
     {
         return new FileSystem\TmpFile();
     }
-
-
+    
     /**
      * @inheritdoc
      */
     public function moveUploadedFile($file_path, $destination, $create_directory = true)
     {
-        $directory = pathinfo($destination, PATHINFO_DIRNAME);
-
-        if ($this->directoryExists($directory) === false && $create_directory === true) {
-            $this->createPath($directory);
+        if (is_uploaded_file($file_path) === false) {
+            throw new Exception\FileSystem('The file needs to be uploaded in order to be moved');
         }
-
-        return move_uploaded_file($file_path, $destination);
+        
+        try {
+            $directory = pathinfo($destination, PATHINFO_DIRNAME);
+            if ($this->directoryExists($directory) === false && $create_directory === true) {
+                $this->createPath($directory);
+            }
+    
+            return move_uploaded_file($file_path, $destination) === true;
+        }
+        catch (\Exception $e) {
+            throw new Exception\FileSystem($e);
+        }
     }
 
     /**
