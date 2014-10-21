@@ -18,8 +18,9 @@ class Manager implements \Everon\Config\Interfaces\Manager
     use Dependency\Injection\Bootstrap;
     use Dependency\Injection\Factory;
     use Dependency\Injection\FileSystem;
-    use Dependency\Logger;
+    
     use Dependency\ConfigLoader;
+    use Dependency\Logger;
 
     use Helper\Arrays;
     use Helper\Exceptions;

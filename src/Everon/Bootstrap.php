@@ -11,7 +11,7 @@ namespace Everon;
 
 use Everon\Interfaces\Environment;
 
-class Bootstrap
+class Bootstrap implements \Everon\Interfaces\Bootstrap
 {
     /**
      * @var \Everon\Interfaces\Environment
@@ -31,7 +31,13 @@ class Bootstrap
     
     protected $show_auto_loader_exceptions = null;
     
-    
+
+    /**
+     * @param $Environment
+     * @param $environment_name
+     * @param string $os
+     * @throws \Exception
+     */
     public function __construct($Environment, $environment_name, $os=PHP_OS)
     {
         $this->environment_name = trim($environment_name);
@@ -54,15 +60,15 @@ class Bootstrap
     }
 
     /**
-     * @param bool $show_auto_loader_exceptions
+     * @inheritdoc
      */
     public function setShowAutoLoaderExceptions($show_auto_loader_exceptions)
     {
-        $this->show_auto_loader_exceptions = $show_auto_loader_exceptions;
+        $this->show_auto_loader_exceptions = (bool) $show_auto_loader_exceptions;
     }
 
     /**
-     * @return bool
+     * @inheritdoc
      */
     public function getShowAutoLoaderExceptions()
     {
@@ -72,22 +78,34 @@ class Bootstrap
         }
         return $this->show_auto_loader_exceptions;
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public function getClassLoader()
     {
         return $this->ClassLoader;
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public function getEnvironment()
     {
         return $this->Environment;
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public function setEnvironment(Environment $Environment)
     {
         return $this->Environment = $Environment;
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public function getOsName()
     {
         return $this->os_name;
@@ -145,6 +163,9 @@ class Bootstrap
         }
     }
 
+    /**
+     * @inheritdoc
+     */
     public function hasAutoloader($name)
     {
         $ini = $this->getApplicationIni();
@@ -157,6 +178,9 @@ class Bootstrap
         return false;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function run($prepend_autoloader=false)
     {
         $this->registerClassLoader($prepend_autoloader);
@@ -173,6 +197,9 @@ class Bootstrap
         return new Application\Factory($Container);
     }
 
+    /**
+     * @inheritdoc
+     */
     public static function setupExceptionHandler($guid_value, $app_root, $log_filename)
     {
         $log_directory = implode(DIRECTORY_SEPARATOR, [$app_root, 'Tmp', 'logs']);
@@ -187,7 +214,10 @@ class Bootstrap
             }
         });
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public static function logException(\Exception $Exception, $guid_value, $log_filename)
     {
         $timestamp = date('c', time());
@@ -198,7 +228,7 @@ class Bootstrap
     }
 
     /**
-     * @param string $environment_name
+     * @inheritdoc
      */
     public function setEnvironmentName($environment_name)
     {
@@ -206,13 +236,10 @@ class Bootstrap
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
     public function getEnvironmentName()
     {
         return $this->environment_name;
     }
-    
-    
-    
 }
