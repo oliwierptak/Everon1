@@ -91,6 +91,46 @@ interface Builder extends \Everon\Interfaces\Arrayable, \Everon\Interfaces\Strin
     function glueByAnd();
 
     function glueByOr();
+
+    /**
+     * @return string
+     */
+    function getGroupBy();
+        
+    /**
+     * @param string $group_by
+     */
+    function setGroupBy($group_by);
+
+    /**
+     * @return int
+     */
+    function getLimit();
+
+    /**
+     * @param int $limit
+     */
+    function setLimit($limit);
+
+    /**
+     * @return int
+     */
+    function getOffset();
+
+    /**
+     * @param int $offset
+     */
+    function setOffset($offset);
+    
+    /**
+     * @return array
+     */
+    function getOrderBy();
+
+    /**
+     * @param array $order_by
+     */
+    function setOrderBy(array $order_by);
     
     /**
      * @return Interfaces\SqlPart
