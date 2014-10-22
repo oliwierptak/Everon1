@@ -66,9 +66,19 @@ class Builder implements Interfaces\Criteria\Builder
     /**
      * @return array
      */
-    protected function getToArray($deep=false)
+    protected function getToArray()
     {
-        return $this->getContainerCollection()->toArray($deep);
+        $SqlPart = $this->toSqlPart();
+        return $SqlPart->getParameters();
+    }
+
+    /**
+     * @return string
+     */
+    protected function getToString()
+    {
+        $SqlPart = $this->toSqlPart();
+        return $SqlPart->getSql();
     }
 
     /**
