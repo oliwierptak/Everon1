@@ -17,7 +17,6 @@ use Everon\Interfaces;
 
 abstract class DataMapper implements Interfaces\DataMapper
 {
-    use \Everon\Dependency\Injection\Factory;
     use Dependency\Schema;
     
     use Helper\String\LastTokenToName;
