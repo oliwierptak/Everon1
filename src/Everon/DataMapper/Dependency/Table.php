@@ -21,7 +21,7 @@ trait Table
     /**
      * @return \Everon\DataMapper\Interfaces\Schema\Table
      */
-    public function getSchema()
+    public function getTable()
     {
         return $this->Table;
     }
