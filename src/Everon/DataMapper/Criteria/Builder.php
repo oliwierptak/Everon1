@@ -57,6 +57,26 @@ class Builder implements Interfaces\Criteria\Builder
      */
     protected $glue = self::GLUE_AND;
 
+    /**
+     * @var int
+     */
+    protected $offset = null;
+
+    /**
+     * @var int
+     */
+    protected $limit = null;
+
+    /**
+     * @var array
+     */
+    protected $order_by = [];
+
+    /**
+     * @var string
+     */
+    protected $group_by = null;
+
     
     public function __construct()
     {
@@ -66,9 +86,19 @@ class Builder implements Interfaces\Criteria\Builder
     /**
      * @return array
      */
-    protected function getToArray($deep=false)
+    protected function getToArray()
     {
-        return $this->getContainerCollection()->toArray($deep);
+        $SqlPart = $this->toSqlPart();
+        return $SqlPart->getParameters();
+    }
+
+    /**
+     * @return string
+     */
+    protected function getToString()
+    {
+        $SqlPart = $this->toSqlPart();
+        return $SqlPart->getSql();
     }
 
     /**
@@ -240,6 +270,121 @@ class Builder implements Interfaces\Criteria\Builder
     }
 
     /**
+     * @return string
+     */
+    public function getGroupBy()
+    {
+        return $this->group_by;
+    }
+
+    /**
+     * @param string $group_by
+     */
+    public function setGroupBy($group_by)
+    {
+        $this->group_by = $group_by;
+    }
+
+    /**
+     * @return int
+     */
+    public function getLimit()
+    {
+        return $this->limit;
+    }
+
+    /**
+     * @param int $limit
+     */
+    public function setLimit($limit)
+    {
+        $this->limit = $limit;
+    }
+
+    /**
+     * @return int
+     */
+    public function getOffset()
+    {
+        return $this->offset;
+    }
+
+    /**
+     * @param int $offset
+     */
+    public function setOffset($offset)
+    {
+        $this->offset = $offset;
+    }
+
+    /**
+     * @return array
+     */
+    public function getOrderBy()
+    {
+        return $this->order_by;
+    }
+
+    /**
+     * @param array $order_by
+     */
+    public function setOrderBy(array $order_by)
+    {
+        $this->order_by = $order_by;
+    }
+
+    /**
+     * @return string
+     */
+    protected function getOffsetLimitSql()
+    {
+        if ((int) $this->getLimit() === 0 && $this->getOffset() === null) {
+            return '';
+        }
+
+        if ((int) $this->getLimit() === 0 && $this->getOffset() !== null) {
+            return 'OFFSET '.$this->offset;
+        }
+
+        if ((int) $this->getLimit() !== 0 && $this->getOffset() === null) {
+            return 'LIMIT '.$this->getLimit();
+        }
+
+        return 'LIMIT '.$this->getLimit(). ' OFFSET '.$this->getOffset();
+    }
+
+    /**
+     * @return string
+     */
+    protected function getOrderByAndSortSql()
+    {
+        if (is_array($this->getOrderBy()) === false || empty($this->getOrderBy())) {
+            return '';
+        }
+
+        $order_by = '';
+        foreach ($this->getOrderBy() as $name => $sort) {
+            $order_by .= "${name} ".$sort.',';
+        }
+
+        if ($order_by !== '') {
+            $order_by = trim($order_by, ',');
+            $order_by = 'ORDER BY '.$order_by;
+        }
+
+        return $order_by;
+    }
+
+    protected function getGroupBySql()
+    {
+        if ($this->getGroupBy() === null) {
+            return '';
+        }
+
+        return 'GROUP BY '.$this->getGroupBy();
+    }
+    
+    /**
      * @inheritdoc
      */
     public function toSqlPart()
@@ -267,7 +412,12 @@ class Builder implements Interfaces\Criteria\Builder
         $sql = implode("\n", $sql);
         $sql = rtrim($sql, $glue.' ');
         
-        return $this->getFactory()->buildDataMapperSqlPart($sql, $parameters);
+        $sql .= ' '.trim($this->getGroupBySql().' '.
+            $this->getOrderByAndSortSql().' '.
+            $this->getOffsetLimitSql())
+        ;
+        
+        return $this->getFactory()->buildDataMapperSqlPart(trim($sql), $parameters);
     }
 
     /**
@@ -277,7 +427,7 @@ class Builder implements Interfaces\Criteria\Builder
     {
         $operator = strtoupper(trim($operator));
         if (isset(static::$operator_mappers[$operator]) === false) {
-            throw new Exception\CriteriaBuilder('Unknown operator_type type: "%s"', $operator);
+            throw new Exception\CriteriaBuilder('Unknown operator type: "%s"', $operator);
         }
         
         return static::$operator_mappers[$operator];

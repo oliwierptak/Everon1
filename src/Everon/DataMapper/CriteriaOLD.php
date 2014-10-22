@@ -206,6 +206,10 @@ class CriteriaOLD implements Interfaces\CriteriaOLD
             return '';
         }
 
+        if ((int) $this->limit === 0 && (int) $this->offset === 0) {
+            return '';
+        }
+
         if ((int) $this->limit === 0 && $this->offset !== null) {
             return 'OFFSET '.$this->offset;
         }
