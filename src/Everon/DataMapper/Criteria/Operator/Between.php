@@ -41,7 +41,7 @@ class Between extends \Everon\DataMapper\Criteria\Operator implements Interfaces
          * @var array $data
          */
         foreach ($data as $value) {
-            $rand = Builder::randomizeParameterName($Criterium->getColumn());
+            $rand = Builder::randomizeParameterName($Criterium->getPlaceholderAsParameter());
             $params[$rand] = $value;
         }
 

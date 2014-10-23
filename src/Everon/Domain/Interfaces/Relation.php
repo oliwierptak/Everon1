@@ -27,12 +27,14 @@ interface Relation extends \Everon\Interfaces\Arrayable, Dependency\DomainManage
     /**
      * @return DataMapper\Interfaces\CriteriaOLD
      */
-     function getCriteria();
+     function getCriteriaBuilder();
 
     /**
-     * @param DataMapper\Interfaces\CriteriaOLD $Criteria
+     * @param DataMapper\Interfaces\Criteria\Builder $CriteriaBuilder
+     * @return mixed
+    @internal param DataMapper\Interfaces\CriteriaOLD $CriteriaBuilder 
      */
-     function setCriteria(DataMapper\Interfaces\CriteriaOLD $Criteria);
+     function setCriteriaBuilder(DataMapper\Interfaces\Criteria\Builder $CriteriaBuilder);
 
     /**
      * @return DataMapper\Interfaces\CriteriaOLD
@@ -40,9 +42,10 @@ interface Relation extends \Everon\Interfaces\Arrayable, Dependency\DomainManage
      function getEntityRelationCriteria();
 
     /**
-     * @param DataMapper\Interfaces\CriteriaOLD $RelationCriteria
+     * @param DataMapper\Interfaces\Criteria\Builder|DataMapper\Interfaces\CriteriaOLD $RelationCriteriaBuilder
+     * @return mixed
      */
-     function setEntityRelationCriteria(DataMapper\Interfaces\CriteriaOLD $RelationCriteria);
+     function setEntityRelationCriteria(DataMapper\Interfaces\Criteria\Builder $RelationCriteriaBuilder);
 
     /**
      * @return \Everon\Interfaces\DataMapper
@@ -95,10 +98,10 @@ interface Relation extends \Everon\Interfaces\Arrayable, Dependency\DomainManage
     function setData(\Everon\Interfaces\Collection $Collection);
 
     /**
-     * @param DataMapper\Interfaces\CriteriaOLD $Criteria 
+     * @param DataMapper\Interfaces\Criteria\Builder|DataMapper\Interfaces\CriteriaOLD $Criteria
      * @return \Everon\Interfaces\Collection
      */
-    function getData(DataMapper\Interfaces\CriteriaOLD $Criteria=null);
+    function getData(DataMapper\Interfaces\Criteria\Builder $Criteria = null);
 
     function getCount();
 

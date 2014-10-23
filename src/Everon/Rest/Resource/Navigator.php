@@ -9,8 +9,8 @@
  */
 namespace Everon\Rest\Resource;
 
-use Everon\Rest\Dependency;
 use Everon\Helper;
+use Everon\Rest\Dependency;
 use Everon\Rest\Interfaces;
 
 class Navigator implements Interfaces\ResourceNavigator
@@ -212,16 +212,16 @@ class Navigator implements Interfaces\ResourceNavigator
      */
     public function toCriteria()
     {
-        $Criteria = new \Everon\DataMapper\CriteriaOLD();
-        $Criteria->limit($this->getLimit());
-        $Criteria->offset($this->getOffset());
-        $Criteria->orderBy($this->getOrderBy() ?: []);
+        $CriteriaBuilder = $this->getFactory()->buildCriteriaBuilder();
+        $CriteriaBuilder->setLimit($this->getLimit());
+        $CriteriaBuilder->setOffset($this->getOffset());
+        $CriteriaBuilder->setOrderBy($this->getOrderBy() ?: []);
         
-        if (is_array($this->getFilters())) {
+/*        if (is_array($this->getFilters())) { xxx
             $Filter = $this->getFactory()->buildRestFilter(new Helper\Collection($this->getFilters()));
-            $Filter->assignToCriteria($Criteria);
-        }
+            $Filter->assignToCriteria($CriteriaBuilder);
+        }*/
         
-        return $Criteria;
+        return $CriteriaBuilder;
     }
 }

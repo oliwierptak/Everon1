@@ -9,8 +9,7 @@
  */
 namespace Everon\Domain\Interfaces;
 
-use Everon\DataMapper\Interfaces\CriteriaOLD;
-use Everon\Interfaces\DataMapper;
+use Everon\DataMapper;
 use Everon\Domain\Exception;
 
 interface Repository
@@ -23,24 +22,25 @@ interface Repository
 
     /**
      * @param Entity $Entity
-     * @param CriteriaOLD $Criteria
+     * @param DataMapper\Interfaces\Criteria\Builder $CriteriaBuilder
+     * @internal param CriteriaOLD $CriteriaBuilder
      * @return
      */
-    function buildEntityRelations(Entity $Entity, CriteriaOLD $Criteria = null);
+    function buildEntityRelations(Entity $Entity, DataMapper\Interfaces\Criteria\Builder $CriteriaBuilder = null);
 
     /**
      * @param $id
-     * @param CriteriaOLD $RelationCriteria
+     * @param  DataMapper\Interfaces\Criteria\Builder $RelationCriteria
      * @return Entity|null
      */
-    function getEntityById($id, CriteriaOLD $RelationCriteria=null);
+    function getEntityById($id, DataMapper\Interfaces\Criteria\Builder $RelationCriteria=null);
 
     /**
      * @param array $property_criteria
-     * @param CriteriaOLD $RelationCriteria
+     * @param DataMapper\Interfaces\Criteria\Builder|CriteriaOLD $RelationCriteria
      * @return Entity|null
      */
-    function getEntityByPropertyValue(array $property_criteria, CriteriaOLD $RelationCriteria=null);
+    function getEntityByPropertyValue(array $property_criteria, DataMapper\Interfaces\Criteria\Builder $RelationCriteria = null);
 
     /**
      * @param array $data
@@ -50,16 +50,17 @@ interface Repository
     function persistFromArray(array $data, $user_id=null);
 
     /**
-     * @param CriteriaOLD $Criteria
+     * @param DataMapper\Interfaces\Criteria\Builder $CriteriaBuilder
+     * @param DataMapper\Interfaces\Criteria\Builder $RelationCriteriaBuilder
      * @return array|null
      */
-    function getByCriteria(CriteriaOLD $Criteria);
+    function getByCriteria(DataMapper\Interfaces\Criteria\Builder $CriteriaBuilder, DataMapper\Interfaces\Criteria\Builder $RelationCriteriaBuilder=null);
 
     /**
-     * @param CriteriaOLD $Criteria
+     * @param DataMapper\Interfaces\Criteria\Builder|CriteriaOLD $CriteriaBuilder
      * @return int
      */
-    function count(CriteriaOLD $Criteria=null);
+    function count(DataMapper\Interfaces\Criteria\Builder $CriteriaBuilder = null);
 
     /**
      * @param Entity $Entity
@@ -74,16 +75,17 @@ interface Repository
     function remove(Entity $Entity, $user_id=null);
 
     /**
-     * @param CriteriaOLD $Criteria
+     * @param DataMapper\Interfaces\Criteria\Builder|CriteriaOLD $CriteriaBuilder
+     * @return
      */
-    function removeByCriteria(CriteriaOLD $Criteria);
+    function removeByCriteria(DataMapper\Interfaces\Criteria\Builder $CriteriaBuilder);
 
     /**
-     * @param CriteriaOLD $Criteria
-     * @param CriteriaOLD $RelationCriteria
+     * @param DataMapper\Interfaces\Criteria\Builder|CriteriaOLD $CriteriaBuilder
+     * @param DataMapper\Interfaces\Criteria\Builder|CriteriaOLD $RelationCriteriaBuilder
      * @return Entity|null
      */
-    function getOneByCriteria(CriteriaOLD $Criteria, CriteriaOLD $RelationCriteria=null);
+    function getOneByCriteria(DataMapper\Interfaces\Criteria\Builder $CriteriaBuilder, DataMapper\Interfaces\Criteria\Builder $RelationCriteriaBuilder = null);
 
     /**
      * @return DataMapper
@@ -99,9 +101,10 @@ interface Repository
 
     /**
      * @param array $data
+     * @param DataMapper\Interfaces\Criteria\Builder $RelationCriteria
      * @return Entity
      */
-    function buildFromArray(array $data);
+    function buildFromArray(array $data, DataMapper\Interfaces\Criteria\Builder $RelationCriteria=null);
 
     /**
      * @param $point null

@@ -69,7 +69,7 @@ interface Builder extends \Everon\Interfaces\Arrayable, \Everon\Interfaces\Strin
     /**
      * @param Interfaces\Criteria\Container $Container
      */
-    function setCurrentCriteria(Interfaces\Criteria\Container $Container);
+    function setCurrentContainer(Interfaces\Criteria\Container $Container);
 
     /**
      * @return \Everon\Interfaces\Collection

@@ -216,7 +216,7 @@ class Builder implements Interfaces\Criteria\Builder
     /**
      * @inheritdoc
      */
-    public function setCurrentCriteria(Interfaces\Criteria\Container $Container)
+    public function setCurrentContainer(Interfaces\Criteria\Container $Container)
     {
         $this->ContainerCollection[$this->current] = $Container;
     }
@@ -338,11 +338,11 @@ class Builder implements Interfaces\Criteria\Builder
      */
     protected function getOffsetLimitSql()
     {
-        if ((int) $this->getLimit() === 0 && $this->getOffset() === null) {
+        if ($this->getLimit() === null && $this->getOffset() === null) {
             return '';
         }
 
-        if ((int) $this->getLimit() === 0 && $this->getOffset() !== null) {
+        if ($this->getLimit() === null && ($this->getOffset() !== null && (int) $this->getOffset() !== 0)) {
             return 'OFFSET '.$this->offset;
         }
 
@@ -409,15 +409,16 @@ class Builder implements Interfaces\Criteria\Builder
             $parameters = $this->arrayMergeDefault($tmp, $parameters);
         }
 
-        $sql = implode("\n", $sql);
-        $sql = rtrim($sql, $glue.' ');
-        
-        $sql .= ' '.trim($this->getGroupBySql().' '.
+        $sql_query = implode("\n", $sql);
+        $sql_query = rtrim($sql_query, $glue.' ');
+
+        $sql_query .= trim($this->getGroupBySql().' '.
             $this->getOrderByAndSortSql().' '.
-            $this->getOffsetLimitSql())
-        ;
+            $this->getOffsetLimitSql());
         
-        return $this->getFactory()->buildDataMapperSqlPart(trim($sql), $parameters);
+        $sql_query = empty($sql) === false ? 'WHERE '.$sql_query : $sql_query;
+        
+        return $this->getFactory()->buildDataMapperSqlPart(trim($sql_query), $parameters);
     }
 
     /**
