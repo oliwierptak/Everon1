@@ -63,26 +63,26 @@ class Navigator implements Interfaces\ResourceNavigator
 
     /**
      * @param $name
-     * @param null $default
+     * @param null $default_value
      * @return array|mixed|null
      */
-    protected function getParameterValue($name, $default=null)
+    protected function getParameterValue($name, $default_value=null)
     {
-        $as_array = is_array($default);
-        $value = $this->getRequest()->getGetParameter($name, $default);
-        if ($value !== null) {
-            if ($as_array || strpos($value, static::PARAM_SEPARATOR) !== false) {
-                $value = explode(static::PARAM_SEPARATOR, trim($value, static::PARAM_SEPARATOR)); //eg. date_added,user_name
-                if (is_array($value)) {
-                    return $value;
+        $as_array = is_array($default_value);
+        $parameter_value = $this->getRequest()->getGetParameter($name, null);
+        if ($parameter_value !== null) {
+            if ($as_array || strpos($parameter_value, static::PARAM_SEPARATOR) !== false) {
+                $parameter_value = explode(static::PARAM_SEPARATOR, trim($parameter_value, static::PARAM_SEPARATOR)); //eg. date_added,user_name
+                if (is_array($parameter_value)) {
+                    return $parameter_value;
                 }
             }
             else {
-                return $this->getRequest()->getQueryParameter($name, $default);
+                return $this->getRequest()->getQueryParameter($name, $default_value);
             }
         }
         
-        return $default;
+        return $default_value;
     }
     
     protected function init()
