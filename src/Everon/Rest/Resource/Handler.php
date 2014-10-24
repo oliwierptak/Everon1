@@ -279,7 +279,7 @@ class Handler implements Interfaces\ResourceHandler
             $ResourceCollection = $Resource->getRelationCollectionByName($collection_name);
             
             if ($extra_expand !== null && $ResourceCollection instanceof Interfaces\ResourceCollection) {
-                foreach ($ResourceCollection->getItemCollection() as $ResourceItemToExpand) {
+                foreach ($ResourceCollection->getItemCollection() as $ResourceItemToExpand) { //DRY
                     $NavigatorToExpand = clone $Navigator;
                     //$NavigatorToExpand->setLimit($Paginator->getLimit());
                     //$NavigatorToExpand->setOffset($Paginator->getOffset());
@@ -314,7 +314,7 @@ class Handler implements Interfaces\ResourceHandler
             }
 
             if ($extra_expand !== null) {
-                foreach ($ResourceCollection as $ResourceItemToExpand) {
+                foreach ($ResourceCollection as $ResourceItemToExpand) { //DRY
                     $NavigatorToExpand = clone $Navigator;
                     //$NavigatorToExpand->setLimit($Paginator->getLimit());
                     //$NavigatorToExpand->setOffset($Paginator->getOffset());
@@ -392,12 +392,14 @@ class Handler implements Interfaces\ResourceHandler
             $Href = $this->getResourceUrl($version, $resource_name, $resource_id, $collection);
             $Href->setItemId($item_id);
             $Resource->setHref($Href);
+            
             $expand = $Navigator->getExpand();
             foreach ($expand as $index => $item_name) {
                 if ($item_name === $collection) {
                     unset($expand[$index]);
                 }
             }
+            
             $Navigator->setExpand($expand);
             $this->expandResource($Resource, $Navigator);
 
