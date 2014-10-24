@@ -97,18 +97,14 @@ abstract class Relation implements Interfaces\Relation
     
     protected function setupRelationParameters()
     {
-        if ($this->relation_was_setup) {
-            return;
-        }
+        $this->resetRelationCriteriaParameters();
         
         if ($this->getRelationMapper()->isVirtual()) { //virtual relations handle their data on their own
-            $this->relation_was_setup = true;
             return;
         }
 
         $this->validate();
         $this->setupRelation();
-        $this->relation_was_setup = true;
     }
     
     protected function validate()
@@ -145,7 +141,7 @@ abstract class Relation implements Interfaces\Relation
     protected function resetRelationCriteriaParameters()
     {
         $CriteriaBuilder = $this->getFactory()->buildCriteriaBuilder();
-        $this->setCriteriaBuilder($CriteriaBuilder);
+        $this->CriteriaBuilder = $CriteriaBuilder;
         $this->sql = null;
         $this->sql_count = null;
     }
@@ -153,6 +149,7 @@ abstract class Relation implements Interfaces\Relation
     public function reset()
     {
         $this->loaded = false;
+        $this->resetRelationCriteriaParameters();
     }
 
     /**
@@ -177,7 +174,6 @@ abstract class Relation implements Interfaces\Relation
     public function setOwnerEntity(Domain\Interfaces\Entity $Entity)
     {
         $this->OwnerEntity = $Entity;
-        $this->reset();
     }
 
     /**
@@ -199,7 +195,6 @@ abstract class Relation implements Interfaces\Relation
     public function setCriteriaBuilder(DataMapper\Interfaces\Criteria\Builder $CriteriaBuilder)
     {
         $this->CriteriaBuilder = $CriteriaBuilder;
-        $this->reset();
     }
 
     /**
@@ -217,7 +212,6 @@ abstract class Relation implements Interfaces\Relation
     public function setEntityRelationCriteria(DataMapper\Interfaces\Criteria\Builder $RelationCriteriaBuilder)
     {
         $this->EntityRelationCriteria = $RelationCriteriaBuilder;
-        $this->reset();
     }
 
     /**
@@ -234,7 +228,6 @@ abstract class Relation implements Interfaces\Relation
     public function setDataMapper(\Everon\Interfaces\DataMapper $DataMapper)
     {
         $this->getDomainManager()->getRepositoryByName($this->getName())->setMapper($DataMapper);
-        $this->reset();
     }
 
     /**
@@ -251,7 +244,6 @@ abstract class Relation implements Interfaces\Relation
     public function setName($name)
     {
         $this->name = $name;
-        $this->reset();
     }
 
     /**
@@ -276,7 +268,6 @@ abstract class Relation implements Interfaces\Relation
     public function setType($type)
     {
         $this->type = $type;
-        $this->reset();
     }
 
     /**
@@ -316,9 +307,15 @@ abstract class Relation implements Interfaces\Relation
         $this->setupRelationParameters();
         
         if ($Criteria !== null) {
-            $this->getCriteriaBuilder()->setOrderBy($Criteria->getOrderBy() ?: $this->getCriteriaBuilder()->getOrderBy());
-            $this->getCriteriaBuilder()->setLimit($Criteria->getLimit() ?:$this->getCriteriaBuilder()->getLimit());
-            $this->getCriteriaBuilder()->setOffset($Criteria->getOffset() ?: $this->getCriteriaBuilder()->getOffset());
+            if (empty($Criteria->getOrderBy()) === false) {
+                $this->getCriteriaBuilder()->setOrderBy($Criteria->getOrderBy());
+            } 
+            if ($Criteria->getLimit()) {
+                $this->getCriteriaBuilder()->setLimit($Criteria->getLimit());
+            }
+            if ($Criteria->getOffset() !== null) {
+                $this->getCriteriaBuilder()->setOffset($Criteria->getOffset());
+            }
         }
 
         $Loader = function () {
@@ -351,25 +348,26 @@ abstract class Relation implements Interfaces\Relation
 
     public function getCount()
     {
-        $this->setupRelationParameters();
-        
-        if ($this->loaded === false) {
-            $CriteriaBuilder = clone $this->getCriteriaBuilder();
-            $CriteriaBuilder->setOrderBy([]);
-            $CriteriaBuilder->setLimit(0);
-            $CriteriaBuilder->setOffset(0);
-            
-            if ($this->sql_count !== null) {
-                $SqlPart = $CriteriaBuilder->toSqlPart();
-                $sql = trim($this->sql_count.' '.$SqlPart->getSql());
-                $PdoStatement = $this->getDataMapper()->getSchema()->getPdoAdapterByName('read')->execute($sql, $SqlPart->getParameters());
-                $this->count = (int) $PdoStatement->fetchColumn();
-            } 
-            else {
-                return $this->getDomainManager()->getRepositoryByName($this->getName())->count($CriteriaBuilder);
-            }
+        if ($this->loaded) {
+            return $this->count;
         }
-
+        
+        $this->setupRelationParameters();
+        $CriteriaBuilder = clone $this->getCriteriaBuilder();
+        $CriteriaBuilder->setOrderBy([]);
+        $CriteriaBuilder->setLimit(null);
+        $CriteriaBuilder->setOffset(null);
+        
+        if ($this->sql_count !== null) {
+            $SqlPart = $CriteriaBuilder->toSqlPart();
+            $sql = trim($this->sql_count.' '.$SqlPart->getSql());
+            $PdoStatement = $this->getDataMapper()->getSchema()->getPdoAdapterByName('read')->execute($sql, $SqlPart->getParameters());
+            $this->count = (int) $PdoStatement->fetchColumn();
+        } 
+        else {
+            $this->count = $this->getDomainManager()->getRepositoryByName($this->getName())->count($CriteriaBuilder);
+        }
+        
         return $this->count;
     }
 

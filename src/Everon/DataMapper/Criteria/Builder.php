@@ -412,7 +412,7 @@ class Builder implements Interfaces\Criteria\Builder
         $sql_query = implode("\n", $sql);
         $sql_query = rtrim($sql_query, $glue.' ');
 
-        $sql_query .= trim($this->getGroupBySql().' '.
+        $sql_query .= ' '.trim($this->getGroupBySql().' '.
             $this->getOrderByAndSortSql().' '.
             $this->getOffsetLimitSql());
         
