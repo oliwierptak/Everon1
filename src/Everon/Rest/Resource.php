@@ -88,7 +88,7 @@ abstract class Resource extends Resource\Basic implements Interfaces\Resource
     /**
      * @inheritdoc
      */
-    protected function getToArray()
+    protected function getToArray() //todo: make better interface then toArray() in order to display it as rest data
     {
         $entity_data = $this->DomainEntity->toArray();
        
@@ -96,11 +96,6 @@ abstract class Resource extends Resource\Basic implements Interfaces\Resource
         array_walk_recursive($entity_data, function(&$value) {
             if ($value instanceof \DateTime) {
                 $value->setTimezone((new \DateTime(null))->getTimezone()); //convert to server timezone
-                /*
-                $offset = $value->format('P');
-                $value = (array) $value;
-                $value['offset'] = $offset;*/
-                //$value = $this->dateAsPostgreSql($value);
                 $value = $value->format(\DateTime::ISO8601);
             }
         });

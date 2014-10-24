@@ -124,6 +124,7 @@ abstract class DataMapper implements Interfaces\DataMapper
         
         $id = $this->getSchema()->getPdoAdapterByName($this->write_connection_name)->insert($sql, $parameters);
         $id = $this->getTable()->validateId($id);
+        
         $data[$this->getTable()->getPk()] = $id;
         
         return $data;
@@ -137,11 +138,14 @@ abstract class DataMapper implements Interfaces\DataMapper
         $parameters = $this->getTable()->prepareDataForSql($data, true);
         $id = $this->getTable()->getIdFromData($data);
         $id = $this->getTable()->validateId($id);
+        
         $CriteriaBuilder = $this->getFactory()->buildCriteriaBuilder();
         $CriteriaBuilder->where($this->getTable()->getPk(), '=', $id);
+        $CriteriaBuilder->setLimit(1);
+        
         $SqlPart = $CriteriaBuilder->toSqlPart();
-
         $sql = trim($this->getUpdateSql().' '.$SqlPart->getSql());
+        $parameters = array_merge($parameters, $SqlPart->getParameters());
         
         return $this->getSchema()->getPdoAdapterByName($this->write_connection_name)->update($sql, $parameters);
     }
@@ -193,6 +197,7 @@ abstract class DataMapper implements Interfaces\DataMapper
         $SqlPart = $Criteria->toSqlPart();
         
         $sql = trim($this->getCountSql().' '.$SqlPart->getSql());
+        //sd($sql, $SqlPart->getParameters());
         $PdoStatement = $this->getSchema()->getPdoAdapterByName($this->read_connection_name)->execute($sql, $SqlPart->getParameters());
         return (int) $PdoStatement->fetchColumn();
     }
