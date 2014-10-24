@@ -32,6 +32,7 @@ class Handler implements Interfaces\ResourceHandler
     const VERSIONING_URL = 'url';
     const VERSIONING_HEADER = 'header';
     const ALPHA_ID_SALT = 'aVg656';
+    const DEFAULT_COLLECTION_SIZE = 10;
 
     /**
      * @var array
@@ -280,8 +281,11 @@ class Handler implements Interfaces\ResourceHandler
             if ($extra_expand !== null && $ResourceCollection instanceof Interfaces\ResourceCollection) {
                 foreach ($ResourceCollection->getItemCollection() as $ResourceItemToExpand) {
                     $NavigatorToExpand = clone $Navigator;
-                    $NavigatorToExpand->setLimit($Paginator->getLimit());
-                    $NavigatorToExpand->setOffset($Paginator->getOffset());
+                    //$NavigatorToExpand->setLimit($Paginator->getLimit());
+                    //$NavigatorToExpand->setOffset($Paginator->getOffset());
+                    $NavigatorToExpand->setLimit(self::DEFAULT_COLLECTION_SIZE);
+                    $NavigatorToExpand->setOffset(0);
+                    $NavigatorToExpand->setOrderBy([]);
                     $NavigatorToExpand->setExpand([$extra_expand]);
                     $this->expandResource($ResourceItemToExpand, $NavigatorToExpand);
                 }
@@ -312,8 +316,11 @@ class Handler implements Interfaces\ResourceHandler
             if ($extra_expand !== null) {
                 foreach ($ResourceCollection as $ResourceItemToExpand) {
                     $NavigatorToExpand = clone $Navigator;
-                    $NavigatorToExpand->setLimit($Paginator->getLimit());
-                    $NavigatorToExpand->setOffset($Paginator->getOffset());
+                    //$NavigatorToExpand->setLimit($Paginator->getLimit());
+                    //$NavigatorToExpand->setOffset($Paginator->getOffset());
+                    $NavigatorToExpand->setLimit(self::DEFAULT_COLLECTION_SIZE);
+                    $NavigatorToExpand->setOffset(0);
+                    $NavigatorToExpand->setOrderBy([]);
                     $NavigatorToExpand->setExpand([$extra_expand]);
                     $this->expandResource($ResourceItemToExpand, $NavigatorToExpand);
                 }
@@ -346,7 +353,15 @@ class Handler implements Interfaces\ResourceHandler
             for ($a=0; $a<count($entity_list); $a++) {
                 $CollectionEntity = $entity_list[$a];
                 $Resource = $this->buildResourceFromEntity($CollectionEntity, $version, $resource_name);
-                $this->expandResource($Resource, clone $Navigator);
+                
+                $NavigatorToExpand = clone $Navigator;
+                //$NavigatorToExpand->setLimit($Paginator->getLimit());
+                //$NavigatorToExpand->setOffset($Paginator->getOffset());
+                $NavigatorToExpand->setLimit(self::DEFAULT_COLLECTION_SIZE);
+                $NavigatorToExpand->setOffset(0);
+                $NavigatorToExpand->setOrderBy([]);
+                
+                $this->expandResource($Resource, $NavigatorToExpand);
                 $ResourceList->set($a, $Resource);
             }
 
