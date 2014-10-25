@@ -152,7 +152,7 @@ abstract class Repository implements Interfaces\Repository
     /**
      * @inheritdoc
      */
-    public function setMapper(DataMapper $Mapper)
+    public function setMapper(\Everon\Interfaces\DataMapper $Mapper)
     {
         $this->Mapper = $Mapper;
     }

@@ -37,7 +37,7 @@ interface Repository
 
     /**
      * @param array $property_criteria
-     * @param DataMapper\Interfaces\Criteria\Builder|CriteriaOLD $RelationCriteria
+     * @param DataMapper\Interfaces\Criteria\Builder $RelationCriteria
      * @return Entity|null
      */
     function getEntityByPropertyValue(array $property_criteria, DataMapper\Interfaces\Criteria\Builder $RelationCriteria = null);
@@ -57,7 +57,7 @@ interface Repository
     function getByCriteria(DataMapper\Interfaces\Criteria\Builder $CriteriaBuilder, DataMapper\Interfaces\Criteria\Builder $RelationCriteriaBuilder=null);
 
     /**
-     * @param DataMapper\Interfaces\Criteria\Builder|CriteriaOLD $CriteriaBuilder
+     * @param DataMapper\Interfaces\Criteria\Builder $CriteriaBuilder
      * @return int
      */
     function count(DataMapper\Interfaces\Criteria\Builder $CriteriaBuilder = null);
@@ -75,14 +75,14 @@ interface Repository
     function remove(Entity $Entity, $user_id=null);
 
     /**
-     * @param DataMapper\Interfaces\Criteria\Builder|CriteriaOLD $CriteriaBuilder
+     * @param DataMapper\Interfaces\Criteria\Builder $CriteriaBuilder
      * @return
      */
     function removeByCriteria(DataMapper\Interfaces\Criteria\Builder $CriteriaBuilder);
 
     /**
-     * @param DataMapper\Interfaces\Criteria\Builder|CriteriaOLD $CriteriaBuilder
-     * @param DataMapper\Interfaces\Criteria\Builder|CriteriaOLD $RelationCriteriaBuilder
+     * @param DataMapper\Interfaces\Criteria\Builder $CriteriaBuilder
+     * @param DataMapper\Interfaces\Criteria\Builder $RelationCriteriaBuilder
      * @return Entity|null
      */
     function getOneByCriteria(DataMapper\Interfaces\Criteria\Builder $CriteriaBuilder, DataMapper\Interfaces\Criteria\Builder $RelationCriteriaBuilder = null);
@@ -95,7 +95,7 @@ interface Repository
     /**
      * @param DataMapper $Mapper
      */
-    function setMapper(DataMapper $Mapper);
+    function setMapper(\Everon\Interfaces\DataMapper $Mapper);
 
     function getName();
 
