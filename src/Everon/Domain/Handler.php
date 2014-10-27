@@ -135,13 +135,4 @@ abstract class Handler implements Interfaces\Handler
     {
         $this->repositories[$name] = $Repository;
     }
-
-    /**
-     * @inheritdoc
-     */
-    public function buildEntityFromArray($domain_name, array $data)
-    {
-        $Repository = $this->getRepositoryByName($domain_name);
-        return $Repository->buildFromArray($data);
-    }
 }
