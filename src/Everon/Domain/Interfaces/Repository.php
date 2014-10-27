@@ -21,14 +21,6 @@ interface Repository
     function validateEntity(Entity $Entity);
 
     /**
-     * @param Entity $Entity
-     * @param DataMapper\Interfaces\Criteria\Builder $RelationCriteria
-     * @internal param CriteriaOLD $CriteriaBuilder
-     * @return
-     */
-    function buildEntityRelations(Entity $Entity, DataMapper\Interfaces\Criteria\Builder $RelationCriteria = null);
-
-    /**
      * @param $id
      * @param  DataMapper\Interfaces\Criteria\Builder $RelationCriteria
      * @return Entity|null

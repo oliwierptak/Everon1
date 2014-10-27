@@ -111,7 +111,7 @@ abstract class Repository implements Interfaces\Repository
      * @param Interfaces\Entity $Entity
      * @param DataMapper\Interfaces\Criteria\Builder $RelationCriteria
      */
-    public function buildEntityRelations(Interfaces\Entity $Entity, DataMapper\Interfaces\Criteria\Builder $RelationCriteria = null)
+    protected function buildEntityRelations(Interfaces\Entity $Entity, DataMapper\Interfaces\Criteria\Builder $RelationCriteria = null)
     {
         $RelationCriteria = $RelationCriteria ?: $this->getFactory()->buildCriteriaBuilder();
         
