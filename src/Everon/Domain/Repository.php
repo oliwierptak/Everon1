@@ -59,14 +59,12 @@ abstract class Repository implements Interfaces\Repository
         /**
          * @var \Everon\DataMapper\Interfaces\Schema\Column $Column
          */
-        foreach ($data as $name => $value) {
-            if ($this->getMapper()->getTable()->hasColumn($name)) {
-                if (array_key_exists($name, $data) === false) {
-                    throw new Exception\Domain('Missing Entity data: "%s" for "%s"', [$name, $this->getMapper()->getTable()->getName()]);
-                }
-                $Column = $this->getMapper()->getTable()->getColumnByName($name);
-                $data[$name] = $Column->getColumnDataForEntity($data[$name]);
+        foreach ($this->getMapper()->getTable()->getColumns() as $name => $Column) {
+            if (array_key_exists($name, $data) === false) {
+                throw new Exception\Domain('Missing Entity data: "%s" for "%s"', [$name, $this->getMapper()->getTable()->getName()]);
             }
+            //$Column = $this->getMapper()->getTable()->getColumnByName($name);
+            $data[$name] = $Column->getColumnDataForEntity($data[$name]);
         }
 
         return $data;
@@ -80,7 +78,7 @@ abstract class Repository implements Interfaces\Repository
      */
     protected function buildEntity(array $data, DataMapper\Interfaces\Criteria\Builder $RelationCriteria = null)
     {
-        $defaults = $this->getDefaultColumns();
+        $defaults = $this->getDefaultEntityData();
         $data = $this->arrayMergeDefault($defaults, $data);
         $data = $this->prepareDataForEntity($data);
         $Entity = $this->getFactory()->buildDomainEntity($this->getName(), $this->getMapper()->getTable()->getPk(), $data);
@@ -92,18 +90,18 @@ abstract class Repository implements Interfaces\Repository
     /**
      * @return array
      */
-    protected function getDefaultColumns()
+    protected function getDefaultEntityData()
     {
         /**
          * @var \Everon\DataMapper\Interfaces\Schema\Column $Column
          */
         $default = [];
         $columns = $this->getMapper()->getTable()->getColumns();
-        foreach ($columns as $Column) {
+        foreach ($columns as $name => $Column) {
             if ($Column->isPk()) {
                 continue;
             }
-            $default[$Column->getName()] = null;
+            $default[$name] = null;
         }
         
         return $default;
@@ -111,11 +109,11 @@ abstract class Repository implements Interfaces\Repository
 
     /**
      * @param Interfaces\Entity $Entity
-     * @param DataMapper\Interfaces\Criteria\Builder $CriteriaBuilder
+     * @param DataMapper\Interfaces\Criteria\Builder $RelationCriteria
      */
-    public function buildEntityRelations(Interfaces\Entity $Entity, DataMapper\Interfaces\Criteria\Builder $CriteriaBuilder = null)
+    public function buildEntityRelations(Interfaces\Entity $Entity, DataMapper\Interfaces\Criteria\Builder $RelationCriteria = null)
     {
-        $CriteriaBuilder = $CriteriaBuilder ?: $this->getFactory()->buildCriteriaBuilder();
+        $RelationCriteria = $RelationCriteria ?: $this->getFactory()->buildCriteriaBuilder();
         
         $RelationCollection = new Helper\Collection([]);
         //buildDomainRelationMapper
@@ -133,8 +131,8 @@ abstract class Repository implements Interfaces\Repository
             );
 
             $Relation = $this->getFactory()->buildDomainRelation($relation_domain_name, $Entity, $RelationMapper);
-            $Relation->setCriteriaBuilder(clone $CriteriaBuilder);
-            $Relation->setEntityRelationCriteria(clone $CriteriaBuilder);
+            $Relation->setCriteriaBuilder(clone $RelationCriteria);
+            $Relation->setEntityRelationCriteria(clone $RelationCriteria);
             $RelationCollection->set($relation_domain_name, $Relation);
         }
 
@@ -267,9 +265,9 @@ abstract class Repository implements Interfaces\Repository
             throw new \Everon\Exception\Domain('Invalid state when attempting to persist entity: "%s@%s"', [$Entity->getDomainName(), $Entity->getId()]);
         }
         
-        $this->validateEntity($Entity);
+        $data = $this->validateEntity($Entity);
+        //$data = $Entity->toArray();
         
-        $data = $Entity->toArray();
         if ($Entity->isNew()) {
             $data = $this->getMapper()->add($data, $user_id);
         }

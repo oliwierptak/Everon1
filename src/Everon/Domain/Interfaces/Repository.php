@@ -22,11 +22,11 @@ interface Repository
 
     /**
      * @param Entity $Entity
-     * @param DataMapper\Interfaces\Criteria\Builder $CriteriaBuilder
+     * @param DataMapper\Interfaces\Criteria\Builder $RelationCriteria
      * @internal param CriteriaOLD $CriteriaBuilder
      * @return
      */
-    function buildEntityRelations(Entity $Entity, DataMapper\Interfaces\Criteria\Builder $CriteriaBuilder = null);
+    function buildEntityRelations(Entity $Entity, DataMapper\Interfaces\Criteria\Builder $RelationCriteria = null);
 
     /**
      * @param $id
