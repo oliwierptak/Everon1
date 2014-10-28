@@ -11,7 +11,7 @@ namespace Everon\Interfaces;
 
 use Everon\Interfaces;
 
-interface Config extends Arrayable
+interface Config extends Arrayable, Dependency\Factory
 {
     function getName();
 

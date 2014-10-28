@@ -156,10 +156,6 @@ abstract class DataMapper implements Interfaces\DataMapper
     /**
      * @inheritdoc
      */
-    /**
-     * @param CriteriaOLD $Criteria
-     * @return int
-     */
     public function deleteByCriteria(CriteriaOLD $Criteria)
     {
         list($sql, $parameters) = $this->getDeleteByCriteriaSql($Criteria);

@@ -11,7 +11,12 @@ namespace Everon\Config\Interfaces;
 
 use Everon\Exception;
 
-interface Manager
+interface Manager extends 
+    \Everon\Interfaces\Dependency\Bootstrap,
+    \Everon\Config\Interfaces\Dependency\ConfigLoader,
+    \Everon\Interfaces\Dependency\Factory,
+    \Everon\Interfaces\Dependency\FileSystem,
+    \Everon\Interfaces\Dependency\Logger
 {
     /**
      * @return Loader

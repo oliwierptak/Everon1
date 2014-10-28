@@ -12,22 +12,21 @@ namespace Everon\Dependency;
 
 trait Bootstrap
 {
-
     /**
-     * @var \Everon\Bootstrap
+     * @var \Everon\Interfaces\Bootstrap
      */
     protected $Bootstrap = null;
 
 
     /**
-     * @return \Everon\Bootstrap
+     * @return \Everon\Interfaces\Bootstrap
      */
     public function getBootstrap()
     {
         return $this->Bootstrap;
     }
 
-    public function setBootstrap(\Everon\Bootstrap $Bootstrap)
+    public function setBootstrap(\Everon\Interfaces\Bootstrap $Bootstrap)
     {
         $this->Bootstrap = $Bootstrap;
     }

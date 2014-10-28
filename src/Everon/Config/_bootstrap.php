@@ -9,6 +9,7 @@
  */
 namespace Everon;
 
+require_once(implode(DIRECTORY_SEPARATOR, [$EVERON_SOURCE_ROOT, 'Interfaces'.DIRECTORY_SEPARATOR.'Bootstrap.php']));
 require_once(implode(DIRECTORY_SEPARATOR, [$EVERON_SOURCE_ROOT, 'Bootstrap.php']));
 require_once(implode(DIRECTORY_SEPARATOR, [$EVERON_SOURCE_ROOT, 'RequestIdentifier.php']));
 
