@@ -291,7 +291,7 @@ class FileSystem implements Interfaces\FileSystem
     /**
      * @inheritdoc
      */
-    public function moveUploadedFile($file_path, $destination, $create_directory = true)
+    public function moveUploadedFile($file_path, $destination)
     {
         if (is_uploaded_file($file_path) === false) {
             throw new Exception\FileSystem('The file needs to be uploaded in order to be moved');
@@ -299,7 +299,7 @@ class FileSystem implements Interfaces\FileSystem
         
         try {
             $directory = pathinfo($destination, PATHINFO_DIRNAME);
-            if ($this->directoryExists($directory) === false && $create_directory === true) {
+            if ($this->directoryExists($directory) === false) {
                 $this->createPath($directory);
             }
     
