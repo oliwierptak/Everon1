@@ -87,12 +87,13 @@ class FileSystem implements Interfaces\FileSystem
     public function setRoot($root)
     {
         /**
-         * @var \SplFileInfo $Dir
+         * @var \SplFileInfo $Root
          */
-        if ((new \SplFileInfo($root))->isDir() === false) {
+        $Root = new \SplFileInfo($root);
+        if ($Root->isDir() === false) {
             throw new Exception\FileSystem('Root directory does not exist: "%s"', $root);
         }
-        $this->root = $Dir->getPathname().DIRECTORY_SEPARATOR;
+        $this->root = $Root->getPathname().DIRECTORY_SEPARATOR;
     }
 
     /**
@@ -104,7 +105,6 @@ class FileSystem implements Interfaces\FileSystem
             $path = $this->getRelativePath($path);
             if (is_dir($path) === false) {
                 mkdir($path, $mode, true);
-                chmod($path, $mode);
             }
         }
         catch (\Exception $e) {
@@ -287,22 +287,22 @@ class FileSystem implements Interfaces\FileSystem
     {
         return new FileSystem\TmpFile();
     }
-    
+
     /**
      * @inheritdoc
      */
-    public function moveUploadedFile($file_path, $destination)
+    public function moveUploadedFile($file_path, $destination, $create_directory = true)
     {
         if (is_uploaded_file($file_path) === false) {
             throw new Exception\FileSystem('The file needs to be uploaded in order to be moved');
         }
-        
+
         try {
             $directory = pathinfo($destination, PATHINFO_DIRNAME);
-            if ($this->directoryExists($directory) === false) {
+            if ($this->directoryExists($directory) === false && $create_directory === true) {
                 $this->createPath($directory);
             }
-    
+
             return move_uploaded_file($file_path, $destination) === true;
         }
         catch (\Exception $e) {
