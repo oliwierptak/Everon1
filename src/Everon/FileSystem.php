@@ -104,6 +104,7 @@ class FileSystem implements Interfaces\FileSystem
             $path = $this->getRelativePath($path);
             if (is_dir($path) === false) {
                 mkdir($path, $mode, true);
+                chmod($path, $mode);
             }
         }
         catch (\Exception $e) {
