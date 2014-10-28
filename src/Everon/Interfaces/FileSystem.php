@@ -88,10 +88,10 @@ interface FileSystem
     /**
      * @param $file_path
      * @param $destination
-     * @param bool $create_directory
+     * @internal param bool $create_directory
      * @return bool
      */
-    function moveUploadedFile($file_path, $destination, $create_directory = true);
+    function moveUploadedFile($file_path, $destination);
 
     /**
      * @param $source
