@@ -73,6 +73,11 @@ interface Repository
     function removeByCriteria(DataMapper\Interfaces\Criteria\Builder $CriteriaBuilder);
 
     /**
+     * @param array $property_criteria
+     */
+    function removeByPropertyValue(array $property_criteria);
+
+    /**
      * @param DataMapper\Interfaces\Criteria\Builder $CriteriaBuilder
      * @param DataMapper\Interfaces\Criteria\Builder $RelationCriteriaBuilder
      * @return Entity|null

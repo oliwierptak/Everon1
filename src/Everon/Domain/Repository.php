@@ -302,6 +302,23 @@ abstract class Repository implements Interfaces\Repository
     /**
      * @inheritdoc
      */
+    public function removeByPropertyValue(array $property_criteria)
+    {
+        if (empty($property_criteria)) {
+            return;
+        }
+
+        $CriteriaBuilder = $this->getFactory()->buildCriteriaBuilder();
+        foreach ($property_criteria as $property => $value) {
+            $CriteriaBuilder->where($property, '=', $value);
+        }
+
+        $this->removeByCriteria($CriteriaBuilder);
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function beginTransaction($point=null)
     {
         $this->getMapper()->getSchema()->getPdoAdapterByName($this->getMapper()->getWriteConnectionName())->beginTransaction();
