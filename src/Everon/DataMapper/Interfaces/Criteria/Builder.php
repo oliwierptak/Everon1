@@ -149,4 +149,19 @@ interface Builder extends \Everon\Interfaces\Arrayable, \Everon\Interfaces\Strin
      * @return string
      */
     static function randomizeParameterName($name);
+
+    /**
+     * @return string
+     */
+    function getOffsetLimitSql();
+
+    /**
+     * @return string
+     */
+    function getOrderByAndSortSql();
+
+    /**
+     * @return string
+     */
+    function getGroupBySql();
 }

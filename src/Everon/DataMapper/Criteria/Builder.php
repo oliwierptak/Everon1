@@ -334,9 +334,9 @@ class Builder implements Interfaces\Criteria\Builder
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
-    protected function getOffsetLimitSql()
+    public function getOffsetLimitSql()
     {
         if ($this->getLimit() === null && $this->getOffset() === null) {
             return '';
@@ -354,9 +354,9 @@ class Builder implements Interfaces\Criteria\Builder
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
-    protected function getOrderByAndSortSql()
+    public function getOrderByAndSortSql()
     {
         if (is_array($this->getOrderBy()) === false || empty($this->getOrderBy())) {
             return '';
@@ -375,7 +375,10 @@ class Builder implements Interfaces\Criteria\Builder
         return $order_by;
     }
 
-    protected function getGroupBySql()
+    /**
+     * @inheritdoc
+     */
+    public function getGroupBySql()
     {
         if ($this->getGroupBy() === null) {
             return '';
