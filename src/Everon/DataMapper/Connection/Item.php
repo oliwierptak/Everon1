@@ -64,7 +64,6 @@ class Item implements Interfaces\ConnectionItem
         $this->user = $data['user'];
         $this->password = $data['password'];
         $this->encoding = $data['encoding'];
-        $this->options = [\PDO::MYSQL_ATTR_INIT_COMMAND => sprintf('SET NAMES \'%s\'', $this->encoding)];
         
         if (isset($data['options'])) {
             $this->options = $this->arrayMergeDefault($this->options, $data['options']);
