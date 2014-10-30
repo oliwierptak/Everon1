@@ -16,6 +16,8 @@ namespace Everon;
  */
 class Logger implements Interfaces\Logger
 {
+    use Dependency\Injection\Factory;
+    
     use Helper\DateFormatter;
     
     protected $log_files = [

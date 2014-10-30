@@ -270,7 +270,7 @@ class Builder implements Interfaces\Criteria\Builder
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
     public function getGroupBy()
     {
@@ -278,15 +278,16 @@ class Builder implements Interfaces\Criteria\Builder
     }
 
     /**
-     * @param string $group_by
+     * @inheritdoc
      */
     public function setGroupBy($group_by)
     {
         $this->group_by = $group_by;
+        return $this;
     }
 
     /**
-     * @return int
+     * @inheritdoc
      */
     public function getLimit()
     {
@@ -294,15 +295,16 @@ class Builder implements Interfaces\Criteria\Builder
     }
 
     /**
-     * @param int $limit
+     * @inheritdoc
      */
     public function setLimit($limit)
     {
         $this->limit = $limit;
+        return $this;
     }
 
     /**
-     * @return int
+     * @inheritdoc
      */
     public function getOffset()
     {
@@ -310,15 +312,16 @@ class Builder implements Interfaces\Criteria\Builder
     }
 
     /**
-     * @param int $offset
+     * @inheritdoc
      */
     public function setOffset($offset)
     {
         $this->offset = $offset;
+        return $this;
     }
 
     /**
-     * @return array
+     * @inheritdoc
      */
     public function getOrderBy()
     {
@@ -326,11 +329,12 @@ class Builder implements Interfaces\Criteria\Builder
     }
 
     /**
-     * @param array $order_by
+     * @inheritdoc
      */
     public function setOrderBy(array $order_by)
     {
         $this->order_by = $order_by;
+        return $this;
     }
 
     /**

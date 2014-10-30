@@ -784,4 +784,17 @@ interface Factory
      */
     function buildPaginator($total, $offset, $limit, $namespace='Everon\Helper');
 
+    /**
+     * @param string $time
+     * @param \DateTimeZone $timezone
+     * @return \DateTime
+     */
+    function buildDateTime($time='now', \DateTimeZone $timezone=null);
+
+    /**
+     * @param $timezone
+     * @return \DateTimeZone
+     */
+    function buildDateTimeZone($timezone);
+
 }

@@ -9,12 +9,15 @@
  */
 namespace Everon\DataMapper\Schema;
 
+use Everon\Dependency;
 use Everon\DataMapper\Exception;
 use Everon\DataMapper\Interfaces\Schema;
 use Everon\Helper;
 
 abstract class Column implements Schema\Column 
 {
+    use Dependency\Injection\Factory;
+    
     use Helper\DateFormatter;
     use Helper\ToString;
 

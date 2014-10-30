@@ -96,9 +96,10 @@ interface Builder extends \Everon\Interfaces\Arrayable, \Everon\Interfaces\Strin
      * @return string
      */
     function getGroupBy();
-        
+
     /**
      * @param string $group_by
+     * @return Interfaces\Criteria\Builder
      */
     function setGroupBy($group_by);
 
@@ -109,6 +110,7 @@ interface Builder extends \Everon\Interfaces\Arrayable, \Everon\Interfaces\Strin
 
     /**
      * @param int $limit
+     * @return Interfaces\Criteria\Builder
      */
     function setLimit($limit);
 
@@ -119,6 +121,7 @@ interface Builder extends \Everon\Interfaces\Arrayable, \Everon\Interfaces\Strin
 
     /**
      * @param int $offset
+     * @return Interfaces\Criteria\Builder
      */
     function setOffset($offset);
     
@@ -129,6 +132,7 @@ interface Builder extends \Everon\Interfaces\Arrayable, \Everon\Interfaces\Strin
 
     /**
      * @param array $order_by
+     * @return Interfaces\Criteria\Builder
      */
     function setOrderBy(array $order_by);
     

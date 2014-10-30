@@ -16,12 +16,12 @@ use Everon\Interfaces;
 
 abstract class Factory implements Interfaces\Factory
 {
-    use Helper\String\UnderscoreToCamel;
     use Helper\Arrays;
-    use Helper\Exceptions;
     use Helper\Asserts\IsStringAndNotEmpty;
     use Helper\Asserts\IsNumericAndNotZero;
     use Helper\Asserts\IsArrayKey;
+    use Helper\Exceptions;
+    use Helper\String\UnderscoreToCamel;
 
 
     /**
@@ -1664,5 +1664,21 @@ abstract class Factory implements Interfaces\Factory
         catch (\Exception $e) {
             throw new Exception\Factory('Paginator initialization error', null, $e);
         }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildDateTime($time='now', \DateTimeZone $timezone=null)
+    {
+        return new \DateTime($time, $timezone);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildDateTimeZone($timezone)
+    {
+        return new \DateTimeZone($timezone);
     }
 }

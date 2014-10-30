@@ -9,13 +9,16 @@
  */
 namespace Everon\Domain;
 
+use Everon\Dependency;
 use Everon\Domain;
 use Everon\Helper;
 use Everon\Rest;
 
 abstract class Model implements Interfaces\Model
 {
+    use Dependency\Injection\Factory;
     use Domain\Dependency\Injection\DomainManager;
+    
     use Helper\Arrays;
     use Helper\Asserts\IsArrayKey;
     use Helper\Exceptions;

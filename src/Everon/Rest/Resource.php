@@ -9,6 +9,7 @@
  */
 namespace Everon\Rest;
 
+use Everon\Dependency;
 use Everon\Helper;
 use Everon\Domain\Interfaces\Entity;
 use Everon\Interfaces\Collection;
@@ -16,6 +17,8 @@ use Everon\Interfaces\Collection;
 
 abstract class Resource extends Resource\Basic implements Interfaces\Resource
 {
+    use Dependency\Injection\Factory;
+    
     use Helper\DateFormatter;
     use Helper\String\LastTokenToName;
     
