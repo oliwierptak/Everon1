@@ -29,7 +29,7 @@ class Item implements Interfaces\ConnectionItem
     protected $user = null;
     protected $password = null;
     protected $encoding = null;
-    protected $options = null;
+    protected $options = [];
     protected $adapter_name = null;
     
     protected $schema = '';
@@ -108,7 +108,7 @@ class Item implements Interfaces\ConnectionItem
             switch ($this->getDriver()) { //todo: xxx
                 case 'mysql':
                     $this->dsn = sprintf(
-                        '%s:dbname=%s;host=%s;port=%s', //'mysql:dbname=testdb;host=127.0.0.1',
+                        '%s:dbname=%s;host=%s;port=%s;charset=UTF8', //'mysql:dbname=testdb;host=127.0.0.1',
                         $this->driver,
                         $this->database,
                         $this->host,
@@ -118,7 +118,7 @@ class Item implements Interfaces\ConnectionItem
                 
                 case 'pgsql':
                     $this->dsn = sprintf(
-                        '%s:host=%s;port=%d;dbname=%s;user=%s;password=%s', //pgsql:host=localhost;port=5432;dbname=testdb;user=postgres;password=easy
+                        '%s:host=%s;port=%d;dbname=%s;user=%s;password=%s;options= --client_encoding=UTF8', //pgsql:host=localhost;port=5432;dbname=testdb;user=postgres;password=easy
                         $this->driver,
                         $this->host,
                         $this->port,
