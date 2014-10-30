@@ -30,10 +30,22 @@ class FileSystem implements Interfaces\FileSystem
     /**
      * @param $path
      * @return string
+     * @throws Exception\FileSystem
      */
     protected function getRelativePath($path)
     {
+        $path = trim($path);
+        
+        if ($path === '') {
+            throw new Exception\FileSystem('Invalid path');
+        }
+        
+        if ($path === '/') {
+            $path = '//';
+        }
+        
         $is_absolute = mb_strtolower($this->root) === mb_strtolower(mb_substr($path, 0, mb_strlen($this->root)));
+        
         if ($path[0] === '/' && $path[1] === '/') { //eg. '//Tests/Everon/tmp/'
             //strip virtual root
             $path = mb_substr($path, 2, mb_strlen($path));
@@ -93,6 +105,7 @@ class FileSystem implements Interfaces\FileSystem
         if ($Root->isDir() === false) {
             throw new Exception\FileSystem('Root directory does not exist: "%s"', $root);
         }
+        
         $this->root = $Root->getPathname().DIRECTORY_SEPARATOR;
     }
 
@@ -209,7 +222,7 @@ class FileSystem implements Interfaces\FileSystem
              */
             foreach ($directories as $Dir) {
                 $name = $Dir->getBasename();
-                if ($Dir->isDot() === false && $Dir->isDir() && $name[0] != '.') {
+                if ($Dir->isDot() === false && $Dir->isDir() && $name[0] !== '.') {
                     $result[] = clone $Dir;
                 }
             }
