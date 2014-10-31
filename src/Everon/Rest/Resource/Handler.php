@@ -280,8 +280,9 @@ class Handler implements Interfaces\ResourceHandler
             if ($extra_expand !== null && $ResourceCollection instanceof Interfaces\ResourceCollection) {
                 foreach ($ResourceCollection->getItemCollection() as $ResourceItemToExpand) {
                     $NavigatorToExpand = clone $Navigator;
-                    $NavigatorToExpand->setLimit($Paginator->getLimit());
-                    $NavigatorToExpand->setOffset($Paginator->getOffset());
+                    $NavigatorToExpand->setLimit(10);
+                    $NavigatorToExpand->setOffset(0);
+                    $NavigatorToExpand->setOrderBy([]);
                     $NavigatorToExpand->setExpand([$extra_expand]);
                     $this->expandResource($ResourceItemToExpand, $NavigatorToExpand);
                 }
@@ -312,8 +313,9 @@ class Handler implements Interfaces\ResourceHandler
             if ($extra_expand !== null) {
                 foreach ($ResourceCollection as $ResourceItemToExpand) {
                     $NavigatorToExpand = clone $Navigator;
-                    $NavigatorToExpand->setLimit($Paginator->getLimit());
-                    $NavigatorToExpand->setOffset($Paginator->getOffset());
+                    $NavigatorToExpand->setLimit(10);
+                    $NavigatorToExpand->setOffset(0);
+                    $NavigatorToExpand->setOrderBy([]);
                     $NavigatorToExpand->setExpand([$extra_expand]);
                     $this->expandResource($ResourceItemToExpand, $NavigatorToExpand);
                 }
@@ -346,7 +348,13 @@ class Handler implements Interfaces\ResourceHandler
             for ($a=0; $a<count($entity_list); $a++) {
                 $CollectionEntity = $entity_list[$a];
                 $Resource = $this->buildResourceFromEntity($CollectionEntity, $version, $resource_name);
-                $this->expandResource($Resource, clone $Navigator);
+
+                $NavigatorToExpand = clone $Navigator;
+                $NavigatorToExpand->setLimit(10);
+                $NavigatorToExpand->setOffset(0);
+                $NavigatorToExpand->setOrderBy([]);
+                
+                $this->expandResource($Resource, clone $NavigatorToExpand);
                 $ResourceList->set($a, $Resource);
             }
 
