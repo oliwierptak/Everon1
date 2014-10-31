@@ -50,6 +50,11 @@ class Navigator implements Interfaces\ResourceNavigator
      * @var string
      */
     protected $filters = null;
+
+    /**
+     * @var bool
+     */
+    protected $initialized = false;
     
 
     /**
@@ -58,7 +63,6 @@ class Navigator implements Interfaces\ResourceNavigator
     public function __construct(Interfaces\Request $Request)
     {
         $this->Request = $Request;
-        $this->init();
     }
 
     /**
@@ -87,6 +91,10 @@ class Navigator implements Interfaces\ResourceNavigator
     
     protected function init()
     {
+        if ($this->initialized) {
+            return;
+        }
+        
         $this->fields = $this->getParameterValue('fields', []);
         $this->expand = $this->getParameterValue('expand', []);
         $this->limit = $this->getRequest()->getGetParameter('limit', 10);
@@ -109,6 +117,8 @@ class Navigator implements Interfaces\ResourceNavigator
                 $this->order_by[$field_name] = 'DESC';
             }
         }
+        
+        $this->initialized = true;
     }
 
     /**
@@ -124,6 +134,7 @@ class Navigator implements Interfaces\ResourceNavigator
      */
     public function getExpand()
     {
+        $this->init();
         return $this->expand;
     }
 
@@ -140,6 +151,7 @@ class Navigator implements Interfaces\ResourceNavigator
      */
     public function getFields()
     {
+        $this->init();
         return $this->fields;
     }
 
@@ -156,6 +168,7 @@ class Navigator implements Interfaces\ResourceNavigator
      */
     public function getOrderBy()
     {
+        $this->init();
         return $this->order_by;
     }
 
@@ -172,6 +185,7 @@ class Navigator implements Interfaces\ResourceNavigator
      */
     public function getOffset()
     {
+        $this->init();
         return $this->offset;
     }
 
@@ -188,23 +202,8 @@ class Navigator implements Interfaces\ResourceNavigator
      */
     public function getLimit()
     {
+        $this->init();
         return $this->limit;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getFilters()
-    {
-        return $this->filters;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function setFilters(array $filters)
-    {
-        $this->filters = $filters;
     }
 
     /**
@@ -212,15 +211,11 @@ class Navigator implements Interfaces\ResourceNavigator
      */
     public function toCriteria()
     {
+        $this->init();
         $CriteriaBuilder = $this->getFactory()->buildCriteriaBuilder();
-        $CriteriaBuilder->setLimit($this->getLimit());
-        $CriteriaBuilder->setOffset($this->getOffset());
-        $CriteriaBuilder->setOrderBy($this->getOrderBy() ?: []);
-        
-/*        if (is_array($this->getFilters())) { xxx
-            $Filter = $this->getFactory()->buildRestFilter(new Helper\Collection($this->getFilters()));
-            $Filter->assignToCriteria($CriteriaBuilder);
-        }*/
+        $CriteriaBuilder->setLimit($this->getLimit())
+            ->setOffset($this->getOffset())
+            ->setOrderBy($this->getOrderBy() ?: []);
         
         return $CriteriaBuilder;
     }
