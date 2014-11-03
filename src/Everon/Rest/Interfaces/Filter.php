@@ -9,33 +9,7 @@
  */
 namespace Everon\Rest\Interfaces;
 
-use Everon\DataMapper\Interfaces\CriteriaOLD;
-
 interface Filter
 {
-    /**
-     * @param \Everon\Helper\Collection $Collection
-     */
-    function setFilterCollection(\Everon\Helper\Collection $Collection);
 
-    /**
-     * @return \Everon\Helper\Collection
-     */
-    function getFilterCollection();
-
-    /**
-     * @param \Everon\Helper\Collection $Collection
-     */
-    function setFilterDefinition(\Everon\Helper\Collection $Collection);
-
-    /**
-     * @return \Everon\Helper\Collection
-     */
-    function getFilterDefinition();
-
-    /**
-     * @param CriteriaOLD $Criteria
-     * @return mixed
-     */
-    function assignToCriteria(CriteriaOLD $Criteria);
 }
