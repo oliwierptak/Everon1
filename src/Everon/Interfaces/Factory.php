@@ -75,7 +75,7 @@ interface Factory
      * @return mixed
      * @throws Exception\Factory
      */
-    function buildRestFilter(Interfaces\Collection $FilterDefinition, $namespace='Everon\Rest');
+    //function buildRestFilter(Interfaces\Collection $FilterDefinition, $namespace='Everon\Rest');
 
     /**
      * @param Rest\Interfaces\ResourceHref $Href
@@ -83,18 +83,6 @@ interface Factory
      * @return Interfaces\Core|Rest\Client
      */
     function buildRestClient(Rest\Interfaces\ResourceHref $Href, Rest\Interfaces\CurlAdapter $CurlAdapter);
-
-    /**
-     * @param $class_name
-     * @param $column
-     * @param $value
-     * @param null $column_glue
-     * @param null $glue
-     * @param string $namespace
-     * @return Rest\Interfaces\FilterOperator
-     * @throws Exception\Factory
-     */
-    function buildRestFilterOperator($class_name, $column, $value, $column_glue=null, $glue=null, $namespace='Everon\Rest\Filter');
 
     /**
      * @return Interfaces\Core
@@ -796,5 +784,16 @@ interface Factory
      * @return \DateTimeZone
      */
     function buildDateTimeZone($timezone);
+
+    /**
+     * @param $locale
+     * @param $datetype
+     * @param $timetype
+     * @param $timezone
+     * @param $calendar
+     * @param $pattern
+     * @return \IntlDateFormatter
+     */
+    function buildIntlDateFormatter($locale, $datetype, $timetype, $timezone, $calendar, $pattern);
 
 }

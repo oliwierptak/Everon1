@@ -206,12 +206,12 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildRestFilter(Interfaces\Collection $FilterDefinition, $namespace='Everon\Rest')
+    public function buildRestFilter($namespace='Everon\Rest')
     {
         try {
             $class_name = $this->getFullClassName($namespace, 'Filter');
             $this->classExists($class_name);
-            $Filter = new $class_name($FilterDefinition);
+            $Filter = new $class_name();
             $this->injectDependencies($class_name, $Filter);
             return $Filter;
         }
@@ -220,23 +220,6 @@ abstract class Factory implements Interfaces\Factory
         }
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function buildRestFilterOperator($class_name, $column, $value=null, $column_glue=null, $glue=null, $namespace='Everon\Rest\Filter')
-    {
-        try {
-            $class_name = $this->getFullClassName($namespace, $class_name);
-            $this->classExists($class_name);
-            $Operator = new $class_name($column, $value, $column_glue, $glue);
-            $this->injectDependencies($class_name, $Operator);
-            return $Operator;
-        }
-        catch (\Exception $e) {
-            throw new Exception\Factory('RestFilterOperator: "%s" initialization error', $class_name, $e);
-        }
-    }
-    
     /**
      * @inheritdoc
      */
@@ -1680,5 +1663,13 @@ abstract class Factory implements Interfaces\Factory
     public function buildDateTimeZone($timezone)
     {
         return new \DateTimeZone($timezone);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildIntlDateFormatter($locale, $datetype, $timetype, $timezone, $calendar, $pattern)
+    {
+        return new \IntlDateFormatter($locale, $datetype, $timetype, $timezone, $calendar, $pattern);
     }
 }
