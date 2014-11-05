@@ -84,8 +84,6 @@ abstract class Mapper extends DataMapper
     {
 /*        
         $sql = "SELECT pgc.reltuples AS total_count FROM pg_catalog.pg_class AS pgc "; 
-        $sql .= $CriteriaOLD;
-        $where_str = empty($CriteriaOLD->getWhere()) ? 'WHERE ' : ''; 
         $sql .= $where_str.' pgc.oid = '.sprintf("'${table_name}'::regclass", $this->getTable()->getSchema(), $this->getTable()->getName());*/
 
         //do slow count

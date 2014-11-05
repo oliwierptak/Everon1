@@ -63,7 +63,7 @@ interface ResourceNavigator extends Dependency\Request
     function getLimit();
 
     /**
-     * @return \Everon\DataMapper\Interfaces\CriteriaOLD
+     * @return \Everon\DataMapper\Interfaces\Criteria\Builder
      */
     function toCriteria();
 }

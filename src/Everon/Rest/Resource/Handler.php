@@ -9,7 +9,6 @@
  */
 namespace Everon\Rest\Resource;
 
-use Everon\DataMapper\CriteriaOLD;
 use Everon\Dependency;
 use Everon\Domain;
 use Everon\Exception as EveronException;

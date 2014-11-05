@@ -212,6 +212,7 @@ abstract class Factory implements Interfaces\Factory
             $class_name = $this->getFullClassName($namespace, 'Filter');
             $this->classExists($class_name);
             $Filter = new $class_name();
+            
             $this->injectDependencies($class_name, $Filter);
             return $Filter;
         }
@@ -728,6 +729,23 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
+    public function buildCriteria($namespace='Everon\DataMapper')
+    {
+        try {
+            $class_name = $this->getFullClassName($namespace, 'Criteria');
+            $this->classExists($class_name);
+            $Builder = new $class_name();
+            $this->injectDependencies($class_name, $Builder);
+            return $Builder;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('Criteria initialization error', null, $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function buildCriteriaBuilder($namespace='Everon\DataMapper\Criteria')
     {
         try {
@@ -779,24 +797,7 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildDataMapperCriteria($namespace='Everon\DataMapper')
-    {
-        try {
-            $class_name = $this->getFullClassName($namespace, 'Criteria');
-            $this->classExists($class_name);
-            $Criteria = new $class_name();
-            $this->injectDependencies($class_name, $Criteria);
-            return $Criteria;
-        }
-        catch (\Exception $e) {
-            throw new Exception\Factory('Criteria initialization error', null, $e);
-        }
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function buildDataMapperCriterium($column, $operator, $value, $namespace = 'Everon\DataMapper\Criteria')
+    public function buildCriteriaCriterium($column, $operator, $value, $namespace = 'Everon\DataMapper\Criteria')
     {
         try {
             $class_name = $this->getFullClassName($namespace, 'Criterium');

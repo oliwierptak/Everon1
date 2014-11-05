@@ -298,7 +298,7 @@ abstract class Relation implements Interfaces\Relation
     /**
      * @inheritdoc
      */
-    public function getData(DataMapper\Interfaces\Criteria\Builder $Criteria=null)
+    public function getData(DataMapper\Interfaces\Criteria\Builder $CriteriaBuilder=null)
     {
         if ($this->loaded) {
             return $this->Data;
@@ -306,15 +306,15 @@ abstract class Relation implements Interfaces\Relation
 
         $this->setupRelationParameters();
         
-        if ($Criteria !== null) {
-            if (empty($Criteria->getOrderBy()) === false) {
-                $this->getCriteriaBuilder()->setOrderBy($Criteria->getOrderBy());
+        if ($CriteriaBuilder !== null) {
+            if (empty($CriteriaBuilder->getOrderBy()) === false) {
+                $this->getCriteriaBuilder()->setOrderBy($CriteriaBuilder->getOrderBy());
             } 
-            if ($Criteria->getLimit()) {
-                $this->getCriteriaBuilder()->setLimit($Criteria->getLimit());
+            if ($CriteriaBuilder->getLimit()) {
+                $this->getCriteriaBuilder()->setLimit($CriteriaBuilder->getLimit());
             }
-            if ($Criteria->getOffset() !== null) {
-                $this->getCriteriaBuilder()->setOffset($Criteria->getOffset());
+            if ($CriteriaBuilder->getOffset() !== null) {
+                $this->getCriteriaBuilder()->setOffset($CriteriaBuilder->getOffset());
             }
         }
 

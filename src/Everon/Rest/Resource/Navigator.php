@@ -207,7 +207,7 @@ class Navigator implements Interfaces\ResourceNavigator
     }
 
     /**
-     * @return \Everon\DataMapper\Interfaces\CriteriaOLD
+     * @inheritdoc
      */
     public function toCriteria()
     {

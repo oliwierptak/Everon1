@@ -85,6 +85,13 @@ interface Factory
     function buildRestClient(Rest\Interfaces\ResourceHref $Href, Rest\Interfaces\CurlAdapter $CurlAdapter);
 
     /**
+     * @param string $namespace
+     * @return Rest\Filter
+     * @throws Exception\Factory
+     */
+    function buildRestFilter($namespace='Everon\Rest');
+
+    /**
      * @return Interfaces\Core
      * @throws Exception\Factory
      */
@@ -247,6 +254,13 @@ interface Factory
 
     /**
      * @param string $namespace
+     * @returns DataMapper\Interfaces\Criteria
+     * @throws Exception\Factory
+     */
+    function buildCriteria($namespace='Everon\DataMapper');
+
+    /**
+     * @param string $namespace
      * @returns DataMapper\Interfaces\Criteria\Builder
      * @throws Exception\Factory
      */
@@ -257,7 +271,6 @@ interface Factory
      * @param $glue
      * @param string $namespace
      * @return DataMapper\Interfaces\Criteria\Container
-     * @throws Exception\Factory
      */
     function buildCriteriaContainer(DataMapper\Interfaces\Criteria $Criteria, $glue, $namespace='Everon\DataMapper\Criteria');
 
@@ -269,21 +282,14 @@ interface Factory
      */
     function buildCriteriaOperator($type, $namespace='Everon\DataMapper\Criteria\Operator');
 
-    /**
-     * @param string $namespace
-     * @return DataMapper\Interfaces\CriteriaOLD
-     * @throws Exception\Factory
-     */
-    function buildDataMapperCriteria($namespace='Everon\DataMapper');
-
-    /**
+   /**
      * @param $column
      * @param $operator
      * @param $value
      * @param string $namespace
      * @return DataMapper\Interfaces\Criteria\Criterium
      */
-    function buildDataMapperCriterium($column, $operator, $value, $namespace = 'Everon\DataMapper\Criteria');
+    function buildCriteriaCriterium($column, $operator, $value, $namespace = 'Everon\DataMapper\Criteria');
 
     /**
      * @param $sql

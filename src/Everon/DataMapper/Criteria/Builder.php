@@ -143,7 +143,7 @@ class Builder implements Interfaces\Criteria\Builder
     public function where($column, $operator, $value)
     {
         $this->current++;
-        $Criterium = $this->getFactory()->buildDataMapperCriterium($column, $operator, $value);
+        $Criterium = $this->getFactory()->buildCriteriaCriterium($column, $operator, $value);
         $this->getCurrentContainer()->getCriteria()->where($Criterium);
         $this->getCurrentContainer()->setGlue(null);
         return $this;
@@ -154,7 +154,7 @@ class Builder implements Interfaces\Criteria\Builder
      */
     public function andWhere($column, $operator, $value)
     {
-        $Criterium = $this->getFactory()->buildDataMapperCriterium($column, $operator, $value);
+        $Criterium = $this->getFactory()->buildCriteriaCriterium($column, $operator, $value);
         $this->getCurrentContainer()->getCriteria()->andWhere($Criterium);
         $this->getCurrentContainer()->setGlue(self::GLUE_AND);
         return $this;
@@ -165,7 +165,7 @@ class Builder implements Interfaces\Criteria\Builder
      */
     public function orWhere($column, $operator, $value)
     {
-        $Criterium = $this->getFactory()->buildDataMapperCriterium($column, $operator, $value);
+        $Criterium = $this->getFactory()->buildCriteriaCriterium($column, $operator, $value);
         $this->getCurrentContainer()->getCriteria()->orWhere($Criterium);
         $this->getCurrentContainer()->setGlue(self::GLUE_OR);
         return $this;
@@ -177,7 +177,7 @@ class Builder implements Interfaces\Criteria\Builder
     public function whereRaw($sql)
     {
         $this->current++;
-        $Criterium = $this->getFactory()->buildDataMapperCriterium($sql, 'raw', null);
+        $Criterium = $this->getFactory()->buildCriteriaCriterium($sql, 'raw', null);
         $this->getCurrentContainer()->getCriteria()->where($Criterium);
         $this->getCurrentContainer()->setGlue(null);
         return $this;
@@ -185,7 +185,7 @@ class Builder implements Interfaces\Criteria\Builder
     
     public function andWhereRaw($sql)
     {
-        $Criterium = $this->getFactory()->buildDataMapperCriterium($sql, 'raw', null);
+        $Criterium = $this->getFactory()->buildCriteriaCriterium($sql, 'raw', null);
         $this->getCurrentContainer()->getCriteria()->andWhere($Criterium);
         $this->getCurrentContainer()->setGlue(self::GLUE_AND);
         return $this;
@@ -193,7 +193,7 @@ class Builder implements Interfaces\Criteria\Builder
 
     public function orWhereRaw($sql)
     {
-        $Criterium = $this->getFactory()->buildDataMapperCriterium($sql, 'raw', null);
+        $Criterium = $this->getFactory()->buildCriteriaCriterium($sql, 'raw', null);
         $this->getCurrentContainer()->getCriteria()->orWhere($Criterium);
         $this->getCurrentContainer()->setGlue(self::GLUE_OR);
         return $this;
@@ -205,8 +205,8 @@ class Builder implements Interfaces\Criteria\Builder
     public function getCurrentContainer()
     {
         if ($this->ContainerCollection->has($this->current) === false) {
-            $Criteria = $this->getFactory()->buildDataMapperCriteria();
-            $Container = $this->getFactory()->buildCriteriaContainer($Criteria, null);
+            $CriteriaBuilder = $this->getFactory()->buildCriteria();
+            $Container = $this->getFactory()->buildCriteriaContainer($CriteriaBuilder, null);
             $this->ContainerCollection[$this->current] = $Container; 
         }
         

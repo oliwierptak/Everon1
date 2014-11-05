@@ -9,60 +9,46 @@
  */
 namespace Everon\Rest;
 
+use Everon\DataMapper;
 use Everon\Dependency;
 use Everon\Helper;
-use Everon\Rest\Exception;
 
 
 class Filter implements Interfaces\Filter
 {
     use Dependency\Injection\Factory;
-    
+
+    /**
+     * @param array $filter
+     * @return DataMapper\Interfaces\Criteria\Builder|void
+     * @throws Exception\Filter
+     */
     public function toCriteria(array $filter)
     {
-        
-        $expressions = [];
-        foreach ($filter as $key => $data) {
-            $key = strtoupper($key);
-            
-            switch ($key) {
-                case 'WHERE':
-                    $CriteriaBuilder = $this->getFactory()->buildCriteriaBuilder();
-                    $CriteriaB$expressionsuilder->where($column, $operator, $value);
-                    $this->parseSubFilter($CriteriaBuilder, $data);
-                    break;
-                case 'AND':
-                    $CriteriaBuilder = $this->getFactory()->buildCriteriaBuilder();
+        try {
+            $CriteriaBuilder = $this->getFactory()->buildCriteriaBuilder();
+
+            $where_item = array_shift($filter);
+            @list($column, $operator, $value) = $where_item;
+            $CriteriaBuilder->where($column, $operator, $value);
+
+            foreach ($filter as $item) {
+                @list($column, $operator, $value, $glue) = $item;
+                $glue = isset($glue) === false ? 'AND' : strtoupper($glue);
+
+                if ($glue === DataMapper\Criteria\Builder::GLUE_AND) {
                     $CriteriaBuilder->andWhere($column, $operator, $value);
-                    $this->parseSubFilter($CriteriaBuilder, $data);
-                    $CriteriaBuilder->glueByAnd();
-                    break;
-                case 'OR':
-                    $CriteriaBuilder = $this->getFactory()->buildCriteriaBuilder();
+                }
+
+                if ($glue === DataMapper\Criteria\Builder::GLUE_OR) {
                     $CriteriaBuilder->orWhere($column, $operator, $value);
-                    $this->parseSubFilter($CriteriaBuilder, $data);
-                    $CriteriaBuilder->glueByOr();
-                    break;
+                }
             }
 
-            $expressions[] = $CriteriaBuilder;
+            return $CriteriaBuilder;            
         }
-        
-        return $CriteriaBuilder;
-    }
-    
-    protected function parseSubFilter($CriteriaBuilder, $data)
-    {
-        foreach ($data as $sub_data) {
-            @list($column, $operator, $value, $glue) = $sub_data;
-            $glue = isset($glue) === false ? 'AND' : strtoupper($glue);
-
-            if ($glue === 'AND') {
-                $CriteriaBuilder->andWhere($column, $operator, $value);
-            }
-            if ($glue === 'OR') {
-                $CriteriaBuilder->orWhere($column, $operator, $value);
-            }
+        catch (\Exception $e) {
+            throw new Exception\Filter($e);
         }
     }
 }

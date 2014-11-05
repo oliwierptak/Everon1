@@ -9,7 +9,15 @@
  */
 namespace Everon\Rest\Interfaces;
 
+use Everon\DataMapper;
+use Everon\Rest;
+
 interface Filter
 {
-
+    /**
+     * @param array $filter
+     * @return DataMapper\Interfaces\Criteria\Builder|void
+     * @throws Rest\Exception\Filter
+     */
+    function toCriteria(array $filter);
 }
