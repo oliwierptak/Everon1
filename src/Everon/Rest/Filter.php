@@ -44,7 +44,7 @@ class Filter implements Interfaces\Filter
                 }
             }
 
-            return $CriteriaBuilder;            
+            return $CriteriaBuilder;
         }
         catch (\Exception $e) {
             throw new Exception\Filter($e);
