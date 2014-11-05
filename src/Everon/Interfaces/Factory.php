@@ -406,6 +406,43 @@ interface Factory
     function buildSchemaTableAndDependencies($database_timezone, $name, $schema, $adapter_name, array $columns, array $primary_keys,  array $unique_keys, array $foreign_keys, Domain\Interfaces\Mapper $DomainMapper, $namespace='Everon\DataMapper');
 
     /**
+     * @param $adapter_name
+     * @param $database_timezone
+     * @param array $data
+     * @param array $primary_key_list
+     * @param array $unique_key_list
+     * @param array $foreign_key_list
+     * @param string $namespace
+     * @return DataMapper\Interfaces\Schema\Column
+     * @throws Exception\Factory]
+     */
+    function buildSchemaColumn($adapter_name, $database_timezone, array $data, array $primary_key_list, array $unique_key_list, array $foreign_key_list, $namespace='Everon\DataMapper\Schema');
+
+    /**
+     * @param array $foreign_key_data
+     * @param string $namespace
+     * @return DataMapper\Interfaces\Schema\ForeignKey
+     * @throws Exception\Factory
+     */
+    function buildSchemaForeignKey(array $foreign_key_data, $namespace='Everon\DataMapper\Schema');
+
+    /**
+     * @param array $primary_key_data
+     * @param string $namespace
+     * @return DataMapper\Interfaces\Schema\PrimaryKey
+     * @throws Exception\Factory
+     */
+    function buildSchemaPrimaryKey(array $primary_key_data, $namespace='Everon\DataMapper\Schema');
+
+    /**
+     * @param array $unique_key_data
+     * @param string $namespace
+     * @return DataMapper\Interfaces\Schema\UniqueKey
+     * @throws Exception\Factory
+     */
+    function buildSchemaUniqueKey(array $unique_key_data, $namespace='Everon\DataMapper\Schema');
+
+    /**
      * @param $name
      * @param $schema
      * @param array $column_list
@@ -417,7 +454,7 @@ interface Factory
      * @return DataMapper\Interfaces\Schema\Table
      * @throws Exception\Factory
      */
-    function buildSchemaTable($name, $schema, array $column_list, array $primary_key_list,  array $unique_key_list, array $foreign_key_list, Domain\Interfaces\Mapper $DomainMapper, $namespace='Everon\DataMapper');
+    function buildSchemaTable($name, $schema, array $column_list, array $primary_key_list,  array $unique_key_list, array $foreign_key_list, Domain\Interfaces\Mapper $DomainMapper, $namespace='Everon\DataMapper\Schema');
 
     /**
      * @param string $name

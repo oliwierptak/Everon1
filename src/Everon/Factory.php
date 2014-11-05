@@ -1013,47 +1013,33 @@ abstract class Factory implements Interfaces\Factory
     public function buildSchemaTableAndDependencies($database_timezone, $name, $schema, $adapter_name, array $columns, array $primary_keys,  array $unique_keys, array $foreign_keys, Domain\Interfaces\Mapper $DomainMapper, $namespace='Everon\DataMapper')
     {
         try {
+            /**
+             * @var \Everon\DataMapper\Interfaces\Schema\PrimaryKey $PrimaryKey
+             * @var \Everon\DataMapper\Interfaces\Schema\UniqueKey $UniqueKey
+             * @var \Everon\DataMapper\Interfaces\Schema\ForeignKey $ForeignKey
+             * @var DataMapper\Schema\Column $Column
+             */
             $primary_key_list = [];
-            foreach ($primary_keys as $constraint_data) {
-                /**
-                 * @var \Everon\DataMapper\Interfaces\Schema\PrimaryKey $PrimaryKey
-                 */
-                $class_name = $this->getFullClassName($namespace, 'Schema\PrimaryKey');
-                $this->classExists($class_name);
-                $PrimaryKey = new $class_name($constraint_data);
+            foreach ($primary_keys as $primary_key_data) {
+                $PrimaryKey = $this->buildSchemaPrimaryKey($primary_key_data);
                 $primary_key_list[$PrimaryKey->getName()] = $PrimaryKey;
             }
 
             $unique_key_list = [];
-            foreach ($unique_keys as $constraint_data) {
-                /**
-                 * @var \Everon\DataMapper\Interfaces\Schema\UniqueKey $UniqueKey
-                 */
-                $class_name = $this->getFullClassName($namespace, 'Schema\UniqueKey');
-                $this->classExists($class_name);
-                $UniqueKey = new $class_name($constraint_data);
+            foreach ($unique_keys as $unique_key_data) {
+                $UniqueKey = $this->buildSchemaUniqueKey($unique_key_data);
                 $unique_key_list[$UniqueKey->getName()] = $UniqueKey;
             }
             
             $foreign_key_list = [];
             foreach ($foreign_keys as $column_name => $foreign_key_data) {
-                /**
-                 * @var \Everon\DataMapper\Interfaces\Schema\ForeignKey $ForeignKey
-                 */
-                $class_name = $this->getFullClassName($namespace, 'Schema\ForeignKey');
-                $this->classExists($class_name);
-                $ForeignKey = new $class_name($foreign_key_data);
-                $foreign_key_list[$ForeignKey->getColumnName()] = new $class_name($foreign_key_data);
+                $ForeignKey = $this->buildSchemaForeignKey($foreign_key_data);
+                $foreign_key_list[$ForeignKey->getColumnName()] = $ForeignKey;
             }
 
             $column_list = [];
             foreach ($columns as $column_data) {
-                $class_name = $this->getFullClassName($namespace, "Schema\\${adapter_name}\\Column");
-                $this->classExists($class_name);
-                /**
-                 * @var DataMapper\Schema\Column $Column
-                 */
-                $Column = new $class_name($database_timezone, $column_data, $primary_key_list, $unique_key_list, $foreign_key_list);
+                $Column = $this->buildSchemaColumn($adapter_name, $database_timezone, $column_data, $primary_key_list, $unique_key_list, $foreign_key_list);
                 $column_list[$Column->getName()] = $Column;
             }
             
@@ -1067,10 +1053,78 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildSchemaTable($name, $schema, array $column_list, array $primary_key_list,  array $unique_key_list, array $foreign_key_list, Domain\Interfaces\Mapper $DomainMapper, $namespace='Everon\DataMapper')
+    public function buildSchemaColumn($adapter_name, $database_timezone, array $data, array $primary_key_list, array $unique_key_list, array $foreign_key_list, $namespace='Everon\DataMapper\Schema')
     {
         try {
-            $class_name = $this->getFullClassName($namespace,'Schema\Table');
+            $class_name = $this->getFullClassName($namespace, $adapter_name.'\\Column');
+            $this->classExists($class_name);
+            $Column = new $class_name($database_timezone, $data, $primary_key_list, $unique_key_list, $foreign_key_list);
+            $this->injectDependencies($class_name, $Column);
+            return $Column;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('SchemaColumn for adapter: "%s" initialization error', $adapter_name, $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildSchemaForeignKey(array $foreign_key_data, $namespace='Everon\DataMapper\Schema')
+    {
+        try {
+            $class_name = $this->getFullClassName($namespace, 'ForeignKey');
+            $this->classExists($class_name);
+            $ForeignKey = new $class_name($foreign_key_data);
+            $this->injectDependencies($class_name, $ForeignKey);
+            return $ForeignKey;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('SchemaForeignKey initialization error', null, $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildSchemaPrimaryKey(array $primary_key_data, $namespace='Everon\DataMapper\Schema')
+    {
+        try {
+            $class_name = $this->getFullClassName($namespace, 'PrimaryKey');
+            $this->classExists($class_name);
+            $PrimaryKey = new $class_name($primary_key_data);
+            $this->injectDependencies($class_name, $PrimaryKey);
+            return $PrimaryKey;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('SchemaPrimaryKey initialization error', null, $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildSchemaUniqueKey(array $unique_key_data, $namespace='Everon\DataMapper\Schema')
+    {
+        try {
+            $class_name = $this->getFullClassName($namespace, 'UniqueKey');
+            $this->classExists($class_name);
+            $UniqueKey = new $class_name($unique_key_data);
+            $this->injectDependencies($class_name, $UniqueKey);
+            return $UniqueKey;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('SchemaUniqueKey initialization error', null, $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildSchemaTable($name, $schema, array $column_list, array $primary_key_list,  array $unique_key_list, array $foreign_key_list, Domain\Interfaces\Mapper $DomainMapper, $namespace='Everon\DataMapper\Schema')
+    {
+        try {
+            $class_name = $this->getFullClassName($namespace, 'Table');
             $this->classExists($class_name);
             $Table = new $class_name($name, $schema, $column_list, $primary_key_list, $unique_key_list, $foreign_key_list, $DomainMapper);
             $this->injectDependencies($class_name, $Table);
