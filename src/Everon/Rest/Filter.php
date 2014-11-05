@@ -18,9 +18,7 @@ class Filter implements Interfaces\Filter
     use Dependency\Injection\Factory;
 
     /**
-     * @param array $filter
-     * @return DataMapper\Interfaces\Criteria\Builder|void
-     * @throws Exception\Filter
+     * @inheritdoc
      */
     public function toCriteria(array $filter)
     {
