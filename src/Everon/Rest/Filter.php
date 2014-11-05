@@ -11,7 +11,6 @@ namespace Everon\Rest;
 
 use Everon\DataMapper;
 use Everon\Dependency;
-use Everon\Helper;
 
 
 class Filter implements Interfaces\Filter
