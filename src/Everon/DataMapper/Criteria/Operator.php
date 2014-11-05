@@ -18,6 +18,9 @@ abstract class Operator implements Interfaces\Criteria\Operator
     const TYPE_EQUAL = 'Equal';
     const TYPE_NOT_EQUAL = 'NotEqual';
     const TYPE_LIKE = 'Like';
+    const TYPE_NOT_LIKE = 'Like';
+    const TYPE_ILIKE = 'Ilike'; //case insensitive like
+    const TYPE_NOT_ILIKE = 'NotIlike';
     const TYPE_IN = 'In';
     const TYPE_NOT_IN = 'NotIn';
     const TYPE_IS = 'Is';
@@ -33,6 +36,9 @@ abstract class Operator implements Interfaces\Criteria\Operator
     const SQL_EQUAL = '=';
     const SQL_NOT_EQUAL = '!=';
     const SQL_LIKE = 'LIKE';
+    const SQL_NOT_LIKE = 'NOT LIKE';
+    const SQL_ILIKE = 'ILIKE'; //case insensitive like
+    const SQL_NOT_ILIKE = 'NOT ILIKE';
     const SQL_IN = 'IN';
     const SQL_NOT_IN = 'NOT IN';
     const SQL_IS = 'IS';

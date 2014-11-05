@@ -24,6 +24,10 @@ class Filter implements Interfaces\Filter
     {
         try {
             $CriteriaBuilder = $this->getFactory()->buildCriteriaBuilder();
+            
+            if (empty($filter)) {
+                return $CriteriaBuilder;
+            }
 
             $where_item = array_shift($filter);
             @list($column, $operator, $value) = $where_item;

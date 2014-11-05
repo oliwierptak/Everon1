@@ -86,7 +86,7 @@ interface Factory
 
     /**
      * @param string $namespace
-     * @return Rest\Filter
+     * @return Rest\Interfaces\Filter
      * @throws Exception\Factory
      */
     function buildRestFilter($namespace='Everon\Rest');

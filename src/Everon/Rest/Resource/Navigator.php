@@ -212,7 +212,18 @@ class Navigator implements Interfaces\ResourceNavigator
     public function toCriteria()
     {
         $this->init();
-        $CriteriaBuilder = $this->getFactory()->buildCriteriaBuilder();
+
+        $filters = $this->getRequest()->getGetParameter('filters', '');
+        if ($filters !== '') {
+            $Filter = $this->getFactory()->buildRestFilter();
+            $CriteriaBuilder = $Filter->toCriteria(json_decode($filters, true));    
+        }
+        else {
+            $CriteriaBuilder = $this->getFactory()->buildCriteriaBuilder();
+        }
+
+        //$SqlPart = $CriteriaBuilder->toSqlPart(); sd($SqlPart);
+        
         $CriteriaBuilder->setLimit($this->getLimit())
             ->setOffset($this->getOffset())
             ->setOrderBy($this->getOrderBy() ?: []);
