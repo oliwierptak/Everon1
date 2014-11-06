@@ -624,7 +624,9 @@ abstract class Factory implements Interfaces\Factory
     {
         try {
             $options = $this->arrayMergeDefault([
-                \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION
+                \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+                \PDO::ATTR_PERSISTENT => true
+                // \PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''
             ], $options);
             return new \PDO($dsn, $username, $password, $options);
         }

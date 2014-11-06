@@ -17,11 +17,11 @@ trait DateFormatter
      * @param \DateTimeZone $TimeZone
      * @return string
      */
-    protected function dateFormat($value=null, $format, \DateTimeZone $TimeZone=null)
+    protected function dateFormat(\DateTime $value=null, $format, \DateTimeZone $TimeZone=null)
     {
         $value = ($value === null) ? $this->getFactory()->buildDateTime() : $value;
         //return (new \DateTime($value->format(\DateTime::ATOM), $TimeZone ?: (new \DateTimeZone(date_default_timezone_get()))))->format($format);
-        $TimeZone = $TimeZone === null ? (new \DateTimeZone(date_default_timezone_get())) : $TimeZone;
+        $TimeZone = $TimeZone === null ? ($this->getFactory()->buildDateTimeZone(date_default_timezone_get())) : $TimeZone;
         $DateTime = $this->getFactory()->buildDateTime($value->format(\DateTime::ATOM), $TimeZone);
         return $DateTime->format($format);
     }
@@ -31,7 +31,7 @@ trait DateFormatter
      * @param \DateTimeZone $TimeZone
      * @return string
      */
-    protected function dateAsMysql($value=null, \DateTimeZone $TimeZone=null)
+    protected function dateAsMysql(\DateTime $value=null, \DateTimeZone $TimeZone=null)
     {
         return $this->dateFormat($value, 'Y-m-d@H:i:s', $TimeZone);
     }
@@ -41,7 +41,7 @@ trait DateFormatter
      * @param \DateTimeZone $TimeZone
      * @return string
      */
-    protected function dateAsPostgreSql($value=null, \DateTimeZone $TimeZone=null)
+    protected function dateAsPostgreSql(\DateTime $value=null, \DateTimeZone $TimeZone=null)
     {
         return $this->dateFormat($value, 'Y-m-d H:i:s.uP', $TimeZone);
     }
@@ -51,7 +51,7 @@ trait DateFormatter
      * @param \DateTimeZone $TimeZone
      * @return string
      */
-    protected function dateAsTime($value=null, \DateTimeZone $TimeZone=null)
+    protected function dateAsTime(\DateTime $value=null, \DateTimeZone $TimeZone=null)
     {
         return $this->dateFormat($value, 'His', $TimeZone);
     }

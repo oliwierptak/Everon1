@@ -354,8 +354,7 @@ abstract class Column implements Schema\Column
                 /**
                  * @var \DateTime $value
                  */
-                //$value->setTimezone();
-                return $this->dateAsPostgreSql($value, new \DateTimeZone($this->database_timezone));
+                return $this->dateAsPostgreSql($value, $this->getFactory()->buildDateTimeZone($this->database_timezone));
                 break;
 
             default:

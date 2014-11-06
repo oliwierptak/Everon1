@@ -75,6 +75,7 @@ abstract class Model implements Interfaces\Model
      */
     public function create(array $data=[])
     {
+        $data[$this->getRepository()->getMapper()->getTable()->getPk()] = null;
         return $this->getRepository()->buildFromArray($data);
     }
 

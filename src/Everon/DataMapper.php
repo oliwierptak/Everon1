@@ -120,9 +120,10 @@ abstract class DataMapper implements Interfaces\DataMapper
     public function add(array $data)
     {
         $sql = $this->getInsertSql();
-        $parameters = $this->getTable()->prepareDataForSql($data, false);
-        
-        $id = $this->getSchema()->getPdoAdapterByName($this->write_connection_name)->insert($sql, $parameters);
+        //$parameters = $this->getTable()->prepareDataForSql($data, false);//data should be prepared at this point
+
+        unset($data[$this->getTable()->getPk()]);
+        $id = $this->getSchema()->getPdoAdapterByName($this->write_connection_name)->insert($sql, $data);
         $id = $this->getTable()->validateId($id);
         
         $data[$this->getTable()->getPk()] = $id;
@@ -135,19 +136,24 @@ abstract class DataMapper implements Interfaces\DataMapper
      */
     public function save(array $data)
     {
-        $parameters = $this->getTable()->prepareDataForSql($data, true);
+        //$parameters = $this->getTable()->prepareDataForSql($data, true);//data should be prepared at this point
         $id = $this->getTable()->getIdFromData($data);
         $id = $this->getTable()->validateId($id);
         
-        $CriteriaBuilder = $this->getFactory()->buildCriteriaBuilder();
-        $CriteriaBuilder->where($this->getTable()->getPk(), '=', $id);
-        $CriteriaBuilder->setLimit(1);
+        $data[$this->getTable()->getPk()] = $id;
+
+        //$CriteriaBuilder = $this->getFactory()->buildCriteriaBuilder();
+        //$CriteriaBuilder->where($this->getTable()->getPk(), '=', $id);
         
-        $SqlPart = $CriteriaBuilder->toSqlPart();
-        $sql = trim($this->getUpdateSql().' '.$SqlPart->getSql());
-        $parameters = array_merge($parameters, $SqlPart->getParameters());
+        //$SqlPart = $CriteriaBuilder->toSqlPart();
+        //$sql = trim($this->getUpdateSql().' '.$SqlPart->getSql());
+        $sql = trim($this->getUpdateSql().' WHERE '.$this->getTable()->getPk() .' = :'.$this->getTable()->getPk());
+        //$parameters = array_merge($data, $SqlPart->getParameters());
+
+        //$parameters[$this->getTable()->getPk()] = null;
+        //unset($parameters[$this->getTable()->getPk()]);
         
-        return $this->getSchema()->getPdoAdapterByName($this->write_connection_name)->update($sql, $parameters);
+        return $this->getSchema()->getPdoAdapterByName($this->write_connection_name)->update($sql, $data);
     }
 
     /**
@@ -158,6 +164,7 @@ abstract class DataMapper implements Interfaces\DataMapper
         $id = $this->getTable()->validateId($id);
         $CriteriaBuilder = $this->getFactory()->buildCriteriaBuilder();
         $CriteriaBuilder->where($this->getTable()->getPk(), '=', $id);
+        
         $SqlPart = $CriteriaBuilder->toSqlPart();
 
         $sql = trim($this->getDeleteSql().' '.$SqlPart->getSql());

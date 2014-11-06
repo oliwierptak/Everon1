@@ -71,7 +71,7 @@ class Column extends Schema\Column
                 $this->length = 19;
                 $this->type = static::TYPE_TIMESTAMP;
                 $this->Validator = function($value) {
-                    $dt = new \DateTime('@'.strtotime($value));
+                    $dt = $this->getFactory()->buildDateTime('@'.strtotime($value));
                     return $dt !== false && !array_sum($dt->getLastErrors());
                 };
                 break;

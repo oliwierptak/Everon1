@@ -139,7 +139,7 @@ class Builder implements Interfaces\Criteria\Builder
 
         return $parameters;
     }
-
+    
     /**
      * @inheritdoc
      */
@@ -148,7 +148,13 @@ class Builder implements Interfaces\Criteria\Builder
         $this->current++;
         $Criterium = $this->getFactory()->buildCriteriaCriterium($column, $operator, $value);
         $this->getCurrentContainer()->getCriteria()->where($Criterium);
-        $this->getCurrentContainer()->setGlue(null);
+        
+        $glue = null;
+        if ($this->current > 0) {
+            $glue = self::GLUE_AND; //glue subqueries by AND, by default if missing glue (where() used twice in a row)
+        }
+        
+        $this->getCurrentContainer()->setGlue($glue);
         return $this;
     }
 
@@ -393,7 +399,7 @@ class Builder implements Interfaces\Criteria\Builder
 
         return 'GROUP BY '.$this->getGroupBy();
     }
-    
+
     /**
      * @inheritdoc
      */
@@ -411,7 +417,7 @@ class Builder implements Interfaces\Criteria\Builder
             $sql[] = $this->criteriaToSql($Container).' '.$glue;
             $criteria_parameters = $this->criteriaToParameters($Container);
             $tmp = [];
-            
+
             foreach ($criteria_parameters as $cp_value) {
                 $tmp = $this->arrayMergeDefault($tmp, $cp_value);
             }
@@ -423,11 +429,11 @@ class Builder implements Interfaces\Criteria\Builder
         $sql_query = rtrim($sql_query, $glue.' ');
 
         $sql_query .= ' '.trim($this->getGroupBySql().' '.
-            $this->getOrderByAndSortSql().' '.
-            $this->getOffsetLimitSql());
-        
+                $this->getOrderByAndSortSql().' '.
+                $this->getOffsetLimitSql());
+
         $sql_query = empty($sql) === false ? 'WHERE '.$sql_query : $sql_query;
-        
+
         return $this->getFactory()->buildDataMapperSqlPart(trim($sql_query), $parameters);
     }
 

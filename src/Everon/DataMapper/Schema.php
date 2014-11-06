@@ -11,6 +11,7 @@ namespace Everon\DataMapper;
 
 use Everon\Config;
 use Everon\Dependency\Injection\Factory as FactoryDependencyInjection;
+use Everon\Dependency\Injection\Logger as LoggerDependencyInjection;
 use Everon\DataMapper\Dependency;
 use Everon\Dependency\Injection\ConfigManager as ConfigManagerDependencyInjection;
 use Everon\Domain\Dependency\DomainMapper as DomainMapperDependency;
@@ -19,10 +20,11 @@ use Everon\Helper;
 
 class Schema implements Interfaces\Schema
 {
-    use Dependency\SchemaReader;
-    use DomainMapperDependency;
+    use LoggerDependencyInjection;
     use FactoryDependencyInjection;
     use ConfigManagerDependencyInjection;
+    use Dependency\SchemaReader;
+    use DomainMapperDependency;
     
     use Helper\ToArray;
 
@@ -245,12 +247,14 @@ class Schema implements Interfaces\Schema
      */
     public function getPdoAdapterByName($name)
     {
+        $name = ($name === 'read') ? 'write' : $name; //todo remove it, add support for transactions, add proxy method
         if (isset($this->pdo_adapters[$name]) === false) {
             $Connection = $this->getConnectionManager()->getConnectionByName($name);
             list($dsn, $username, $password, $options) = $Connection->toPdo();
             $Pdo = $this->getFactory()->buildPdo($dsn, $username, $password, $options);
             $PdoAdapter = $this->getFactory()->buildPdoAdapter($Pdo, $Connection);
             $this->pdo_adapters[$name] = $PdoAdapter;
+            $this->getLogger()->pdo('making pdo: '.$name);
         }
 
         if (isset($this->pdo_adapters[$name]) === false) {
