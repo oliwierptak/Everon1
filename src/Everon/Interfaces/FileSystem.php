@@ -30,6 +30,12 @@ interface FileSystem
     function getRoot();
 
     /**
+     * @param $root
+     * @throws Exception\FileSystem
+     */
+    function setRoot($root);
+
+    /**
      * @param $path
      * @param int $mode
      * @throws Exception\FileSystem

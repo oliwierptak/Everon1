@@ -55,7 +55,15 @@ class Message implements Interfaces\Message
     protected $headers = null;
 
 
-    
+    /**
+     * @param Interfaces\Recipient $Recipient
+     * @param Interfaces\Address $FromAddress
+     * @param $subject
+     * @param $html_body
+     * @param string $text_body
+     * @param array $attachments
+     * @param array $headers
+     */
     public function __construct(Interfaces\Recipient $Recipient, Interfaces\Address $FromAddress, $subject, $html_body, $text_body='', array $attachments=[], array $headers=[])
     {
         $this->Recipient = $Recipient;
@@ -178,7 +186,10 @@ class Message implements Interfaces\Message
     {
         return $this->From;
     }
-    
+
+    /**
+     * @return array
+     */
     public function getToArray()
     {
         return [
