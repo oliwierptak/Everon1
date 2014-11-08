@@ -291,7 +291,7 @@ class Filter implements Interfaces\Filter
     {
         $missing = array_diff($key_values, array_keys($array));
         if (empty($missing) === false) {
-            throw new Exception\Filter('Missing the following key value(s): "%s"', implode("','", $missing));
+            //throw new Exception\Filter('Missing the following key value(s): "%s"', implode("','", $missing));
         }
     }
 }
