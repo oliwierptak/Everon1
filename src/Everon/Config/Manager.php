@@ -80,11 +80,13 @@ class Manager implements \Everon\Config\Interfaces\Manager
         return <<<EOF
 ; Everon application configuration example
 
-[env]
-url = /
-url_statc = /assets/
-name = everon-dev
-autoload = everon       ;external, everon
+[locale]
+database_timezone = UTC
+
+[autoloader]
+active[] = everon
+active[] = composer
+throw_exceptions = true
 
 [cache]
 config_manager = false
@@ -92,18 +94,32 @@ autoloader = false
 view = false
 
 [module]
-default = Test
-active[] = Test
+active[] = Foo
 
 [view]
 compilers[php] = '.php'
 default_extension = '.php'
+default_view = Index
+
+[error_handler]
+module = Rest
+controller = Error
+view = Error
+validation_error_template = formSubmitOnError
 
 [logger]
 enabled = true
 rotate = 512             ; KB
 format = 'c'             ; todo: implment me
 format[trace] = 'U'      ; todo: implment me
+
+[server]
+protocol = http://
+host = everon.localhost
+port_delim =
+port =
+url = /
+location = %application.server.protocol%%application.server.host%%application.server.port_delim%%application.server.port%%application.server.url%
 EOF;
     }
 
