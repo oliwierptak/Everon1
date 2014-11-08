@@ -13,6 +13,23 @@ use Everon\Interfaces;
 
 interface Config extends Arrayable, Dependency\Factory
 {
+    /**
+     * @param $name
+     * @param array $data
+     * @return \Everon\Config\Interfaces\Item
+     */
+    function buildItem($name, array $data);
+
+    /**
+     * @return \Everon\Config\Interfaces\LoaderItem
+     */
+    function getConfigLoaderItem();
+
+    /**
+     * @param \Everon\Config\Interfaces\LoaderItem $ConfigLoaderItem
+     */
+    function setConfigLoaderItem(\Everon\Config\Interfaces\LoaderItem $ConfigLoaderItem);
+    
     function getName();
 
     /**

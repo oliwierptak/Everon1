@@ -208,10 +208,11 @@ interface Factory
     /**
      * @param $filename
      * @param array $data
+     * @param bool $use_cache
+     * @param $namespace
      * @return Config\Loader\Item
-     * @throws Exception\Factory
      */
-    function buildConfigLoaderItem($filename, array $data);
+    function buildConfigLoaderItem($filename, array $data, $use_cache, $namespace='Everon\Config\Item');
 
     /**
      * @param $class_name

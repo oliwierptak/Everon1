@@ -103,8 +103,12 @@ class Loader implements Interfaces\Loader
             $config_filename = $ConfigFile->getPathname();
             $ini_config_data =  parse_ini_file($config_filename, true);
         }
+        
+        if (is_array($ini_config_data) === false) {
+            throw new Exception\Config('Cache data not found for: "%s"', $CacheFile->getBasename());
+        }
 
-        return $this->getFactory()->buildConfigLoaderItem($ConfigFile->getPathname(), $ini_config_data);
+        return $this->getFactory()->buildConfigLoaderItem($ConfigFile->getPathname(), $ini_config_data, $use_cache);
     }
     
     protected function loadFromCache(\SplFileInfo $CacheFile)
@@ -122,11 +126,21 @@ class Loader implements Interfaces\Loader
     public function saveConfigToCache(\Everon\Interfaces\Config $Config)
     {
         try {
-            $cache_filename = $this->cache_directory.pathinfo($Config->getFilename(), PATHINFO_BASENAME).'.php';
-            $data = var_export($Config->toArray(), true);
-            $h = fopen($cache_filename, 'w+');
-            fwrite($h, "<?php \$cache = $data; ");
-            fclose($h);
+            $cache_filename = strtolower(str_replace('@', '_', $Config->getName()));
+            $CacheFile = new \SplFileInfo($this->cache_directory.pathinfo($cache_filename, PATHINFO_BASENAME).'.ini.php');
+            
+            if ($CacheFile->isFile() === false) {
+                $cache_data = [
+                    'default_item' => $Config->getDefaultItem(),
+                    'items' => $Config->getItems(),
+                    'filename' => $Config->getFilename(),
+                    'name' => $Config->getName()
+                ];
+                $data = var_export($cache_data, true);
+                $h = fopen($CacheFile->getPathname(), 'w+');
+                fwrite($h, "<?php \$cache = $data; ");
+                fclose($h);
+            }
         }
         catch (\Exception $e) {
             throw new Exception\Config('Unable to save config cache file: "%s"', $Config->getFilename(), $e);

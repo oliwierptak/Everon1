@@ -50,6 +50,11 @@ class Config implements \Everon\Interfaces\Config
     protected $items = null;
 
     protected $inheritance_symbol = '<';
+
+    /**
+     * @var Config\Interfaces\LoaderItem
+     */
+    protected $ConfigLoaderItem = null;
     
 
     /**
@@ -59,6 +64,7 @@ class Config implements \Everon\Interfaces\Config
      */
     public function __construct($name, Config\Interfaces\LoaderItem $ConfigLoaderItem, \Closure $Compiler)
     {
+        $this->ConfigLoaderItem = $ConfigLoaderItem;
         $filename = $ConfigLoaderItem->getFilename();
         $data = $ConfigLoaderItem->getData();
         
@@ -149,11 +155,27 @@ class Config implements \Everon\Interfaces\Config
      * @param array $data
      * @return Interfaces\Item|Config\Item
      */
-    protected function buildItem($name, array $data)
+    public function buildItem($name, array $data)
     {
         return $this->getFactory()->buildConfigItem($name, $data);
     }
 
+    /**
+     * @return Interfaces\LoaderItem
+     */
+    public function getConfigLoaderItem()
+    {
+        return $this->ConfigLoaderItem;
+    }
+
+    /**
+     * @param Interfaces\LoaderItem $ConfigLoaderItem
+     */
+    public function setConfigLoaderItem(Config\Interfaces\LoaderItem $ConfigLoaderItem)
+    {
+        $this->ConfigLoaderItem = $ConfigLoaderItem;
+    }
+    
     public function getName()
     {
         return $this->name;
@@ -320,5 +342,18 @@ class Config implements \Everon\Interfaces\Config
     public function setCompiler(\Closure $Compiler)
     {
         $this->Compiler = $Compiler;
+    }
+
+    public static function __set_state(array $array)
+    {
+        sd($array);
+        //$name, Config\Interfaces\LoaderItem $ConfigLoaderItem, \Closure $Compiler
+        $array['data'][self::PROPERTY_DEFAULT] = $array['is_default'];
+        $array['data'][self::PROPERTY_NAME] = $array['name'];
+
+        $Item = new static($array['data'], []);
+        $Item->setName($array['name']);
+        $Item->setIsDefault($array['is_default']);
+        return $Item;
     }
 }
