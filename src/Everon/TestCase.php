@@ -226,7 +226,10 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         $ConfigLoader = $Factory->buildConfigLoader($TestEnvironment->getConfig());
         $ConfigLoader->setFactory($Factory);
 
-        $ConfigManager = $Factory->buildConfigManager($ConfigLoader);
+        $ConfigLoaderCache = $Factory->buildConfigCacheLoader($TestEnvironment->getCacheConfig());
+        $ConfigLoaderCache->setFactory($Factory);
+
+        $ConfigManager = $Factory->buildConfigManager($ConfigLoader, $ConfigLoaderCache);
         $ConfigManager->setFactory($Factory);
         $ConfigManager->setFileSystem($FileSystem);
         

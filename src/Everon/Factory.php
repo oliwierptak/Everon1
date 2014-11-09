@@ -409,12 +409,12 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildConfigManager(Config\Interfaces\Loader $Loader, $namespace = 'Everon\Config')
+    public function buildConfigManager(Config\Interfaces\Loader $Loader, Config\Interfaces\LoaderCache $CacheLoader, $namespace = 'Everon\Config')
     {
         try {
             $class_name = $this->getFullClassName($namespace, 'Manager');
             $this->classExists($class_name);
-            $Manager = new $class_name($Loader);
+            $Manager = new $class_name($Loader, $CacheLoader);
             $this->injectDependencies($class_name, $Manager);
             return $Manager;
         }
@@ -454,6 +454,23 @@ abstract class Factory implements Interfaces\Factory
         }
         catch (\Exception $e) {
             throw new Exception\Factory('ConfigLoader initialization error', null, $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildConfigCacheLoader($cache_directory, $namespace = 'Everon\Config')
+    {
+        try {
+            $class_name = $this->getFullClassName($namespace, 'LoaderCache');
+            $this->classExists($class_name);
+            $ConfigLoaderCache = new $class_name($cache_directory);
+            $this->injectDependencies($class_name, $ConfigLoaderCache);
+            return $ConfigLoaderCache;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('ConfigLoaderCache initialization error', null, $e);
         }
     }
 

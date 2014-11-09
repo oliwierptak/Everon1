@@ -91,7 +91,7 @@ class ExpressionMatcher implements Interfaces\ExpressionMatcher
         $Compiler = $this->buildCompiler();
         $Compiler($this->values); 
         
-        return $this->buildCompiler();
+        return $Compiler;
     }
     
     public function tokenizeExpressions(array $data, array $custom_expressions)

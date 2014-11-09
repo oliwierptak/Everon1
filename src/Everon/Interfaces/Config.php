@@ -20,16 +20,6 @@ interface Config extends Arrayable, Dependency\Factory
      */
     function buildItem($name, array $data);
 
-    /**
-     * @return \Everon\Config\Interfaces\LoaderItem
-     */
-    function getConfigLoaderItem();
-
-    /**
-     * @param \Everon\Config\Interfaces\LoaderItem $ConfigLoaderItem
-     */
-    function setConfigLoaderItem(\Everon\Config\Interfaces\LoaderItem $ConfigLoaderItem);
-    
     function getName();
 
     /**
@@ -75,7 +65,12 @@ interface Config extends Arrayable, Dependency\Factory
      * @param $name
      * @return bool
      */
-    function itemExists($name);    
+    function itemExists($name);
+
+    /**
+     * @return bool
+     */
+    function isEmpty();
 
     /**
      * @param $name

@@ -20,6 +20,7 @@ class Manager implements \Everon\Config\Interfaces\Manager
     use Dependency\Injection\FileSystem;
     
     use Dependency\ConfigLoader;
+    use Dependency\ConfigCacheLoader;
     use Dependency\Logger;
 
     use Helper\Arrays;
@@ -50,9 +51,10 @@ class Manager implements \Everon\Config\Interfaces\Manager
     /**
      * @param Interfaces\Loader $Loader
      */
-    public function __construct(Interfaces\Loader $Loader)
+    public function __construct(Interfaces\Loader $Loader,  Interfaces\LoaderCache $ConfigCacheLoader)
     {
         $this->ConfigLoader = $Loader;
+        $this->ConfigCacheLoader = $ConfigCacheLoader;
     }
 
     /**
@@ -153,7 +155,7 @@ EOF;
     protected function getConfigDataFromLoader(Interfaces\Loader $Loader)
     {
         //load configs from application
-        $data = $Loader->load((bool) $this->isCachingEnabled());
+        $data = $Loader->load();
 
         //load domain.ini
         $data['domain'] = $this->getConfigLoader()->loadFromFile(
@@ -230,36 +232,22 @@ EOF;
         /**
          * @var \Everon\Config\Interfaces\LoaderItem $ConfigLoaderItem
          */
-        $configs_data = $this->getConfigDataFromLoader($this->getConfigLoader());
         
-        if ($this->isCachingEnabled() === 2) {
-            /*
-            $this->getDefaultConfigData();
-            foreach ($configs_data as $name => $ConfigLoaderItem) {
-                $Config = $this->getFactory()->buildConfig($name, $ConfigLoaderItem, function(){});
-                $items = [];
-                foreach ($ConfigLoaderItem->getData() as $secion_name => $config_items) {
-                    $items[] = $Config->buildItem($secion_name, $config_items); 
-                }
-                $Config->setItems($items);
+        
+        if ($this->isCachingEnabled()) {
+            $configs_data = $this->getConfigCacheLoader()->load();
+            foreach ($configs_data as $name => $data) {
+                $ConfigLoaderItem = $this->getFactory()->buildConfigLoaderItem($data['filename'], $data);
+                $Config = $this->getFactory()->buildConfig($name, $ConfigLoaderItem, function () {});
+                $config_data = $ConfigLoaderItem->getData();
+                $Config->setDefaultItem($data['default_item']);
+                $Config->setItems($data['items'] ?: []  );
                 $this->configs[$Config->getName()] = $Config;
             }
             return;
-            */
-            foreach ($configs_data as $name => $ConfigLoaderItem) {
-                $Config = $this->getFactory()->buildConfig($name, $ConfigLoaderItem, function () {});
-                $config_data = $ConfigLoaderItem->getData();
-                d($config_data);
-                $Config->setDefaultItem($config_data['default_item']);
-                $Config->setItems($config_data['items']);
-                $Config->setFilename($config_data['filename']);
-                $Config->setName($config_data['name']);
-                
-                $this->configs[$Config->getName()] = $Config;
-            }
-            //return;
         }
 
+        $configs_data = $this->getConfigDataFromLoader($this->getConfigLoader());
         list($Compiler, $config_items_data) = $this->getAllConfigsDataAndCompiler($configs_data);
         
         /**
@@ -281,8 +269,9 @@ EOF;
         if ($this->isRegistered($name) === false) {
             $Config = $this->getFactory()->buildConfig($name, $ConfigLoaderItem, $Compiler);
             $this->register($Config);
+            $this->getConfigCacheLoader()->saveConfigToCache($Config);
             if ($this->isCachingEnabled()) {
-                $this->getConfigLoader()->saveConfigToCache($Config);
+                
             }
         }
     }
@@ -301,16 +290,12 @@ EOF;
             $default_data[$name] = $Config->toArray();
         }
 
-        $Filename = new \SplFileInfo($filename);
-        $Filename = $this->getConfigLoader()->loadByFile($Filename, $this->isCachingEnabled());
-        $default_data[$config_name] = $Filename->getData();
+        $Loader = $this->getConfigLoader()->loadFromFile(new \SplFileInfo($filename));
+        $default_data[$config_name] = $Loader->getData();
         $Compiler = $this->getExpressionMatcher()->getCompiler($default_data, $this->getEnvironmentExpressions());
         $Compiler($default_data);
-
-        $data = $default_data[$config_name];
-        $ConfigLoaderItem = $this->getFactory()->buildConfigLoaderItem($filename, $data);
-        $ConfigLoaderItem->setData($data);
-        $this->loadAndRegisterOneConfig($config_name, $ConfigLoaderItem, $Compiler);
+        
+        $this->loadAndRegisterOneConfig($config_name, $Loader, $Compiler);
     }
 
     /**
@@ -424,7 +409,6 @@ EOF;
             return $Config->get($section, $default);
         }
         catch (Exception\Config $e) {
-            $this->getLogger()->error($e);
             return $default;
         }
     }

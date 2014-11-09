@@ -51,7 +51,8 @@ $Container->propose('ConfigManager', function() use ($Factory) {
      */
     $Environment = $Factory->getDependencyContainer()->resolve('Bootstrap')->getEnvironment();
     $Loader = $Factory->buildConfigLoader($Environment->getConfig());
-    return $Factory->buildConfigManager($Loader);
+    $CacheLoader = $Factory->buildConfigCacheLoader($Environment->getCacheConfig());
+    return $Factory->buildConfigManager($Loader, $CacheLoader);
 });
 
 $Container->propose('ModuleManager', function() use ($Factory) {

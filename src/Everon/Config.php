@@ -51,11 +51,6 @@ class Config implements \Everon\Interfaces\Config
 
     protected $inheritance_symbol = '<';
 
-    /**
-     * @var Config\Interfaces\LoaderItem
-     */
-    protected $ConfigLoaderItem = null;
-    
 
     /**
      * @param $name
@@ -64,13 +59,9 @@ class Config implements \Everon\Interfaces\Config
      */
     public function __construct($name, Config\Interfaces\LoaderItem $ConfigLoaderItem, \Closure $Compiler)
     {
-        $this->ConfigLoaderItem = $ConfigLoaderItem;
-        $filename = $ConfigLoaderItem->getFilename();
-        $data = $ConfigLoaderItem->getData();
-        
         $this->name = $name;
-        $this->filename = $filename;
-        $this->data = $data;
+        $this->filename = $ConfigLoaderItem->getFilename();
+        $this->data = $ConfigLoaderItem->getData();
         $this->Compiler = $Compiler;
     }
 
@@ -125,7 +116,7 @@ class Config implements \Everon\Interfaces\Config
 
     protected function initItems()
     {
-        if ($this->data === null || empty($this->data)) {
+        if ($this->isEmpty()) {
             return;
         }
         
@@ -160,22 +151,6 @@ class Config implements \Everon\Interfaces\Config
         return $this->getFactory()->buildConfigItem($name, $data);
     }
 
-    /**
-     * @return Interfaces\LoaderItem
-     */
-    public function getConfigLoaderItem()
-    {
-        return $this->ConfigLoaderItem;
-    }
-
-    /**
-     * @param Interfaces\LoaderItem $ConfigLoaderItem
-     */
-    public function setConfigLoaderItem(Config\Interfaces\LoaderItem $ConfigLoaderItem)
-    {
-        $this->ConfigLoaderItem = $ConfigLoaderItem;
-    }
-    
     public function getName()
     {
         return $this->name;
@@ -219,7 +194,7 @@ class Config implements \Everon\Interfaces\Config
             $this->initItems();
         }
 
-        if ($this->DefaultItem === null) {
+        if ($this->DefaultItem === null && $this->isEmpty() === false) {
             throw new Exception\Config('Default config item not defined for config: "%s"', $this->getName());
         }
         
@@ -231,7 +206,7 @@ class Config implements \Everon\Interfaces\Config
      */
     protected function getToArray($deep=false)
     {
-        return $this->getItems($deep);
+        return $this->getItems();
     }
 
     /**
@@ -282,6 +257,14 @@ class Config implements \Everon\Interfaces\Config
         }
         
         return isset($this->items[$name]);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isEmpty()
+    {
+        return ($this->data === null || empty($this->data));
     }
 
     /**
@@ -346,7 +329,7 @@ class Config implements \Everon\Interfaces\Config
 
     public static function __set_state(array $array)
     {
-        sd($array);
+        sd('AAA',$array);
         //$name, Config\Interfaces\LoaderItem $ConfigLoaderItem, \Closure $Compiler
         $array['data'][self::PROPERTY_DEFAULT] = $array['is_default'];
         $array['data'][self::PROPERTY_NAME] = $array['name'];
