@@ -156,11 +156,9 @@ EOF;
         $data = $Loader->load((bool) $this->isCachingEnabled());
 
         //load domain.ini
-        $old_dir = $this->getConfigLoader()->getConfigDirectory();
-        $this->getConfigLoader()->setConfigDirectory($this->getBootstrap()->getEnvironment()->getDomainConfig());
-        $domain_data = $Loader->load((bool) $this->isCachingEnabled());
-        $this->getConfigLoader()->setConfigDirectory($old_dir);
-        $data['domain'] = $domain_data['domain'];
+        $data['domain'] = $this->getConfigLoader()->loadFromFile(
+            new \SplFileInfo($this->getBootstrap()->getEnvironment()->getDomainConfig().'domain.ini')
+        );
         
         //load module.ini data from all modules
         $module_list = $this->getPathsOfActiveModules();
@@ -173,7 +171,7 @@ EOF;
                 continue;
             }
             $Filename = new \SplFileInfo($this->getFileSystem()->getRealPath('//Module/'.$module_name.'/Config/module.ini'));
-            $data[$module_name.'@module'] = $this->getConfigLoader()->loadByFile($Filename, $this->isCachingEnabled());
+            $data[$module_name.'@module'] = $this->getConfigLoader()->loadFromFile($Filename);
         }
         
         return $data;
