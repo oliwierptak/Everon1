@@ -67,7 +67,7 @@ class Manager implements \Everon\Config\Interfaces\Manager
         $this->default_config_data = parse_ini_string($this->getDefaults(), true);
 
         $directory = $this->getConfigLoader()->getConfigDirectory();
-        $ini = $this->getConfigLoader()->read($directory.$this->default_config_filename);
+        $ini = $this->getConfigLoader()->readIni($directory.$this->default_config_filename);
         if (is_array($ini)) {
             $this->default_config_data = $this->arrayMergeDefault($this->default_config_data, $ini);
         }
@@ -310,7 +310,7 @@ EOF;
         $Compiler($default_data);
 
         $data = $default_data[$config_name];
-        $ConfigLoaderItem = $this->getFactory()->buildConfigLoaderItem($filename, $data, $this->isCachingEnabled());
+        $ConfigLoaderItem = $this->getFactory()->buildConfigLoaderItem($filename, $data);
         $ConfigLoaderItem->setData($data);
         $this->loadAndRegisterOneConfig($config_name, $ConfigLoaderItem, $Compiler);
     }

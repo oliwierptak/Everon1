@@ -20,58 +20,43 @@ class Loader implements Interfaces\Loader
     use Helper\Arrays;
     
     protected $config_directory = null;
-    protected $cache_directory = null;
 
     /**
      * @param $config_directory
-     * @param $cache_directory
      */
-    public function __construct($config_directory, $cache_directory)
+    public function __construct($config_directory)
     {
         $this->config_directory = $config_directory;
-        $this->cache_directory = $cache_directory;
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public function getConfigDirectory()
     {
         return $this->config_directory;
     }
 
     /**
-     * @param $config_directory
+     * @inheritdoc
      */
     public function setConfigDirectory($config_directory)
     {
         $this->config_directory = $config_directory;
     }
     
-    public function getCacheDirectory()
-    {
-        return $this->cache_directory;
-    }
-
     /**
-     * @param $cache_directory
+     * @inheritdoc
      */
-    public function setCacheDirectory($cache_directory)
-    {
-        $this->cache_directory = $cache_directory;
-    }
-
-    /**
-     * @param $filename
-     * @return array|null
-     */
-    public function read($filename)
+    public function readIni($filename)
     {
         return @parse_ini_file($filename, true);
     }
 
     /**
-     * @param $use_cache
-     * @return array
+     * @inheritdoc
      */
-    public function load($use_cache)
+    public function load()
     {
         /**
          * @var \SplFileInfo $ConfigFile
@@ -81,69 +66,24 @@ class Loader implements Interfaces\Loader
         $IniFiles = new \GlobIterator($this->getConfigDirectory().'*.ini');
         foreach ($IniFiles as $config_filename => $ConfigFile) {
             $name = $ConfigFile->getBasename('.ini');
-            $list[$name] = $this->loadByFile($ConfigFile, $use_cache);
+            $list[$name] = $this->loadFromFile($ConfigFile);
         }
 
         return $list;
     }
     
     /**
-     * @param \SplFileInfo $ConfigFile
-     * @param $use_cache
-     * @return Interfaces\LoaderItem
+     * @inheritdoc
      */
-    public function loadByFile(\SplFileInfo $ConfigFile, $use_cache)
+    public function loadFromFile(\SplFileInfo $ConfigFile)
     {
-        $CacheFile = new \SplFileInfo($this->getCacheDirectory().$ConfigFile->getBasename().'.php');
-        $config_cached = $use_cache && $CacheFile->isFile();
-        if ($config_cached) {
-            $ini_config_data = $this->loadFromCache($CacheFile);
-        }
-        else {
-            $config_filename = $ConfigFile->getPathname();
-            $ini_config_data =  parse_ini_file($config_filename, true);
-        }
+        $ini_config_data =  $this->readIni($ConfigFile->getPathname());
         
         if (is_array($ini_config_data) === false) {
-            throw new Exception\Config('Cache data not found for: "%s"', $CacheFile->getBasename());
+            throw new Exception\Config('Config data not found for: "%s"', $ConfigFile->getBasename());
         }
 
-        return $this->getFactory()->buildConfigLoaderItem($ConfigFile->getPathname(), $ini_config_data, $use_cache);
+        return $this->getFactory()->buildConfigLoaderItem($ConfigFile->getPathname(), $ini_config_data);
     }
-    
-    protected function loadFromCache(\SplFileInfo $CacheFile)
-    {
-        $filename = $CacheFile->getPathname();
-        $cache = null;
-        include($filename);
-        return $cache;  
-    }
-    
-    /**
-     * @param \Everon\Interfaces\Config $Config
-     * @throws Exception\Config
-     */
-    public function saveConfigToCache(\Everon\Interfaces\Config $Config)
-    {
-        try {
-            $cache_filename = strtolower(str_replace('@', '_', $Config->getName()));
-            $CacheFile = new \SplFileInfo($this->cache_directory.pathinfo($cache_filename, PATHINFO_BASENAME).'.ini.php');
-            
-            if ($CacheFile->isFile() === false) {
-                $cache_data = [
-                    'default_item' => $Config->getDefaultItem(),
-                    'items' => $Config->getItems(),
-                    'filename' => $Config->getFilename(),
-                    'name' => $Config->getName()
-                ];
-                $data = var_export($cache_data, true);
-                $h = fopen($CacheFile->getPathname(), 'w+');
-                fwrite($h, "<?php \$cache = $data; ");
-                fclose($h);
-            }
-        }
-        catch (\Exception $e) {
-            throw new Exception\Config('Unable to save config cache file: "%s"', $Config->getFilename(), $e);
-        }
-    }
+
 }

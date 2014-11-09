@@ -21,35 +21,21 @@ interface Loader
      */
     function setConfigDirectory($config_directory);
     
-    function getCacheDirectory();
-
     /**
-     * @param $cache_directory
-     */
-    function setCacheDirectory($cache_directory);
-    
-    /**
-     * @param $use_cache
      * @return array
      */
-    function load($use_cache);
+    function load();
 
     /**
      * @param \SplFileInfo $ConfigFile
-     * @param $use_cache
      * @return LoaderItem
+     * @throws Exception\Config
      */
-    function loadByFile(\SplFileInfo $ConfigFile, $use_cache);
+    function loadFromFile(\SplFileInfo $ConfigFile);
 
     /**
      * @param $filename
      * @return array|null
      */
-    function read($filename);
-        
-    /**
-     * @param Interfaces\Config $Config
-     * @throws Exception\Config
-     */
-    function saveConfigToCache(Interfaces\Config $Config);
+    function readIni($filename);
 }

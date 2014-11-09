@@ -23,14 +23,4 @@ interface LoaderItem extends \Everon\Interfaces\Arrayable
      * @param $data
      */
     function setData(array $data);
-    
-    /**
-     * @return boolean
-     */
-    function isCachingEnabled();
-
-    /**
-     * @param boolean $use_cache
-     */
-    function setIsCachingEnabled($use_cache);
 }

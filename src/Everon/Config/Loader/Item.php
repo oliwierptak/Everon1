@@ -18,19 +18,15 @@ class Item implements Interfaces\LoaderItem
 
     protected $filename = null;
 
-    protected $is_caching_enabled = false;
-
 
     /**
      * @param $filename
      * @param array $data
-     * @param $use_cache
      */
-    public function __construct($filename, array $data, $use_cache)
+    public function __construct($filename, array $data)
     {
         $this->filename = $filename;
         $this->data = $data;
-        $this->is_caching_enabled = $use_cache;
     }
 
     public function getFilename()
@@ -52,21 +48,5 @@ class Item implements Interfaces\LoaderItem
     public function setData(array $data)
     {
         $this->data = $data;
-    }
-
-    /**
-     * @return boolean
-     */
-    public function isCachingEnabled()
-    {
-        return $this->is_caching_enabled;
-    }
-
-    /**
-     * @param boolean $use_cache
-     */
-    public function setIsCachingEnabled($use_cache)
-    {
-        $this->is_caching_enabled = $use_cache;
     }
 }

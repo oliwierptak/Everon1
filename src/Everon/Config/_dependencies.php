@@ -50,8 +50,7 @@ $Container->propose('ConfigManager', function() use ($Factory) {
      * @var \Everon\Interfaces\Environment $Environment
      */
     $Environment = $Factory->getDependencyContainer()->resolve('Bootstrap')->getEnvironment();
-    $config_cache_directory = $Environment->getCacheConfig();
-    $Loader = $Factory->buildConfigLoader($Environment->getConfig(), $config_cache_directory);
+    $Loader = $Factory->buildConfigLoader($Environment->getConfig());
     return $Factory->buildConfigManager($Loader);
 });
 
