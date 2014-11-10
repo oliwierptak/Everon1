@@ -232,8 +232,6 @@ EOF;
         /**
          * @var \Everon\Config\Interfaces\LoaderItem $ConfigLoaderItem
          */
-        
-        
         if ($this->isCachingEnabled()) {
             $configs_data = $this->getConfigCacheLoader()->load();
             foreach ($configs_data as $name => $data) {
@@ -269,9 +267,8 @@ EOF;
         if ($this->isRegistered($name) === false) {
             $Config = $this->getFactory()->buildConfig($name, $ConfigLoaderItem, $Compiler);
             $this->register($Config);
-            $this->getConfigCacheLoader()->saveConfigToCache($Config);
             if ($this->isCachingEnabled()) {
-                
+                $this->getConfigCacheLoader()->saveConfigToCache($Config);
             }
         }
     }
@@ -279,13 +276,13 @@ EOF;
     /**
      * @inheritdoc
      */
-    public function registerByFilename($config_name, $filename)
+/*    public function registerByFilename($config_name, $filename)
     {
         $default_data = [];
         $config_data = $this->getConfigs();
-        /**
+        / **
          * @var Interfaces\Config $Config
-         */
+         * /
         foreach ($config_data as $name => $Config) {
             $default_data[$name] = $Config->toArray();
         }
@@ -296,7 +293,7 @@ EOF;
         $Compiler($default_data);
         
         $this->loadAndRegisterOneConfig($config_name, $Loader, $Compiler);
-    }
+    }*/
 
     /**
      * @inheritdoc
