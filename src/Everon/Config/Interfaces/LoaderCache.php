@@ -12,15 +12,15 @@ namespace Everon\Config\Interfaces;
 use Everon\Exception;
 use Everon\Interfaces;
 
-interface Loader
+interface LoaderCache
 {
-    function getConfigDirectory();
+    function getCacheDirectory();
 
     /**
-     * @param $config_directory
+     * @param $cache_directory
      */
-    function setConfigDirectory($config_directory);
-    
+    function setCacheDirectory($cache_directory);
+
     /**
      * @return array
      */
@@ -31,11 +31,11 @@ interface Loader
      * @return LoaderItem
      * @throws Exception\Config
      */
-    function loadFromFile(\SplFileInfo $ConfigFile);
+    function loadFromCache(\SplFileInfo $ConfigFile);
 
     /**
-     * @param $filename
-     * @return array|null
+     * @param Interfaces\Config $Config
+     * @throws Exception\Config
      */
-    function readIni($filename);
+    function saveConfigToCache(Interfaces\Config $Config);
 }

@@ -14,7 +14,7 @@ use Everon\Interfaces;
 
 class Router extends \Everon\Config
 {      
-    protected function buildItem($name, array $data)
+    public function buildItem($name, array $data)
     {
         $data['url'] = '%application.server.url%'.$data['url']; //auto append application url
         $data = $this->recompile($data);

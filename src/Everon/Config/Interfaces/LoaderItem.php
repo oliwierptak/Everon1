@@ -13,6 +13,14 @@ namespace Everon\Config\Interfaces;
 interface LoaderItem extends \Everon\Interfaces\Arrayable
 {
     function getFilename();
+
+    /**
+     * @return array
+     */
     function getData();
+
+    /**
+     * @param $data
+     */
     function setData(array $data);
 }

@@ -63,7 +63,7 @@ interface Manager extends
      * @param $config_name
      * @param $filename
      */
-    function registerByFilename($config_name, $filename);
+    //function registerByFilename($config_name, $filename);
 
     /**
      * @param $name
