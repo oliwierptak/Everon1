@@ -15,23 +15,27 @@ use Everon\Helper;
 class Item implements Interfaces\LoaderItem
 {
     use Helper\ToArray;
-    
+
     protected $filename = null;
-    
-    
+
+
+    /**
+     * @param $filename
+     * @param array $data
+     */
     public function __construct($filename, array $data)
     {
         $this->filename = $filename;
         $this->data = $data;
     }
-    
+
     public function getFilename()
     {
         return $this->filename;
     }
 
     /**
-     * @return array
+     * @inheritdoc
      */
     public function getData()
     {
@@ -39,10 +43,10 @@ class Item implements Interfaces\LoaderItem
     }
 
     /**
-     * @param $data
+     * @inheritdoc
      */
     public function setData(array $data)
     {
         $this->data = $data;
     }
-}   
+}

@@ -181,10 +181,11 @@ interface Factory
 
     /**
      * @param Config\Interfaces\Loader $Loader
+     * @param Config\Interfaces\LoaderCache $CacheLoader
+     * @param string $namespace
      * @return Config\Manager|mixed
-     * @throws Exception\Factory
      */
-    function buildConfigManager(Config\Interfaces\Loader $Loader);
+    function buildConfigManager(Config\Interfaces\Loader $Loader, Config\Interfaces\LoaderCache $CacheLoader, $namespace = 'Everon\Config');
 
     /**
      * @return Config\Interfaces\ExpressionMatcher
@@ -194,19 +195,25 @@ interface Factory
 
     /**
      * @param $config_directory
-     * @param $cache_directory
+     * @param string $namespace
      * @return Config\Loader
-     * @throws Exception\Factory
      */
-    function buildConfigLoader($config_directory, $cache_directory);
+    function buildConfigLoader($config_directory, $namespace = 'Everon\Config');
+
+    /**
+     * @param $cache_directory
+     * @param string $namespace
+     * @return Config\LoaderCache
+     */
+    function buildConfigCacheLoader($cache_directory, $namespace = 'Everon\Config');
 
     /**
      * @param $filename
      * @param array $data
+     * @param $namespace
      * @return Config\Loader\Item
-     * @throws Exception\Factory
      */
-    function buildConfigLoaderItem($filename, array $data);
+    function buildConfigLoaderItem($filename, array $data, $namespace='Everon\Config\Item');
 
     /**
      * @param $class_name
