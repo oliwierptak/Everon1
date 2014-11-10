@@ -94,6 +94,7 @@ throw_exceptions = true
 config_manager = false
 autoloader = false
 view = false
+datamapper = false
 
 [module]
 active[] = Foo
