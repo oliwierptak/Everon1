@@ -36,7 +36,6 @@ class PdoAdapter implements Interfaces\PdoAdapter
     public function __construct(\PDO $Pdo, ConnectionItem $Connection)
     {
         $this->Pdo = $Pdo;
-        $this->getPdo()->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
         $this->ConnectionConfig = $Connection;
     }
 
