@@ -203,8 +203,8 @@ class Manager implements Interfaces\Manager
                     $IncludeContext->setPhp($Include->getTemplateContent());
                     $IncludeContext->setData($Include->getData());
                     $IncludeContext->setScope($Context->getScope());
-
-                    $Compiler->compile($IncludeContext);
+                    
+                    $this->compile($Compiler, $IncludeContext);
                     $data[$name] = $IncludeContext->getCompiled();
                 }
             }
