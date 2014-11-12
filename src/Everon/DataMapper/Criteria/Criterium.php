@@ -178,7 +178,8 @@ class Criterium implements Interfaces\Criteria\Criterium
         }
         
         if ($this->placeholder === null) {
-            $this->placeholder = ':'.Builder::randomizeParameterName($this->getColumn());
+            $column_name = str_replace('.', '_', Builder::randomizeParameterName($this->getColumn()));
+            $this->placeholder = ':'.$column_name;
         }
         
         return $this->placeholder;

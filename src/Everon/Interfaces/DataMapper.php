@@ -9,12 +9,8 @@
  */
 namespace Everon\Interfaces;
 
-use Everon\Domain\Interfaces\Entity;
-use Everon\DataMapper\Interfaces\CriteriaOLD;
-use Everon\DataMapper\Interfaces\Schema;
-use Everon\DataMapper\Interfaces\Schema\Table;
 
-interface DataMapper
+interface DataMapper extends \Everon\Interfaces\Dependency\Factory, \Everon\DataMapper\Interfaces\Dependency\Schema
 {
     /**
      * @param array $data
@@ -35,16 +31,16 @@ interface DataMapper
     function delete($id);
 
     /**
-     * @param CriteriaOLD $Criteria
+     * @param \Everon\DataMapper\Interfaces\Criteria\Builder $CriteriaBuilder
      * @return bool
      */
-    function deleteByCriteria(CriteriaOLD $Criteria);
+    function deleteByCriteria(\Everon\DataMapper\Interfaces\Criteria\Builder $CriteriaBuilder);
 
     /**
-     * @param CriteriaOLD $Criteria
+     * @param \Everon\DataMapper\Interfaces\Criteria\Builder $CriteriaBuilder
      * @return int
      */
-    function count(CriteriaOLD $Criteria=null);
+    function count(\Everon\DataMapper\Interfaces\Criteria\Builder $CriteriaBuilder=null);
 
     /**
      * @param int $id
@@ -53,16 +49,16 @@ interface DataMapper
     function fetchOneById($id);
 
     /**
-     * @param CriteriaOLD $Criteria
+     * @param \Everon\DataMapper\Interfaces\Criteria\Builder $CriteriaBuilder
      * @return array
      */
-    function fetchOneByCriteria(CriteriaOLD $Criteria);
+    function fetchOneByCriteria(\Everon\DataMapper\Interfaces\Criteria\Builder $CriteriaBuilder);
 
     /**
-     * @param CriteriaOLD $Criteria
+     * @param \Everon\DataMapper\Interfaces\Criteria\Builder $CriteriaBuilder
      * @return array
      */
-    function fetchAll(CriteriaOLD $Criteria);
+    function fetchAll(\Everon\DataMapper\Interfaces\Criteria\Builder $CriteriaBuilder);
 
     /**
      * @return string
@@ -70,19 +66,19 @@ interface DataMapper
     function getName();
 
     /**
-     * @return Schema
+     * @return \Everon\DataMapper\Interfaces\Schema
      */
     function getSchema();
 
     /**
-     * @return Table
+     * @return \Everon\DataMapper\Interfaces\Schema\Table
      */
     function getTable();
 
     /**
-     * @param Table $Table
+     * @param \Everon\DataMapper\Interfaces\Schema\Table $Table
      */
-    function setTable(Table $Table);
+    function setTable(\Everon\DataMapper\Interfaces\Schema\Table $Table);
 
     /**
      * @param string $read_connection_name
@@ -111,36 +107,24 @@ interface DataMapper
     function rollbackTransaction();
 
     /**
-     * @param array $data
-     * @return array
+     * @return string
      */
-    function getInsertSql(array $data);
+    function getInsertSql();
 
     /**
-     * @param array $data
-     * @internal param array $id
-     * @return array
+     * @return string
      */
-    function getUpdateSql(array $data);
+    function getUpdateSql();
 
     /**
-     * @param $id
-     * @return array
+     * @return string
      */
-    function getDeleteSql($id);
+    function getDeleteSql();
 
     /**
-     * @param CriteriaOLD $Criteria
-     * @return array
-     * @throws \Everon\Exception\DataMapper
+     * @return string
      */
-    function getDeleteByCriteriaSql(CriteriaOLD $Criteria);
-
-    /**
-     * @param CriteriaOLD $Criteria
-     * @return array
-     */
-    function getFetchAllSql(CriteriaOLD $Criteria=null);
+    function getFetchAllSql();
 
     /**
      * @param $select
@@ -148,16 +132,14 @@ interface DataMapper
      * @param $b
      * @param $on_a
      * @param $on_b
-     * @param CriteriaOLD $Criteria
      * @param string $type (left, right, ...)
      * @return string
      */
-    function getJoinSql($select, $a, $b, $on_a, $on_b, CriteriaOLD $Criteria=null, $type='');
+    function getJoinSql($select, $a, $b, $on_a, $on_b, $type='');
 
     /**
-     * @param CriteriaOLD $Criteria
      * @return string
      */
-    function getCountSql(CriteriaOLD $Criteria=null);
+    function getCountSql();
 
 }

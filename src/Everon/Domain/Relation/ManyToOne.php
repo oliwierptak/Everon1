@@ -51,42 +51,6 @@ class ManyToOne extends Domain\Relation implements Domain\Interfaces\Relation
             return;
         }
 
-        $this->getCriteria()->where([
-            't.'.$this->getRelationMapper()->getInversedBy() => $this->getDataMapper()->getSchema()->getTableByName($table)->validateId($value)
-        ]);
-    }
-
-    public function AAAresolveRelationsIntoData(Domain\Interfaces\Entity $Entity)
-    {
-        die('no no');
-        if ($this->getRelationMapper()->isVirtual()) {
-            return;
-        }
-
-        $value = $this->getOwnerEntity()->getValueByName($this->getRelationMapper()->getMappedBy());
-        $Column = $this->getDataMapper()->getTable()->getColumnByName($this->getRelationMapper()->getMappedBy());
-
-        if ($Column->isPk() && $this->getOwnerEntity()->isNew() && $value === null) {
-            return;
-        }
-
-        if ($Column->isNullable() && $value === null) {
-            $this->getOwnerEntity()->getRelationByName($this->getName())->reset();
-            $this->getOwnerEntity()->setValueByName($this->getRelationMapper()->getMappedBy(), null);
-            $this->getOwnerEntity()->getRelationByName($this->getName())->reset();
-            return;
-        }
-
-        $ChildEntity = $this->getDomainManager()->getRepositoryByName($this->getName())->getEntityByPropertyValue([
-            $this->getRelationMapper()->getInversedBy() => $value
-        ]);
-
-        if ($ChildEntity === null) {
-            $this->getOwnerEntity()->getRelationByName($this->getName())->reset();
-        }
-        else {
-            $this->getOwnerEntity()->getRelationByName($this->getName())->setOne($ChildEntity); //update relation
-            $this->getOwnerEntity()->setValueByName($this->getRelationMapper()->getInversedBy(), $ChildEntity->getValueByName($this->getRelationMapper()->getInversedBy())); //update fields represented in relations eg. user_id -> User->getId()
-        }
+        $this->getCriteriaBuilder()->where('t.'.$this->getRelationMapper()->getInversedBy(), '=', $this->getDataMapper()->getSchema()->getTableByName($table)->validateId($value));
     }
 }

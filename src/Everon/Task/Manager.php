@@ -13,6 +13,7 @@ use Everon\Dependency;
 
 class Manager implements Interfaces\Manager
 {
+    use Dependency\Injection\Factory;
     use Dependency\Injection\Logger;
 
 
@@ -53,7 +54,7 @@ class Manager implements Interfaces\Manager
             }
             
             $Task->setResult($result);
-            $Task->setExecutedAt(new \DateTime());
+            $Task->setExecutedAt($this->getFactory()->buildDateTime());
         }
     }
 }

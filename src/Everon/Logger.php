@@ -16,6 +16,8 @@ namespace Everon;
  */
 class Logger implements Interfaces\Logger
 {
+    use Dependency\Injection\Factory;
+    
     use Helper\DateFormatter;
     
     protected $log_files = [
@@ -88,7 +90,7 @@ class Logger implements Interfaces\Logger
             $message = (string) $message; //casting to string will append exception name
         }
         
-        $LogDate = (new \DateTime(null, $this->getLogDateTimeZone()));
+        $LogDate = ($this->getFactory()->buildDateTime(null, $this->getLogDateTimeZone()));
         $Filename = $this->getFilenameByLevel($level);
         $Dir = new \SplFileInfo($Filename->getPath());
         
@@ -152,8 +154,8 @@ class Logger implements Interfaces\Logger
     public function getLogDateTimeZone()
     {
         $timezone = @date_default_timezone_get();
-        $timezone = $timezone ?: 'Europe/Amsterdam'; //todo: visit coffeeshop 
-        return new \DateTimeZone($timezone);
+        $timezone = $timezone ?: 'Europe/Amsterdam'; //todo: visit coffeeshop
+        return $this->getFactory()->buildDateTimeZone($timezone);
     }
 
     public function setLogDirectory($directory)

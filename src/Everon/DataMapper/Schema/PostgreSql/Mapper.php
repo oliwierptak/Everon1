@@ -18,29 +18,22 @@ abstract class Mapper extends DataMapper
     /**
      * @inheritdoc
      */
-    public function getInsertSql(array $data)
+    public function getInsertSql()
     {
-        $data = $this->getTable()->prepareDataForSql($data, false);
         $values_str = rtrim(implode(',', $this->getPlaceholderForQuery()), ',');
         $columns = $this->getPlaceholderForQuery('');
         array_walk($columns, function(&$item) {
             $item = '"'.$item.'"';
         });
         $columns_str = rtrim(implode(',', $columns), ',');
-        $sql = sprintf('INSERT INTO %s.%s (%s) VALUES (%s) RETURNING %s', $this->getTable()->getSchema(), $this->getTable()->getName(), $columns_str, $values_str, $this->getTable()->getPk());
-        return [$sql, $this->getValuesForQuery($data)];
+        return sprintf('INSERT INTO %s.%s (%s) VALUES (%s) RETURNING %s', $this->getTable()->getSchema(), $this->getTable()->getName(), $columns_str, $values_str, $this->getTable()->getPk());
     }
 
     /**
      * @inheritdoc
      */
-    public function getUpdateSql(array $data)
+    public function getUpdateSql()
     {
-        $data = $this->getTable()->prepareDataForSql($data, true);
-        $id = $this->getTable()->getIdFromData($data);
-        $id = $this->getTable()->validateId($id);
-        
-        $pk_name = $this->getTable()->getPk();
         $values_str = '';
         $columns = $this->getTable()->getColumns();
         /**
@@ -53,85 +46,47 @@ abstract class Mapper extends DataMapper
         }
 
         $values_str = rtrim($values_str, ',');
-        $sql = sprintf('UPDATE %s.%s t SET '.$values_str.' WHERE %s = :%s', $this->getTable()->getSchema(), $this->getTable()->getName(), $pk_name, $pk_name);
-        $params = $this->getValuesForQuery($data);
-        $params[$pk_name] = $id;
-        return [$sql, $params];
+        return sprintf('UPDATE %s.%s t SET %s', $this->getTable()->getSchema(), $this->getTable()->getName(), $values_str);
     }
 
     /**
      * @inheritdoc
      */
-    public function getDeleteSql($id)
+    public function getDeleteSql()
     {
-        $pk_name = $this->getTable()->getPk();
-        $sql = sprintf('DELETE FROM %s.%s t WHERE %s = :%s', $this->getTable()->getSchema(), $this->getTable()->getName(), $pk_name, $pk_name);
-        $params = [$pk_name => $id];
-        return [$sql, $params];
+        return sprintf('DELETE FROM %s.%s t', $this->getTable()->getSchema(), $this->getTable()->getName());
     }
 
     /**
      * @inheritdoc
      */
-    public function getDeleteByCriteriaSql(Interfaces\CriteriaOLD $Criteria)
+    public function getFetchAllSql()
     {
-        $params = $Criteria->getWhere();
-        if (empty($params)) {
-            throw new \Everon\Exception\DataMapper('No criteria conditions defined');
-        }
+        $sql = "SELECT * FROM %s.%s t";
         
-        $sql = sprintf('DELETE FROM %s.%s t %s', $this->getTable()->getSchema(), $this->getTable()->getName(), $Criteria->getWhereSql());
-        return [$sql, $params];
+        return sprintf($sql, $this->getTable()->getSchema(), $this->getTable()->getName());
     }
 
     /**
      * @inheritdoc
      */
-    public function getFetchAllSql(Interfaces\CriteriaOLD $Criteria=null)
+    public function getJoinSql($select, $a, $b, $on_a, $on_b, $type='')
     {
-        $pk_name = $this->getTable()->getPk();
-
-        $sql = "
-            SELECT * 
-            FROM %s.%s t
-            ";
-        $sql .= $Criteria;
+        $sql = "SELECT %s FROM %s t ${type} JOIN %s ON %s = %s";
         
-        $sql = sprintf($sql, $this->getTable()->getSchema(), $this->getTable()->getName(), $pk_name);
-        return $sql;
+        return sprintf($sql, $select, $a, $b, $on_a, $on_b);
     }
 
     /**
      * @inheritdoc
      */
-    public function getJoinSql($select, $a, $b, $on_a, $on_b, Interfaces\CriteriaOLD $Criteria=null, $type='')
+    public function getCountSql()
     {
-        $sql = "
-            SELECT %s FROM %s t
-            ${type} JOIN %s ON %s = %s 
-            ";
-        $sql .= $Criteria;
-        
-        $sql = sprintf($sql, $select, $a, $b, $on_a, $on_b);
-        return $sql;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getCountSql(Interfaces\CriteriaOLD $Criteria=null)
-    {
-        $table_name = sprintf('%s.%s', $this->getTable()->getSchema(), $this->getTable()->getName());
 /*        
         $sql = "SELECT pgc.reltuples AS total_count FROM pg_catalog.pg_class AS pgc "; 
-        $sql .= $CriteriaOLD;
-        $where_str = empty($CriteriaOLD->getWhere()) ? 'WHERE ' : ''; 
         $sql .= $where_str.' pgc.oid = '.sprintf("'${table_name}'::regclass", $this->getTable()->getSchema(), $this->getTable()->getName());*/
-        
-        //do slow count
-        $pk = $this->getTable()->getPk();
-        $sql = "SELECT COUNT(${pk}) FROM ${table_name} t ".$Criteria;
 
-        return [$sql, $Criteria->getWhere()];
+        //do slow count
+        return sprintf("SELECT COUNT(t.%s) FROM %s.%s t", $this->getTable()->getPk(), $this->getTable()->getSchema(), $this->getTable()->getName());
     }
 }

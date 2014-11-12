@@ -9,8 +9,8 @@
  */
 namespace Everon\Rest\Resource;
 
-use Everon\Rest\Dependency;
 use Everon\Helper;
+use Everon\Rest\Dependency;
 use Everon\Rest\Interfaces;
 
 class Navigator implements Interfaces\ResourceNavigator
@@ -50,6 +50,11 @@ class Navigator implements Interfaces\ResourceNavigator
      * @var string
      */
     protected $filters = null;
+
+    /**
+     * @var bool
+     */
+    protected $initialized = false;
     
 
     /**
@@ -58,35 +63,38 @@ class Navigator implements Interfaces\ResourceNavigator
     public function __construct(Interfaces\Request $Request)
     {
         $this->Request = $Request;
-        $this->init();
     }
 
     /**
      * @param $name
-     * @param null $default
+     * @param null $default_value
      * @return array|mixed|null
      */
-    protected function getParameterValue($name, $default=null)
+    protected function getParameterValue($name, $default_value=null)
     {
-        $as_array = is_array($default);
-        $value = $this->getRequest()->getGetParameter($name, null);
-        if ($value !== null) {
-            if ($as_array || strpos($value, static::PARAM_SEPARATOR) !== false) {
-                $value = explode(static::PARAM_SEPARATOR, trim($value, static::PARAM_SEPARATOR)); //eg. date_added,user_name
-                if (is_array($value)) {
-                    return $value;
+        $as_array = is_array($default_value);
+        $parameter_value = $this->getRequest()->getGetParameter($name, null);
+        if ($parameter_value !== null) {
+            if ($as_array || strpos($parameter_value, static::PARAM_SEPARATOR) !== false) {
+                $parameter_value = explode(static::PARAM_SEPARATOR, trim($parameter_value, static::PARAM_SEPARATOR)); //eg. date_added,user_name
+                if (is_array($parameter_value)) {
+                    return $parameter_value;
                 }
             }
             else {
-                return $this->getRequest()->getQueryParameter($name, $default);
+                return $this->getRequest()->getQueryParameter($name, $default_value);
             }
         }
         
-        return $default;
+        return $default_value;
     }
     
     protected function init()
     {
+        if ($this->initialized) {
+            return;
+        }
+        
         $this->fields = $this->getParameterValue('fields', []);
         $this->expand = $this->getParameterValue('expand', []);
         $this->limit = $this->getRequest()->getGetParameter('limit', 10);
@@ -109,6 +117,8 @@ class Navigator implements Interfaces\ResourceNavigator
                 $this->order_by[$field_name] = 'DESC';
             }
         }
+        
+        $this->initialized = true;
     }
 
     /**
@@ -124,6 +134,7 @@ class Navigator implements Interfaces\ResourceNavigator
      */
     public function getExpand()
     {
+        $this->init();
         return $this->expand;
     }
 
@@ -140,6 +151,7 @@ class Navigator implements Interfaces\ResourceNavigator
      */
     public function getFields()
     {
+        $this->init();
         return $this->fields;
     }
 
@@ -156,6 +168,7 @@ class Navigator implements Interfaces\ResourceNavigator
      */
     public function getOrderBy()
     {
+        $this->init();
         return $this->order_by;
     }
 
@@ -172,6 +185,7 @@ class Navigator implements Interfaces\ResourceNavigator
      */
     public function getOffset()
     {
+        $this->init();
         return $this->offset;
     }
 
@@ -188,40 +202,32 @@ class Navigator implements Interfaces\ResourceNavigator
      */
     public function getLimit()
     {
+        $this->init();
         return $this->limit;
     }
 
     /**
      * @inheritdoc
      */
-    public function getFilters()
-    {
-        return $this->filters;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function setFilters(array $filters)
-    {
-        $this->filters = $filters;
-    }
-
-    /**
-     * @return \Everon\DataMapper\Interfaces\CriteriaOLD
-     */
     public function toCriteria()
     {
-        $Criteria = new \Everon\DataMapper\CriteriaOLD();
-        $Criteria->limit($this->getLimit());
-        $Criteria->offset($this->getOffset());
-        $Criteria->orderBy($this->getOrderBy() ?: []);
-        
-        if (is_array($this->getFilters())) {
-            $Filter = $this->getFactory()->buildRestFilter(new Helper\Collection($this->getFilters()));
-            $Filter->assignToCriteria($Criteria);
+        $this->init();
+
+        $filters = $this->getRequest()->getGetParameter('filters', '');
+        if ($filters !== '') {
+            $Filter = $this->getFactory()->buildRestFilter();
+            $CriteriaBuilder = $Filter->toCriteria(json_decode($filters, true));    
         }
+        else {
+            $CriteriaBuilder = $this->getFactory()->buildCriteriaBuilder();
+        }
+
+        //$SqlPart = $CriteriaBuilder->toSqlPart(); sd($SqlPart);
         
-        return $Criteria;
+        $CriteriaBuilder->setLimit($this->getLimit())
+            ->setOffset($this->getOffset())
+            ->setOrderBy($this->getOrderBy() ?: []);
+        
+        return $CriteriaBuilder;
     }
 }

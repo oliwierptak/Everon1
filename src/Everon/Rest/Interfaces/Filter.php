@@ -9,33 +9,15 @@
  */
 namespace Everon\Rest\Interfaces;
 
-use Everon\DataMapper\Interfaces\CriteriaOLD;
+use Everon\DataMapper;
+use Everon\Rest;
 
 interface Filter
 {
     /**
-     * @param \Everon\Helper\Collection $Collection
+     * @param array $filter
+     * @return DataMapper\Interfaces\Criteria\Builder|void
+     * @throws Rest\Exception\Filter
      */
-    function setFilterCollection(\Everon\Helper\Collection $Collection);
-
-    /**
-     * @return \Everon\Helper\Collection
-     */
-    function getFilterCollection();
-
-    /**
-     * @param \Everon\Helper\Collection $Collection
-     */
-    function setFilterDefinition(\Everon\Helper\Collection $Collection);
-
-    /**
-     * @return \Everon\Helper\Collection
-     */
-    function getFilterDefinition();
-
-    /**
-     * @param CriteriaOLD $Criteria
-     * @return mixed
-     */
-    function assignToCriteria(CriteriaOLD $Criteria);
+    function toCriteria(array $filter);
 }
