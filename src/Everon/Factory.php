@@ -16,12 +16,12 @@ use Everon\Interfaces;
 
 abstract class Factory implements Interfaces\Factory
 {
-    use Helper\String\UnderscoreToCamel;
     use Helper\Arrays;
-    use Helper\Exceptions;
     use Helper\Asserts\IsStringAndNotEmpty;
     use Helper\Asserts\IsNumericAndNotZero;
     use Helper\Asserts\IsArrayKey;
+    use Helper\Exceptions;
+    use Helper\String\UnderscoreToCamel;
 
 
     /**
@@ -29,12 +29,6 @@ abstract class Factory implements Interfaces\Factory
      */
     protected $DependencyContainer = null;
 
-
-    /**
-     * @param $class_name
-     * @param $Receiver
-     */
-    //abstract public function injectDependencies($class_name, $Receiver);
 
     /**
      * @inheritdoc
@@ -47,11 +41,6 @@ abstract class Factory implements Interfaces\Factory
         }
     }
 
-    /**
-     * @var Interfaces\Collection
-     */
-    //protected $WorkerCollection = null;
-
 
     /**
      * @param Interfaces\DependencyContainer $Container
@@ -59,44 +48,7 @@ abstract class Factory implements Interfaces\Factory
     public function __construct(Interfaces\DependencyContainer $Container)
     {
         $this->DependencyContainer = $Container;
-        //$this->WorkerCollection = new Helper\Collection([]);
     }
-
-    /**
-     * @param $name
-     * @param $arguments
-     * @return mixed
-     * @throws Exception\Factory
-     */
-    /*
-    public function __call($name, $arguments)
-    {
-        foreach ($this->WorkerCollection as $worker_name => $Worker) {
-            d($worker_name, $Worker);
-            / **
-             * @var Interfaces\FactoryWorker $Worker
-             * /
-            if ($Worker->getMethods()->has($name)) {
-                return call_user_func_array([$Worker, $name], $arguments);
-            }
-        }
-
-        throw new Exception\Factory('Invalid factory method: "%s"', $name);
-    }
-
-    public function registerWorker(Interfaces\FactoryWorker $Worker)
-    {
-        $name = get_class($Worker);
-        $this->WorkerCollection->set($name, $Worker);
-        $Worker->register($this);
-    }
-    
-    public function unRegisterWorker(Interfaces\FactoryWorker $Worker)
-    {
-        $name = get_class($Worker);
-        $this->WorkerCollection->set($name, $Worker);
-        $Worker->unRegister();
-    }*/
 
     /**
      * @inheritdoc
@@ -123,8 +75,7 @@ abstract class Factory implements Interfaces\Factory
             return $class_name; //absolute name
         }
 
-        $class = $namespace.'\\'.$class_name;
-        return $class;
+        return $namespace.'\\'.$class_name;
     }
 
     /**
@@ -1647,6 +1598,9 @@ abstract class Factory implements Interfaces\Factory
             $task_type = ucfirst($this->stringUnderscoreToCamel(strtolower($type)));
             $class_name = $this->getFullClassName($namespace, $task_type);
             $this->classExists($class_name);
+            /**
+             * @var Task\Interfaces\Item $Item
+             */
             $Item = new $class_name($data);
             $Item->setType($type);
             $this->injectDependencies($class_name, $Item);

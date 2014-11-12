@@ -29,6 +29,8 @@ class Popo implements Interfaces\Arrayable
     protected $call_type = null;
     
     protected $call_property = null;
+    
+    protected $property_name_cache = [];
 
 
     /**
@@ -78,9 +80,15 @@ class Popo implements Interfaces\Arrayable
             throw new Exception\Popo('Unknown method: "%s" in "%s"', [$name, get_called_class()]);
         }
 
-        $camelized = preg_split('/(?<=\\w)(?=[A-Z])/', $name);
-        array_shift($camelized);
-        $property = mb_strtolower(implode('_', $camelized));
+        if (array_key_exists($name, $this->property_name_cache)) {
+            $property = $this->property_name_cache[$name];
+        }
+        else {
+            $camelized = preg_split('/(?<=\\w)(?=[A-Z])/', $name);
+            array_shift($camelized);
+            $property = mb_strtolower(implode('_', $camelized));
+        }
+
         $this->call_property = $property;
 
         if (array_key_exists($property, $this->data) === false) {
@@ -113,6 +121,7 @@ class Popo implements Interfaces\Arrayable
     public function setData(array $data)
     {
         $this->data = $data;
+        $this->property_name_cache = null;
     }
 
     public function __sleep()

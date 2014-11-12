@@ -325,12 +325,6 @@ class Entity extends Helper\Popo implements Interfaces\Entity
      */
     public function __call($name, $arguments)
     {
-        if ($this->isCallable($this, $name)) {
-            $this->call_type = static::CALL_TYPE_METHOD;
-            $this->call_property = $name;
-            return call_user_func_array([$this, $name], $arguments);
-        }
-
         $return = parent::__call($name, $arguments);
         
         if ($this->call_type === static::CALL_TYPE_SETTER) {
