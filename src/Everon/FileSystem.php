@@ -30,10 +30,22 @@ class FileSystem implements Interfaces\FileSystem
     /**
      * @param $path
      * @return string
+     * @throws Exception\FileSystem
      */
     protected function getRelativePath($path)
     {
+        $path = trim($path);
+        
+        if ($path === '') {
+            throw new Exception\FileSystem('Invalid path');
+        }
+        
+        if ($path === '/') {
+            $path = '//';
+        }
+        
         $is_absolute = mb_strtolower($this->root) === mb_strtolower(mb_substr($path, 0, mb_strlen($this->root)));
+        
         if ($path[0] === '/' && $path[1] === '/') { //eg. '//Tests/Everon/tmp/'
             //strip virtual root
             $path = mb_substr($path, 2, mb_strlen($path));
@@ -87,12 +99,14 @@ class FileSystem implements Interfaces\FileSystem
     public function setRoot($root)
     {
         /**
-         * @var \SplFileInfo $Dir
+         * @var \SplFileInfo $Root
          */
-        if ((new \SplFileInfo($root))->isDir() === false) {
+        $Root = new \SplFileInfo($root);
+        if ($Root->isDir() === false) {
             throw new Exception\FileSystem('Root directory does not exist: "%s"', $root);
         }
-        $this->root = $Dir->getPathname().DIRECTORY_SEPARATOR;
+        
+        $this->root = $Root->getPathname().DIRECTORY_SEPARATOR;
     }
 
     /**
@@ -104,7 +118,6 @@ class FileSystem implements Interfaces\FileSystem
             $path = $this->getRelativePath($path);
             if (is_dir($path) === false) {
                 mkdir($path, $mode, true);
-                chmod($path, $mode);
             }
         }
         catch (\Exception $e) {
@@ -209,7 +222,7 @@ class FileSystem implements Interfaces\FileSystem
              */
             foreach ($directories as $Dir) {
                 $name = $Dir->getBasename();
-                if ($Dir->isDot() === false && $Dir->isDir() && $name[0] != '.') {
+                if ($Dir->isDot() === false && $Dir->isDir() && $name[0] !== '.') {
                     $result[] = clone $Dir;
                 }
             }
@@ -287,22 +300,22 @@ class FileSystem implements Interfaces\FileSystem
     {
         return new FileSystem\TmpFile();
     }
-    
+
     /**
      * @inheritdoc
      */
-    public function moveUploadedFile($file_path, $destination)
+    public function moveUploadedFile($file_path, $destination, $create_directory = true)
     {
         if (is_uploaded_file($file_path) === false) {
             throw new Exception\FileSystem('The file needs to be uploaded in order to be moved');
         }
-        
+
         try {
             $directory = pathinfo($destination, PATHINFO_DIRNAME);
-            if ($this->directoryExists($directory) === false) {
+            if ($this->directoryExists($directory) === false && $create_directory === true) {
                 $this->createPath($directory);
             }
-    
+
             return move_uploaded_file($file_path, $destination) === true;
         }
         catch (\Exception $e) {
