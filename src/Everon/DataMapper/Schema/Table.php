@@ -16,7 +16,7 @@ use Everon\Helper;
 
 class Table implements Interfaces\Schema\Table
 {
-    use Dependency\Injection\Logger;
+    //use Dependency\Injection\Logger;
     
     use Helper\Asserts\IsNumericAndNotZero;
     use Helper\Asserts\IsStringAndNotEmpty;
@@ -246,7 +246,8 @@ class Table implements Interfaces\Schema\Table
             }
 
             if (array_key_exists($name, $data) === false) {
-                $this->getLogger()->warning('Entity property not set. Using null for: "%s@%s"', [$Column->getTable(), $name]);
+                throw new Exception\Table('Entity property key not set for: "%s@%s"', [$Column->getTable(), $name]);
+                //$this->getLogger()->warning('Entity property not set. Using null for: "%s@%s"', [$Column->getTable(), $name]);
                 $data[$name] = null;
             }
             

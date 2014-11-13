@@ -28,6 +28,8 @@ abstract class Container implements Interfaces\DependencyContainer
     
     protected $excluded = [];
     
+    //public static $TMP_COUNTER = [];
+    
 
     /**
      * @inheritdoc
@@ -102,6 +104,7 @@ abstract class Container implements Interfaces\DependencyContainer
      */
     protected function getClassDependencies($class, $autoload=true) 
     {
+        //self::$TMP_COUNTER[$name] = @intval(self::$TMP_COUNTER[$name]) + 1;
         $traits = class_uses($class, $autoload);
         $parents = class_parents($class, $autoload);
 
