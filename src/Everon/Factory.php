@@ -1076,6 +1076,23 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
+    public function buildSchemaView($original_name, $name, $schema, array $column_list, array $primary_key_list,  array $unique_key_list, array $foreign_key_list, Domain\Interfaces\Mapper $DomainMapper, $namespace='Everon\DataMapper')
+    {
+        try {
+            $class_name = $this->getFullClassName($namespace,'Schema\View');
+            $this->classExists($class_name);
+            $Table = new $class_name($original_name, $name, $schema, $column_list, $primary_key_list, $unique_key_list, $foreign_key_list, $DomainMapper);
+            $this->injectDependencies($class_name, $Table);
+            return $Table;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('SchemaView: "%s.%s" initialization error', [$schema,$name], $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function buildSchemaConstraint(array $data, $namespace='Everon\DataMapper')
     {
         try {

@@ -175,7 +175,8 @@ class Schema implements Interfaces\Schema
             $table = array_pop($tokens);
             $schema_name = implode('.', $tokens);
             
-            $this->tables[$Item->getTable()] = $this->getFactory()->buildSchemaTable(
+            $SchemaView = $this->getFactory()->buildSchemaView(
+                $Item->getTableOriginal(),
                 $table,
                 $schema_name,
                 $view_columns,
@@ -185,7 +186,7 @@ class Schema implements Interfaces\Schema
                 $this->getDomainMapper()
             );
 
-            $this->tables[$Item->getTable()]->setOriginalName($Item->getTableOriginal());
+            $this->tables[$Item->getTable()] = $SchemaView;
         }
     }
     

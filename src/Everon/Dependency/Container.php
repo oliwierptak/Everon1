@@ -26,6 +26,10 @@ abstract class Container implements Interfaces\DependencyContainer
     
     protected $circular_dependencies = [];
     
+    protected $excluded = [];
+    
+    public static $TMP_COUNTER = [];
+    
 
     /**
      * @inheritdoc
@@ -64,17 +68,6 @@ abstract class Container implements Interfaces\DependencyContainer
 
     /**
      * @param $dependency_name
-     * @return bool
-     */
-    protected function demandsInjection($dependency_name)
-    {
-        $tokens = explode('\Dependency\Injection', $dependency_name);
-        $container_name = ltrim(@$tokens[1], '\\');
-        return $container_name !== '';
-    }
-
-    /**
-     * @param $dependency_name
      * @return string
      * @throws \Everon\Exception\DependencyContainer
      */
@@ -84,9 +77,17 @@ abstract class Container implements Interfaces\DependencyContainer
             return $this->container_dependencies[$dependency_name];
         }
         
+        if (isset($this->excluded[$dependency_name])) {
+            return '';
+        }
+
         $tokens = explode('\Dependency\Injection', $dependency_name);
-        $container_name = ltrim(@$tokens[1], '\\'); //eg. from Everon\Dependency\Injection\Environment\Test into Environment\Test
+        if (count($tokens) <= 1) {
+            $this->excluded[$dependency_name] = true;
+            return '';
+        }
         
+        $container_name = ltrim(@$tokens[1], '\\'); //eg. from Everon\Dependency\Injection\FooManager into FooManager
         if ($container_name === '') {
             throw new Exception\DependencyContainer('Unresolved container name for: "%"', $dependency_name);
         }
@@ -130,9 +131,12 @@ abstract class Container implements Interfaces\DependencyContainer
             throw new Exception\DependencyContainer('Error injecting dependency: "%s"', $class_name);
         }
 
+        self::$TMP_COUNTER[$class_name] = @intval(self::$TMP_COUNTER[$class_name]) + 1;
+        
         if (isset($this->class_dependencies_to_inject[$class_name]) === false) {
             $OnlyInjections = function($name) {
-                return $this->demandsInjection($name);
+                $result = $this->getContainerNameFromDependencyToInject($name) !== '';
+                return $result;
             };
             
             $this->class_dependencies_to_inject[$class_name] = array_filter(

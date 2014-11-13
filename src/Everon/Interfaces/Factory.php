@@ -433,6 +433,21 @@ interface Factory
     function buildSchemaTable($name, $schema, array $column_list, array $primary_key_list,  array $unique_key_list, array $foreign_key_list, Domain\Interfaces\Mapper $DomainMapper, $namespace='Everon\DataMapper');
 
     /**
+     * @param $original_name
+     * @param $name
+     * @param $schema
+     * @param array $column_list
+     * @param array $primary_key_list
+     * @param array $unique_key_list
+     * @param array $foreign_key_list
+     * @param Domain\Interfaces\Mapper $DomainMapper
+     * @param string $namespace
+     * @return DataMapper\Interfaces\Schema\View
+     * @throws Exception\Factory
+     */
+    function buildSchemaView($original_name, $name, $schema, array $column_list, array $primary_key_list,  array $unique_key_list, array $foreign_key_list, Domain\Interfaces\Mapper $DomainMapper, $namespace='Everon\DataMapper');
+
+    /**
      * @param string $name
      * @param array $data
      * @param string $class_name

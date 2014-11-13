@@ -22,22 +22,20 @@ class Table implements Interfaces\Schema\Table
     use Helper\Asserts\IsStringAndNotEmpty;
     use Helper\Exceptions;
     use Helper\Immutable;
-    
+
+    protected $pk = null;
+
     protected $name = null;
-    
-    protected $original_name = null; //todo view_only
-    
+
     protected $schema = null;
     
-    protected $pk = null;
-    
     protected $columns = [];
-    
+
     protected $primary_keys = [];
 
-    protected $foreign_keys = [];
-    
     protected $unique_keys = [];
+
+    protected $foreign_keys = [];
     
 
     /**
@@ -69,6 +67,7 @@ class Table implements Interfaces\Schema\Table
         foreach ($this->columns as $Column) {
             if ($Column->isPk()) {
                 $this->pk = $Column->getName();
+                break;
             }
         }
     }
@@ -279,24 +278,35 @@ class Table implements Interfaces\Schema\Table
         return $data[$pk_name];
     }
 
-    /**
-     * @param string $original_name
-     */
-    public function setOriginalName($original_name)
-    {
-        $this->original_name = $original_name;
-    }
-
-    /**
-     * @return string
-     */
-    public function getOriginalName()
-    {
-        return $this->original_name;
-    }
-    
     public function __toString()
     {
         return (string) $this->name;
+    }
+
+    public function __sleep()
+    {
+        return [
+            'pk',
+            'name',
+            'schema',
+            'columns',
+            'primary_keys',
+            'unique_keys',
+            'foreign_keys'
+        ];
+    }
+
+    public static function __set_state(array $array)
+    {
+        $Table = new static(
+            $array['name'],
+            $array['schema'],
+            $array['columns'],
+            $array['primary_keys'],
+            $array['unique_keys'],
+            $array['foreign_keys']
+        );
+        
+        return $Table;
     }
 }
