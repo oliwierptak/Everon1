@@ -28,8 +28,6 @@ abstract class Container implements Interfaces\DependencyContainer
     
     protected $excluded = [];
     
-    public static $TMP_COUNTER = [];
-    
 
     /**
      * @inheritdoc
@@ -131,8 +129,6 @@ abstract class Container implements Interfaces\DependencyContainer
             throw new Exception\DependencyContainer('Error injecting dependency: "%s"', $class_name);
         }
 
-        self::$TMP_COUNTER[$class_name] = @intval(self::$TMP_COUNTER[$class_name]) + 1;
-        
         if (isset($this->class_dependencies_to_inject[$class_name]) === false) {
             $OnlyInjections = function($name) {
                 $result = $this->getContainerNameFromDependencyToInject($name) !== '';
