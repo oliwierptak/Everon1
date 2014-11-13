@@ -13,7 +13,14 @@ use Everon\Interfaces;
 use Everon\Exception;
 use Everon\RequestIdentifier;
 
-interface Core
+interface Core extends 
+    Dependency\Logger,
+    Dependency\Factory,
+    Dependency\Response,
+    Dependency\Request,
+    Dependency\Router,
+    \Everon\Config\Interfaces\Dependency\Manager,
+    \Everon\Module\Interfaces\Dependency\ModuleManager
 {
     function getRequestIdentifier();
 
