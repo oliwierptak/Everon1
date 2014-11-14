@@ -91,6 +91,13 @@ class Schema implements Interfaces\Schema
         }
         
         $this->initViews();
+        
+/*$t = current($this->tables);
+        dd($t);
+        $data = var_export($t, true);
+        $h = fopen('/tmp/shit.php', 'w+');
+        fwrite($h, "<?php \$cache = $data; ");
+        fclose($h);*/
     }
     
     protected function initViews()

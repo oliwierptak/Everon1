@@ -299,4 +299,22 @@ class Table implements Interfaces\Schema\Table
     {
         return (string) $this->name;
     }
+
+    public function __sleep()
+    {
+        s('sleep');
+        return [
+            'name',
+        ];
+    }
+
+    public function __wakeup()
+    {
+        s('wakeup');
+    }
+
+    public static function __set_state(array $parameters)
+    {
+        s('set_state', $parameters);
+    }
 }
