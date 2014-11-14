@@ -322,9 +322,14 @@ class Entity extends Helper\Popo implements Interfaces\Entity
      * @param $name
      * @param $arguments
      * @return mixed
+     * @throws Exception\Entity
      */
     public function __call($name, $arguments)
     {
+        if (strtolower($name) === 'setid') {
+            throw new Exception\Entity('It is the database\'s job to maintain primary keys');
+        }
+        
         $return = parent::__call($name, $arguments);
         
         if ($this->call_type === static::CALL_TYPE_SETTER) {
