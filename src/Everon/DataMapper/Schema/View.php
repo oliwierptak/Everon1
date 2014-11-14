@@ -16,6 +16,8 @@ use Everon\Helper;
 
 class View extends Table implements Interfaces\Schema\View
 {
+    protected $original_name = null;
+    
     /**
      * @param $original_name
      * @param $name
@@ -50,29 +52,14 @@ class View extends Table implements Interfaces\Schema\View
     public function __sleep()
     {
         return [
-            'name',
             'original_name',
-            'schema',
             'pk',
+            'name',
+            'schema',
             'columns',
             'primary_keys',
-            'foreign_keys',
-            'unique_keys'
+            'unique_keys',
+            'foreign_keys'
         ];
-    }
-
-    public static function __set_state(array $array)
-    {
-        $Table = new static(
-            $array['original_name'],
-            $array['name'],
-            $array['schema'],
-            $array['columns'],
-            $array['primary_keys'],
-            $array['unique_keys'],
-            $array['foreign_keys']
-        );
-        
-        return $Table;
     }
 }

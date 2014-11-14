@@ -52,9 +52,9 @@ class Table implements Interfaces\Schema\Table
         $this->schema = $schema;
         $this->columns = $columns;
         $this->primary_keys = $primary_keys;
-        $this->foreign_keys = $foreign_keys;
         $this->unique_keys = $unique_keys;
-        
+        $this->foreign_keys = $foreign_keys;
+
         $this->init();
         $this->lock();
     }
@@ -295,19 +295,5 @@ class Table implements Interfaces\Schema\Table
             'unique_keys',
             'foreign_keys'
         ];
-    }
-
-    public static function __set_state(array $array)
-    {
-        $Table = new static(
-            $array['name'],
-            $array['schema'],
-            $array['columns'],
-            $array['primary_keys'],
-            $array['unique_keys'],
-            $array['foreign_keys']
-        );
-        
-        return $Table;
     }
 }

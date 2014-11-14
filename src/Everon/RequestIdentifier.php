@@ -52,19 +52,18 @@ class RequestIdentifier
 
     public function __sleep()
     {
-        //todo: test me xxx
         return [
             'guid',
             'system_memory_at_start',
         ];
     }
 
-    public static function __set_state(array $array)
+    public static function __set_state(array $parameters)
     {
-        //todo: test me xxx
-        $RequestIdentifier = new static($array);
-        $RequestIdentifier->guid = $array['guid'];
-        $RequestIdentifier->system_memory_at_start = $array['system_memory_at_start'];
+        $RequestIdentifier = new static();
+        foreach ($parameters as $key => $value) {
+            $RequestIdentifier->$key = $value;
+        }
     }
     
 }

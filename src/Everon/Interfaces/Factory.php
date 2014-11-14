@@ -14,6 +14,7 @@ use Everon\Domain;
 use Everon\DataMapper;
 use Everon\Exception;
 use Everon\Interfaces;
+use Everon\FileSystem;
 use Everon\Module;
 use Everon\View;
 use Everon\Http;
@@ -380,11 +381,11 @@ interface Factory
      * @param DataMapper\Interfaces\Schema\Reader $Reader
      * @param DataMapper\Interfaces\ConnectionManager $ConnectionManager
      * @param Domain\Interfaces\Mapper $DomainMapper
+     * @param FileSystem\Interfaces\PhpCache $PhpCacheLoader
      * @param string $namespace
      * @return DataMapper\Interfaces\Schema
-     * @throws Exception\Factory
      */
-    function buildSchema(DataMapper\Interfaces\Schema\Reader $Reader, DataMapper\Interfaces\ConnectionManager $ConnectionManager, Domain\Interfaces\Mapper $DomainMapper, $namespace='Everon\DataMapper');
+    function buildSchema(DataMapper\Interfaces\Schema\Reader $Reader, DataMapper\Interfaces\ConnectionManager $ConnectionManager, Domain\Interfaces\Mapper $DomainMapper, FileSystem\Interfaces\PhpCache $PhpCacheLoader, $namespace = 'Everon\DataMapper');
 
     /**
      * @param Interfaces\PdoAdapter $PdoAdapter
@@ -479,6 +480,22 @@ interface Factory
      * @throws Exception\Factory
      */
     function buildFileSystem($root, $namespace='Everon\View');
+
+    /**
+     * @param $cache_directory
+     * @param string $namespace
+     * @return \Everon\FileSystem\Interfaces\PhpCache
+     * @throws Exception\Factory
+     */
+    function buildFileSystemPhpCacheFile($cache_directory, $namespace='Everon\FileSystem');
+
+    /**
+     * @param resource $handle default is tmpfile()
+     * @param string $namespace
+     * @return \Everon\FileSystem\Interfaces\TmpFile
+     * @throws Exception\Factory
+     */
+    function buildFileSystemTmpFile($handle=null, $namespace='Everon\FileSystem');
 
     /**
      * @param DataMapper\Interfaces\ConnectionItem $dsn
