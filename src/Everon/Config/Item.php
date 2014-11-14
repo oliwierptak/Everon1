@@ -106,15 +106,17 @@ class Item implements Interfaces\Item
         
         return $this->data[$name];
     }
+    
+    
 
-    public static function __set_state(array $array)
+    public static function __set_state(array $parameters)
     {
-        $array['data'][self::PROPERTY_DEFAULT] = $array['is_default'];
-        $array['data'][self::PROPERTY_NAME] = $array['name'];
+        $Item = new static($parameters['data'], []);
         
-        $Item = new static($array['data'], []);
-        $Item->setName($array['name']);
-        $Item->setIsDefault($array['is_default']);
+        foreach ($parameters as $property => $value) {
+            $Item->$property = $value;
+        }
+        
         return $Item;
     }
 }

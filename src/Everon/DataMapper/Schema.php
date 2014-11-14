@@ -10,11 +10,13 @@
 namespace Everon\DataMapper;
 
 use Everon\Config;
+use Everon\Dependency\ConfigCacheLoader;
 use Everon\Dependency\Injection\Factory as FactoryDependencyInjection;
 use Everon\DataMapper\Dependency;
 use Everon\Dependency\Injection\ConfigManager as ConfigManagerDependencyInjection;
 use Everon\Domain\Dependency\DomainMapper as DomainMapperDependency;
 use Everon\Domain;
+use Everon\FileSystem;
 use Everon\Helper;
 
 class Schema implements Interfaces\Schema
@@ -37,6 +39,11 @@ class Schema implements Interfaces\Schema
     protected $ConnectionManager = null;
 
     /**
+     * @var FileSystem\Interfaces\PhpCache
+     */
+    protected $CacheLoader = null;
+
+    /**
      * @var array
      */
     protected $pdo_adapters = null;
@@ -50,12 +57,19 @@ class Schema implements Interfaces\Schema
      * @param Interfaces\Schema\Reader $SchemaReader
      * @param Interfaces\ConnectionManager $ConnectionManager
      * @param Domain\Interfaces\Mapper $DomainMapper
+     * @param FileSystem\Interfaces\PhpCache $CacheLoader
      */
-    public function __construct(Interfaces\Schema\Reader $SchemaReader, Interfaces\ConnectionManager $ConnectionManager, Domain\Interfaces\Mapper $DomainMapper)
+    public function __construct(
+        Interfaces\Schema\Reader $SchemaReader, 
+        Interfaces\ConnectionManager $ConnectionManager, 
+        Domain\Interfaces\Mapper $DomainMapper,
+        FileSystem\Interfaces\PhpCache $CacheLoader
+    )
     {
         $this->SchemaReader = $SchemaReader;
         $this->ConnectionManager = $ConnectionManager;
         $this->DomainMapper = $DomainMapper;
+        $this->CacheLoader = $CacheLoader;
     }
     
     protected function initTables()
@@ -89,6 +103,7 @@ class Schema implements Interfaces\Schema
         }
         
         $this->initViews();
+        dd($this->tables);
     }
     
     protected function initViews()
@@ -124,7 +139,7 @@ class Schema implements Interfaces\Schema
                 $Table = $this->tables[$item_table_name];
                 $Column = clone $Table->getColumnByName($column_name);
                 $Column->setName($view_column_name);
-                $Column->unMarkAsPk();
+                $Column->unMarkAsPk(); //pk will be said based on primary keys
                 $Column->setIsNullable(in_array($view_column_name, $Item->getNullable()));
                 $view_columns[$view_column_name] = $Column;
             }
@@ -175,7 +190,8 @@ class Schema implements Interfaces\Schema
             $table = array_pop($tokens);
             $schema_name = implode('.', $tokens);
             
-            $this->tables[$Item->getTable()] = $this->getFactory()->buildSchemaTable(
+            $SchemaView = $this->getFactory()->buildSchemaView(
+                $Item->getTableOriginal(),
                 $table,
                 $schema_name,
                 $view_columns,
@@ -185,8 +201,24 @@ class Schema implements Interfaces\Schema
                 $this->getDomainMapper()
             );
 
-            $this->tables[$Item->getTable()]->setOriginalName($Item->getTableOriginal());
+            $this->tables[$Item->getTable()] = $SchemaView;
         }
+    }
+
+    /**
+     * @param FileSystem\Interfaces\PhpCache $CacheLoader
+     */
+    public function setCacheLoader(FileSystem\Interfaces\PhpCache $CacheLoader)
+    {
+        $this->CacheLoader = $CacheLoader;
+    }
+
+    /**
+     * @return \Everon\FileSystem\Interfaces\PhpCache
+     */
+    public function getCacheLoader()
+    {
+        return $this->CacheLoader;
     }
     
     /**
@@ -278,4 +310,5 @@ class Schema implements Interfaces\Schema
         }
         return $this->database_timezone;
     }
+    
 }

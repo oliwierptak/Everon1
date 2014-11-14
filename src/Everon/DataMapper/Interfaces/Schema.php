@@ -9,6 +9,7 @@
  */
 namespace Everon\DataMapper\Interfaces;
 
+use Everon\FileSystem;
 use Everon\Interfaces\PdoAdapter;
 
 interface Schema  extends \Everon\DataMapper\Interfaces\Dependency\SchemaReader, \Everon\Domain\Interfaces\Dependency\DomainMapper 
@@ -19,6 +20,16 @@ interface Schema  extends \Everon\DataMapper\Interfaces\Dependency\SchemaReader,
      * @throws \Everon\DataMapper\Exception\Schema
      */    
     function getPdoAdapterByName($name);
+
+    /**
+     * @param FileSystem\Interfaces\PhpCache $CacheLoader
+     */
+    function setCacheLoader(FileSystem\Interfaces\PhpCache $CacheLoader);
+
+    /**
+     * @return \Everon\FileSystem\Interfaces\PhpCache
+     */
+    function getCacheLoader();
     
     /**
      * @return ConnectionManager

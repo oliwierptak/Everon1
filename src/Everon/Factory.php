@@ -965,12 +965,12 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildSchema(DataMapper\Interfaces\Schema\Reader $Reader, DataMapper\Interfaces\Connectionmanager $ConnectionManager, Domain\Interfaces\Mapper $DomainMapper, $namespace='Everon\DataMapper')
+    public function buildSchema(DataMapper\Interfaces\Schema\Reader $Reader, DataMapper\Interfaces\ConnectionManager $ConnectionManager, Domain\Interfaces\Mapper $DomainMapper, FileSystem\Interfaces\PhpCache $PhpCacheLoader, $namespace = 'Everon\DataMapper')
     {
         try {
             $class_name = $this->getFullClassName($namespace, 'Schema');
             $this->classExists($class_name);
-            $Schema = new $class_name($Reader, $ConnectionManager, $DomainMapper);
+            $Schema = new $class_name($Reader, $ConnectionManager, $DomainMapper, $PhpCacheLoader);
             $this->injectDependencies($class_name, $Schema);
             return $Schema;
         }
@@ -1070,6 +1070,23 @@ abstract class Factory implements Interfaces\Factory
         }
         catch (\Exception $e) {
             throw new Exception\Factory('SchemaTable: "%s.%s" initialization error', [$schema,$name], $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildSchemaView($original_name, $name, $schema, array $column_list, array $primary_key_list,  array $unique_key_list, array $foreign_key_list, Domain\Interfaces\Mapper $DomainMapper, $namespace='Everon\DataMapper')
+    {
+        try {
+            $class_name = $this->getFullClassName($namespace,'Schema\View');
+            $this->classExists($class_name);
+            $Table = new $class_name($original_name, $name, $schema, $column_list, $primary_key_list, $unique_key_list, $foreign_key_list, $DomainMapper);
+            $this->injectDependencies($class_name, $Table);
+            return $Table;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('SchemaView: "%s.%s" initialization error', [$schema,$name], $e);
         }
     }
 
@@ -1282,6 +1299,40 @@ abstract class Factory implements Interfaces\Factory
         }
         catch (\Exception $e) {
             throw new Exception\Factory('FileSystem initialization error', null, $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildFileSystemPhpCacheFile($cache_directory, $namespace='Everon\FileSystem')
+    {
+        try {
+            $class_name = $this->getFullClassName($namespace, 'PhpCache');
+            $this->classExists($class_name);
+            $FileSystem = new $class_name($cache_directory);
+            $this->injectDependencies($class_name, $FileSystem);
+            return $FileSystem;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('FileSystem PhpCache initialization error', null, $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildFileSystemTmpFile($handle=null, $namespace='Everon\FileSystem')
+    {
+        try {
+            $class_name = $this->getFullClassName($namespace, 'TmpFile');
+            $this->classExists($class_name);
+            $FileSystem = new $class_name($handle);
+            $this->injectDependencies($class_name, $FileSystem);
+            return $FileSystem;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('FileSystem TmpFile initialization error', null, $e);
         }
     }
 
