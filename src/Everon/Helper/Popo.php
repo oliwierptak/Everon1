@@ -121,7 +121,7 @@ class Popo implements Interfaces\Arrayable
     public function setData(array $data)
     {
         $this->data = $data;
-        $this->property_name_cache = null;
+        $this->property_name_cache = [];
     }
 
     public function __sleep()
