@@ -60,7 +60,10 @@ class LoaderCache implements Interfaces\LoaderCache
 
         return $list;
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public function loadFromCache(\SplFileInfo $CacheFile)
     {
         $filename = $CacheFile->getPathname();
@@ -70,15 +73,14 @@ class LoaderCache implements Interfaces\LoaderCache
     }
     
     /**
-     * @param \Everon\Interfaces\Config $Config
-     * @throws Exception\Config
+     * @inheritdoc
      */
     public function saveConfigToCache(\Everon\Interfaces\Config $Config)
     {
         try {
             $CacheFile = new \SplFileInfo($this->cache_directory.pathinfo($Config->getName(), PATHINFO_BASENAME).'.ini.php');
             
-            if ($CacheFile->isFile() === false) {
+            if ($CacheFile->isFile() === false && $CacheFile->isWritable()) {
                 $cache_data = [
                     'default_item' => $Config->getDefaultItem(),
                     'items' => $Config->getItems(),
