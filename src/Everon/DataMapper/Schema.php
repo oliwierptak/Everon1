@@ -103,7 +103,6 @@ class Schema implements Interfaces\Schema
         }
         
         $this->initViews();
-        dd($this->tables);
     }
     
     protected function initViews()
