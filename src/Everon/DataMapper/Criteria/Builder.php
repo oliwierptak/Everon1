@@ -146,15 +146,18 @@ class Builder implements Interfaces\Criteria\Builder
     public function where($column, $operator, $value)
     {
         $this->current++;
-        $Criterium = $this->getFactory()->buildCriteriaCriterium($column, $operator, $value);
-        $this->getCurrentContainer()->getCriteria()->where($Criterium);
         
-        $glue = null;
         if ($this->current > 0) {
-            $glue = self::GLUE_AND; //glue subqueries by AND, by default if missing glue (where() used twice in a row)
+            $Criterium = $this->getFactory()->buildCriteriaCriterium($column, $operator, $value);
+            $this->getCurrentContainer()->getCriteria()->where($Criterium);
+            $this->getCurrentContainer()->setGlue(self::GLUE_AND);
+        }
+        else {
+            $Criterium = $this->getFactory()->buildCriteriaCriterium($column, $operator, $value);
+            $this->getCurrentContainer()->getCriteria()->where($Criterium);
+            $this->getCurrentContainer()->setGlue(null);
         }
         
-        $this->getCurrentContainer()->setGlue($glue);
         return $this;
     }
 
@@ -413,8 +416,9 @@ class Builder implements Interfaces\Criteria\Builder
          * @var Interfaces\Criteria $Container
          */
         foreach ($this->getContainerCollection() as $Container) {
-            $glue = $Container->getGlue();
-            $sql[] = $this->criteriaToSql($Container).' '.$glue;
+            $glue = (count($sql) === 0) ? '' : $Container->getGlue(); //reset glue if that's the first iteration
+            
+            $sql[] = $glue.' '.$this->criteriaToSql($Container);
             $criteria_parameters = $this->criteriaToParameters($Container);
             $tmp = [];
 

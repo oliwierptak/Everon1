@@ -194,6 +194,7 @@ class Entity extends Helper\Popo implements Interfaces\Entity
             throw new \Everon\Domain\Exception('Property name cannot be empty in: "%s"', $this->getDomainName());
         }
         $this->data[$name] = $value;
+        $this->markPropertyAsModified($name);
     }
 
     /**
@@ -314,6 +315,8 @@ class Entity extends Helper\Popo implements Interfaces\Entity
     {
         $data = $this->arrayMergeDefault($this->getData(), $data);
         $this->setData($data);
+        $this->modified_properties = array_keys($data);
+        $this->markModified();
     }
     
     /**
