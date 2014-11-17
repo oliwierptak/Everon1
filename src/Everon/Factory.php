@@ -600,7 +600,7 @@ abstract class Factory implements Interfaces\Factory
         try {
             $options = $this->arrayMergeDefault([
                 \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
-                \PDO::ATTR_PERSISTENT => true,
+                \PDO::ATTR_PERSISTENT => false,
                 \PDO::ATTR_EMULATE_PREPARES => false   
             ], $options);
             return new \PDO($dsn, $username, $password, $options);

@@ -297,14 +297,6 @@ class Table implements Interfaces\Schema\Table
         ];
     }
 
-    public function __sleep()
-    {
-        s('sleep');
-        return [
-            'name',
-        ];
-    }
-
     public function __wakeup()
     {
         s('wakeup');
