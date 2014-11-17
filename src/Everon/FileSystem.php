@@ -14,6 +14,8 @@ use Everon\Exception;
 
 class FileSystem implements Interfaces\FileSystem
 {
+    use Dependency\Injection\Factory;
+    
     /**
      * @var string location of the file system root folder
      */
@@ -294,11 +296,11 @@ class FileSystem implements Interfaces\FileSystem
     }
 
     /**
-     * @return FileSystem\TmpFile
+     * @return FileSystem\Interfaces\TmpFile
      */
     public function createTmpFile()
     {
-        return new FileSystem\TmpFile();
+        return $this->getFactory()->buildFileSystemTmpFile();
     }
 
     /**

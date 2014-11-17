@@ -31,9 +31,7 @@ class Item implements Interfaces\ConnectionItem
     protected $encoding = null;
     protected $options = [];
     protected $adapter_name = null;
-    
     protected $schema = '';
-    
     protected $dsn = null;
 
 
@@ -147,7 +145,7 @@ class Item implements Interfaces\ConnectionItem
     public function getAdapterName()
     {
         if ($this->adapter_name === null) {
-            switch (strtolower($this->getDriver())) {
+            switch (strtolower($this->getDriver())) { //todo xxx
                 case 'mysql':
                     $this->adapter_name = 'MySql';
                     break;
@@ -159,7 +157,7 @@ class Item implements Interfaces\ConnectionItem
         }
         
         if ($this->adapter_name === null) {
-            throw new ConnectionItemException('Driver database not set');
+            throw new ConnectionItemException('Database driver not set');
         }
         
         return $this->adapter_name;
@@ -198,5 +196,33 @@ class Item implements Interfaces\ConnectionItem
             $this->getPassword(),
             $this->getOptions()
         ];        
+    }
+
+    public function __sleep()
+    {
+        return [
+            'driver',
+            'host',
+            'port',
+            'database',
+            'user',
+            'password',
+            'encoding',
+            'options',
+            'adapter_name',
+            'schema',
+            'dsn',
+        ];
+    }
+
+    public static function __set_state(array $parameters)
+    {
+        $Item = new static($parameters['data'], []);
+        
+        foreach ($parameters as $key => $value) {
+            $Item->$key = $value;
+        }
+
+        return $Item;
     }
 }

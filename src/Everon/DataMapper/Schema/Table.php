@@ -16,28 +16,26 @@ use Everon\Helper;
 
 class Table implements Interfaces\Schema\Table
 {
-    use Dependency\Injection\Logger;
+    //use Dependency\Injection\Logger;
     
     use Helper\Asserts\IsNumericAndNotZero;
     use Helper\Asserts\IsStringAndNotEmpty;
     use Helper\Exceptions;
     use Helper\Immutable;
-    
+
+    protected $pk = null;
+
     protected $name = null;
-    
-    protected $original_name = null; //todo view_only
-    
+
     protected $schema = null;
     
-    protected $pk = null;
-    
     protected $columns = [];
-    
+
     protected $primary_keys = [];
 
-    protected $foreign_keys = [];
-    
     protected $unique_keys = [];
+
+    protected $foreign_keys = [];
     
 
     /**
@@ -54,9 +52,9 @@ class Table implements Interfaces\Schema\Table
         $this->schema = $schema;
         $this->columns = $columns;
         $this->primary_keys = $primary_keys;
-        $this->foreign_keys = $foreign_keys;
         $this->unique_keys = $unique_keys;
-        
+        $this->foreign_keys = $foreign_keys;
+
         $this->init();
         $this->lock();
     }
@@ -69,6 +67,7 @@ class Table implements Interfaces\Schema\Table
         foreach ($this->columns as $Column) {
             if ($Column->isPk()) {
                 $this->pk = $Column->getName();
+                break;
             }
         }
     }
@@ -247,7 +246,8 @@ class Table implements Interfaces\Schema\Table
             }
 
             if (array_key_exists($name, $data) === false) {
-                $this->getLogger()->warning('Entity property not set. Using null for: "%s@%s"', [$Column->getTable(), $name]);
+                throw new Exception\Table('Entity property key not set for: "%s@%s"', [$Column->getTable(), $name]);
+                //$this->getLogger()->warning('Entity property not set. Using null for: "%s@%s"', [$Column->getTable(), $name]);
                 $data[$name] = null;
             }
             
@@ -279,25 +279,22 @@ class Table implements Interfaces\Schema\Table
         return $data[$pk_name];
     }
 
-    /**
-     * @param string $original_name
-     */
-    public function setOriginalName($original_name)
-    {
-        $this->original_name = $original_name;
-    }
-
-    /**
-     * @return string
-     */
-    public function getOriginalName()
-    {
-        return $this->original_name;
-    }
-    
     public function __toString()
     {
         return (string) $this->name;
+    }
+
+    public function __sleep()
+    {
+        return [
+            'pk',
+            'name',
+            'schema',
+            'columns',
+            'primary_keys',
+            'unique_keys',
+            'foreign_keys'
+        ];
     }
 
     public function __sleep()

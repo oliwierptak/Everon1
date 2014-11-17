@@ -66,20 +66,6 @@ class Entity extends Helper\Popo implements Interfaces\Entity
         }
     }
 
-    /**
-     * If the primary key is auto incremented, setId() should never be used.
-     * It's database's job to maintain its primary keys.
-     *
-     * We either create new object (no ID) or we load it from the database (has ID).
-     *
-     * @param $id
-     * @throws Exception\Entity
-     */
-    protected function setId($id)
-    {
-        throw new Exception\Entity('It is the database\'s job to maintain primary keys');
-    }
-
     protected function markModified()
     {
         $this->state = static::STATE_MODIFIED;
@@ -156,6 +142,20 @@ class Entity extends Helper\Popo implements Interfaces\Entity
     public function isDeleted()
     {
         return $this->state === static::STATE_DELETED;
+    }
+
+    /**
+     * If the primary key is auto incremented, setId() should never be used.
+     * It's the job of the database to maintain its primary keys.
+     *
+     * We either create new object (no ID) or we load it from the database (has ID).
+     *
+     * @param $id
+     * @throws Exception\Entity
+     */
+    public function setId($id)
+    {
+        throw new Exception\Entity('It\'s the job of the database to maintain its primary keys.');
     }
 
     /**
@@ -322,6 +322,7 @@ class Entity extends Helper\Popo implements Interfaces\Entity
      * @param $name
      * @param $arguments
      * @return mixed
+     * @throws Exception\Entity
      */
     public function __call($name, $arguments)
     {

@@ -327,16 +327,4 @@ class Config implements \Everon\Interfaces\Config
         $this->Compiler = $Compiler;
     }
 
-    public static function __set_state(array $array)
-    {
-        sd('AAA',$array);
-        //$name, Config\Interfaces\LoaderItem $ConfigLoaderItem, \Closure $Compiler
-        $array['data'][self::PROPERTY_DEFAULT] = $array['is_default'];
-        $array['data'][self::PROPERTY_NAME] = $array['name'];
-
-        $Item = new static($array['data'], []);
-        $Item->setName($array['name']);
-        $Item->setIsDefault($array['is_default']);
-        return $Item;
-    }
 }

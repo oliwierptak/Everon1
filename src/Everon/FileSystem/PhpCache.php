@@ -7,19 +7,23 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon\Config;
+namespace Everon\FileSystem;
 
 use Everon\Dependency;
 use Everon\Exception;
 use Everon\Helper;
 
-class LoaderCache implements Interfaces\LoaderCache
+class PhpCache implements Interfaces\PhpCache
 {
     use Dependency\Injection\Factory;
     use Dependency\Injection\FileSystem;
     use Helper\Arrays;
-    
+
+    /**
+     * @param string
+     */
     protected $cache_directory = null;
+    
 
     /**
      * @param $cache_directory
@@ -28,14 +32,17 @@ class LoaderCache implements Interfaces\LoaderCache
     {
         $this->cache_directory = $cache_directory;
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public function getCacheDirectory()
     {
         return $this->cache_directory;
     }
 
     /**
-     * @param $cache_directory
+     * @inheritdoc
      */
     public function setCacheDirectory($cache_directory)
     {
@@ -71,22 +78,16 @@ class LoaderCache implements Interfaces\LoaderCache
         include($filename);
         return $cache;  
     }
-    
+
     /**
      * @inheritdoc
      */
-    public function saveConfigToCache(\Everon\Interfaces\Config $Config)
+    public function saveToCache($name, array $cache_data)
     {
         try {
-            $CacheFile = new \SplFileInfo($this->cache_directory.pathinfo($Config->getName(), PATHINFO_BASENAME).'.ini.php');
+            $CacheFile = new \SplFileInfo($this->cache_directory.pathinfo($name, PATHINFO_BASENAME).'.ini.php');
             
-            if ($CacheFile->isFile() === false && $CacheFile->isWritable()) {
-                $cache_data = [
-                    'default_item' => $Config->getDefaultItem(),
-                    'items' => $Config->getItems(),
-                    'filename' => $Config->getFilename(),
-                    'name' => $Config->getName()
-                ];
+            if ($CacheFile->isFile() === false) {
                 $data = var_export($cache_data, true);
                 $h = fopen($CacheFile->getPathname(), 'w+');
                 fwrite($h, "<?php \$cache = $data; ");
@@ -94,7 +95,7 @@ class LoaderCache implements Interfaces\LoaderCache
             }
         }
         catch (\Exception $e) {
-            throw new Exception\Config('Unable to save config cache file: "%s"', $Config->getFilename(), $e);
+            throw new Exception\Config('Unable to save PhpCache file for: "%s"', $name, $e);
         }
     }
 }

@@ -268,9 +268,7 @@ EOF;
         if ($this->isRegistered($name) === false) {
             $Config = $this->getFactory()->buildConfig($name, $ConfigLoaderItem, $Compiler);
             $this->register($Config);
-            if ($this->isCachingEnabled()) {
-                $this->getConfigCacheLoader()->saveConfigToCache($Config);
-            }
+            $this->getConfigCacheLoader()->saveConfigToCache($Config);
         }
     }
 
