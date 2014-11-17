@@ -251,24 +251,35 @@ abstract class Request implements Interfaces\Request
     protected function sanitizeInput($input)
     {
         if ($this->isIterable($input)) {
-            array_walk_recursive($input, [$this,'sanitizeInputToken']);
+            foreach ($input as $key => $value) {
+                if ($this->isIterable($value)) {
+                    $value = $this->sanitizeInput($value);
+                }
+                else {
+                    $value = $this->sanitizeInputToken($value);
+                }
+                $input[$key] = $value;
+            }
             return $input;
         }
 
-        $this->sanitizeInputToken($input, null);
-
-        return $input;
+        return $this->sanitizeInputToken($input);
     }
-    
+
     /**
      * @param $value
-     * @param $index
+     * @return mixed
      */
-    protected function sanitizeInputToken(&$value, $index)
+    protected function sanitizeInputToken($value)
     {
         if ($value !== null) {
+            if (is_bool($value)) { //because php is the shittiest thing in this universe
+                $value = (int) $value;
+            }
             $value = strip_tags($value, '<p><a><br><img><b><strong><i><em><u><ul><li><span><h1><h2><h3><h4><h5><hr>');
         }
+        
+        return $value;
     }
 
     /**
