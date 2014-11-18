@@ -387,10 +387,6 @@ abstract class Relation implements Interfaces\Relation
         }
         
         $data = $this->getData()->toArray();
-        if (empty($data)) {
-            return null;
-        }
-        
         if (is_array($data)) {
             return current($data);
         }
