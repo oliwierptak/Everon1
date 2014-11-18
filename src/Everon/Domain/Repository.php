@@ -9,13 +9,11 @@
  */
 namespace Everon\Domain;
 
-use Everon\DataMapper\Interfaces\CriteriaOLD;
+use Everon\DataMapper;
 use Everon\Dependency;
 use Everon\Domain;
-use Everon\Domain\Interfaces;
 use Everon\Exception;
 use Everon\Interfaces\Collection;
-use Everon\Interfaces\DataMapper;
 use Everon\Helper;
 
 abstract class Repository implements Interfaces\Repository
@@ -41,9 +39,9 @@ abstract class Repository implements Interfaces\Repository
 
     /**
      * @param $name
-     * @param DataMapper $Mapper
+     * @param \Everon\Interfaces\DataMapper $Mapper
      */
-    public function __construct($name, DataMapper $Mapper)
+    public function __construct($name, \Everon\Interfaces\DataMapper $Mapper)
     {
         $this->name = $name;
         $this->Mapper = $Mapper;
@@ -61,14 +59,12 @@ abstract class Repository implements Interfaces\Repository
         /**
          * @var \Everon\DataMapper\Interfaces\Schema\Column $Column
          */
-        foreach ($data as $name => $value) {
-            if ($this->getMapper()->getTable()->hasColumn($name)) {
-                if (array_key_exists($name, $data) === false) {
-                    throw new Exception\Domain('Missing Entity data: "%s" for "%s"', [$name, $this->getMapper()->getTable()->getName()]);
-                }
-                $Column = $this->getMapper()->getTable()->getColumnByName($name);
-                $data[$name] = $Column->getColumnDataForEntity($data[$name]);
+        foreach ($this->getMapper()->getTable()->getColumns() as $name => $Column) {
+            if (array_key_exists($name, $data) === false) {
+                throw new Exception\Domain('Missing Entity data: "%s" for "%s"', [$name, $this->getMapper()->getTable()->getName()]);
             }
+            //$Column = $this->getMapper()->getTable()->getColumnByName($name);
+            $data[$name] = $Column->getColumnDataForEntity($data[$name]);
         }
 
         return $data;
@@ -76,12 +72,13 @@ abstract class Repository implements Interfaces\Repository
 
     /**
      * @param array $data
-     * @param CriteriaOLD $RelationCriteria
+     * @param DataMapper\Interfaces\Criteria\Builder $RelationCriteria
+     * @throws Exception\Domain
      * @return Interfaces\Entity
      */
-    protected function buildEntity(array $data, CriteriaOLD $RelationCriteria=null)
+    protected function buildEntity(array $data, DataMapper\Interfaces\Criteria\Builder $RelationCriteria = null)
     {
-        $defaults = $this->getDefaultColumns();
+        $defaults = $this->getDefaultEntityData();
         $data = $this->arrayMergeDefault($defaults, $data);
         $data = $this->prepareDataForEntity($data);
         $Entity = $this->getFactory()->buildDomainEntity($this->getName(), $this->getMapper()->getTable()->getPk(), $data);
@@ -93,18 +90,18 @@ abstract class Repository implements Interfaces\Repository
     /**
      * @return array
      */
-    protected function getDefaultColumns()
+    protected function getDefaultEntityData()
     {
         /**
          * @var \Everon\DataMapper\Interfaces\Schema\Column $Column
          */
         $default = [];
         $columns = $this->getMapper()->getTable()->getColumns();
-        foreach ($columns as $Column) {
+        foreach ($columns as $name => $Column) {
             if ($Column->isPk()) {
                 continue;
             }
-            $default[$Column->getName()] = null;
+            $default[$name] = null;
         }
         
         return $default;
@@ -112,11 +109,11 @@ abstract class Repository implements Interfaces\Repository
 
     /**
      * @param Interfaces\Entity $Entity
-     * @param CriteriaOLD $Criteria
+     * @param DataMapper\Interfaces\Criteria\Builder $RelationCriteria
      */
-    public function buildEntityRelations(Interfaces\Entity $Entity, CriteriaOLD $Criteria = null)
+    protected function buildEntityRelations(Interfaces\Entity $Entity, DataMapper\Interfaces\Criteria\Builder $RelationCriteria = null)
     {
-        $Criteria = $Criteria ?: (new \Everon\DataMapper\CriteriaOLD())->limit(20)->offset(0);
+        $RelationCriteria = $RelationCriteria ?: $this->getFactory()->buildCriteriaBuilder();
         
         $RelationCollection = new Helper\Collection([]);
         //buildDomainRelationMapper
@@ -134,76 +131,14 @@ abstract class Repository implements Interfaces\Repository
             );
 
             $Relation = $this->getFactory()->buildDomainRelation($relation_domain_name, $Entity, $RelationMapper);
-            $Relation->setCriteria(clone $Criteria);
-            $Relation->setEntityRelationCriteria(clone $Criteria);
+            $Relation->setCriteriaBuilder(clone $RelationCriteria);
+            $Relation->setEntityRelationCriteria(clone $RelationCriteria);
             $RelationCollection->set($relation_domain_name, $Relation);
         }
 
         $Entity->setRelationCollection($RelationCollection);
     }
-
-    /**
-     * @param Interfaces\Entity $Entity
-     * @throws \Everon\Exception\Domain
-     */
-    protected function AAAresolveRelationsIntoData(Interfaces\Entity $Entity)
-    {
-        if ($Entity->isNew()) {
-            return;
-        }
-
-        foreach ($Entity->getRelationCollection() as $domain_name => $Relation) {
-            $Relation->resolveRelationsIntoData($Entity);
-        }
-
-        return;
-        
-        /**
-         * @var \Everon\Domain\Interfaces\Relation $Relation
-         */
-        foreach ($Entity->getRelationCollection() as $domain_name => $Relation) {
-            if ($Relation->getRelationMapper()->isOwningSide() === false && $Relation->getRelationMapper()->isVirtual() === false) {
-                switch ($Relation->getType()) {
-                    case Domain\Relation::ONE_TO_ONE:
-                        //d($Entity->getId(), $Entity->getDomainName(), $Relation->getRelationMapper()->getColumn());
-                        $value = $Entity->getValueByName($Relation->getRelationMapper()->getColumn());
-                        $Column = $this->getMapper()->getTable()->getColumnByName($Relation->getRelationMapper()->getColumn());
-                        break;
-
-                    default:
-                        $value = $Entity->getValueByName($Relation->getRelationMapper()->getMappedBy());
-                        $Column = $this->getMapper()->getTable()->getColumnByName($Relation->getRelationMapper()->getMappedBy());
-                        break;
-                }
-
-                if ($Column->isPk() && $Entity->isNew() && $value === null) {
-                    continue;
-                }
-
-
-                if ($Column->isNullable() && $value === null) {
-                    $Entity->getRelationByName($Relation->getName())->reset();
-                    $Entity->setValueByName($Relation->getRelationMapper()->getMappedBy(), null);
-                    continue;
-                }
-
-                
-                $ChildEntity = $this->getDomainManager()->getRepositoryByName($Relation->getName())->getEntityByPropertyValue([
-                    $Relation->getRelationMapper()->getInversedBy() => $value
-                ]);
-                
-                if ($ChildEntity === null) {
-                    //throw new Exception\Domain('RelationEntity: "%s" could not be resolved for "%s@%s" with value "%s"', [$Entity->getDomainName(), $Relation->getName(), $Relation->getRelationMapper()->getInversedBy(), $value]);
-                    $Entity->getRelationByName($Relation->getName())->reset();
-                }
-                else {
-                    $Entity->getRelationByName($Relation->getName())->setOne($ChildEntity); //update relation
-                    $Entity->setValueByName($Relation->getRelationMapper()->getInversedBy(), $ChildEntity->getValueByName($Relation->getRelationMapper()->getInversedBy())); //update fields represented in relations eg. user_id -> User->getId()
-                }
-            }
-        }
-    }
-
+    
     /**
      * @inheritdoc
      */
@@ -215,7 +150,7 @@ abstract class Repository implements Interfaces\Repository
     /**
      * @inheritdoc
      */
-    public function setMapper(DataMapper $Mapper)
+    public function setMapper(\Everon\Interfaces\DataMapper $Mapper)
     {
         $this->Mapper = $Mapper;
     }
@@ -228,7 +163,7 @@ abstract class Repository implements Interfaces\Repository
     /**
      * @inheritdoc
      */
-    public function buildFromArray(array $data, CriteriaOLD $RelationCriteria=null)
+    public function buildFromArray(array $data, DataMapper\Interfaces\Criteria\Builder $RelationCriteria=null)
     {
         return $this->buildEntity($data, $RelationCriteria);
     }
@@ -254,54 +189,60 @@ abstract class Repository implements Interfaces\Repository
     /**
      * @inheritdoc
      */
-    public function getEntityById($id, CriteriaOLD $RelationCriteria=null)
+    public function getEntityById($id, DataMapper\Interfaces\Criteria\Builder $RelationCriteria=null)
     {
-        $Criteria = (new \Everon\DataMapper\CriteriaOLD())->where([
-            $this->getMapper()->getTable()->getPk() => $id
-        ]);
-        return $this->getOneByCriteria($Criteria, $RelationCriteria);
+        $CriteriaBuilder = $this->getFactory()->buildCriteriaBuilder();
+        $CriteriaBuilder->where($this->getMapper()->getTable()->getPk(), '=', $id);
+        
+        return $this->getOneByCriteria($CriteriaBuilder, $RelationCriteria);
     }
 
     /**
      * @inheritdoc
      */
-    public function getEntityByPropertyValue(array $property_criteria, CriteriaOLD $RelationCriteria=null)
+    public function getEntityByPropertyValue(array $property_criteria, DataMapper\Interfaces\Criteria\Builder $RelationCriteria = null)
     {
         if (empty($property_criteria)) {
             return null;
         }
-        $Criteria = (new \Everon\DataMapper\CriteriaOLD())->where($property_criteria);
-        return $this->getOneByCriteria($Criteria, $RelationCriteria);
+        
+        $CriteriaBuilder = $this->getFactory()->buildCriteriaBuilder();
+        foreach ($property_criteria as $property => $value) {
+            $CriteriaBuilder->where($property, '=', $value);
+        }
+        
+        return $this->getOneByCriteria($CriteriaBuilder, $RelationCriteria);
     }
 
     /**
      * @inheritdoc
      */
-    public function getOneByCriteria(CriteriaOLD $Criteria, CriteriaOLD $RelationCriteria=null)
+    public function getOneByCriteria(DataMapper\Interfaces\Criteria\Builder $CriteriaBuilder, DataMapper\Interfaces\Criteria\Builder $RelationCriteriaBuilder = null)
     {
-        $Criteria->limit(1);
-        $Criteria->offset(0);
-        $data = $this->getMapper()->fetchOneByCriteria($Criteria);
+        $CriteriaBuilder->setLimit(1);
+        $CriteriaBuilder->setOffset(0);
+        
+        $data = $this->getMapper()->fetchOneByCriteria($CriteriaBuilder);
         if (empty($data)) {
             return null;
         }
 
-        return $this->buildEntity($data, $RelationCriteria);
+        return $this->buildEntity($data, $RelationCriteriaBuilder);
     }
 
     /**
      * @inheritdoc
      */
-    public function getByCriteria(CriteriaOLD $Criteria, CriteriaOLD $RelationCriteria=null)
+    public function getByCriteria(DataMapper\Interfaces\Criteria\Builder $CriteriaBuilder, DataMapper\Interfaces\Criteria\Builder $RelationCriteriaBuilder=null)
     {
-        $data = $this->getMapper()->fetchAll($Criteria);
+        $data = $this->getMapper()->fetchAll($CriteriaBuilder);
         if (empty($data)) {
             return null;
         }
         
         $result = [];
         foreach ($data as $item) {
-            $result[] = $this->buildEntity($item, $RelationCriteria);
+            $result[] = $this->buildEntity($item, $RelationCriteriaBuilder);
         }
         
         return $result;
@@ -310,9 +251,9 @@ abstract class Repository implements Interfaces\Repository
     /**
      * @inheritdoc
      */
-    public function count(CriteriaOLD $Criteria=null)
+    public function count(DataMapper\Interfaces\Criteria\Builder $CriteriaBuilder = null)
     {
-        return $this->getMapper()->count($Criteria);
+        return $this->getMapper()->count($CriteriaBuilder);
     }
 
     /**
@@ -321,12 +262,12 @@ abstract class Repository implements Interfaces\Repository
     public function persist(Interfaces\Entity $Entity, $user_id=null)
     {
         if ($Entity->isDeleted()) {
-            throw new \Everon\Exception\Domain('Invalid entity state when attempting to persist entity: "%s@%s"', [$Entity->getDomainName(), $Entity->getId()]);
+            throw new \Everon\Exception\Domain('Invalid state when attempting to persist entity: "%s@%s"', [$Entity->getDomainName(), $Entity->getId()]);
         }
         
-        $this->validateEntity($Entity);
+        $data = $this->validateEntity($Entity);
+        //$data = $Entity->toArray();
         
-        $data = $Entity->toArray();
         if ($Entity->isNew()) {
             $data = $this->getMapper()->add($data, $user_id);
         }
@@ -334,8 +275,9 @@ abstract class Repository implements Interfaces\Repository
             $this->getMapper()->save($data, $user_id);
         }
 
+        $data = $this->prepareDataForEntity($data);
+        
         $Entity->persist($data);
-        //$this->resolveRelationsIntoData($Entity);
     }
 
     /**
@@ -344,7 +286,7 @@ abstract class Repository implements Interfaces\Repository
     public function remove(Interfaces\Entity $Entity, $user_id=null)
     {
         if ($Entity->isNew() || $Entity->isDeleted()) {
-            throw new \Everon\Exception\Domain('Invalid entity state when attempting to delete entity: "%s@%s"', [$Entity->getDomainName(), $Entity->getId()]);
+            throw new \Everon\Exception\Domain('Invalid state when attempting to delete entity: "%s@%s"', [$Entity->getDomainName(), $Entity->getId()]);
         }
         
         $this->getMapper()->delete($Entity->getId(), $user_id);
@@ -354,9 +296,26 @@ abstract class Repository implements Interfaces\Repository
     /**
      * @inheritdoc
      */
-    public function removeByCriteria(CriteriaOLD $Criteria)
+    public function removeByCriteria(DataMapper\Interfaces\Criteria\Builder $CriteriaBuilder)
     {
-        $this->getMapper()->deleteByCriteria($Criteria);
+        $this->getMapper()->deleteByCriteria($CriteriaBuilder);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function removeByPropertyValue(array $property_criteria)
+    {
+        if (empty($property_criteria)) {
+            return;
+        }
+
+        $CriteriaBuilder = $this->getFactory()->buildCriteriaBuilder();
+        foreach ($property_criteria as $property => $value) {
+            $CriteriaBuilder->where($property, '=', $value);
+        }
+
+        $this->removeByCriteria($CriteriaBuilder);
     }
 
     /**
@@ -365,6 +324,7 @@ abstract class Repository implements Interfaces\Repository
     public function beginTransaction($point=null)
     {
         $this->getMapper()->getSchema()->getPdoAdapterByName($this->getMapper()->getWriteConnectionName())->beginTransaction();
+        $this->getMapper()->getSchema()->getPdoAdapterByName($this->getMapper()->getWriteConnectionName())->execute('BEGIN TRANSACTION;');
         if ($point !== null) {
             $this->getLogger()->transaction('begin: '.$point);
         }
@@ -379,6 +339,7 @@ abstract class Repository implements Interfaces\Repository
     public function commitTransaction($point=null)
     {
         $this->getMapper()->getSchema()->getPdoAdapterByName($this->getMapper()->getWriteConnectionName())->commitTransaction();
+        $this->getMapper()->getSchema()->getPdoAdapterByName($this->getMapper()->getWriteConnectionName())->execute('COMMIT;');
         if ($point !== null) {
             $this->getLogger()->transaction('commit: '.$point);
         }
@@ -393,6 +354,7 @@ abstract class Repository implements Interfaces\Repository
     public function rollbackTransaction($point=null)
     {
         $this->getMapper()->getSchema()->getPdoAdapterByName($this->getMapper()->getWriteConnectionName())->rollbackTransaction();
+        $this->getMapper()->getSchema()->getPdoAdapterByName($this->getMapper()->getWriteConnectionName())->execute('ROLLBACK;');
         if ($point !== null) {
             $this->getLogger()->transaction('rollback: '.$point);
         }

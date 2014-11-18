@@ -9,70 +9,62 @@
  */
 namespace Everon;
 
-use Everon\DataMapper\Interfaces\Schema;
-use Everon\DataMapper\Interfaces\CriteriaOLD;
-use Everon\DataMapper\Interfaces\Schema\Table;
-use Everon\DataMapper\Dependency;
-use Everon\Interfaces;
-
 abstract class DataMapper implements Interfaces\DataMapper
 {
-    use Dependency\Schema;
+    use Dependency\Injection\Factory;
+    use DataMapper\Dependency\Schema;
     
     use Helper\String\LastTokenToName;
     
 
     /**
-     * @var Table
+     * @var DataMapper\Interfaces\Schema\Table
      */
     protected $Table = null;
-    
+
     protected $name = null;
     
     protected $write_connection_name = 'write';
+    
     protected $read_connection_name = 'read';
+    
 
     /**
      * @inheritdoc
      */
-    abstract public function getInsertSql(array $data);
+    abstract public function getInsertSql();
     
     /**
      * @inheritdoc
      */
-    abstract public function getUpdateSql(array $data);
+    abstract public function getUpdateSql();
 
     /**
      * @inheritdoc
      */
-    abstract public function getDeleteSql($id);
+    abstract public function getDeleteSql();
+    
+    /**
+     * @inheritdoc
+     */
+    abstract public function getFetchAllSql();
 
     /**
      * @inheritdoc
      */
-    abstract public function getDeleteByCriteriaSql(CriteriaOLD $Criteria);
+    abstract public function getJoinSql($select, $a, $b, $on_a, $on_b, $type='');
 
     /**
      * @inheritdoc
      */
-    abstract public function getFetchAllSql(CriteriaOLD $Criteria=null);
-
-    /**
-     * @inheritdoc
-     */
-    abstract public function getJoinSql($select, $a, $b, $on_a, $on_b, CriteriaOLD $Criteria=null, $type='');
-
-    /**
-     * @inheritdoc
-     */
-    abstract public function getCountSql(CriteriaOLD $Criteria=null);
+    abstract public function getCountSql();
     
 
     /**
-     * @param Table $Table
-     * @param Schema $Schema
+     * @param DataMapper\Interfaces\Schema\Table $Table
+     * @param DataMapper\Interfaces\Schema $Schema
      */
-    public function __construct(Table $Table, Schema $Schema)
+    public function __construct(DataMapper\Interfaces\Schema\Table $Table, DataMapper\Interfaces\Schema $Schema)
     {
         $this->Table = $Table;
         $this->Schema = $Schema;
@@ -127,10 +119,15 @@ abstract class DataMapper implements Interfaces\DataMapper
      */
     public function add(array $data)
     {
-        list($sql, $parameters) = $this->getInsertSql($data);
-        $id = $this->getSchema()->getPdoAdapterByName($this->write_connection_name)->insert($sql, $parameters);
+        $sql = $this->getInsertSql();
+        //$parameters = $this->getTable()->prepareDataForSql($data, false);//data should be prepared at this point
+
+        unset($data[$this->getTable()->getPk()]);
+        $id = $this->getSchema()->getPdoAdapterByName($this->write_connection_name)->insert($sql, $data);
         $id = $this->getTable()->validateId($id);
+        
         $data[$this->getTable()->getPk()] = $id;
+        
         return $data;
     }
 
@@ -139,8 +136,24 @@ abstract class DataMapper implements Interfaces\DataMapper
      */
     public function save(array $data)
     {
-        list($sql, $parameters) = $this->getUpdateSql($data);
-        return $this->getSchema()->getPdoAdapterByName($this->write_connection_name)->update($sql, $parameters);
+        //$parameters = $this->getTable()->prepareDataForSql($data, true);//data should be prepared at this point
+        $id = $this->getTable()->getIdFromData($data);
+        $id = $this->getTable()->validateId($id);
+        
+        $data[$this->getTable()->getPk()] = $id;
+
+        //$CriteriaBuilder = $this->getFactory()->buildCriteriaBuilder();
+        //$CriteriaBuilder->where($this->getTable()->getPk(), '=', $id);
+        
+        //$SqlPart = $CriteriaBuilder->toSqlPart();
+        //$sql = trim($this->getUpdateSql().' '.$SqlPart->getSql());
+        $sql = trim($this->getUpdateSql().' WHERE '.$this->getTable()->getPk() .' = :'.$this->getTable()->getPk());
+        //$parameters = array_merge($data, $SqlPart->getParameters());
+        
+        //$parameters[$this->getTable()->getPk()] = null;
+        //unset($parameters[$this->getTable()->getPk()]);
+        
+        return $this->getSchema()->getPdoAdapterByName($this->write_connection_name)->update($sql, $data);
     }
 
     /**
@@ -149,36 +162,49 @@ abstract class DataMapper implements Interfaces\DataMapper
     public function delete($id)
     {
         $id = $this->getTable()->validateId($id);
-        list($sql, $parameters) = $this->getDeleteSql($id);
-        return $this->getSchema()->getPdoAdapterByName($this->write_connection_name)->delete($sql, $parameters);
+        $CriteriaBuilder = $this->getFactory()->buildCriteriaBuilder();
+        $CriteriaBuilder->where($this->getTable()->getPk(), '=', $id);
+        
+        $SqlPart = $CriteriaBuilder->toSqlPart();
+        $sql = trim($this->getDeleteSql().' '.$SqlPart->getSql());
+        
+        return $this->getSchema()->getPdoAdapterByName($this->write_connection_name)->delete($sql, $SqlPart->getParameters());
     }
 
     /**
      * @inheritdoc
      */
-    public function deleteByCriteria(CriteriaOLD $Criteria)
+    public function deleteByCriteria(DataMapper\Interfaces\Criteria\Builder $CriteriaBuilder)
     {
-        list($sql, $parameters) = $this->getDeleteByCriteriaSql($Criteria);
-        return $this->getSchema()->getPdoAdapterByName($this->write_connection_name)->delete($sql, $parameters);
+        $SqlPart = $CriteriaBuilder->toSqlPart();
+        if (empty($SqlPart->getParameters())) {
+            throw new Exception\DataMapper('No criteria conditions defined');
+        }
+
+        $sql = trim($this->getDeleteSql().' '.$SqlPart->getSql());
+        return $this->getSchema()->getPdoAdapterByName($this->write_connection_name)->delete($sql, $SqlPart->getParameters());
     }
 
     /**
      * @inheritdoc
      */
-    public function count(CriteriaOLD $Criteria=null)
+    public function count(DataMapper\Interfaces\Criteria\Builder $CriteriaBuilder=null)
     {
-        if ($Criteria === null) {
-            $Criteria = new DataMapper\CriteriaOLD();
+        if ($CriteriaBuilder === null) {
+            $Criteria = $this->getFactory()->buildCriteriaBuilder();
         }
         else {
-            $Criteria = clone $Criteria;
-            $Criteria->orderBy([]);
-            $Criteria->offset(0);
-            $Criteria->limit(0);
+            $Criteria = clone $CriteriaBuilder;
+            $Criteria->setOrderBy([]);
+            $Criteria->setOffset(null);
+            $Criteria->setLimit(null);
         }
+
+        $SqlPart = $Criteria->toSqlPart();
         
-        list($sql, $parameters) = $this->getCountSql($Criteria);
-        $PdoStatement = $this->getSchema()->getPdoAdapterByName($this->read_connection_name)->execute($sql, $parameters);
+        $sql = trim($this->getCountSql().' '.$SqlPart->getSql());
+        //sd($sql, $SqlPart->getParameters());
+        $PdoStatement = $this->getSchema()->getPdoAdapterByName($this->read_connection_name)->execute($sql, $SqlPart->getParameters());
         return (int) $PdoStatement->fetchColumn();
     }
 
@@ -187,29 +213,34 @@ abstract class DataMapper implements Interfaces\DataMapper
      */
     public function fetchOneById($id)
     {
-        $Criteria = new DataMapper\CriteriaOLD();
+        $CriteriaBuilder = $this->getFactory()->buildCriteriaBuilder();
         $id = $this->getTable()->validateId($id);
-        $Criteria->where([$this->getTable()->getPk() => $id]);
-        return $this->fetchOneByCriteria($Criteria);
+        $CriteriaBuilder->where($this->getTable()->getPk(), '=', $id);
+        
+        return $this->fetchOneByCriteria($CriteriaBuilder);
     }
 
     /**
      * @inheritdoc
      */
-    public function fetchOneByCriteria(CriteriaOLD $Criteria)
+    public function fetchOneByCriteria(DataMapper\Interfaces\Criteria\Builder $CriteriaBuilder)
     {
-        $Criteria->limit(1);
-        $sql = $this->getFetchAllSql($Criteria);
-        return $this->getSchema()->getPdoAdapterByName($this->read_connection_name)->execute($sql, $Criteria->getWhere())->fetch();
+        $CriteriaBuilder->setLimit(1);
+        $SqlPart = $CriteriaBuilder->toSqlPart();
+        
+        $sql = trim($this->getFetchAllSql().' '.$SqlPart->getSql());
+        return $this->getSchema()->getPdoAdapterByName($this->read_connection_name)->execute($sql, $SqlPart->getParameters())->fetch();
     }
 
     /**
      * @inheritdoc
      */
-    public function fetchAll(CriteriaOLD $Criteria)
+    public function fetchAll(DataMapper\Interfaces\Criteria\Builder $CriteriaBuilder)
     {
-        $sql = $this->getFetchAllSql($Criteria);
-        return $this->getSchema()->getPdoAdapterByName($this->read_connection_name)->execute($sql, $Criteria->getWhere())->fetchAll();
+        $SqlPart = $CriteriaBuilder->toSqlPart();
+        $sql = trim($this->getFetchAllSql().' '.$SqlPart->getSql());
+        
+        return $this->getSchema()->getPdoAdapterByName($this->read_connection_name)->execute($sql, $SqlPart->getParameters())->fetchAll();
     }
 
     /**
@@ -234,7 +265,7 @@ abstract class DataMapper implements Interfaces\DataMapper
     /**
      * @inheritdoc
      */
-    public function setTable(Table $Table)
+    public function setTable(DataMapper\Interfaces\Schema\Table $Table)
     {
         $this->Table = $Table;
     }

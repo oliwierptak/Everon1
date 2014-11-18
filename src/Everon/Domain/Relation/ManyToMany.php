@@ -25,9 +25,4 @@ class ManyToMany extends Domain\Relation implements Domain\Interfaces\Relation
             throw new Domain\Exception('The attribute "inversed_by" is required for ManyToMany relations');
         }
     }
-
-    public function AAAresolveRelationsIntoData(Domain\Interfaces\Entity $Entity)
-    {
-        die('fix me many to many');
-    }
 }

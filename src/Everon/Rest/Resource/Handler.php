@@ -9,7 +9,6 @@
  */
 namespace Everon\Rest\Resource;
 
-use Everon\DataMapper\CriteriaOLD;
 use Everon\Dependency;
 use Everon\Domain;
 use Everon\Exception as EveronException;
@@ -32,6 +31,7 @@ class Handler implements Interfaces\ResourceHandler
     const VERSIONING_URL = 'url';
     const VERSIONING_HEADER = 'header';
     const ALPHA_ID_SALT = 'aVg656';
+    const DEFAULT_COLLECTION_SIZE = 10;
 
     /**
      * @var array
@@ -278,9 +278,11 @@ class Handler implements Interfaces\ResourceHandler
             $ResourceCollection = $Resource->getRelationCollectionByName($collection_name);
             
             if ($extra_expand !== null && $ResourceCollection instanceof Interfaces\ResourceCollection) {
-                foreach ($ResourceCollection->getItemCollection() as $ResourceItemToExpand) {
+                foreach ($ResourceCollection->getItemCollection() as $ResourceItemToExpand) { //DRY
                     $NavigatorToExpand = clone $Navigator;
-                    $NavigatorToExpand->setLimit(10);
+                    //$NavigatorToExpand->setLimit($Paginator->getLimit());
+                    //$NavigatorToExpand->setOffset($Paginator->getOffset());
+                    $NavigatorToExpand->setLimit(self::DEFAULT_COLLECTION_SIZE);
                     $NavigatorToExpand->setOffset(0);
                     $NavigatorToExpand->setOrderBy([]);
                     $NavigatorToExpand->setExpand([$extra_expand]);
@@ -311,9 +313,11 @@ class Handler implements Interfaces\ResourceHandler
             }
 
             if ($extra_expand !== null) {
-                foreach ($ResourceCollection as $ResourceItemToExpand) {
+                foreach ($ResourceCollection as $ResourceItemToExpand) { //DRY
                     $NavigatorToExpand = clone $Navigator;
-                    $NavigatorToExpand->setLimit(10);
+                    //$NavigatorToExpand->setLimit($Paginator->getLimit());
+                    //$NavigatorToExpand->setOffset($Paginator->getOffset());
+                    $NavigatorToExpand->setLimit(self::DEFAULT_COLLECTION_SIZE);
                     $NavigatorToExpand->setOffset(0);
                     $NavigatorToExpand->setOrderBy([]);
                     $NavigatorToExpand->setExpand([$extra_expand]);
@@ -348,13 +352,15 @@ class Handler implements Interfaces\ResourceHandler
             for ($a=0; $a<count($entity_list); $a++) {
                 $CollectionEntity = $entity_list[$a];
                 $Resource = $this->buildResourceFromEntity($CollectionEntity, $version, $resource_name);
-
+                
                 $NavigatorToExpand = clone $Navigator;
-                $NavigatorToExpand->setLimit(10);
+                //$NavigatorToExpand->setLimit($Paginator->getLimit());
+                //$NavigatorToExpand->setOffset($Paginator->getOffset());
+                $NavigatorToExpand->setLimit(self::DEFAULT_COLLECTION_SIZE);
                 $NavigatorToExpand->setOffset(0);
                 $NavigatorToExpand->setOrderBy([]);
                 
-                $this->expandResource($Resource, clone $NavigatorToExpand);
+                $this->expandResource($Resource, $NavigatorToExpand);
                 $ResourceList->set($a, $Resource);
             }
 
@@ -385,12 +391,14 @@ class Handler implements Interfaces\ResourceHandler
             $Href = $this->getResourceUrl($version, $resource_name, $resource_id, $collection);
             $Href->setItemId($item_id);
             $Resource->setHref($Href);
+            
             $expand = $Navigator->getExpand();
             foreach ($expand as $index => $item_name) {
                 if ($item_name === $collection) {
                     unset($expand[$index]);
                 }
             }
+            
             $Navigator->setExpand($expand);
             $this->expandResource($Resource, $Navigator);
 

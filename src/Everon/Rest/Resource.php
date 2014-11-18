@@ -9,6 +9,7 @@
  */
 namespace Everon\Rest;
 
+use Everon\Dependency;
 use Everon\Helper;
 use Everon\Domain\Interfaces\Entity;
 use Everon\Interfaces\Collection;
@@ -16,6 +17,8 @@ use Everon\Interfaces\Collection;
 
 abstract class Resource extends Resource\Basic implements Interfaces\Resource
 {
+    use Dependency\Injection\Factory;
+    
     use Helper\DateFormatter;
     use Helper\String\LastTokenToName;
     
@@ -88,19 +91,15 @@ abstract class Resource extends Resource\Basic implements Interfaces\Resource
     /**
      * @inheritdoc
      */
-    protected function getToArray()
+    protected function getToArray() //todo: make better interface then toArray() in order to display it as rest data
     {
         $entity_data = $this->DomainEntity->toArray();
        
         //make \DateTime useful, must be in timezone_type 3
         array_walk_recursive($entity_data, function(&$value) {
             if ($value instanceof \DateTime) {
-                $value->setTimezone((new \DateTime(null))->getTimezone()); //convert to server timezone
-                /*
-                $offset = $value->format('P');
-                $value = (array) $value;
-                $value['offset'] = $offset;*/
-                //$value = $this->dateAsPostgreSql($value);
+                //$value->setTimezone((new \DateTime(null))->getTimezone()); //convert to server timezone
+                $value->setTimezone($this->getFactory()->buildDateTime(null)->getTimezone()); //convert to server timezone
                 $value = $value->format(\DateTime::ISO8601);
             }
         });

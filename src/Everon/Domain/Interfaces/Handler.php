@@ -36,11 +36,4 @@ interface Handler extends \Everon\Interfaces\Dependency\Factory, \Everon\DataMap
      * @param $Model
      */
     function setModelByName($name, $Model);
-
-    /**
-     * @param $domain_name
-     * @param array $data
-     * @return Entity
-     */
-    function buildEntityFromArray($domain_name, array $data);
 }

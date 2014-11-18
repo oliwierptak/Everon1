@@ -17,10 +17,13 @@ trait DateFormatter
      * @param \DateTimeZone $TimeZone
      * @return string
      */
-    protected function dateFormat($value=null, $format, \DateTimeZone $TimeZone=null)
+    protected function dateFormat(\DateTime $value=null, $format, \DateTimeZone $TimeZone=null)
     {
-        $value = ($value === null) ? new \DateTime() : $value;
-        return (new \DateTime($value->format(\DateTime::ATOM), $TimeZone ?: (new \DateTimeZone(date_default_timezone_get()))))->format($format);
+        $value = ($value === null) ? $this->getFactory()->buildDateTime() : $value;
+        //return (new \DateTime($value->format(\DateTime::ATOM), $TimeZone ?: (new \DateTimeZone(date_default_timezone_get()))))->format($format);
+        $TimeZone = $TimeZone === null ? ($this->getFactory()->buildDateTimeZone(date_default_timezone_get())) : $TimeZone;
+        $DateTime = $this->getFactory()->buildDateTime($value->format(\DateTime::ATOM), $TimeZone);
+        return $DateTime->format($format);
     }
 
     /**
@@ -28,7 +31,7 @@ trait DateFormatter
      * @param \DateTimeZone $TimeZone
      * @return string
      */
-    protected function dateAsMysql($value=null, \DateTimeZone $TimeZone=null)
+    protected function dateAsMysql(\DateTime $value=null, \DateTimeZone $TimeZone=null)
     {
         return $this->dateFormat($value, 'Y-m-d@H:i:s', $TimeZone);
     }
@@ -38,7 +41,7 @@ trait DateFormatter
      * @param \DateTimeZone $TimeZone
      * @return string
      */
-    protected function dateAsPostgreSql($value=null, \DateTimeZone $TimeZone=null)
+    protected function dateAsPostgreSql(\DateTime $value=null, \DateTimeZone $TimeZone=null)
     {
         return $this->dateFormat($value, 'Y-m-d H:i:s.uP', $TimeZone);
     }
@@ -48,7 +51,7 @@ trait DateFormatter
      * @param \DateTimeZone $TimeZone
      * @return string
      */
-    protected function dateAsTime($value=null, \DateTimeZone $TimeZone=null)
+    protected function dateAsTime(\DateTime $value=null, \DateTimeZone $TimeZone=null)
     {
         return $this->dateFormat($value, 'His', $TimeZone);
     }
@@ -61,11 +64,11 @@ trait DateFormatter
      */
     protected function getDateTime($value=null, $timezone, $timezone_to_convert=null) 
     {
-        $Tz = new \DateTimeZone($timezone);
-        $TzToConvert = ($timezone_to_convert !== null) ? new \DateTimeZone($timezone_to_convert) : null;
-        $Date =  new \DateTime($value, $TzToConvert ?: $Tz);
+        $Tz = $this->getFactory()->buildDateTimeZone($timezone);
+        $TzToConvert = ($timezone_to_convert !== null) ? $this->getFactory()->buildDateTime($timezone_to_convert) : null;
+        $Date =  $this->getFactory()->buildDateTime($value, $TzToConvert ?: $Tz);
         $Date->setTimezone($TzToConvert ?: $Tz); //force datetime_format to 3, you can use getOffset() if you want to get gmt
-          
+  
         return $Date;
     }
 }

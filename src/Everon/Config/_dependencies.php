@@ -15,7 +15,7 @@ namespace Everon;
  */
 
 $Container->propose('Logger', function() use ($Factory) {
-    $Factory->getDependencyContainer()->monitor('Logger', ['Everon\Config\Manager', 'Everon\Environment']);
+    $Factory->getDependencyContainer()->monitor('Logger', ['Everon\Config\Manager', 'Everon\Environment', 'Everon\Factory']);
     $enabled = $Factory->getDependencyContainer()->resolve('ConfigManager')->getConfigValue('application.logger.enabled');
     $log_directory = $Factory->getDependencyContainer()->resolve('Bootstrap')->getEnvironment()->getLog();
     return $Factory->buildLogger($log_directory, $enabled);

@@ -76,7 +76,7 @@ interface Factory
      * @return mixed
      * @throws Exception\Factory
      */
-    function buildRestFilter(Interfaces\Collection $FilterDefinition, $namespace='Everon\Rest');
+    //function buildRestFilter(Interfaces\Collection $FilterDefinition, $namespace='Everon\Rest');
 
     /**
      * @param Rest\Interfaces\ResourceHref $Href
@@ -86,16 +86,11 @@ interface Factory
     function buildRestClient(Rest\Interfaces\ResourceHref $Href, Rest\Interfaces\CurlAdapter $CurlAdapter);
 
     /**
-     * @param $class_name
-     * @param $column
-     * @param $value
-     * @param null $column_glue
-     * @param null $glue
      * @param string $namespace
-     * @return Rest\Interfaces\FilterOperator
+     * @return Rest\Interfaces\Filter
      * @throws Exception\Factory
      */
-    function buildRestFilterOperator($class_name, $column, $value, $column_glue=null, $glue=null, $namespace='Everon\Rest\Filter');
+    function buildRestFilter($namespace='Everon\Rest');
 
     /**
      * @return Interfaces\Core
@@ -267,6 +262,13 @@ interface Factory
 
     /**
      * @param string $namespace
+     * @returns DataMapper\Interfaces\Criteria
+     * @throws Exception\Factory
+     */
+    function buildCriteria($namespace='Everon\DataMapper');
+
+    /**
+     * @param string $namespace
      * @returns DataMapper\Interfaces\Criteria\Builder
      * @throws Exception\Factory
      */
@@ -277,7 +279,6 @@ interface Factory
      * @param $glue
      * @param string $namespace
      * @return DataMapper\Interfaces\Criteria\Container
-     * @throws Exception\Factory
      */
     function buildCriteriaContainer(DataMapper\Interfaces\Criteria $Criteria, $glue, $namespace='Everon\DataMapper\Criteria');
 
@@ -289,21 +290,14 @@ interface Factory
      */
     function buildCriteriaOperator($type, $namespace='Everon\DataMapper\Criteria\Operator');
 
-    /**
-     * @param string $namespace
-     * @return DataMapper\Interfaces\CriteriaOLD
-     * @throws Exception\Factory
-     */
-    function buildDataMapperCriteria($namespace='Everon\DataMapper');
-
-    /**
+   /**
      * @param $column
      * @param $operator
      * @param $value
      * @param string $namespace
      * @return DataMapper\Interfaces\Criteria\Criterium
      */
-    function buildDataMapperCriterium($column, $operator, $value, $namespace = 'Everon\DataMapper\Criteria');
+    function buildCriteriaCriterium($column, $operator, $value, $namespace = 'Everon\DataMapper\Criteria');
 
     /**
      * @param $sql
@@ -420,6 +414,43 @@ interface Factory
     function buildSchemaTableAndDependencies($database_timezone, $name, $schema, $adapter_name, array $columns, array $primary_keys,  array $unique_keys, array $foreign_keys, Domain\Interfaces\Mapper $DomainMapper, $namespace='Everon\DataMapper');
 
     /**
+     * @param $adapter_name
+     * @param $database_timezone
+     * @param array $data
+     * @param array $primary_key_list
+     * @param array $unique_key_list
+     * @param array $foreign_key_list
+     * @param string $namespace
+     * @return DataMapper\Interfaces\Schema\Column
+     * @throws Exception\Factory]
+     */
+    function buildSchemaColumn($adapter_name, $database_timezone, array $data, array $primary_key_list, array $unique_key_list, array $foreign_key_list, $namespace='Everon\DataMapper\Schema');
+
+    /**
+     * @param array $foreign_key_data
+     * @param string $namespace
+     * @return DataMapper\Interfaces\Schema\ForeignKey
+     * @throws Exception\Factory
+     */
+    function buildSchemaForeignKey(array $foreign_key_data, $namespace='Everon\DataMapper\Schema');
+
+    /**
+     * @param array $primary_key_data
+     * @param string $namespace
+     * @return DataMapper\Interfaces\Schema\PrimaryKey
+     * @throws Exception\Factory
+     */
+    function buildSchemaPrimaryKey(array $primary_key_data, $namespace='Everon\DataMapper\Schema');
+
+    /**
+     * @param array $unique_key_data
+     * @param string $namespace
+     * @return DataMapper\Interfaces\Schema\UniqueKey
+     * @throws Exception\Factory
+     */
+    function buildSchemaUniqueKey(array $unique_key_data, $namespace='Everon\DataMapper\Schema');
+
+    /**
      * @param $name
      * @param $schema
      * @param array $column_list
@@ -431,7 +462,7 @@ interface Factory
      * @return DataMapper\Interfaces\Schema\Table
      * @throws Exception\Factory
      */
-    function buildSchemaTable($name, $schema, array $column_list, array $primary_key_list,  array $unique_key_list, array $foreign_key_list, Domain\Interfaces\Mapper $DomainMapper, $namespace='Everon\DataMapper');
+    function buildSchemaTable($name, $schema, array $column_list, array $primary_key_list,  array $unique_key_list, array $foreign_key_list, Domain\Interfaces\Mapper $DomainMapper, $namespace='Everon\DataMapper\Schema');
 
     /**
      * @param $original_name
@@ -822,5 +853,29 @@ interface Factory
      * @return Paginator
      */
     function buildPaginator($total, $offset, $limit, $namespace='Everon\Helper');
+
+    /**
+     * @param string $time
+     * @param \DateTimeZone $timezone
+     * @return \DateTime
+     */
+    function buildDateTime($time='now', \DateTimeZone $timezone=null);
+
+    /**
+     * @param $timezone
+     * @return \DateTimeZone
+     */
+    function buildDateTimeZone($timezone);
+
+    /**
+     * @param $locale
+     * @param $datetype
+     * @param $timetype
+     * @param $timezone
+     * @param $calendar
+     * @param $pattern
+     * @return \IntlDateFormatter
+     */
+    function buildIntlDateFormatter($locale, $datetype, $timetype, $timezone, $calendar, $pattern);
 
 }
