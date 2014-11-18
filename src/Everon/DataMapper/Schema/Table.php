@@ -231,8 +231,6 @@ class Table implements Interfaces\Schema\Table
      */
     public function prepareDataForSql(array $data, $validate_id)
     {
-        die('wtf');
-        
         $entity_data = [];
         /**
          * @var Interfaces\Schema\Column $Column
