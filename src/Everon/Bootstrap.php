@@ -146,10 +146,6 @@ class Bootstrap implements \Everon\Interfaces\Bootstrap
 
     protected function registerClassLoader($prepend_autoloader)
     {
-        if ($this->hasAutoloader('composer')) {
-            require_once($this->Environment->getRoot().'vendor/autoload.php');
-        }
-        
         if ($this->hasAutoloader('everon')) {
             $this->setupClassLoader();
             $this->getClassLoader()->add('Everon', $this->getEnvironment()->getEveronRoot());
@@ -160,6 +156,10 @@ class Bootstrap implements \Everon\Interfaces\Bootstrap
             $this->getClassLoader()->add('Everon\Rest', $this->getEnvironment()->getRest());
             $this->getClassLoader()->add('Everon\View', $this->getEnvironment()->getView());
             $this->getClassLoader()->register($prepend_autoloader);
+        }
+
+        if ($this->hasAutoloader('composer')) {
+            require_once($this->Environment->getRoot().'vendor/autoload.php');
         }
     }
 

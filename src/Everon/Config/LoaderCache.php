@@ -80,7 +80,7 @@ class LoaderCache implements Interfaces\LoaderCache
         try {
             $CacheFile = new \SplFileInfo($this->cache_directory.pathinfo($Config->getName(), PATHINFO_BASENAME).'.ini.php');
             
-            if ($CacheFile->isFile() === false && $CacheFile->isWritable()) {
+            if ($CacheFile->isFile() === false && is_dir($CacheFile->getPath())) {
                 $cache_data = [
                     'default_item' => $Config->getDefaultItem(),
                     'items' => $Config->getItems(),

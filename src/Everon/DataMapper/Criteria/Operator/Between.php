@@ -46,7 +46,8 @@ class Between extends \Everon\DataMapper\Criteria\Operator implements Interfaces
         }
 
         $placeholder_sql = ':'.rtrim(implode(' AND :', array_keys($params)), ',');
-        $sql = sprintf("%s %s", $this->getTypeAsSql(), $placeholder_sql);
+        $sql = sprintf("%s %s %s", $Criterium->getColumn(), $this->getTypeAsSql(), $placeholder_sql);
+        
         return [$sql, $params];
     }
 }
