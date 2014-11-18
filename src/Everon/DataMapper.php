@@ -149,7 +149,7 @@ abstract class DataMapper implements Interfaces\DataMapper
         //$sql = trim($this->getUpdateSql().' '.$SqlPart->getSql());
         $sql = trim($this->getUpdateSql().' WHERE '.$this->getTable()->getPk() .' = :'.$this->getTable()->getPk());
         //$parameters = array_merge($data, $SqlPart->getParameters());
-
+        
         //$parameters[$this->getTable()->getPk()] = null;
         //unset($parameters[$this->getTable()->getPk()]);
         
@@ -166,7 +166,6 @@ abstract class DataMapper implements Interfaces\DataMapper
         $CriteriaBuilder->where($this->getTable()->getPk(), '=', $id);
         
         $SqlPart = $CriteriaBuilder->toSqlPart();
-
         $sql = trim($this->getDeleteSql().' '.$SqlPart->getSql());
         
         return $this->getSchema()->getPdoAdapterByName($this->write_connection_name)->delete($sql, $SqlPart->getParameters());

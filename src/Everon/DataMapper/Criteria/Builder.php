@@ -146,15 +146,13 @@ class Builder implements Interfaces\Criteria\Builder
     public function where($column, $operator, $value)
     {
         $this->current++;
+        $Criterium = $this->getFactory()->buildCriteriaCriterium($column, $operator, $value);
+        $this->getCurrentContainer()->getCriteria()->where($Criterium);
         
         if ($this->current > 0) {
-            $Criterium = $this->getFactory()->buildCriteriaCriterium($column, $operator, $value);
-            $this->getCurrentContainer()->getCriteria()->where($Criterium);
             $this->getCurrentContainer()->setGlue(self::GLUE_AND);
         }
         else {
-            $Criterium = $this->getFactory()->buildCriteriaCriterium($column, $operator, $value);
-            $this->getCurrentContainer()->getCriteria()->where($Criterium);
             $this->getCurrentContainer()->setGlue(null);
         }
         
@@ -191,7 +189,14 @@ class Builder implements Interfaces\Criteria\Builder
         $this->current++;
         $Criterium = $this->getFactory()->buildCriteriaCriterium($sql, 'raw', null);
         $this->getCurrentContainer()->getCriteria()->where($Criterium);
-        $this->getCurrentContainer()->setGlue(null);
+
+        if ($this->current > 0) {
+            $this->getCurrentContainer()->setGlue(self::GLUE_AND);
+        }
+        else {
+            $this->getCurrentContainer()->setGlue(null);
+        }
+        
         return $this;
     }
     
@@ -416,9 +421,9 @@ class Builder implements Interfaces\Criteria\Builder
          * @var Interfaces\Criteria $Container
          */
         foreach ($this->getContainerCollection() as $Container) {
-            $glue = (count($sql) === 0) ? '' : $Container->getGlue(); //reset glue if that's the first iteration
+            $glue = (count($sql) === 0) ? '' : $Container->getGlue().' '; //reset glue if that's the first iteration
             
-            $sql[] = $glue.' '.$this->criteriaToSql($Container);
+            $sql[] = $glue.$this->criteriaToSql($Container);
             $criteria_parameters = $this->criteriaToParameters($Container);
             $tmp = [];
 

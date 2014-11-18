@@ -207,22 +207,36 @@ class Navigator implements Interfaces\ResourceNavigator
     }
 
     /**
+     * @param array $filters
+     */
+    public function setFilters(array $filters)
+    {
+        $this->filters = $filters;
+    }
+
+    /**
+     * @return array
+     */
+    public function getFilters()
+    {
+        $this->init();
+        return $this->filters;
+    }
+
+    /**
      * @inheritdoc
      */
     public function toCriteria()
     {
         $this->init();
 
-        $filters = $this->getRequest()->getGetParameter('filters', '');
-        if ($filters !== '') {
+        if (empty($this->getFilters()) === false) {
             $Filter = $this->getFactory()->buildRestFilter();
-            $CriteriaBuilder = $Filter->toCriteria(json_decode($filters, true));    
+            $CriteriaBuilder = $Filter->toCriteria($this->getFilters());    
         }
         else {
             $CriteriaBuilder = $this->getFactory()->buildCriteriaBuilder();
         }
-
-        //$SqlPart = $CriteriaBuilder->toSqlPart(); sd($SqlPart);
         
         $CriteriaBuilder->setLimit($this->getLimit())
             ->setOffset($this->getOffset())

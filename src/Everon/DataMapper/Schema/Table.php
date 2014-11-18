@@ -231,6 +231,8 @@ class Table implements Interfaces\Schema\Table
      */
     public function prepareDataForSql(array $data, $validate_id)
     {
+        die('wtf');
+        
         $entity_data = [];
         /**
          * @var Interfaces\Schema\Column $Column
@@ -248,7 +250,7 @@ class Table implements Interfaces\Schema\Table
             if (array_key_exists($name, $data) === false) {
                 throw new Exception\Table('Entity property key not set for: "%s@%s"', [$Column->getTable(), $name]);
                 //$this->getLogger()->warning('Entity property not set. Using null for: "%s@%s"', [$Column->getTable(), $name]);
-                $data[$name] = null;
+                //$data[$name] = null;
             }
             
             $value = $Column->getDataForSql($data[$name]);
