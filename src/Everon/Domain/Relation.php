@@ -307,15 +307,13 @@ abstract class Relation implements Interfaces\Relation
         $this->setupRelationParameters();
         
         if ($CriteriaBuilder !== null) {
-            if (empty($CriteriaBuilder->getOrderBy()) === false) {
-                $this->getCriteriaBuilder()->setOrderBy($CriteriaBuilder->getOrderBy());
-            } 
-            if ($CriteriaBuilder->getLimit()) {
-                $this->getCriteriaBuilder()->setLimit($CriteriaBuilder->getLimit());
-            }
-            if ($CriteriaBuilder->getOffset() !== null) {
-                $this->getCriteriaBuilder()->setOffset($CriteriaBuilder->getOffset());
-            }
+            $this->setCriteriaBuilder($CriteriaBuilder);
+        }
+        if ($this->getCriteriaBuilder()->getLimit() === null) {
+            $this->getCriteriaBuilder()->setLimit(10);
+        }
+        if ($this->getCriteriaBuilder()->getOffset() === null) {
+            $this->getCriteriaBuilder()->setOffset(0);
         }
 
         $Loader = function () {
@@ -337,6 +335,7 @@ abstract class Relation implements Interfaces\Relation
                 $entities[] = $this->getRepository()->buildFromArray($item, $this->getEntityRelationCriteria());
             }
 
+            $this->loaded = true;
             return $entities;
         };
 
