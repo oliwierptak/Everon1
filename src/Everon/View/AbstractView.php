@@ -272,6 +272,12 @@ abstract class AbstractView implements Interfaces\View
      */
     public function templetize(array $data)
     {
+        foreach ($data as $key => $value) {
+            if ($this->isIterable($value)) {
+                $data[$key] = $this->templetize($value);
+            }
+        }
+        
         return new Helper\PopoProps($data);
     }
 

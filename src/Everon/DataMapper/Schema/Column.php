@@ -357,6 +357,10 @@ abstract class Column implements Schema\Column
                 return $this->dateAsPostgreSql($value, $this->getFactory()->buildDateTimeZone($this->database_timezone));
                 break;
 
+            case self::TYPE_JSON:
+                return json_encode($value);
+                break;
+
             default:
                 return $value;
                 break;           
@@ -395,6 +399,14 @@ abstract class Column implements Schema\Column
                 }
                 
                 return $this->getDateTime($value, $this->database_timezone);
+                break;
+
+            case self::TYPE_JSON:
+                if (is_array($value)) {
+                    return $value;
+                }
+                
+                return json_decode($value, true);
                 break;
 
             default:
