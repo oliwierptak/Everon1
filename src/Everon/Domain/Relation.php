@@ -311,7 +311,7 @@ abstract class Relation implements Interfaces\Relation
         $this->setupRelationParameters();
         
         if ($this->getCriteriaBuilder()->getLimit() === null) {
-            $this->getCriteriaBuilder()->setLimit(10);
+            $this->getCriteriaBuilder()->setLimit(999);
         }
         if ($this->getCriteriaBuilder()->getOffset() === null) {
             $this->getCriteriaBuilder()->setOffset(0);
