@@ -213,19 +213,7 @@ EOF;
      */
     protected function getAllConfigsDataAndCompiler(array $configs_data)
     {
-        /**
-         * @var Interfaces\LoaderItem $ConfigLoaderItem
-         */
-        $config_items_data = [];
-        foreach ($configs_data as $name => $ConfigLoaderItem) {
-            $config_items_data[$name] = $ConfigLoaderItem->toArray();
-        }
 
-        //compile expressions in one go
-        $Compiler = $this->getExpressionMatcher()->getCompiler($config_items_data, $this->getEnvironmentExpressions());
-        $Compiler($config_items_data);
-
-        return [$Compiler, $config_items_data];
     }
 
     protected function loadAndRegisterAllConfigs()
@@ -233,7 +221,7 @@ EOF;
         /**
          * @var \Everon\Config\Interfaces\LoaderItem $ConfigLoaderItem
          */
-        if ($this->isCachingEnabled()) {
+/*        if ($this->isCachingEnabled()) {
             $configs_data = $this->getConfigCacheLoader()->load();
             foreach ($configs_data as $name => $data) {
                 $ConfigLoaderItem = $this->getFactory()->buildConfigLoaderItem($data['filename'], $data);
@@ -244,29 +232,41 @@ EOF;
                 $this->configs[$Config->getName()] = $Config;
             }
             return;
-        }
+        }*/
 
         $configs_data = $this->getConfigDataFromLoader($this->getConfigLoader());
-        list($Compiler, $config_items_data) = $this->getAllConfigsDataAndCompiler($configs_data);
+        
+        /**
+         * @var Interfaces\LoaderItem $ConfigLoaderItem
+         */
+        $config_items_data = [];
+        foreach ($configs_data as $name => $ConfigLoaderItem) {
+            $config_items_data[$name] = $ConfigLoaderItem->toArray();
+        }
+
+        //compile expressions in one go
+        $environment_expressions = $this->getEnvironmentExpressions();
+        $this->getExpressionMatcher()->compile($config_items_data, $environment_expressions);
         
         /**
          * @var Interfaces\LoaderItem $ConfigLoaderItem
          */
         foreach ($configs_data as $name => $ConfigLoaderItem) {
             $ConfigLoaderItem->setData($config_items_data[$name]);
-            $this->loadAndRegisterOneConfig($name, $ConfigLoaderItem, $Compiler);
+            $this->loadAndRegisterOneConfig($name, $ConfigLoaderItem);
         }
+
+        dd($config_items_data);
     }
 
     /**
      * @param $name
      * @param $ConfigLoaderItem
-     * @param $Compiler
      */
-    protected function loadAndRegisterOneConfig($name, $ConfigLoaderItem, $Compiler)
+    protected function loadAndRegisterOneConfig($name, $ConfigLoaderItem)
     {
         if ($this->isRegistered($name) === false) {
-            $Config = $this->getFactory()->buildConfig($name, $ConfigLoaderItem, $Compiler);
+            $Config = $this->getFactory()->buildConfig($name, $ConfigLoaderItem);
             $this->register($Config);
             $this->getConfigCacheLoader()->saveConfigToCache($Config);
         }

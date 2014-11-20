@@ -60,6 +60,9 @@ class Item implements Interfaces\Item
      */
     public function validateData(array $data)
     {
+        if (@$data[static::PROPERTY_NAME]=== null) {
+            die('fsdfa');
+        }
         $this->assertIsStringAndNonEmpty((string) @$data[static::PROPERTY_NAME], 'Invalid item name: "%s"', 'ConfigItem');
     }
 
@@ -106,16 +109,16 @@ class Item implements Interfaces\Item
         
         return $this->data[$name];
     }
-    
-    
 
     public static function __set_state(array $parameters)
     {
-        $Item = new static($parameters['data'], []);
+        /**
+         * @var Interfaces\Item $Item
+         */
+        $defaults[self::PROPERTY_NAME] = $parameters['name'];
+        $defaults[self::PROPERTY_DEFAULT] = $parameters['is_default'];
         
-        foreach ($parameters as $property => $value) {
-            $Item->$property = $value;
-        }
+        $Item = new static($parameters['data'], $defaults);
         
         return $Item;
     }

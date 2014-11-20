@@ -173,12 +173,10 @@ interface Factory
      * will become Everon\Config\Router
      *
      * @param $name
-     * @param Config\Interfaces\LoaderItem $ConfigLoaderItem
-     * @param callable $Compiler
+     * @param \Everon\Config\Interfaces\LoaderItem $ConfigLoaderItem
      * @return Interfaces\Config
-     * @throws Exception\Factory
      */
-    function buildConfig($name, Config\Interfaces\LoaderItem $ConfigLoaderItem, \Closure $Compiler);
+    function buildConfig($name, Config\Interfaces\LoaderItem $ConfigLoaderItem);
 
     /**
      * @param Config\Interfaces\Loader $Loader

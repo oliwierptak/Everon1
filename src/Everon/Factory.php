@@ -314,7 +314,7 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildConfig($name, Config\Interfaces\LoaderItem $ConfigLoaderItem, \Closure $Compiler)
+    public function buildConfig($name, Config\Interfaces\LoaderItem $ConfigLoaderItem)
     {
         try {
             $ConfigFile = new \SplFileInfo($ConfigLoaderItem->getFilename());
@@ -331,7 +331,7 @@ abstract class Factory implements Interfaces\Factory
                 $class_name = 'Everon\Config';
             }
 
-            $Config = new $class_name($name, $ConfigLoaderItem, $Compiler);
+            $Config = new $class_name($name, $ConfigLoaderItem);
             $this->injectDependencies($class_name, $Config);
             return $Config;
         }

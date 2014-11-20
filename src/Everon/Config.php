@@ -40,11 +40,6 @@ class Config implements \Everon\Interfaces\Config
     protected $DefaultItem = null;
 
     /**
-     * @var \Closure
-     */ 
-    protected $Compiler = null;
-
-    /**
      * @var array
      */
     protected $items = null;
@@ -55,14 +50,12 @@ class Config implements \Everon\Interfaces\Config
     /**
      * @param $name
      * @param Config\Interfaces\LoaderItem $ConfigLoaderItem
-     * @param callable $Compiler
      */
-    public function __construct($name, Config\Interfaces\LoaderItem $ConfigLoaderItem, \Closure $Compiler)
+    public function __construct($name, Config\Interfaces\LoaderItem $ConfigLoaderItem)
     {
         $this->name = $name;
         $this->filename = $ConfigLoaderItem->getFilename();
         $this->data = $ConfigLoaderItem->getData();
-        $this->Compiler = $Compiler;
     }
 
     protected function processData()
@@ -123,6 +116,7 @@ class Config implements \Everon\Interfaces\Config
         $this->processData();
         
         $DefaultOrFirstItem = null;
+        
         foreach ($this->data as $item_name => $config_data) {
             $Item = $this->buildItem($item_name, $config_data); 
             $this->items[$item_name] = $Item;
@@ -137,6 +131,7 @@ class Config implements \Everon\Interfaces\Config
             $DefaultOrFirstItem->setIsDefault(true);
             $this->setDefaultItem($DefaultOrFirstItem);
         }
+
         
         $this->data = null; //only getItems() from now on
     }
@@ -307,24 +302,6 @@ class Config implements \Everon\Interfaces\Config
      */
     public function recompile($data)
     {
-        $this->Compiler->__invoke($data);
         return $data;
     }
-
-    /**
-     * @inheritdoc
-     */
-    public function getCompiler()
-    {
-        return $this->Compiler;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function setCompiler(\Closure $Compiler)
-    {
-        $this->Compiler = $Compiler;
-    }
-
 }

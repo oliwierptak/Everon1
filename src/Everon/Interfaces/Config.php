@@ -90,14 +90,4 @@ interface Config extends Arrayable, Dependency\Factory
      * @return mixed
      */
     function recompile($data);
-
-    /**
-     * @return callable|null  Wrapped Config\Interfaces\ExpressionMatcher
-     */
-    function getCompiler();
-
-    /**
-     * @param \Closure $Compiler Wrapped Config\Interfaces\ExpressionMatcher
-     */
-    function setCompiler(\Closure $Compiler);
 }

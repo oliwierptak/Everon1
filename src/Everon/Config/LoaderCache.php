@@ -82,7 +82,7 @@ class LoaderCache implements Interfaces\LoaderCache
             
             if ($CacheFile->isFile() === false && is_dir($CacheFile->getPath())) {
                 $cache_data = [
-                    'default_item' => $Config->getDefaultItem(),
+                    'default_item' => $Config->getDefaultItem()->getName(),
                     'items' => $Config->getItems(),
                     'filename' => $Config->getFilename(),
                     'name' => $Config->getName()

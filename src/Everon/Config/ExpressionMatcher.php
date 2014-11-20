@@ -15,12 +15,21 @@ use Everon\Helper;
 
 class ExpressionMatcher implements Interfaces\ExpressionMatcher
 {
+    use Dependency\Injection\Factory;
+    
     use Helper\Arrays;
     use Helper\IsIterable;
-    
+
+    /**
+     * @var array
+     */
     protected $expressions = [];
+
+    /**
+     * @var array
+     */
     protected $values = [];
-    
+
 
     /**
      * @return \Closure
@@ -37,13 +46,14 @@ class ExpressionMatcher implements Interfaces\ExpressionMatcher
 
         return $Compiler;
     }
+    
 
     /**
      * @param array $configs_data
      * @param array $custom_expressions
      * @return callable
      */
-    public function getCompiler(array $configs_data, array $custom_expressions=[])
+    public function compile(array &$configs_data, array &$custom_expressions=[])
     {
         $this->expressions = [];
         $this->values = [];
@@ -82,19 +92,26 @@ class ExpressionMatcher implements Interfaces\ExpressionMatcher
         }
 
         $this->values = $this->arrayDotKeysFlattern($configs_data);
-        $this->values = $this->arrayDotKeysFlattern($this->values);
-        $this->values = $this->arrayDotKeysFlattern($this->values);
+
+        for ($depth=0; $depth<3; $depth++) {
+            $this->values = $this->arrayDotKeysFlattern($this->values);
+        }
+        
         $this->values = $this->arrayPrefixKey('%', $this->values, '%');
+
+        $Compiler = $this->buildCompiler();
         
         //compile to update self references, eg.
         //'%application.assets.themes%' => string (34) "%application.env.url_statc%themes/"
-        $Compiler = $this->buildCompiler();
-        $Compiler($this->values); 
+        $Compiler($this->values);
         
-        return $Compiler;
+        $Compiler($configs_data);
+        
+        unset($this->values);
+        unset($this->expressions);
     }
     
-    public function tokenizeExpressions(array $data, array $custom_expressions)
+    protected function tokenizeExpressions(array &$data, array &$custom_expressions)
     {
         $SetExpressions = function($item) {
             preg_match('(%([^\%]*)\.([^\%]*)\.([^\%]*)%)', $item, $matches); //%application.assets.themes%
@@ -112,4 +129,5 @@ class ExpressionMatcher implements Interfaces\ExpressionMatcher
 
         $this->expressions = array_merge($this->expressions, $custom_expressions);
     }
+
 }

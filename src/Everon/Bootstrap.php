@@ -206,11 +206,12 @@ class Bootstrap implements \Everon\Interfaces\Bootstrap
         $log_filename = $log_directory.DIRECTORY_SEPARATOR.$log_filename;
 
         set_exception_handler(function ($Exception) use ($guid_value, $log_filename) {
+            echo $Exception;
             Bootstrap::logException($Exception, $guid_value, $log_filename);
             
             if (php_sapi_name() !== 'cli' || headers_sent() === false) {
                 http_response_code(500);
-                header("EVRID: $guid_value");
+                header("EVERON_ID: $guid_value");
             }
         });
     }

@@ -21,7 +21,7 @@ trait GetUrl
     {
         $Item = $this->getConfigManager()->getConfigByName('router')->getItemByName($name);
         if ($Item === null) {
-            throw new \Everon\Exception\Application('Invalid router config name for url: "%s"', (string) $name);
+            throw new \Everon\Exception\Application('Invalid router config item name for url: "%s"', (string) $name);
         }
         
         $Item->compileUrl($query);
