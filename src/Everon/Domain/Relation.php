@@ -153,6 +153,7 @@ abstract class Relation implements Interfaces\Relation
     }
 
     /**
+     * @param bool $deep
      * @return array
      */
     protected function getToArray($deep=false)
@@ -304,15 +305,20 @@ abstract class Relation implements Interfaces\Relation
             return $this->Data;
         }
 
-        if ($CriteriaBuilder !== null) {
-            $this->setCriteriaBuilder($CriteriaBuilder);
-        }
-
         $this->setupRelationParameters();
+
+        if ($CriteriaBuilder !== null) {
+            $this->getCriteriaBuilder()->appendContainerCollection($CriteriaBuilder->getContainerCollection());
+            //todo these are resetted in Resource Handler, refactor later 
+            $this->getCriteriaBuilder()->setLimit($CriteriaBuilder->getLimit());
+            $this->getCriteriaBuilder()->setOffset($CriteriaBuilder->getOffset());
+            $this->getCriteriaBuilder()->setOrderBy($CriteriaBuilder->getOrderBy());
+        }
         
         if ($this->getCriteriaBuilder()->getLimit() === null) {
             $this->getCriteriaBuilder()->setLimit(999);
         }
+        
         if ($this->getCriteriaBuilder()->getOffset() === null) {
             $this->getCriteriaBuilder()->setOffset(0);
         }

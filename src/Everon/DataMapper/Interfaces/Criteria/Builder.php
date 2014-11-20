@@ -142,6 +142,11 @@ interface Builder extends \Everon\Interfaces\Arrayable, \Everon\Interfaces\Strin
     function toSqlPart();
 
     /**
+     * @param \Everon\Interfaces\Collection $ContainerCollectionToMerge
+     */
+    function appendContainerCollection(\Everon\Interfaces\Collection $ContainerCollectionToMerge);
+
+    /**
      * @param $operator
      * @return string
      * @throws \Everon\DataMapper\Exception\CriteriaBuilder

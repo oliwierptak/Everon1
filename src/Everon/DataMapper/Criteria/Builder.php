@@ -447,6 +447,16 @@ class Builder implements Interfaces\Criteria\Builder
     }
 
     /**
+     * @param \Everon\Interfaces\Collection $ContainerCollectionToMerge
+     */
+    public function appendContainerCollection(\Everon\Interfaces\Collection $ContainerCollectionToMerge)
+    {
+        foreach ($ContainerCollectionToMerge as $ContainerToMerge) {
+            $this->getContainerCollection()->append($ContainerToMerge);
+        }
+    }
+
+    /**
      * @inheritdoc
      */
     public static function getOperatorClassNameBySqlOperator($operator)
