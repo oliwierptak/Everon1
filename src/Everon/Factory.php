@@ -138,7 +138,7 @@ abstract class Factory implements Interfaces\Factory
             throw new Exception\Factory('RestClient initialization error', null, $e);
         }
     }
-    
+
     /**
      * @inheritdoc
      */
@@ -261,7 +261,7 @@ abstract class Factory implements Interfaces\Factory
             throw new Exception\Factory('RestResourceHref initialization error for: "%s"', $url, $e);
         }
     }
-    
+
     /**
      * @inheritdoc
      */
@@ -295,7 +295,7 @@ abstract class Factory implements Interfaces\Factory
             throw new Exception\Factory('RestResourceNavigator initialization error', null, $e);
         }
     }
-    
+
     /**
      * @inheritdoc
      */
@@ -314,14 +314,14 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildConfig($name, Config\Interfaces\LoaderItem $ConfigLoaderItem)
+    public function buildConfig($name, Config\Interfaces\LoaderItem $ConfigLoaderItem, \Closure $Compiler)
     {
         try {
             $ConfigFile = new \SplFileInfo($ConfigLoaderItem->getFilename());
             $class_name = $ConfigFile->getBasename('.ini');
             $class_name = ucfirst($this->stringUnderscoreToCamel($class_name));
             $class_name = $this->getFullClassName('Everon\Config', $class_name);
-            
+
             try {
                 if (class_exists($class_name, true) == false) {
                     $class_name = 'Everon\Config';
@@ -331,7 +331,7 @@ abstract class Factory implements Interfaces\Factory
                 $class_name = 'Everon\Config';
             }
 
-            $Config = new $class_name($name, $ConfigLoaderItem);
+            $Config = new $class_name($name, $ConfigLoaderItem, $Compiler);
             $this->injectDependencies($class_name, $Config);
             return $Config;
         }
@@ -601,7 +601,7 @@ abstract class Factory implements Interfaces\Factory
             $options = $this->arrayMergeDefault([
                 \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
                 \PDO::ATTR_PERSISTENT => false,
-                \PDO::ATTR_EMULATE_PREPARES => false   
+                \PDO::ATTR_EMULATE_PREPARES => false
             ], $options);
             return new \PDO($dsn, $username, $password, $options);
         }
@@ -609,7 +609,7 @@ abstract class Factory implements Interfaces\Factory
             throw new Exception\Factory('PDO initialization error', null, $e);
         }
     }
-    
+
     /**
      * @inheritdoc
      */
@@ -641,7 +641,7 @@ abstract class Factory implements Interfaces\Factory
             throw new Exception\Factory('ConnectionItem initialization error', null, $e);
         }
     }
-    
+
     /**
      * @inheritdoc
      */
@@ -885,7 +885,7 @@ abstract class Factory implements Interfaces\Factory
     {
         try {
             $class_name = $this->getFullClassName($namespace.'\\'.$Entity->getDomainName(), 'Relation\\'.$name);
-            
+
             try {
                 $this->classExists($class_name);
                 $class_exists = true;
@@ -899,7 +899,7 @@ abstract class Factory implements Interfaces\Factory
              * @var Domain\Interfaces\Relation $Relation
              */
             $Relation = new $class_name($Entity, $RelationMapper);
-            
+
             if ($class_exists === false) {
                 $Relation->setName($name);
             }
@@ -1006,7 +1006,7 @@ abstract class Factory implements Interfaces\Factory
                 $UniqueKey = $this->buildSchemaUniqueKey($unique_key_data);
                 $unique_key_list[$UniqueKey->getName()] = $UniqueKey;
             }
-            
+
             $foreign_key_list = [];
             foreach ($foreign_keys as $column_name => $foreign_key_data) {
                 $ForeignKey = $this->buildSchemaForeignKey($foreign_key_data);
@@ -1018,7 +1018,7 @@ abstract class Factory implements Interfaces\Factory
                 $Column = $this->buildSchemaColumn($adapter_name, $database_timezone, $column_data, $primary_key_list, $unique_key_list, $foreign_key_list);
                 $column_list[$Column->getName()] = $Column;
             }
-            
+
             return $this->buildSchemaTable($name, $schema, $column_list, $primary_key_list, $unique_key_list, $foreign_key_list, $DomainMapper);
         }
         catch (\Exception $e) {
@@ -1188,13 +1188,13 @@ abstract class Factory implements Interfaces\Factory
         try {
             $class_name = $this->getFullClassName($namespace, 'CookieCollection');
             $this->classExists($class_name);
-            
+
             $cookies = [];
             foreach ($data as $cookie_name => $cookie_value) {
                 $Cookie = $this->buildHttpCookie($cookie_name, $cookie_value, 0);
                 $cookies[$cookie_name] = $Cookie;
             }
-            
+
             $CookieCollection = new $class_name($cookies);
             $this->injectDependencies($class_name, $CookieCollection);
             return $CookieCollection;
@@ -1203,7 +1203,7 @@ abstract class Factory implements Interfaces\Factory
             throw new Exception\Factory('HttpCookieCollection initialization error', null, $e);
         }
     }
-    
+
     /**
      * @inheritdoc
      */
@@ -1220,7 +1220,7 @@ abstract class Factory implements Interfaces\Factory
             throw new Exception\Factory('HttpResponse initialization error', null, $e);
         }
     }
-    
+
     /**
      * @inheritdoc
      */
@@ -1462,7 +1462,7 @@ abstract class Factory implements Interfaces\Factory
             $this->classExists($class_name);
             $Environment = new $class_name($app_root, $source_root);
             $this->injectDependencies($class_name, $Environment);
-            return $Environment;            
+            return $Environment;
         }
         catch (\Exception $e) {
             throw new Exception\Factory('Environment initialization error', null, $e);
@@ -1501,8 +1501,8 @@ abstract class Factory implements Interfaces\Factory
         catch (\Exception $e) {
             throw new Exception\Factory('EventContext initialization error', null, $e);
         }
-    }    
-    
+    }
+
     /**
      * @inheritdoc
      */

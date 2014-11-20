@@ -15,19 +15,10 @@ use Everon\Helper;
 
 class ExpressionMatcher implements Interfaces\ExpressionMatcher
 {
-    use Dependency\Injection\Factory;
-    
     use Helper\Arrays;
     use Helper\IsIterable;
 
-    /**
-     * @var array
-     */
     protected $expressions = [];
-
-    /**
-     * @var array
-     */
     protected $values = [];
 
 
@@ -46,18 +37,17 @@ class ExpressionMatcher implements Interfaces\ExpressionMatcher
 
         return $Compiler;
     }
-    
 
     /**
      * @param array $configs_data
      * @param array $custom_expressions
      * @return callable
      */
-    public function compile(array &$configs_data, array &$custom_expressions=[])
+    public function getCompiler(array $configs_data, array $custom_expressions=[])
     {
         $this->expressions = [];
         $this->values = [];
-        
+
         $this->tokenizeExpressions($configs_data, $custom_expressions);
         foreach ($this->expressions as $item) {
             $tokens = explode('.', trim($item, '%'));   //eg. %application.env.url%
@@ -69,15 +59,15 @@ class ExpressionMatcher implements Interfaces\ExpressionMatcher
             if (isset($configs_data[$config_name]) === false) {
                 continue;
             }
-            
+
             $data = $configs_data[$config_name];
             if (isset($data[$config_section][$config_section_variable]) === false) {
                 continue;
             }
-            
+
             $this->values[$item] = $data[$config_section][$config_section_variable];
         }
-        
+
         foreach ($configs_data as $name => $items) { //remove inheritance info from section names in order to prepare values, eg. 'myitem < default'
             foreach ($items as $section_name => $section_items) {
                 if (strpos($section_name, '<') !== false) {
@@ -92,26 +82,19 @@ class ExpressionMatcher implements Interfaces\ExpressionMatcher
         }
 
         $this->values = $this->arrayDotKeysFlattern($configs_data);
-
-        for ($depth=0; $depth<3; $depth++) {
-            $this->values = $this->arrayDotKeysFlattern($this->values);
-        }
-        
+        $this->values = $this->arrayDotKeysFlattern($this->values);
+        $this->values = $this->arrayDotKeysFlattern($this->values);
         $this->values = $this->arrayPrefixKey('%', $this->values, '%');
 
-        $Compiler = $this->buildCompiler();
-        
         //compile to update self references, eg.
         //'%application.assets.themes%' => string (34) "%application.env.url_statc%themes/"
+        $Compiler = $this->buildCompiler();
         $Compiler($this->values);
-        
-        $Compiler($configs_data);
-        
-        unset($this->values);
-        unset($this->expressions);
+
+        return $Compiler;
     }
-    
-    protected function tokenizeExpressions(array &$data, array &$custom_expressions)
+
+    public function tokenizeExpressions(array $data, array $custom_expressions)
     {
         $SetExpressions = function($item) {
             preg_match('(%([^\%]*)\.([^\%]*)\.([^\%]*)%)', $item, $matches); //%application.assets.themes%
@@ -119,7 +102,7 @@ class ExpressionMatcher implements Interfaces\ExpressionMatcher
                 $this->expressions[$matches[0]] = $matches[0];
             }
         };
-        
+
         /**
          * @var  Loader\Item $config_data
          */
@@ -129,5 +112,4 @@ class ExpressionMatcher implements Interfaces\ExpressionMatcher
 
         $this->expressions = array_merge($this->expressions, $custom_expressions);
     }
-
 }

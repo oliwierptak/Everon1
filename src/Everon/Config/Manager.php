@@ -18,7 +18,7 @@ class Manager implements \Everon\Config\Interfaces\Manager
     use Dependency\Injection\Bootstrap;
     use Dependency\Injection\Factory;
     use Dependency\Injection\FileSystem;
-    
+
     use Dependency\ConfigLoader;
     use Dependency\ConfigCacheLoader;
     use Dependency\Logger;
@@ -35,16 +35,16 @@ class Manager implements \Everon\Config\Interfaces\Manager
     protected $configs = null;
 
     protected $default_config_filename = 'application.ini';
-    
+
     protected $default_config_name = 'application';
-    
-    protected $ExpressionMatcher = null; 
+
+    protected $ExpressionMatcher = null;
 
     /**
      * @var array
      */
     protected $default_config_data = null;
-    
+
     protected $is_caching_enabled = null;
 
 
@@ -162,7 +162,7 @@ EOF;
         $data['domain'] = $this->getConfigLoader()->loadFromFile(
             new \SplFileInfo($this->getBootstrap()->getEnvironment()->getDomainConfig().'domain.ini')
         );
-        
+
         //load module.ini data from all modules
         $module_list = $this->getPathsOfActiveModules();
         /**
@@ -176,7 +176,7 @@ EOF;
             $Filename = new \SplFileInfo($this->getFileSystem()->getRealPath('//Module/'.$module_name.'/Config/module.ini'));
             $data[$module_name.'@module'] = $this->getConfigLoader()->loadFromFile($Filename);
         }
-        
+
         return $data;
     }
 
@@ -213,7 +213,19 @@ EOF;
      */
     protected function getAllConfigsDataAndCompiler(array $configs_data)
     {
+        /**
+         * @var Interfaces\LoaderItem $ConfigLoaderItem
+         */
+        $config_items_data = [];
+        foreach ($configs_data as $name => $ConfigLoaderItem) {
+            $config_items_data[$name] = $ConfigLoaderItem->toArray();
+        }
 
+        //compile expressions in one go
+        $Compiler = $this->getExpressionMatcher()->getCompiler($config_items_data, $this->getEnvironmentExpressions());
+        $Compiler($config_items_data);
+
+        return [$Compiler, $config_items_data];
     }
 
     protected function loadAndRegisterAllConfigs()
@@ -221,7 +233,7 @@ EOF;
         /**
          * @var \Everon\Config\Interfaces\LoaderItem $ConfigLoaderItem
          */
-/*        if ($this->isCachingEnabled()) {
+        if ($this->isCachingEnabled()) {
             $configs_data = $this->getConfigCacheLoader()->load();
             foreach ($configs_data as $name => $data) {
                 $ConfigLoaderItem = $this->getFactory()->buildConfigLoaderItem($data['filename'], $data);
@@ -232,41 +244,29 @@ EOF;
                 $this->configs[$Config->getName()] = $Config;
             }
             return;
-        }*/
-
-        $configs_data = $this->getConfigDataFromLoader($this->getConfigLoader());
-        
-        /**
-         * @var Interfaces\LoaderItem $ConfigLoaderItem
-         */
-        $config_items_data = [];
-        foreach ($configs_data as $name => $ConfigLoaderItem) {
-            $config_items_data[$name] = $ConfigLoaderItem->toArray();
         }
 
-        //compile expressions in one go
-        $environment_expressions = $this->getEnvironmentExpressions();
-        $this->getExpressionMatcher()->compile($config_items_data, $environment_expressions);
-        
+        $configs_data = $this->getConfigDataFromLoader($this->getConfigLoader());
+        list($Compiler, $config_items_data) = $this->getAllConfigsDataAndCompiler($configs_data);
+
         /**
          * @var Interfaces\LoaderItem $ConfigLoaderItem
          */
         foreach ($configs_data as $name => $ConfigLoaderItem) {
             $ConfigLoaderItem->setData($config_items_data[$name]);
-            $this->loadAndRegisterOneConfig($name, $ConfigLoaderItem);
+            $this->loadAndRegisterOneConfig($name, $ConfigLoaderItem, $Compiler);
         }
-
-        dd($config_items_data);
     }
 
     /**
      * @param $name
      * @param $ConfigLoaderItem
+     * @param $Compiler
      */
-    protected function loadAndRegisterOneConfig($name, $ConfigLoaderItem)
+    protected function loadAndRegisterOneConfig($name, $ConfigLoaderItem, $Compiler)
     {
         if ($this->isRegistered($name) === false) {
-            $Config = $this->getFactory()->buildConfig($name, $ConfigLoaderItem);
+            $Config = $this->getFactory()->buildConfig($name, $ConfigLoaderItem, $Compiler);
             $this->register($Config);
             $this->getConfigCacheLoader()->saveConfigToCache($Config);
         }
@@ -275,24 +275,24 @@ EOF;
     /**
      * @inheritdoc
      */
-/*    public function registerByFilename($config_name, $filename)
-    {
-        $default_data = [];
-        $config_data = $this->getConfigs();
-        / **
-         * @var Interfaces\Config $Config
-         * /
-        foreach ($config_data as $name => $Config) {
-            $default_data[$name] = $Config->toArray();
-        }
-
-        $Loader = $this->getConfigLoader()->loadFromFile(new \SplFileInfo($filename));
-        $default_data[$config_name] = $Loader->getData();
-        $Compiler = $this->getExpressionMatcher()->getCompiler($default_data, $this->getEnvironmentExpressions());
-        $Compiler($default_data);
-        
-        $this->loadAndRegisterOneConfig($config_name, $Loader, $Compiler);
-    }*/
+    /*    public function registerByFilename($config_name, $filename)
+        {
+            $default_data = [];
+            $config_data = $this->getConfigs();
+            / **
+             * @var Interfaces\Config $Config
+             * /
+            foreach ($config_data as $name => $Config) {
+                $default_data[$name] = $Config->toArray();
+            }
+    
+            $Loader = $this->getConfigLoader()->loadFromFile(new \SplFileInfo($filename));
+            $default_data[$config_name] = $Loader->getData();
+            $Compiler = $this->getExpressionMatcher()->getCompiler($default_data, $this->getEnvironmentExpressions());
+            $Compiler($default_data);
+            
+            $this->loadAndRegisterOneConfig($config_name, $Loader, $Compiler);
+        }*/
 
     /**
      * @inheritdoc
@@ -316,10 +316,10 @@ EOF;
         if ($this->ExpressionMatcher === null) {
             $this->ExpressionMatcher = $this->getFactory()->buildConfigExpressionMatcher();
         }
-        
+
         return $this->ExpressionMatcher;
     }
-   
+
     /**
      * @inheritdoc
      */
@@ -374,7 +374,7 @@ EOF;
      * @param $name
      * @return bool
      */
-    public function hasConfig($name) 
+    public function hasConfig($name)
     {
         return isset($this->configs[$name]);
     }
@@ -408,7 +408,7 @@ EOF;
             return $default;
         }
     }
-    
+
     /**
      * @inheritdoc
      */
@@ -417,7 +417,7 @@ EOF;
         if (is_null($this->configs)) {
             $this->loadAndRegisterAllConfigs();
         }
-        
+
         return $this->configs;
     }
 

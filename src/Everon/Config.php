@@ -22,7 +22,7 @@ class Config implements \Everon\Interfaces\Config
     use Helper\Exceptions;
     use Helper\Asserts\IsArrayKey;
     use Helper\ToArray;
-    
+
     protected $name = null;
 
     protected $filename = '';
@@ -40,6 +40,11 @@ class Config implements \Everon\Interfaces\Config
     protected $DefaultItem = null;
 
     /**
+     * @var \Closure
+     */
+    protected $Compiler = null;
+
+    /**
      * @var array
      */
     protected $items = null;
@@ -50,12 +55,14 @@ class Config implements \Everon\Interfaces\Config
     /**
      * @param $name
      * @param Config\Interfaces\LoaderItem $ConfigLoaderItem
+     * @param callable $Compiler
      */
-    public function __construct($name, Config\Interfaces\LoaderItem $ConfigLoaderItem)
+    public function __construct($name, Config\Interfaces\LoaderItem $ConfigLoaderItem, \Closure $Compiler)
     {
         $this->name = $name;
         $this->filename = $ConfigLoaderItem->getFilename();
         $this->data = $ConfigLoaderItem->getData();
+        $this->Compiler = $Compiler;
     }
 
     protected function processData()
@@ -76,7 +83,7 @@ class Config implements \Everon\Interfaces\Config
                 break;
             }
         }
-        
+
         if ($use_inheritance === false) {
             return;
         }
@@ -112,13 +119,12 @@ class Config implements \Everon\Interfaces\Config
         if ($this->isEmpty()) {
             return;
         }
-        
+
         $this->processData();
-        
+
         $DefaultOrFirstItem = null;
-        
         foreach ($this->data as $item_name => $config_data) {
-            $Item = $this->buildItem($item_name, $config_data); 
+            $Item = $this->buildItem($item_name, $config_data);
             $this->items[$item_name] = $Item;
 
             $DefaultOrFirstItem = ($DefaultOrFirstItem === null) ? $Item : $DefaultOrFirstItem;
@@ -126,13 +132,12 @@ class Config implements \Everon\Interfaces\Config
                 $this->setDefaultItem($Item);
             }
         }
-        
+
         if (is_null($this->DefaultItem)) {
             $DefaultOrFirstItem->setIsDefault(true);
             $this->setDefaultItem($DefaultOrFirstItem);
         }
 
-        
         $this->data = null; //only getItems() from now on
     }
 
@@ -192,7 +197,7 @@ class Config implements \Everon\Interfaces\Config
         if ($this->DefaultItem === null && $this->isEmpty() === false) {
             throw new Exception\Config('Default config item not defined for config: "%s"', $this->getName());
         }
-        
+
         return $this->DefaultItem;
     }
 
@@ -234,11 +239,11 @@ class Config implements \Everon\Interfaces\Config
         if (is_null($this->items)) {
             $this->initItems();
         }
-        
+
         if (isset($this->items[$name]) === false) {
             return null;
         }
-        
+
         return $this->items[$name];
     }
 
@@ -250,7 +255,7 @@ class Config implements \Everon\Interfaces\Config
         if (is_null($this->items)) {
             $this->initItems();
         }
-        
+
         return isset($this->items[$name]);
     }
 
@@ -268,7 +273,7 @@ class Config implements \Everon\Interfaces\Config
     public function get($name, $default=null)
     {
         $section = array_shift($this->go_path);
-        
+
         if ($section === null) {
             $Item = $this->getItemByName($name);
             if ($Item === null) {
@@ -276,15 +281,15 @@ class Config implements \Everon\Interfaces\Config
             }
             return $Item->toArray();
         }
-        
+
         $Item = $this->getItemByName($section);
         if ($Item === null) {
             return $default;
         }
-        
+
         $data = $Item->toArray();
         $this->go_path = [];
-        
+
         return isset($data[$name]) ? $data[$name] : $default;
     }
 
@@ -293,7 +298,7 @@ class Config implements \Everon\Interfaces\Config
      */
     public function go($where)
     {
-        $this->go_path[] = $where; 
+        $this->go_path[] = $where;
         return $this;
     }
 
@@ -302,6 +307,24 @@ class Config implements \Everon\Interfaces\Config
      */
     public function recompile($data)
     {
+        $this->Compiler->__invoke($data);
         return $data;
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function getCompiler()
+    {
+        return $this->Compiler;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setCompiler(\Closure $Compiler)
+    {
+        $this->Compiler = $Compiler;
+    }
+
 }

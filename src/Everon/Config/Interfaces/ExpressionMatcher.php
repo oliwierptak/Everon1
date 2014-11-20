@@ -17,5 +17,5 @@ interface ExpressionMatcher
      * @param array $custom_expressions
      * @return callable
      */
-    function compile(array &$configs_data, array &$custom_expressions=[]);
+    function getCompiler(array $configs_data, array $custom_expressions=[]);
 }

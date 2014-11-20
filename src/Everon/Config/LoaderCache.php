@@ -78,6 +78,7 @@ class LoaderCache implements Interfaces\LoaderCache
     public function saveConfigToCache(\Everon\Interfaces\Config $Config)
     {
         try {
+            return;
             $CacheFile = new \SplFileInfo($this->cache_directory.pathinfo($Config->getName(), PATHINFO_BASENAME).'.ini.php');
             
             if ($CacheFile->isFile() === false && is_dir($CacheFile->getPath())) {

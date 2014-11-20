@@ -173,10 +173,12 @@ interface Factory
      * will become Everon\Config\Router
      *
      * @param $name
-     * @param \Everon\Config\Interfaces\LoaderItem $ConfigLoaderItem
+     * @param Config\Interfaces\LoaderItem $ConfigLoaderItem
+     * @param callable $Compiler
      * @return Interfaces\Config
+     * @throws Exception\Factory
      */
-    function buildConfig($name, Config\Interfaces\LoaderItem $ConfigLoaderItem);
+    function buildConfig($name, Config\Interfaces\LoaderItem $ConfigLoaderItem, \Closure $Compiler);
 
     /**
      * @param Config\Interfaces\Loader $Loader
@@ -288,7 +290,7 @@ interface Factory
      */
     function buildCriteriaOperator($type, $namespace='Everon\DataMapper\Criteria\Operator');
 
-   /**
+    /**
      * @param $column
      * @param $operator
      * @param $value
