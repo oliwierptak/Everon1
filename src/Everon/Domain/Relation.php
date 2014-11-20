@@ -304,11 +304,12 @@ abstract class Relation implements Interfaces\Relation
             return $this->Data;
         }
 
-        $this->setupRelationParameters();
-        
         if ($CriteriaBuilder !== null) {
             $this->setCriteriaBuilder($CriteriaBuilder);
         }
+
+        $this->setupRelationParameters();
+        
         if ($this->getCriteriaBuilder()->getLimit() === null) {
             $this->getCriteriaBuilder()->setLimit(10);
         }
