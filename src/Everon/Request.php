@@ -10,7 +10,7 @@
 namespace Everon;
 
 
-abstract class Request implements Interfaces\Request 
+abstract class Request implements Interfaces\Request
 {
     use Helper\ToArray;
 
@@ -22,7 +22,7 @@ abstract class Request implements Interfaces\Request
     const METHOD_OPTIONS = 'OPTIONS';
     const METHOD_TRACE = 'TRACE';
     const METHOD_CONNECT= 'CONNECT';
-    
+
     /**
      * @var Interfaces\Collection $_SERVER
      */
@@ -32,7 +32,7 @@ abstract class Request implements Interfaces\Request
      * @var Interfaces\Collection $_POST
      */
     protected $PostCollection  = null;
-    
+
     /**
      * @var Interfaces\Collection $_GET
      */
@@ -51,7 +51,7 @@ abstract class Request implements Interfaces\Request
      * @var string eg. http://dev.localhost:80
      */
     protected $location = null;
-    
+
     /**
      * @var string REQUEST_METHOD
      */
@@ -85,7 +85,12 @@ abstract class Request implements Interfaces\Request
     /**
      * @var bool HTTPS
      */
-    protected $secure = false;
+    protected $is_secure = false;
+
+    /**
+     * @var bool X_REQUESTED_WITH
+     */
+    protected $is_ajax = false;
 
     /**
      * @var array Array of accepted request methods
@@ -102,7 +107,8 @@ abstract class Request implements Interfaces\Request
     ];
 
     /**
-     * @return string
+     * @param string $default
+     * @return mixed
      */
     protected abstract function getPreferredLanguage($default='en-US');
 
@@ -115,7 +121,7 @@ abstract class Request implements Interfaces\Request
      * @var \resource
      */
     protected $php_input_context = null;
-    
+
 
     /**
      * @param array $server $_SERVER
@@ -130,25 +136,25 @@ abstract class Request implements Interfaces\Request
         $this->QueryCollection = new Helper\Collection([]);
         $this->PostCollection = new Helper\Collection($this->sanitizeInput($post));
         $this->FileCollection = new Helper\Collection($this->sanitizeInput($files));
-        
+
         $this->initRequest();
     }
-
 
     protected function initRequest()
     {
         $data = $this->getDataFromGlobals();
         $this->validate($data);
-        
+
         $this->data = $data;
-        $this->location = $data['location'];  
+        $this->location = $data['location'];
         $this->method = $data['method'];
         $this->url = $data['url'];
         $this->query_string = $data['query_string'];
         $this->protocol = $data['protocol'];
-        $this->port = (integer) $data['port'];
-        $this->secure = (boolean) $data['secure'];
+        $this->port = (int) $data['port'];
+        $this->is_secure = (boolean) $data['is_secure'];
         $this->path = $data['path'];
+        $this->is_ajax = (boolean) $data['is_ajax'];
     }
 
     /**
@@ -158,21 +164,28 @@ abstract class Request implements Interfaces\Request
     {
         return [
             'location' => $this->getServerLocationFromGlobals(),
-            'method' => $this->ServerCollection['REQUEST_METHOD'],
+            'method' => $this->ServerCollection->get('REQUEST_METHOD'),
             'url' => $this->getUrlFromGlobals(),
-            'query_string' => $this->ServerCollection['QUERY_STRING'],
-            'path' => $this->ServerCollection['REQUEST_URI'],
+            'query_string' => $this->ServerCollection->get('QUERY_STRING'),
+            'path' => $this->ServerCollection->get('REQUEST_URI'),
             'protocol' => $this->getProtocolFromGlobals(),
             'port' => $this->getPortFromGlobals(),
-            'secure' => $this->getSecureFromGlobals()
+            'is_secure' => $this->getSecureFromGlobals(),
+            'is_ajax' => $this->getIsAjaxFromGlobals()
         ];
     }
 
+    /**
+     * @return string
+     */
     protected function getUrlFromGlobals()
     {
-        return $this->getServerLocationFromGlobals().@$this->ServerCollection['REQUEST_URI'];
+        return $this->getServerLocationFromGlobals().$this->ServerCollection->get('REQUEST_URI');
     }
 
+    /**
+     * @return string
+     */
     protected function getServerLocationFromGlobals()
     {
         $host = $this->getHostNameFromGlobals();
@@ -188,22 +201,28 @@ abstract class Request implements Interfaces\Request
             $port_str = ':'.$port;
         }
 
-        return $protocol.$host.$port_str;        
+        return $protocol.$host.$port_str;
     }
 
+    /**
+     * @return null
+     */
     protected function getHostNameFromGlobals()
     {
         if ($this->ServerCollection->has('SERVER_NAME')) {
             return $this->ServerCollection->get('SERVER_NAME');
         }
-        
+
         if ($this->ServerCollection->has('HTTP_HOST')) {
             return $this->ServerCollection->get('HTTP_HOST');
         }
-        
+
         return $this->ServerCollection->get('SERVER_ADDR');
     }
 
+    /**
+     * @return null|string
+     */
     protected function getProtocolFromGlobals()
     {
         $protocol = '';
@@ -214,11 +233,14 @@ abstract class Request implements Interfaces\Request
         return $protocol;
     }
 
+    /**
+     * @return int
+     */
     protected function getPortFromGlobals()
     {
         $port = 0;
         if ($this->ServerCollection->has('SERVER_PORT')) {
-            $port = (integer) $this->ServerCollection->get('SERVER_PORT');
+            $port = (int) $this->ServerCollection->get('SERVER_PORT');
         }
 
         return $port;
@@ -229,18 +251,34 @@ abstract class Request implements Interfaces\Request
      */
     protected function getSecureFromGlobals()
     {
-        if ($this->ServerCollection->has('HTTPS') && $this->ServerCollection->get('HTTPS') !== 'off') {
+        if ($this->ServerCollection->has('HTTPS') && strtolower($this->ServerCollection->get('HTTPS')) !== 'off') {
             return true;
         }
 
-        if ($this->ServerCollection->has('SSL_HTTPS') && $this->ServerCollection->get('SSL_HTTPS') !== 'off') {
+        if ($this->ServerCollection->has('SSL_HTTPS') && strtolower($this->ServerCollection->get('SSL_HTTPS')) !== 'off') {
             return true;
+        }
+
+        if ($this->ServerCollection->has('SERVER_PORT') && (int) $this->ServerCollection->get('SERVER_PORT') === 443) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
+    protected function getIsAjaxFromGlobals()
+    {
+        if ($this->ServerCollection->get('X_REQUESTED_WITH') !== null) {
+            return $this->ServerCollection->has('X_REQUESTED_WITH') && strtolower($this->ServerCollection->get('X_REQUESTED_WITH')) === 'xmlhttprequest';
+        }
+
+        if ($this->ServerCollection->get('HTTP_X_REQUESTED_WITH') !== null) {
+            return $this->ServerCollection->has('HTTP_X_REQUESTED_WITH') && strtolower($this->ServerCollection->get('HTTP_X_REQUESTED_WITH')) === 'xmlhttprequest';
         }
         
-        if ($this->ServerCollection->has('SERVER_PORT') && $this->ServerCollection->get('SERVER_PORT') == 443) {
-            return true;
-        }
-
         return false;
     }
 
@@ -278,7 +316,7 @@ abstract class Request implements Interfaces\Request
             }
             $value = strip_tags($value, '<p><a><br><img><b><strong><i><em><u><ul><li><span><h1><h2><h3><h4><h5><hr>');
         }
-        
+
         return $value;
     }
 
@@ -296,7 +334,8 @@ abstract class Request implements Interfaces\Request
             'path',
             'protocol',
             'port',
-            'secure'            
+            'is_secure',
+            'is_ajax',
         ];
 
         foreach ($required as $name) {
@@ -316,9 +355,12 @@ abstract class Request implements Interfaces\Request
      */
     public function isSecure()
     {
-        return $this->secure;
+        return $this->is_secure;
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public function getLocation()
     {
         return $this->location;
@@ -403,6 +445,9 @@ abstract class Request implements Interfaces\Request
         $this->method = $method;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function getMethod()
     {
         return $this->method;
@@ -416,6 +461,9 @@ abstract class Request implements Interfaces\Request
         $this->url = $url;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function getUrl()
     {
         return $this->url;
@@ -429,6 +477,9 @@ abstract class Request implements Interfaces\Request
         $this->query_string = $query_string;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function getQueryString()
     {
         return $this->query_string;
@@ -442,6 +493,9 @@ abstract class Request implements Interfaces\Request
         $this->path = $path;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function getPath()
     {
         return $this->path;
@@ -527,7 +581,10 @@ abstract class Request implements Interfaces\Request
     {
         return $this->FileCollection;
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public function getProtocol()
     {
         return $this->protocol;
@@ -540,7 +597,10 @@ abstract class Request implements Interfaces\Request
     {
         $this->protocol = $protocol;
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public function getPort()
     {
         return $this->port;
@@ -596,7 +656,7 @@ abstract class Request implements Interfaces\Request
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
     public function getUserAgent()
     {
@@ -604,7 +664,7 @@ abstract class Request implements Interfaces\Request
     }
 
     /**
-     * @return resource
+     * @inheritdoc
      */
     public function getPhpInputContext()
     {
@@ -612,7 +672,7 @@ abstract class Request implements Interfaces\Request
     }
 
     /**
-     * @param \resource $php_input_context
+     * @inheritdoc
      */
     public function setPhpInputContext($php_input_context)
     {
@@ -620,7 +680,7 @@ abstract class Request implements Interfaces\Request
     }
 
     /**
-     * @return boolean
+     * @inheritdoc
      */
     public function getPhpInputFlags()
     {
@@ -628,10 +688,26 @@ abstract class Request implements Interfaces\Request
     }
 
     /**
-     * @param boolean $php_input_flags
+     * @inheritdoc
      */
     public function setPhpInputFlags($php_input_flags)
     {
         $this->php_input_flags = $php_input_flags;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setIsAjax($is_ajax)
+    {
+        $this->is_ajax = $is_ajax;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function IsAjax()
+    {
+        return $this->is_ajax;
     }
 }

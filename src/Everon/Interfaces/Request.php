@@ -15,24 +15,40 @@ interface Request extends Arrayable
      * @param $location
      */
     function setLocation($location);
+
+    /**
+     * @return string
+     */
     function getLocation();
 
     /**
      * @param $method
      */
     function setMethod($method);
+
+    /**
+     * @return string
+     */
     function getMethod();
 
     /**
      * @param $url
      */
     function setUrl($url);
+
+    /**
+     * @return string
+     */
     function getUrl();
 
     /**
      * @param $path
      */
     function setPath($path);
+
+    /**
+     * @return string
+     */
     function getPath();
 
     /**
@@ -99,14 +115,20 @@ interface Request extends Arrayable
      * @param $port
      */
     function setPort($port);
-    
+
+    /**
+     * @return int
+     */
     function getPort();
 
     /**
      * @param $protocol
      */
     function setProtocol($protocol);
-    
+
+    /**
+     * @return string
+     */
     function getProtocol();
 
     /**
@@ -201,4 +223,14 @@ interface Request extends Arrayable
      * @param boolean $php_input_flags
      */
     function setPhpInputFlags($php_input_flags);
+
+    /**
+     * @param boolean $is_ajax
+     */
+    function setIsAjax($is_ajax);
+
+    /**
+     * @return boolean
+     */
+    function IsAjax();
 }
