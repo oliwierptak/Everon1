@@ -43,12 +43,13 @@ class ExpressionMatcher implements Interfaces\ExpressionMatcher
      * @param array $custom_expressions
      * @return callable
      */
-    public function getCompiler(array $configs_data, array $custom_expressions=[])
+    public function getCompiler(array &$configs_data, array $custom_expressions=[])
     {
         $this->expressions = [];
         $this->values = [];
 
         $this->tokenizeExpressions($configs_data, $custom_expressions);
+
         foreach ($this->expressions as $item) {
             $tokens = explode('.', trim($item, '%'));   //eg. %application.env.url%
             if (count($tokens) < 3) {
@@ -80,16 +81,21 @@ class ExpressionMatcher implements Interfaces\ExpressionMatcher
                 }
             }
         }
-
+        
+        $this->expressions = array_merge($this->expressions, $custom_expressions);
+        
         $this->values = $this->arrayDotKeysFlattern($configs_data);
-        $this->values = $this->arrayDotKeysFlattern($this->values);
-        $this->values = $this->arrayDotKeysFlattern($this->values);
+        for ($depth=0; $depth<2; $depth++) {
+            $this->values = $this->arrayDotKeysFlattern($this->values);
+        }
         $this->values = $this->arrayPrefixKey('%', $this->values, '%');
 
         //compile to update self references, eg.
         //'%application.assets.themes%' => string (34) "%application.env.url_statc%themes/"
         $Compiler = $this->buildCompiler();
+
         $Compiler($this->values);
+        $Compiler($configs_data);
 
         return $Compiler;
     }
@@ -109,7 +115,5 @@ class ExpressionMatcher implements Interfaces\ExpressionMatcher
         foreach ($data as $config_name => $config_data) {
             array_walk_recursive($config_data, $SetExpressions);
         }
-
-        $this->expressions = array_merge($this->expressions, $custom_expressions);
     }
 }

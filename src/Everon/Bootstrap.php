@@ -118,7 +118,20 @@ class Bootstrap implements \Everon\Interfaces\Bootstrap
 
         $ini = $this->getApplicationIni();
         $use_cache = (bool) @$ini['cache']['autoloader'];
+        $extra_files = @$ini['autoloader']['files'] ?: [];
+        $paths = @$ini['autoloader']['paths'] ?: null;
+        
+        foreach ($extra_files as $extra_class_name => $extra_filename) {
+            if (is_file('../'.$extra_filename)) {
+                require_once('../'.$extra_filename);
+            }
+        }
 
+        if ($paths !== null) {
+            array_push($paths, get_include_path());
+            set_include_path(join(PATH_SEPARATOR, array_values($paths)));
+        }
+        
         $ClassMap = null;
         if ($use_cache) {
             require_once($this->Environment->getEveronRoot().'ClassLoaderCache.php');

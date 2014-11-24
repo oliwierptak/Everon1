@@ -21,7 +21,8 @@ class Environment implements Interfaces\Environment
     {
         $this->resources = [
             'root' => $root,
-            'everon_source_root' => $everon_source_root
+            'everon_source_root' => $everon_source_root,
+            'vendor' => $root.'vendor'.DIRECTORY_SEPARATOR
         ];
 
         $this->resources += [
@@ -256,6 +257,16 @@ class Environment implements Interfaces\Environment
     function setRest($rest)
     {
         $this->resources['rest'] = $rest;
+    }
+
+    function getVendor()
+    {
+        return $this->resources['vendor'];
+    }
+
+    function setVendor($vendor)
+    {
+        $this->resources['Vendor'] = $vendor;
     }
     
     function toArray()

@@ -52,5 +52,7 @@ interface Environment
     function setModule($module);
     function getRest();
     function setRest($rest);
+    function getVendor();
+    function setVendor($vendor);
     function toArray();
 }

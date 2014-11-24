@@ -223,8 +223,7 @@ EOF;
 
         //compile expressions in one go
         $Compiler = $this->getExpressionMatcher()->getCompiler($config_items_data, $this->getEnvironmentExpressions());
-        $Compiler($config_items_data);
-
+        
         return [$Compiler, $config_items_data];
     }
 
@@ -248,7 +247,7 @@ EOF;
 
         $configs_data = $this->getConfigDataFromLoader($this->getConfigLoader());
         list($Compiler, $config_items_data) = $this->getAllConfigsDataAndCompiler($configs_data);
-
+        
         /**
          * @var Interfaces\LoaderItem $ConfigLoaderItem
          */
@@ -300,6 +299,7 @@ EOF;
     public function getEnvironmentExpressions()
     {
         $data = $this->getBootstrap()->getEnvironment()->toArray();
+        
         foreach ($data as $key => $value) {
             $data["%environment.paths.$key%"] = $value;
             unset($data[$key]);
