@@ -268,30 +268,6 @@ abstract class Controller extends \Everon\Controller implements Mvc\Interfaces\C
     /**
      * @inheritdoc
      */
-    public function addValidationError($name, $message)
-    {
-        $this->getRouter()->getRequestValidator()->addError($name, $message);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function removeValidationError($name, $message)
-    {
-        $this->getRouter()->getRequestValidator()->removeError($name, $message);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function hasValidationError()
-    {
-        return ($this->getRouter()->getRequestValidator()->isValid() === false);
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function redirect($name, $query=[], $get=[])
     {
         $this->is_redirecting = true;

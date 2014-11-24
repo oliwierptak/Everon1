@@ -51,4 +51,10 @@ interface Module extends
      * @return \Everon\Interfaces\Controller
      */
     function getController($name);
+
+    /**
+     * @param $name
+     * @return \Everon\Ajax\Interfaces\Controller
+     */
+    function getAjaxController($name);
 }

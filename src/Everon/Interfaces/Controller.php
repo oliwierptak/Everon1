@@ -76,4 +76,21 @@ interface Controller extends
      * @return \Everon\Module\Interfaces\Module
      */
     function getModule();
+
+    /**
+     * @param $name
+     * @param $message
+     */
+    function addValidationError($name, $message);
+
+    /**
+     * @param $name
+     * @param $message
+     */
+    function removeValidationError($name, $message);
+
+    /**
+     * @return bool
+     */
+    function hasValidationError();
 }

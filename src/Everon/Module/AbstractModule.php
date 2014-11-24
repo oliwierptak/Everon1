@@ -26,6 +26,11 @@ abstract class AbstractModule implements \Everon\Module\Interfaces\Module
      * @var Interfaces\Collection
      */
     protected $ControllerCollection = null;
+    
+    /**
+     * @var Interfaces\Collection
+     */
+    protected $AjaxControllerCollection = null;
 
     /**
      * @var Interfaces\FactoryWorker
@@ -44,6 +49,7 @@ abstract class AbstractModule implements \Everon\Module\Interfaces\Module
         $this->directory = $module_directory;
         $this->Config = $Config;
         $this->ControllerCollection = new Helper\Collection([]);
+        $this->AjaxControllerCollection = new Helper\Collection([]);
     }
 
     /**
@@ -53,6 +59,15 @@ abstract class AbstractModule implements \Everon\Module\Interfaces\Module
     protected function createController($name)
     {
         return $this->getFactory()->buildController($name, $this, 'Everon\Module\\'.$this->getName().'\Controller');
+    }
+
+    /**
+     * @param $name
+     * @return Interfaces\Controller
+     */
+    protected function createAjaxController($name)
+    {
+        return $this->getFactory()->buildController($name, $this, 'Everon\Module\\'.$this->getName().'\Controller\Ajax');
     }
 
     /**
@@ -66,6 +81,19 @@ abstract class AbstractModule implements \Everon\Module\Interfaces\Module
         }
 
         return $this->ControllerCollection->get($name);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getAjaxController($name)
+    {
+        if ($this->AjaxControllerCollection->has($name) === false) {
+            $AjaxController = $this->createAjaxController($name);
+            $this->AjaxControllerCollection->set($name, $AjaxController);
+        }
+
+        return $this->AjaxControllerCollection->get($name);
     }
 
     /**

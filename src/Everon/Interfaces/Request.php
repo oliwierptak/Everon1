@@ -232,5 +232,5 @@ interface Request extends Arrayable
     /**
      * @return boolean
      */
-    function IsAjax();
+    function isAjax();
 }

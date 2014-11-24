@@ -706,7 +706,7 @@ abstract class Request implements Interfaces\Request
     /**
      * @inheritdoc
      */
-    public function IsAjax()
+    public function isAjax()
     {
         return $this->is_ajax;
     }
