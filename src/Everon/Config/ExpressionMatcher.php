@@ -43,7 +43,7 @@ class ExpressionMatcher implements Interfaces\ExpressionMatcher
      * @param array $custom_expressions
      * @return callable
      */
-    public function getCompiler(array &$configs_data, array $custom_expressions=[])
+    public function getCompiler(array $configs_data, array $custom_expressions=[])
     {
         $this->expressions = [];
         $this->values = [];
