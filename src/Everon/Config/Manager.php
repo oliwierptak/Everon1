@@ -223,6 +223,7 @@ EOF;
 
         //compile expressions in one go
         $Compiler = $this->getExpressionMatcher()->getCompiler($config_items_data, $this->getEnvironmentExpressions());
+        $Compiler($config_items_data);
         
         return [$Compiler, $config_items_data];
     }

@@ -95,7 +95,7 @@ class ExpressionMatcher implements Interfaces\ExpressionMatcher
         $Compiler = $this->buildCompiler();
 
         $Compiler($this->values);
-        $Compiler($configs_data);
+        //$Compiler($configs_data);
 
         return $Compiler;
     }
