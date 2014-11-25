@@ -32,4 +32,10 @@ interface Container
      * @param string $glue
      */
     function setGlue($glue);
+
+    function resetGlue();
+
+    function glueByAnd();
+
+    function glueByOr();
 }

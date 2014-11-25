@@ -150,10 +150,10 @@ class Builder implements Interfaces\Criteria\Builder
         $this->getCurrentContainer()->getCriteria()->where($Criterium);
         
         if ($this->current > 0) {
-            $this->getCurrentContainer()->setGlue(self::GLUE_AND);
+            $this->getCurrentContainer()->glueByAnd();
         }
         else {
-            $this->getCurrentContainer()->setGlue(null);
+            $this->getCurrentContainer()->resetGlue();
         }
         
         return $this;
@@ -166,7 +166,7 @@ class Builder implements Interfaces\Criteria\Builder
     {
         $Criterium = $this->getFactory()->buildCriteriaCriterium($column, $operator, $value);
         $this->getCurrentContainer()->getCriteria()->andWhere($Criterium);
-        $this->getCurrentContainer()->setGlue(self::GLUE_AND);
+        $this->getCurrentContainer()->glueByAnd();
         return $this;
     }
 
@@ -177,7 +177,7 @@ class Builder implements Interfaces\Criteria\Builder
     {
         $Criterium = $this->getFactory()->buildCriteriaCriterium($column, $operator, $value);
         $this->getCurrentContainer()->getCriteria()->orWhere($Criterium);
-        $this->getCurrentContainer()->setGlue(self::GLUE_OR);
+        $this->getCurrentContainer()->glueByOr();
         return $this;
     }
 
@@ -191,10 +191,10 @@ class Builder implements Interfaces\Criteria\Builder
         $this->getCurrentContainer()->getCriteria()->where($Criterium);
 
         if ($this->current > 0) {
-            $this->getCurrentContainer()->setGlue(self::GLUE_AND);
+            $this->getCurrentContainer()->glueByAnd();
         }
         else {
-            $this->getCurrentContainer()->setGlue(null);
+            $this->getCurrentContainer()->resetGlue();
         }
         
         return $this;
@@ -204,7 +204,7 @@ class Builder implements Interfaces\Criteria\Builder
     {
         $Criterium = $this->getFactory()->buildCriteriaCriterium($sql, 'raw', null);
         $this->getCurrentContainer()->getCriteria()->andWhere($Criterium);
-        $this->getCurrentContainer()->setGlue(self::GLUE_AND);
+        $this->getCurrentContainer()->glueByAnd();
         return $this;
     }
 
@@ -212,7 +212,7 @@ class Builder implements Interfaces\Criteria\Builder
     {
         $Criterium = $this->getFactory()->buildCriteriaCriterium($sql, 'raw', null);
         $this->getCurrentContainer()->getCriteria()->orWhere($Criterium);
-        $this->getCurrentContainer()->setGlue(self::GLUE_OR);
+        $this->getCurrentContainer()->glueByOr();
         return $this;
     }
     
@@ -267,7 +267,7 @@ class Builder implements Interfaces\Criteria\Builder
      */
     public function resetGlue()
     {
-        $this->getCurrentContainer()->setGlue(null);
+        $this->getCurrentContainer()->resetGlue();
     }
 
     /**
@@ -275,7 +275,7 @@ class Builder implements Interfaces\Criteria\Builder
      */
     public function glueByAnd()
     {
-        $this->getCurrentContainer()->setGlue(self::GLUE_AND);
+        $this->getCurrentContainer()->glueByAnd();
     }
 
     /**
@@ -283,7 +283,7 @@ class Builder implements Interfaces\Criteria\Builder
      */
     public function glueByOr()
     {
-        $this->getCurrentContainer()->setGlue(self::GLUE_OR);
+        $this->getCurrentContainer()->glueByOr();
     }
 
     /**
@@ -449,9 +449,15 @@ class Builder implements Interfaces\Criteria\Builder
     /**
      * @param \Everon\Interfaces\Collection $ContainerCollectionToMerge
      */
-    public function appendContainerCollection(\Everon\Interfaces\Collection $ContainerCollectionToMerge)
+    public function appendContainerCollection(\Everon\Interfaces\Collection $ContainerCollectionToMerge, $glue=self::GLUE_AND)
     {
+        /**
+         * @var \Everon\DataMapper\Interfaces\Criteria\Container $ContainerToMerge
+         */
         foreach ($ContainerCollectionToMerge as $ContainerToMerge) {
+            if ($ContainerToMerge->getGlue() === null) {
+                $ContainerToMerge->setGlue($glue);
+            }
             $this->getContainerCollection()->append($ContainerToMerge);
         }
     }
