@@ -301,7 +301,12 @@ abstract class AbstractView implements Interfaces\View
          * @var \Everon\Interfaces\Arrayable $Item
          */
         foreach ($data as $index => $Item) {
-            $data[$index] = $this->templetize($Item->toArray());
+            if ($Item instanceof \Everon\Interfaces\Arrayable) {
+                $data[$index] = $this->templetize($Item->toArray());
+            }
+            else if (is_array($Item)) {
+                $data[$index] = $this->templetizeArrayable($Item);
+            }
         }
 
         return $data;
