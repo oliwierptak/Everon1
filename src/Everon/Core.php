@@ -87,12 +87,14 @@ abstract class Core implements Interfaces\Core
     {
         $this->runOnce($RequestIdentifier);
 
-        $this->Controller = $this->Module->getController($this->Route->getController());
         if ($this->getRequest()->isAjax()) {
             $AjaxController = $this->Module->getAjaxController($this->Route->getController());
             if ($this->isCallable($AjaxController, $this->Route->getAction())) {
                 $this->Controller = $AjaxController;
             }
+        }
+        else {
+            $this->Controller = $this->Module->getController($this->Route->getController());
         }
         
         $this->Controller->setCurrentRoute($this->Route);
