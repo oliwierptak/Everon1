@@ -88,6 +88,8 @@ database_timezone = UTC
 [autoloader]
 active[] = everon
 active[] = composer
+; files['Kint'] = vendor/raveren/kint/Kint.class.php
+; paths['Mockery'] = vendor/mockery/mockery/library/
 throw_exceptions = true
 
 [cache]
