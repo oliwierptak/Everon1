@@ -175,7 +175,7 @@ abstract class AbstractView implements Interfaces\View
      */
     public function get($name, $default=null)
     {
-        return $this->getContainer()->get($name);
+        return $this->getContainer()->get($name, $default);
     }
 
     /**
