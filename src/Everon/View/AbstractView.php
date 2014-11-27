@@ -235,7 +235,7 @@ abstract class AbstractView implements Interfaces\View
     public function execute($action)
     {
         if ($this->index_executed === false) {
-            $default_action = 'index';
+            $default_action = 'setup';
             if (strcasecmp($action, $default_action) !== 0) {
                 if ($this->isCallable($this, $default_action)) {
                     $this->{$default_action}();
@@ -372,7 +372,7 @@ abstract class AbstractView implements Interfaces\View
         }
     } 
     
-    public function index()
+    public function setup()
     {
         $this->includeResources();
     }
