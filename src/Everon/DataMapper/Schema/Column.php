@@ -338,6 +338,12 @@ abstract class Column implements Schema\Column
         }
         
         switch ($this->type) {
+            case self::TYPE_STRING:
+                if ($value === '' && $this->isNullable()) {
+                    return null;
+                }
+                break;
+            
             case self::TYPE_INTEGER:
                 return (int) $value;
                 break;
@@ -381,6 +387,12 @@ abstract class Column implements Schema\Column
         }
         
         switch ($this->type) {
+            case self::TYPE_STRING:
+                if ($value === '' && $this->isNullable()) {
+                    return null;
+                }
+                break;
+            
             case self::TYPE_INTEGER:
                 return (int) $value;
                 break;
