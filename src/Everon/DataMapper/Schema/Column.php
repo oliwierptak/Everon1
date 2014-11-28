@@ -339,8 +339,8 @@ abstract class Column implements Schema\Column
         
         switch ($this->type) {
             case self::TYPE_STRING:
-                if ($value === '' && $this->isNullable()) {
-                    return null;
+                if (trim($value) === '' && $this->isNullable()) {
+                    $value = null;
                 }
                 return $value;
                 break;
@@ -389,8 +389,8 @@ abstract class Column implements Schema\Column
         
         switch ($this->type) {
             case self::TYPE_STRING:
-                if ($value === '' && $this->isNullable()) {
-                    return null;
+                if (trim($value) === '' && $this->isNullable()) {
+                    $value = null;
                 }
                 return $value;
                 break;
