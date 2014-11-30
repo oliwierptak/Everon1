@@ -1016,11 +1016,11 @@ abstract class Factory implements Interfaces\Factory
                 $ForeignKey = $this->buildSchemaForeignKey($foreign_key_data);
                 $foreign_key_list[$ForeignKey->getColumnName()] = $ForeignKey;
             }
-            
+
             $column_list = [];
             foreach ($columns as $column_data) {
-                $is_pk = @isset($primary_keys[$column_data['column_name']]);
-                $is_unique = @isset($unique_keys[$column_data['column_name']]);
+                $is_pk = @isset($primary_key_list[$column_data['column_name']]);
+                $is_unique = @isset($unique_key_list[$column_data['column_name']]);
 
                 $Column = $this->buildSchemaColumn($adapter_name, $database_timezone, $column_data, $is_pk, $is_unique);
                 $column_list[$Column->getName()] = $Column;

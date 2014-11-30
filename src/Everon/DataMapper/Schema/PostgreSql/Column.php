@@ -97,6 +97,7 @@ class Column extends Schema\Column
                 break;
         }
         
+        unset($this->ColumnInfo);
         $this->initialized = true;
     }
 }

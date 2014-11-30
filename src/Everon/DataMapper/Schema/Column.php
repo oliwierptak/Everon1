@@ -466,4 +466,12 @@ abstract class Column implements Interfaces\Schema\Column
                 break;
         }
     }
+
+    public function __sleep()
+    {
+        $vars = get_object_vars($this);
+        unset($vars['Factory']);
+        $data = array_keys($vars);
+        return $data;
+    }
 }

@@ -282,4 +282,11 @@ class Table implements Interfaces\Schema\Table
     {
         return (string) $this->name;
     }
+
+    public function __sleep()
+    {
+        $this->init();
+        $data = array_keys(get_object_vars($this));
+        return $data;
+    }
 }

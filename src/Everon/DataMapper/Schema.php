@@ -324,14 +324,8 @@ class Schema implements Interfaces\Schema
         $this->initTables();
         
         foreach ($this->tables as $table_name => $Table) {
-            foreach ($Table->getColumns() as $column_name => $Column) {
-                $Column->unsetFactory();
-                $Column->getValidator()->unsetFactory();
-            }
-            
             $this->getCacheLoader()->saveToCache($table_name, $Table);
         }
-
     }
     
     public function loadTablesFromCache()
@@ -350,15 +344,5 @@ class Schema implements Interfaces\Schema
             $this->initTables();
             return;
         }
-
-        foreach ($this->tables as $table_name => $Table) {
-            foreach ($Table->getColumns() as $column_name => $Column) {
-                $Column->getValidator()->setFactory($this->getFactory());
-                $Column->setFactory($this->getFactory());
-            }
-            //dd($Table);
-            //$this->tables[$table_name] = $Table;
-        }
     }
-
 }

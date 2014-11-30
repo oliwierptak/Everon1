@@ -130,4 +130,12 @@ abstract class Constraint implements Schema\Constraint
     {
         return (string) $this->name;
     }
+
+    public function __sleep()
+    {
+        $vars = get_object_vars($this);
+        $data = array_keys($vars);
+        return $data;
+    }
+
 }
