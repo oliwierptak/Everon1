@@ -199,6 +199,7 @@ class Table implements Interfaces\Schema\Table
         if (is_array($this->pk)) {
             return $this->pk[0];
         }
+        
         return $this->pk;
     }
 
@@ -247,8 +248,6 @@ class Table implements Interfaces\Schema\Table
 
             if (array_key_exists($name, $data) === false) {
                 throw new Exception\Table('Entity property key not set for: "%s@%s"', [$Column->getTable(), $name]);
-                //$this->getLogger()->warning('Entity property not set. Using null for: "%s@%s"', [$Column->getTable(), $name]);
-                //$data[$name] = null;
             }
             
             $value = $Column->getDataForSql($data[$name]);
@@ -282,28 +281,5 @@ class Table implements Interfaces\Schema\Table
     public function __toString()
     {
         return (string) $this->name;
-    }
-
-    public function __sleep()
-    {
-        return [
-            'pk',
-            'name',
-            'schema',
-            'columns',
-            'primary_keys',
-            'unique_keys',
-            'foreign_keys'
-        ];
-    }
-
-    public function __wakeup()
-    {
-        s('wakeup');
-    }
-
-    public static function __set_state(array $parameters)
-    {
-        s('set_state', $parameters);
     }
 }

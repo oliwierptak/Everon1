@@ -12,7 +12,7 @@ namespace Everon\Config\Interfaces;
 use Everon\Exception;
 use Everon\Interfaces;
 
-interface LoaderCache
+interface LoaderCache extends Interfaces\Dependency\Factory, Interfaces\Dependency\FileSystem
 {
     function getCacheDirectory();
 

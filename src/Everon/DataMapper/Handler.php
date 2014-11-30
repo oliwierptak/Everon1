@@ -44,12 +44,17 @@ abstract class Handler implements Interfaces\Handler
             $Pdo = $this->getFactory()->buildPdo($dsn, $username, $password, $options);
             $PdoAdapter = $this->getFactory()->buildPdoAdapter($Pdo, $Connection);
             $SchemaReader = $this->getFactory()->buildSchemaReader($PdoAdapter);
-            $CacheLoader = $this->getFactory()->buildFileSystemPhpCacheFile($this->getFileSystem()->getRealPath('//Tmp/cache/data_mapper/'));
+            $CacheLoader = $this->getFactory()->buildFileSystemCacheLoader('Serialized', $this->getFileSystem()->getRealPath('//Tmp/cache/data_mapper/'));
                 
             $this->Schema = $this->getFactory()->buildSchema(
                 $SchemaReader, $this->getConnectionManager(), $this->getDomainMapper(), $CacheLoader
             );
+
+            //$this->Schema->saveTablesToCache();
+            //$this->Schema->loadTablesFromCache();   
         }
+        
+        //dd($this->Schema->getTables());
 
         return $this->Schema;
     }

@@ -41,7 +41,7 @@ class Schema implements Interfaces\Schema
     protected $ConnectionManager = null;
 
     /**
-     * @var FileSystem\Interfaces\PhpCache
+     * @var FileSystem\Interfaces\CacheLoader
      */
     protected $CacheLoader = null;
 
@@ -59,13 +59,13 @@ class Schema implements Interfaces\Schema
      * @param Interfaces\Schema\Reader $SchemaReader
      * @param Interfaces\ConnectionManager $ConnectionManager
      * @param Domain\Interfaces\Mapper $DomainMapper
-     * @param FileSystem\Interfaces\PhpCache $CacheLoader
+     * @param FileSystem\Interfaces\CacheLoader $CacheLoader
      */
     public function __construct(
         Interfaces\Schema\Reader $SchemaReader, 
         Interfaces\ConnectionManager $ConnectionManager, 
         Domain\Interfaces\Mapper $DomainMapper,
-        FileSystem\Interfaces\PhpCache $CacheLoader
+        FileSystem\Interfaces\CacheLoader $CacheLoader
     )
     {
         $this->SchemaReader = $SchemaReader;
@@ -85,10 +85,11 @@ class Schema implements Interfaces\Schema
         $primary_key_list = $this->getSchemaReader()->getPrimaryKeysList();
         $foreign_key_list = $this->getSchemaReader()->getForeignKeyList();
         $unique_key_list = $this->getSchemaReader()->getUniqueKeysList();
-
+        
         $castToEmptyArrayWhenNull = function($name, $item) {    
             return isset($item[$name]) ? $item[$name] : [];
         };
+
 
         foreach ($table_list as $name => $table_data) {
             $this->tables[$name] = $this->getFactory()->buildSchemaTableAndDependencies(
@@ -105,13 +106,6 @@ class Schema implements Interfaces\Schema
         }
         
         $this->initViews();
-        
-/*$t = current($this->tables);
-        dd($t);
-        $data = var_export($t, true);
-        $h = fopen('/tmp/shit.php', 'w+');
-        fwrite($h, "<?php \$cache = $data; ");
-        fclose($h);*/
     }
     
     protected function initViews()
@@ -214,15 +208,15 @@ class Schema implements Interfaces\Schema
     }
 
     /**
-     * @param FileSystem\Interfaces\PhpCache $CacheLoader
+     * @param FileSystem\Interfaces\CacheLoader $CacheLoader
      */
-    public function setCacheLoader(FileSystem\Interfaces\PhpCache $CacheLoader)
+    public function setCacheLoader(FileSystem\Interfaces\CacheLoader $CacheLoader)
     {
         $this->CacheLoader = $CacheLoader;
     }
 
     /**
-     * @return \Everon\FileSystem\Interfaces\PhpCache
+     * @return \Everon\FileSystem\Interfaces\CacheLoader
      */
     public function getCacheLoader()
     {
@@ -292,7 +286,6 @@ class Schema implements Interfaces\Schema
             $Pdo = $this->getFactory()->buildPdo($dsn, $username, $password, $options);
             $PdoAdapter = $this->getFactory()->buildPdoAdapter($Pdo, $Connection);
             $this->pdo_adapters[$name] = $PdoAdapter;
-            $this->getLogger()->pdo('making pdo: '.$name);
         }
 
         if (isset($this->pdo_adapters[$name]) === false) {
@@ -320,5 +313,52 @@ class Schema implements Interfaces\Schema
         }
         return $this->database_timezone;
     }
+
+    public function saveTablesToCache()
+    {
+        /**
+         * @var Interfaces\Schema\Column $Column
+         * @var Interfaces\Schema\Table $Table
+         */
+
+        $this->initTables();
+        
+        foreach ($this->tables as $table_name => $Table) {
+            foreach ($Table->getColumns() as $column_name => $Column) {
+                $Column->unsetFactory();
+                $Column->getValidator()->unsetFactory();
+            }
+            
+            $this->getCacheLoader()->saveToCache($table_name, $Table);
+        }
+
+    }
     
+    public function loadTablesFromCache()
+    {
+        /**
+         * @var Interfaces\Schema\Column $Column
+         * @var Interfaces\Schema\Table $Table
+         */
+
+        $d = $this->getCacheLoader()->load();
+        
+        if (empty($d) === false) {
+            $this->tables = &$d;
+        }
+        else {
+            $this->initTables();
+            return;
+        }
+
+        foreach ($this->tables as $table_name => $Table) {
+            foreach ($Table->getColumns() as $column_name => $Column) {
+                $Column->getValidator()->setFactory($this->getFactory());
+                $Column->setFactory($this->getFactory());
+            }
+            //dd($Table);
+            //$this->tables[$table_name] = $Table;
+        }
+    }
+
 }

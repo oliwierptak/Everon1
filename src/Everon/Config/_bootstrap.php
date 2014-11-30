@@ -38,8 +38,8 @@ require_once(implode(DIRECTORY_SEPARATOR, [$EVERON_SOURCE_ROOT, 'Environment.php
 $Environment = new Environment($EVERON_ROOT, $EVERON_SOURCE_ROOT, $EVERON_CUSTOM_PATHS);
 $Bootstrap = new Bootstrap($Environment, EVERON_ENVIRONMENT);
 
-$Factory = $Bootstrap->run();
-$Container = $Factory->getDependencyContainer();
+$EVERON_FACTORY = $Bootstrap->run();
+$Container = $EVERON_FACTORY->getDependencyContainer();
 
 $Container->propose('Bootstrap', function() use ($Bootstrap) {
     return $Bootstrap;

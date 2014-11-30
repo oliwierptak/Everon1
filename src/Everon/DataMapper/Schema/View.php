@@ -48,18 +48,4 @@ class View extends Table implements Interfaces\Schema\View
     {
         return $this->original_name;
     }
-
-    public function __sleep()
-    {
-        return [
-            'original_name',
-            'pk',
-            'name',
-            'schema',
-            'columns',
-            'primary_keys',
-            'unique_keys',
-            'foreign_keys'
-        ];
-    }
 }

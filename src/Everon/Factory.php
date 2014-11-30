@@ -949,12 +949,16 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildSchema(DataMapper\Interfaces\Schema\Reader $Reader, DataMapper\Interfaces\ConnectionManager $ConnectionManager, Domain\Interfaces\Mapper $DomainMapper, FileSystem\Interfaces\PhpCache $PhpCacheLoader, $namespace = 'Everon\DataMapper')
+    public function buildSchema(DataMapper\Interfaces\Schema\Reader $Reader, 
+                                DataMapper\Interfaces\ConnectionManager $ConnectionManager, 
+                                Domain\Interfaces\Mapper $DomainMapper,
+                                FileSystem\Interfaces\CacheLoader $CacheLoader, 
+                                $namespace = 'Everon\DataMapper')
     {
         try {
             $class_name = $this->getFullClassName($namespace, 'Schema');
             $this->classExists($class_name);
-            $Schema = new $class_name($Reader, $ConnectionManager, $DomainMapper, $PhpCacheLoader);
+            $Schema = new $class_name($Reader, $ConnectionManager, $DomainMapper, $CacheLoader);
             $this->injectDependencies($class_name, $Schema);
             return $Schema;
         }
@@ -1008,14 +1012,30 @@ abstract class Factory implements Interfaces\Factory
             }
 
             $foreign_key_list = [];
-            foreach ($foreign_keys as $column_name => $foreign_key_data) {
+            foreach ($foreign_keys as $foreign_key_data) {
                 $ForeignKey = $this->buildSchemaForeignKey($foreign_key_data);
                 $foreign_key_list[$ForeignKey->getColumnName()] = $ForeignKey;
             }
-
+            
             $column_list = [];
             foreach ($columns as $column_data) {
-                $Column = $this->buildSchemaColumn($adapter_name, $database_timezone, $column_data, $primary_key_list, $unique_key_list, $foreign_key_list);
+                $is_pk = false;
+                $is_unique = false;
+
+                foreach ($primary_key_list as $pk_name => $PrimaryKey) {
+                    if ($PrimaryKey->getColumnName() === $column_data['column_name'] && $PrimaryKey->getFullTableName() === $column_data['__TABLE_NAME']) {
+                        $is_pk = true;
+                    }
+                }
+
+                foreach ($unique_key_list as $unique_name => $UniqueKey) {
+                    if ($UniqueKey->getColumnName() === $column_data['column_name'] && $UniqueKey->getFullTableName() === $column_data['__TABLE_NAME']) {
+                        $is_unique = true;
+                    }
+                }
+
+                $Column = $this->buildSchemaColumn($adapter_name, $database_timezone, $column_data, $is_pk, $is_unique);
+                //dd($Column->getName(), $Column, $name, $column_data, $primary_key_list, $unique_key_list, $is_pk, $is_unique);
                 $column_list[$Column->getName()] = $Column;
             }
 
@@ -1029,17 +1049,35 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildSchemaColumn($adapter_name, $database_timezone, array $data, array $primary_key_list, array $unique_key_list, array $foreign_key_list, $namespace='Everon\DataMapper\Schema')
+    public function buildSchemaColumn($adapter_name, $database_timezone, array $data, $is_pk, $is_unique, $namespace = 'Everon\DataMapper\Schema')
     {
         try {
             $class_name = $this->getFullClassName($namespace, $adapter_name.'\\Column');
             $this->classExists($class_name);
-            $Column = new $class_name($database_timezone, $data, $primary_key_list, $unique_key_list, $foreign_key_list);
+            $Column = new $class_name($database_timezone, $data, $is_pk, $is_unique);
             $this->injectDependencies($class_name, $Column);
             return $Column;
         }
         catch (\Exception $e) {
             throw new Exception\Factory('SchemaColumn for adapter: "%s" initialization error', $adapter_name, $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildSchemaConstraint(array $data, $namespace='Everon\DataMapper')
+    {
+        try {
+            $class_name = $this->getFullClassName($namespace, 'Schema\Constraint');
+            $this->classExists($class_name);
+            $constraint_list[] = $class_name($data);
+            $Constraint = new $class_name($data);
+            $this->injectDependencies($class_name, $Constraint);
+            return $Constraint;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('SchemaConstraint initialization error', null, $e);
         }
     }
 
@@ -1131,18 +1169,17 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildSchemaConstraint(array $data, $namespace='Everon\DataMapper')
+    public function buildSchemaValidator($type, $adapter_name, $namespace='Everon\DataMapper\Schema\Column\Validator')
     {
         try {
-            $class_name = $this->getFullClassName($namespace, 'Schema\Constraint');
+            $class_name = $this->getFullClassName($namespace, $adapter_name.'\\'.$type);
             $this->classExists($class_name);
-            $constraint_list[] = $class_name($data);
-            $Constraint = new $class_name($data);
-            $this->injectDependencies($class_name, $Constraint);
-            return $Constraint;
+            $SchemaValidator = new $class_name();
+            $this->injectDependencies($class_name, $SchemaValidator);
+            return $SchemaValidator;
         }
         catch (\Exception $e) {
-            throw new Exception\Factory('SchemaConstraint initialization error', null, $e);
+            throw new Exception\Factory('SchemaValidator: "%s.%s" initialization error', [$adapter_name, $type], $e);
         }
     }
 
@@ -1343,20 +1380,37 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildFileSystemPhpCacheFile($cache_directory, $namespace='Everon\FileSystem')
+    public function buildFileSystemCacheLoader($type, $cache_directory, $namespace = 'Everon\FileSystem\CacheLoader')
     {
         try {
-            $class_name = $this->getFullClassName($namespace, 'PhpCache');
+            $class_name = $this->getFullClassName($namespace, $type);
             $this->classExists($class_name);
-            $FileSystem = new $class_name($cache_directory);
-            $this->injectDependencies($class_name, $FileSystem);
-            return $FileSystem;
+            $CacheLoader = new $class_name($cache_directory);
+            $this->injectDependencies($class_name, $CacheLoader);
+            return $CacheLoader;
         }
         catch (\Exception $e) {
-            throw new Exception\Factory('FileSystem PhpCache initialization error', null, $e);
+            throw new Exception\Factory('FileSystem CacheLoader: "%s" initialization error', $type, $e);
         }
     }
 
+    /**
+     * @inheritdoc
+     */
+    public function buildFileSystemSerializedCacheFile($cache_directory, $namespace='Everon\FileSystem')
+    {
+        try {
+            $class_name = $this->getFullClassName($namespace, 'SerializedCache');
+            $this->classExists($class_name);
+            $Cache = new $class_name($cache_directory);
+            $this->injectDependencies($class_name, $Cache);
+            return $Cache;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('FileSystem SerializedCache initialization error', null, $e);
+        }
+    }
+    
     /**
      * @inheritdoc
      */

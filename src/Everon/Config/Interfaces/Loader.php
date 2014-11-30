@@ -12,7 +12,7 @@ namespace Everon\Config\Interfaces;
 use Everon\Exception;
 use Everon\Interfaces;
 
-interface Loader
+interface Loader extends Interfaces\Dependency\Factory, Interfaces\Dependency\FileSystem
 {
     function getConfigDirectory();
 

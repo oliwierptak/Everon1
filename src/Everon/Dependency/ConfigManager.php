@@ -15,14 +15,14 @@ trait ConfigManager
     /**
      * @var \Everon\Config\Manager
      */
-    protected $ConfigManger = null;
+    protected $ConfigManager = null;
 
     /**
      * @return \Everon\Config\Interfaces\Manager
      */
     public function getConfigManager()
     {
-        return $this->ConfigManger;
+        return $this->ConfigManager;
     }
 
     /**
@@ -30,6 +30,6 @@ trait ConfigManager
      */
     public function setConfigManager(\Everon\Config\Interfaces\Manager $ConfigManager)
     {
-        $this->ConfigManger = $ConfigManager;
+        $this->ConfigManager = $ConfigManager;
     }
 }

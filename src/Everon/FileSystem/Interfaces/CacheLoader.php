@@ -11,7 +11,7 @@ namespace Everon\FileSystem\Interfaces;
 
 use Everon\Exception;
 
-interface PhpCache
+interface CacheLoader extends \Everon\Interfaces\Dependency\Factory, \Everon\Interfaces\Dependency\FileSystem
 {
     /**
      * @return string
@@ -30,14 +30,13 @@ interface PhpCache
 
     /**
      * @param \SplFileInfo $CacheFile
-     * @return null
+     * @return mixed|null
      */
     function loadFromCache(\SplFileInfo $CacheFile);
 
     /**
      * @param $name
-     * @param array $cache_data
-     * @throws \Everon\Exception\Config
+     * @param mixed $cache_data
      */
-    function saveToCache($name, array $cache_data);
+    function saveToCache($name, $cache_data);
 }

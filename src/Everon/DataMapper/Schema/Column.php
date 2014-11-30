@@ -11,10 +11,10 @@ namespace Everon\DataMapper\Schema;
 
 use Everon\Dependency;
 use Everon\DataMapper\Exception;
-use Everon\DataMapper\Interfaces\Schema;
+use Everon\DataMapper\Interfaces;
 use Everon\Helper;
 
-abstract class Column implements Schema\Column 
+abstract class Column implements Interfaces\Schema\Column 
 {
     use Dependency\Injection\Factory;
     
@@ -50,57 +50,48 @@ abstract class Column implements Schema\Column
     protected $encoding = null;
 
     /**
-     * @var \Closure
+     * @var Interfaces\Schema\Column\Validator
      */
     protected $Validator = null;
 
     protected $schema = null;
     
     protected $table = null;
-
+    
     /**
      * @var string
      */
     protected $database_timezone = null;
 
     /**
-     * Validators should ensure that the values can be passed to sql
-     * 
-     * @param array $data
-     * @param array $primary_key_list
-     * @param array $unique_key_list
-     * @param array $foreign_key_list
-     * @return mixed|void
-     * @throws \Everon\DataMapper\Exception\Column
+     * @var bool
      */
-    abstract protected function init(array $data, array $primary_key_list, array $unique_key_list, array $foreign_key_list);
+    protected $initialized = false;
+
+    /**
+     * Initialized Column data and validators. Validators should ensure that the values can be passed to sql
+     *
+     */
+    abstract protected function init();
 
     /**
      * @param $database_timezone
      * @param array $data
-     * @param array $primary_key_list
-     * @param array $unique_key_list
-     * @param array $foreign_key_list
+     * @param $is_pk
+     * @param $is_unique
      */
-    public function __construct($database_timezone, array $data, array $primary_key_list, array $unique_key_list, array $foreign_key_list)
+    public function __construct($database_timezone, array $data, $is_pk, $is_unique)
     {
         $this->database_timezone = $database_timezone;
-        $this->init($data, $primary_key_list, $unique_key_list, $foreign_key_list);
+        $this->ColumnInfo = new Helper\PopoProps($data);
+        $this->is_pk = $is_pk;
+        $this->is_unique = $is_unique || $this->is_pk;
     }
 
     protected function getToString()
     {
+        $this->init();
         return (string) $this->name;
-    }
-
-    /**
-     * @param $name
-     * @param $data
-     * @return bool
-     */
-    protected function hasInfo($name, $data)
-    {
-        return isset($data[$name]);
     }
 
     /**
@@ -108,6 +99,7 @@ abstract class Column implements Schema\Column
      */
     public function isPk()
     {
+        $this->init();
         return $this->is_pk;
     }
 
@@ -116,6 +108,7 @@ abstract class Column implements Schema\Column
      */
     public function markAsPk()
     {
+        $this->init();
         $this->is_pk = true;
     }
 
@@ -124,6 +117,7 @@ abstract class Column implements Schema\Column
      */
     public function unMarkAsPk()
     {
+        $this->init();
         $this->is_pk = false;
     }
 
@@ -132,6 +126,7 @@ abstract class Column implements Schema\Column
      */
     public function getName()
     {
+        $this->init();
         return $this->name;
     }
 
@@ -140,6 +135,7 @@ abstract class Column implements Schema\Column
      */
     public function getType()
     {
+        $this->init();
         return $this->type;
     }
 
@@ -148,6 +144,7 @@ abstract class Column implements Schema\Column
      */
     public function getLength()
     {
+        $this->init();
         return $this->length;
     }
 
@@ -156,6 +153,7 @@ abstract class Column implements Schema\Column
      */
     public function isNullable()
     {
+        $this->init();
         return $this->is_nullable;
     }
 
@@ -164,6 +162,7 @@ abstract class Column implements Schema\Column
      */
     public function getDefault()
     {
+        $this->init();
         return $this->default;
     }
 
@@ -172,6 +171,7 @@ abstract class Column implements Schema\Column
      */
     public function getSchema()
     {
+        $this->init();
         return $this->schema;
     }
 
@@ -180,6 +180,7 @@ abstract class Column implements Schema\Column
      */
     public function getValidator()
     {
+        $this->init();
         return $this->Validator;
     }
 
@@ -188,6 +189,7 @@ abstract class Column implements Schema\Column
      */
     public function getTable()
     {
+        $this->init();
         return $this->table;
     }
 
@@ -196,6 +198,7 @@ abstract class Column implements Schema\Column
      */
     public function toArray($deep=false)
     {
+        $this->init();
         return get_object_vars($this);
     }
 
@@ -204,6 +207,7 @@ abstract class Column implements Schema\Column
      */
     public function setDefault($default)
     {
+        $this->init();
         $this->default = $default;
     }
     
@@ -212,6 +216,7 @@ abstract class Column implements Schema\Column
      */
     public function setEncoding($encoding)
     {
+        $this->init();
         $this->encoding = $encoding;
     }
 
@@ -220,6 +225,7 @@ abstract class Column implements Schema\Column
      */
     public function setIsNullable($is_nullable)
     {
+        $this->init();
         $this->is_nullable = $is_nullable;
     }
 
@@ -228,6 +234,7 @@ abstract class Column implements Schema\Column
      */
     public function setIsPk($is_pk)
     {
+        $this->init();
         $this->is_pk = $is_pk;
     }
 
@@ -236,6 +243,7 @@ abstract class Column implements Schema\Column
      */
     public function setIsUnique($is_unique)
     {
+        $this->init();
         $this->is_unique = $is_unique;
     }
 
@@ -244,6 +252,7 @@ abstract class Column implements Schema\Column
      */
     public function setLength($length)
     {
+        $this->init();
         $this->length = $length;
     }
 
@@ -252,6 +261,7 @@ abstract class Column implements Schema\Column
      */
     public function setName($name)
     {
+        $this->init();
         $this->name = $name;
     }
 
@@ -260,6 +270,7 @@ abstract class Column implements Schema\Column
      */
     public function setPrecision($precision)
     {
+        $this->init();
         $this->precision = $precision;
     }
 
@@ -268,6 +279,7 @@ abstract class Column implements Schema\Column
      */
     public function setSchema($schema)
     {
+        $this->init();
         $this->schema = $schema;
     }
 
@@ -276,6 +288,7 @@ abstract class Column implements Schema\Column
      */
     public function setTable($table)
     {
+        $this->init();
         $this->table = $table;
     }
 
@@ -284,15 +297,35 @@ abstract class Column implements Schema\Column
      */
     public function setType($type)
     {
+        $this->init();
         $this->type = $type;
     }
 
     /**
      * @inheritdoc
      */
-    public function setValidator($validation_rules)
+    public function setValidator(Interfaces\Schema\Column\Validator $Validator)
     {
-        $this->Validator = $validation_rules;
+        $this->init();
+        $this->Validator = $Validator;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function disableValidation()
+    {
+        $this->init();
+        $this->Validator = null;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function hasValidator()
+    {
+        $this->init();
+        return $this->Validator !== null;
     }
 
     /**
@@ -301,7 +334,9 @@ abstract class Column implements Schema\Column
     public function validateColumnValue($value)
     {
         try {
-            if ($this->getValidator() === null) {
+            $this->init();
+            
+            if ($this->hasValidator() === false) {
                 return $value; //validation is disabled
             }
 
@@ -311,8 +346,7 @@ abstract class Column implements Schema\Column
 
             $display_value = ($value === null) ? 'NULL' : $value;
             
-            $Validator = $this->getValidator();
-            $validation_result = $Validator($value);
+            $validation_result = $this->getValidator()->validateValue($value);
             if ($validation_result !== true) {
                 throw new Exception\Column('Column: "%s@%s" failed to validate with value: "%s"', [$this->getTable(), $this->getName(), $display_value]);
             }
@@ -329,6 +363,8 @@ abstract class Column implements Schema\Column
      */
     public function getDataForSql($value)
     {
+        $this->init();
+        
         if ($this->isNullable() && $value === null) {
             return $value;
         }
@@ -379,6 +415,8 @@ abstract class Column implements Schema\Column
      */
     public function getColumnDataForEntity($value)
     {
+        $this->init();
+        
         if ($this->isNullable() && $value === null) {
             return $value;
         }

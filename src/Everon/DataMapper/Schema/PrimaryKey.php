@@ -30,6 +30,7 @@ class PrimaryKey extends Constraint implements Schema\PrimaryKey
         $PrimaryKeyInfo = new Helper\PopoProps($data);
         $this->name = $PrimaryKeyInfo->column_name;
         $this->sequence_name = $PrimaryKeyInfo->sequence_name;
+        
         $this->lock();
     }
 

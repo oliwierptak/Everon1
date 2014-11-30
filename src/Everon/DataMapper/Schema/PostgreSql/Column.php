@@ -21,48 +21,43 @@ class Column extends Schema\Column
     /**
      * @inheritdoc
      */
-    protected function init(array $data, array $primary_key_list, array $unique_key_list, array $foreign_key_list)
+    protected function init()
     {
-        $ColumnInfo = new Helper\PopoProps($data);
-        $this->name = $ColumnInfo->column_name;
-        $this->is_pk = $this->hasInfo($this->name, $primary_key_list);
-        $this->is_unique = $this->hasInfo($this->name, $unique_key_list) || $this->is_pk;
-        $this->is_nullable = ($ColumnInfo->is_nullable == 'YES');
-        $this->default = $ColumnInfo->column_default;
-        $this->schema = $ColumnInfo->table_schema;
-        $this->table = $ColumnInfo->__table_name_without_schema;
+        if ($this->initialized) {
+            return;
+        }
         
-        switch ($type = $ColumnInfo->data_type) {
+        $this->name = $this->ColumnInfo->column_name;
+        $this->is_nullable = ($this->ColumnInfo->is_nullable == 'YES');
+        $this->default = $this->ColumnInfo->column_default;
+        $this->schema = $this->ColumnInfo->table_schema;
+        $this->table = $this->ColumnInfo->__table_name_without_schema;
+        
+        switch ($type = $this->ColumnInfo->data_type) {
             case 'char':
             case 'character varying':
             case 'text':
-                $this->length = (int) $ColumnInfo->character_maximum_length;
-                $this->encoding = $ColumnInfo->character_set_name;
+                $this->length = (int) $this->ColumnInfo->character_maximum_length;
+                $this->encoding = $this->ColumnInfo->character_set_name;
                 $this->type = static::TYPE_STRING;
-                $this->Validator = function($value) {
-                    return is_string($value);
-                };
+                $this->Validator = $this->getFactory()->buildSchemaValidator('String', 'PostgreSql');
                 break;
 
             case 'bigint':
             case 'integer':
             case 'smallint':
-                $this->length = (int) $ColumnInfo->numeric_precision;
-                $this->precision = (int) $ColumnInfo->numeric_scale;
+                $this->length = (int) $this->ColumnInfo->numeric_precision;
+                $this->precision = (int) $this->ColumnInfo->numeric_scale;
                 $this->type = static::TYPE_INTEGER;
-                $this->Validator = function($value) {
-                    return is_numeric($value);
-                };
+                $this->Validator = $this->getFactory()->buildSchemaValidator('Numeric', 'PostgreSql');
                 break;
 
             case 'decimal':
             case 'double precision':
-                $this->length = (int) $ColumnInfo->numeric_precision;
-                $this->precision = (int) $ColumnInfo->numeric_scale;
+                $this->length = (int) $this->ColumnInfo->numeric_precision;
+                $this->precision = (int) $this->ColumnInfo->numeric_scale;
                 $this->type = static::TYPE_FLOAT;
-                $this->Validator = function($value) {
-                    return is_float($value);
-                };
+                $this->Validator = $this->getFactory()->buildSchemaValidator('Float', 'PostgreSql');
                 break;
 
             case 'timestamp':
@@ -70,47 +65,38 @@ class Column extends Schema\Column
             case 'timestamp with time zone':
                 $this->length = 19;
                 $this->type = static::TYPE_TIMESTAMP;
-                $this->Validator = function($value) {
-                    $dt = $this->getFactory()->buildDateTime('@'.strtotime($value));
-                    return $dt !== false && !array_sum($dt->getLastErrors());
-                };
+                $this->Validator = $this->getFactory()->buildSchemaValidator('Timestamp', 'PostgreSql');
                 break;
             
             case 'json':
                 $this->length = null;
                 $this->type = static::TYPE_JSON;
-                $this->Validator = function($value) {
-                    return is_string($value);
-                };
+                $this->Validator = $this->getFactory()->buildSchemaValidator('String', 'PostgreSql');
                 break;
             
             case 'boolean':
                 $this->length = 1;
                 $this->type = static::TYPE_BOOLEAN;
-                $this->Validator = function($value) {
-                    return is_string($value) && ($value === 'f' || $value === 't');
-                };
+                $this->Validator = $this->getFactory()->buildSchemaValidator('Boolean', 'PostgreSql');
                 break;
 
             case 'point':
                 $this->length = null;
                 $this->type = static::TYPE_POINT;
-                $this->Validator = function($value) {
-                    return is_string($value);
-                };
+                $this->Validator = $this->getFactory()->buildSchemaValidator('String', 'PostgreSql');
                 break;
             
             case 'polygon':
                 $this->length = null;
                 $this->type = static::TYPE_POLYGON;
-                $this->Validator = function($value) {
-                    return is_string($value);
-                };
+                $this->Validator = $this->getFactory()->buildSchemaValidator('String', 'PostgreSql');
                 break;
 
             default:
                 throw new Exception\Column('Unsupported data type: "%s"', $type);
                 break;
         }
+        
+        $this->initialized = true;
     }
 }

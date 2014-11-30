@@ -12,7 +12,12 @@ namespace Everon\DataMapper\Interfaces;
 use Everon\FileSystem;
 use Everon\Interfaces\PdoAdapter;
 
-interface Schema  extends \Everon\DataMapper\Interfaces\Dependency\SchemaReader, \Everon\Domain\Interfaces\Dependency\DomainMapper 
+interface Schema  extends 
+    \Everon\Interfaces\Dependency\Factory,
+    \Everon\Interfaces\Dependency\Logger,
+    \Everon\Config\Interfaces\Dependency\Manager,
+    \Everon\DataMapper\Interfaces\Dependency\SchemaReader,
+    \Everon\Domain\Interfaces\Dependency\DomainMapper
 {
     /**
      * @param $name
@@ -22,12 +27,12 @@ interface Schema  extends \Everon\DataMapper\Interfaces\Dependency\SchemaReader,
     function getPdoAdapterByName($name);
 
     /**
-     * @param FileSystem\Interfaces\PhpCache $CacheLoader
+     * @param FileSystem\Interfaces\CacheLoader $CacheLoader
      */
-    function setCacheLoader(FileSystem\Interfaces\PhpCache $CacheLoader);
+    function setCacheLoader(FileSystem\Interfaces\CacheLoader $CacheLoader);
 
     /**
-     * @return \Everon\FileSystem\Interfaces\PhpCache
+     * @return \Everon\FileSystem\Interfaces\CacheLoader
      */
     function getCacheLoader();
     

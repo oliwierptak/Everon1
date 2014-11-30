@@ -375,11 +375,15 @@ interface Factory
      * @param DataMapper\Interfaces\Schema\Reader $Reader
      * @param DataMapper\Interfaces\ConnectionManager $ConnectionManager
      * @param Domain\Interfaces\Mapper $DomainMapper
-     * @param FileSystem\Interfaces\PhpCache $PhpCacheLoader
+     * @param \Everon\FileSystem\Interfaces\CacheLoader|\Everon\FileSystem\Interfaces\SerializedCache $CacheLoader
      * @param string $namespace
      * @return DataMapper\Interfaces\Schema
      */
-    function buildSchema(DataMapper\Interfaces\Schema\Reader $Reader, DataMapper\Interfaces\ConnectionManager $ConnectionManager, Domain\Interfaces\Mapper $DomainMapper, FileSystem\Interfaces\PhpCache $PhpCacheLoader, $namespace = 'Everon\DataMapper');
+    function buildSchema(DataMapper\Interfaces\Schema\Reader $Reader, 
+                         DataMapper\Interfaces\ConnectionManager $ConnectionManager, 
+                         Domain\Interfaces\Mapper $DomainMapper,
+                         FileSystem\Interfaces\CacheLoader $CacheLoader, 
+                         $namespace = 'Everon\DataMapper');
 
     /**
      * @param Interfaces\PdoAdapter $PdoAdapter
@@ -417,14 +421,12 @@ interface Factory
      * @param $adapter_name
      * @param $database_timezone
      * @param array $data
-     * @param array $primary_key_list
-     * @param array $unique_key_list
-     * @param array $foreign_key_list
+     * @param $is_pk
+     * @param $is_unique
      * @param string $namespace
      * @return DataMapper\Interfaces\Schema\Column
-     * @throws Exception\Factory]
      */
-    function buildSchemaColumn($adapter_name, $database_timezone, array $data, array $primary_key_list, array $unique_key_list, array $foreign_key_list, $namespace='Everon\DataMapper\Schema');
+    function buildSchemaColumn($adapter_name, $database_timezone, array $data, $is_pk, $is_unique, $namespace = 'Everon\DataMapper\Schema');
 
     /**
      * @param array $foreign_key_data
@@ -480,6 +482,15 @@ interface Factory
     function buildSchemaView($original_name, $name, $schema, array $column_list, array $primary_key_list,  array $unique_key_list, array $foreign_key_list, Domain\Interfaces\Mapper $DomainMapper, $namespace='Everon\DataMapper');
 
     /**
+     * @param $type
+     * @param $adapter_name
+     * @param string $namespace
+     * @return DataMapper\Interfaces\Schema\Column\Validator
+     * @throws Exception\Factory
+     */
+    function buildSchemaValidator($type, $adapter_name, $namespace='Everon\DataMapper\Schema\Column\Validator');
+
+    /**
      * @param string $name
      * @param array $data
      * @param string $class_name
@@ -513,12 +524,12 @@ interface Factory
     function buildFileSystem($root, $namespace='Everon\View');
 
     /**
+     * @param $type
      * @param $cache_directory
      * @param string $namespace
-     * @return \Everon\FileSystem\Interfaces\PhpCache
-     * @throws Exception\Factory
+     * @return \Everon\FileSystem\Interfaces\CacheLoader
      */
-    function buildFileSystemPhpCacheFile($cache_directory, $namespace='Everon\FileSystem');
+    function buildFileSystemCacheLoader($type, $cache_directory, $namespace = 'Everon\FileSystem\CacheLoader');    
 
     /**
      * @param resource $handle default is tmpfile()

@@ -156,35 +156,4 @@ abstract class Reader implements Interfaces\Schema\Reader
         $export('foreign_keys', $foreign_keys);
         $export('unique_keys', $unique_keys);
     }
-
-    public function __sleep()
-    {
-        return [
-            'PdoAdapter',
-            'database',
-            'column_list',
-            'constraint_list',
-            'foreign_key_list',
-            'unique_key_list',
-            'table_list',
-        ];
-    }
-
-    public function __wakeup()
-    {
-        
-    }
-
-    public static function __set_state(array $parameters)
-    {
-        $Reader = new static(
-            $parameters['PdoAdapter']
-        );
-
-        foreach ($parameters as $property => $value) {
-            $Reader->$property = $value;
-        }
-        
-        return $Reader;
-    }
 }

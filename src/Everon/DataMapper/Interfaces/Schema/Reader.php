@@ -11,7 +11,7 @@ namespace Everon\DataMapper\Interfaces\Schema;
 
 use Everon\Interfaces\PdoAdapter;
 
-interface Reader
+interface Reader extends \Everon\Interfaces\Dependency\Factory
 {
     function getAdapterName();
     

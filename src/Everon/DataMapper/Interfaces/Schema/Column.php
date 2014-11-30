@@ -10,9 +10,8 @@
 namespace Everon\DataMapper\Interfaces\Schema;
 
 use Everon\Interfaces\Arrayable;
-use Everon\Interfaces\Immutable;
 
-interface Column extends Arrayable
+interface Column extends Arrayable, \Everon\Interfaces\Dependency\Factory
 {
     /**
      * @return boolean
@@ -54,7 +53,7 @@ interface Column extends Arrayable
     function getSchema();
     
     /**
-     * @return array
+     * @return Column\Validator
      */
     function getValidator();
 
@@ -143,7 +142,14 @@ interface Column extends Arrayable
     function setType($type);
 
     /**
-     * @param string $validation_rules
+     * @param Column\Validator $Validator
      */
-    function setValidator($validation_rules);
+    function setValidator(Column\Validator $Validator);
+
+    function disableValidation();
+
+    /**
+     * @return bool
+     */
+    function hasValidator();
 }
