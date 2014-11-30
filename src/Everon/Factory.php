@@ -1019,23 +1019,10 @@ abstract class Factory implements Interfaces\Factory
             
             $column_list = [];
             foreach ($columns as $column_data) {
-                $is_pk = false;
-                $is_unique = false;
-
-                foreach ($primary_key_list as $pk_name => $PrimaryKey) {
-                    if ($PrimaryKey->getColumnName() === $column_data['column_name'] && $PrimaryKey->getFullTableName() === $column_data['__TABLE_NAME']) {
-                        $is_pk = true;
-                    }
-                }
-
-                foreach ($unique_key_list as $unique_name => $UniqueKey) {
-                    if ($UniqueKey->getColumnName() === $column_data['column_name'] && $UniqueKey->getFullTableName() === $column_data['__TABLE_NAME']) {
-                        $is_unique = true;
-                    }
-                }
+                $is_pk = @isset($primary_keys[$column_data['column_name']]);
+                $is_unique = @isset($unique_keys[$column_data['column_name']]);
 
                 $Column = $this->buildSchemaColumn($adapter_name, $database_timezone, $column_data, $is_pk, $is_unique);
-                //dd($Column->getName(), $Column, $name, $column_data, $primary_key_list, $unique_key_list, $is_pk, $is_unique);
                 $column_list[$Column->getName()] = $Column;
             }
 
