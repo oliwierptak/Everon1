@@ -19,15 +19,15 @@ if (defined('EVERON_ENVIRONMENT') === false) {
     define('EVERON_ENVIRONMENT', 'development');
 }
 
-if (isset($REQUEST_IDENTIFIER) === false) {
-    $REQUEST_IDENTIFIER = new RequestIdentifier();
+if (isset($EVERON_REQUEST_IDENTIFIER) === false) {
+    $EVERON_REQUEST_IDENTIFIER = new RequestIdentifier();
 }
 
 if (isset($CUSTOM_EXCEPTION_HANDLER)) {
     $CUSTOM_EXCEPTION_HANDLER();
 }
 else {
-    Bootstrap::setupExceptionHandler($REQUEST_IDENTIFIER->getValue(), $EVERON_ROOT, '500.log');
+    Bootstrap::setupExceptionHandler($EVERON_REQUEST_IDENTIFIER->getValue(), $EVERON_ROOT, '500.log');
 }
 
 require_once(implode(DIRECTORY_SEPARATOR, [$EVERON_SOURCE_ROOT, 'Interfaces', 'Environment.php']));
@@ -35,18 +35,16 @@ require_once(implode(DIRECTORY_SEPARATOR, [$EVERON_SOURCE_ROOT, 'Environment.php
 
 @$EVERON_CUSTOM_PATHS = $EVERON_CUSTOM_PATHS ?: [];
 
-$Environment = new Environment($EVERON_ROOT, $EVERON_SOURCE_ROOT, $EVERON_CUSTOM_PATHS);
-$Bootstrap = new Bootstrap($Environment, EVERON_ENVIRONMENT);
+$EVERON_ENVIRONMENT = new Environment($EVERON_ROOT, $EVERON_SOURCE_ROOT, $EVERON_CUSTOM_PATHS);
+$EVERON_BOOTSTRAP = new Bootstrap($EVERON_ENVIRONMENT, EVERON_ENVIRONMENT);
+$EVERON_FACTORY = $EVERON_BOOTSTRAP->run();
 
-$EVERON_FACTORY = $Bootstrap->run();
-$Container = $EVERON_FACTORY->getDependencyContainer();
-
-$Container->propose('Bootstrap', function() use ($Bootstrap) {
-    return $Bootstrap;
+$EVERON_FACTORY->getDependencyContainer()->propose('Bootstrap', function() use ($EVERON_BOOTSTRAP) {
+    return $EVERON_BOOTSTRAP;
 });
 
-$Container->propose('RequestIdentifier', function() use ($REQUEST_IDENTIFIER) {
-    return $REQUEST_IDENTIFIER;
+$EVERON_FACTORY->getDependencyContainer()->propose('RequestIdentifier', function() use ($EVERON_REQUEST_IDENTIFIER) {
+    return $EVERON_REQUEST_IDENTIFIER;
 });
 
-require_once($Environment->getEveronConfig().'_dependencies.php');
+require_once($EVERON_ENVIRONMENT->getEveronConfig().'_dependencies.php');
