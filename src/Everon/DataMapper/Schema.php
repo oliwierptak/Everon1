@@ -79,6 +79,14 @@ class Schema implements Interfaces\Schema
         if ($this->tables !== null) {
             return;
         }
+
+        $ColumnValidators = new Helper\Collection([
+            'String' => $this->getFactory()->buildSchemaColumnValidator('String', $this->getAdapterName()),
+            'Numeric' => $this->getFactory()->buildSchemaColumnValidator('Numeric', $this->getAdapterName()),
+            'Float' => $this->getFactory()->buildSchemaColumnValidator('Float', $this->getAdapterName()),
+            'Timestamp' => $this->getFactory()->buildSchemaColumnValidator('Timestamp', $this->getAdapterName()),
+            'Boolean' => $this->getFactory()->buildSchemaColumnValidator('Boolean', $this->getAdapterName())
+        ]);
         
         $table_list = $this->getSchemaReader()->getTableList();
         $column_list = $this->getSchemaReader()->getColumnList();
@@ -90,17 +98,17 @@ class Schema implements Interfaces\Schema
             return isset($item[$name]) ? $item[$name] : [];
         };
 
-
         foreach ($table_list as $name => $table_data) {
             $this->tables[$name] = $this->getFactory()->buildSchemaTableAndDependencies(
-                $this->getDatabaseTimezone(),
-                $table_data['__TABLE_NAME_WITHOUT_SCHEMA'],
-                $table_data['table_schema'],
-                $this->getAdapterName(),
+                $this->getDatabaseTimezone(), 
+                $table_data['__TABLE_NAME_WITHOUT_SCHEMA'], 
+                $table_data['table_schema'], 
+                $this->getAdapterName(), 
                 $castToEmptyArrayWhenNull($name, $column_list), 
                 $castToEmptyArrayWhenNull($name, $primary_key_list), 
-                $castToEmptyArrayWhenNull($name, $unique_key_list),
-                $castToEmptyArrayWhenNull($name, $foreign_key_list),
+                $castToEmptyArrayWhenNull($name, $unique_key_list), 
+                $castToEmptyArrayWhenNull($name, $foreign_key_list), 
+                $ColumnValidators, 
                 $this->getDomainMapper()
             );
         }

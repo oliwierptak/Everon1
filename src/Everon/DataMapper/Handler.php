@@ -16,6 +16,7 @@ use Everon\Helper;
 
 abstract class Handler implements Interfaces\Handler
 {
+    use Dependency\Injection\ConfigManager;
     use Dependency\Injection\Factory;
     use Dependency\Injection\FileSystem;
     
@@ -51,10 +52,11 @@ abstract class Handler implements Interfaces\Handler
             );
 
             //$this->Schema->saveTablesToCache();
-            //$this->Schema->loadTablesFromCache();   
+            
+/*            if ($this->getConfigManager()->getConfigValue('application.cache.data_mapper')) {
+                $this->Schema->loadTablesFromCache();
+            }*/
         }
-        
-        //dd($this->Schema->getTables());
 
         return $this->Schema;
     }

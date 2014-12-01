@@ -40,7 +40,7 @@ class Column extends Schema\Column
                 $this->length = (int) $this->ColumnInfo->character_maximum_length;
                 $this->encoding = $this->ColumnInfo->character_set_name;
                 $this->type = static::TYPE_STRING;
-                $this->Validator = $this->getFactory()->buildSchemaValidator('String', 'PostgreSql');
+                $this->Validator = $this->ColumnValidators->get('String');
                 break;
 
             case 'bigint':
@@ -49,7 +49,7 @@ class Column extends Schema\Column
                 $this->length = (int) $this->ColumnInfo->numeric_precision;
                 $this->precision = (int) $this->ColumnInfo->numeric_scale;
                 $this->type = static::TYPE_INTEGER;
-                $this->Validator = $this->getFactory()->buildSchemaValidator('Numeric', 'PostgreSql');
+                $this->Validator = $this->ColumnValidators->get('Numeric');;
                 break;
 
             case 'decimal':
@@ -57,7 +57,7 @@ class Column extends Schema\Column
                 $this->length = (int) $this->ColumnInfo->numeric_precision;
                 $this->precision = (int) $this->ColumnInfo->numeric_scale;
                 $this->type = static::TYPE_FLOAT;
-                $this->Validator = $this->getFactory()->buildSchemaValidator('Float', 'PostgreSql');
+                $this->Validator = $this->ColumnValidators->get('Float');
                 break;
 
             case 'timestamp':
@@ -65,31 +65,31 @@ class Column extends Schema\Column
             case 'timestamp with time zone':
                 $this->length = 19;
                 $this->type = static::TYPE_TIMESTAMP;
-                $this->Validator = $this->getFactory()->buildSchemaValidator('Timestamp', 'PostgreSql');
+                $this->Validator = $this->ColumnValidators->get('Timestamp');
                 break;
             
             case 'json':
                 $this->length = null;
                 $this->type = static::TYPE_JSON;
-                $this->Validator = $this->getFactory()->buildSchemaValidator('String', 'PostgreSql');
+                $this->Validator = $this->ColumnValidators->get('String');
                 break;
             
             case 'boolean':
                 $this->length = 1;
                 $this->type = static::TYPE_BOOLEAN;
-                $this->Validator = $this->getFactory()->buildSchemaValidator('Boolean', 'PostgreSql');
+                $this->Validator = $this->ColumnValidators->get('Boolean');
                 break;
 
             case 'point':
                 $this->length = null;
                 $this->type = static::TYPE_POINT;
-                $this->Validator = $this->getFactory()->buildSchemaValidator('String', 'PostgreSql');
+                $this->Validator = $this->ColumnValidators->get('String');
                 break;
             
             case 'polygon':
                 $this->length = null;
                 $this->type = static::TYPE_POLYGON;
-                $this->Validator = $this->getFactory()->buildSchemaValidator('String', 'PostgreSql');
+                $this->Validator = $this->ColumnValidators->get('String');
                 break;
 
             default:

@@ -27,7 +27,6 @@ abstract class DataMapper implements Interfaces\DataMapper
     protected $write_connection_name = 'write';
     
     protected $read_connection_name = 'read';
-    
 
     /**
      * @inheritdoc
@@ -58,7 +57,7 @@ abstract class DataMapper implements Interfaces\DataMapper
      * @inheritdoc
      */
     abstract public function getCountSql();
-    
+
 
     /**
      * @param DataMapper\Interfaces\Schema\Table $Table

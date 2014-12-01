@@ -17,7 +17,7 @@ use Everon\Exception;
 class Config implements \Everon\Interfaces\Config
 {
     use Dependency\Injection\Factory;
-
+    
     use Helper\Arrays;
     use Helper\Exceptions;
     use Helper\Asserts\IsArrayKey;

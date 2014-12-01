@@ -98,7 +98,6 @@ abstract class Resource extends Resource\Basic implements Interfaces\Resource
         //make \DateTime useful, must be in timezone_type 3
         array_walk_recursive($entity_data, function(&$value) {
             if ($value instanceof \DateTime) {
-                //$value->setTimezone((new \DateTime(null))->getTimezone()); //convert to server timezone
                 $value->setTimezone($this->getFactory()->buildDateTime(null)->getTimezone()); //convert to server timezone
                 $value = $value->format(\DateTime::ISO8601);
             }

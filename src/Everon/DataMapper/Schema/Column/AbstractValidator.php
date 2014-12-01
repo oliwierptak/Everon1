@@ -20,12 +20,17 @@ abstract class AbstractValidator implements Interfaces\Schema\Column\Validator
      * @inheritdoc
      */
     abstract public function validateValue($value);
-
+    
     public function __sleep()
     {
         $vars = get_object_vars($this);
         unset($vars['Factory']);
         $data = array_keys($vars);
         return $data;
+    }
+
+    public function __wakeup()
+    {
+        $this->Factory = @$GLOBALS['EVERON_FACTORY']; //xxx meh
     }
 }
