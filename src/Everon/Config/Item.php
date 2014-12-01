@@ -60,9 +60,6 @@ class Item implements Interfaces\Item
      */
     public function validateData(array $data)
     {
-        if (@$data[static::PROPERTY_NAME]=== null) {
-            die('fsdfa');
-        }
         $this->assertIsStringAndNonEmpty((string) @$data[static::PROPERTY_NAME], 'Invalid item name: "%s"', 'ConfigItem');
     }
 
