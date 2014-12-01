@@ -10,7 +10,6 @@
 namespace Everon\Rest;
 
 use Everon\Config\Interfaces\ItemRouter;
-use Everon\Interfaces\Request;
 use Everon\Exception;
 use Everon\Router as EveronRouter;
 
@@ -19,7 +18,7 @@ class Router extends EveronRouter implements Interfaces\Router
     /**
      * @inheritdoc
      */
-    public function getRouteByRequest(Request $Request)
+    public function getRouteByRequest(\Everon\Interfaces\Request $Request)
     {
         try {
             $DefaultItem = parent::getRouteByRequest($Request);
