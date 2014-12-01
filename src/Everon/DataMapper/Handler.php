@@ -50,12 +50,12 @@ abstract class Handler implements Interfaces\Handler
             $this->Schema = $this->getFactory()->buildSchema(
                 $SchemaReader, $this->getConnectionManager(), $this->getDomainMapper(), $CacheLoader
             );
-
+            
             //$this->Schema->saveTablesToCache();
             
-/*            if ($this->getConfigManager()->getConfigValue('application.cache.data_mapper')) {
+            if ($this->getConfigManager()->getConfigValue('application.cache.data_mapper')) {
                 $this->Schema->loadTablesFromCache();
-            }*/
+            }
         }
 
         return $this->Schema;
