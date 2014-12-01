@@ -27,7 +27,7 @@ class Router extends EveronRouter implements Interfaces\Router
             $DefaultItem = null;
         }
 
-        if ($DefaultItem !== null && $Request->getMethod() === $DefaultItem->getMethod()) {
+        if ($DefaultItem !== null && strcasecmp($Request->getMethod(), $DefaultItem->getMethod()) === 0) {
             return $DefaultItem;
         }
         
