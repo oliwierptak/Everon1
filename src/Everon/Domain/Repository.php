@@ -72,7 +72,9 @@ abstract class Repository implements Interfaces\Repository
                 }
                 $default[$name] = null;
             }
-            $data[$name] = $Column->getColumnDataForEntity($data[$name]);
+            else {
+                $data[$name] = $Column->getColumnDataForEntity($data[$name]);
+            }
         }
 
         return $data;
