@@ -51,30 +51,27 @@ abstract class Repository implements Interfaces\Repository
      * Makes sure data defined in the Entity is in proper format and all keys are set
      * 
      * @param array $data
-     * @param $check_id
      * @return array
      * @throws \Everon\Exception\Domain
      */
-    protected function prepareDataForEntity(array $data, $check_id)
+    protected function prepareDataForEntity(array $data)
     {
         /**
          * @var \Everon\DataMapper\Interfaces\Schema\Column $Column
          */
         foreach ($this->getMapper()->getTable()->getColumns() as $name => $Column) {
-            if ($check_id && $Column->isPk()) {
-                $default[$name] = null;
-                continue;
-            }
-
             if (array_key_exists($name, $data) === false) {
-                if ($Column->isNullable() === false) {
+                if ($Column->isPk()) {
+                    $data[$name] = null;
+                }
+                else if ($Column->isNullable() === false) {
                     throw new Exception\Domain('Missing Entity data: "%s" for "%s"', [$name, $this->getMapper()->getTable()->getName()]);
                 }
-                $default[$name] = null;
+                
+                $data[$name] = null;
             }
-            else {
-                $data[$name] = $Column->getColumnDataForEntity($data[$name]);
-            }
+            
+            $data[$name] = $Column->getColumnDataForEntity($data[$name]);
         }
 
         return $data;
@@ -88,7 +85,7 @@ abstract class Repository implements Interfaces\Repository
      */
     protected function buildEntity(array $data, DataMapper\Interfaces\Criteria\Builder $RelationCriteria = null)
     {
-        $data = $this->prepareDataForEntity($data, true);
+        $data = $this->prepareDataForEntity($data);
         $Entity = $this->getFactory()->buildDomainEntity($this->getName(), $this->getMapper()->getTable()->getPk(), $data);
         $this->buildEntityRelations($Entity, $RelationCriteria);
         return $Entity;
@@ -262,7 +259,7 @@ abstract class Repository implements Interfaces\Repository
             $this->getMapper()->save($data, $user_id);
         }
 
-        $data = $this->prepareDataForEntity($data, false);
+        $data = $this->prepareDataForEntity($data);
         
         $Entity->persist($data);
     }

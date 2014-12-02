@@ -220,7 +220,7 @@ abstract class Relation implements Interfaces\Relation
      */
     public function getDataMapper()
     {
-        return $this->getDomainManager()->getRepositoryByName($this->getName())->getMapper();
+        return $this->getRepository()->getMapper();
     }
 
     /**
@@ -228,7 +228,7 @@ abstract class Relation implements Interfaces\Relation
      */
     public function setDataMapper(\Everon\Interfaces\DataMapper $DataMapper)
     {
-        $this->getDomainManager()->getRepositoryByName($this->getName())->setMapper($DataMapper);
+        $this->getRepository()->setMapper($DataMapper);
     }
 
     /**
@@ -341,7 +341,7 @@ abstract class Relation implements Interfaces\Relation
             foreach ($data as $item) {
                 $entities[] = $this->getRepository()->buildFromArray($item, $this->getEntityRelationCriteria());
             }
-
+            
             $this->loaded = true;
             return $entities;
         };
