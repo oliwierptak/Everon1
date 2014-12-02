@@ -375,9 +375,10 @@ interface Factory
      * @param DataMapper\Interfaces\Schema\Reader $Reader
      * @param DataMapper\Interfaces\ConnectionManager $ConnectionManager
      * @param Domain\Interfaces\Mapper $DomainMapper
-     * @param \Everon\FileSystem\Interfaces\CacheLoader|\Everon\FileSystem\Interfaces\SerializedCache $CacheLoader
+     * @param \Everon\FileSystem\Interfaces\CacheLoader $CacheLoader
      * @param string $namespace
      * @return DataMapper\Interfaces\Schema
+     * @throws Exception\Factory
      */
     function buildSchema(DataMapper\Interfaces\Schema\Reader $Reader, 
                          DataMapper\Interfaces\ConnectionManager $ConnectionManager, 
@@ -410,12 +411,13 @@ interface Factory
      * @param array $primary_keys
      * @param array $unique_keys
      * @param array $foreign_keys
+     * @param Collection $ColumnValidators
      * @param Domain\Interfaces\Mapper $DomainMapper
      * @param string $namespace
      * @return DataMapper\Interfaces\Schema\Table
      * @throws Exception\Factory
      */
-    function buildSchemaTableAndDependencies($database_timezone, $name, $schema, $adapter_name, array $columns, array $primary_keys,  array $unique_keys, array $foreign_keys, Domain\Interfaces\Mapper $DomainMapper, $namespace='Everon\DataMapper');
+    function buildSchemaTableAndDependencies($database_timezone, $name, $schema, $adapter_name, array $columns, array $primary_keys, array $unique_keys, array $foreign_keys, Interfaces\Collection $ColumnValidators, Domain\Interfaces\Mapper $DomainMapper, $namespace = 'Everon\DataMapper');
 
     /**
      * @param $adapter_name
@@ -423,10 +425,12 @@ interface Factory
      * @param array $data
      * @param $is_pk
      * @param $is_unique
+     * @param Collection $ColumnValidators
      * @param string $namespace
      * @return DataMapper\Interfaces\Schema\Column
+     * @throws Exception\Factory
      */
-    function buildSchemaColumn($adapter_name, $database_timezone, array $data, $is_pk, $is_unique, $namespace = 'Everon\DataMapper\Schema');
+    function buildSchemaColumn($adapter_name, $database_timezone, array $data, $is_pk, $is_unique, Interfaces\Collection $ColumnValidators, $namespace = 'Everon\DataMapper\Schema');
 
     /**
      * @param array $foreign_key_data
@@ -464,7 +468,7 @@ interface Factory
      * @return DataMapper\Interfaces\Schema\Table
      * @throws Exception\Factory
      */
-    function buildSchemaTable($name, $schema, array $column_list, array $primary_key_list,  array $unique_key_list, array $foreign_key_list, Domain\Interfaces\Mapper $DomainMapper, $namespace='Everon\DataMapper\Schema');
+    function buildSchemaTable($name, $schema, array $column_list, array $primary_key_list, array $unique_key_list, array $foreign_key_list, Domain\Interfaces\Mapper $DomainMapper, $namespace = 'Everon\DataMapper\Schema');
 
     /**
      * @param $original_name
@@ -488,7 +492,7 @@ interface Factory
      * @return DataMapper\Interfaces\Schema\Column\Validator
      * @throws Exception\Factory
      */
-    function buildSchemaValidator($type, $adapter_name, $namespace='Everon\DataMapper\Schema\Column\Validator');
+    function buildSchemaColumnValidator($type, $adapter_name, $namespace='Everon\DataMapper\Schema\Column\Validator');
 
     /**
      * @param string $name
@@ -528,6 +532,7 @@ interface Factory
      * @param $cache_directory
      * @param string $namespace
      * @return \Everon\FileSystem\Interfaces\CacheLoader
+     * @throws Exception\Factory
      */
     function buildFileSystemCacheLoader($type, $cache_directory, $namespace = 'Everon\FileSystem\CacheLoader');    
 
@@ -586,6 +591,7 @@ interface Factory
     /**
      * @param string $namespace
      * @return View\Interfaces\TemplateCompilerContext
+     * @throws Exception\Factory
      */
     function buildTemplateCompilerContext($namespace='Everon\View\Template\Compiler');
 
@@ -637,6 +643,7 @@ interface Factory
      * @param \Everon\View\Interfaces\Manager $ViewManager
      * @param string $namespace
      * @return View\Interfaces\WidgetManager
+     * @throws Exception\Factory
      */
     function buildViewWidgetManager(View\Interfaces\Manager $ViewManager, $namespace = 'Everon\View\Widget');
 
@@ -837,6 +844,7 @@ interface Factory
     /**
      * @param array $credential_data
      * @return Email\Credential
+     * @throws Exception\Factory
      */
     function buildEmailCredential(array $credential_data);
 
@@ -862,6 +870,7 @@ interface Factory
      * @param int $limit
      * @param string $namespace
      * @return Paginator
+     * @throws Exception\Factory
      */
     function buildPaginator($total, $offset, $limit, $namespace='Everon\Helper');
 
@@ -869,12 +878,14 @@ interface Factory
      * @param string $time
      * @param \DateTimeZone $timezone
      * @return \DateTime
+     * @throws Exception\Factory
      */
     function buildDateTime($time='now', \DateTimeZone $timezone=null);
 
     /**
      * @param $timezone
      * @return \DateTimeZone
+     * @throws Exception\Factory
      */
     function buildDateTimeZone($timezone);
 
@@ -886,6 +897,7 @@ interface Factory
      * @param $calendar
      * @param $pattern
      * @return \IntlDateFormatter
+     * @throws Exception\Factory
      */
     function buildIntlDateFormatter($locale, $datetype, $timetype, $timezone, $calendar, $pattern);
 

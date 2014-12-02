@@ -222,8 +222,8 @@ class Builder implements Interfaces\Criteria\Builder
     public function getCurrentContainer()
     {
         if ($this->ContainerCollection->has($this->current) === false) {
-            $CriteriaBuilder = $this->getFactory()->buildCriteria();
-            $Container = $this->getFactory()->buildCriteriaContainer($CriteriaBuilder, null);
+            $Criteria = $this->getFactory()->buildCriteria();
+            $Container = $this->getFactory()->buildCriteriaContainer($Criteria, null);
             $this->ContainerCollection[$this->current] = $Container; 
         }
         

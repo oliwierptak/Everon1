@@ -156,7 +156,7 @@ abstract class Handler implements Interfaces\Handler
              * @var \SplFileInfo $File
              */
             foreach ($LoaderFiles as $filename => $File) {
-                $Container = $this->getFactory()->getDependencyContainer();
+                $EVERON_FACTORY = $this->getFactory();
                 $FactoryWorker = $this->getFactoryWorker($module_name);
                 include($File->getPathname());
             }

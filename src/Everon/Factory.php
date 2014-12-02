@@ -202,7 +202,9 @@ abstract class Factory implements Interfaces\Factory
     public function buildRestResponse($guid, Http\Interfaces\HeaderCollection $HeaderCollection, Http\Interfaces\CookieCollection $CookieCollection, $namespace='Everon\Http')
     {
         try {
-            $Response = new Rest\Response($guid, $HeaderCollection, $CookieCollection);
+            $class_name = $this->getFullClassName($namespace, 'Response');
+            $this->classExists($class_name);
+            $Response = new $class_name($guid, $HeaderCollection, $CookieCollection);
             $this->injectDependencies('Everon\Rest\Response', $Response);
             return $Response;
         }
@@ -990,7 +992,7 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildSchemaTableAndDependencies($database_timezone, $name, $schema, $adapter_name, array $columns, array $primary_keys,  array $unique_keys, array $foreign_keys, Domain\Interfaces\Mapper $DomainMapper, $namespace='Everon\DataMapper')
+    public function buildSchemaTableAndDependencies($database_timezone, $name, $schema, $adapter_name, array $columns, array $primary_keys, array $unique_keys, array $foreign_keys, Interfaces\Collection $ColumnValidators, Domain\Interfaces\Mapper $DomainMapper, $namespace = 'Everon\DataMapper')
     {
         try {
             /**
@@ -1022,7 +1024,7 @@ abstract class Factory implements Interfaces\Factory
                 $is_pk = @isset($primary_key_list[$column_data['column_name']]);
                 $is_unique = @isset($unique_key_list[$column_data['column_name']]);
 
-                $Column = $this->buildSchemaColumn($adapter_name, $database_timezone, $column_data, $is_pk, $is_unique);
+                $Column = $this->buildSchemaColumn($adapter_name, $database_timezone, $column_data, $is_pk, $is_unique, $ColumnValidators);
                 $column_list[$Column->getName()] = $Column;
             }
 
@@ -1036,12 +1038,12 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildSchemaColumn($adapter_name, $database_timezone, array $data, $is_pk, $is_unique, $namespace = 'Everon\DataMapper\Schema')
+    public function buildSchemaColumn($adapter_name, $database_timezone, array $data, $is_pk, $is_unique, Interfaces\Collection $ColumnValidators, $namespace = 'Everon\DataMapper\Schema')
     {
         try {
             $class_name = $this->getFullClassName($namespace, $adapter_name.'\\Column');
             $this->classExists($class_name);
-            $Column = new $class_name($database_timezone, $data, $is_pk, $is_unique);
+            $Column = new $class_name($this, $ColumnValidators, $database_timezone, $data, $is_pk, $is_unique);
             $this->injectDependencies($class_name, $Column);
             return $Column;
         }
@@ -1122,7 +1124,7 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildSchemaTable($name, $schema, array $column_list, array $primary_key_list,  array $unique_key_list, array $foreign_key_list, Domain\Interfaces\Mapper $DomainMapper, $namespace='Everon\DataMapper\Schema')
+    public function buildSchemaTable($name, $schema, array $column_list, array $primary_key_list, array $unique_key_list, array $foreign_key_list, Domain\Interfaces\Mapper $DomainMapper, $namespace = 'Everon\DataMapper\Schema')
     {
         try {
             $class_name = $this->getFullClassName($namespace, 'Table');
@@ -1156,7 +1158,7 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildSchemaValidator($type, $adapter_name, $namespace='Everon\DataMapper\Schema\Column\Validator')
+    public function buildSchemaColumnValidator($type, $adapter_name, $namespace='Everon\DataMapper\Schema\Column\Validator')
     {
         try {
             $class_name = $this->getFullClassName($namespace, $adapter_name.'\\'.$type);

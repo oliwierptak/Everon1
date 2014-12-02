@@ -16,7 +16,7 @@ use Everon\Helper;
 
 abstract class Column implements Interfaces\Schema\Column 
 {
-    use Dependency\Injection\Factory;
+    use Dependency\Factory;
     
     use Helper\DateFormatter;
     use Helper\ToString;
@@ -69,19 +69,29 @@ abstract class Column implements Interfaces\Schema\Column
     protected $initialized = false;
 
     /**
+     * @var \Everon\Interfaces\Collection
+     */
+    protected $ColumnValidators = null;
+
+    /**
      * Initialized Column data and validators. Validators should ensure that the values can be passed to sql
      *
      */
     abstract protected function init();
 
+
     /**
+     * @param \Everon\Interfaces\Factory $Factory
+     * @param $ColumnValidators
      * @param $database_timezone
      * @param array $data
      * @param $is_pk
      * @param $is_unique
      */
-    public function __construct($database_timezone, array $data, $is_pk, $is_unique)
+    public function __construct(\Everon\Interfaces\Factory $Factory, $ColumnValidators, $database_timezone, array $data, $is_pk, $is_unique)
     {
+        $this->Factory = $Factory;
+        $this->ColumnValidators = $ColumnValidators;
         $this->database_timezone = $database_timezone;
         $this->ColumnInfo = new Helper\PopoProps($data);
         $this->is_pk = $is_pk;
@@ -473,5 +483,10 @@ abstract class Column implements Interfaces\Schema\Column
         unset($vars['Factory']);
         $data = array_keys($vars);
         return $data;
+    }
+    
+    public function __wakeup()
+    {
+        $this->Factory = @$GLOBALS['EVERON_FACTORY']; //xxx meh
     }
 }

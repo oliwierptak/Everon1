@@ -80,7 +80,7 @@ class Popo implements Interfaces\Arrayable
             throw new Exception\Popo('Unknown method: "%s" in "%s"', [$name, get_called_class()]);
         }
 
-        if (array_key_exists($name, $this->property_name_cache)) {
+        if ((isset($this->property_name_cache[$name])) || array_key_exists($name, $this->property_name_cache)) {
             $property = $this->property_name_cache[$name];
         }
         else {

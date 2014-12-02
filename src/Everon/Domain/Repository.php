@@ -48,22 +48,30 @@ abstract class Repository implements Interfaces\Repository
     }
 
     /**
-     * Makes sure data defined in the Entity is in proper format
-     *
+     * Makes sure data defined in the Entity is in proper format and all keys are set
+     * 
      * @param array $data
+     * @param $check_id
      * @return array
      * @throws \Everon\Exception\Domain
      */
-    protected function prepareDataForEntity(array $data)
+    protected function prepareDataForEntity(array $data, $check_id)
     {
         /**
          * @var \Everon\DataMapper\Interfaces\Schema\Column $Column
          */
         foreach ($this->getMapper()->getTable()->getColumns() as $name => $Column) {
-            if (array_key_exists($name, $data) === false) {
-                throw new Exception\Domain('Missing Entity data: "%s" for "%s"', [$name, $this->getMapper()->getTable()->getName()]);
+            if ($check_id && $Column->isPk()) {
+                $default[$name] = null;
+                continue;
             }
-            //$Column = $this->getMapper()->getTable()->getColumnByName($name);
+
+            if (array_key_exists($name, $data) === false) {
+                if ($Column->isNullable() === false) {
+                    throw new Exception\Domain('Missing Entity data: "%s" for "%s"', [$name, $this->getMapper()->getTable()->getName()]);
+                }
+                $default[$name] = null;
+            }
             $data[$name] = $Column->getColumnDataForEntity($data[$name]);
         }
 
@@ -78,33 +86,10 @@ abstract class Repository implements Interfaces\Repository
      */
     protected function buildEntity(array $data, DataMapper\Interfaces\Criteria\Builder $RelationCriteria = null)
     {
-        $defaults = $this->getDefaultEntityData();
-        $data = $this->arrayMergeDefault($defaults, $data);
-        $data = $this->prepareDataForEntity($data);
+        $data = $this->prepareDataForEntity($data, true);
         $Entity = $this->getFactory()->buildDomainEntity($this->getName(), $this->getMapper()->getTable()->getPk(), $data);
         $this->buildEntityRelations($Entity, $RelationCriteria);
-        //$this->resolveRelationsIntoData($Entity);
         return $Entity;
-    }
-
-    /**
-     * @return array
-     */
-    protected function getDefaultEntityData()
-    {
-        /**
-         * @var \Everon\DataMapper\Interfaces\Schema\Column $Column
-         */
-        $default = [];
-        $columns = $this->getMapper()->getTable()->getColumns();
-        foreach ($columns as $name => $Column) {
-            if ($Column->isPk()) {
-                continue;
-            }
-            $default[$name] = null;
-        }
-        
-        return $default;
     }
 
     /**
@@ -275,7 +260,7 @@ abstract class Repository implements Interfaces\Repository
             $this->getMapper()->save($data, $user_id);
         }
 
-        $data = $this->prepareDataForEntity($data);
+        $data = $this->prepareDataForEntity($data, false);
         
         $Entity->persist($data);
     }

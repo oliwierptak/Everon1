@@ -70,4 +70,8 @@ interface Schema  extends
      * @return string
      */
     function getDatabaseTimezone();
+
+    function saveTablesToCache();
+
+    function loadTablesFromCache();
 }
