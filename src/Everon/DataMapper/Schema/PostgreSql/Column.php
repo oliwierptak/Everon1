@@ -98,6 +98,7 @@ class Column extends Schema\Column
         }
         
         unset($this->ColumnInfo);
+        unset($this->ColumnValidators);
         $this->initialized = true;
     }
 }
