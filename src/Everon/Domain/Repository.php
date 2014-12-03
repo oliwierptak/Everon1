@@ -330,10 +330,10 @@ abstract class Repository implements Interfaces\Repository
     {
         $this->getMapper()->getSchema()->getPdoAdapterByName($this->getMapper()->getWriteConnectionName())->beginTransaction();
         if ($point !== null) {
-            $this->getLogger()->log('transaction', 'begin: '.$point);
+            $this->getLogger()->log('sql', 'BEGIN TRANSACTION: '.$point);
         }
         else {
-            $this->getLogger()->log('transaction', 'begin');
+            $this->getLogger()->log('sql', 'BEGIN TRANSACTION');
         }
     }
 
@@ -344,10 +344,10 @@ abstract class Repository implements Interfaces\Repository
     {
         $this->getMapper()->getSchema()->getPdoAdapterByName($this->getMapper()->getWriteConnectionName())->commitTransaction();
         if ($point !== null) {
-            $this->getLogger()->log('transaction', 'commit: '.$point);
+            $this->getLogger()->log('sql', 'COMMIT: '.$point);
         }
         else {
-            $this->getLogger()->log('transaction', 'commit');
+            $this->getLogger()->log('sql', 'COMMIT');
         }
     }
 
@@ -358,10 +358,10 @@ abstract class Repository implements Interfaces\Repository
     {
         $this->getMapper()->getSchema()->getPdoAdapterByName($this->getMapper()->getWriteConnectionName())->rollbackTransaction();
         if ($point !== null) {
-            $this->getLogger()->log('transaction', 'rollback: '.$point);
+            $this->getLogger()->log('sql', 'ROLLBACK: '.$point);
         }
         else {
-            $this->getLogger()->log('transaction', 'rollback');
+            $this->getLogger()->log('sql', 'ROLLBACK');
         }
     }
 }
