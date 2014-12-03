@@ -27,7 +27,7 @@ class Core extends \Everon\Core implements Interfaces\Core
             $this->showException($e, $this->Controller);
         }
         finally {
-            $this->getLogger()->console(
+            $this->getLogger()->log('console',
                 sprintf(
                     '[%d] %s %s',
                     $this->getResponse()->getResult(), $this->getRequest()->getMethod(), $this->getRequest()->getPath()

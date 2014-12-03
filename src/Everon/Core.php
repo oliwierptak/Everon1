@@ -136,7 +136,6 @@ abstract class Core implements Interfaces\Core
     protected function showException(\Exception $Exception, $Controller)
     {
         $this->getLogger()->error($Exception);
-        $this->getLogger()->trace($Exception);
 
         /**
          * @var \Everon\Mvc\Interfaces\Controller $Controller

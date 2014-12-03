@@ -31,7 +31,7 @@ class Php extends Compiler
             $this->runPhp($Context, $this->getFileSystem());
         }
         catch (\Exception $e) {
-            $this->getLogger()->view($e."\n".$Context->getPhp());
+            $this->getLogger()->log('view', $e."\n".$Context->getPhp());
             $Context->setCompiled($e->getMessage());
             //$content = 'Template error: '.$e->getMessage().' on line '.$e->getLine().' in '.$scope;
         }

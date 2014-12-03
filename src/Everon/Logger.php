@@ -69,7 +69,7 @@ class Logger implements Interfaces\Logger
     /**
      * Don't generate errors and only write to log file when possible
      * 
-     * @param $message
+     * @param $message \Exception or string
      * @param $level
      * @param $parameters
      * @return \DateTime
@@ -112,24 +112,33 @@ class Logger implements Interfaces\Logger
             error_log($message."\n", 3, $Filename->getPathname());
 
             if ($ExceptionToTrace instanceof \Exception) {
-                $this->logTrace($ExceptionToTrace, $LogDate, $id);
+                $this->logTrace($ExceptionToTrace, $LogDate, $id, $level);
             }
         }
         
         return $LogDate;
     }
-    
-    protected function logTrace(\Exception $Exception, \DateTime $StarDate, $id)
+
+    /**
+     * @param \Exception $Exception
+     * @param \DateTime $StarDate
+     * @param $id
+     * @param $log_level
+     */
+    protected function logTrace(\Exception $Exception, \DateTime $StarDate, $id, $log_level)
     {
         $trace = $Exception->getTraceAsString();
         if ($trace !== null) {
             $trace = $StarDate->format($this->getLogDateFormat())." ${id} \n".$trace;
-            $Filename = $this->getFilenameByLevel('trace');
+            $Filename = $this->getFilenameByLevel($log_level);
             $this->logRotate($Filename);
             error_log($trace."\n", 3, $Filename->getPathname());
         }
     }
-    
+
+    /**
+     * @param \SplFileInfo $Filename
+     */
     protected function logRotate(\SplFileInfo $Filename)
     {
         if ($Filename->isFile() === false) {
@@ -145,12 +154,18 @@ class Logger implements Interfaces\Logger
             fclose($h);
         }
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public function getLogDateFormat()
     {
         return 'c';
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public function getLogDateTimeZone()
     {
         $timezone = @date_default_timezone_get();
@@ -158,45 +173,77 @@ class Logger implements Interfaces\Logger
         return $this->getFactory()->buildDateTimeZone($timezone);
     }
 
+    /**
+     * @inheritdoc
+     */
     public function setLogDirectory($directory)
     {
         $this->log_directory = $directory;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function getLogDirectory()
     {
         return $this->log_directory;
-    }    
-    
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function setLogFiles(array $files)
     {
         $this->log_files = $files;
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public function getLogFiles()
     {
         return $this->log_files;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function warn($message, array $parameters=[])
     {
         return $this->write($message, 'warning', $parameters);
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public function trace(\Exception $Message, array $parameters=[])
     {
         $Message = $Message->getTraceAsString();
         return $this->write($Message, 'trace', $parameters);
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public function error($message, array $parameters=[])
     {
         return $this->write($message, 'error', $parameters);
     }
-    
+
+    /**
+     * @inheritdoc
+     */
     public function debug($message, array $parameters=[])
     {
         return $this->write($message, 'debug', $parameters);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function log($log_name, $message, array $parameters=[])
+    {
+        return $this->write($message, $log_name, $parameters);
     }
 
     /**
@@ -206,7 +253,7 @@ class Logger implements Interfaces\Logger
      * @param $arguments
      * @return \DateTime
      */
-    public function __call($name, array $arguments=[])
+    /*public function __call($name, array $arguments=[])
     {
         if ($this->enabled === false) {
             return null;
@@ -218,6 +265,6 @@ class Logger implements Interfaces\Logger
         @list($message, $parameters) = $arguments;
         $parameters = $parameters ?: [];
         return $this->write($message, $name, $parameters);
-    }
+    }*/
     
 }

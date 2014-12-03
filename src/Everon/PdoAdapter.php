@@ -79,7 +79,7 @@ class PdoAdapter implements Interfaces\PdoAdapter
     protected function executeSql($sql, $parameters, $fetch_mode)
     {
         try {
-            $this->getLogger()->sql($sql."|".print_r($parameters, true));
+            $this->getLogger()->log('sql', $sql."|".print_r($parameters, true));
             $statement = $this->getPdo()->prepare($sql, [
                 \PDO::ATTR_CURSOR => \PDO::CURSOR_FWDONLY
             ]);
@@ -95,7 +95,7 @@ class PdoAdapter implements Interfaces\PdoAdapter
             return $statement;
         }
         catch (\PDOException $e) {
-            $this->getLogger()->sql_error($sql."|".print_r($parameters, true)); //todo: addFromArray logSql to logger to handle thot
+            $this->getLogger()->log('sql_error', $sql."|".print_r($parameters, true)); //todo: addFromArray logSql to logger to handle thot
             throw new Exception\Pdo($e);
         }
     }

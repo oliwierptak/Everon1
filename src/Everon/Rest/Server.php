@@ -76,7 +76,7 @@ class Server extends \Everon\Core implements Rest\Interfaces\Server
  
     public function showException(Http\Exception $Exception, $Controller)
     {
-        $this->getLogger()->trace($Exception);
+        $this->getLogger()->error($Exception);
         
         $message = $Exception->getMessage();
         $code = $Exception->getCode();
@@ -96,7 +96,7 @@ class Server extends \Everon\Core implements Rest\Interfaces\Server
     {
         $s = parent::shutdown();
 
-        $this->getLogger()->response(
+        $this->getLogger()->log('response',
             sprintf(
                 '[%s] (%d) %s : %s %s',
                 $s,

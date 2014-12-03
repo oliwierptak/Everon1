@@ -73,7 +73,7 @@ class Core extends \Everon\Core implements Interfaces\Core
     {
         $s = parent::shutdown();
 
-        $this->getLogger()->response(
+        $this->getLogger()->log('response', 
             sprintf(
                 '[%s] (%d) %s : %s %s',
                 $s,
