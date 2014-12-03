@@ -27,7 +27,7 @@ if (isset($CUSTOM_EXCEPTION_HANDLER)) {
     $CUSTOM_EXCEPTION_HANDLER();
 }
 else {
-    Bootstrap::setupExceptionHandler($EVERON_REQUEST_IDENTIFIER->getValue(), $EVERON_ROOT, '500.log');
+    Bootstrap::setupExceptionHandler($EVERON_REQUEST_IDENTIFIER->getValue(), $EVERON_ROOT, 'error.log');
 }
 
 require_once(implode(DIRECTORY_SEPARATOR, [$EVERON_SOURCE_ROOT, 'Interfaces', 'Environment.php']));
