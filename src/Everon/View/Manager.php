@@ -139,7 +139,7 @@ class Manager implements Interfaces\Manager
             $Layout = $makeLayout($name);
         }
         catch (Exception $e) {
-            $this->getLogger()->warning($e);
+            $this->getLogger()->warn($e);
             $Layout = $makeLayout($default_view);
         }
         
