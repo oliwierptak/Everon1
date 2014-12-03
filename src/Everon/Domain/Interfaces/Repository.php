@@ -97,6 +97,17 @@ interface Repository
     function getName();
 
     /**
+     * Creates NEW entity from array
+     * 
+     * @param array $data
+     * @param DataMapper\Interfaces\Criteria\Builder $RelationCriteria
+     * @return Entity
+     */
+    function createFromArray(array $data, DataMapper\Interfaces\Criteria\Builder $RelationCriteria=null);
+
+    /**
+     * * Creates EXISTING entity from array
+     * 
      * @param array $data
      * @param DataMapper\Interfaces\Criteria\Builder $RelationCriteria
      * @return Entity

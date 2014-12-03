@@ -56,7 +56,7 @@ class OneToOne extends Domain\Relation implements Domain\Interfaces\Relation
             }
 
             $ForeignKey = $this->getDataMapper()->getTable()->getForeignKeys()[$this->getRelationMapper()->getInversedBy()];
-            $target_column = $ForeignKey->getForeignColumnName(); //was getColumnName()
+            $target_column = $ForeignKey->getColumnName();
 
             $value = $this->getOwnerEntity()->getValueByName($this->getRelationMapper()->getColumn());
             $Column = $this->getDataMapper()->getTable()->getColumnByName($this->getRelationMapper()->getInversedBy()); //todo DataMapper leak

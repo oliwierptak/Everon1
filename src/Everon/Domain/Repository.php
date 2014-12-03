@@ -36,6 +36,11 @@ abstract class Repository implements Interfaces\Repository
      */
     protected $RelationCollection = null;
 
+    /**
+     * @var array
+     */
+    protected $entity_defaults = null;
+
 
     /**
      * @param $name
@@ -80,7 +85,6 @@ abstract class Repository implements Interfaces\Repository
     /**
      * @param array $data
      * @param DataMapper\Interfaces\Criteria\Builder $RelationCriteria
-     * @throws Exception\Domain
      * @return Interfaces\Entity
      */
     protected function buildEntity(array $data, DataMapper\Interfaces\Criteria\Builder $RelationCriteria = null)
@@ -142,6 +146,24 @@ abstract class Repository implements Interfaces\Repository
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function createFromArray(array $data, DataMapper\Interfaces\Criteria\Builder $RelationCriteria=null)
+    {
+        if ($this->entity_defaults === null) { //make sure all the keys are set for new entities, if nulls are not allowed data mapper should complain
+            $keys = array_keys($this->getMapper()->getTable()->getColumns());
+            $values = array_fill(0, count($keys), null);
+            $defaults = array_combine($keys, $values);
+            $this->entity_defaults = $defaults;
+        }
+
+        $data = array_merge($this->entity_defaults, $data);
+        $data[$this->getMapper()->getTable()->getPk()] = null; // Force new
+        
+        return $this->buildEntity($data, $RelationCriteria);
     }
 
     /**
@@ -250,7 +272,6 @@ abstract class Repository implements Interfaces\Repository
         }
         
         $data = $this->validateEntity($Entity);
-        //$data = $Entity->toArray();
         
         if ($Entity->isNew()) {
             $data = $this->getMapper()->add($data, $user_id);
