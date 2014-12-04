@@ -125,7 +125,7 @@ abstract class Core implements Interfaces\Core
     public function handleExceptions(\Exception $Exception)
     {
         $this->restorePreviousExceptionHandler();
-        $this->getLogger()->critical($Exception);
+        $this->getLogger()->error($Exception);
         $this->showException($Exception, null);
     }
 
