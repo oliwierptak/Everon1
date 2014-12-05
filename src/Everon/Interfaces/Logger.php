@@ -11,14 +11,6 @@ namespace Everon\Interfaces;
 
 use Everon\Exception;
 
-/**
- * Interface Logger
- * 
- * @method null critical
- * @method null notFound
- * 
- * @package Everon\Interfaces
- */
 interface Logger
 {
     /**

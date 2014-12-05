@@ -9,11 +9,6 @@
  */
 namespace Everon;
 
-/**
- * @method \DateTime critical
- * @method \DateTime notFound
- * 
- */
 class Logger implements Interfaces\Logger
 {
     use Dependency\Injection\Factory;
@@ -21,8 +16,6 @@ class Logger implements Interfaces\Logger
     use Helper\DateFormatter;
     
     protected $log_files = [
-        'critical' => '500.log',
-        'notFound' => '404.log',
     ];
     
     protected $log_directory = null;

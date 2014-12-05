@@ -88,9 +88,12 @@ class Entity extends Helper\Popo implements Interfaces\Entity
      */
     protected function isIdSet()
     {
-        if (array_key_exists($this->id_name, $this->data) && $this->data[$this->id_name] !== null) {
-            $id = trim($this->data[$this->id_name]);
-            return mb_strlen($id) > 0;
+        if (isset($this->data[$this->id_name])) {
+            if (filter_var($this->data[$this->id_name], FILTER_VALIDATE_INT)) {
+                return (int) $this->data[$this->id_name] > 0;
+            }
+
+            return mb_strlen(trim($this->data[$this->id_name])) > 0;
         }
         
         return false;
