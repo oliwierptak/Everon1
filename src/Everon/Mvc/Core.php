@@ -109,7 +109,7 @@ class Core extends \Everon\Core implements Interfaces\Core
     public function redirectAndTerminate($name, $query=[], $get=[])
     {
         $url = $this->getUrl($name, $query, $get);
-        $this->getResponse()->setHeader('refresh', '0; url='.$url);
+        $this->getResponse()->setHeader('location', $url);
         $this->getResponse()->send();
         $this->shutdown();
         $this->terminate();
