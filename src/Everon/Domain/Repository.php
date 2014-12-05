@@ -115,7 +115,12 @@ abstract class Repository implements Interfaces\Repository
             ], $relation_data);
             
             $RelationMapper = $this->getFactory()->buildDomainRelationMapper(
-                $relation_data['type'], $relation_domain_name, $relation_data['column'], $relation_data['mapped_by'], $relation_data['inversed_by'], $relation_data['virtual']
+                $relation_data['type'], 
+                $relation_domain_name, 
+                $relation_data['column'], 
+                $relation_data['mapped_by'], 
+                $relation_data['inversed_by'], 
+                $relation_data['virtual']
             );
 
             $Relation = $this->getFactory()->buildDomainRelation($relation_domain_name, $Entity, $RelationMapper);
