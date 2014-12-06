@@ -24,6 +24,18 @@ interface CacheLoader extends \Everon\Interfaces\Dependency\Factory, \Everon\Int
     function setCacheDirectory($cache_directory);
 
     /**
+     * @param $name
+     * @return bool
+     */
+    function cacheFileExists($name);
+
+    /**
+     * @param $name
+     * @return \SplFileInfo
+     */
+    function generateCacheFileByName($name);
+
+    /**
      * @inheritdoc
      */
     function load();

@@ -32,86 +32,22 @@ class Config implements \Everon\Interfaces\Config
      */
     protected $go_path = [];
 
-    protected $data_processed = false;
-
     /**
      * @var mixed
      */
-    protected $DefaultItem = null;
-
-    /**
-     * @var \Closure
-     */
-    protected $Compiler = null;
+    protected $default_item_name = null;
 
     /**
      * @var array
      */
     protected $items = null;
 
-    protected $inheritance_symbol = '<';
 
-
-    /**
-     * @param $name
-     * @param Config\Interfaces\LoaderItem $ConfigLoaderItem
-     * @param callable $Compiler
-     */
-    public function __construct($name, Config\Interfaces\LoaderItem $ConfigLoaderItem, \Closure $Compiler)
+    public function __construct($name, $filename, array $data)
     {
         $this->name = $name;
-        $this->filename = $ConfigLoaderItem->getFilename();
-        $this->data = $ConfigLoaderItem->getData();
-        $this->Compiler = $Compiler;
-    }
-
-    protected function processData()
-    {
-        if ($this->data_processed === true) {
-            return;
-        }
-
-        $this->data_processed = true;
-        $HasInheritance = function($value) {
-            return strpos($value, $this->inheritance_symbol) !== false;
-        };
-
-        $use_inheritance = false;
-        foreach ($this->data as $name => $data) {
-            if ($HasInheritance($name) === true) {
-                $use_inheritance = true;
-                break;
-            }
-        }
-
-        if ($use_inheritance === false) {
-            return;
-        }
-
-        $inheritance_list = [];
-        $data_processed = [];
-        foreach ($this->data as $name => $data) {
-            if ($HasInheritance($name) === true) {
-                list($for, $from) = explode($this->inheritance_symbol, $name);
-                $for = trim($for);
-                $from = trim($from);
-                $inheritance_list[$for] = $from;
-                $data_processed[$for] = $data;
-            }
-            else {
-                $data_processed[$name] = $data;
-            }
-        }
-
-        if (empty($inheritance_list) === false) {
-            foreach ($inheritance_list as $for => $from) {
-                $this->assertIsArrayKey($for, $data_processed, 'Undefined config for section: "%s"');
-                $this->assertIsArrayKey($from, $data_processed, 'Undefined config from section: "%s"');
-                $data_processed[$for] = $this->arrayMergeDefault($data_processed[$from], $data_processed[$for]);
-            }
-        }
-
-        $this->data = $data_processed;
+        $this->filename = $filename;
+        $this->data = $data;
     }
 
     protected function initItems()
@@ -120,8 +56,6 @@ class Config implements \Everon\Interfaces\Config
             return;
         }
 
-        $this->processData();
-
         $DefaultOrFirstItem = null;
         foreach ($this->data as $item_name => $config_data) {
             $Item = $this->buildItem($item_name, $config_data);
@@ -129,13 +63,13 @@ class Config implements \Everon\Interfaces\Config
 
             $DefaultOrFirstItem = ($DefaultOrFirstItem === null) ? $Item : $DefaultOrFirstItem;
             if ($Item->isDefault()) {
-                $this->setDefaultItem($Item);
+                $this->setDefaultItemName($Item);
             }
         }
 
-        if (is_null($this->DefaultItem)) {
+        if (is_null($this->default_item_name)) {
             $DefaultOrFirstItem->setIsDefault(true);
-            $this->setDefaultItem($DefaultOrFirstItem);
+            $this->setDefaultItemName($DefaultOrFirstItem);
         }
 
         $this->data = null; //only getItems() from now on
@@ -180,9 +114,17 @@ class Config implements \Everon\Interfaces\Config
     /**
      * @inheritdoc
      */
-    public function setDefaultItem($Default)
+    public function setDefaultItemName($name)
     {
-        $this->DefaultItem = $Default;
+        $this->default_item_name = $name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDefaultItemName()
+    {
+        return $this->default_item_name;
     }
 
     /**
@@ -190,19 +132,20 @@ class Config implements \Everon\Interfaces\Config
      */
     public function getDefaultItem()
     {
-        if (is_null($this->DefaultItem)) {
+        if (is_null($this->items)) {
             $this->initItems();
         }
 
-        if ($this->DefaultItem === null && $this->isEmpty() === false) {
+        if ($this->default_item_name === null && $this->isEmpty() === false || (isset($this->items[$this->default_item_name]) === false )) {
             throw new Exception\Config('Default config item not defined for config: "%s"', $this->getName());
         }
 
-        return $this->DefaultItem;
+        return $this->items[$this->default_item_name];
     }
 
     /**
-     * @return array
+     * @param bool $deep
+     * @return array|null
      */
     protected function getToArray($deep=false)
     {
@@ -301,30 +244,4 @@ class Config implements \Everon\Interfaces\Config
         $this->go_path[] = $where;
         return $this;
     }
-
-    /**
-     * @inheritdoc
-     */
-    public function recompile($data)
-    {
-        $this->Compiler->__invoke($data);
-        return $data;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getCompiler()
-    {
-        return $this->Compiler;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function setCompiler(\Closure $Compiler)
-    {
-        $this->Compiler = $Compiler;
-    }
-
 }

@@ -30,7 +30,7 @@ class Php extends \Everon\FileSystem\CacheLoader
     public function saveToCache($name, $cache_data)
     {
         try {
-            $CacheFile = new \SplFileInfo($this->cache_directory.pathinfo($name, PATHINFO_BASENAME).'.exported.php');
+            $CacheFile = $this->generateCacheFileByName($name);
             
             if ($CacheFile->isFile() === false) {
                 $data = var_export($cache_data, true);

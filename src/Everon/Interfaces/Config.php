@@ -35,9 +35,14 @@ interface Config extends Arrayable, Dependency\Factory
     function setFilename($filename);
     
     /**
-     * @param mixed $Default
+     * @param string $name
      */
-    function setDefaultItem($Default);
+    function setDefaultItemName($name);
+
+    /**
+     * @return string
+     */
+    function getDefaultItemName();
 
     /**
      * @return mixed
@@ -89,5 +94,5 @@ interface Config extends Arrayable, Dependency\Factory
      * @param $data
      * @return mixed
      */
-    function recompile($data);
+    //function recompile($data);
 }

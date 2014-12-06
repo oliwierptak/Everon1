@@ -83,7 +83,10 @@ class Loader implements Interfaces\Loader
             throw new Exception\Config('Config data not found for: "%s"', $ConfigFile->getBasename());
         }
 
-        return $this->getFactory()->buildConfigLoaderItem($ConfigFile->getPathname(), $ini_config_data);
+        return [
+            'filename' => $ConfigFile->getPathname(), 
+            'data' => $ini_config_data
+        ];
     }
 
 }
