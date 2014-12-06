@@ -100,7 +100,7 @@ class ExpressionMatcher implements Interfaces\ExpressionMatcher
         return $Compiler;
     }
 
-    public function tokenizeExpressions(array $data, array $custom_expressions)
+    protected function tokenizeExpressions(array $dat)
     {
         $SetExpressions = function($item) {
             preg_match('(%([^\%]*)\.([^\%]*)\.([^\%]*)%)', $item, $matches); //%application.assets.themes%

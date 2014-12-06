@@ -64,7 +64,7 @@ class Router extends Config\Item implements Config\Interfaces\ItemRouter
             'url' => null,
             'controller' => null,
             'action' => null,
-            'method' => null,
+            'method' => 'GET',
             'get' => [],
             'query' => [],
             'post' => [],
@@ -210,7 +210,6 @@ class Router extends Config\Item implements Config\Interfaces\ItemRouter
     public function setUrl($url)
     {
         $this->url = $url;
-        $this->data['url'] = $url;
     }
 
     /**
@@ -227,7 +226,6 @@ class Router extends Config\Item implements Config\Interfaces\ItemRouter
     public function setController($controller)
     {
         $this->controller = $controller;
-        $this->data['controller'] = $controller;
     }
 
     /**
@@ -244,7 +242,6 @@ class Router extends Config\Item implements Config\Interfaces\ItemRouter
     public function setAction($action)
     {
         $this->action = $action;
-        $this->data['action'] = $action;
     }
 
     /**
