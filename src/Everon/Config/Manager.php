@@ -42,9 +42,9 @@ class Manager implements Interfaces\Manager
      */
     protected $configs = null;
 
-    protected $default_config_filename = 'application.ini';
+    protected $default_config_filename = 'everon.ini';
 
-    protected $default_config_name = 'application';
+    protected $default_config_name = 'everon';
 
     protected $ExpressionMatcher = null;
 
@@ -123,7 +123,7 @@ class Manager implements Interfaces\Manager
     protected function getDefaults()
     {
         return <<<EOF
-; Everon application configuration example
+; Everon configuration example
 
 [locale]
 database_timezone = UTC
@@ -131,18 +131,13 @@ database_timezone = UTC
 [autoloader]
 active[] = everon
 active[] = composer
-; files['Kint'] = vendor/raveren/kint/Kint.class.php
-; paths['Mockery'] = vendor/mockery/mockery/library/
 throw_exceptions = true
 
 [cache]
 config_manager = false
 autoloader = false
 view = false
-datamapper = false
-
-[module]
-active[] = Foo
+data_mapper = false
 
 [view]
 compilers[php] = '.php'
@@ -160,14 +155,6 @@ enabled = true
 rotate = 512             ; KB
 format = 'c'             ; todo: implment me
 format[trace] = 'U'      ; todo: implment me
-
-[server]
-protocol = http://
-host = everon.localhost
-port_delim =
-port =
-url = /
-location = %application.server.protocol%%application.server.host%%application.server.port_delim%%application.server.port%%application.server.url%
 EOF;
     }
 
@@ -206,6 +193,11 @@ EOF;
         //load domain.ini
         $data['domain'] = $this->getConfigLoader()->loadFromFile(
             new \SplFileInfo($this->getBootstrap()->getEnvironment()->getDomainConfig().'domain.ini')
+        );
+
+        //load rest_resources.ini
+        $data['rest_resource'] = $this->getConfigLoader()->loadFromFile(
+            new \SplFileInfo($this->getBootstrap()->getEnvironment()->getRest().'rest_resource.ini')
         );
         
         //load module.ini data from all modules
@@ -314,15 +306,16 @@ EOF;
                 $config_items_data = $this->getConfigCacheLoader()->loadFromCache($CacheFile);
             }
         }
-        
+
         if ($config_items_data === null) {
             $configs_data = $this->getConfigDataFromLoader($this->getConfigLoader());
             $config_items_data = $this->getAllConfigsDataAndCompiler($configs_data);
-
+            
             if ($this->getConfigCacheLoader()->cacheFileExists('config_manager') === false) {
                 $this->getConfigCacheLoader()->saveToCache('config_manager', $config_items_data);
             }
         }
+
         
         foreach ($config_items_data as $config_name => $config_data) {
             $this->loadAndRegisterOneConfig($config_name, $config_data['filename'], $config_data['data']);

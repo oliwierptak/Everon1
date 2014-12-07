@@ -142,8 +142,8 @@ abstract class Core implements Interfaces\Core
          */
         if ($Controller === null) {
             try {
-                $error_module = $this->getConfigManager()->getConfigValue('application.error_handler.module', null);
-                $error_controller = $this->getConfigManager()->getConfigValue('application.error_handler.controller', null);
+                $error_module = $this->getConfigManager()->getConfigValue('everon.error_handler.module', null);
+                $error_controller = $this->getConfigManager()->getConfigValue('everon.error_handler.controller', null);
                 $Module = $this->getModuleManager()->getModuleByName($error_module);
                 $Controller = $Module->getController($error_controller);
             } 

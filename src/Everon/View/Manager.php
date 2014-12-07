@@ -63,7 +63,7 @@ class Manager implements Interfaces\Manager
 
     protected function getDefaultCompiler()
     {
-        $default_extension = $this->getConfigManager()->getConfigValue('application.view.default_extension');
+        $default_extension = $this->getConfigManager()->getConfigValue('everon.view.default_extension');
         if (isset($this->compilers[$default_extension]) === false) {
             throw new Exception\ViewManager('Default template compiler not set for: "%s"', $default_extension);
         }
@@ -87,7 +87,7 @@ class Manager implements Interfaces\Manager
             throw new Exception\ConfigItem('Undefined view layout data for: "%s"', $name);
         }*/
         
-        $default_extension = $this->getConfigManager()->getConfigValue('application.view.default_extension');
+        $default_extension = $this->getConfigManager()->getConfigValue('everon.view.default_extension');
 
         if ($template_directory !== null) {
             $TemplateDirectory = new \SplFileInfo($template_directory);
@@ -111,7 +111,7 @@ class Manager implements Interfaces\Manager
      */
     public function createLayout($name, $namespace='Everon\View')
     {
-        $default_view = $this->getConfigManager()->getConfigValue('application.view.default_view');
+        $default_view = $this->getConfigManager()->getConfigValue('everon.view.default_view');
         $namespace .= '\\'.$this->getCurrentThemeName();
         
         $makeLayout = function($name) use ($namespace) {

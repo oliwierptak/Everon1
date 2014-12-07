@@ -73,7 +73,7 @@ abstract class Handler implements Interfaces\Handler
     public function getPathsOfActiveModules()
     {
         $module_list = $this->getFileSystem()->listPathDir('//Module');
-        $active_modules = $this->getConfigManager()->getConfigValue('application.module.active', []);
+        $active_modules = $this->getConfigManager()->getConfigValue('everon.module.active', []);
 
         /**
          * @var \DirectoryIterator $Dir

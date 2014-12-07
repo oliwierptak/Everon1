@@ -211,7 +211,7 @@ abstract class Controller extends \Everon\Controller implements Mvc\Interfaces\C
      */
     public function showException(\Exception $Exception)
     {
-        $layout_name = $this->getConfigManager()->getConfigValue('application.error_handler.view');
+        $layout_name = $this->getConfigManager()->getConfigValue('everon.error_handler.view');
         $Layout = $this->getViewManager()->createLayout($layout_name);
         $Layout->set('error', $Exception->getMessage());
         $Layout->execute('show');
@@ -233,8 +233,8 @@ abstract class Controller extends \Everon\Controller implements Mvc\Interfaces\C
          * @var \Everon\View\Interfaces\View $ErrorView
          * @var \Everon\Mvc\Interfaces\Controller $Controller
          */
-        $error_view = $this->getConfigManager()->getConfigValue('application.error_handler.view', null);
-        $error_form_validation_error_template = $this->getConfigManager()->getConfigValue('application.error_handler.validation_error_template', null);
+        $error_view = $this->getConfigManager()->getConfigValue('everon.error_handler.view', null);
+        $error_form_validation_error_template = $this->getConfigManager()->getConfigValue('everon.error_handler.validation_error_template', null);
         
         $ErrorView = $this->getViewManager()->createLayout($error_view);
         $ErrorView->set('validation_errors', $errors ?: $this->getRouter()->getRequestValidator()->getErrors());

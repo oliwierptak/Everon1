@@ -317,7 +317,7 @@ class Schema implements Interfaces\Schema
     public function getDatabaseTimezone()
     {
         if ($this->database_timezone === null) {
-            $this->database_timezone = $this->getConfigManager()->getConfigValue('application.locale.database_timezone', 'UTC');
+            $this->database_timezone = $this->getConfigManager()->getConfigValue('everon.locale.database_timezone', 'UTC');
         }
         return $this->database_timezone;
     }
