@@ -88,6 +88,26 @@ abstract class CacheLoader implements Interfaces\CacheLoader
     }
 
     /**
+     * @param $name
+     * @return bool
+     */
+    public function cacheFileExists($name)
+    {
+        $CacheFile = $this->generateCacheFileByName($name);
+     //   sd($CacheFile->getPathname(), $CacheFile->isFile() && $CacheFile->isReadable());
+        return $CacheFile->isFile() && $CacheFile->isReadable();
+    }
+
+    /**
+     * @param $name
+     * @return \SplFileInfo
+     */
+    public function generateCacheFileByName($name) 
+    {
+        return new \SplFileInfo($this->cache_directory.pathinfo($name, PATHINFO_BASENAME).'.cache.php');
+    }
+
+    /**
      * @inheritdoc
      */
     public function load()
@@ -95,11 +115,10 @@ abstract class CacheLoader implements Interfaces\CacheLoader
         /**
          * @var \SplFileInfo $CacheFile
          */
-        $type = strtolower($this->getType());
         $list = [];
-        $IniFiles = new \GlobIterator($this->getCacheDirectory().'*.'.$type.'.php');
+        $IniFiles = new \GlobIterator($this->getCacheDirectory().'*.cache.php');
         foreach ($IniFiles as $config_filename => $CacheFile) {
-            $name = $CacheFile->getBasename('.'.$type.'.php');
+            $name = $CacheFile->getBasename('.cache.php');
             $list[$name] = $this->loadFromCache($CacheFile);
         }
 

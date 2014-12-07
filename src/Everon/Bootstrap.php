@@ -25,7 +25,7 @@ class Bootstrap implements \Everon\Interfaces\Bootstrap
     
     protected $os_name = null;
     
-    protected $application_ini = null;
+    protected $everon_ini = null;
     
     protected $environment_name = null;
     
@@ -73,7 +73,7 @@ class Bootstrap implements \Everon\Interfaces\Bootstrap
     public function getShowAutoLoaderExceptions()
     {
         if ($this->show_auto_loader_exceptions === null) {
-            $ini = $this->getApplicationIni();
+            $ini = $this->getEveronIni();
             $this->show_auto_loader_exceptions = @$ini['autoloader']['throw_exceptions'] === true;
         }
         return $this->show_auto_loader_exceptions;
@@ -116,7 +116,7 @@ class Bootstrap implements \Everon\Interfaces\Bootstrap
         require_once($this->Environment->getEveronInterface().'ClassLoader.php');
         require_once($this->Environment->getEveronRoot().'ClassLoader.php');
 
-        $ini = $this->getApplicationIni();
+        $ini = $this->getEveronIni();
         $use_cache = (bool) @$ini['cache']['autoloader'];
         $extra_files = @$ini['autoloader']['files'] ?: [];
         $paths = @$ini['autoloader']['paths'] ?: null;
@@ -149,12 +149,12 @@ class Bootstrap implements \Everon\Interfaces\Bootstrap
         $this->ClassLoader = $ClassLoader;
     }
     
-    protected function getApplicationIni()
+    protected function getEveronIni()
     {
-        if ($this->application_ini === null) {
-            $this->application_ini = @parse_ini_file($this->Environment->getConfig().'application.ini', true);
+        if ($this->everon_ini === null) {
+            $this->everon_ini = @parse_ini_file($this->Environment->getConfig().'everon.ini', true);
         }
-        return $this->application_ini;
+        return $this->everon_ini;
     }
 
     protected function registerClassLoader($prepend_autoloader)
@@ -181,7 +181,7 @@ class Bootstrap implements \Everon\Interfaces\Bootstrap
      */
     public function hasAutoloader($name)
     {
-        $ini = $this->getApplicationIni();
+        $ini = $this->getEveronIni();
         $autoloaders = @$ini['autoloader']['active'];
         
         if (is_array($autoloaders)) {

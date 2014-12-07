@@ -316,10 +316,10 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildConfig($name, Config\Interfaces\LoaderItem $ConfigLoaderItem, \Closure $Compiler)
+    public function buildConfig($name, $filename, array $data)
     {
         try {
-            $ConfigFile = new \SplFileInfo($ConfigLoaderItem->getFilename());
+            $ConfigFile = new \SplFileInfo($filename);
             $class_name = $ConfigFile->getBasename('.ini');
             $class_name = ucfirst($this->stringUnderscoreToCamel($class_name));
             $class_name = $this->getFullClassName('Everon\Config', $class_name);
@@ -333,7 +333,7 @@ abstract class Factory implements Interfaces\Factory
                 $class_name = 'Everon\Config';
             }
 
-            $Config = new $class_name($name, $ConfigLoaderItem, $Compiler);
+            $Config = new $class_name($name, $ConfigFile->getPathname(), $data);
             $this->injectDependencies($class_name, $Config);
             return $Config;
         }
@@ -345,7 +345,7 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildConfigManager(Config\Interfaces\Loader $Loader, Config\Interfaces\LoaderCache $CacheLoader, $namespace = 'Everon\Config')
+    public function buildConfigManager(Config\Interfaces\Loader $Loader, FileSystem\Interfaces\CacheLoader $CacheLoader, $namespace = 'Everon\Config')
     {
         try {
             $class_name = $this->getFullClassName($namespace, 'Manager');
@@ -396,10 +396,10 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildConfigCacheLoader($cache_directory, $namespace = 'Everon\Config')
+    public function buildConfigCacheLoader($cache_directory, $namespace = 'Everon\FileSystem\CacheLoader')
     {
         try {
-            $class_name = $this->getFullClassName($namespace, 'LoaderCache');
+            $class_name = $this->getFullClassName($namespace, 'Php');
             $this->classExists($class_name);
             $ConfigLoaderCache = new $class_name($cache_directory);
             $this->injectDependencies($class_name, $ConfigLoaderCache);
@@ -407,23 +407,6 @@ abstract class Factory implements Interfaces\Factory
         }
         catch (\Exception $e) {
             throw new Exception\Factory('ConfigLoaderCache initialization error', null, $e);
-        }
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function buildConfigLoaderItem($filename, array $data, $namespace='Everon\Config\Loader')
-    {
-        try {
-            $class_name = $this->getFullClassName($namespace, 'Item');
-            $this->classExists($class_name);
-            $ConfigLoaderItem = new $class_name($filename, $data);
-            $this->injectDependencies($class_name, $ConfigLoaderItem);
-            return $ConfigLoaderItem;
-        }
-        catch (\Exception $e) {
-            throw new Exception\Factory('ConfigLoaderItem initialization error', null, $e);
         }
     }
 

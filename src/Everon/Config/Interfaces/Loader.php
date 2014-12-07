@@ -28,7 +28,7 @@ interface Loader extends Interfaces\Dependency\Factory, Interfaces\Dependency\Fi
 
     /**
      * @param \SplFileInfo $ConfigFile
-     * @return LoaderItem
+     * @return array(filename=string, data=array)
      * @throws Exception\Config
      */
     function loadFromFile(\SplFileInfo $ConfigFile);

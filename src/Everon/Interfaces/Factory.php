@@ -173,20 +173,20 @@ interface Factory
      * will become Everon\Config\Router
      *
      * @param $name
-     * @param Config\Interfaces\LoaderItem $ConfigLoaderItem
-     * @param callable $Compiler
+     * @param $filename
+     * @param array $data
+     * @internal param \Everon\Config\Interfaces\LoaderItem $ConfigLoaderItem
      * @return Interfaces\Config
-     * @throws Exception\Factory
      */
-    function buildConfig($name, Config\Interfaces\LoaderItem $ConfigLoaderItem, \Closure $Compiler);
+    function buildConfig($name, $filename, array $data);
 
     /**
      * @param Config\Interfaces\Loader $Loader
-     * @param Config\Interfaces\LoaderCache $CacheLoader
+     * @param \Everon\FileSystem\Interfaces\CacheLoader $CacheLoader
      * @param string $namespace
      * @return Config\Manager|mixed
      */
-    function buildConfigManager(Config\Interfaces\Loader $Loader, Config\Interfaces\LoaderCache $CacheLoader, $namespace = 'Everon\Config');
+    function buildConfigManager(Config\Interfaces\Loader $Loader, FileSystem\Interfaces\CacheLoader $CacheLoader, $namespace = 'Everon\Config');
 
     /**
      * @return Config\Interfaces\ExpressionMatcher
@@ -204,17 +204,9 @@ interface Factory
     /**
      * @param $cache_directory
      * @param string $namespace
-     * @return Config\LoaderCache
+     * @return FileSystem\Interfaces\CacheLoader
      */
-    function buildConfigCacheLoader($cache_directory, $namespace = 'Everon\Config');
-
-    /**
-     * @param $filename
-     * @param array $data
-     * @param $namespace
-     * @return Config\Loader\Item
-     */
-    function buildConfigLoaderItem($filename, array $data, $namespace='Everon\Config\Item');
+    function buildConfigCacheLoader($cache_directory, $namespace = 'Everon\FileSystem\CacheLoader');
 
     /**
      * @param $class_name

@@ -13,7 +13,6 @@ use Everon\Exception;
 
 interface Manager extends 
     \Everon\Interfaces\Dependency\Bootstrap,
-    \Everon\Config\Interfaces\Dependency\ConfigLoader,
     \Everon\Interfaces\Dependency\Factory,
     \Everon\Interfaces\Dependency\FileSystem,
     \Everon\Interfaces\Dependency\Logger
@@ -27,6 +26,16 @@ interface Manager extends
      * @param Loader $ConfigLoader
      */
     function setConfigLoader(Loader $ConfigLoader);
+
+    /**
+     * @return \Everon\FileSystem\Interfaces\CacheLoader
+     */
+    function getConfigCacheLoader();
+
+    /**
+     * @param \Everon\FileSystem\Interfaces\CacheLoader $ConfigCacheLoader
+     */
+    function setConfigCacheLoader(\Everon\FileSystem\Interfaces\CacheLoader $ConfigCacheLoader);
         
     /**
      * @return \Everon\Interfaces\Config
