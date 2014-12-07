@@ -17,12 +17,11 @@ use Everon\Http;
 use Everon\Rest;
 
 /**
- * @method \Everon\Http\Interfaces\Response getResponse
  * @method \Everon\Rest\Interfaces\Request getRequest
+ * @property Interfaces\Controller $Controller
  */
-class Server extends \Everon\Core implements Rest\Interfaces\Server
+class Server extends \Everon\Http\Core implements Rest\Interfaces\Server
 {
-    
     /**
      * @inheritdoc
      */
@@ -90,35 +89,5 @@ class Server extends \Everon\Core implements Rest\Interfaces\Server
         $this->getResponse()->setStatusCode($code);
         $this->getResponse()->setStatusMessage($message);
         echo $this->getResponse()->toJson();
-    }
-
-    public function shutdown()
-    {
-        $s = parent::shutdown();
-
-        $this->getLogger()->log('response',
-            sprintf(
-                '[%s] (%d) %s : %s %s',
-                $s,
-                $this->getResponse()->getStatusCode(),
-                $this->getResponse()->getStatusMessage(),
-                $this->getRequest()->getMethod(),
-                $this->getRequest()->getPath()
-            )
-        );
-
-        return $s;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function redirectAndTerminate($name, $query=[], $get=[])
-    {
-        $url = $this->getUrl($name, $query, $get);
-        $this->getResponse()->setHeader('refresh', '0; url='.$url);
-        $this->getResponse()->send();
-        $this->shutdown();
-        $this->terminate();
     }
 }

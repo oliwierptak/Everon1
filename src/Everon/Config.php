@@ -63,13 +63,13 @@ class Config implements \Everon\Interfaces\Config
 
             $DefaultOrFirstItem = ($DefaultOrFirstItem === null) ? $Item : $DefaultOrFirstItem;
             if ($Item->isDefault()) {
-                $this->setDefaultItemName($Item);
+                $this->setDefaultItemName($Item->getName());
             }
         }
 
         if (is_null($this->default_item_name)) {
             $DefaultOrFirstItem->setIsDefault(true);
-            $this->setDefaultItemName($DefaultOrFirstItem);
+            $this->setDefaultItemName($DefaultOrFirstItem->getName());
         }
 
         $this->data = null; //only getItems() from now on
@@ -135,8 +135,8 @@ class Config implements \Everon\Interfaces\Config
         if (is_null($this->items)) {
             $this->initItems();
         }
-
-        if ($this->default_item_name === null && $this->isEmpty() === false || (isset($this->items[$this->default_item_name]) === false )) {
+        
+        if ($this->default_item_name === null && $this->isEmpty() === false || (@isset($this->items[$this->default_item_name]) === false )) {
             throw new Exception\Config('Default config item not defined for config: "%s"', $this->getName());
         }
 

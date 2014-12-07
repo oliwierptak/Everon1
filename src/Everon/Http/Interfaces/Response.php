@@ -81,22 +81,24 @@ interface Response extends \Everon\Interfaces\Response
      * @param $status
      */
     function setStatusCode($status);
+    
     function getStatusCode();
+    
     function getStatusMessage();
 
     /**
      * @param string $status_message
      */
     function setStatusMessage($status_message);
-    
-    function send();
-    
-    function toHtml();
 
     /**
      * @return boolean
      */
     function wasStatusSet();
+
+    function send();
+    
+    function toHtml();
 
     /**
      * @return bool
