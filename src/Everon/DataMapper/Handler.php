@@ -53,7 +53,7 @@ abstract class Handler implements Interfaces\Handler
             
             //$this->Schema->saveTablesToCache();
             
-            if ($this->getConfigManager()->getConfigValue('application.cache.data_mapper')) {
+            if ($this->getConfigManager()->getConfigValue('everon.cache.data_mapper')) {
                 $this->Schema->loadTablesFromCache();
             }
         }

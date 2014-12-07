@@ -190,18 +190,23 @@ EOF;
         //load configs from application
         $data = $Loader->load();
 
-        //load domain.ini
-        $data['domain'] = $this->getConfigLoader()->loadFromFile(
-            new \SplFileInfo($this->getBootstrap()->getEnvironment()->getDomainConfig().'domain.ini')
-        );
-
-        //load rest_resources.ini
-        $data['rest_resource'] = $this->getConfigLoader()->loadFromFile(
-            new \SplFileInfo($this->getBootstrap()->getEnvironment()->getRest().'rest_resource.ini')
-        );
+        if ($this->getFileSystem()->fileExists('//Domain/domain.ini')) {
+            //load domain.ini
+            $data['domain'] = $this->getConfigLoader()->loadFromFile(
+                new \SplFileInfo($this->getFileSystem()->getRealPath('//Domain/domain.ini'))
+            );
+        }
         
+        if ($this->getFileSystem()->fileExists('//Rest/rest_resource.ini')) {
+            //load rest_resources.ini
+            $data['rest_resource'] = $this->getConfigLoader()->loadFromFile(
+                new \SplFileInfo($this->getFileSystem()->getRealPath('//Rest/rest_resource.ini'))
+            );
+        }
+
         //load module.ini data from all modules
         $module_list = $this->getPathsOfActiveModules();
+        
         /**
          * @var \DirectoryIterator $Dir
          */

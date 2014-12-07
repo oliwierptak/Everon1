@@ -328,7 +328,7 @@ abstract class AbstractView implements Interfaces\View
         }
         
         $Config = $this->getConfigManager()->getConfigByName('minify');
-        $url = $this->getConfigManager()->getConfigValue('application.static.url_min');
+        $url = $this->getConfigManager()->getConfigValue('application.static.url_min'); //xxx
         
         foreach ($this->resources_js as $name => $items_to_minify) {
             $files = [];
