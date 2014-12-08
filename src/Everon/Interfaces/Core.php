@@ -14,6 +14,7 @@ use Everon\Exception;
 use Everon\RequestIdentifier;
 
 interface Core extends 
+    Dependency\GetUrl,
     Dependency\Logger,
     Dependency\Factory,
     Dependency\Response,

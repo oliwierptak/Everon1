@@ -18,7 +18,7 @@ use Everon\Exception;
 
 abstract class AbstractWidget implements View\Interfaces\Widget
 {
-    use Dependency\Injection\ConfigManager;
+    use Dependency\Injection\Router;
     use Domain\Dependency\Injection\DomainManager;
     use View\Dependency\Injection\ViewManager;
     

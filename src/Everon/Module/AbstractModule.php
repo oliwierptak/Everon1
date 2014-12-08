@@ -12,11 +12,15 @@ namespace Everon\Module;
 use Everon\Helper;
 use Everon\Interfaces;
 
-abstract class AbstractModule implements \Everon\Module\Interfaces\Module
+abstract class AbstractModule implements \Everon\Module\Interfaces\Module, \Everon\Interfaces\Dependency\GetUrl
 {
     use \Everon\Dependency\Config;
     use \Everon\Dependency\Injection\Factory;
+    use \Everon\Dependency\Injection\Router;
     use Dependency\Injection\ModuleManager;
+
+    use Helper\GetUrl;
+    
     
     protected $name = null;
     

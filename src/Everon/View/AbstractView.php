@@ -19,6 +19,7 @@ abstract class AbstractView implements Interfaces\View
     use Dependency\Injection\ConfigManager;
     use Dependency\Injection\Logger;
     use Dependency\Injection\Factory;
+    use Dependency\Injection\Router;
     use ViewManagerDependency;
 
     use Helper\Arrays;

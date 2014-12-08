@@ -149,4 +149,28 @@ class Router implements Interfaces\Router
         return $this->CurrentRoute;
     }
 
+    /**
+     * @inheritdoc
+     */
+    public function getUrl($name, $query=[], $get=[])
+    {
+        $Item = $this->getConfig()->getItemByName($name);
+        if ($Item === null) {
+            throw new \Everon\Exception\Router('Invalid router item name for url: "%s"', (string) $name);
+        }
+
+        $Item->compileUrl($query);
+        $url = $Item->getParsedUrl();
+
+        $get_url = '';
+        if (empty($get) === false) {
+            $get_url = http_build_query($get);
+            if (trim($get_url) !== '') {
+                $get_url = '?'.$get_url;
+            }
+        }
+
+        return $url.$get_url;
+    }
+
 }

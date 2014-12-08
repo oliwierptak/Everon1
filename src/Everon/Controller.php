@@ -21,10 +21,10 @@ abstract class Controller implements Interfaces\Controller
     use Event\Dependency\Injection\EventManager;
     use Module\Dependency\Injection\ModuleManager;
 
+    use Helper\GetUrl;
     use Helper\IsCallable;
     use Helper\ToString;
     use Helper\String\LastTokenToName;
-    use Helper\GetUrl;
 
     /**
      * @var string

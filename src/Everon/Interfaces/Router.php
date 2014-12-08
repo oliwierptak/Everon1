@@ -13,7 +13,7 @@ use Everon\Config\Interfaces\ItemRouter;
 use Everon\Interfaces;
 use Everon\Exception;
 
-interface Router extends Interfaces\Dependency\RequestValidator
+interface Router extends Interfaces\Dependency\RequestValidator, \Everon\Interfaces\Dependency\GetUrl
 {
     /**
      * @param ItemRouter $RouteItem

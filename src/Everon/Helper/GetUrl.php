@@ -10,31 +10,16 @@
 namespace Everon\Helper;
 
 /**
- * @method \Everon\Config\Interfaces\Manager getConfigManager
+ * @method \Everon\Interfaces\Router getRouter
+ * @requires \Everon\Interfaces\Router
  */
-trait GetUrl 
+trait GetUrl
 {
     /**
      * @inheritdoc
      */
     public function getUrl($name, $query=[], $get=[])
     {
-        $Item = $this->getConfigManager()->getConfigByName('router')->getItemByName($name);
-        if ($Item === null) {
-            throw new \Everon\Exception\Application('Invalid router config item name for url: "%s"', (string) $name);
-        }
-        
-        $Item->compileUrl($query);
-        $url = $Item->getParsedUrl();
-
-        $get_url = '';
-        if (empty($get) === false) {
-            $get_url = http_build_query($get);
-            if (trim($get_url) !== '') {
-                $get_url = '?'.$get_url;
-            }
-        }
-
-        return $url.$get_url;
+        return $this->getRouter()->getUrl($name, $query, $get);
     }
 }
