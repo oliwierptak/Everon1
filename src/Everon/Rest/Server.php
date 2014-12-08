@@ -60,16 +60,13 @@ class Server extends \Everon\Http\Core implements Rest\Interfaces\Server
             $BadRequest = new Http\Exception((new Http\Message\BadRequest($Exception->getMessage())));
             $this->showException($BadRequest, $this->Controller);
         }
-        catch (Http\Exception $Exception) {
-            $this->showException($Exception, $this->Controller);
-        }
         catch (Rest\Exception\Resource $Exception) {
             $RestException = new Http\Exception((new Http\Message\BadRequest($Exception->getMessage())));
             $this->showException($RestException, $this->Controller);
         }
         catch (\Exception $Exception) {
-            $InternalServerError = new Http\Exception((new Http\Message\InternalServerError($Exception->getMessage())));
-            $this->showException($InternalServerError, $this->Controller);
+            $Internal = new Http\Exception((new Http\Message\InternalServerError($Exception->getMessage())));
+            $this->showException($Internal, $this->Controller);
         }
     }
  
