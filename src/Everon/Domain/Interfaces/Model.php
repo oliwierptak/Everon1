@@ -9,7 +9,7 @@
  */
 namespace Everon\Domain\Interfaces;
 
-interface Model extends \Everon\Domain\Interfaces\Dependency\DomainManager
+interface Model extends \Everon\Domain\Interfaces\Dependency\DomainManager, \Everon\Interfaces\Dependency\Factory
 {
     /**
      * @param $id
