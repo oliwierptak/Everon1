@@ -16,6 +16,7 @@ use Everon\Http;
 
 /**
  * @method \Everon\Http\Interfaces\Response getResponse
+ * @method \Everon\Http\Interfaces\Controller getController
  */
 abstract class Core extends \Everon\Core implements \Everon\Interfaces\Core
 {

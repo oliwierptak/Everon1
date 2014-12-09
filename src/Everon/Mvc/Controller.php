@@ -19,14 +19,12 @@ use Everon\Mvc;
 use Everon\View;
 
 /**
- * @method Http\Interfaces\Response getResponse()
- * @method \Everon\Module\Interfaces\Mvc getModule()
+  * @method \Everon\Module\Interfaces\Mvc getModule()
  */
-abstract class Controller extends \Everon\Controller implements Mvc\Interfaces\Controller
+abstract class Controller extends Http\Controller implements Mvc\Interfaces\Controller
 {
     use Dependency\Injection\Factory;
     use Domain\Dependency\Injection\DomainManager;
-    use Http\Dependency\Injection\HttpSession;
     use View\Dependency\Injection\ViewManager;
 
     use Helper\Arrays;
@@ -85,6 +83,9 @@ abstract class Controller extends \Everon\Controller implements Mvc\Interfaces\C
             if ($ActionTemplate !== null) {
                 $this->getView()->setContainer($ActionTemplate);
                 $Layout->set('body', $this->getView());
+
+                $Layout->set('flash_message', $this->getFlashMessage());
+                $this->resetFlashMessage();
             }
         }
 

@@ -34,6 +34,21 @@ interface Session extends Arrayable
     function setStartTime(\DateTime $start_time);
 
     /**
+     * @param string $flash_message
+     */
+    function setFlashMessage($flash_message);
+
+    /**
+     * @return string
+     */
+    function getFlashMessage();
+
+    /**
+     * @return void
+     */
+    function resetFlashMessage();
+
+    /**
      * @param $name
      * @return bool
      */
