@@ -20,7 +20,7 @@ use Everon\Http;
  * @method \Everon\Mvc\Interfaces\Controller getController
  * @property \Everon\Mvc\Interfaces\Controller $Controller
  */
-abstract class Core extends \Everon\Http\Core implements Interfaces\Core
+class Core extends \Everon\Http\Core implements Interfaces\Core
 {
     /**
      * @inheritdoc

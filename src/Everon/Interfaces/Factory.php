@@ -53,16 +53,25 @@ interface Factory
     function classExists($class);
 
     /**
+     * @param string $namespace
      * @return Interfaces\Core
      * @throws Exception\Factory
      */
-    function buildConsole();
+    function buildConsole($namespace='Everon\Console');
 
     /**
+     * @param string $namespace
      * @return Interfaces\Core
      * @throws Exception\Factory
      */
-    function buildMvc();
+    function buildMvc($namespace='Everon\Mvc');
+
+    /**
+     * @param string $namespace
+     * @return Interfaces\Core
+     * @throws Exception\Factory
+     */
+    function buildHttpCore($namespace='Everon\Http');
 
     /**
      * @return Rest\CurlAdapter

@@ -127,6 +127,14 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
+    public function buildHttpCore($namespace='Everon\Http')
+    {
+        return $this->buildCore('Core', $namespace);
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function buildRestCurlAdapter()
     {
         try {

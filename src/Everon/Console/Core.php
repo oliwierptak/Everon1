@@ -13,7 +13,7 @@ use Everon\Exception;
 use Everon\Interfaces;
 use Everon\RequestIdentifier;
 
-abstract class Core extends \Everon\Core implements Interfaces\Core
+class Core extends \Everon\Core implements Interfaces\Core
 {
     /**
      * @inheritdoc
