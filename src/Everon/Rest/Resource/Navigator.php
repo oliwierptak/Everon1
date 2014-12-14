@@ -11,12 +11,16 @@ namespace Everon\Rest\Resource;
 
 use Everon\Helper;
 use Everon\Rest\Dependency;
+use Everon\Rest\Exception;
 use Everon\Rest\Interfaces;
 
 class Navigator implements Interfaces\ResourceNavigator
 {
-    use Dependency\Request;
     use \Everon\Dependency\Injection\Factory;
+    use Dependency\Request;
+
+    use Helper\Arrays;
+    use Helper\IsIterable;
 
     const PARAM_SEPARATOR = ',';
 
@@ -226,16 +230,35 @@ class Navigator implements Interfaces\ResourceNavigator
     /**
      * @inheritdoc
      */
-    public function toCriteria()
+    public function toCriteria($domain_name)
     {
         $this->init();
 
+        $column = null;
+        $CriteriaBuilder = $this->getFactory()->buildCriteriaBuilder();
+
         if (empty($this->getFilters()) === false) {
-            $Filter = $this->getFactory()->buildRestFilter();
-            $CriteriaBuilder = $Filter->toCriteria($this->getFilters());    
-        }
-        else {
-            $CriteriaBuilder = $this->getFactory()->buildCriteriaBuilder();
+            $filters = $this->getFilters();
+            $organized_filters = [];
+            
+            foreach ($filters as $key => $values) {
+                $collection_name = null;
+                
+                foreach ($values as $v => $vv) {
+                    if (strpos($vv, '.') !== false) {
+                        $tokens = explode('.', $vv); //eg. foo.bar.zzz
+                        $collection_name = array_shift($tokens);
+                        $column = current($tokens);
+                        $organized_filters[$collection_name][$key] = $filters[$key];
+                        $organized_filters[$collection_name][$key][$v] = $column;
+                    }
+                }
+            }
+            
+            if (isset($organized_filters[$domain_name]) !== false) {
+                $Filter = $this->getFactory()->buildRestFilter();
+                $CriteriaBuilder = $Filter->toCriteria($organized_filters[$domain_name]);
+            }
         }
         
         $CriteriaBuilder->setLimit($this->getLimit())

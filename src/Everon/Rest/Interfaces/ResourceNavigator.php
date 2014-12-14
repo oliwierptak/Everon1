@@ -73,7 +73,8 @@ interface ResourceNavigator extends Dependency\Request
     function getFilters();
 
     /**
+     * @param $domain_name
      * @return \Everon\DataMapper\Interfaces\Criteria\Builder
      */
-    function toCriteria();
+    function toCriteria($domain_name);
 }

@@ -223,8 +223,8 @@ class Handler implements Interfaces\ResourceHandler
     public function getResource($version, $resource_name, $resource_id, Interfaces\ResourceNavigator $Navigator)
     {
         try {
-            $EntityRelationCriteria = $Navigator->toCriteria();            
             $domain_name = $this->getDomainNameFromMapping($resource_name);
+            $EntityRelationCriteria = $Navigator->toCriteria($domain_name);
             $id = $this->generateEntityId($resource_id, $domain_name);
 
             $Entity = $this->getDomainManager()->getRepositoryByName($domain_name)->getEntityById($id, $EntityRelationCriteria);
@@ -297,7 +297,10 @@ class Handler implements Interfaces\ResourceHandler
             
             $a = 0;
             $ResourceCollection = new Helper\Collection([]);
-            $data = $EntityRelation->getData($Navigator->toCriteria())->toArray();
+            $data = $EntityRelation->getData(
+                $Navigator->toCriteria($EntityRelation->getOwnerEntity()->getDomainName())
+            )->toArray();
+            
             foreach ($data as $Entity) {
                 $Item = $this->buildResourceFromEntity($Entity, $Resource->getVersion(), $collection_name);
                 $resource_id = $this->generateResourceId($Entity->getId(), $collection_name);
@@ -344,7 +347,7 @@ class Handler implements Interfaces\ResourceHandler
             $domain_name = $this->getDomainNameFromMapping($resource_name);
             $Href = $this->getResourceUrl($version, $resource_name);
             $Repository = $this->getDomainManager()->getRepositoryByName($domain_name);
-            $EntityRelationCriteria = $Navigator->toCriteria();
+            $EntityRelationCriteria = $Navigator->toCriteria($domain_name);
             $Paginator = $this->getFactory()->buildPaginator($Repository->count($EntityRelationCriteria), $Navigator->getOffset(), $Navigator->getLimit());
             $entity_list = $Repository->getByCriteria($EntityRelationCriteria);
     
@@ -380,8 +383,8 @@ class Handler implements Interfaces\ResourceHandler
     public function getCollectionItemResource($version, $resource_name, $resource_id, $collection, $item_id, Interfaces\ResourceNavigator $Navigator)
     {
         try {
-            $EntityRelationCriteria = $Navigator->toCriteria();
             $domain_name = $this->getDomainNameFromMapping($collection);
+            $EntityRelationCriteria = $Navigator->toCriteria($domain_name);
             $id = $this->generateEntityId($item_id, $domain_name);
             
             $Entity = $this->getDomainManager()->getRepositoryByName($domain_name)->getEntityById($id, $EntityRelationCriteria);
