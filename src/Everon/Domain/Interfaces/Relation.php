@@ -102,7 +102,11 @@ interface Relation extends \Everon\Interfaces\Arrayable, Dependency\DomainManage
      */
     function getData(DataMapper\Interfaces\Criteria\Builder $CriteriaBuilder = null);
 
-    function getCount();
+    /**
+     * @param DataMapper\Interfaces\Criteria\Builder $CriteriaBuilder
+     * @return int
+     */
+    function getCount(DataMapper\Interfaces\Criteria\Builder $CriteriaBuilder=null);
 
     /**
      * @param Entity $Entity

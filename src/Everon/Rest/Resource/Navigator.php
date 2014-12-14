@@ -230,7 +230,7 @@ class Navigator implements Interfaces\ResourceNavigator
     /**
      * @inheritdoc
      */
-    public function toCriteria($domain_name)
+    public function toCriteria($resource_name)
     {
         $this->init();
 
@@ -245,7 +245,7 @@ class Navigator implements Interfaces\ResourceNavigator
                 $collection_name = null;
                 
                 foreach ($values as $v => $vv) {
-                    if (strpos($vv, '.') !== false) {
+                    if (is_string($vv) && strpos($vv, '.') !== false) {
                         $tokens = explode('.', $vv); //eg. foo.bar.zzz
                         $collection_name = array_shift($tokens);
                         $column = current($tokens);
@@ -255,9 +255,9 @@ class Navigator implements Interfaces\ResourceNavigator
                 }
             }
             
-            if (isset($organized_filters[$domain_name]) !== false) {
+            if (isset($organized_filters[$resource_name]) !== false) {
                 $Filter = $this->getFactory()->buildRestFilter();
-                $CriteriaBuilder = $Filter->toCriteria($organized_filters[$domain_name]);
+                $CriteriaBuilder = $Filter->toCriteria($organized_filters[$resource_name]);
             }
         }
         

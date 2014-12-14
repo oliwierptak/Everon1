@@ -224,7 +224,7 @@ class Handler implements Interfaces\ResourceHandler
     {
         try {
             $domain_name = $this->getDomainNameFromMapping($resource_name);
-            $EntityRelationCriteria = $Navigator->toCriteria($domain_name);
+            $EntityRelationCriteria = $Navigator->toCriteria($resource_name);
             $id = $this->generateEntityId($resource_id, $domain_name);
 
             $Entity = $this->getDomainManager()->getRepositoryByName($domain_name)->getEntityById($id, $EntityRelationCriteria);
@@ -270,7 +270,7 @@ class Handler implements Interfaces\ResourceHandler
             }
             
             $Paginator = $this->getFactory()->buildPaginator(
-                $EntityRelation->getCount(),
+                $EntityRelation->getCount($Navigator->toCriteria($collection_name)),
                 $Navigator->getOffset(),
                 $Navigator->getLimit()
             );
@@ -298,7 +298,7 @@ class Handler implements Interfaces\ResourceHandler
             $a = 0;
             $ResourceCollection = new Helper\Collection([]);
             $data = $EntityRelation->getData(
-                $Navigator->toCriteria($EntityRelation->getOwnerEntity()->getDomainName())
+                $Navigator->toCriteria($collection_name)
             )->toArray();
             
             foreach ($data as $Entity) {
@@ -347,7 +347,7 @@ class Handler implements Interfaces\ResourceHandler
             $domain_name = $this->getDomainNameFromMapping($resource_name);
             $Href = $this->getResourceUrl($version, $resource_name);
             $Repository = $this->getDomainManager()->getRepositoryByName($domain_name);
-            $EntityRelationCriteria = $Navigator->toCriteria($domain_name);
+            $EntityRelationCriteria = $Navigator->toCriteria($resource_name);
             $Paginator = $this->getFactory()->buildPaginator($Repository->count($EntityRelationCriteria), $Navigator->getOffset(), $Navigator->getLimit());
             $entity_list = $Repository->getByCriteria($EntityRelationCriteria);
     
@@ -384,7 +384,7 @@ class Handler implements Interfaces\ResourceHandler
     {
         try {
             $domain_name = $this->getDomainNameFromMapping($collection);
-            $EntityRelationCriteria = $Navigator->toCriteria($domain_name);
+            $EntityRelationCriteria = $Navigator->toCriteria($resource_name);
             $id = $this->generateEntityId($item_id, $domain_name);
             
             $Entity = $this->getDomainManager()->getRepositoryByName($domain_name)->getEntityById($id, $EntityRelationCriteria);

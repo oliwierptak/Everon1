@@ -41,7 +41,7 @@ class Builder implements Interfaces\Criteria\Builder
         Operator::SQL_SMALLER_THEN => Operator::TYPE_SMALLER_THEN,
         Operator::SQL_SMALLER_OR_EQUAL => Operator::TYPE_SMALLER_OR_EQUAL,
         Operator::SQL_BETWEEN => Operator::TYPE_BETWEEN,
-        Operator::SQL_BETWEEN => Operator::TYPE_NOT_BETWEEN,
+        Operator::SQL_NOT_BETWEEN => Operator::TYPE_NOT_BETWEEN,
         Operator::SQL_RAW => Operator::TYPE_RAW
     ];
     

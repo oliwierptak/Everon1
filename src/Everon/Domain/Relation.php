@@ -352,13 +352,21 @@ abstract class Relation implements Interfaces\Relation
         return $this->Data;
     }
 
-    public function getCount()
+    /**
+     * @inheritdoc
+     */
+    public function getCount(DataMapper\Interfaces\Criteria\Builder $CriteriaBuilder=null)
     {
         if ($this->loaded) {
             return $this->count;
         }
         
         $this->setupRelationParameters();
+
+        if ($CriteriaBuilder !== null) {
+            $this->getCriteriaBuilder()->appendContainerCollection($CriteriaBuilder->getContainerCollection());
+        }
+
         $CriteriaBuilder = clone $this->getCriteriaBuilder();
         $CriteriaBuilder->setOrderBy([]);
         $CriteriaBuilder->setLimit(null);
@@ -371,7 +379,7 @@ abstract class Relation implements Interfaces\Relation
             $this->count = (int) $PdoStatement->fetchColumn();
         } 
         else {
-            $this->count = $this->getDomainManager()->getRepositoryByName($this->getName())->count($CriteriaBuilder);
+            $this->count = (int) $this->getDomainManager()->getRepositoryByName($this->getName())->count($CriteriaBuilder);
         }
         
         return $this->count;
