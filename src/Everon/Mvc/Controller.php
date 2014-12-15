@@ -19,14 +19,12 @@ use Everon\Mvc;
 use Everon\View;
 
 /**
- * @method Http\Interfaces\Response getResponse()
- * @method \Everon\Module\Interfaces\Mvc getModule()
+  * @method \Everon\Module\Interfaces\Mvc getModule()
  */
-abstract class Controller extends \Everon\Controller implements Mvc\Interfaces\Controller
+abstract class Controller extends Http\Controller implements Mvc\Interfaces\Controller
 {
     use Dependency\Injection\Factory;
     use Domain\Dependency\Injection\DomainManager;
-    use Http\Dependency\Injection\HttpSession;
     use View\Dependency\Injection\ViewManager;
 
     use Helper\Arrays;
@@ -53,16 +51,16 @@ abstract class Controller extends \Everon\Controller implements Mvc\Interfaces\C
     public function __construct(\Everon\Module\Interfaces\Module $Module)
     {
         parent::__construct($Module);
-        
+
         if ($this->view_name === null) {
             $this->view_name = $this->getName();
         }
-        
+
         if ($this->layout_name === null) {
             $this->layout_name = $this->getName();
         }
     }
-    
+
     /**
      * @param $action
      * @param $result
@@ -79,19 +77,22 @@ abstract class Controller extends \Everon\Controller implements Mvc\Interfaces\C
         $Layout = $this->getViewManager()->createLayout($this->getLayoutName());
         $data = $this->arrayMergeDefault($Layout->getData(), $this->getView()->getData()); //import view variables into template
         $Layout->setData($data);
-        
+
         if ($result) {
             $ActionTemplate = $this->getView()->getTemplate($action, $data);
             if ($ActionTemplate !== null) {
                 $this->getView()->setContainer($ActionTemplate);
                 $Layout->set('body', $this->getView());
+
+                $Layout->set('flash_message', $this->getFlashMessage());
+                $this->resetFlashMessage();
             }
         }
 
         $this->executeView($Layout, $action);
         $this->getViewManager()->compileView($action, $Layout);
         $this->getResponse()->setData($Layout->getContainer()->getCompiledContent());
-        
+
         if ($this->getResponse()->wasStatusSet() === false) {//DRY
             $Ok = new Http\Message\Ok();
             $this->getResponse()->setStatusCode($Ok->getCode());
@@ -103,7 +104,7 @@ abstract class Controller extends \Everon\Controller implements Mvc\Interfaces\C
     {
         echo $this->getResponse()->toHtml();
     }
-    
+
     /**
      * @param $action
      * @return bool
@@ -170,7 +171,7 @@ abstract class Controller extends \Everon\Controller implements Mvc\Interfaces\C
     {
         return $this->layout_name;
     }
-    
+
     /**
      * @inheritdoc
      */
@@ -193,7 +194,7 @@ abstract class Controller extends \Everon\Controller implements Mvc\Interfaces\C
     public function getActionTemplate()
     {
         if ($this->ActionTemplate === null) {
-            $this->ActionTemplate = $this->getView()->getTemplate($this->action, $this->getView()->getData()); 
+            $this->ActionTemplate = $this->getView()->getTemplate($this->action, $this->getView()->getData());
         }
         return $this->ActionTemplate;
     }
@@ -211,11 +212,11 @@ abstract class Controller extends \Everon\Controller implements Mvc\Interfaces\C
      */
     public function showException(\Exception $Exception)
     {
-        $layout_name = $this->getConfigManager()->getConfigValue('application.error_handler.view');
+        $layout_name = $this->getConfigManager()->getConfigValue('everon.error_handler.view');
         $Layout = $this->getViewManager()->createLayout($layout_name);
         $Layout->set('error', $Exception->getMessage());
         $Layout->execute('show');
-        
+
         $this->getViewManager()->compileView('', $Layout);
 
         $content = (string) $Layout->getContainer()->getCompiledContent();
@@ -233,24 +234,24 @@ abstract class Controller extends \Everon\Controller implements Mvc\Interfaces\C
          * @var \Everon\View\Interfaces\View $ErrorView
          * @var \Everon\Mvc\Interfaces\Controller $Controller
          */
-        $error_view = $this->getConfigManager()->getConfigValue('application.error_handler.view', null);
-        $error_form_validation_error_template = $this->getConfigManager()->getConfigValue('application.error_handler.validation_error_template', null);
-        
+        $error_view = $this->getConfigManager()->getConfigValue('everon.error_handler.view', null);
+        $error_form_validation_error_template = $this->getConfigManager()->getConfigValue('everon.error_handler.validation_error_template', null);
+
         $ErrorView = $this->getViewManager()->createLayout($error_view);
         $ErrorView->set('validation_errors', $errors ?: $this->getRouter()->getRequestValidator()->getErrors());
         $ErrorView->execute('show');
-        
+
         $Tpl = $ErrorView->getTemplate($error_form_validation_error_template, $ErrorView->getData());
         if ($Tpl === null) {
             $this->getLogger()->error('Invalid error template: '.$error_view.'@'.$error_form_validation_error_template);
         }
 
         $this->getView()->set('error', $Tpl);
-        
+
         $BadRequest = new Http\Message\BadRequest();
         $this->getResponse()->setStatusCode($BadRequest->getCode());
         $this->getResponse()->setStatusMessage($BadRequest->getMessage());
-        
+
         $this->were_error_handled = true;
     }
 
@@ -268,34 +269,10 @@ abstract class Controller extends \Everon\Controller implements Mvc\Interfaces\C
     /**
      * @inheritdoc
      */
-    public function addValidationError($name, $message)
-    {
-        $this->getRouter()->getRequestValidator()->addError($name, $message);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function removeValidationError($name, $message)
-    {
-        $this->getRouter()->getRequestValidator()->removeError($name, $message);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function hasValidationError()
-    {
-        return ($this->getRouter()->getRequestValidator()->isValid() === false);
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function redirect($name, $query=[], $get=[])
     {
         $this->is_redirecting = true;
         $url = $this->getUrl($name, $query, $get);
-        $this->getResponse()->setHeader('refresh', '0; url='.$url);
+        $this->getResponse()->setHeader('location', $url);
     }
 }

@@ -16,7 +16,7 @@ require_once('vendor/autoload.php');
 
 /**
  * @var RequestIdentifier $RequestIdentifier
- * @var Interfaces\Factory $Factory
+ * @var Interfaces\Factory $EVERON_FACTORY
  * @var Interfaces\Core $Console
  */
 
@@ -50,13 +50,13 @@ implode(DIRECTORY_SEPARATOR,
  * @var Bootstrap $Bootstrap
  * @var Interfaces\Environment $Environment
  * @var Application\Interfaces\DependencyContainer $Container
- * @var Application\Interfaces\Factory $Factory
+ * @var Application\Interfaces\Factory $EVERON_FACTORY
  */
-$Container->register('Request', function() use ($Factory) {
-    return $Factory->buildConsoleRequest($_SERVER, $_GET, $_POST, $_FILES);
+$Container->register('Request', function() use ($EVERON_FACTORY) {
+    return $EVERON_FACTORY->buildConsoleRequest($_SERVER, $_GET, $_POST, $_FILES);
 });
 
 $REQUEST_IDENTIFIER->setSystemMemoryAtStart($system_memory);
-$Console = $Factory->buildConsole();
+$Console = $EVERON_FACTORY->buildConsole();
 $Console->run($REQUEST_IDENTIFIER);
 

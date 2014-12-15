@@ -25,7 +25,7 @@ class Bootstrap implements \Everon\Interfaces\Bootstrap
     
     protected $os_name = null;
     
-    protected $application_ini = null;
+    protected $everon_ini = null;
     
     protected $environment_name = null;
     
@@ -73,7 +73,7 @@ class Bootstrap implements \Everon\Interfaces\Bootstrap
     public function getShowAutoLoaderExceptions()
     {
         if ($this->show_auto_loader_exceptions === null) {
-            $ini = $this->getApplicationIni();
+            $ini = $this->getEveronIni();
             $this->show_auto_loader_exceptions = @$ini['autoloader']['throw_exceptions'] === true;
         }
         return $this->show_auto_loader_exceptions;
@@ -116,9 +116,22 @@ class Bootstrap implements \Everon\Interfaces\Bootstrap
         require_once($this->Environment->getEveronInterface().'ClassLoader.php');
         require_once($this->Environment->getEveronRoot().'ClassLoader.php');
 
-        $ini = $this->getApplicationIni();
+        $ini = $this->getEveronIni();
         $use_cache = (bool) @$ini['cache']['autoloader'];
+        $extra_files = @$ini['autoloader']['files'] ?: [];
+        $paths = @$ini['autoloader']['paths'] ?: null;
+        
+        foreach ($extra_files as $extra_class_name => $extra_filename) {
+            if (is_file('../'.$extra_filename)) {
+                require_once('../'.$extra_filename);
+            }
+        }
 
+        if ($paths !== null) {
+            array_push($paths, get_include_path());
+            set_include_path(join(PATH_SEPARATOR, array_values($paths)));
+        }
+        
         $ClassMap = null;
         if ($use_cache) {
             require_once($this->Environment->getEveronRoot().'ClassLoaderCache.php');
@@ -136,20 +149,16 @@ class Bootstrap implements \Everon\Interfaces\Bootstrap
         $this->ClassLoader = $ClassLoader;
     }
     
-    protected function getApplicationIni()
+    protected function getEveronIni()
     {
-        if ($this->application_ini === null) {
-            $this->application_ini = @parse_ini_file($this->Environment->getConfig().'application.ini', true);
+        if ($this->everon_ini === null) {
+            $this->everon_ini = @parse_ini_file($this->Environment->getConfig().'everon.ini', true);
         }
-        return $this->application_ini;
+        return $this->everon_ini;
     }
 
     protected function registerClassLoader($prepend_autoloader)
     {
-        if ($this->hasAutoloader('composer')) {
-            require_once($this->Environment->getRoot().'vendor/autoload.php');
-        }
-        
         if ($this->hasAutoloader('everon')) {
             $this->setupClassLoader();
             $this->getClassLoader()->add('Everon', $this->getEnvironment()->getEveronRoot());
@@ -161,6 +170,10 @@ class Bootstrap implements \Everon\Interfaces\Bootstrap
             $this->getClassLoader()->add('Everon\View', $this->getEnvironment()->getView());
             $this->getClassLoader()->register($prepend_autoloader);
         }
+
+        if ($this->hasAutoloader('composer')) {
+            require_once($this->Environment->getRoot().'vendor/autoload.php');
+        }
     }
 
     /**
@@ -168,7 +181,7 @@ class Bootstrap implements \Everon\Interfaces\Bootstrap
      */
     public function hasAutoloader($name)
     {
-        $ini = $this->getApplicationIni();
+        $ini = $this->getEveronIni();
         $autoloaders = @$ini['autoloader']['active'];
         
         if (is_array($autoloaders)) {
@@ -206,11 +219,12 @@ class Bootstrap implements \Everon\Interfaces\Bootstrap
         $log_filename = $log_directory.DIRECTORY_SEPARATOR.$log_filename;
 
         set_exception_handler(function ($Exception) use ($guid_value, $log_filename) {
+            echo $Exception;
             Bootstrap::logException($Exception, $guid_value, $log_filename);
             
             if (php_sapi_name() !== 'cli' || headers_sent() === false) {
                 http_response_code(500);
-                header("EVRID: $guid_value");
+                header("EVERON_ID: $guid_value");
             }
         });
     }

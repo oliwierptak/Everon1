@@ -16,9 +16,12 @@ use Everon\Helper;
 
 abstract class Handler implements Interfaces\Handler
 {
+    use Dependency\Injection\ConfigManager;
+    use Dependency\Injection\Factory;
+    use Dependency\Injection\FileSystem;
+    
     use DataMapper\Dependency\ConnectionManager;
     use DataMapper\Dependency\Schema;
-    use Dependency\Injection\Factory;
     use Domain\Dependency\DomainMapper;
     
     /**
@@ -42,7 +45,17 @@ abstract class Handler implements Interfaces\Handler
             $Pdo = $this->getFactory()->buildPdo($dsn, $username, $password, $options);
             $PdoAdapter = $this->getFactory()->buildPdoAdapter($Pdo, $Connection);
             $SchemaReader = $this->getFactory()->buildSchemaReader($PdoAdapter);
-            $this->Schema = $this->getFactory()->buildSchema($SchemaReader, $this->getConnectionManager(), $this->getDomainMapper());
+            $CacheLoader = $this->getFactory()->buildFileSystemCacheLoader('Serialized', $this->getFileSystem()->getRealPath('//Tmp/cache/data_mapper/'));
+                
+            $this->Schema = $this->getFactory()->buildSchema(
+                $SchemaReader, $this->getConnectionManager(), $this->getDomainMapper(), $CacheLoader
+            );
+            
+            //$this->Schema->saveTablesToCache();
+            
+            if ($this->getConfigManager()->getConfigValue('everon.cache.data_mapper')) {
+                $this->Schema->loadTablesFromCache();
+            }
         }
 
         return $this->Schema;

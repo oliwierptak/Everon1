@@ -21,10 +21,10 @@ abstract class Controller implements Interfaces\Controller
     use Event\Dependency\Injection\EventManager;
     use Module\Dependency\Injection\ModuleManager;
 
+    use Helper\GetUrl;
     use Helper\IsCallable;
     use Helper\ToString;
     use Helper\String\LastTokenToName;
-    use Helper\GetUrl;
 
     /**
      * @var string
@@ -241,6 +241,30 @@ abstract class Controller implements Interfaces\Controller
     public function showException(\Exception $Exception)
     {
         echo $Exception->getMessage();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function addValidationError($name, $message)
+    {
+        $this->getRouter()->getRequestValidator()->addError($name, $message);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function removeValidationError($name, $message)
+    {
+        $this->getRouter()->getRequestValidator()->removeError($name, $message);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function hasValidationError()
+    {
+        return ($this->getRouter()->getRequestValidator()->isValid() === false);
     }
 
 }

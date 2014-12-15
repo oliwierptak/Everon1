@@ -12,7 +12,10 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
      * @var array
      */
     protected $json_data = null;
-    
+
+    /**
+     * @var mixed
+     */
     protected $json_result = null;
 
 
@@ -24,7 +27,8 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
     {
         $this->getResponse()->setData([
             'result' => ($this->json_result !== null) ? $this->json_result : $result,
-            'data' => $this->json_data
+            'data' => $this->json_data,
+            'errors' => $this->getRouter()->getRequestValidator()->getErrors()
         ]);
     }
 

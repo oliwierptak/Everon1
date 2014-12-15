@@ -63,13 +63,6 @@ class PopoProps implements Interfaces\Arrayable
         }
 
         $property = $this->lookup[$property_to_lookup];
-        if (array_key_exists($property, $this->data) === false) {
-            if ($this->strict) {
-                throw new Exception\Popo('Unknown public property: "%s" in "%s"', [$property, get_called_class()]);
-            }
-
-            return null;
-        }
 
         return $this->data[$property];
     }

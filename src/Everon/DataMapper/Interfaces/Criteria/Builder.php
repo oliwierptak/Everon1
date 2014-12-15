@@ -69,7 +69,7 @@ interface Builder extends \Everon\Interfaces\Arrayable, \Everon\Interfaces\Strin
     /**
      * @param Interfaces\Criteria\Container $Container
      */
-    function setCurrentCriteria(Interfaces\Criteria\Container $Container);
+    function setCurrentContainer(Interfaces\Criteria\Container $Container);
 
     /**
      * @return \Everon\Interfaces\Collection
@@ -96,9 +96,10 @@ interface Builder extends \Everon\Interfaces\Arrayable, \Everon\Interfaces\Strin
      * @return string
      */
     function getGroupBy();
-        
+
     /**
      * @param string $group_by
+     * @return Interfaces\Criteria\Builder
      */
     function setGroupBy($group_by);
 
@@ -109,6 +110,7 @@ interface Builder extends \Everon\Interfaces\Arrayable, \Everon\Interfaces\Strin
 
     /**
      * @param int $limit
+     * @return Interfaces\Criteria\Builder
      */
     function setLimit($limit);
 
@@ -119,6 +121,7 @@ interface Builder extends \Everon\Interfaces\Arrayable, \Everon\Interfaces\Strin
 
     /**
      * @param int $offset
+     * @return Interfaces\Criteria\Builder
      */
     function setOffset($offset);
     
@@ -129,6 +132,7 @@ interface Builder extends \Everon\Interfaces\Arrayable, \Everon\Interfaces\Strin
 
     /**
      * @param array $order_by
+     * @return Interfaces\Criteria\Builder
      */
     function setOrderBy(array $order_by);
     
@@ -136,6 +140,11 @@ interface Builder extends \Everon\Interfaces\Arrayable, \Everon\Interfaces\Strin
      * @return Interfaces\SqlPart
      */
     function toSqlPart();
+
+    /**
+     * @param \Everon\Interfaces\Collection $ContainerCollectionToMerge
+     */
+    function appendContainerCollection(\Everon\Interfaces\Collection $ContainerCollectionToMerge);
 
     /**
      * @param $operator
@@ -149,4 +158,19 @@ interface Builder extends \Everon\Interfaces\Arrayable, \Everon\Interfaces\Strin
      * @return string
      */
     static function randomizeParameterName($name);
+
+    /**
+     * @return string
+     */
+    function getOffsetLimitSql();
+
+    /**
+     * @return string
+     */
+    function getOrderByAndSortSql();
+
+    /**
+     * @return string
+     */
+    function getGroupBySql();
 }

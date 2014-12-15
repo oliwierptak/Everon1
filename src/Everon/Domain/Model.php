@@ -9,13 +9,16 @@
  */
 namespace Everon\Domain;
 
+use Everon\Dependency;
 use Everon\Domain;
 use Everon\Helper;
 use Everon\Rest;
 
 abstract class Model implements Interfaces\Model
 {
+    use Dependency\Injection\Factory;
     use Domain\Dependency\Injection\DomainManager;
+    
     use Helper\Arrays;
     use Helper\Asserts\IsArrayKey;
     use Helper\Exceptions;
@@ -72,7 +75,7 @@ abstract class Model implements Interfaces\Model
      */
     public function create(array $data=[])
     {
-        return $this->getRepository()->buildFromArray($data);
+        return $this->getRepository()->createFromArray($data);
     }
 
     /**
@@ -148,8 +151,8 @@ abstract class Model implements Interfaces\Model
     public function addCollection(Domain\Interfaces\Entity $Entity, $relation_name, array $data, $user_id=null)
     {
         $Repository = $this->getDomainManager()->getRepositoryByName($relation_name);
+        $Repository->beginTransaction();
         try {
-            $Repository->beginTransaction();
             /**
              * @var Domain\Interfaces\Entity $EntityToAdd
              */
@@ -182,8 +185,8 @@ abstract class Model implements Interfaces\Model
     public function saveCollection(Domain\Interfaces\Entity $Entity, $relation_name, array $data, $user_id=null)
     {
         $Repository = $this->getDomainManager()->getRepositoryByName($relation_name);
+        $Repository->beginTransaction();
         try {
-            $Repository->beginTransaction();
             /**
              * @var Domain\Interfaces\Entity $EntityToSave
              */
@@ -221,8 +224,8 @@ abstract class Model implements Interfaces\Model
     public function deleteCollection(Domain\Interfaces\Entity $Entity, $relation_name, array $data, $user_id=null)
     {
         $Repository = $this->getDomainManager()->getRepositoryByName($relation_name);
+        $Repository->beginTransaction();
         try {
-            $Repository->beginTransaction();
             /**
              * @var Domain\Interfaces\Entity $EntityToDelete
              */

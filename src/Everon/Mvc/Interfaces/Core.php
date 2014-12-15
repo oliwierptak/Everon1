@@ -9,8 +9,10 @@
  */
 namespace Everon\Mvc\Interfaces;
 
-use Everon\View\Interfaces;
-
+/**
+ * @method \Everon\Http\Interfaces\Response getResponse
+ * @method \Everon\Mvc\Interfaces\Controller getController
+ */
 interface Core extends \Everon\Interfaces\Core
 {
 

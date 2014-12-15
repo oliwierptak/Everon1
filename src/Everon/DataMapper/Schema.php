@@ -10,19 +10,23 @@
 namespace Everon\DataMapper;
 
 use Everon\Config;
+use Everon\Dependency\ConfigCacheLoader;
 use Everon\Dependency\Injection\Factory as FactoryDependencyInjection;
+use Everon\Dependency\Injection\Logger as LoggerDependencyInjection;
 use Everon\DataMapper\Dependency;
 use Everon\Dependency\Injection\ConfigManager as ConfigManagerDependencyInjection;
 use Everon\Domain\Dependency\DomainMapper as DomainMapperDependency;
 use Everon\Domain;
+use Everon\FileSystem;
 use Everon\Helper;
 
 class Schema implements Interfaces\Schema
 {
-    use Dependency\SchemaReader;
-    use DomainMapperDependency;
+    use LoggerDependencyInjection;
     use FactoryDependencyInjection;
     use ConfigManagerDependencyInjection;
+    use Dependency\SchemaReader;
+    use DomainMapperDependency;
     
     use Helper\ToArray;
 
@@ -35,6 +39,11 @@ class Schema implements Interfaces\Schema
      * @var Interfaces\ConnectionManager
      */
     protected $ConnectionManager = null;
+
+    /**
+     * @var FileSystem\Interfaces\CacheLoader
+     */
+    protected $CacheLoader = null;
 
     /**
      * @var array
@@ -50,12 +59,19 @@ class Schema implements Interfaces\Schema
      * @param Interfaces\Schema\Reader $SchemaReader
      * @param Interfaces\ConnectionManager $ConnectionManager
      * @param Domain\Interfaces\Mapper $DomainMapper
+     * @param FileSystem\Interfaces\CacheLoader $CacheLoader
      */
-    public function __construct(Interfaces\Schema\Reader $SchemaReader, Interfaces\ConnectionManager $ConnectionManager, Domain\Interfaces\Mapper $DomainMapper)
+    public function __construct(
+        Interfaces\Schema\Reader $SchemaReader, 
+        Interfaces\ConnectionManager $ConnectionManager, 
+        Domain\Interfaces\Mapper $DomainMapper,
+        FileSystem\Interfaces\CacheLoader $CacheLoader
+    )
     {
         $this->SchemaReader = $SchemaReader;
         $this->ConnectionManager = $ConnectionManager;
         $this->DomainMapper = $DomainMapper;
+        $this->CacheLoader = $CacheLoader;
     }
     
     protected function initTables()
@@ -63,27 +79,36 @@ class Schema implements Interfaces\Schema
         if ($this->tables !== null) {
             return;
         }
+
+        $ColumnValidators = new Helper\Collection([
+            'String' => $this->getFactory()->buildSchemaColumnValidator('String', $this->getAdapterName()),
+            'Numeric' => $this->getFactory()->buildSchemaColumnValidator('Numeric', $this->getAdapterName()),
+            'Float' => $this->getFactory()->buildSchemaColumnValidator('Float', $this->getAdapterName()),
+            'Timestamp' => $this->getFactory()->buildSchemaColumnValidator('Timestamp', $this->getAdapterName()),
+            'Boolean' => $this->getFactory()->buildSchemaColumnValidator('Boolean', $this->getAdapterName())
+        ]);
         
         $table_list = $this->getSchemaReader()->getTableList();
         $column_list = $this->getSchemaReader()->getColumnList();
         $primary_key_list = $this->getSchemaReader()->getPrimaryKeysList();
         $foreign_key_list = $this->getSchemaReader()->getForeignKeyList();
         $unique_key_list = $this->getSchemaReader()->getUniqueKeysList();
-
+        
         $castToEmptyArrayWhenNull = function($name, $item) {    
             return isset($item[$name]) ? $item[$name] : [];
         };
 
         foreach ($table_list as $name => $table_data) {
             $this->tables[$name] = $this->getFactory()->buildSchemaTableAndDependencies(
-                $this->getDatabaseTimezone(),
-                $table_data['__TABLE_NAME_WITHOUT_SCHEMA'],
-                $table_data['table_schema'],
-                $this->getAdapterName(),
+                $this->getDatabaseTimezone(), 
+                $table_data['__TABLE_NAME_WITHOUT_SCHEMA'], 
+                $table_data['table_schema'], 
+                $this->getAdapterName(), 
                 $castToEmptyArrayWhenNull($name, $column_list), 
                 $castToEmptyArrayWhenNull($name, $primary_key_list), 
-                $castToEmptyArrayWhenNull($name, $unique_key_list),
-                $castToEmptyArrayWhenNull($name, $foreign_key_list),
+                $castToEmptyArrayWhenNull($name, $unique_key_list), 
+                $castToEmptyArrayWhenNull($name, $foreign_key_list), 
+                $ColumnValidators, 
                 $this->getDomainMapper()
             );
         }
@@ -124,7 +149,7 @@ class Schema implements Interfaces\Schema
                 $Table = $this->tables[$item_table_name];
                 $Column = clone $Table->getColumnByName($column_name);
                 $Column->setName($view_column_name);
-                $Column->unMarkAsPk();
+                $Column->unMarkAsPk(); //pk will be said based on primary keys
                 $Column->setIsNullable(in_array($view_column_name, $Item->getNullable()));
                 $view_columns[$view_column_name] = $Column;
             }
@@ -175,7 +200,8 @@ class Schema implements Interfaces\Schema
             $table = array_pop($tokens);
             $schema_name = implode('.', $tokens);
             
-            $this->tables[$Item->getTable()] = $this->getFactory()->buildSchemaTable(
+            $SchemaView = $this->getFactory()->buildSchemaView(
+                $Item->getTableOriginal(),
                 $table,
                 $schema_name,
                 $view_columns,
@@ -185,8 +211,24 @@ class Schema implements Interfaces\Schema
                 $this->getDomainMapper()
             );
 
-            $this->tables[$Item->getTable()]->setOriginalName($Item->getTableOriginal());
+            $this->tables[$Item->getTable()] = $SchemaView;
         }
+    }
+
+    /**
+     * @param FileSystem\Interfaces\CacheLoader $CacheLoader
+     */
+    public function setCacheLoader(FileSystem\Interfaces\CacheLoader $CacheLoader)
+    {
+        $this->CacheLoader = $CacheLoader;
+    }
+
+    /**
+     * @return \Everon\FileSystem\Interfaces\CacheLoader
+     */
+    public function getCacheLoader()
+    {
+        return $this->CacheLoader;
     }
     
     /**
@@ -245,6 +287,7 @@ class Schema implements Interfaces\Schema
      */
     public function getPdoAdapterByName($name)
     {
+        $name = ($name === 'read') ? 'write' : $name; //todo remove it, add support for transactions, add proxy method
         if (isset($this->pdo_adapters[$name]) === false) {
             $Connection = $this->getConnectionManager()->getConnectionByName($name);
             list($dsn, $username, $password, $options) = $Connection->toPdo();
@@ -274,8 +317,40 @@ class Schema implements Interfaces\Schema
     public function getDatabaseTimezone()
     {
         if ($this->database_timezone === null) {
-            $this->database_timezone = $this->getConfigManager()->getConfigValue('application.locale.database_timezone', 'UTC');
+            $this->database_timezone = $this->getConfigManager()->getConfigValue('everon.locale.database_timezone', 'UTC');
         }
         return $this->database_timezone;
+    }
+
+    public function saveTablesToCache()
+    {
+        /**
+         * @var Interfaces\Schema\Column $Column
+         * @var Interfaces\Schema\Table $Table
+         */
+
+        $this->initTables();
+        
+        foreach ($this->tables as $table_name => $Table) {
+            $this->getCacheLoader()->saveToCache($table_name, $Table);
+        }
+    }
+    
+    public function loadTablesFromCache()
+    {
+        /**
+         * @var Interfaces\Schema\Column $Column
+         * @var Interfaces\Schema\Table $Table
+         */
+
+        $d = $this->getCacheLoader()->load();
+        
+        if (empty($d) === false) {
+            $this->tables = &$d;
+        }
+        else {
+            $this->initTables();
+            return;
+        }
     }
 }

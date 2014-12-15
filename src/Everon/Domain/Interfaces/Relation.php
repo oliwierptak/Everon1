@@ -25,24 +25,26 @@ interface Relation extends \Everon\Interfaces\Arrayable, Dependency\DomainManage
      function setOwnerEntity(Domain\Interfaces\Entity $Entity);
 
     /**
-     * @return DataMapper\Interfaces\CriteriaOLD
+     * @return DataMapper\Interfaces\Criteria\Builder
      */
-     function getCriteria();
+     function getCriteriaBuilder();
 
     /**
-     * @param DataMapper\Interfaces\CriteriaOLD $Criteria
+     * @param DataMapper\Interfaces\Criteria\Builder $CriteriaBuilder
+     * @return mixed
      */
-     function setCriteria(DataMapper\Interfaces\CriteriaOLD $Criteria);
+     function setCriteriaBuilder(DataMapper\Interfaces\Criteria\Builder $CriteriaBuilder);
 
     /**
-     * @return DataMapper\Interfaces\CriteriaOLD
+     * @return DataMapper\Interfaces\Criteria\Builder
      */
      function getEntityRelationCriteria();
 
     /**
-     * @param DataMapper\Interfaces\CriteriaOLD $RelationCriteria
+     * @param DataMapper\Interfaces\Criteria\Builder $RelationCriteriaBuilder
+     * @return mixed
      */
-     function setEntityRelationCriteria(DataMapper\Interfaces\CriteriaOLD $RelationCriteria);
+     function setEntityRelationCriteria(DataMapper\Interfaces\Criteria\Builder $RelationCriteriaBuilder);
 
     /**
      * @return \Everon\Interfaces\DataMapper
@@ -95,12 +97,16 @@ interface Relation extends \Everon\Interfaces\Arrayable, Dependency\DomainManage
     function setData(\Everon\Interfaces\Collection $Collection);
 
     /**
-     * @param DataMapper\Interfaces\CriteriaOLD $Criteria 
+     * @param DataMapper\Interfaces\Criteria\Builder $CriteriaBuilder
      * @return \Everon\Interfaces\Collection
      */
-    function getData(DataMapper\Interfaces\CriteriaOLD $Criteria=null);
+    function getData(DataMapper\Interfaces\Criteria\Builder $CriteriaBuilder = null);
 
-    function getCount();
+    /**
+     * @param DataMapper\Interfaces\Criteria\Builder $CriteriaBuilder
+     * @return int
+     */
+    function getCount(DataMapper\Interfaces\Criteria\Builder $CriteriaBuilder=null);
 
     /**
      * @param Entity $Entity

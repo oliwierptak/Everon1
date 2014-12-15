@@ -62,6 +62,10 @@ interface ResourceNavigator extends Dependency\Request
      */
     function getLimit();
 
+    /**
+     * @param array $filters
+     */
+    function setFilters(array $filters);
 
     /**
      * @return array
@@ -69,12 +73,8 @@ interface ResourceNavigator extends Dependency\Request
     function getFilters();
 
     /**
-     * @param array $filters
+     * @param $resource_name
+     * @return \Everon\DataMapper\Interfaces\Criteria\Builder
      */
-    function setFilters(array $filters);
-
-    /**
-     * @return \Everon\DataMapper\Interfaces\CriteriaOLD
-     */
-    function toCriteria();
+    function toCriteria($resource_name);
 }

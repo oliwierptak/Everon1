@@ -65,4 +65,28 @@ class Container implements Interfaces\Criteria\Container
     {
         $this->glue = $glue;
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function resetGlue()
+    {
+        $this->glue = null;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function glueByAnd()
+    {
+        $this->glue = Builder::GLUE_AND;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function glueByOr()
+    {
+        $this->glue = Builder::GLUE_OR;
+    }
 }

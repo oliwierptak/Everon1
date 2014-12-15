@@ -15,12 +15,13 @@ abstract class Core implements Interfaces\Core
     use Dependency\Injection\ConfigManager;
     use Dependency\Injection\Logger;
     use Dependency\Injection\Factory;
-    use Dependency\Injection\Router;
-    use Dependency\Injection\Request;
     use Dependency\Injection\Response;
+    use Dependency\Injection\Request;
+    use Dependency\Injection\Router;
     use Module\Dependency\Injection\ModuleManager;
 
     use Helper\GetUrl;
+    use Helper\IsCallable;
 
     /**
      * @var Interfaces\Controller
@@ -86,7 +87,22 @@ abstract class Core implements Interfaces\Core
     {
         $this->runOnce($RequestIdentifier);
 
-        $this->Controller = $this->Module->getController($this->Route->getController());
+        if ($this->getRequest()->isAjax()) {
+            try {
+                $AjaxController = $this->Module->getAjaxController($this->Route->getController());
+                if ($this->isCallable($AjaxController, $this->Route->getAction())) {
+                    $this->Controller = $AjaxController;
+                }
+            }
+            catch (\Exception $e) {
+
+            }
+        }
+
+        if ($this->Controller === null) {
+            $this->Controller = $this->Module->getController($this->Route->getController());
+        }
+
         $this->Controller->setCurrentRoute($this->Route);
         $this->Controller->execute($this->Route->getAction());
     }
@@ -109,7 +125,7 @@ abstract class Core implements Interfaces\Core
     public function handleExceptions(\Exception $Exception)
     {
         $this->restorePreviousExceptionHandler();
-        $this->getLogger()->critical($Exception);
+        $this->getLogger()->error($Exception);
         $this->showException($Exception, null);
     }
 
@@ -120,15 +136,14 @@ abstract class Core implements Interfaces\Core
     protected function showException(\Exception $Exception, $Controller)
     {
         $this->getLogger()->error($Exception);
-        $this->getLogger()->trace($Exception);
 
         /**
          * @var \Everon\Mvc\Interfaces\Controller $Controller
          */
         if ($Controller === null) {
             try {
-                $error_module = $this->getConfigManager()->getConfigValue('application.error_handler.module', null);
-                $error_controller = $this->getConfigManager()->getConfigValue('application.error_handler.controller', null);
+                $error_module = $this->getConfigManager()->getConfigValue('everon.error_handler.module', null);
+                $error_controller = $this->getConfigManager()->getConfigValue('everon.error_handler.controller', null);
                 $Module = $this->getModuleManager()->getModuleByName($error_module);
                 $Controller = $Module->getController($error_controller);
             } 

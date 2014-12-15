@@ -51,8 +51,8 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
     public function showException(\Exception $Exception)
     {
         $message = $Exception->getMessage();
-        $this->lines[] = $message;
         $this->getResponse()->setResult(false);
+        $this->getResponse()->setData('Error: '. $message);
         $this->response();
     }
     

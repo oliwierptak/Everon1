@@ -7,16 +7,13 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon\Interfaces;
+namespace Everon\DataMapper\Interfaces\Schema\Column;
 
-use Everon\Exception;
-
-interface FileSystemTmpFile
+interface Validator extends \Everon\Interfaces\Dependency\Factory 
 {
     /**
-     * @inheritdoc
+     * @param mixed $value
+     * @return bool
      */
-    function write($content);
-    function getFilename();
-    function close();
+    function validateValue($value);
 }

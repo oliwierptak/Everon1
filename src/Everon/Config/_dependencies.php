@@ -10,96 +10,95 @@
 namespace Everon;
 
 /**
- * @var Application\Interfaces\DependencyContainer $Container
- * @var Application\Interfaces\Factory $Factory
+ * @var Application\Interfaces\Factory $EVERON_FACTORY
  */
 
-$Container->propose('Logger', function() use ($Factory) {
-    $Factory->getDependencyContainer()->monitor('Logger', ['Everon\Config\Manager', 'Everon\Environment']);
-    $enabled = $Factory->getDependencyContainer()->resolve('ConfigManager')->getConfigValue('application.logger.enabled');
-    $log_directory = $Factory->getDependencyContainer()->resolve('Bootstrap')->getEnvironment()->getLog();
-    return $Factory->buildLogger($log_directory, $enabled);
+$EVERON_FACTORY->getDependencyContainer()->propose('Logger', function() use ($EVERON_FACTORY) {
+    $EVERON_FACTORY->getDependencyContainer()->monitor('Logger', ['Everon\Config\Manager', 'Everon\Environment', 'Everon\Factory']);
+    $enabled = $EVERON_FACTORY->getDependencyContainer()->resolve('ConfigManager')->getConfigValue('everon.logger.enabled');
+    $log_directory = $EVERON_FACTORY->getDependencyContainer()->resolve('Bootstrap')->getEnvironment()->getLog();
+    return $EVERON_FACTORY->buildLogger($log_directory, $enabled);
 });
 
-$Container->propose('FileSystem', function() use ($Factory) {
-    $Factory->getDependencyContainer()->monitor('FileSystem', ['Everon\Environment']);
-    $root_directory = $Factory->getDependencyContainer()->resolve('Bootstrap')->getEnvironment()->getRoot();
-    return $Factory->buildFileSystem($root_directory);
+$EVERON_FACTORY->getDependencyContainer()->propose('FileSystem', function() use ($EVERON_FACTORY) {
+    $EVERON_FACTORY->getDependencyContainer()->monitor('FileSystem', ['Everon\Environment']);
+    $root_directory = $EVERON_FACTORY->getDependencyContainer()->resolve('Bootstrap')->getEnvironment()->getRoot();
+    return $EVERON_FACTORY->buildFileSystem($root_directory);
 });
 
-$Container->propose('Request', function() use ($Factory) {
-    return $Factory->buildConsoleRequest($_SERVER, $_GET, $_POST, $_FILES);
+$EVERON_FACTORY->getDependencyContainer()->propose('Request', function() use ($EVERON_FACTORY) {
+    return $EVERON_FACTORY->buildConsoleRequest($_SERVER, $_GET, $_POST, $_FILES);
 });
 
-$Container->propose('Router', function() use ($Factory) {
-    $Factory->getDependencyContainer()->monitor('Router', ['Everon\Config\Manager', 'Everon\RequestValidator']);
-    $RouterConfig = $Factory->getDependencyContainer()->resolve('ConfigManager')->getConfigByName('router');
-    $RequestValidator = $Factory->buildRequestValidator();
-    return $Factory->buildRouter($RouterConfig, $RequestValidator);
+$EVERON_FACTORY->getDependencyContainer()->propose('Router', function() use ($EVERON_FACTORY) {
+    $EVERON_FACTORY->getDependencyContainer()->monitor('Router', ['Everon\Config\Manager', 'Everon\RequestValidator']);
+    $RouterConfig = $EVERON_FACTORY->getDependencyContainer()->resolve('ConfigManager')->getConfigByName('router');
+    $RequestValidator = $EVERON_FACTORY->buildRequestValidator();
+    return $EVERON_FACTORY->buildRouter($RouterConfig, $RequestValidator);
 });
 
-$Container->propose('Response', function() use ($Factory) {
-    $Factory->getDependencyContainer()->monitor('Response', ['Everon\Logger']);
-    $RequestIdentifier = $Factory->getDependencyContainer()->resolve('RequestIdentifier');
-    return $Factory->buildResponse($RequestIdentifier->getValue());
+$EVERON_FACTORY->getDependencyContainer()->propose('Response', function() use ($EVERON_FACTORY) {
+    $EVERON_FACTORY->getDependencyContainer()->monitor('Response', ['Everon\Logger']);
+    $RequestIdentifier = $EVERON_FACTORY->getDependencyContainer()->resolve('RequestIdentifier');
+    return $EVERON_FACTORY->buildResponse($RequestIdentifier->getValue());
 });
 
-$Container->propose('ConfigManager', function() use ($Factory) {
-    $Factory->getDependencyContainer()->monitor('ConfigManager', ['Everon\Environment', 'Everon\Config\Loader']);
+$EVERON_FACTORY->getDependencyContainer()->propose('ConfigManager', function() use ($EVERON_FACTORY) {
+    $EVERON_FACTORY->getDependencyContainer()->monitor('ConfigManager', ['Everon\Environment', 'Everon\Config\Loader']);
     /**
      * @var \Everon\Interfaces\Environment $Environment
      */
-    $Environment = $Factory->getDependencyContainer()->resolve('Bootstrap')->getEnvironment();
-    $config_cache_directory = $Environment->getCacheConfig();
-    $Loader = $Factory->buildConfigLoader($Environment->getConfig(), $config_cache_directory);
-    return $Factory->buildConfigManager($Loader);
+    $Environment = $EVERON_FACTORY->getDependencyContainer()->resolve('Bootstrap')->getEnvironment();
+    $Loader = $EVERON_FACTORY->buildConfigLoader($Environment->getConfig());
+    $CacheLoader = $EVERON_FACTORY->buildConfigCacheLoader($Environment->getCacheConfig());
+    return $EVERON_FACTORY->buildConfigManager($Loader, $CacheLoader);
 });
 
-$Container->propose('ModuleManager', function() use ($Factory) {
-    return $Factory->buildModuleManager();
+$EVERON_FACTORY->getDependencyContainer()->propose('ModuleManager', function() use ($EVERON_FACTORY) {
+    return $EVERON_FACTORY->buildModuleManager();
 });
 
-$Container->propose('DomainMapper', function() use ($Factory) {
-    $Factory->getDependencyContainer()->monitor('DomainMapper', ['Everon\Config\Manager']);
-    $DomainConfig = $Factory->getDependencyContainer()->resolve('ConfigManager')->getConfigByName('domain');
-    return $Factory->buildDomainMapper($DomainConfig->toArray());
+$EVERON_FACTORY->getDependencyContainer()->propose('DomainMapper', function() use ($EVERON_FACTORY) {
+    $EVERON_FACTORY->getDependencyContainer()->monitor('DomainMapper', ['Everon\Config\Manager']);
+    $DomainConfig = $EVERON_FACTORY->getDependencyContainer()->resolve('ConfigManager')->getConfigByName('domain');
+    return $EVERON_FACTORY->buildDomainMapper($DomainConfig->toArray());
 });
 
-$Container->propose('DomainManager', function() use ($Factory) {
-    $Factory->getDependencyContainer()->monitor('DomainManager', ['Everon\DataMapper\Manager']);
-    $DataMapperManager = $Factory->getDependencyContainer()->resolve('DataMapperManager');
-    return $Factory->buildDomainManager($DataMapperManager);
+$EVERON_FACTORY->getDependencyContainer()->propose('DomainManager', function() use ($EVERON_FACTORY) {
+    $EVERON_FACTORY->getDependencyContainer()->monitor('DomainManager', ['Everon\DataMapper\Manager']);
+    $DataMapperManager = $EVERON_FACTORY->getDependencyContainer()->resolve('DataMapperManager');
+    return $EVERON_FACTORY->buildDomainManager($DataMapperManager);
 });
 
-$Container->propose('DataMapperManager', function() use ($Factory) {
-    $Factory->getDependencyContainer()->monitor('DataMapperManager', ['Everon\DataMapper\Connection\Manager', 'Everon\Domain\Mapper']);
-    $ConnectionManager = $Factory->getDependencyContainer()->resolve('ConnectionManager');
-    $DomainMapper = $Factory->getDependencyContainer()->resolve('DomainMapper');
-    return $Factory->buildDataMapperManager($ConnectionManager, $DomainMapper);
+$EVERON_FACTORY->getDependencyContainer()->propose('DataMapperManager', function() use ($EVERON_FACTORY) {
+    $EVERON_FACTORY->getDependencyContainer()->monitor('DataMapperManager', ['Everon\DataMapper\Connection\Manager', 'Everon\Domain\Mapper']);
+    $ConnectionManager = $EVERON_FACTORY->getDependencyContainer()->resolve('ConnectionManager');
+    $DomainMapper = $EVERON_FACTORY->getDependencyContainer()->resolve('DomainMapper');
+    return $EVERON_FACTORY->buildDataMapperManager($ConnectionManager, $DomainMapper);
 });
 
-$Container->propose('ConnectionManager', function() use ($Factory) {
-    $Factory->getDependencyContainer()->monitor('ConnectionManager', ['Everon\Config\Manager']);
-    $DatabaseConfig = $Factory->getDependencyContainer()->resolve('ConfigManager')->getDatabaseConfig();
-    return $Factory->buildConnectionManager($DatabaseConfig);
+$EVERON_FACTORY->getDependencyContainer()->propose('ConnectionManager', function() use ($EVERON_FACTORY) {
+    $EVERON_FACTORY->getDependencyContainer()->monitor('ConnectionManager', ['Everon\Config\Manager']);
+    $DatabaseConfig = $EVERON_FACTORY->getDependencyContainer()->resolve('ConfigManager')->getDatabaseConfig();
+    return $EVERON_FACTORY->buildConnectionManager($DatabaseConfig);
 });
 
-$Container->propose('EmailManager', function() use ($Factory) {
-    return $Factory->buildEmailManager();
+$EVERON_FACTORY->getDependencyContainer()->propose('EmailManager', function() use ($EVERON_FACTORY) {
+    return $EVERON_FACTORY->buildEmailManager();
 });
 
-$Container->propose('EventManager', function() use ($Factory) {
-    return $Factory->buildEventManager();
+$EVERON_FACTORY->getDependencyContainer()->propose('EventManager', function() use ($EVERON_FACTORY) {
+    return $EVERON_FACTORY->buildEventManager();
 });
 
-$Container->register('TaskManager', function() use ($Factory) {
-    return $Factory->buildTaskManager();
+$EVERON_FACTORY->getDependencyContainer()->register('TaskManager', function() use ($EVERON_FACTORY) {
+    return $EVERON_FACTORY->buildTaskManager();
 });
 
 //xxx
 //avoid circular dependencies
-//the logger needs ConfigManager in order to be instantiated, therefore Logger can't be auto injected into ConfigManger
-$Container->afterSetup(function($Container){
-    $ConfigManager = $Container->resolve('ConfigManager');
-    $ConfigManager->setLogger($Container->resolve('Logger'));
+//the logger needs ConfigManager in order to be instantiated, therefore Logger can't be auto injected into ConfigManager
+$EVERON_FACTORY->getDependencyContainer()->afterSetup(function() use ($EVERON_FACTORY) {
+    $ConfigManager = $EVERON_FACTORY->getDependencyContainer()->resolve('ConfigManager');
+    $ConfigManager->setLogger($EVERON_FACTORY->getDependencyContainer()->resolve('Logger'));
 });

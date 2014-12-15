@@ -16,12 +16,12 @@ use Everon\Interfaces;
 
 abstract class Factory implements Interfaces\Factory
 {
-    use Helper\String\UnderscoreToCamel;
     use Helper\Arrays;
-    use Helper\Exceptions;
     use Helper\Asserts\IsStringAndNotEmpty;
     use Helper\Asserts\IsNumericAndNotZero;
     use Helper\Asserts\IsArrayKey;
+    use Helper\Exceptions;
+    use Helper\String\UnderscoreToCamel;
 
 
     /**
@@ -29,12 +29,6 @@ abstract class Factory implements Interfaces\Factory
      */
     protected $DependencyContainer = null;
 
-
-    /**
-     * @param $class_name
-     * @param $Receiver
-     */
-    //abstract public function injectDependencies($class_name, $Receiver);
 
     /**
      * @inheritdoc
@@ -47,11 +41,6 @@ abstract class Factory implements Interfaces\Factory
         }
     }
 
-    /**
-     * @var Interfaces\Collection
-     */
-    //protected $WorkerCollection = null;
-
 
     /**
      * @param Interfaces\DependencyContainer $Container
@@ -59,44 +48,7 @@ abstract class Factory implements Interfaces\Factory
     public function __construct(Interfaces\DependencyContainer $Container)
     {
         $this->DependencyContainer = $Container;
-        //$this->WorkerCollection = new Helper\Collection([]);
     }
-
-    /**
-     * @param $name
-     * @param $arguments
-     * @return mixed
-     * @throws Exception\Factory
-     */
-    /*
-    public function __call($name, $arguments)
-    {
-        foreach ($this->WorkerCollection as $worker_name => $Worker) {
-            d($worker_name, $Worker);
-            / **
-             * @var Interfaces\FactoryWorker $Worker
-             * /
-            if ($Worker->getMethods()->has($name)) {
-                return call_user_func_array([$Worker, $name], $arguments);
-            }
-        }
-
-        throw new Exception\Factory('Invalid factory method: "%s"', $name);
-    }
-
-    public function registerWorker(Interfaces\FactoryWorker $Worker)
-    {
-        $name = get_class($Worker);
-        $this->WorkerCollection->set($name, $Worker);
-        $Worker->register($this);
-    }
-    
-    public function unRegisterWorker(Interfaces\FactoryWorker $Worker)
-    {
-        $name = get_class($Worker);
-        $this->WorkerCollection->set($name, $Worker);
-        $Worker->unRegister();
-    }*/
 
     /**
      * @inheritdoc
@@ -123,8 +75,7 @@ abstract class Factory implements Interfaces\Factory
             return $class_name; //absolute name
         }
 
-        $class = $namespace.'\\'.$class_name;
-        return $class;
+        return $namespace.'\\'.$class_name;
     }
 
     /**
@@ -176,6 +127,14 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
+    public function buildHttpCore($namespace='Everon\Http')
+    {
+        return $this->buildCore('Core', $namespace);
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function buildRestCurlAdapter()
     {
         try {
@@ -187,7 +146,7 @@ abstract class Factory implements Interfaces\Factory
             throw new Exception\Factory('RestClient initialization error', null, $e);
         }
     }
-    
+
     /**
      * @inheritdoc
      */
@@ -206,12 +165,12 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildRestFilter(Interfaces\Collection $FilterDefinition, $namespace='Everon\Rest')
+    public function buildRestFilter($namespace='Everon\Rest')
     {
         try {
             $class_name = $this->getFullClassName($namespace, 'Filter');
             $this->classExists($class_name);
-            $Filter = new $class_name($FilterDefinition);
+            $Filter = new $class_name();
             $this->injectDependencies($class_name, $Filter);
             return $Filter;
         }
@@ -220,23 +179,6 @@ abstract class Factory implements Interfaces\Factory
         }
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function buildRestFilterOperator($class_name, $column, $value=null, $column_glue=null, $glue=null, $namespace='Everon\Rest\Filter')
-    {
-        try {
-            $class_name = $this->getFullClassName($namespace, $class_name);
-            $this->classExists($class_name);
-            $Operator = new $class_name($column, $value, $column_glue, $glue);
-            $this->injectDependencies($class_name, $Operator);
-            return $Operator;
-        }
-        catch (\Exception $e) {
-            throw new Exception\Factory('RestFilterOperator: "%s" initialization error', $class_name, $e);
-        }
-    }
-    
     /**
      * @inheritdoc
      */
@@ -268,7 +210,9 @@ abstract class Factory implements Interfaces\Factory
     public function buildRestResponse($guid, Http\Interfaces\HeaderCollection $HeaderCollection, Http\Interfaces\CookieCollection $CookieCollection, $namespace='Everon\Http')
     {
         try {
-            $Response = new Rest\Response($guid, $HeaderCollection, $CookieCollection);
+            $class_name = $this->getFullClassName($namespace, 'Response');
+            $this->classExists($class_name);
+            $Response = new $class_name($guid, $HeaderCollection, $CookieCollection);
             $this->injectDependencies('Everon\Rest\Response', $Response);
             return $Response;
         }
@@ -327,7 +271,7 @@ abstract class Factory implements Interfaces\Factory
             throw new Exception\Factory('RestResourceHref initialization error for: "%s"', $url, $e);
         }
     }
-    
+
     /**
      * @inheritdoc
      */
@@ -361,7 +305,7 @@ abstract class Factory implements Interfaces\Factory
             throw new Exception\Factory('RestResourceNavigator initialization error', null, $e);
         }
     }
-    
+
     /**
      * @inheritdoc
      */
@@ -380,14 +324,14 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildConfig($name, Config\Interfaces\LoaderItem $ConfigLoaderItem, \Closure $Compiler)
+    public function buildConfig($name, $filename, array $data)
     {
         try {
-            $ConfigFile = new \SplFileInfo($ConfigLoaderItem->getFilename());
+            $ConfigFile = new \SplFileInfo($filename);
             $class_name = $ConfigFile->getBasename('.ini');
             $class_name = ucfirst($this->stringUnderscoreToCamel($class_name));
             $class_name = $this->getFullClassName('Everon\Config', $class_name);
-            
+
             try {
                 if (class_exists($class_name, true) == false) {
                     $class_name = 'Everon\Config';
@@ -397,7 +341,7 @@ abstract class Factory implements Interfaces\Factory
                 $class_name = 'Everon\Config';
             }
 
-            $Config = new $class_name($name, $ConfigLoaderItem, $Compiler);
+            $Config = new $class_name($name, $ConfigFile->getPathname(), $data);
             $this->injectDependencies($class_name, $Config);
             return $Config;
         }
@@ -409,11 +353,13 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildConfigManager(Config\Interfaces\Loader $Loader)
+    public function buildConfigManager(Config\Interfaces\Loader $Loader, FileSystem\Interfaces\CacheLoader $CacheLoader, $namespace = 'Everon\Config')
     {
         try {
-            $Manager = new Config\Manager($Loader);
-            $this->injectDependencies('Everon\Config\Manager', $Manager);
+            $class_name = $this->getFullClassName($namespace, 'Manager');
+            $this->classExists($class_name);
+            $Manager = new $class_name($Loader, $CacheLoader);
+            $this->injectDependencies($class_name, $Manager);
             return $Manager;
         }
         catch (\Exception $e) {
@@ -424,11 +370,13 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildConfigExpressionMatcher()
+    public function buildConfigExpressionMatcher($namespace = 'Everon\Config')
     {
         try {
-            $ExpressionMatcher = new Config\ExpressionMatcher();
-            $this->injectDependencies('Everon\Config\ExpressionMatcher', $ExpressionMatcher);
+            $class_name = $this->getFullClassName($namespace, 'ExpressionMatcher');
+            $this->classExists($class_name);
+            $ExpressionMatcher = new $class_name();
+            $this->injectDependencies($class_name, $ExpressionMatcher);
             return $ExpressionMatcher;
         }
         catch (\Exception $e) {
@@ -439,11 +387,13 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildConfigLoader($config_directory, $cache_directory)
+    public function buildConfigLoader($config_directory, $namespace = 'Everon\Config')
     {
         try {
-            $ConfigLoader = new Config\Loader($config_directory, $cache_directory);
-            $this->injectDependencies('Everon\Config\Loader', $ConfigLoader);
+            $class_name = $this->getFullClassName($namespace, 'Loader');
+            $this->classExists($class_name);
+            $ConfigLoader = new $class_name($config_directory);
+            $this->injectDependencies($class_name, $ConfigLoader);
             return $ConfigLoader;
         }
         catch (\Exception $e) {
@@ -454,15 +404,17 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildConfigLoaderItem($filename, array $data)
+    public function buildConfigCacheLoader($cache_directory, $namespace = 'Everon\FileSystem\CacheLoader')
     {
         try {
-            $ConfigLoaderItem = new Config\Loader\Item($filename, $data);
-            $this->injectDependencies('Everon\Config\Loader\Item', $ConfigLoaderItem);
-            return $ConfigLoaderItem;
+            $class_name = $this->getFullClassName($namespace, 'Php');
+            $this->classExists($class_name);
+            $ConfigLoaderCache = new $class_name($cache_directory);
+            $this->injectDependencies($class_name, $ConfigLoaderCache);
+            return $ConfigLoaderCache;
         }
         catch (\Exception $e) {
-            throw new Exception\Factory('ConfigLoaderItem initialization error', null, $e);
+            throw new Exception\Factory('ConfigLoaderCache initialization error', null, $e);
         }
     }
 
@@ -640,7 +592,9 @@ abstract class Factory implements Interfaces\Factory
     {
         try {
             $options = $this->arrayMergeDefault([
-                \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION
+                \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+                \PDO::ATTR_PERSISTENT => false,
+                \PDO::ATTR_EMULATE_PREPARES => false
             ], $options);
             return new \PDO($dsn, $username, $password, $options);
         }
@@ -648,7 +602,7 @@ abstract class Factory implements Interfaces\Factory
             throw new Exception\Factory('PDO initialization error', null, $e);
         }
     }
-    
+
     /**
      * @inheritdoc
      */
@@ -680,7 +634,7 @@ abstract class Factory implements Interfaces\Factory
             throw new Exception\Factory('ConnectionItem initialization error', null, $e);
         }
     }
-    
+
     /**
      * @inheritdoc
      */
@@ -744,6 +698,23 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
+    public function buildCriteria($namespace='Everon\DataMapper')
+    {
+        try {
+            $class_name = $this->getFullClassName($namespace, 'Criteria');
+            $this->classExists($class_name);
+            $Builder = new $class_name();
+            $this->injectDependencies($class_name, $Builder);
+            return $Builder;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('Criteria initialization error', null, $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function buildCriteriaBuilder($namespace='Everon\DataMapper\Criteria')
     {
         try {
@@ -795,24 +766,7 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildDataMapperCriteria($namespace='Everon\DataMapper')
-    {
-        try {
-            $class_name = $this->getFullClassName($namespace, 'Criteria');
-            $this->classExists($class_name);
-            $Criteria = new $class_name();
-            $this->injectDependencies($class_name, $Criteria);
-            return $Criteria;
-        }
-        catch (\Exception $e) {
-            throw new Exception\Factory('Criteria initialization error', null, $e);
-        }
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function buildDataMapperCriterium($column, $operator, $value, $namespace = 'Everon\DataMapper\Criteria')
+    public function buildCriteriaCriterium($column, $operator, $value, $namespace = 'Everon\DataMapper\Criteria')
     {
         try {
             $class_name = $this->getFullClassName($namespace, 'Criterium');
@@ -924,7 +878,7 @@ abstract class Factory implements Interfaces\Factory
     {
         try {
             $class_name = $this->getFullClassName($namespace.'\\'.$Entity->getDomainName(), 'Relation\\'.$name);
-            
+
             try {
                 $this->classExists($class_name);
                 $class_exists = true;
@@ -938,7 +892,7 @@ abstract class Factory implements Interfaces\Factory
              * @var Domain\Interfaces\Relation $Relation
              */
             $Relation = new $class_name($Entity, $RelationMapper);
-            
+
             if ($class_exists === false) {
                 $Relation->setName($name);
             }
@@ -988,12 +942,16 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildSchema(DataMapper\Interfaces\Schema\Reader $Reader, DataMapper\Interfaces\Connectionmanager $ConnectionManager, Domain\Interfaces\Mapper $DomainMapper, $namespace='Everon\DataMapper')
+    public function buildSchema(DataMapper\Interfaces\Schema\Reader $Reader, 
+                                DataMapper\Interfaces\ConnectionManager $ConnectionManager, 
+                                Domain\Interfaces\Mapper $DomainMapper,
+                                FileSystem\Interfaces\CacheLoader $CacheLoader, 
+                                $namespace = 'Everon\DataMapper')
     {
         try {
             $class_name = $this->getFullClassName($namespace, 'Schema');
             $this->classExists($class_name);
-            $Schema = new $class_name($Reader, $ConnectionManager, $DomainMapper);
+            $Schema = new $class_name($Reader, $ConnectionManager, $DomainMapper, $CacheLoader);
             $this->injectDependencies($class_name, $Schema);
             return $Schema;
         }
@@ -1025,53 +983,42 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildSchemaTableAndDependencies($database_timezone, $name, $schema, $adapter_name, array $columns, array $primary_keys,  array $unique_keys, array $foreign_keys, Domain\Interfaces\Mapper $DomainMapper, $namespace='Everon\DataMapper')
+    public function buildSchemaTableAndDependencies($database_timezone, $name, $schema, $adapter_name, array $columns, array $primary_keys, array $unique_keys, array $foreign_keys, Interfaces\Collection $ColumnValidators, Domain\Interfaces\Mapper $DomainMapper, $namespace = 'Everon\DataMapper')
     {
         try {
+            /**
+             * @var \Everon\DataMapper\Interfaces\Schema\PrimaryKey $PrimaryKey
+             * @var \Everon\DataMapper\Interfaces\Schema\UniqueKey $UniqueKey
+             * @var \Everon\DataMapper\Interfaces\Schema\ForeignKey $ForeignKey
+             * @var DataMapper\Schema\Column $Column
+             */
             $primary_key_list = [];
-            foreach ($primary_keys as $constraint_data) {
-                /**
-                 * @var \Everon\DataMapper\Interfaces\Schema\PrimaryKey $PrimaryKey
-                 */
-                $class_name = $this->getFullClassName($namespace, 'Schema\PrimaryKey');
-                $this->classExists($class_name);
-                $PrimaryKey = new $class_name($constraint_data);
+            foreach ($primary_keys as $primary_key_data) {
+                $PrimaryKey = $this->buildSchemaPrimaryKey($primary_key_data);
                 $primary_key_list[$PrimaryKey->getName()] = $PrimaryKey;
             }
 
             $unique_key_list = [];
-            foreach ($unique_keys as $constraint_data) {
-                /**
-                 * @var \Everon\DataMapper\Interfaces\Schema\UniqueKey $UniqueKey
-                 */
-                $class_name = $this->getFullClassName($namespace, 'Schema\UniqueKey');
-                $this->classExists($class_name);
-                $UniqueKey = new $class_name($constraint_data);
+            foreach ($unique_keys as $unique_key_data) {
+                $UniqueKey = $this->buildSchemaUniqueKey($unique_key_data);
                 $unique_key_list[$UniqueKey->getName()] = $UniqueKey;
             }
-            
+
             $foreign_key_list = [];
-            foreach ($foreign_keys as $column_name => $foreign_key_data) {
-                /**
-                 * @var \Everon\DataMapper\Interfaces\Schema\ForeignKey $ForeignKey
-                 */
-                $class_name = $this->getFullClassName($namespace, 'Schema\ForeignKey');
-                $this->classExists($class_name);
-                $ForeignKey = new $class_name($foreign_key_data);
-                $foreign_key_list[$ForeignKey->getColumnName()] = new $class_name($foreign_key_data);
+            foreach ($foreign_keys as $foreign_key_data) {
+                $ForeignKey = $this->buildSchemaForeignKey($foreign_key_data);
+                $foreign_key_list[$ForeignKey->getColumnName()] = $ForeignKey;
             }
 
             $column_list = [];
             foreach ($columns as $column_data) {
-                $class_name = $this->getFullClassName($namespace, "Schema\\${adapter_name}\\Column");
-                $this->classExists($class_name);
-                /**
-                 * @var DataMapper\Schema\Column $Column
-                 */
-                $Column = new $class_name($database_timezone, $column_data, $primary_key_list, $unique_key_list, $foreign_key_list);
+                $is_pk = @isset($primary_key_list[$column_data['column_name']]);
+                $is_unique = @isset($unique_key_list[$column_data['column_name']]);
+
+                $Column = $this->buildSchemaColumn($adapter_name, $database_timezone, $column_data, $is_pk, $is_unique, $ColumnValidators);
                 $column_list[$Column->getName()] = $Column;
             }
-            
+
             return $this->buildSchemaTable($name, $schema, $column_list, $primary_key_list, $unique_key_list, $foreign_key_list, $DomainMapper);
         }
         catch (\Exception $e) {
@@ -1082,17 +1029,17 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildSchemaTable($name, $schema, array $column_list, array $primary_key_list,  array $unique_key_list, array $foreign_key_list, Domain\Interfaces\Mapper $DomainMapper, $namespace='Everon\DataMapper')
+    public function buildSchemaColumn($adapter_name, $database_timezone, array $data, $is_pk, $is_unique, Interfaces\Collection $ColumnValidators, $namespace = 'Everon\DataMapper\Schema')
     {
         try {
-            $class_name = $this->getFullClassName($namespace,'Schema\Table');
+            $class_name = $this->getFullClassName($namespace, $adapter_name.'\\Column');
             $this->classExists($class_name);
-            $Table = new $class_name($name, $schema, $column_list, $primary_key_list, $unique_key_list, $foreign_key_list, $DomainMapper);
-            $this->injectDependencies($class_name, $Table);
-            return $Table;
+            $Column = new $class_name($this, $ColumnValidators, $database_timezone, $data, $is_pk, $is_unique);
+            $this->injectDependencies($class_name, $Column);
+            return $Column;
         }
         catch (\Exception $e) {
-            throw new Exception\Factory('SchemaTable: "%s.%s" initialization error', [$schema,$name], $e);
+            throw new Exception\Factory('SchemaColumn for adapter: "%s" initialization error', $adapter_name, $e);
         }
     }
 
@@ -1111,6 +1058,108 @@ abstract class Factory implements Interfaces\Factory
         }
         catch (\Exception $e) {
             throw new Exception\Factory('SchemaConstraint initialization error', null, $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildSchemaForeignKey(array $foreign_key_data, $namespace='Everon\DataMapper\Schema')
+    {
+        try {
+            $class_name = $this->getFullClassName($namespace, 'ForeignKey');
+            $this->classExists($class_name);
+            $ForeignKey = new $class_name($foreign_key_data);
+            $this->injectDependencies($class_name, $ForeignKey);
+            return $ForeignKey;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('SchemaForeignKey initialization error', null, $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildSchemaPrimaryKey(array $primary_key_data, $namespace='Everon\DataMapper\Schema')
+    {
+        try {
+            $class_name = $this->getFullClassName($namespace, 'PrimaryKey');
+            $this->classExists($class_name);
+            $PrimaryKey = new $class_name($primary_key_data);
+            $this->injectDependencies($class_name, $PrimaryKey);
+            return $PrimaryKey;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('SchemaPrimaryKey initialization error', null, $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildSchemaUniqueKey(array $unique_key_data, $namespace='Everon\DataMapper\Schema')
+    {
+        try {
+            $class_name = $this->getFullClassName($namespace, 'UniqueKey');
+            $this->classExists($class_name);
+            $UniqueKey = new $class_name($unique_key_data);
+            $this->injectDependencies($class_name, $UniqueKey);
+            return $UniqueKey;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('SchemaUniqueKey initialization error', null, $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildSchemaTable($name, $schema, array $column_list, array $primary_key_list, array $unique_key_list, array $foreign_key_list, Domain\Interfaces\Mapper $DomainMapper, $namespace = 'Everon\DataMapper\Schema')
+    {
+        try {
+            $class_name = $this->getFullClassName($namespace, 'Table');
+            $this->classExists($class_name);
+            $Table = new $class_name($name, $schema, $column_list, $primary_key_list, $unique_key_list, $foreign_key_list, $DomainMapper);
+            $this->injectDependencies($class_name, $Table);
+            return $Table;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('SchemaTable: "%s.%s" initialization error', [$schema,$name], $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildSchemaView($original_name, $name, $schema, array $column_list, array $primary_key_list,  array $unique_key_list, array $foreign_key_list, Domain\Interfaces\Mapper $DomainMapper, $namespace='Everon\DataMapper')
+    {
+        try {
+            $class_name = $this->getFullClassName($namespace,'Schema\View');
+            $this->classExists($class_name);
+            $Table = new $class_name($original_name, $name, $schema, $column_list, $primary_key_list, $unique_key_list, $foreign_key_list, $DomainMapper);
+            $this->injectDependencies($class_name, $Table);
+            return $Table;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('SchemaView: "%s.%s" initialization error', [$schema,$name], $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildSchemaColumnValidator($type, $adapter_name, $namespace='Everon\DataMapper\Schema\Column\Validator')
+    {
+        try {
+            $class_name = $this->getFullClassName($namespace, $adapter_name.'\\'.$type);
+            $this->classExists($class_name);
+            $SchemaValidator = new $class_name();
+            $this->injectDependencies($class_name, $SchemaValidator);
+            return $SchemaValidator;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('SchemaValidator: "%s.%s" initialization error', [$adapter_name, $type], $e);
         }
     }
 
@@ -1156,13 +1205,13 @@ abstract class Factory implements Interfaces\Factory
         try {
             $class_name = $this->getFullClassName($namespace, 'CookieCollection');
             $this->classExists($class_name);
-            
+
             $cookies = [];
             foreach ($data as $cookie_name => $cookie_value) {
                 $Cookie = $this->buildHttpCookie($cookie_name, $cookie_value, 0);
                 $cookies[$cookie_name] = $Cookie;
             }
-            
+
             $CookieCollection = new $class_name($cookies);
             $this->injectDependencies($class_name, $CookieCollection);
             return $CookieCollection;
@@ -1171,7 +1220,7 @@ abstract class Factory implements Interfaces\Factory
             throw new Exception\Factory('HttpCookieCollection initialization error', null, $e);
         }
     }
-    
+
     /**
      * @inheritdoc
      */
@@ -1188,7 +1237,7 @@ abstract class Factory implements Interfaces\Factory
             throw new Exception\Factory('HttpResponse initialization error', null, $e);
         }
     }
-    
+
     /**
      * @inheritdoc
      */
@@ -1311,6 +1360,57 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
+    public function buildFileSystemCacheLoader($type, $cache_directory, $namespace = 'Everon\FileSystem\CacheLoader')
+    {
+        try {
+            $class_name = $this->getFullClassName($namespace, $type);
+            $this->classExists($class_name);
+            $CacheLoader = new $class_name($cache_directory);
+            $this->injectDependencies($class_name, $CacheLoader);
+            return $CacheLoader;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('FileSystem CacheLoader: "%s" initialization error', $type, $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildFileSystemSerializedCacheFile($cache_directory, $namespace='Everon\FileSystem')
+    {
+        try {
+            $class_name = $this->getFullClassName($namespace, 'SerializedCache');
+            $this->classExists($class_name);
+            $Cache = new $class_name($cache_directory);
+            $this->injectDependencies($class_name, $Cache);
+            return $Cache;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('FileSystem SerializedCache initialization error', null, $e);
+        }
+    }
+    
+    /**
+     * @inheritdoc
+     */
+    public function buildFileSystemTmpFile($handle=null, $namespace='Everon\FileSystem')
+    {
+        try {
+            $class_name = $this->getFullClassName($namespace, 'TmpFile');
+            $this->classExists($class_name);
+            $FileSystem = new $class_name($handle);
+            $this->injectDependencies($class_name, $FileSystem);
+            return $FileSystem;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('FileSystem TmpFile initialization error', null, $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function buildLogger($directory, $enabled, $namespace='Everon')
     {
         try {
@@ -1396,7 +1496,7 @@ abstract class Factory implements Interfaces\Factory
             $this->classExists($class_name);
             $Environment = new $class_name($app_root, $source_root);
             $this->injectDependencies($class_name, $Environment);
-            return $Environment;            
+            return $Environment;
         }
         catch (\Exception $e) {
             throw new Exception\Factory('Environment initialization error', null, $e);
@@ -1435,8 +1535,8 @@ abstract class Factory implements Interfaces\Factory
         catch (\Exception $e) {
             throw new Exception\Factory('EventContext initialization error', null, $e);
         }
-    }    
-    
+    }
+
     /**
      * @inheritdoc
      */
@@ -1621,6 +1721,9 @@ abstract class Factory implements Interfaces\Factory
             $task_type = ucfirst($this->stringUnderscoreToCamel(strtolower($type)));
             $class_name = $this->getFullClassName($namespace, $task_type);
             $this->classExists($class_name);
+            /**
+             * @var Task\Interfaces\Item $Item
+             */
             $Item = new $class_name($data);
             $Item->setType($type);
             $this->injectDependencies($class_name, $Item);
@@ -1663,5 +1766,29 @@ abstract class Factory implements Interfaces\Factory
         catch (\Exception $e) {
             throw new Exception\Factory('Paginator initialization error', null, $e);
         }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildDateTime($time='now', \DateTimeZone $timezone=null)
+    {
+        return new \DateTime($time, $timezone);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildDateTimeZone($timezone)
+    {
+        return new \DateTimeZone($timezone);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function buildIntlDateFormatter($locale, $datetype, $timetype, $timezone, $calendar, $pattern)
+    {
+        return new \IntlDateFormatter($locale, $datetype, $timetype, $timezone, $calendar, $pattern);
     }
 }

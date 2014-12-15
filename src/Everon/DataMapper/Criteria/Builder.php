@@ -29,6 +29,9 @@ class Builder implements Interfaces\Criteria\Builder
         Operator::SQL_EQUAL => Operator::TYPE_EQUAL,
         Operator::SQL_NOT_EQUAL => Operator::TYPE_NOT_EQUAL,
         Operator::SQL_LIKE => Operator::TYPE_LIKE,
+        Operator::SQL_NOT_LIKE => Operator::TYPE_LIKE,
+        Operator::SQL_ILIKE => Operator::TYPE_ILIKE,
+        Operator::SQL_NOT_ILIKE => Operator::TYPE_ILIKE,
         Operator::SQL_IN => Operator::TYPE_IN,
         Operator::SQL_NOT_IN => Operator::TYPE_NOT_IN,
         Operator::SQL_IS => Operator::TYPE_IS,
@@ -38,7 +41,7 @@ class Builder implements Interfaces\Criteria\Builder
         Operator::SQL_SMALLER_THEN => Operator::TYPE_SMALLER_THEN,
         Operator::SQL_SMALLER_OR_EQUAL => Operator::TYPE_SMALLER_OR_EQUAL,
         Operator::SQL_BETWEEN => Operator::TYPE_BETWEEN,
-        Operator::SQL_BETWEEN => Operator::TYPE_NOT_BETWEEN,
+        Operator::SQL_NOT_BETWEEN => Operator::TYPE_NOT_BETWEEN,
         Operator::SQL_RAW => Operator::TYPE_RAW
     ];
     
@@ -136,16 +139,23 @@ class Builder implements Interfaces\Criteria\Builder
 
         return $parameters;
     }
-
+    
     /**
      * @inheritdoc
      */
     public function where($column, $operator, $value)
     {
         $this->current++;
-        $Criterium = $this->getFactory()->buildDataMapperCriterium($column, $operator, $value);
+        $Criterium = $this->getFactory()->buildCriteriaCriterium($column, $operator, $value);
         $this->getCurrentContainer()->getCriteria()->where($Criterium);
-        $this->getCurrentContainer()->setGlue(null);
+        
+        if ($this->current > 0) {
+            $this->getCurrentContainer()->glueByAnd();
+        }
+        else {
+            $this->getCurrentContainer()->resetGlue();
+        }
+        
         return $this;
     }
 
@@ -154,9 +164,9 @@ class Builder implements Interfaces\Criteria\Builder
      */
     public function andWhere($column, $operator, $value)
     {
-        $Criterium = $this->getFactory()->buildDataMapperCriterium($column, $operator, $value);
+        $Criterium = $this->getFactory()->buildCriteriaCriterium($column, $operator, $value);
         $this->getCurrentContainer()->getCriteria()->andWhere($Criterium);
-        $this->getCurrentContainer()->setGlue(self::GLUE_AND);
+        $this->getCurrentContainer()->glueByAnd();
         return $this;
     }
 
@@ -165,9 +175,9 @@ class Builder implements Interfaces\Criteria\Builder
      */
     public function orWhere($column, $operator, $value)
     {
-        $Criterium = $this->getFactory()->buildDataMapperCriterium($column, $operator, $value);
+        $Criterium = $this->getFactory()->buildCriteriaCriterium($column, $operator, $value);
         $this->getCurrentContainer()->getCriteria()->orWhere($Criterium);
-        $this->getCurrentContainer()->setGlue(self::GLUE_OR);
+        $this->getCurrentContainer()->glueByOr();
         return $this;
     }
 
@@ -177,25 +187,32 @@ class Builder implements Interfaces\Criteria\Builder
     public function whereRaw($sql)
     {
         $this->current++;
-        $Criterium = $this->getFactory()->buildDataMapperCriterium($sql, 'raw', null);
+        $Criterium = $this->getFactory()->buildCriteriaCriterium($sql, 'raw', null);
         $this->getCurrentContainer()->getCriteria()->where($Criterium);
-        $this->getCurrentContainer()->setGlue(null);
+
+        if ($this->current > 0) {
+            $this->getCurrentContainer()->glueByAnd();
+        }
+        else {
+            $this->getCurrentContainer()->resetGlue();
+        }
+        
         return $this;
     }
     
     public function andWhereRaw($sql)
     {
-        $Criterium = $this->getFactory()->buildDataMapperCriterium($sql, 'raw', null);
+        $Criterium = $this->getFactory()->buildCriteriaCriterium($sql, 'raw', null);
         $this->getCurrentContainer()->getCriteria()->andWhere($Criterium);
-        $this->getCurrentContainer()->setGlue(self::GLUE_AND);
+        $this->getCurrentContainer()->glueByAnd();
         return $this;
     }
 
     public function orWhereRaw($sql)
     {
-        $Criterium = $this->getFactory()->buildDataMapperCriterium($sql, 'raw', null);
+        $Criterium = $this->getFactory()->buildCriteriaCriterium($sql, 'raw', null);
         $this->getCurrentContainer()->getCriteria()->orWhere($Criterium);
-        $this->getCurrentContainer()->setGlue(self::GLUE_OR);
+        $this->getCurrentContainer()->glueByOr();
         return $this;
     }
     
@@ -205,7 +222,7 @@ class Builder implements Interfaces\Criteria\Builder
     public function getCurrentContainer()
     {
         if ($this->ContainerCollection->has($this->current) === false) {
-            $Criteria = $this->getFactory()->buildDataMapperCriteria();
+            $Criteria = $this->getFactory()->buildCriteria();
             $Container = $this->getFactory()->buildCriteriaContainer($Criteria, null);
             $this->ContainerCollection[$this->current] = $Container; 
         }
@@ -216,7 +233,7 @@ class Builder implements Interfaces\Criteria\Builder
     /**
      * @inheritdoc
      */
-    public function setCurrentCriteria(Interfaces\Criteria\Container $Container)
+    public function setCurrentContainer(Interfaces\Criteria\Container $Container)
     {
         $this->ContainerCollection[$this->current] = $Container;
     }
@@ -250,7 +267,7 @@ class Builder implements Interfaces\Criteria\Builder
      */
     public function resetGlue()
     {
-        $this->getCurrentContainer()->setGlue(null);
+        $this->getCurrentContainer()->resetGlue();
     }
 
     /**
@@ -258,7 +275,7 @@ class Builder implements Interfaces\Criteria\Builder
      */
     public function glueByAnd()
     {
-        $this->getCurrentContainer()->setGlue(self::GLUE_AND);
+        $this->getCurrentContainer()->glueByAnd();
     }
 
     /**
@@ -266,11 +283,11 @@ class Builder implements Interfaces\Criteria\Builder
      */
     public function glueByOr()
     {
-        $this->getCurrentContainer()->setGlue(self::GLUE_OR);
+        $this->getCurrentContainer()->glueByOr();
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
     public function getGroupBy()
     {
@@ -278,15 +295,16 @@ class Builder implements Interfaces\Criteria\Builder
     }
 
     /**
-     * @param string $group_by
+     * @inheritdoc
      */
     public function setGroupBy($group_by)
     {
         $this->group_by = $group_by;
+        return $this;
     }
 
     /**
-     * @return int
+     * @inheritdoc
      */
     public function getLimit()
     {
@@ -294,15 +312,16 @@ class Builder implements Interfaces\Criteria\Builder
     }
 
     /**
-     * @param int $limit
+     * @inheritdoc
      */
     public function setLimit($limit)
     {
         $this->limit = $limit;
+        return $this;
     }
 
     /**
-     * @return int
+     * @inheritdoc
      */
     public function getOffset()
     {
@@ -310,15 +329,16 @@ class Builder implements Interfaces\Criteria\Builder
     }
 
     /**
-     * @param int $offset
+     * @inheritdoc
      */
     public function setOffset($offset)
     {
         $this->offset = $offset;
+        return $this;
     }
 
     /**
-     * @return array
+     * @inheritdoc
      */
     public function getOrderBy()
     {
@@ -326,23 +346,24 @@ class Builder implements Interfaces\Criteria\Builder
     }
 
     /**
-     * @param array $order_by
+     * @inheritdoc
      */
     public function setOrderBy(array $order_by)
     {
         $this->order_by = $order_by;
+        return $this;
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
-    protected function getOffsetLimitSql()
+    public function getOffsetLimitSql()
     {
-        if ((int) $this->getLimit() === 0 && $this->getOffset() === null) {
+        if ($this->getLimit() === null && $this->getOffset() === null) {
             return '';
         }
 
-        if ((int) $this->getLimit() === 0 && $this->getOffset() !== null) {
+        if ($this->getLimit() === null && ($this->getOffset() !== null && (int) $this->getOffset() !== 0)) {
             return 'OFFSET '.$this->offset;
         }
 
@@ -354,9 +375,9 @@ class Builder implements Interfaces\Criteria\Builder
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
-    protected function getOrderByAndSortSql()
+    public function getOrderByAndSortSql()
     {
         if (is_array($this->getOrderBy()) === false || empty($this->getOrderBy())) {
             return '';
@@ -375,7 +396,10 @@ class Builder implements Interfaces\Criteria\Builder
         return $order_by;
     }
 
-    protected function getGroupBySql()
+    /**
+     * @inheritdoc
+     */
+    public function getGroupBySql()
     {
         if ($this->getGroupBy() === null) {
             return '';
@@ -383,7 +407,7 @@ class Builder implements Interfaces\Criteria\Builder
 
         return 'GROUP BY '.$this->getGroupBy();
     }
-    
+
     /**
      * @inheritdoc
      */
@@ -397,11 +421,12 @@ class Builder implements Interfaces\Criteria\Builder
          * @var Interfaces\Criteria $Container
          */
         foreach ($this->getContainerCollection() as $Container) {
-            $glue = $Container->getGlue();
-            $sql[] = $this->criteriaToSql($Container).' '.$glue;
+            $glue = (count($sql) === 0) ? '' : $Container->getGlue().' '; //reset glue if that's the first iteration
+            
+            $sql[] = $glue.$this->criteriaToSql($Container);
             $criteria_parameters = $this->criteriaToParameters($Container);
             $tmp = [];
-            
+
             foreach ($criteria_parameters as $cp_value) {
                 $tmp = $this->arrayMergeDefault($tmp, $cp_value);
             }
@@ -409,15 +434,32 @@ class Builder implements Interfaces\Criteria\Builder
             $parameters = $this->arrayMergeDefault($tmp, $parameters);
         }
 
-        $sql = implode("\n", $sql);
-        $sql = rtrim($sql, $glue.' ');
-        
-        $sql .= ' '.trim($this->getGroupBySql().' '.
-            $this->getOrderByAndSortSql().' '.
-            $this->getOffsetLimitSql())
-        ;
-        
-        return $this->getFactory()->buildDataMapperSqlPart(trim($sql), $parameters);
+        $sql_query = implode("\n", $sql);
+        $sql_query = rtrim($sql_query, $glue.' ');
+
+        $sql_query .= ' '.trim($this->getGroupBySql().' '.
+                $this->getOrderByAndSortSql().' '.
+                $this->getOffsetLimitSql());
+
+        $sql_query = empty($sql) === false ? 'WHERE '.$sql_query : $sql_query;
+
+        return $this->getFactory()->buildDataMapperSqlPart(trim($sql_query), $parameters);
+    }
+
+    /**
+     * @param \Everon\Interfaces\Collection $ContainerCollectionToMerge
+     */
+    public function appendContainerCollection(\Everon\Interfaces\Collection $ContainerCollectionToMerge, $glue=self::GLUE_AND)
+    {
+        /**
+         * @var \Everon\DataMapper\Interfaces\Criteria\Container $ContainerToMerge
+         */
+        foreach ($ContainerCollectionToMerge as $ContainerToMerge) {
+            if ($ContainerToMerge->getGlue() === null) {
+                $ContainerToMerge->setGlue($glue);
+            }
+            $this->getContainerCollection()->append($ContainerToMerge);
+        }
     }
 
     /**

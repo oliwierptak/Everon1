@@ -30,7 +30,7 @@ class RequestValidator implements Interfaces\RequestValidator
     {
         $method = $RouteItem->getMethod();
         if ($method !== null && strcasecmp($method, $Request->getMethod()) !== 0) {
-            throw new Exception\RequestValidator('Invalid request method: "%s", expected: "%s"', [$Request->getMethod(), $method]);
+            throw new Exception\RequestValidator('Invalid request method: "%s", expected: "%s" for url: "%s"', [$Request->getMethod(), $method, $RouteItem->getName()]);
         }
         
         $this->errors = null;

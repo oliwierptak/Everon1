@@ -26,6 +26,10 @@ abstract class Container implements Interfaces\DependencyContainer
     
     protected $circular_dependencies = [];
     
+    protected $excluded = [];
+    
+    //public static $TMP_COUNTER = [];
+    
 
     /**
      * @inheritdoc
@@ -45,41 +49,21 @@ abstract class Container implements Interfaces\DependencyContainer
 
     /**
      * @param $dependency_name
-     * @param mixed $Receiver
-     * @return null
+     * @param $container_name
+     * @param $Receiver
      * @throws Exception\DependencyContainer
      */
-    protected function dependencyToObject($dependency_name, $Receiver)
+    protected function dependencyToObject($dependency_name, $container_name, $Receiver)
     {
-        if (isset($this->container_dependencies[$dependency_name])) {
-            $container_name = $this->container_dependencies[$dependency_name];
-        }
-        else {
-            if ($container_name = $this->getContainerNameFromDependencyToInject($dependency_name)) {
-                $this->container_dependencies[$dependency_name] = $container_name;
-            }
-        }
-
         $method = 'set'.$container_name; //eg. setConfigManager
         if (method_exists($Receiver, $method) === false) {
             throw new Exception\DependencyContainer(
                 'Required dependency setter: "%s" is missing in: "%s"',
-                [$container_name, $dependency_name]
+                [$dependency_name, $container_name]
             );
         }
 
         $Receiver->$method($this->resolve($container_name));
-    }
-
-    /**
-     * @param $dependency_name
-     * @return bool
-     */
-    protected function demandsInjection($dependency_name)
-    {
-        $tokens = explode('\Dependency\Injection', $dependency_name);
-        $container_name = ltrim(@$tokens[1], '\\');
-        return $container_name !== '';
     }
 
     /**
@@ -89,12 +73,26 @@ abstract class Container implements Interfaces\DependencyContainer
      */
     protected function getContainerNameFromDependencyToInject($dependency_name)
     {
-        $tokens = explode('\Dependency\Injection', $dependency_name);
-        $container_name = ltrim(@$tokens[1], '\\'); //eg. from Everon\Dependency\Injection\Environment\Test into Environment\Test
+        if (isset($this->container_dependencies[$dependency_name])) {
+            return $this->container_dependencies[$dependency_name];
+        }
         
+        if (isset($this->excluded[$dependency_name])) {
+            return '';
+        }
+
+        $tokens = explode('\Dependency\Injection', $dependency_name);
+        if (count($tokens) <= 1) {
+            $this->excluded[$dependency_name] = true;
+            return '';
+        }
+        
+        $container_name = ltrim(@$tokens[1], '\\'); //eg. from Everon\Dependency\Injection\FooManager into FooManager
         if ($container_name === '') {
             throw new Exception\DependencyContainer('Unresolved container name for: "%"', $dependency_name);
         }
+
+        $this->container_dependencies[$dependency_name] = $container_name;
         
         return $container_name;
     }
@@ -106,9 +104,10 @@ abstract class Container implements Interfaces\DependencyContainer
      */
     protected function getClassDependencies($class, $autoload=true) 
     {
+        //self::$TMP_COUNTER[$name] = @intval(self::$TMP_COUNTER[$name]) + 1;
         $traits = class_uses($class, $autoload);
         $parents = class_parents($class, $autoload);
-        
+
         foreach ($parents as $parent) {
             $traits = array_merge(
                 class_uses($parent, $autoload), 
@@ -135,7 +134,8 @@ abstract class Container implements Interfaces\DependencyContainer
 
         if (isset($this->class_dependencies_to_inject[$class_name]) === false) {
             $OnlyInjections = function($name) {
-                return $this->demandsInjection($name);
+                $result = $this->getContainerNameFromDependencyToInject($name) !== '';
+                return $result;
             };
             
             $this->class_dependencies_to_inject[$class_name] = array_filter(
@@ -149,13 +149,13 @@ abstract class Container implements Interfaces\DependencyContainer
                 $this->wants_factory[$class_name] = true;
             }
             else {
-                $dep_name = $this->getContainerNameFromDependencyToInject($name);
-                if (isset($this->circular_dependencies[$dep_name])) {
-                    if (in_array($class_name, $this->circular_dependencies[$dep_name])) {
-                        throw new Exception\DependencyContainer('Circular dependency injection: "%s" in class: "%s"', [$dep_name, $class_name]);
+                $container_name = $this->getContainerNameFromDependencyToInject($name);
+                if (isset($this->circular_dependencies[$container_name])) {
+                    if (in_array($class_name, $this->circular_dependencies[$container_name])) {
+                        throw new Exception\DependencyContainer('Circular dependency injection: "%s" in class: "%s"', [$container_name, $class_name]);
                     }
                 }
-                $this->dependencyToObject($name, $Receiver);
+                $this->dependencyToObject($name, $container_name, $Receiver);
             }
         }
 

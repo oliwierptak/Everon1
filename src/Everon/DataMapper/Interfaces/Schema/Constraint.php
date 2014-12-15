@@ -15,6 +15,16 @@ use Everon\Interfaces\Immutable;
 interface Constraint extends Arrayable, Immutable
 {
     /**
+     * @param string $column_name
+     */
+    function setColumnName($column_name);
+
+    /**
+     * @return string
+     */
+    function getColumnName();
+
+    /**
      * @param $name
      */
     function setName($name);

@@ -11,9 +11,8 @@ namespace Everon\FileSystem;
 
 use Everon\Dependency;
 use Everon\Exception;
-use Everon\Interfaces;
 
-class TmpFile implements Interfaces\FileSystemTmpFile
+class TmpFile implements Interfaces\TmpFile
 {
     protected $handle = null;
     

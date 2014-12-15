@@ -19,6 +19,7 @@ abstract class AbstractView implements Interfaces\View
     use Dependency\Injection\ConfigManager;
     use Dependency\Injection\Logger;
     use Dependency\Injection\Factory;
+    use Dependency\Injection\Router;
     use ViewManagerDependency;
 
     use Helper\Arrays;
@@ -175,7 +176,7 @@ abstract class AbstractView implements Interfaces\View
      */
     public function get($name, $default=null)
     {
-        return $this->getContainer()->get($name);
+        return $this->getContainer()->get($name, $default);
     }
 
     /**
@@ -235,7 +236,7 @@ abstract class AbstractView implements Interfaces\View
     public function execute($action)
     {
         if ($this->index_executed === false) {
-            $default_action = 'index';
+            $default_action = 'setup';
             if (strcasecmp($action, $default_action) !== 0) {
                 if ($this->isCallable($this, $default_action)) {
                     $this->{$default_action}();
@@ -272,6 +273,12 @@ abstract class AbstractView implements Interfaces\View
      */
     public function templetize(array $data)
     {
+        foreach ($data as $key => $value) {
+            if ($this->isIterable($value)) {
+                $data[$key] = $this->templetize($value);
+            }
+        }
+        
         return new Helper\PopoProps($data);
     }
 
@@ -295,7 +302,12 @@ abstract class AbstractView implements Interfaces\View
          * @var \Everon\Interfaces\Arrayable $Item
          */
         foreach ($data as $index => $Item) {
-            $data[$index] = $this->templetize($Item->toArray());
+            if ($Item instanceof \Everon\Interfaces\Arrayable) {
+                $data[$index] = $this->templetize($Item->toArray());
+            }
+            else if (is_array($Item)) {
+                $data[$index] = $this->templetizeArrayable($Item);
+            }
         }
 
         return $data;
@@ -317,7 +329,7 @@ abstract class AbstractView implements Interfaces\View
         }
         
         $Config = $this->getConfigManager()->getConfigByName('minify');
-        $url = $this->getConfigManager()->getConfigValue('application.static.url_min');
+        $url = $this->getConfigManager()->getConfigValue('application.static.url_min'); //xxx
         
         foreach ($this->resources_js as $name => $items_to_minify) {
             $files = [];
@@ -361,7 +373,7 @@ abstract class AbstractView implements Interfaces\View
         }
     } 
     
-    public function index()
+    public function setup()
     {
         $this->includeResources();
     }

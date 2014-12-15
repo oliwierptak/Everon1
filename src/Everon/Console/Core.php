@@ -9,7 +9,7 @@
  */
 namespace Everon\Console;
 
-use Everon\Dependency;
+use Everon\Exception;
 use Everon\Interfaces;
 use Everon\RequestIdentifier;
 
@@ -23,22 +23,45 @@ class Core extends \Everon\Core implements Interfaces\Core
         try {
             parent::run($RequestIdentifier);
         }
+        catch (Exception\RouteNotDefined $e) {
+            $NotFound = new \Exception('Unknown command: '.$e->getMessage());
+            $this->showException($NotFound, $this->Controller);
+        }
         catch (\Exception $e) {
             $this->showException($e, $this->Controller);
         }
-        finally {
-            $this->getLogger()->console(
-                sprintf(
-                    '[%d] %s %s',
-                    $this->getResponse()->getResult(), $this->getRequest()->getMethod(), $this->getRequest()->getPath()
-                )
-            );
+    }
+
+    /**
+     * @param \Exception $Exception
+     * @param \Everon\Interfaces\Controller|null $Controller
+     */
+    protected function showException(\Exception $Exception, $Controller)
+    {
+        $this->getLogger()->error($Exception);
+
+        /**
+         * @var \Everon\Interfaces\Controller $Controller
+         */
+        if ($Controller === null) {
+            echo 'Error: '. $Exception->getMessage();
+        }
+        else if ($Controller instanceof Interfaces\Controller) {
+            $Controller->showException($Exception);
         }
     }
 
     public function shutdown()
     {
         $s = parent::shutdown();
+        
+        $this->getLogger()->log('response',
+            sprintf(
+                '[%d] %s %s',
+                $this->getResponse()->getResult(), $this->getRequest()->getMethod(), $this->getRequest()->getPath()
+            )
+        );
+
         echo "\nExecuted in $s\n";
     }    
 }

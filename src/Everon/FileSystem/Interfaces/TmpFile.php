@@ -7,12 +7,16 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Everon\Config\Interfaces;
+namespace Everon\FileSystem\Interfaces;
 
+use Everon\Exception;
 
-interface LoaderItem extends \Everon\Interfaces\Arrayable
+interface TmpFile
 {
+    /**
+     * @inheritdoc
+     */
+    function write($content);
     function getFilename();
-    function getData();
-    function setData(array $data);
+    function close();
 }

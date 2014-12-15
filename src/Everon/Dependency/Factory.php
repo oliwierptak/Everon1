@@ -35,4 +35,9 @@ trait Factory
         $this->Factory = $Factory;
     }
 
+    public function unsetFactory()
+    {
+        $this->Factory = null;
+    }
+
 }

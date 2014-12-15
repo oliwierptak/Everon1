@@ -61,7 +61,7 @@ class Response extends BasicResponse implements Interfaces\Response
     protected function sendHeaders()
     {
         http_response_code($this->status_code);
-        $this->HeaderCollection->set('EVRID', $this->guid);
+        $this->HeaderCollection->set('EVERON_ID', $this->guid); //todo make configurable
 
         /**
          * @var \Everon\Http\Interfaces\Cookie $Cookie

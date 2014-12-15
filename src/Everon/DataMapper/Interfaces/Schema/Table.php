@@ -95,20 +95,4 @@ interface Table extends Arrayable, Immutable
      */
     function getIdFromData($data);
 
-    /**
-     * Original table name in case this is a view 
-     * 
-     * @todo remove this
-     * @param string $original_name
-     */
-    function setOriginalName($original_name);
-
-    /**
-     * Original table name in case this is a view
-     *
-     * @todo remove this
-     * @return string
-     */
-    function getOriginalName();
-
 }

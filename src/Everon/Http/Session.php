@@ -25,7 +25,6 @@ class Session implements Interfaces\Session
      */
     protected $start_time = null;
     
-    
     /**
      * @param $evrid
      */
@@ -70,6 +69,30 @@ class Session implements Interfaces\Session
     /**
      * @inheritdoc
      */
+    public function setFlashMessage($flash_message)
+    {
+        $this->set('flash_message', $flash_message);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getFlashMessage()
+    {
+        return $this->get('flash_message');
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function resetFlashMessage()
+    {
+        $this->remove('flash_message');
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function has($name)
     {
         return isset($_SESSION[$name]);
@@ -101,20 +124,5 @@ class Session implements Interfaces\Session
         }
 
         return $_SESSION[$name];
-    }
-
-    public function __sleep()
-    {
-        return [
-            'guid',
-            'start_time'
-        ];
-    }
-
-    public static function __set_state(array $array)
-    {
-        $Session = new static($array['guid']);
-        $Session->start_time = $array['start_time'];
-        return $Session;
     }
 }

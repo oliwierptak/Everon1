@@ -13,7 +13,7 @@ use Everon\Interfaces;
 use Everon\Exception;
 use Everon\DataMapper\Interfaces\ConnectionItem;
 
-interface PdoAdapter
+interface PdoAdapter extends Interfaces\Dependency\Logger
 {
     /**
      * @param $sql

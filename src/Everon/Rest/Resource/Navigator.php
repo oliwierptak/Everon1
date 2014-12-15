@@ -9,14 +9,18 @@
  */
 namespace Everon\Rest\Resource;
 
-use Everon\Rest\Dependency;
 use Everon\Helper;
+use Everon\Rest\Dependency;
+use Everon\Rest\Exception;
 use Everon\Rest\Interfaces;
 
 class Navigator implements Interfaces\ResourceNavigator
 {
-    use Dependency\Request;
     use \Everon\Dependency\Injection\Factory;
+    use Dependency\Request;
+
+    use Helper\Arrays;
+    use Helper\IsIterable;
 
     const PARAM_SEPARATOR = ',';
 
@@ -50,6 +54,11 @@ class Navigator implements Interfaces\ResourceNavigator
      * @var string
      */
     protected $filters = null;
+
+    /**
+     * @var bool
+     */
+    protected $initialized = false;
     
 
     /**
@@ -58,35 +67,38 @@ class Navigator implements Interfaces\ResourceNavigator
     public function __construct(Interfaces\Request $Request)
     {
         $this->Request = $Request;
-        $this->init();
     }
 
     /**
      * @param $name
-     * @param null $default
+     * @param null $default_value
      * @return array|mixed|null
      */
-    protected function getParameterValue($name, $default=null)
+    protected function getParameterValue($name, $default_value=null)
     {
-        $as_array = is_array($default);
-        $value = $this->getRequest()->getGetParameter($name, null);
-        if ($value !== null) {
-            if ($as_array || strpos($value, static::PARAM_SEPARATOR) !== false) {
-                $value = explode(static::PARAM_SEPARATOR, trim($value, static::PARAM_SEPARATOR)); //eg. date_added,user_name
-                if (is_array($value)) {
-                    return $value;
+        $as_array = is_array($default_value);
+        $parameter_value = $this->getRequest()->getGetParameter($name, null);
+        if ($parameter_value !== null) {
+            if ($as_array || strpos($parameter_value, static::PARAM_SEPARATOR) !== false) {
+                $parameter_value = explode(static::PARAM_SEPARATOR, trim($parameter_value, static::PARAM_SEPARATOR)); //eg. date_added,user_name
+                if (is_array($parameter_value)) {
+                    return $parameter_value;
                 }
             }
             else {
-                return $this->getRequest()->getQueryParameter($name, $default);
+                return $this->getRequest()->getQueryParameter($name, $default_value);
             }
         }
         
-        return $default;
+        return $default_value;
     }
     
     protected function init()
     {
+        if ($this->initialized) {
+            return;
+        }
+        
         $this->fields = $this->getParameterValue('fields', []);
         $this->expand = $this->getParameterValue('expand', []);
         $this->limit = $this->getRequest()->getGetParameter('limit', 10);
@@ -109,6 +121,8 @@ class Navigator implements Interfaces\ResourceNavigator
                 $this->order_by[$field_name] = 'DESC';
             }
         }
+        
+        $this->initialized = true;
     }
 
     /**
@@ -124,6 +138,7 @@ class Navigator implements Interfaces\ResourceNavigator
      */
     public function getExpand()
     {
+        $this->init();
         return $this->expand;
     }
 
@@ -140,6 +155,7 @@ class Navigator implements Interfaces\ResourceNavigator
      */
     public function getFields()
     {
+        $this->init();
         return $this->fields;
     }
 
@@ -156,6 +172,7 @@ class Navigator implements Interfaces\ResourceNavigator
      */
     public function getOrderBy()
     {
+        $this->init();
         return $this->order_by;
     }
 
@@ -172,6 +189,7 @@ class Navigator implements Interfaces\ResourceNavigator
      */
     public function getOffset()
     {
+        $this->init();
         return $this->offset;
     }
 
@@ -188,19 +206,12 @@ class Navigator implements Interfaces\ResourceNavigator
      */
     public function getLimit()
     {
+        $this->init();
         return $this->limit;
     }
 
     /**
-     * @inheritdoc
-     */
-    public function getFilters()
-    {
-        return $this->filters;
-    }
-
-    /**
-     * @inheritdoc
+     * @param array $filters
      */
     public function setFilters(array $filters)
     {
@@ -208,20 +219,52 @@ class Navigator implements Interfaces\ResourceNavigator
     }
 
     /**
-     * @return \Everon\DataMapper\Interfaces\CriteriaOLD
+     * @return array
      */
-    public function toCriteria()
+    public function getFilters()
     {
-        $Criteria = new \Everon\DataMapper\CriteriaOLD();
-        $Criteria->limit($this->getLimit());
-        $Criteria->offset($this->getOffset());
-        $Criteria->orderBy($this->getOrderBy() ?: []);
-        
-        if (is_array($this->getFilters())) {
-            $Filter = $this->getFactory()->buildRestFilter(new Helper\Collection($this->getFilters()));
-            $Filter->assignToCriteria($Criteria);
+        $this->init();
+        return $this->filters;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function toCriteria($resource_name)
+    {
+        $this->init();
+
+        $column = null;
+        $CriteriaBuilder = $this->getFactory()->buildCriteriaBuilder();
+
+        if (empty($this->getFilters()) === false) {
+            $filters = $this->getFilters();
+            $organized_filters = [];
+            
+            foreach ($filters as $key => $values) {
+                $collection_name = null;
+                
+                foreach ($values as $v => $vv) {
+                    if (is_string($vv) && strpos($vv, '.') !== false) {
+                        $tokens = explode('.', $vv); //eg. foo.bar.zzz
+                        $collection_name = array_shift($tokens);
+                        $column = current($tokens);
+                        $organized_filters[$collection_name][$key] = $filters[$key];
+                        $organized_filters[$collection_name][$key][$v] = $column;
+                    }
+                }
+            }
+            
+            if (isset($organized_filters[$resource_name]) !== false) {
+                $Filter = $this->getFactory()->buildRestFilter();
+                $CriteriaBuilder = $Filter->toCriteria($organized_filters[$resource_name]);
+            }
         }
         
-        return $Criteria;
+        $CriteriaBuilder->setLimit($this->getLimit())
+            ->setOffset($this->getOffset())
+            ->setOrderBy($this->getOrderBy() ?: []);
+        
+        return $CriteriaBuilder;
     }
 }

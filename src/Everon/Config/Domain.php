@@ -14,7 +14,7 @@ use Everon\Interfaces;
 
 class Domain extends \Everon\Config
 {      
-    protected function buildItem($name, array $data)
+    public function buildItem($name, array $data)
     {
         return $this->getFactory()->buildConfigItem($name, $data, 'Everon\Config\Item\Domain');
     }

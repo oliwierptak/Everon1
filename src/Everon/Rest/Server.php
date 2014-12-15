@@ -17,12 +17,11 @@ use Everon\Http;
 use Everon\Rest;
 
 /**
- * @method \Everon\Http\Interfaces\Response getResponse
  * @method \Everon\Rest\Interfaces\Request getRequest
+ * @property Interfaces\Controller $Controller
  */
-class Server extends \Everon\Core implements Rest\Interfaces\Server
+class Server extends \Everon\Http\Core implements Rest\Interfaces\Server
 {
-    
     /**
      * @inheritdoc
      */
@@ -61,22 +60,19 @@ class Server extends \Everon\Core implements Rest\Interfaces\Server
             $BadRequest = new Http\Exception((new Http\Message\BadRequest($Exception->getMessage())));
             $this->showException($BadRequest, $this->Controller);
         }
-        catch (Http\Exception $Exception) {
-            $this->showException($Exception, $this->Controller);
-        }
         catch (Rest\Exception\Resource $Exception) {
             $RestException = new Http\Exception((new Http\Message\BadRequest($Exception->getMessage())));
             $this->showException($RestException, $this->Controller);
         }
         catch (\Exception $Exception) {
-            $InternalServerError = new Http\Exception((new Http\Message\InternalServerError($Exception->getMessage())));
-            $this->showException($InternalServerError, $this->Controller);
+            $Internal = new Http\Exception((new Http\Message\InternalServerError($Exception->getMessage())));
+            $this->showException($Internal, $this->Controller);
         }
     }
  
     public function showException(Http\Exception $Exception, $Controller)
     {
-        $this->getLogger()->trace($Exception);
+        $this->getLogger()->error($Exception);
         
         $message = $Exception->getMessage();
         $code = $Exception->getCode();
@@ -90,35 +86,5 @@ class Server extends \Everon\Core implements Rest\Interfaces\Server
         $this->getResponse()->setStatusCode($code);
         $this->getResponse()->setStatusMessage($message);
         echo $this->getResponse()->toJson();
-    }
-
-    public function shutdown()
-    {
-        $s = parent::shutdown();
-
-        $this->getLogger()->response(
-            sprintf(
-                '[%s] (%d) %s : %s %s',
-                $s,
-                $this->getResponse()->getStatusCode(),
-                $this->getResponse()->getStatusMessage(),
-                $this->getRequest()->getMethod(),
-                $this->getRequest()->getPath()
-            )
-        );
-
-        return $s;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function redirectAndTerminate($name, $query=[], $get=[])
-    {
-        $url = $this->getUrl($name, $query, $get);
-        $this->getResponse()->setHeader('refresh', '0; url='.$url);
-        $this->getResponse()->send();
-        $this->shutdown();
-        $this->terminate();
     }
 }

@@ -16,9 +16,25 @@ abstract class Constraint implements Schema\Constraint
 {
     use Helper\Immutable;
 
+    /**
+     * @var string
+     */
     protected $name = null;
+
+    /**
+     * @var string
+     */
     protected $schema = null;
+
+    /**
+     * @var string
+     */
     protected $table_name = null;
+
+    /**
+     * @var string
+     */
+    protected $column_name = null;
     
     
     public function __construct(array $data)
@@ -28,8 +44,25 @@ abstract class Constraint implements Schema\Constraint
         $this->name = $ConstraintInfo->constraint_name;
         $this->schema = $ConstraintInfo->constraint_schema;
         $this->table_name = $ConstraintInfo->table_name;
+        $this->column_name = $ConstraintInfo->column_name;
 
         $this->lock();
+    }
+
+    /**
+     * @param string $column_name
+     */
+    public function setColumnName($column_name)
+    {
+        $this->column_name = $column_name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getColumnName()
+    {
+        return $this->column_name;
     }
     
     /**
@@ -97,4 +130,12 @@ abstract class Constraint implements Schema\Constraint
     {
         return (string) $this->name;
     }
+
+    public function __sleep()
+    {
+        $vars = get_object_vars($this);
+        $data = array_keys($vars);
+        return $data;
+    }
+
 }

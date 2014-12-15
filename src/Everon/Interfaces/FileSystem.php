@@ -11,7 +11,7 @@ namespace Everon\Interfaces;
 
 use Everon\Exception;
 
-interface FileSystem
+interface FileSystem extends Dependency\Factory
 {
     /**
      * @param $path

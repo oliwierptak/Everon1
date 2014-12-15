@@ -14,6 +14,7 @@ use Everon\Domain;
 use Everon\DataMapper;
 use Everon\Exception;
 use Everon\Interfaces;
+use Everon\FileSystem;
 use Everon\Module;
 use Everon\View;
 use Everon\Http;
@@ -52,16 +53,25 @@ interface Factory
     function classExists($class);
 
     /**
+     * @param string $namespace
      * @return Interfaces\Core
      * @throws Exception\Factory
      */
-    function buildConsole();
+    function buildConsole($namespace='Everon\Console');
 
     /**
+     * @param string $namespace
      * @return Interfaces\Core
      * @throws Exception\Factory
      */
-    function buildMvc();
+    function buildMvc($namespace='Everon\Mvc');
+
+    /**
+     * @param string $namespace
+     * @return Interfaces\Core
+     * @throws Exception\Factory
+     */
+    function buildHttpCore($namespace='Everon\Http');
 
     /**
      * @return Rest\CurlAdapter
@@ -75,7 +85,7 @@ interface Factory
      * @return mixed
      * @throws Exception\Factory
      */
-    function buildRestFilter(Interfaces\Collection $FilterDefinition, $namespace='Everon\Rest');
+    //function buildRestFilter(Interfaces\Collection $FilterDefinition, $namespace='Everon\Rest');
 
     /**
      * @param Rest\Interfaces\ResourceHref $Href
@@ -85,16 +95,11 @@ interface Factory
     function buildRestClient(Rest\Interfaces\ResourceHref $Href, Rest\Interfaces\CurlAdapter $CurlAdapter);
 
     /**
-     * @param $class_name
-     * @param $column
-     * @param $value
-     * @param null $column_glue
-     * @param null $glue
      * @param string $namespace
-     * @return Rest\Interfaces\FilterOperator
+     * @return Rest\Interfaces\Filter
      * @throws Exception\Factory
      */
-    function buildRestFilterOperator($class_name, $column, $value, $column_glue=null, $glue=null, $namespace='Everon\Rest\Filter');
+    function buildRestFilter($namespace='Everon\Rest');
 
     /**
      * @return Interfaces\Core
@@ -177,19 +182,20 @@ interface Factory
      * will become Everon\Config\Router
      *
      * @param $name
-     * @param Config\Interfaces\LoaderItem $ConfigLoaderItem
-     * @param callable $Compiler
+     * @param $filename
+     * @param array $data
+     * @internal param \Everon\Config\Interfaces\LoaderItem $ConfigLoaderItem
      * @return Interfaces\Config
-     * @throws Exception\Factory
      */
-    function buildConfig($name, Config\Interfaces\LoaderItem $ConfigLoaderItem, \Closure $Compiler);
+    function buildConfig($name, $filename, array $data);
 
     /**
      * @param Config\Interfaces\Loader $Loader
+     * @param \Everon\FileSystem\Interfaces\CacheLoader $CacheLoader
+     * @param string $namespace
      * @return Config\Manager|mixed
-     * @throws Exception\Factory
      */
-    function buildConfigManager(Config\Interfaces\Loader $Loader);
+    function buildConfigManager(Config\Interfaces\Loader $Loader, FileSystem\Interfaces\CacheLoader $CacheLoader, $namespace = 'Everon\Config');
 
     /**
      * @return Config\Interfaces\ExpressionMatcher
@@ -199,19 +205,17 @@ interface Factory
 
     /**
      * @param $config_directory
-     * @param $cache_directory
+     * @param string $namespace
      * @return Config\Loader
-     * @throws Exception\Factory
      */
-    function buildConfigLoader($config_directory, $cache_directory);
+    function buildConfigLoader($config_directory, $namespace = 'Everon\Config');
 
     /**
-     * @param $filename
-     * @param array $data
-     * @return Config\Loader\Item
-     * @throws Exception\Factory
+     * @param $cache_directory
+     * @param string $namespace
+     * @return FileSystem\Interfaces\CacheLoader
      */
-    function buildConfigLoaderItem($filename, array $data);
+    function buildConfigCacheLoader($cache_directory, $namespace = 'Everon\FileSystem\CacheLoader');
 
     /**
      * @param $class_name
@@ -259,6 +263,13 @@ interface Factory
 
     /**
      * @param string $namespace
+     * @returns DataMapper\Interfaces\Criteria
+     * @throws Exception\Factory
+     */
+    function buildCriteria($namespace='Everon\DataMapper');
+
+    /**
+     * @param string $namespace
      * @returns DataMapper\Interfaces\Criteria\Builder
      * @throws Exception\Factory
      */
@@ -269,7 +280,6 @@ interface Factory
      * @param $glue
      * @param string $namespace
      * @return DataMapper\Interfaces\Criteria\Container
-     * @throws Exception\Factory
      */
     function buildCriteriaContainer(DataMapper\Interfaces\Criteria $Criteria, $glue, $namespace='Everon\DataMapper\Criteria');
 
@@ -282,20 +292,13 @@ interface Factory
     function buildCriteriaOperator($type, $namespace='Everon\DataMapper\Criteria\Operator');
 
     /**
-     * @param string $namespace
-     * @return DataMapper\Interfaces\CriteriaOLD
-     * @throws Exception\Factory
-     */
-    function buildDataMapperCriteria($namespace='Everon\DataMapper');
-
-    /**
      * @param $column
      * @param $operator
      * @param $value
      * @param string $namespace
      * @return DataMapper\Interfaces\Criteria\Criterium
      */
-    function buildDataMapperCriterium($column, $operator, $value, $namespace = 'Everon\DataMapper\Criteria');
+    function buildCriteriaCriterium($column, $operator, $value, $namespace = 'Everon\DataMapper\Criteria');
 
     /**
      * @param $sql
@@ -373,11 +376,16 @@ interface Factory
      * @param DataMapper\Interfaces\Schema\Reader $Reader
      * @param DataMapper\Interfaces\ConnectionManager $ConnectionManager
      * @param Domain\Interfaces\Mapper $DomainMapper
+     * @param \Everon\FileSystem\Interfaces\CacheLoader $CacheLoader
      * @param string $namespace
      * @return DataMapper\Interfaces\Schema
      * @throws Exception\Factory
      */
-    function buildSchema(DataMapper\Interfaces\Schema\Reader $Reader, DataMapper\Interfaces\ConnectionManager $ConnectionManager, Domain\Interfaces\Mapper $DomainMapper, $namespace='Everon\DataMapper');
+    function buildSchema(DataMapper\Interfaces\Schema\Reader $Reader, 
+                         DataMapper\Interfaces\ConnectionManager $ConnectionManager, 
+                         Domain\Interfaces\Mapper $DomainMapper,
+                         FileSystem\Interfaces\CacheLoader $CacheLoader, 
+                         $namespace = 'Everon\DataMapper');
 
     /**
      * @param Interfaces\PdoAdapter $PdoAdapter
@@ -404,12 +412,50 @@ interface Factory
      * @param array $primary_keys
      * @param array $unique_keys
      * @param array $foreign_keys
+     * @param Collection $ColumnValidators
      * @param Domain\Interfaces\Mapper $DomainMapper
      * @param string $namespace
      * @return DataMapper\Interfaces\Schema\Table
      * @throws Exception\Factory
      */
-    function buildSchemaTableAndDependencies($database_timezone, $name, $schema, $adapter_name, array $columns, array $primary_keys,  array $unique_keys, array $foreign_keys, Domain\Interfaces\Mapper $DomainMapper, $namespace='Everon\DataMapper');
+    function buildSchemaTableAndDependencies($database_timezone, $name, $schema, $adapter_name, array $columns, array $primary_keys, array $unique_keys, array $foreign_keys, Interfaces\Collection $ColumnValidators, Domain\Interfaces\Mapper $DomainMapper, $namespace = 'Everon\DataMapper');
+
+    /**
+     * @param $adapter_name
+     * @param $database_timezone
+     * @param array $data
+     * @param $is_pk
+     * @param $is_unique
+     * @param Collection $ColumnValidators
+     * @param string $namespace
+     * @return DataMapper\Interfaces\Schema\Column
+     * @throws Exception\Factory
+     */
+    function buildSchemaColumn($adapter_name, $database_timezone, array $data, $is_pk, $is_unique, Interfaces\Collection $ColumnValidators, $namespace = 'Everon\DataMapper\Schema');
+
+    /**
+     * @param array $foreign_key_data
+     * @param string $namespace
+     * @return DataMapper\Interfaces\Schema\ForeignKey
+     * @throws Exception\Factory
+     */
+    function buildSchemaForeignKey(array $foreign_key_data, $namespace='Everon\DataMapper\Schema');
+
+    /**
+     * @param array $primary_key_data
+     * @param string $namespace
+     * @return DataMapper\Interfaces\Schema\PrimaryKey
+     * @throws Exception\Factory
+     */
+    function buildSchemaPrimaryKey(array $primary_key_data, $namespace='Everon\DataMapper\Schema');
+
+    /**
+     * @param array $unique_key_data
+     * @param string $namespace
+     * @return DataMapper\Interfaces\Schema\UniqueKey
+     * @throws Exception\Factory
+     */
+    function buildSchemaUniqueKey(array $unique_key_data, $namespace='Everon\DataMapper\Schema');
 
     /**
      * @param $name
@@ -423,7 +469,31 @@ interface Factory
      * @return DataMapper\Interfaces\Schema\Table
      * @throws Exception\Factory
      */
-    function buildSchemaTable($name, $schema, array $column_list, array $primary_key_list,  array $unique_key_list, array $foreign_key_list, Domain\Interfaces\Mapper $DomainMapper, $namespace='Everon\DataMapper');
+    function buildSchemaTable($name, $schema, array $column_list, array $primary_key_list, array $unique_key_list, array $foreign_key_list, Domain\Interfaces\Mapper $DomainMapper, $namespace = 'Everon\DataMapper\Schema');
+
+    /**
+     * @param $original_name
+     * @param $name
+     * @param $schema
+     * @param array $column_list
+     * @param array $primary_key_list
+     * @param array $unique_key_list
+     * @param array $foreign_key_list
+     * @param Domain\Interfaces\Mapper $DomainMapper
+     * @param string $namespace
+     * @return DataMapper\Interfaces\Schema\View
+     * @throws Exception\Factory
+     */
+    function buildSchemaView($original_name, $name, $schema, array $column_list, array $primary_key_list,  array $unique_key_list, array $foreign_key_list, Domain\Interfaces\Mapper $DomainMapper, $namespace='Everon\DataMapper');
+
+    /**
+     * @param $type
+     * @param $adapter_name
+     * @param string $namespace
+     * @return DataMapper\Interfaces\Schema\Column\Validator
+     * @throws Exception\Factory
+     */
+    function buildSchemaColumnValidator($type, $adapter_name, $namespace='Everon\DataMapper\Schema\Column\Validator');
 
     /**
      * @param string $name
@@ -457,6 +527,23 @@ interface Factory
      * @throws Exception\Factory
      */
     function buildFileSystem($root, $namespace='Everon\View');
+
+    /**
+     * @param $type
+     * @param $cache_directory
+     * @param string $namespace
+     * @return \Everon\FileSystem\Interfaces\CacheLoader
+     * @throws Exception\Factory
+     */
+    function buildFileSystemCacheLoader($type, $cache_directory, $namespace = 'Everon\FileSystem\CacheLoader');    
+
+    /**
+     * @param resource $handle default is tmpfile()
+     * @param string $namespace
+     * @return \Everon\FileSystem\Interfaces\TmpFile
+     * @throws Exception\Factory
+     */
+    function buildFileSystemTmpFile($handle=null, $namespace='Everon\FileSystem');
 
     /**
      * @param DataMapper\Interfaces\ConnectionItem $dsn
@@ -505,6 +592,7 @@ interface Factory
     /**
      * @param string $namespace
      * @return View\Interfaces\TemplateCompilerContext
+     * @throws Exception\Factory
      */
     function buildTemplateCompilerContext($namespace='Everon\View\Template\Compiler');
 
@@ -556,6 +644,7 @@ interface Factory
      * @param \Everon\View\Interfaces\Manager $ViewManager
      * @param string $namespace
      * @return View\Interfaces\WidgetManager
+     * @throws Exception\Factory
      */
     function buildViewWidgetManager(View\Interfaces\Manager $ViewManager, $namespace = 'Everon\View\Widget');
 
@@ -756,6 +845,7 @@ interface Factory
     /**
      * @param array $credential_data
      * @return Email\Credential
+     * @throws Exception\Factory
      */
     function buildEmailCredential(array $credential_data);
 
@@ -781,7 +871,35 @@ interface Factory
      * @param int $limit
      * @param string $namespace
      * @return Paginator
+     * @throws Exception\Factory
      */
     function buildPaginator($total, $offset, $limit, $namespace='Everon\Helper');
+
+    /**
+     * @param string $time
+     * @param \DateTimeZone $timezone
+     * @return \DateTime
+     * @throws Exception\Factory
+     */
+    function buildDateTime($time='now', \DateTimeZone $timezone=null);
+
+    /**
+     * @param $timezone
+     * @return \DateTimeZone
+     * @throws Exception\Factory
+     */
+    function buildDateTimeZone($timezone);
+
+    /**
+     * @param $locale
+     * @param $datetype
+     * @param $timetype
+     * @param $timezone
+     * @param $calendar
+     * @param $pattern
+     * @return \IntlDateFormatter
+     * @throws Exception\Factory
+     */
+    function buildIntlDateFormatter($locale, $datetype, $timetype, $timezone, $calendar, $pattern);
 
 }

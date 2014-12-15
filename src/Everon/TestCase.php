@@ -48,11 +48,18 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
             'tmp' => getcwd().'/tmp/',
         ], @$GLOBALS['EVERON_CUSTOM_PATHS']);
         
-        $this->RequestIdentifier = @$GLOBALS['REQUEST_IDENTIFIER'];
+        $this->RequestIdentifier = @$GLOBALS['EVERON_REQUEST_IDENTIFIER'];
         $Environment = new Environment(@$GLOBALS['EVERON_ROOT'], @$GLOBALS['EVERON_SOURCE_ROOT'], $custom_test_paths);
         $this->FrameworkBootstrap = new Bootstrap($Environment, 'development');
         
         $this->includeDoubles();
+
+        unset($GLOBALS['EVERON_FACTORY']);
+        unset($GLOBALS['EVERON_BOOTSTRAP']);
+        unset($GLOBALS['EVERON_ENVIRONMENT']);
+        //unset($GLOBALS['EVERON_CUSTOM_PATHS']);
+        //unset($GLOBALS['EVERON_REQUEST_IDENTIFIER']);
+        //unset($GLOBALS['CUSTOM_EXCEPTION_HANDLER']);
     }
 
     protected function includeDoubles()
@@ -188,10 +195,10 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
     public function buildFactory()
     {
         /**
-         * @var \Everon\Interfaces\Factory $Factory
+         * @var \Everon\Interfaces\Factory $EVERON_FACTORY
          */
-        $Factory = new Application\Factory(new Application\Dependency\Container());
-        $Container = $Factory->getDependencyContainer();
+        $EVERON_FACTORY = new Application\Factory(new Application\Dependency\Container());
+        $EVERON_CONTAINER = $EVERON_FACTORY->getDependencyContainer();
 
         //$TestEnvironment = new \Everon\Environment($this->FrameworkBootstrap->getEnvironment()->getRoot(), $this->FrameworkBootstrap->getEnvironment()->getEveronRoot());
         $TestEnvironment = $this->FrameworkBootstrap->getEnvironment();
@@ -204,33 +211,35 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         $TestEnvironment->setDomainConfig($this->getFixtureDirectory().'Domain/');
         */
 
-        $Bootstrap = $this->FrameworkBootstrap;
-        $Container->register('Bootstrap', function() use ($Bootstrap) {
-            return $Bootstrap;
+        $EVERON_BOOTSTRAP = $this->FrameworkBootstrap;
+        $EVERON_CONTAINER->register('Bootstrap', function() use ($EVERON_BOOTSTRAP) {
+            return $EVERON_BOOTSTRAP;
         });
 
-        $Container->register('Environment', function() use ($TestEnvironment) {
+        $EVERON_CONTAINER->register('Environment', function() use ($TestEnvironment) {
             return $TestEnvironment;
         });
 
-        $FileSystem = $Factory->buildFileSystem($TestEnvironment->getRoot());
-        $Container->register('FileSystem', function() use ($FileSystem) {
+        $FileSystem = $EVERON_FACTORY->buildFileSystem($TestEnvironment->getRoot());
+        $EVERON_CONTAINER->register('FileSystem', function() use ($FileSystem) {
             return $FileSystem;
         });
 
-        $Container->register('RequestIdentifier', function()  {
+        $EVERON_CONTAINER->register('RequestIdentifier', function()  {
             return $this->RequestIdentifier;
         });
 
+        $ConfigLoader = $EVERON_FACTORY->buildConfigLoader($TestEnvironment->getConfig());
+        $ConfigLoader->setFactory($EVERON_FACTORY);
 
-        $ConfigLoader = $Factory->buildConfigLoader($TestEnvironment->getConfig(), $TestEnvironment->getCacheConfig());
-        $ConfigLoader->setFactory($Factory);
+        $ConfigLoaderCache = $EVERON_FACTORY->buildConfigCacheLoader($TestEnvironment->getCacheConfig());
+        $ConfigLoaderCache->setFactory($EVERON_FACTORY);
 
-        $ConfigManager = $Factory->buildConfigManager($ConfigLoader);
-        $ConfigManager->setFactory($Factory);
+        $ConfigManager = $EVERON_FACTORY->buildConfigManager($ConfigLoader, $ConfigLoaderCache);
+        $ConfigManager->setFactory($EVERON_FACTORY);
         $ConfigManager->setFileSystem($FileSystem);
         
-        $Container->register('ConfigManager', function() use ($ConfigManager) {
+        $EVERON_CONTAINER->register('ConfigManager', function() use ($ConfigManager) {
             return $ConfigManager;
         });
 
@@ -240,20 +249,20 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         /**
          * @var \Everon\Interfaces\Logger $Logger
          */
-        $Logger = $Container->resolve('Logger');
+        $Logger = $EVERON_CONTAINER->resolve('Logger');
         $Logger->setRequestIdentifier($this->RequestIdentifier->getValue());
 
-        $Container->register('Request', function() use ($Factory) {
+        $EVERON_CONTAINER->register('Request', function() use ($EVERON_FACTORY) {
             $server_data = $this->getServerDataForRequest([
                 'REQUEST_METHOD' => 'GET',
                 'REQUEST_URI' => '/',
                 'QUERY_STRING' => '',
             ]);
             
-            return $Factory->buildHttpRequest($server_data, $_GET, $_POST, $_FILES);
+            return $EVERON_FACTORY->buildHttpRequest($server_data, $_GET, $_POST, $_FILES);
         });
 
-        return $Factory;
+        return $EVERON_FACTORY;
     }
 
 }

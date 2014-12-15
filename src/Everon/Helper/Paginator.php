@@ -16,6 +16,9 @@ use Everon\Interfaces;
 class Paginator implements Interfaces\Arrayable, \Everon\Interfaces\Paginator
 {
     use Helper\ToArray;
+    
+    const DEFAULT_LIMIT = 10;
+    const DEFAULT_OFFSET = 0;
 
     /**
      * @var int
@@ -41,8 +44,10 @@ class Paginator implements Interfaces\Arrayable, \Everon\Interfaces\Paginator
     public function __construct($total, $offset, $limit)
     {
         $this->total = (int) $total;
-        $this->offset = (int) $offset;
-        $this->limit = (int) $limit;
+        
+        //order of execution matters, limit before offset
+        $this->setLimit($limit);
+        $this->setOffset($offset);
     }
 
     /**
@@ -99,6 +104,14 @@ class Paginator implements Interfaces\Arrayable, \Everon\Interfaces\Paginator
      */
     public function setLimit($limit)
     {
+        if ((int) $limit <= 0) {
+            $limit = static::DEFAULT_LIMIT;
+        }
+
+        if ((int) $limit > $this->getTotal()) {
+            $limit = static::DEFAULT_LIMIT;
+        }
+        
         $this->limit = (int) $limit;
     }
 
@@ -107,9 +120,6 @@ class Paginator implements Interfaces\Arrayable, \Everon\Interfaces\Paginator
      */
     public function getLimit()
     {
-        if ((int) $this->limit <= 0) {
-            $this->limit = 10;
-        }
         return $this->limit;
     }
 
@@ -118,10 +128,19 @@ class Paginator implements Interfaces\Arrayable, \Everon\Interfaces\Paginator
      */
     public function setOffset($offset)
     {
-        $max = $this->getTotal() - $this->getLimit();
-        $max = ($max < 0) ? 0 : $max;
-        $offset = ($offset < 0) ? 0 : $offset;
-        $offset = ($offset > $max) ? $max : $offset;
+        $max = $this->getTotal() - $this->getOffset();
+        
+        if ($offset > $max || $max <= 0) {
+            $offset = $this->getTotal() - $this->getLimit();
+        }
+        
+        if ((int) $offset < 0) {
+            $offset = static::DEFAULT_OFFSET;
+        }
+
+        if ((int) $offset > $this->getTotal()) {
+            $offset = static::DEFAULT_OFFSET;
+        }
         
         $this->offset = (int) $offset;
     }

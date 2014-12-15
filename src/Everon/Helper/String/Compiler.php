@@ -13,7 +13,7 @@ use Everon\Helper;
 use Everon\Interfaces;
 
 /**
- * @requires Helper\isIterable
+ * @requires Helper\IsIterable
  */
 trait Compiler
 {

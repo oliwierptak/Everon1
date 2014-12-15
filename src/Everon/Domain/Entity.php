@@ -66,20 +66,6 @@ class Entity extends Helper\Popo implements Interfaces\Entity
         }
     }
 
-    /**
-     * If the primary key is auto incremented, setId() should never be used.
-     * It's database's job to maintain its primary keys.
-     *
-     * We either create new object (no ID) or we load it from the database (has ID).
-     *
-     * @param $id
-     * @throws Exception\Entity
-     */
-    protected function setId($id)
-    {
-        throw new Exception\Entity('It is the database\'s job to maintain primary keys');
-    }
-
     protected function markModified()
     {
         $this->state = static::STATE_MODIFIED;
@@ -102,9 +88,12 @@ class Entity extends Helper\Popo implements Interfaces\Entity
      */
     protected function isIdSet()
     {
-        if (array_key_exists($this->id_name, $this->data) && $this->data[$this->id_name] !== null) {
-            $id = trim($this->data[$this->id_name]);
-            return mb_strlen($id) > 0;
+        if (isset($this->data[$this->id_name])) {
+            if (filter_var($this->data[$this->id_name], FILTER_VALIDATE_INT)) {
+                return (int) $this->data[$this->id_name] > 0;
+            }
+
+            return mb_strlen(trim($this->data[$this->id_name])) > 0;
         }
         
         return false;
@@ -159,6 +148,20 @@ class Entity extends Helper\Popo implements Interfaces\Entity
     }
 
     /**
+     * If the primary key is auto incremented, setId() should never be used.
+     * It's the job of the database to maintain its primary keys.
+     *
+     * We either create new object (no ID) or we load it from the database (has ID).
+     *
+     * @param $id
+     * @throws Exception\Entity
+     */
+    public function setId($id)
+    {
+        throw new Exception\Entity('It\'s the job of the database to maintain its primary keys.');
+    }
+
+    /**
      * @inheritdoc
      */
     public function getId()
@@ -194,6 +197,7 @@ class Entity extends Helper\Popo implements Interfaces\Entity
             throw new \Everon\Domain\Exception('Property name cannot be empty in: "%s"', $this->getDomainName());
         }
         $this->data[$name] = $value;
+        $this->markPropertyAsModified($name);
     }
 
     /**
@@ -314,6 +318,8 @@ class Entity extends Helper\Popo implements Interfaces\Entity
     {
         $data = $this->arrayMergeDefault($this->getData(), $data);
         $this->setData($data);
+        $this->modified_properties = array_keys($data);
+        $this->markModified();
     }
     
     /**
@@ -322,15 +328,10 @@ class Entity extends Helper\Popo implements Interfaces\Entity
      * @param $name
      * @param $arguments
      * @return mixed
+     * @throws Exception\Entity
      */
     public function __call($name, $arguments)
     {
-        if ($this->isCallable($this, $name)) {
-            $this->call_type = static::CALL_TYPE_METHOD;
-            $this->call_property = $name;
-            return call_user_func_array([$this, $name], $arguments);
-        }
-
         $return = parent::__call($name, $arguments);
         
         if ($this->call_type === static::CALL_TYPE_SETTER) {
@@ -338,31 +339,5 @@ class Entity extends Helper\Popo implements Interfaces\Entity
         }
         
         return $return;
-    }
-
-    public function __sleep()
-    {
-        //todo: test me xxx
-        return [
-            'id_name',
-            'data',
-            'modified_properties',
-            'state',
-            'RelationCollection',
-            'call_type',
-            'call_property',
-        ];
-    }
-
-    public static function __set_state(array $array)
-    {
-        //todo: test me xxx
-        $Entity = new static($array['id_name'], $array['data']);
-        $Entity->modified_properties = $array['modified_properties'];
-        $Entity->state = $array['state'];
-        $Entity->call_type = $array['call_type'];
-        $Entity->call_property = $array['call_property'];
-        $Entity->RelationCollection = $array['RelationCollection'];
-        return $Entity;
     }
 }

@@ -13,6 +13,13 @@ use Everon\Interfaces;
 
 interface Config extends Arrayable, Dependency\Factory
 {
+    /**
+     * @param $name
+     * @param array $data
+     * @return \Everon\Config\Interfaces\Item
+     */
+    function buildItem($name, array $data);
+
     function getName();
 
     /**
@@ -28,9 +35,14 @@ interface Config extends Arrayable, Dependency\Factory
     function setFilename($filename);
     
     /**
-     * @param mixed $Default
+     * @param string $name
      */
-    function setDefaultItem($Default);
+    function setDefaultItemName($name);
+
+    /**
+     * @return string
+     */
+    function getDefaultItemName();
 
     /**
      * @return mixed
@@ -58,7 +70,12 @@ interface Config extends Arrayable, Dependency\Factory
      * @param $name
      * @return bool
      */
-    function itemExists($name);    
+    function itemExists($name);
+
+    /**
+     * @return bool
+     */
+    function isEmpty();
 
     /**
      * @param $name
@@ -77,15 +94,5 @@ interface Config extends Arrayable, Dependency\Factory
      * @param $data
      * @return mixed
      */
-    function recompile($data);
-
-    /**
-     * @return callable|null  Wrapped Config\Interfaces\ExpressionMatcher
-     */
-    function getCompiler();
-
-    /**
-     * @param \Closure $Compiler Wrapped Config\Interfaces\ExpressionMatcher
-     */
-    function setCompiler(\Closure $Compiler);
+    //function recompile($data);
 }

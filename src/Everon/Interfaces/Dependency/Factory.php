@@ -20,4 +20,6 @@ interface Factory
      * @param \Everon\Application\Interfaces\Factory
      */
     function setFactory(\Everon\Application\Interfaces\Factory $Factory);
+
+    function unsetFactory();
 }
