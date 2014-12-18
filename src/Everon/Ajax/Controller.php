@@ -6,7 +6,7 @@ use Everon\Http;
 /**
  * @method \Everon\Http\Interfaces\Response getResponse()
  */
-abstract class Controller extends \Everon\Controller implements Interfaces\Controller
+abstract class Controller extends Http\Controller implements Interfaces\Controller
 {
     /**
      * @var array
@@ -25,11 +25,9 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
      */
     protected function prepareResponse($action, $result)
     {
-        $this->getResponse()->setData([
-            'result' => ($this->json_result !== null) ? $this->json_result : $result,
-            'data' => $this->json_data,
-            'errors' => $this->getRouter()->getRequestValidator()->getErrors()
-        ]);
+        $this->getResponse()->setDataValue('result', $this->json_result);
+        $this->getResponse()->setDataValue('data', $this->json_data);
+        $this->getResponse()->setDataValue('errors', $this->getRouter()->getRequestValidator()->getErrors());
     }
 
     protected function response()
@@ -67,5 +65,17 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
     public function setJsonResult($json_result)
     {
         $this->json_result = (bool) $json_result;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function showException(\Exception $Exception)
+    {
+
+        $this->getResponse()->setDataValue('result', false);
+        $this->getResponse()->setDataValue('error', $Exception->getMessage());
+
+        $this->response();
     }
 }
