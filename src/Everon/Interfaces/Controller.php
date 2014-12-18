@@ -84,6 +84,12 @@ interface Controller extends
     function addValidationError($name, $message);
 
     /**
+     * @param $message
+     * @return mixed
+     */
+    function setFatalValidationError($message);
+
+    /**
      * @param $name
      * @param $message
      */
