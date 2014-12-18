@@ -40,10 +40,4 @@ interface Response
      * @param mixed $data
      */
     function setData($data);
-
-    /**
-     * @param $name
-     * @param $data
-     */
-    function setDataValue($name, $data);
 }

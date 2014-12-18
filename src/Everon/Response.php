@@ -34,14 +34,6 @@ class Response implements Interfaces\Response
     }
 
     /**
-     * @inheritdoc
-     */
-    public function setDataValue($name, $data)
-    {
-        $this->data[$name] = $data;
-    }
-
-    /**
      * @return null
      */
     public function getData()
