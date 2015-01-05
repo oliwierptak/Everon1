@@ -178,6 +178,7 @@ class Router extends Config\Item implements Config\Interfaces\ItemRouter
         $this->assertIsStringAndNonEmpty((string) @$data[static::PROPERTY_MODULE], 'Invalid item module name: "%s"', 'ConfigItem');
         $this->assertIsStringAndNonEmpty((string) @$data['controller'], 'Invalid controller: "%s"', 'ConfigItem');
         $this->assertIsStringAndNonEmpty((string) @$data['action'], 'Invalid action: "%s"', 'ConfigItem');
+        $this->assertIsStringAndNonEmpty((string) @$data['method'], 'Invalid method: "%s"', 'ConfigItem');
     }
 
     /**
