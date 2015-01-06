@@ -73,7 +73,8 @@ class RequestValidator implements Interfaces\RequestValidator
     protected function validateRoute($route_name, array $route_params, array $parsed_request_params, $throw)
     {
         foreach ($route_params as $name => $expression) {
-            $msg = vsprintf('Invalid parameter: "%s" for route: "%s"', [$name, $route_name]);
+            //$msg = vsprintf('Invalid parameter: "%s" for route: "%s"', [$name, $route_name]);
+            $msg = 'This field is not valid.';
             if (isset($parsed_request_params[$name]) === false) {
                 $this->errors[$name] = $msg;
             }
