@@ -28,18 +28,17 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
      */
     protected function prepareResponse($action, $result)
     {
-        $this->getResponse()->setStatusCode(($result ? 200 : 500)); // Bleh..
+        $this->getResponse()->setStatusCode(($result ? 200 : 400));
 
         if ($this->getRouter()->getRequestValidator()->hasFatalError()) {
             $this->getResponse()->setDataValue('result', false);
             $this->getResponse()->setDataValue('error', $this->getRouter()->getRequestValidator()->getFatalError());
-            return false;
         }
-
-
-        $this->getResponse()->setDataValue('result', $this->json_result);
-        $this->getResponse()->setDataValue('data', $this->json_data);
-        $this->getResponse()->setDataValue('errors', $this->getRouter()->getRequestValidator()->getErrors());
+        else {
+            $this->getResponse()->setDataValue('result', $this->json_result);
+            $this->getResponse()->setDataValue('data', $this->json_data);
+            $this->getResponse()->setDataValue('errors', $this->getRouter()->getRequestValidator()->getErrors());
+        }
     }
 
     protected function response()
