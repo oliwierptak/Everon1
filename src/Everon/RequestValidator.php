@@ -12,15 +12,16 @@ namespace Everon;
 class RequestValidator implements Interfaces\RequestValidator
 {
     use Helper\Exceptions;
-    use Helper\Asserts\IsArrayKey;    
+    use Helper\Asserts\IsArrayKey;
     use Helper\Regex;
 
     protected $errors = null;
+    protected $fatal_error = null;
 
     /**
      * Validates $_GET, $_POST and $QUERY_STRING.
      * Returns array of validated query, get and post, or throws an exception
-     * 
+     *
      * @param Config\Interfaces\ItemRouter $RouteItem
      * @param Interfaces\Request $Request
      * @return array
@@ -32,9 +33,9 @@ class RequestValidator implements Interfaces\RequestValidator
         if ($method !== null && strcasecmp($method, $Request->getMethod()) !== 0) {
             throw new Exception\RequestValidator('Invalid request method: "%s", expected: "%s" for url: "%s"', [$Request->getMethod(), $method, $RouteItem->getName()]);
         }
-        
+
         $this->errors = null;
-        
+
         $parsed_query_parameters = $this->validateQuery($RouteItem, $Request->getPath(), $Request->getQueryCollection()->toArray());
         $this->validateRoute(
             $RouteItem->getName(),
@@ -50,7 +51,7 @@ class RequestValidator implements Interfaces\RequestValidator
             $parsed_get_parameters,
             false
         );
-        
+
         $parsed_post_parameters = $this->validatePost($RouteItem, $Request->getPostCollection()->toArray());
         $this->validateRoute(
             $RouteItem->getName(),
@@ -72,11 +73,12 @@ class RequestValidator implements Interfaces\RequestValidator
     protected function validateRoute($route_name, array $route_params, array $parsed_request_params, $throw)
     {
         foreach ($route_params as $name => $expression) {
-            $msg = vsprintf('Invalid parameter: "%s" for route: "%s"', [$name, $route_name]);
+            //$msg = vsprintf('Invalid parameter: "%s" for route: "%s"', [$name, $route_name]);
+            $msg = 'This field is not valid.';
             if (isset($parsed_request_params[$name]) === false) {
                 $this->errors[$name] = $msg;
             }
-            
+
             if ($throw) {
                 $this->assertIsArrayKey($name, $parsed_request_params, $msg, 'InvalidRoute');
             }
@@ -95,13 +97,13 @@ class RequestValidator implements Interfaces\RequestValidator
         try {
             $request_url = $RouteItem->getCleanUrl($request_url);
             $regex_url = $RouteItem->getCleanUrl($RouteItem->getUrl());
-    
+
             $parsed_query = [];
             $validators_for_query = $RouteItem->filterQueryKeys($get_data);
             if (is_array($validators_for_query)) {
                 $url_pattern = $RouteItem->replaceCurlyParametersWithRegex($regex_url, $validators_for_query);
                 $url_pattern = $this->regexCompleteAndValidate($RouteItem->getName(), $url_pattern);
-    
+
                 if (preg_match($url_pattern, $request_url, $params_tokens)) {
                     array_shift($params_tokens); //remove url
                     if (count($validators_for_query) === count($params_tokens)) {
@@ -109,7 +111,7 @@ class RequestValidator implements Interfaces\RequestValidator
                     }
                 }
             }
-    
+
             return $parsed_query;
         }
         catch (\Exception $e) {
@@ -137,12 +139,12 @@ class RequestValidator implements Interfaces\RequestValidator
                     }
                 }
             }
-    
+
             return $parsed_get;
         }
         catch (\Exception $e) {
            throw new Exception\RequestValidator($e);
-        }        
+        }
     }
 
     /**
@@ -215,5 +217,34 @@ class RequestValidator implements Interfaces\RequestValidator
     {
         $this->errors[$name] = null;
         unset($this->errors[$name]);
+    }
+
+    /**
+     * @param $fatal_error
+     */
+    public function setFatalError($fatal_error)
+    {
+        $this->fatal_error = $fatal_error;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getFatalError()
+    {
+        return $this->fatal_error;
+    }
+
+    public function resetFatalError()
+    {
+        $this->fatal_error = null;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasFatalError()
+    {
+        return $this->fatal_error !== null;
     }
 }

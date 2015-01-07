@@ -188,7 +188,8 @@ abstract class Controller implements Interfaces\Controller
     {
         $result = ($result !== false) ? true : $result;
         $this->getResponse()->setResult($result);
-        
+
+
         if ($result === false) {
             $result_on_error = null;
             if ($use_on_error) {
@@ -249,6 +250,14 @@ abstract class Controller implements Interfaces\Controller
     public function addValidationError($name, $message)
     {
         $this->getRouter()->getRequestValidator()->addError($name, $message);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setFatalValidationError($message)
+    {
+        $this->getRouter()->getRequestValidator()->setFatalError($message);
     }
 
     /**
