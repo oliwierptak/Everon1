@@ -39,22 +39,5 @@ interface RequestValidator
     /**
      * @param $name
      */
-    public function removeError($name);
-
-    /**
-     * @param $fatal_error
-     */
-    function setFatalError($fatal_error);
-
-    /**
-     * @return null|string
-     */
-    function getFatalError();
-
-    function resetFatalError();
-
-    /**
-     * @return bool
-     */
-    function hasFatalError();
+    function removeError($name);
 }

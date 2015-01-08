@@ -16,7 +16,6 @@ class RequestValidator implements Interfaces\RequestValidator
     use Helper\Regex;
 
     protected $errors = null;
-    protected $fatal_error = null;
 
     /**
      * Validates $_GET, $_POST and $QUERY_STRING.
@@ -73,9 +72,8 @@ class RequestValidator implements Interfaces\RequestValidator
     protected function validateRoute($route_name, array $route_params, array $parsed_request_params, $throw)
     {
         foreach ($route_params as $name => $expression) {
-            //$msg = vsprintf('Invalid parameter: "%s" for route: "%s"', [$name, $route_name]);
-            $msg = 'This field is not valid.';
-            if (isset($parsed_request_params[$name]) === false) {
+            $msg = vsprintf('Invalid parameter: "%s" for route: "%s"', [$name, $route_name]);
+            if (array_key_exists($name, $parsed_request_params) === false) {
                 $this->errors[$name] = $msg;
             }
 
@@ -156,20 +154,23 @@ class RequestValidator implements Interfaces\RequestValidator
     protected function validatePost(Config\Interfaces\ItemRouter $RouteItem, array $post_data)
     {
         try {
-            foreach ($post_data as $param_name => $pvalue) {
-                foreach ($RouteItem->getPostRegex() as $regex_name => $regex) {
-                    if (strcasecmp($param_name, $regex_name) !== 0) {
-                        continue;
-                    }
-
-                    $subject = $post_data[$param_name];
+            foreach ($RouteItem->getPostRegex() as $regex_name => $regex) {
+                if (array_key_exists($regex_name, $post_data)) {
+                    $subject = $post_data[$regex_name];
                     $pattern = $this->regexCompleteAndValidate($RouteItem->getName(), $regex);
                     if (preg_match($pattern, $subject, $params_tokens) === 0) {
-                        unset($post_data[$param_name]);  //remove invalid post
+                        unset($post_data[$regex_name]);  //remove invalid post
+                    }
+                }
+                else { //will it validate as optional (empty) value?
+                    $subject = '';
+                    $pattern = $this->regexCompleteAndValidate($RouteItem->getName(), $regex);
+                    if (preg_match($pattern, $subject, $params_tokens) !== 0) {
+                        $post_data[$regex_name] = null; //insert as empty value
                     }
                 }
             }
-
+            
             return $post_data;
         }
         catch (\Exception $e) {
@@ -217,34 +218,5 @@ class RequestValidator implements Interfaces\RequestValidator
     {
         $this->errors[$name] = null;
         unset($this->errors[$name]);
-    }
-
-    /**
-     * @param $fatal_error
-     */
-    public function setFatalError($fatal_error)
-    {
-        $this->fatal_error = $fatal_error;
-    }
-
-    /**
-     * @return null|string
-     */
-    public function getFatalError()
-    {
-        return $this->fatal_error;
-    }
-
-    public function resetFatalError()
-    {
-        $this->fatal_error = null;
-    }
-
-    /**
-     * @return bool
-     */
-    public function hasFatalError()
-    {
-        return $this->fatal_error !== null;
     }
 }

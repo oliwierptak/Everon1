@@ -51,4 +51,14 @@ interface Router extends Interfaces\Dependency\RequestValidator, \Everon\Interfa
      * @return Interfaces\Config
      */
     function getConfig();
+
+    /**
+     * @param \Everon\Config\Interfaces\ItemRouter $CurrentRoute
+     */
+    function setCurrentRoute($CurrentRoute);
+
+    /**
+     * @return \Everon\Config\Interfaces\ItemRouter
+     */
+    function getCurrentRoute();
 }
