@@ -6,10 +6,8 @@ use Everon\Http;
 /**
  * @method \Everon\Http\Interfaces\Response getResponse()
  */
-abstract class Controller extends \Everon\Controller implements Interfaces\Controller
+abstract class Controller extends \Everon\Http\Controller
 {
-    use Http\Dependency\Injection\HttpSession;
-
     /**
      * @var array
      */
@@ -30,15 +28,9 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
     {
         $this->getResponse()->setStatusCode(($result ? 200 : 400));
 
-        if ($this->getRouter()->getRequestValidator()->hasFatalError()) {
-            $this->getResponse()->setDataValue('result', false);
-            $this->getResponse()->setDataValue('error', $this->getRouter()->getRequestValidator()->getFatalError());
-        }
-        else {
-            $this->getResponse()->setDataValue('result', $this->json_result);
-            $this->getResponse()->setDataValue('data', $this->json_data);
-            $this->getResponse()->setDataValue('errors', $this->getRouter()->getRequestValidator()->getErrors());
-        }
+        $this->getResponse()->setDataValue('result', $this->getJsonResult() ?: $result);
+        $this->getResponse()->setDataValue('data', $this->getJsonData());
+        $this->getResponse()->setDataValue('errors', $this->getRouter()->getRequestValidator()->getErrors());
     }
 
     protected function response()
@@ -83,31 +75,9 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
      */
     public function showException(\Exception $Exception)
     {
-
-        $this->getResponse()->setDataValue('result', false);
-        $this->getResponse()->setDataValue('error', $Exception->getMessage());
+        $this->setJsonResult(false);
+        $this->addValidationError('exception', $Exception->getMessage());
 
         $this->response();
-    }
-
-    /**
-     * @param $flash_message
-     */
-    public function setFlashMessage($flash_message)
-    {
-        $this->getHttpSession()->setFlashMessage($flash_message);
-    }
-
-    /**
-     * @return string
-     */
-    public function getFlashMessage()
-    {
-        return $this->getHttpSession()->getFlashMessage();
-    }
-
-    public function resetFlashMessage()
-    {
-        $this->getHttpSession()->resetFlashMessage();
     }
 }

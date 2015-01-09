@@ -163,8 +163,9 @@ interface Request extends Arrayable
 
     /**
      * @param array $data
+     * @param null $allowed_tags
      */
-    function setPostCollection(array $data);
+    function setPostCollection(array $data, $allowed_tags = null);
 
     /**
      * @return Collection
@@ -233,4 +234,11 @@ interface Request extends Arrayable
      * @return boolean
      */
     function isAjax();
+
+    /**
+     * @param $input
+     * @param $allowed_tags
+     * @return mixed
+     */
+    function sanitizeInput($input, $allowed_tags=null);
 }

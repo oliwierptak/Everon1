@@ -33,10 +33,19 @@ class Router extends Config\Item implements Config\Interfaces\ItemRouter
 
     protected $action = null;
 
+    /**
+     * @var array
+     */
     protected $regex_get = [];
-    
+
+    /**
+     * @var array
+     */
     protected $regex_query = [];
 
+    /**
+     * @var array
+     */
     protected $regex_post = [];
     
     protected $method = null;
@@ -47,6 +56,8 @@ class Router extends Config\Item implements Config\Interfaces\ItemRouter
      * @var boolean
      */
     protected $secure = false;
+
+    protected $allowed_tags = null;
 
     /**
      * @param array $data
@@ -68,7 +79,8 @@ class Router extends Config\Item implements Config\Interfaces\ItemRouter
             'get' => [],
             'query' => [],
             'post' => [],
-            'secure' => false
+            'secure' => false,
+            'allowed_tags' => null
         ]);
     }
 
@@ -87,6 +99,7 @@ class Router extends Config\Item implements Config\Interfaces\ItemRouter
         $this->setPostRegex($this->data['post']);
         $this->setMethod($this->data['method']);
         $this->setIsSecure($this->data['secure']);
+        $this->setAllowedTags($this->data['allowed_tags']);
     }
 
     /**
@@ -340,6 +353,22 @@ class Router extends Config\Item implements Config\Interfaces\ItemRouter
         $this->parsed_url = $parsed_url;
     }
 
+    /**
+     * @param $allowed_tags
+     */
+    public function setAllowedTags($allowed_tags)
+    {
+        $this->allowed_tags = $allowed_tags;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getAllowedTags()
+    {
+        return $this->allowed_tags;
+    }
+    
     /**
      * @inheritdoc
      */

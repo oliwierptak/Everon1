@@ -255,14 +255,6 @@ abstract class Controller implements Interfaces\Controller
     /**
      * @inheritdoc
      */
-    public function setFatalValidationError($message)
-    {
-        $this->getRouter()->getRequestValidator()->setFatalError($message);
-    }
-
-    /**
-     * @inheritdoc
-     */
     public function removeValidationError($name, $message)
     {
         $this->getRouter()->getRequestValidator()->removeError($name, $message);
