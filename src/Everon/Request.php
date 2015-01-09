@@ -318,7 +318,7 @@ abstract class Request implements Interfaces\Request
             if (is_bool($value)) { //because php is the shittiest thing in this universe
                 $value = (int) $value;
             }
-            //$value = strip_tags($value, '<p><a><br><img><b><strong><i><em><u><ul><li><span><h1><h2><h3><h4><h5><hr>');
+            
             if (trim($allowed_tags) !== '') {
                 $value = strip_tags($value, $allowed_tags);
             }
