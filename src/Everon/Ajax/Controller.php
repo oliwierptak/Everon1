@@ -6,7 +6,7 @@ use Everon\Http;
 /**
  * @method \Everon\Http\Interfaces\Response getResponse()
  */
-abstract class Controller extends \Everon\Controller implements Interfaces\Controller
+abstract class Controller extends \Everon\Http\Controller
 {
     /**
      * @var array
@@ -22,14 +22,15 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
     /**
      * @param $action
      * @param $result
+     * @return bool|void
      */
     protected function prepareResponse($action, $result)
     {
-        $this->getResponse()->setData([
-            'result' => ($this->json_result !== null) ? $this->json_result : $result,
-            'data' => $this->json_data,
-            'errors' => $this->getRouter()->getRequestValidator()->getErrors()
-        ]);
+        $this->getResponse()->setStatusCode(($result ? 200 : 400));
+
+        $this->getResponse()->setDataValue('result', $this->getJsonResult() ?: $result);
+        $this->getResponse()->setDataValue('data', $this->getJsonData());
+        $this->getResponse()->setDataValue('errors', $this->getRouter()->getRequestValidator()->getErrors());
     }
 
     protected function response()
@@ -67,5 +68,16 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
     public function setJsonResult($json_result)
     {
         $this->json_result = (bool) $json_result;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function showException(\Exception $Exception)
+    {
+        $this->setJsonResult(false);
+        $this->addValidationError('exception', $Exception->getMessage());
+
+        $this->response();
     }
 }

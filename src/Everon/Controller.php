@@ -188,7 +188,8 @@ abstract class Controller implements Interfaces\Controller
     {
         $result = ($result !== false) ? true : $result;
         $this->getResponse()->setResult($result);
-        
+
+
         if ($result === false) {
             $result_on_error = null;
             if ($use_on_error) {

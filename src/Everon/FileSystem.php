@@ -318,7 +318,12 @@ class FileSystem implements Interfaces\FileSystem
                 $this->createPath($directory);
             }
 
-            return move_uploaded_file($file_path, $destination) === true;
+            $result = move_uploaded_file($file_path, $destination) === true;
+            if ($result) {
+                chmod($destination, 0664);
+            }
+            
+            return $result;
         }
         catch (\Exception $e) {
             throw new Exception\FileSystem($e);

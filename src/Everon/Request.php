@@ -124,6 +124,9 @@ abstract class Request implements Interfaces\Request
 
 
     /**
+     * There is no sanitation for GET and POST as it requires RouteItem's allowed tags.
+     * It is setup by Router->validateAndUpdateRequestAndRouteItem(...)
+     * 
      * @param array $server $_SERVER
      * @param array $get $_GET
      * @param array $post $_POST
@@ -131,10 +134,10 @@ abstract class Request implements Interfaces\Request
      */
     public function __construct(array $server, array $get, array $post, array $files)
     {
-        $this->ServerCollection = new Helper\Collection($this->sanitizeInput($server));
-        $this->GetCollection = new Helper\Collection($this->sanitizeInput($get));
         $this->QueryCollection = new Helper\Collection([]);
-        $this->PostCollection = new Helper\Collection($this->sanitizeInput($post));
+        $this->GetCollection = new Helper\Collection($get); //no sanitation as it requires RouteItem's allowed tags
+        $this->PostCollection = new Helper\Collection($post);
+        $this->ServerCollection = new Helper\Collection($this->sanitizeInput($server));
         $this->FileCollection = new Helper\Collection($this->sanitizeInput($files));
 
         $this->initRequest();
@@ -274,8 +277,7 @@ abstract class Request implements Interfaces\Request
         if ($this->ServerCollection->get('X_REQUESTED_WITH') !== null) {
             return $this->ServerCollection->has('X_REQUESTED_WITH') && strtolower($this->ServerCollection->get('X_REQUESTED_WITH')) === 'xmlhttprequest';
         }
-
-        if ($this->ServerCollection->get('HTTP_X_REQUESTED_WITH') !== null) {
+        else if ($this->ServerCollection->get('HTTP_X_REQUESTED_WITH') !== null) {
             return $this->ServerCollection->has('HTTP_X_REQUESTED_WITH') && strtolower($this->ServerCollection->get('HTTP_X_REQUESTED_WITH')) === 'xmlhttprequest';
         }
         
@@ -284,39 +286,47 @@ abstract class Request implements Interfaces\Request
 
     /**
      * @param $input
+     * @param $allowed_tags
      * @return mixed
      */
-    protected function sanitizeInput($input)
+    public function sanitizeInput($input, $allowed_tags=null)
     {
         if ($this->isIterable($input)) {
             foreach ($input as $key => $value) {
                 if ($this->isIterable($value)) {
-                    $value = $this->sanitizeInput($value);
+                    $value = $this->sanitizeInput($value, $allowed_tags);
                 }
                 else {
-                    $value = $this->sanitizeInputToken($value);
+                    $value = $this->sanitizeInputToken($value, $allowed_tags);
                 }
                 $input[$key] = $value;
             }
             return $input;
         }
 
-        return $this->sanitizeInputToken($input);
+        return $this->sanitizeInputToken($input, $allowed_tags);
     }
 
     /**
      * @param $value
+     * @param $allowed_tags
      * @return mixed
      */
-    protected function sanitizeInputToken($value)
+    protected function sanitizeInputToken($value, $allowed_tags)
     {
         if ($value !== null) {
             if (is_bool($value)) { //because php is the shittiest thing in this universe
                 $value = (int) $value;
             }
-            $value = strip_tags($value, '<p><a><br><img><b><strong><i><em><u><ul><li><span><h1><h2><h3><h4><h5><hr>');
+            
+            if (trim($allowed_tags) !== '') {
+                $value = strip_tags($value, $allowed_tags);
+            }
+            else {
+                $value = strip_tags($value);
+            }
         }
-
+        
         return $value;
     }
 
@@ -536,9 +546,9 @@ abstract class Request implements Interfaces\Request
     /**
      * @inheritdoc
      */
-    public function setPostCollection(array $data)
+    public function setPostCollection(array $data, $allowed_tags = null)
     {
-        $this->PostCollection  = new Helper\Collection($this->sanitizeInput($data));
+        $this->PostCollection  = new Helper\Collection($this->sanitizeInput($data, $allowed_tags));
     }
 
     /**

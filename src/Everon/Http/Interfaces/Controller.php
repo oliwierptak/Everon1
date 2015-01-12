@@ -11,7 +11,7 @@ namespace Everon\Http\Interfaces;
 
 use Everon\View\Interfaces;
 
-interface Controller extends \Everon\Interfaces\Controller, \Everon\View\Interfaces\Dependency\Manager
+interface Controller extends \Everon\Interfaces\Controller
 {
     /**
      * @param $flash_message

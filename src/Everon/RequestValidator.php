@@ -12,7 +12,7 @@ namespace Everon;
 class RequestValidator implements Interfaces\RequestValidator
 {
     use Helper\Exceptions;
-    use Helper\Asserts\IsArrayKey;    
+    use Helper\Asserts\IsArrayKey;
     use Helper\Regex;
 
     protected $errors = null;
@@ -20,7 +20,7 @@ class RequestValidator implements Interfaces\RequestValidator
     /**
      * Validates $_GET, $_POST and $QUERY_STRING.
      * Returns array of validated query, get and post, or throws an exception
-     * 
+     *
      * @param Config\Interfaces\ItemRouter $RouteItem
      * @param Interfaces\Request $Request
      * @return array
@@ -32,9 +32,9 @@ class RequestValidator implements Interfaces\RequestValidator
         if ($method !== null && strcasecmp($method, $Request->getMethod()) !== 0) {
             throw new Exception\RequestValidator('Invalid request method: "%s", expected: "%s" for url: "%s"', [$Request->getMethod(), $method, $RouteItem->getName()]);
         }
-        
+
         $this->errors = null;
-        
+
         $parsed_query_parameters = $this->validateQuery($RouteItem, $Request->getPath(), $Request->getQueryCollection()->toArray());
         $this->validateRoute(
             $RouteItem->getName(),
@@ -50,7 +50,7 @@ class RequestValidator implements Interfaces\RequestValidator
             $parsed_get_parameters,
             false
         );
-        
+
         $parsed_post_parameters = $this->validatePost($RouteItem, $Request->getPostCollection()->toArray());
         $this->validateRoute(
             $RouteItem->getName(),
@@ -73,10 +73,10 @@ class RequestValidator implements Interfaces\RequestValidator
     {
         foreach ($route_params as $name => $expression) {
             $msg = vsprintf('Invalid parameter: "%s" for route: "%s"', [$name, $route_name]);
-            if (isset($parsed_request_params[$name]) === false) {
+            if (array_key_exists($name, $parsed_request_params) === false) {
                 $this->errors[$name] = $msg;
             }
-            
+
             if ($throw) {
                 $this->assertIsArrayKey($name, $parsed_request_params, $msg, 'InvalidRoute');
             }
@@ -95,13 +95,13 @@ class RequestValidator implements Interfaces\RequestValidator
         try {
             $request_url = $RouteItem->getCleanUrl($request_url);
             $regex_url = $RouteItem->getCleanUrl($RouteItem->getUrl());
-    
+
             $parsed_query = [];
             $validators_for_query = $RouteItem->filterQueryKeys($get_data);
             if (is_array($validators_for_query)) {
                 $url_pattern = $RouteItem->replaceCurlyParametersWithRegex($regex_url, $validators_for_query);
                 $url_pattern = $this->regexCompleteAndValidate($RouteItem->getName(), $url_pattern);
-    
+
                 if (preg_match($url_pattern, $request_url, $params_tokens)) {
                     array_shift($params_tokens); //remove url
                     if (count($validators_for_query) === count($params_tokens)) {
@@ -109,7 +109,7 @@ class RequestValidator implements Interfaces\RequestValidator
                     }
                 }
             }
-    
+
             return $parsed_query;
         }
         catch (\Exception $e) {
@@ -137,12 +137,12 @@ class RequestValidator implements Interfaces\RequestValidator
                     }
                 }
             }
-    
+
             return $parsed_get;
         }
         catch (\Exception $e) {
            throw new Exception\RequestValidator($e);
-        }        
+        }
     }
 
     /**
@@ -154,20 +154,23 @@ class RequestValidator implements Interfaces\RequestValidator
     protected function validatePost(Config\Interfaces\ItemRouter $RouteItem, array $post_data)
     {
         try {
-            foreach ($post_data as $param_name => $pvalue) {
-                foreach ($RouteItem->getPostRegex() as $regex_name => $regex) {
-                    if (strcasecmp($param_name, $regex_name) !== 0) {
-                        continue;
-                    }
-
-                    $subject = $post_data[$param_name];
+            foreach ($RouteItem->getPostRegex() as $regex_name => $regex) {
+                if (array_key_exists($regex_name, $post_data)) {
+                    $subject = $post_data[$regex_name];
                     $pattern = $this->regexCompleteAndValidate($RouteItem->getName(), $regex);
                     if (preg_match($pattern, $subject, $params_tokens) === 0) {
-                        unset($post_data[$param_name]);  //remove invalid post
+                        unset($post_data[$regex_name]);  //remove invalid post
+                    }
+                }
+                else { //will it validate as optional (empty) value?
+                    $subject = '';
+                    $pattern = $this->regexCompleteAndValidate($RouteItem->getName(), $regex);
+                    if (preg_match($pattern, $subject, $params_tokens) !== 0) {
+                        $post_data[$regex_name] = null; //insert as empty value
                     }
                 }
             }
-
+            
             return $post_data;
         }
         catch (\Exception $e) {
