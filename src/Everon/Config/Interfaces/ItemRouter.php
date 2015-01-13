@@ -135,4 +135,14 @@ interface ItemRouter extends Item
      * @return boolean
      */
     function isSecure();
+
+    /**
+     * @param $allowed_tags
+     */
+    function setAllowedTags($allowed_tags);
+
+    /**
+     * @return string|null
+     */
+    function getAllowedTags();
 }

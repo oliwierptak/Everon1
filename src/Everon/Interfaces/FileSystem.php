@@ -87,7 +87,7 @@ interface FileSystem extends Dependency\Factory
     function delete($filename);
 
     /**
-     * @return \Everon\Interfaces\FileSystemTmpFile
+     * @return \Everon\\FileSystem\Interfaces\TmpFile
      */
     function createTmpFile();
 

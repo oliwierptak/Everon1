@@ -87,19 +87,18 @@ class Router implements Interfaces\Router
     public function validateAndUpdateRequestAndRouteItem(ItemRouter $RouteItem, Interfaces\Request $Request)
     {
         list($query, $get, $post) = $this->getRequestValidator()->validate($RouteItem, $Request);
-
+        
         $RouteItem->compileUrl($query);
 
-        $Request->setQueryCollection(
-            $this->arrayMergeDefault($Request->getQueryCollection()->toArray(), $query)
-        );
+        $query = $this->arrayMergeDefault($Request->getQueryCollection()->toArray(), $query);
+        $Request->setQueryCollection($query);
 
-        $Request->setGetCollection(
-            $this->arrayMergeDefault($Request->getGetCollection()->toArray(), $get)
-        );
-
+        $get = $this->arrayMergeDefault($Request->getGetCollection()->toArray(), $get);
+        $Request->setGetCollection($get);
+        
+        $post = $this->arrayMergeDefault($Request->getPostCollection()->toArray(), $post);
         $Request->setPostCollection(
-            $this->arrayMergeDefault($Request->getPostCollection()->toArray(), $post)
+            $post, $RouteItem->getAllowedTags()
         );
     }
     

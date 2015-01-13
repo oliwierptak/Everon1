@@ -34,6 +34,15 @@ class Response implements Interfaces\Response
     }
 
     /**
+     * @param $name
+     * @param $data
+     */
+    public function setDataValue($name, $data)
+    {
+        $this->data[$name] = $data;
+    }
+
+    /**
      * @return null
      */
     public function getData()

@@ -39,6 +39,5 @@ interface RequestValidator
     /**
      * @param $name
      */
-    public function removeError($name);
-    
+    function removeError($name);
 }
