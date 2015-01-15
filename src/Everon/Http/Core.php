@@ -81,8 +81,16 @@ class Core extends \Everon\Core implements \Everon\Interfaces\Core
     public function redirectAndTerminate($name, $query=[], $get=[])
     {
         $url = $this->getUrl($name, $query, $get);
-        $this->getResponse()->setHeader('location', $url);
-        $this->getResponse()->send();
+        if ($this->getRequest()->isAjax()) {
+            $this->getResponse()->setDataValue('redirect', $url);
+            $this->getResponse()->send();
+            echo $this->getResponse()->toJson();
+        }
+        else {
+            $this->getResponse()->setHeader('location', $url);
+            $this->getResponse()->send();
+        }
+        
         $this->shutdown();
         $this->terminate();
     }
