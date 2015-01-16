@@ -36,6 +36,7 @@ abstract class Handler implements Interfaces\Handler
     protected function initModules()
     {
         $path_list = $this->getPathsOfActiveModules();
+
         /**
          * @var \DirectoryIterator $Dir
          */
