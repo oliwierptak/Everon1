@@ -341,7 +341,6 @@ abstract class AbstractView implements Interfaces\View
                 }
                 
                 $path = $ConfigItem->getValueByName('path');
-                
                 $url = $url_static;
                 if (substr($path, 0, strlen('//shared')) === '//shared') {
                     $url = $url_shared;
@@ -368,7 +367,14 @@ abstract class AbstractView implements Interfaces\View
                 if ($ConfigItem === null) {
                     throw new Exception\View('Invalid minify resource name: "%s"', $resource_name);
                 }
+                
                 $path = $ConfigItem->getValueByName('path');
+                $url = $url_static;
+                if (substr($path, 0, strlen('//shared')) === '//shared') {
+                    $url = $url_shared;
+                    $path = str_replace('//shared', '', $path);
+                }
+
                 $tmp_files = $ConfigItem->getValueByName('files');
                 $minify = (bool) $ConfigItem->getValueByName('minify');
                 if ($minify === false) {
