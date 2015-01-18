@@ -329,7 +329,8 @@ abstract class AbstractView implements Interfaces\View
         }
         
         $Config = $this->getConfigManager()->getConfigByName('minify');
-        $url = $this->getConfigManager()->getConfigValue('application.static.url_min'); //xxx
+        $url_static = $this->getConfigManager()->getConfigValue('application.static.url_min');
+        $url_shared = $this->getConfigManager()->getConfigValue('application.media_storage.shared_url');
         
         foreach ($this->resources_js as $name => $items_to_minify) {
             $files = [];
@@ -338,7 +339,14 @@ abstract class AbstractView implements Interfaces\View
                 if ($ConfigItem === null) {
                     throw new Exception\View('Invalid minify resource name: "%s"', $resource_name);
                 }
+                
                 $path = $ConfigItem->getValueByName('path');
+                $url = $url_static;
+                if (substr($path, 0, strlen('//shared')) === '//shared') {
+                    $url = $url_shared;
+                    $path = str_replace('//shared', '', $path);
+                }
+                
                 $tmp_files = $ConfigItem->getValueByName('files');
                 $minify = (bool) $ConfigItem->getValueByName('minify');
                 if ($minify === false) {
@@ -359,7 +367,14 @@ abstract class AbstractView implements Interfaces\View
                 if ($ConfigItem === null) {
                     throw new Exception\View('Invalid minify resource name: "%s"', $resource_name);
                 }
+                
                 $path = $ConfigItem->getValueByName('path');
+                $url = $url_static;
+                if (substr($path, 0, strlen('//shared')) === '//shared') {
+                    $url = $url_shared;
+                    $path = str_replace('//shared', '', $path);
+                }
+
                 $tmp_files = $ConfigItem->getValueByName('files');
                 $minify = (bool) $ConfigItem->getValueByName('minify');
                 if ($minify === false) {
