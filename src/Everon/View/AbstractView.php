@@ -315,6 +315,10 @@ abstract class AbstractView implements Interfaces\View
 
     protected function appendFilePaths($tmp_files, $url)
     {
+        if (trim($url) === '' || is_array($tmp_files) === false) {
+            return $tmp_files;
+        }
+        
         array_walk($tmp_files, function(&$item) use ($url){
             $item =  $url.$item;
         });
@@ -346,6 +350,10 @@ abstract class AbstractView implements Interfaces\View
                     $url = $url_shared;
                     $path = str_replace('//shared', '', $path);
                 }
+                else if (substr($path, 0, strlen('//')) === '//') {
+                    $url = '';
+                    $path = '';
+                }
                 
                 $tmp_files = $ConfigItem->getValueByName('files');
                 $minify = (bool) $ConfigItem->getValueByName('minify');
@@ -373,6 +381,10 @@ abstract class AbstractView implements Interfaces\View
                 if (substr($path, 0, strlen('//shared')) === '//shared') {
                     $url = $url_shared;
                     $path = str_replace('//shared', '', $path);
+                }
+                else if (substr($path, 0, strlen('//')) === '//') {
+                    $url = '';
+                    $path = '';
                 }
 
                 $tmp_files = $ConfigItem->getValueByName('files');
