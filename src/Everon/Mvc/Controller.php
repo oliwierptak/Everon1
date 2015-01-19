@@ -80,10 +80,9 @@ abstract class Controller extends Http\Controller implements Mvc\Interfaces\Cont
 
         if ($result) {
             $ActionTemplate = $this->getView()->getTemplate($action, $data);
-            if ($ActionTemplate !== null) {
+            if ($ActionTemplate !== null && $this->is_redirecting === false) {
                 $this->getView()->setContainer($ActionTemplate);
                 $Layout->set('body', $this->getView());
-
                 $Layout->set('flash_message', $this->getFlashMessage());
                 $this->resetFlashMessage();
             }
