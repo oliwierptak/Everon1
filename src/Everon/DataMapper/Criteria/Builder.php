@@ -199,18 +199,24 @@ class Builder implements Interfaces\Criteria\Builder
         
         return $this;
     }
-    
-    public function andWhereRaw($sql)
+
+    /**
+     * @inheritdoc
+     */
+    public function andWhereRaw($sql, $value = null)
     {
-        $Criterium = $this->getFactory()->buildCriteriaCriterium($sql, 'raw', null);
+        $Criterium = $this->getFactory()->buildCriteriaCriterium($sql, 'raw', $value);
         $this->getCurrentContainer()->getCriteria()->andWhere($Criterium);
         $this->getCurrentContainer()->glueByAnd();
         return $this;
     }
 
-    public function orWhereRaw($sql)
+    /**
+     * @inheritdoc
+     */
+    public function orWhereRaw($sql, $value = null)
     {
-        $Criterium = $this->getFactory()->buildCriteriaCriterium($sql, 'raw', null);
+        $Criterium = $this->getFactory()->buildCriteriaCriterium($sql, 'raw', $value);
         $this->getCurrentContainer()->getCriteria()->orWhere($Criterium);
         $this->getCurrentContainer()->glueByOr();
         return $this;
@@ -447,7 +453,7 @@ class Builder implements Interfaces\Criteria\Builder
     }
 
     /**
-     * @param \Everon\Interfaces\Collection $ContainerCollectionToMerge
+     * @inheritdoc
      */
     public function appendContainerCollection(\Everon\Interfaces\Collection $ContainerCollectionToMerge, $glue=self::GLUE_AND)
     {
