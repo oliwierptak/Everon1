@@ -9,6 +9,7 @@
  */
 namespace Everon\DataMapper\Criteria\Operator;
 
+use Everon\DataMapper\Criteria\Builder;
 use Everon\DataMapper\Interfaces;
 
 class Raw extends \Everon\DataMapper\Criteria\Operator implements Interfaces\Criteria\Operator
@@ -26,6 +27,6 @@ class Raw extends \Everon\DataMapper\Criteria\Operator implements Interfaces\Cri
     public function toSqlPartData(Interfaces\Criteria\Criterium $Criterium)
     {
         $sql = sprintf("%s", $Criterium->getColumn());
-        return [$sql, []];
+        return [$sql, $Criterium->getValue() ?: []];
     }
 }
