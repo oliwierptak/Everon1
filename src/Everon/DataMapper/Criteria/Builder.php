@@ -143,14 +143,14 @@ class Builder implements Interfaces\Criteria\Builder
     /**
      * @inheritdoc
      */
-    public function where($column, $operator, $value)
+    public function where($column, $operator, $value, $glue = self::GLUE_AND)
     {
         $this->current++;
         $Criterium = $this->getFactory()->buildCriteriaCriterium($column, $operator, $value);
         $this->getCurrentContainer()->getCriteria()->where($Criterium);
-        
+
         if ($this->current > 0) {
-            $this->getCurrentContainer()->glueByAnd();
+            $this->getCurrentContainer()->setGlue($glue);
         }
         else {
             $this->getCurrentContainer()->resetGlue();
@@ -184,14 +184,14 @@ class Builder implements Interfaces\Criteria\Builder
     /**
      * @inheritdoc
      */
-    public function whereRaw($sql, $value = null)
+    public function whereRaw($sql, $value = null, $glue = \Everon\DataMapper\Criteria\Builder::GLUE_AND)
     {
         $this->current++;
-        $Criterium = $this->getFactory()->buildCriteriaCriterium($sql, 'raw', $value);
+        $Criterium = $this->getFactory()->buildCriteriaCriterium($sql, 'raw', null);
         $this->getCurrentContainer()->getCriteria()->where($Criterium);
 
         if ($this->current > 0) {
-            $this->getCurrentContainer()->glueByAnd();
+            $this->getCurrentContainer()->setGlue($glue);
         }
         else {
             $this->getCurrentContainer()->resetGlue();

@@ -19,9 +19,10 @@ interface Builder extends \Everon\Interfaces\Arrayable, \Everon\Interfaces\Strin
      * @param $column
      * @param $operator
      * @param $value
+     * @param $glue
      * @return $this
      */
-    function where($column, $operator, $value);
+    function where($column, $operator, $value, $glue = \Everon\DataMapper\Criteria\Builder::GLUE_AND);
         
     /**
      * Appends to current subquery
@@ -46,9 +47,10 @@ interface Builder extends \Everon\Interfaces\Arrayable, \Everon\Interfaces\Strin
     /**
      * @param $sql
      * @param null $value
+     * @param $glue
      * @return $this
      */
-    function whereRaw($sql, $value = null);
+    function whereRaw($sql, $value = null, $glue = \Everon\DataMapper\Criteria\Builder::GLUE_AND);
 
     /**
      * @param $sql
