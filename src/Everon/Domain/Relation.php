@@ -301,11 +301,7 @@ abstract class Relation implements Interfaces\Relation
      */
     public function getData(DataMapper\Interfaces\Criteria\Builder $CriteriaBuilder=null)
     {
-        if ($CriteriaBuilder !== null) {
-            $this->reset();
-        }
-
-        if ($this->loaded) {
+        if ($this->loaded && $CriteriaBuilder === null) {
             return $this->Data;
         }
 
@@ -361,7 +357,7 @@ abstract class Relation implements Interfaces\Relation
      */
     public function getCount(DataMapper\Interfaces\Criteria\Builder $CriteriaBuilder=null)
     {
-        if ($this->loaded) {
+        if ($this->loaded && $CriteriaBuilder === null) {
             return $this->count;
         }
         
