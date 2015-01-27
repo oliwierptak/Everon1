@@ -187,7 +187,7 @@ class Builder implements Interfaces\Criteria\Builder
     public function whereRaw($sql, $value = null, $glue = \Everon\DataMapper\Criteria\Builder::GLUE_AND)
     {
         $this->current++;
-        $Criterium = $this->getFactory()->buildCriteriaCriterium($sql, 'raw', null);
+        $Criterium = $this->getFactory()->buildCriteriaCriterium($sql, 'raw', $value);
         $this->getCurrentContainer()->getCriteria()->where($Criterium);
 
         if ($this->current > 0) {
