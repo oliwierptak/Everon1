@@ -45,9 +45,10 @@ interface Builder extends \Everon\Interfaces\Arrayable, \Everon\Interfaces\Strin
 
     /**
      * @param $sql
+     * @param null $value
      * @return $this
      */
-    function whereRaw($sql);
+    function whereRaw($sql, $value = null);
 
     /**
      * @param $sql

@@ -184,10 +184,10 @@ class Builder implements Interfaces\Criteria\Builder
     /**
      * @inheritdoc
      */
-    public function whereRaw($sql)
+    public function whereRaw($sql, $value = null)
     {
         $this->current++;
-        $Criterium = $this->getFactory()->buildCriteriaCriterium($sql, 'raw', null);
+        $Criterium = $this->getFactory()->buildCriteriaCriterium($sql, 'raw', $value);
         $this->getCurrentContainer()->getCriteria()->where($Criterium);
 
         if ($this->current > 0) {
