@@ -126,7 +126,7 @@ interface Relation extends \Everon\Interfaces\Arrayable, Dependency\DomainManage
     /**
      * @return array
      */
-    function getMany();
+    function getMany($CriteriaBuilder = null);
 
     function reset();
 }

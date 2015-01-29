@@ -143,17 +143,17 @@ class Builder implements Interfaces\Criteria\Builder
     /**
      * @inheritdoc
      */
-    public function where($column, $operator, $value)
+    public function where($column, $operator, $value, $glue = self::GLUE_AND)
     {
         $this->current++;
         $Criterium = $this->getFactory()->buildCriteriaCriterium($column, $operator, $value);
         $this->getCurrentContainer()->getCriteria()->where($Criterium);
-        
+
         if ($this->current > 0) {
-            $this->getCurrentContainer()->glueByAnd();
+            $this->getCurrentContainer()->setGlue($glue);
         }
         else {
-            $this->getCurrentContainer()->resetGlue();
+            $this->getCurrentContainer()->resetGlue(); //reset glue for first item
         }
         
         return $this;
@@ -165,8 +165,14 @@ class Builder implements Interfaces\Criteria\Builder
     public function andWhere($column, $operator, $value)
     {
         $Criterium = $this->getFactory()->buildCriteriaCriterium($column, $operator, $value);
-        $this->getCurrentContainer()->getCriteria()->andWhere($Criterium);
-        $this->getCurrentContainer()->glueByAnd();
+        if ($this->current < 0) {
+            $this->where($column, $operator, $value);
+        }
+        else {
+            $this->getCurrentContainer()->getCriteria()->andWhere($Criterium);
+            $this->getCurrentContainer()->glueByAnd();
+        }
+        
         return $this;
     }
 
@@ -176,43 +182,65 @@ class Builder implements Interfaces\Criteria\Builder
     public function orWhere($column, $operator, $value)
     {
         $Criterium = $this->getFactory()->buildCriteriaCriterium($column, $operator, $value);
-        $this->getCurrentContainer()->getCriteria()->orWhere($Criterium);
-        $this->getCurrentContainer()->glueByOr();
+        if ($this->current < 0) {
+            $this->where($column, $operator, $value);
+        }
+        else {
+            $this->getCurrentContainer()->getCriteria()->orWhere($Criterium);
+            $this->getCurrentContainer()->glueByOr();
+        }
+        
         return $this;
     }
 
     /**
      * @inheritdoc
      */
-    public function whereRaw($sql)
+    public function whereRaw($sql, $value = null, $glue = \Everon\DataMapper\Criteria\Builder::GLUE_AND)
     {
         $this->current++;
-        $Criterium = $this->getFactory()->buildCriteriaCriterium($sql, 'raw', null);
+        $Criterium = $this->getFactory()->buildCriteriaCriterium($sql, 'raw', $value);
         $this->getCurrentContainer()->getCriteria()->where($Criterium);
 
         if ($this->current > 0) {
-            $this->getCurrentContainer()->glueByAnd();
+            $this->getCurrentContainer()->setGlue($glue);
         }
         else {
-            $this->getCurrentContainer()->resetGlue();
+            $this->getCurrentContainer()->resetGlue(); //reset glue for first item
         }
         
         return $this;
     }
-    
-    public function andWhereRaw($sql)
+
+    /**
+     * @inheritdoc
+     */
+    public function andWhereRaw($sql, $value = null)
     {
-        $Criterium = $this->getFactory()->buildCriteriaCriterium($sql, 'raw', null);
-        $this->getCurrentContainer()->getCriteria()->andWhere($Criterium);
-        $this->getCurrentContainer()->glueByAnd();
+        $Criterium = $this->getFactory()->buildCriteriaCriterium($sql, 'raw', $value);
+        if ($this->current < 0) {
+            $this->where($sql, 'raw', $value);
+        }
+        else {
+            $this->getCurrentContainer()->getCriteria()->andWhere($Criterium);
+            $this->getCurrentContainer()->glueByAnd();
+        }
         return $this;
     }
 
-    public function orWhereRaw($sql)
+    /**
+     * @inheritdoc
+     */
+    public function orWhereRaw($sql, $value = null)
     {
-        $Criterium = $this->getFactory()->buildCriteriaCriterium($sql, 'raw', null);
-        $this->getCurrentContainer()->getCriteria()->orWhere($Criterium);
-        $this->getCurrentContainer()->glueByOr();
+        $Criterium = $this->getFactory()->buildCriteriaCriterium($sql, 'raw', $value);
+        if ($this->current < 0) {
+            $this->where($sql, 'raw', $value);
+        }
+        else {
+            $this->getCurrentContainer()->getCriteria()->orWhere($Criterium);
+            $this->getCurrentContainer()->glueByOr();
+        }
         return $this;
     }
     
@@ -447,7 +475,7 @@ class Builder implements Interfaces\Criteria\Builder
     }
 
     /**
-     * @param \Everon\Interfaces\Collection $ContainerCollectionToMerge
+     * @inheritdoc
      */
     public function appendContainerCollection(\Everon\Interfaces\Collection $ContainerCollectionToMerge, $glue=self::GLUE_AND)
     {

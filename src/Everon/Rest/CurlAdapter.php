@@ -62,7 +62,7 @@ class CurlAdapter implements Interfaces\CurlAdapter
             $this->http_response_code = (int) curl_getinfo($curl, CURLINFO_HTTP_CODE);
             if ($this->http_response_code !== 200 && $this->http_response_code !== 201 && $this->http_response_code !== 204) {
                 $error = json_decode($response, true);
-                $str = $error['data']['error'];
+                $str = @$error['data']['error'];
                 throw new Exception\Resource($str);
             }
             

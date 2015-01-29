@@ -19,9 +19,10 @@ interface Builder extends \Everon\Interfaces\Arrayable, \Everon\Interfaces\Strin
      * @param $column
      * @param $operator
      * @param $value
+     * @param $glue
      * @return $this
      */
-    function where($column, $operator, $value);
+    function where($column, $operator, $value, $glue = \Everon\DataMapper\Criteria\Builder::GLUE_AND);
         
     /**
      * Appends to current subquery
@@ -45,21 +46,25 @@ interface Builder extends \Everon\Interfaces\Arrayable, \Everon\Interfaces\Strin
 
     /**
      * @param $sql
+     * @param null $value
+     * @param $glue
      * @return $this
      */
-    function whereRaw($sql);
+    function whereRaw($sql, $value = null, $glue = \Everon\DataMapper\Criteria\Builder::GLUE_AND);
 
     /**
      * @param $sql
+     * @param null $value
      * @return $this
      */
-    function andWhereRaw($sql);
+    function andWhereRaw($sql, $value = null);
 
     /**
      * @param $sql
+     * @param $value
      * @return $this
      */
-    function orWhereRaw($sql);
+    function orWhereRaw($sql, $value = null);
 
     /**
      * @return Interfaces\Criteria\Container
@@ -143,8 +148,9 @@ interface Builder extends \Everon\Interfaces\Arrayable, \Everon\Interfaces\Strin
 
     /**
      * @param \Everon\Interfaces\Collection $ContainerCollectionToMerge
+     * @param string $glue
      */
-    function appendContainerCollection(\Everon\Interfaces\Collection $ContainerCollectionToMerge);
+    function appendContainerCollection(\Everon\Interfaces\Collection $ContainerCollectionToMerge, $glue=\Everon\DataMapper\Criteria\Builder::GLUE_AND);
 
     /**
      * @param $operator
