@@ -18,7 +18,7 @@ use Everon\Helper;
  *
  * http://en.wikipedia.org/wiki/POJO
  */
-class Popo implements Interfaces\Arrayable
+class   Popo implements Interfaces\Arrayable
 {
     use Helper\ToArray;
     
