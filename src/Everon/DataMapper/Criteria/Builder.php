@@ -170,7 +170,6 @@ class Builder implements Interfaces\Criteria\Builder
         }
         else {
             $this->getCurrentContainer()->getCriteria()->andWhere($Criterium);
-            $this->getCurrentContainer()->glueByAnd();
         }
         
         return $this;
@@ -187,7 +186,6 @@ class Builder implements Interfaces\Criteria\Builder
         }
         else {
             $this->getCurrentContainer()->getCriteria()->orWhere($Criterium);
-            $this->getCurrentContainer()->glueByOr();
         }
         
         return $this;
@@ -223,7 +221,6 @@ class Builder implements Interfaces\Criteria\Builder
         }
         else {
             $this->getCurrentContainer()->getCriteria()->andWhere($Criterium);
-            $this->getCurrentContainer()->glueByAnd();
         }
         return $this;
     }
@@ -239,7 +236,6 @@ class Builder implements Interfaces\Criteria\Builder
         }
         else {
             $this->getCurrentContainer()->getCriteria()->orWhere($Criterium);
-            $this->getCurrentContainer()->glueByOr();
         }
         return $this;
     }
