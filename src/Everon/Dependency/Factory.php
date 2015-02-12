@@ -16,7 +16,7 @@ trait Factory
     /**
      * @var \Everon\Application\Interfaces\Factory
      */
-    protected $Factory = null;
+    protected static $Factory = null;
 
 
     /**
@@ -24,7 +24,7 @@ trait Factory
      */
     public function getFactory()
     {
-        return $this->Factory;
+        return static::$Factory;
     }
 
     /**
@@ -32,12 +32,12 @@ trait Factory
      */
     public function setFactory(\Everon\Application\Interfaces\Factory $Factory)
     {
-        $this->Factory = $Factory;
+        static::$Factory = $Factory;
     }
 
     public function unsetFactory()
     {
-        $this->Factory = null;
+        static::$Factory = null;
     }
 
 }

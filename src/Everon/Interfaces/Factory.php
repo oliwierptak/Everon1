@@ -607,13 +607,6 @@ interface Factory
     function buildView($class_name, $template_directory, $default_extension, $namespace='Everon\View');
 
     /**
-     * @param Interfaces\FileSystem $FileSystem
-     * @return View\Interfaces\Cache
-     * @throws Exception\Factory
-     */
-    function buildViewCache(Interfaces\FileSystem $FileSystem);
-
-    /**
      * @param Config\Interfaces\ItemRouter $RouteItem
      * @param string $namespace
      * @return View\Interfaces\Form

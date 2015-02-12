@@ -90,7 +90,7 @@ abstract class Column implements Interfaces\Schema\Column
      */
     public function __construct(\Everon\Interfaces\Factory $Factory, $ColumnValidators, $database_timezone, array $data, $is_pk, $is_unique)
     {
-        $this->Factory = $Factory;
+        static::$Factory = $Factory;
         $this->ColumnValidators = $ColumnValidators;
         $this->database_timezone = $database_timezone;
         $this->ColumnInfo = new Helper\PopoProps($data);
@@ -475,18 +475,5 @@ abstract class Column implements Interfaces\Schema\Column
                 return $value;
                 break;
         }
-    }
-
-    public function __sleep()
-    {
-        $vars = get_object_vars($this);
-        unset($vars['Factory']);
-        $data = array_keys($vars);
-        return $data;
-    }
-    
-    public function __wakeup()
-    {
-        $this->Factory = @$GLOBALS['EVERON_FACTORY']; //xxx meh
     }
 }

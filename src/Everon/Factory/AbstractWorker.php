@@ -21,6 +21,6 @@ abstract class AbstractWorker implements Interfaces\FactoryWorker
     
     public function __construct(Application\Interfaces\Factory $Factory)
     {
-        $this->Factory = $Factory;
+        static::$Factory = $Factory;
     }
 }

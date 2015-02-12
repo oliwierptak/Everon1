@@ -27,7 +27,7 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @var Interfaces\DependencyContainer
      */
-    protected $DependencyContainer = null;
+    protected static $DependencyContainer = null;
 
 
     /**
@@ -47,7 +47,7 @@ abstract class Factory implements Interfaces\Factory
      */
     public function __construct(Interfaces\DependencyContainer $Container)
     {
-        $this->DependencyContainer = $Container;
+        static::$DependencyContainer = $Container;
     }
 
     /**
@@ -55,7 +55,7 @@ abstract class Factory implements Interfaces\Factory
      */
     public function getDependencyContainer()
     {
-        return $this->DependencyContainer;
+        return static::$DependencyContainer;
     }
 
     /**
@@ -63,7 +63,7 @@ abstract class Factory implements Interfaces\Factory
      */
     public function setDependencyContainer(Interfaces\DependencyContainer $Container)
     {
-        $this->DependencyContainer = $Container;
+        static::$DependencyContainer = $Container;
     }
 
     /**
@@ -452,23 +452,6 @@ abstract class Factory implements Interfaces\Factory
         }
         catch (\Exception $e) {
             throw new Exception\Factory('View: "%s" initialization error', $class_name, $e);
-        }
-    }
-
-    /**
-     * @param Interfaces\FileSystem $FileSystem
-     * @return View\Interfaces\Cache
-     * @throws Exception\Factory
-     */
-    public function buildViewCache(Interfaces\FileSystem $FileSystem)
-    {
-        try {
-            $ViewCache = new View\Cache($FileSystem);
-            $this->injectDependencies('Everon\View\Cache', $ViewCache);
-            return $ViewCache;
-        }
-        catch (\Exception $e) {
-            throw new Exception\Factory('ViewCache initialization error', null, $e);
         }
     }
 
