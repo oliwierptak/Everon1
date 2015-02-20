@@ -15,7 +15,7 @@ interface ResourceNavigator extends Dependency\Request
     /**
      * @param array $expand
      */
-    function setExpand($expand);
+    function setExpand(array $expand);
 
     /**
      * @return array

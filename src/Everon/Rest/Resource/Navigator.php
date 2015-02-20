@@ -26,7 +26,7 @@ class Navigator implements Interfaces\ResourceNavigator
 
 
     /**
-     * @var string
+     * @var array
      */
     protected $expand = null;
 
@@ -128,7 +128,7 @@ class Navigator implements Interfaces\ResourceNavigator
     /**
      * @inheritdoc
      */
-    public function setExpand($expand)
+    public function setExpand(array $expand)
     {
         $this->expand = $expand;
     }
