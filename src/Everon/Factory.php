@@ -309,10 +309,11 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildRestApiKey($id, $secret)
+    public function buildRestApiKey($id, $secret, $namespace = 'Everon\Rest')
     {
         try {
-            $ApiKey = new Rest\ApiKey($id, $secret);
+            $class_name = $this->getFullClassName($namespace, 'ApiKey');
+            $ApiKey = new $class_name($id, $secret);
             $this->injectDependencies('Everon\Rest\ApiKey', $ApiKey);
             return $ApiKey;
         }

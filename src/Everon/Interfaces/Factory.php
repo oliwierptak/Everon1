@@ -172,10 +172,10 @@ interface Factory
     /**
      * @param $id
      * @param $secret
+     * @param string $namespace
      * @return Rest\ApiKey
-     * @throws Exception\Factory
      */
-    function buildRestApiKey($id, $secret);
+    function buildRestApiKey($id, $secret, $namespace = 'Everon\Rest');
 
     /**
      * Class name is based on filename from ConfigLoaderItem, eg. /var/www/.../Module/_Core/Config/router.ini
