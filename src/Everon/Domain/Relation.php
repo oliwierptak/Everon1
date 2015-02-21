@@ -162,7 +162,7 @@ abstract class Relation implements Interfaces\Relation
     }
 
     /**
-     * @return Domain\Interfaces\Entity
+     * @inheritdoc
      */
     public function getOwnerEntity()
     {
@@ -170,15 +170,15 @@ abstract class Relation implements Interfaces\Relation
     }
 
     /**
-     * @param Domain\Interfaces\Entity $Entity
+     * @inheritdoc
      */
     public function setOwnerEntity(Domain\Interfaces\Entity $Entity)
     {
         $this->OwnerEntity = $Entity;
     }
-
+    
     /**
-     * @return DataMapper\Interfaces\Criteria\Builder
+     * @inheritdoc
      */
     public function getCriteriaBuilder()
     {
@@ -190,8 +190,7 @@ abstract class Relation implements Interfaces\Relation
     }
 
     /**
-     * @param DataMapper\Interfaces\Criteria\Builder $CriteriaBuilder
-     * @return void
+     * @inheritdoc
      */
     public function setCriteriaBuilder(DataMapper\Interfaces\Criteria\Builder $CriteriaBuilder)
     {
@@ -207,8 +206,7 @@ abstract class Relation implements Interfaces\Relation
     }
 
     /**
-     * @param DataMapper\Interfaces\Criteria\Builder $RelationCriteriaBuilder
-     * @return void
+     * @inheritdoc
      */
     public function setEntityRelationCriteria(DataMapper\Interfaces\Criteria\Builder $RelationCriteriaBuilder)
     {
@@ -216,7 +214,7 @@ abstract class Relation implements Interfaces\Relation
     }
 
     /**
-     * @return \Everon\Interfaces\DataMapper
+     * @inheritdoc
      */
     public function getDataMapper()
     {
@@ -224,7 +222,7 @@ abstract class Relation implements Interfaces\Relation
     }
 
     /**
-     * @param \Everon\Interfaces\DataMapper $DataMapper
+     * @inheritdoc
      */
     public function setDataMapper(\Everon\Interfaces\DataMapper $DataMapper)
     {
@@ -232,7 +230,7 @@ abstract class Relation implements Interfaces\Relation
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
     public function getName()
     {
@@ -240,7 +238,7 @@ abstract class Relation implements Interfaces\Relation
     }
 
     /**
-     * @param string $name
+     * @inheritdoc
      */
     public function setName($name)
     {
@@ -248,7 +246,7 @@ abstract class Relation implements Interfaces\Relation
     }
 
     /**
-     * @return Domain\Interfaces\Repository
+     * @inheritdoc
      */
     public function getRepository()
     {
@@ -256,7 +254,7 @@ abstract class Relation implements Interfaces\Relation
     }
 
     /**
-     * @return string
+     * @inheritdoc
      */
     public function getType()
     {
@@ -264,7 +262,7 @@ abstract class Relation implements Interfaces\Relation
     }
 
     /**
-     * @param string $type
+     * @inheritdoc
      */
     public function setType($type)
     {
@@ -272,7 +270,7 @@ abstract class Relation implements Interfaces\Relation
     }
 
     /**
-     * @param \Everon\Domain\Interfaces\RelationMapper $RelationMapper
+     * @inheritdoc
      */
     public function setRelationMapper(Domain\Interfaces\RelationMapper $RelationMapper)
     {
@@ -280,7 +278,7 @@ abstract class Relation implements Interfaces\Relation
     }
 
     /**
-     * @return \Everon\Domain\Interfaces\RelationMapper
+     * @inheritdoc
      */
     public function getRelationMapper()
     {
@@ -288,7 +286,7 @@ abstract class Relation implements Interfaces\Relation
     }
     
     /**
-     * @param \Everon\Interfaces\Collection $Collection
+     * @inheritdoc
      */
     public function setData(\Everon\Interfaces\Collection $Collection)
     {
@@ -385,6 +383,9 @@ abstract class Relation implements Interfaces\Relation
         return $this->count;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function setOne(Domain\Interfaces\Entity $Entity)
     {
         $this->loaded = true;
@@ -392,7 +393,7 @@ abstract class Relation implements Interfaces\Relation
     }
 
     /**
-     * @return Domain\Interfaces\Entity
+     * @inheritdoc
      */
     public function getOne()
     {
@@ -409,7 +410,7 @@ abstract class Relation implements Interfaces\Relation
     }
 
     /**
-     * @param array $data
+     * @inheritdoc
      */
     public function setMany(array $data)
     {
@@ -418,7 +419,7 @@ abstract class Relation implements Interfaces\Relation
     }
 
     /**
-     * @return array
+     * @inheritdoc
      */
     public function getMany($CriteriaBuilder = null)
     {
