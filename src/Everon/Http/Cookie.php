@@ -56,13 +56,18 @@ class Cookie implements Interfaces\Cookie
      */
     protected $use_json = false;
 
+    /**
+     * @var bool
+     */
+    protected $is_existing = true;
+
 
     /**
      * @param $name
      * @param mixed $value if json string or array is used, the $use_json will be set to true
      * @param mixed $expire_date int as in 'time()' or string as in '+15 minutes'
      */
-    function __construct($name, $value, $expire_date)
+    public function __construct($name, $value, $expire_date)
     {
         $this->name = $name;
         $this->value = $value;
@@ -269,6 +274,22 @@ class Cookie implements Interfaces\Cookie
     public function isJsonEnabled()
     {
         return $this->use_json;
+    }
+
+    /**
+     * @param boolean $existing
+     */
+    public function setIsExisting($existing)
+    {
+        $this->is_existing = $existing;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isExisting()
+    {
+        return $this->is_existing;
     }
     
 }

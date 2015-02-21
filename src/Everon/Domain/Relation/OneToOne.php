@@ -52,7 +52,7 @@ class OneToOne extends Domain\Relation implements Domain\Interfaces\Relation
          */
         if ($this->getRelationMapper()->isOwningSide() === false) {
             if (array_key_exists($this->getRelationMapper()->getInversedBy(), $this->getDataMapper()->getTable()->getForeignKeys()) === false) {
-                throw new \Everon\Exception\Domain('Invalid OneToOne owning relation property "inversed_by" for: "%s@%s', [$this->getName(), $this->getRelationMapper()->getInversedBy()]);
+                throw new \Everon\Exception\Domain('Invalid OneToOne owning relation property "inversed_by" for: "%s@%s" in: "%s"', [$this->getName(), $this->getRelationMapper()->getInversedBy(), $this->getOwnerEntity()->getDomainName()]);
             }
 
             $ForeignKey = $this->getDataMapper()->getTable()->getForeignKeys()[$this->getRelationMapper()->getInversedBy()];
@@ -63,7 +63,7 @@ class OneToOne extends Domain\Relation implements Domain\Interfaces\Relation
         } 
         else {
             if (array_key_exists($this->getRelationMapper()->getMappedBy(), $Repository->getMapper()->getTable()->getForeignKeys()) === false) {
-                throw new \Everon\Exception\Domain('Invalid OneToOne inversed relation property "mapped_by" for: "%s@%s', [$this->getName(), $this->getRelationMapper()->getMappedBy()]);
+                throw new \Everon\Exception\Domain('Invalid OneToOne inversed relation property "mapped_by" for: "%s@%s" in: "%s"', [$this->getName(), $this->getRelationMapper()->getMappedBy(), $this->getOwnerEntity()->getDomainName()]);
             }
 
             $ForeignKey = $Repository->getMapper()->getTable()->getForeignKeys()[$this->getRelationMapper()->getMappedBy()];

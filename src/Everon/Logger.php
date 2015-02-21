@@ -142,8 +142,9 @@ class Logger implements Interfaces\Logger
         $size = intval($size / 1024);
         
         //reset the log file if its size exceeded 512 KB
-        if ($size > 512) { //KB, todo: read it from config
+        if ($size > 1) { //KB, todo: read it from config
             $h = fopen($Filename->getPathname(), 'w');
+            fwrite($h, '');
             fclose($h);
         }
     }
@@ -237,6 +238,21 @@ class Logger implements Interfaces\Logger
     public function log($log_name, $message, array $parameters=[])
     {
         return $this->write($message, $log_name, $parameters);
+    }
+
+    /**
+     * @param $log_name
+     */
+    public function logReset($log_name)
+    {
+        try {
+            $Filename = $this->getFilenameByLevel($log_name);
+            $h = fopen($Filename->getPathname(), 'w');
+            fwrite($h, '');
+            fclose($h);            
+        }
+        catch (\Exception $e) {
+        }
     }
 
     /**

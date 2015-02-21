@@ -61,12 +61,16 @@ class Response extends BasicResponse implements Interfaces\Response
     protected function sendHeaders()
     {
         http_response_code($this->status_code);
-        $this->HeaderCollection->set('EVERON_ID', $this->guid); //todo make configurable
-
+        $this->HeaderCollection->set('EVRID', $this->guid); //todo make configurable
+        
         /**
          * @var \Everon\Http\Interfaces\Cookie $Cookie
          */     
         foreach ($this->CookieCollection as $name => $Cookie) {
+            if ($Cookie->isExisting()) {
+                continue;
+            }
+            
             setcookie(
                 $Cookie->getName(),
                 $Cookie->isJsonEnabled() ? $Cookie->getValueAsJson() : $Cookie->getValue(),
@@ -111,6 +115,7 @@ class Response extends BasicResponse implements Interfaces\Response
      */
     public function setCookie(Interfaces\Cookie $Cookie)
     {
+        $Cookie->setIsExisting(false); //if exisitng = true it won't be set again, probably imported here via $_COOKIE
         $this->CookieCollection->set($Cookie->getName(), $Cookie);
     }
 

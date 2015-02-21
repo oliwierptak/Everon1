@@ -60,6 +60,11 @@ interface Logger
     function log($log_name, $message, array $parameters=[]);
 
     /**
+     * @param $log_name
+     */
+    function logReset($log_name);
+
+    /**
      * @param \Exception $Message
      * @param array $parameters
      * @return \DateTime

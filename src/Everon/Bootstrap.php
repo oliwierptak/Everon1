@@ -224,7 +224,7 @@ class Bootstrap implements \Everon\Interfaces\Bootstrap
             
             if (php_sapi_name() !== 'cli' || headers_sent() === false) {
                 http_response_code(500);
-                header("EVERON_ID: $guid_value");
+                header("EVRID: $guid_value");
             }
         });
     }
