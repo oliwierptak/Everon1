@@ -406,8 +406,12 @@ EOF;
      */
     public function unRegister($name)
     {
-        @$this->configs[$name] = null;
-        unset($this->configs[$name]);
+        try {
+            unset($this->configs[$name]);
+        }
+        catch (\Exception $e) {
+            
+        }
     }
 
     /**
