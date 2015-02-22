@@ -233,7 +233,7 @@ class Navigator implements Interfaces\ResourceNavigator
     public function toCriteria($resource_name)
     {
         $this->init();
-
+        
         $column = null;
         $CriteriaBuilder = $this->getFactory()->buildCriteriaBuilder();
 

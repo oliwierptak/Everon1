@@ -46,11 +46,11 @@ interface Builder extends \Everon\Interfaces\Arrayable, \Everon\Interfaces\Strin
 
     /**
      * @param $sql
-     * @param null $value
-     * @param $glue
+     * @param array|null $value
+     * @param string $glue
      * @return $this
      */
-    function whereRaw($sql, $value = null, $glue = \Everon\DataMapper\Criteria\Builder::GLUE_AND);
+    function whereRaw($sql, array $value = null, $glue = \Everon\DataMapper\Criteria\Builder::GLUE_AND);
 
     /**
      * @param $sql
