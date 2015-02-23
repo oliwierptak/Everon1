@@ -309,10 +309,11 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildRestApiKey($id, $secret)
+    public function buildRestApiKey($id, $secret, $namespace = 'Everon\Rest')
     {
         try {
-            $ApiKey = new Rest\ApiKey($id, $secret);
+            $class_name = $this->getFullClassName($namespace, 'ApiKey');
+            $ApiKey = new $class_name($id, $secret);
             $this->injectDependencies('Everon\Rest\ApiKey', $ApiKey);
             return $ApiKey;
         }
@@ -1186,9 +1187,13 @@ abstract class Factory implements Interfaces\Factory
     public function buildHttpCookie($name, $value, $expire_date, $namespace='Everon\Http')
     {
         try {
+            /**
+             * @var \Everon\Http\Interfaces\Cookie $Cookie
+             */
             $class_name = $this->getFullClassName($namespace, 'Cookie');
             $this->classExists($class_name);
             $Cookie = new $class_name($name, $value, $expire_date);
+            $Cookie->setDomain(ini_get('session.cookie_domain'));
             $this->injectDependencies($class_name, $Cookie);
             return $Cookie;
         }

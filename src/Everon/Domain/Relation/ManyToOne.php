@@ -34,7 +34,7 @@ class ManyToOne extends Domain\Relation implements Domain\Interfaces\Relation
         $inversed_table = $this->getDataMapper()->getTable()->getFullName();
 
         if (array_key_exists($this->getRelationMapper()->getInversedBy(), $this->getDataMapper()->getTable()->getForeignKeys()) === false) {
-            throw new \Everon\Exception\Domain('Invalid relation "inversed_by" for: "%s@%s', [$this->getName(), $this->getRelationMapper()->getInversedBy()]);
+            throw new \Everon\Exception\Domain('Invalid relation "inversed_by" for: "%s@%s" in: "%s"', [$this->getName(), $this->getRelationMapper()->getInversedBy(), $this->getOwnerEntity()->getDomainName()]);
         }
 
         /**

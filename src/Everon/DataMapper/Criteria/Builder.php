@@ -170,7 +170,6 @@ class Builder implements Interfaces\Criteria\Builder
         }
         else {
             $this->getCurrentContainer()->getCriteria()->andWhere($Criterium);
-            $this->getCurrentContainer()->glueByAnd();
         }
         
         return $this;
@@ -187,7 +186,6 @@ class Builder implements Interfaces\Criteria\Builder
         }
         else {
             $this->getCurrentContainer()->getCriteria()->orWhere($Criterium);
-            $this->getCurrentContainer()->glueByOr();
         }
         
         return $this;
@@ -196,7 +194,7 @@ class Builder implements Interfaces\Criteria\Builder
     /**
      * @inheritdoc
      */
-    public function whereRaw($sql, $value = null, $glue = \Everon\DataMapper\Criteria\Builder::GLUE_AND)
+    public function whereRaw($sql, array $value = null, $glue = \Everon\DataMapper\Criteria\Builder::GLUE_AND)
     {
         $this->current++;
         $Criterium = $this->getFactory()->buildCriteriaCriterium($sql, 'raw', $value);
@@ -223,7 +221,6 @@ class Builder implements Interfaces\Criteria\Builder
         }
         else {
             $this->getCurrentContainer()->getCriteria()->andWhere($Criterium);
-            $this->getCurrentContainer()->glueByAnd();
         }
         return $this;
     }
@@ -239,7 +236,6 @@ class Builder implements Interfaces\Criteria\Builder
         }
         else {
             $this->getCurrentContainer()->getCriteria()->orWhere($Criterium);
-            $this->getCurrentContainer()->glueByOr();
         }
         return $this;
     }

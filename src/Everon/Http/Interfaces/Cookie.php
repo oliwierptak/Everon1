@@ -109,4 +109,14 @@ interface Cookie
      * @return boolean
      */
     function isSecure();
+
+    /**
+     * @param boolean $existing
+     */
+    function setIsExisting($existing);
+
+    /**
+     * @return boolean
+     */
+    function isExisting();
 }

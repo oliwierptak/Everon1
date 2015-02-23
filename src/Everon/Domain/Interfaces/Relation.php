@@ -31,7 +31,6 @@ interface Relation extends \Everon\Interfaces\Arrayable, Dependency\DomainManage
 
     /**
      * @param DataMapper\Interfaces\Criteria\Builder $CriteriaBuilder
-     * @return mixed
      */
      function setCriteriaBuilder(DataMapper\Interfaces\Criteria\Builder $CriteriaBuilder);
 
@@ -42,7 +41,6 @@ interface Relation extends \Everon\Interfaces\Arrayable, Dependency\DomainManage
 
     /**
      * @param DataMapper\Interfaces\Criteria\Builder $RelationCriteriaBuilder
-     * @return mixed
      */
      function setEntityRelationCriteria(DataMapper\Interfaces\Criteria\Builder $RelationCriteriaBuilder);
 
@@ -124,6 +122,7 @@ interface Relation extends \Everon\Interfaces\Arrayable, Dependency\DomainManage
     function setMany(array $data);
 
     /**
+     * @param null $CriteriaBuilder
      * @return array
      */
     function getMany($CriteriaBuilder = null);

@@ -255,11 +255,11 @@ class Handler implements Interfaces\ResourceHandler
              * @var \Everon\Domain\Interfaces\Relation $EntityRelation
              * @var \Everon\Domain\Interfaces\Entity $Entity
              */
-            $extra_expand = null;
+            $extra_expand_string = null;
             if (strpos($collection_name, '.') !== false) {
                 $tokens = explode('.', $collection_name); //eg. foo.bar.zzz
                 $collection_name = array_shift($tokens);
-                $extra_expand = implode('.', $tokens);
+                $extra_expand_string = implode('.', $tokens);
                 $Navigator->setExpand([$collection_name]);
             }
             
@@ -277,7 +277,7 @@ class Handler implements Interfaces\ResourceHandler
             
             $ResourceCollection = $Resource->getRelationCollectionByName($collection_name);
             
-            if ($extra_expand !== null && $ResourceCollection instanceof Interfaces\ResourceCollection) {
+            if ($extra_expand_string !== null && $ResourceCollection instanceof Interfaces\ResourceCollection) {
                 foreach ($ResourceCollection->getItemCollection() as $ResourceItemToExpand) { //DRY
                     $NavigatorToExpand = clone $Navigator;
                     //$NavigatorToExpand->setLimit($Paginator->getLimit());
@@ -285,7 +285,7 @@ class Handler implements Interfaces\ResourceHandler
                     $NavigatorToExpand->setLimit(self::DEFAULT_COLLECTION_SIZE);
                     $NavigatorToExpand->setOffset(0);
                     $NavigatorToExpand->setOrderBy([]);
-                    $NavigatorToExpand->setExpand([$extra_expand]);
+                    $NavigatorToExpand->setExpand([$extra_expand_string]);
                     $this->expandResource($ResourceItemToExpand, $NavigatorToExpand);
                 }
                 continue;
@@ -315,7 +315,7 @@ class Handler implements Interfaces\ResourceHandler
                 $ResourceCollection->set($a++, $Item);
             }
 
-            if ($extra_expand !== null) {
+            if ($extra_expand_string !== null) {
                 foreach ($ResourceCollection as $ResourceItemToExpand) { //DRY
                     $NavigatorToExpand = clone $Navigator;
                     //$NavigatorToExpand->setLimit($Paginator->getLimit());
@@ -323,7 +323,7 @@ class Handler implements Interfaces\ResourceHandler
                     $NavigatorToExpand->setLimit(self::DEFAULT_COLLECTION_SIZE);
                     $NavigatorToExpand->setOffset(0);
                     $NavigatorToExpand->setOrderBy([]);
-                    $NavigatorToExpand->setExpand([$extra_expand]);
+                    $NavigatorToExpand->setExpand([$extra_expand_string]);
                     $this->expandResource($ResourceItemToExpand, $NavigatorToExpand);
                 }
             }
