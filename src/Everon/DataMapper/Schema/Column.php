@@ -411,6 +411,9 @@ abstract class Column implements Interfaces\Schema\Column
                 break;
 
             case self::TYPE_JSON:
+                if (empty($value) && $this->isNullable()) {
+                    return null;
+                }
                 return json_encode($value);
                 break;
 
