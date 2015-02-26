@@ -414,6 +414,9 @@ abstract class Column implements Interfaces\Schema\Column
                 if (empty($value) && $this->isNullable()) {
                     return null;
                 }
+                if (empty($value)) {
+                    return '{}'; //fixes error SQLSTATE[22023]: Invalid parameter value: 7 ERROR: cannot extract field from a non-object
+                }
                 return json_encode($value);
                 break;
 
