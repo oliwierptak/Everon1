@@ -43,7 +43,7 @@ class Paginator implements Interfaces\Arrayable, \Everon\Interfaces\Paginator
     
     public function __construct($total, $offset, $limit)
     {
-        $this->total = (int) $total;
+        $this->setTotal($total);
         
         //order of execution matters, limit before offset
         $this->setLimit($limit);
@@ -109,7 +109,7 @@ class Paginator implements Interfaces\Arrayable, \Everon\Interfaces\Paginator
         }
 
         if ((int) $limit > $this->getTotal()) {
-            $limit = static::DEFAULT_LIMIT;
+            $limit = $this->getTotal();
         }
         
         $this->limit = (int) $limit;

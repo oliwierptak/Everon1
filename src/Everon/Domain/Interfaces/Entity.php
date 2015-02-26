@@ -12,6 +12,7 @@ namespace Everon\Domain\Interfaces;
 use Everon\Interfaces;
 use Everon\Interfaces\Collection;
 
+
 interface Entity extends Interfaces\Arrayable
 {
 
