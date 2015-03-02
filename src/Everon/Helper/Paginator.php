@@ -111,7 +111,11 @@ class Paginator implements Interfaces\Arrayable, \Everon\Interfaces\Paginator
         if ((int) $limit > $this->getTotal()) {
             $limit = $this->getTotal();
         }
-        
+
+        if ((int) $limit <= 0) {
+            $limit = static::DEFAULT_LIMIT;
+        }
+
         $this->limit = (int) $limit;
     }
 
