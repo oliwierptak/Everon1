@@ -31,7 +31,7 @@ class Handler implements Interfaces\ResourceHandler
     const VERSIONING_URL = 'url';
     const VERSIONING_HEADER = 'header';
     const ALPHA_ID_SALT = 'aVg656';
-    const DEFAULT_COLLECTION_SIZE = 10;
+    const DEFAULT_COLLECTION_SIZE = 999;
 
     /**
      * @var array
