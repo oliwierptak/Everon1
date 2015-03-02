@@ -30,9 +30,16 @@ interface Repository
     /**
      * @param array $property_criteria
      * @param DataMapper\Interfaces\Criteria\Builder $RelationCriteria
+     * @return array|null
+     */
+    function getOneByPropertyValue(array $property_criteria, DataMapper\Interfaces\Criteria\Builder $RelationCriteria = null);
+
+    /**
+     * @param array $property_criteria
+     * @param DataMapper\Interfaces\Criteria\Builder $RelationCriteria
      * @return Entity|null
      */
-    function getEntityByPropertyValue(array $property_criteria, DataMapper\Interfaces\Criteria\Builder $RelationCriteria = null);
+    function getByPropertyValue(array $property_criteria, DataMapper\Interfaces\Criteria\Builder $RelationCriteria = null);
 
     /**
      * @param array $data
