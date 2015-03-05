@@ -213,7 +213,7 @@ abstract class Repository implements Interfaces\Repository
     /**
      * @inheritdoc
      */
-    public function getEntityByPropertyValue(array $property_criteria, DataMapper\Interfaces\Criteria\Builder $RelationCriteria = null)
+    public function getOneByPropertyValue(array $property_criteria, DataMapper\Interfaces\Criteria\Builder $RelationCriteria = null)
     {
         if (empty($property_criteria)) {
             return null;
@@ -225,6 +225,23 @@ abstract class Repository implements Interfaces\Repository
         }
         
         return $this->getOneByCriteria($CriteriaBuilder, $RelationCriteria);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getByPropertyValue(array $property_criteria, DataMapper\Interfaces\Criteria\Builder $RelationCriteria = null)
+    {
+        if (empty($property_criteria)) {
+            return null;
+        }
+
+        $CriteriaBuilder = $this->getFactory()->buildCriteriaBuilder();
+        foreach ($property_criteria as $property => $value) {
+            $CriteriaBuilder->where($property, '=', $value);
+        }
+
+        return $this->getByCriteria($CriteriaBuilder, $RelationCriteria);
     }
 
     /**
