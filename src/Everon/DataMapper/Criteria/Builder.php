@@ -340,10 +340,6 @@ class Builder implements Interfaces\Criteria\Builder
      */
     public function setLimit($limit)
     {
-        $limit = (int) $limit;
-        if ($limit <= 0) {
-            $limit = 1;
-        }
         $this->limit = $limit;
         return $this;
     }
