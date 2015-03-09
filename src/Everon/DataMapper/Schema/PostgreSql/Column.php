@@ -32,11 +32,17 @@ class Column extends Schema\Column
         $this->default = $this->ColumnInfo->column_default;
         $this->schema = $this->ColumnInfo->table_schema;
         $this->table = $this->ColumnInfo->__table_name_without_schema;
+        $type = $this->ColumnInfo->data_type;
         
-        switch ($type = $this->ColumnInfo->data_type) {
+        if (strcasecmp($type, 'USER-DEFINED') === 0) {
+            $type = strtolower($this->ColumnInfo->udt_name); 
+        }
+        
+        switch ($type) {
             case 'char':
             case 'character varying':
             case 'text':
+            case 'citext': //extension citext
                 $this->length = (int) $this->ColumnInfo->character_maximum_length;
                 $this->encoding = $this->ColumnInfo->character_set_name;
                 $this->type = static::TYPE_STRING;
