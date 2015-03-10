@@ -26,7 +26,9 @@ abstract class Controller extends \Everon\Http\Controller
      */
     protected function prepareResponse($action, $result)
     {
-        $this->getResponse()->setStatusCode(($result ? 200 : 400));
+        if ($this->getResponse()->getStatusCode() === null) {
+            $this->getResponse()->setStatusCode(($result ? 200 : 400));
+        }
 
         $this->getResponse()->setDataValue('result', $this->getJsonResult() ?: $result);
         $this->getResponse()->setDataValue('data', $this->getJsonData());
@@ -77,6 +79,7 @@ abstract class Controller extends \Everon\Http\Controller
     {
         $this->setJsonResult(false);
         $this->addValidationError('exception', $Exception->getMessage());
+        $this->prepareResponse('', false);
 
         $this->response();
     }
