@@ -103,16 +103,15 @@ class Logger implements Interfaces\Logger
             
             $message = empty($parameters) === false ? vsprintf($message, $parameters) : $message;
             $message = $LogDate->format($this->getLogDateFormat())." ${id} ".$message;
-            error_log($message."\n", 3, $Filename->getPathname());
-
+            
             if ($ExceptionToTrace instanceof \Exception) {
                 $trace = $ExceptionToTrace->getTraceAsString();
                 if ($trace !== null) {
-                    $trace = $LogDate->format($this->getLogDateFormat())." ${id} \n".$trace;
-                    $this->logRotate($Filename);
-                    error_log($trace."\n", 3, $Filename->getPathname());
+                    $message .= "\n".$LogDate->format($this->getLogDateFormat())." ${id} \n".$trace."\n";
                 }
             }
+
+            error_log($message."\n", 3, $Filename->getPathname());
         }
         
         return $LogDate;

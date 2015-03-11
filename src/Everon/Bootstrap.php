@@ -236,7 +236,8 @@ class Bootstrap implements \Everon\Interfaces\Bootstrap
     {
         $timestamp = date('c', time());
         $id = substr($guid_value, 0, 6);
-        $message = "$timestamp ${id} \n$Exception \n\n";
+        $message = "$timestamp ${id} \n$Exception \n";
+        $message .= $Exception->getTraceAsString()."\n\n";
         error_log($message, 3, $log_filename);
         return $message;
     }
