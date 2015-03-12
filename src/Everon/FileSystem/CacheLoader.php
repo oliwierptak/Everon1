@@ -95,7 +95,7 @@ abstract class CacheLoader implements Interfaces\CacheLoader
     {
         $CacheFile = $this->generateCacheFileByName($name);
      //   sd($CacheFile->getPathname(), $CacheFile->isFile() && $CacheFile->isReadable());
-        return $CacheFile->isFile() && $CacheFile->isReadable();
+        return $CacheFile->isFile() && $CacheFile->isReadable() && $CacheFile->getSize() > 0;
     }
 
     /**

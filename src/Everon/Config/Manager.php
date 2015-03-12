@@ -316,11 +316,10 @@ EOF;
             $configs_data = $this->getConfigDataFromLoader($this->getConfigLoader());
             $config_items_data = $this->getAllConfigsDataAndCompiler($configs_data);
             
-            if ($this->getConfigCacheLoader()->cacheFileExists('config_manager') === false) {
+            if ($this->isCachingEnabled() && $this->getConfigCacheLoader()->cacheFileExists('config_manager') === false) {
                 $this->getConfigCacheLoader()->saveToCache('config_manager', $config_items_data);
             }
         }
-
         
         foreach ($config_items_data as $config_name => $config_data) {
             $this->loadAndRegisterOneConfig($config_name, $config_data['filename'], $config_data['data']);
