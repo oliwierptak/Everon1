@@ -20,11 +20,27 @@ interface Loader extends Interfaces\Dependency\Factory, Interfaces\Dependency\Fi
      * @param $config_directory
      */
     function setConfigDirectory($config_directory);
+
+    /**
+     * @param string $config_flavour_directory
+     */
+    function setConfigFlavourDirectory($config_flavour_directory);
+
+    /**
+     * @return string
+     */
+    function getConfigFlavourDirectory();
     
     /**
      * @return array
      */
     function load();
+
+    /**
+     * @param $directory
+     * @return array
+     */
+    function loadFromDirectory($directory);
 
     /**
      * @param \SplFileInfo $ConfigFile

@@ -205,10 +205,11 @@ interface Factory
 
     /**
      * @param $config_directory
+     * @param $config_flavour_directory
      * @param string $namespace
      * @return Config\Loader
      */
-    function buildConfigLoader($config_directory, $namespace = 'Everon\Config');
+    function buildConfigLoader($config_directory, $config_flavour_directory, $namespace = 'Everon\Config');
 
     /**
      * @param $cache_directory

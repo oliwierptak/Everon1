@@ -28,6 +28,7 @@ class Environment implements Interfaces\Environment
         $this->resources += [
             'application' => $this->getRoot().'Application'.DIRECTORY_SEPARATOR,
             'config' => $this->getRoot().'Config'.DIRECTORY_SEPARATOR,
+            'config_flavour' => $this->getRoot().'Config'.DIRECTORY_SEPARATOR,
             'data_mapper' => $this->getRoot().'DataMapper'.DIRECTORY_SEPARATOR,
             'domain' => $this->getRoot().'Domain'.DIRECTORY_SEPARATOR,
             'domain_config' => $this->getRoot().'Domain'.DIRECTORY_SEPARATOR,
@@ -98,6 +99,17 @@ class Environment implements Interfaces\Environment
     {
         $this->resources['config'] = $config;
     }
+
+    function getConfigFlavour()
+    {
+        return $this->resources['config_flavour'];
+    }
+
+    function setConfigFlavour($config_flavour)
+    {
+        $this->resources['config_flavour'] = $config_flavour;
+    }
+
 
     function getDomain()
     {

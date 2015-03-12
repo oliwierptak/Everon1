@@ -18,15 +18,26 @@ class Loader implements Interfaces\Loader
     use Dependency\Injection\Factory;
     use Dependency\Injection\FileSystem;
     use Helper\Arrays;
-    
+
+    /**
+     * @var string
+     */
     protected $config_directory = null;
 
     /**
-     * @param $config_directory
+     * @var string
      */
-    public function __construct($config_directory)
+    protected $config_flavour_directory = null;
+    
+
+    /**
+     * @param $config_directory
+     * @param $config_flavour_directory
+     */
+    public function __construct($config_directory, $config_flavour_directory)
     {
         $this->config_directory = $config_directory;
+        $this->config_flavour_directory = $config_flavour_directory;
     }
 
     /**
@@ -43,6 +54,22 @@ class Loader implements Interfaces\Loader
     public function setConfigDirectory($config_directory)
     {
         $this->config_directory = $config_directory;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setConfigFlavourDirectory($config_flavour_directory)
+    {
+        $this->config_flavour_directory = $config_flavour_directory;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getConfigFlavourDirectory()
+    {
+        return $this->config_flavour_directory;
     }
     
     /**
@@ -62,14 +89,30 @@ class Loader implements Interfaces\Loader
          * @var \SplFileInfo $ConfigFile
          * @var \Closure $Compiler
          */
+        $list = $this->loadFromDirectory($this->getConfigDirectory()) ?: [];
+        $list_flavour = $this->loadFromDirectory($this->getConfigFlavourDirectory()) ?: [];
+
+        return array_merge($list, $list_flavour);
+    }
+
+    /**
+     * @param $directory
+     * @return array
+     */
+    public function loadFromDirectory($directory)
+    {
+        /**
+         * @var \SplFileInfo $ConfigFile
+         * @var \Closure $Compiler
+         */
         $list = [];
-        $IniFiles = new \GlobIterator($this->getConfigDirectory().'*.ini');
+        $IniFiles = new \GlobIterator($directory.'*.ini');
         foreach ($IniFiles as $config_filename => $ConfigFile) {
             $name = $ConfigFile->getBasename('.ini');
             $list[$name] = $this->loadFromFile($ConfigFile);
         }
 
-        return $list;
+        return $list;   
     }
     
     /**
