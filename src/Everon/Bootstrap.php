@@ -25,7 +25,7 @@ class Bootstrap implements \Everon\Interfaces\Bootstrap
     
     protected $os_name = null;
     
-    protected $everon_ini = null;
+    protected $everon_config_data = null;
     
     protected $environment_name = null;
     
@@ -49,14 +49,15 @@ class Bootstrap implements \Everon\Interfaces\Bootstrap
         $os = substr($os, 0, 3);
         $this->os_name = $os === 'WIN' ? 'win' : 'unix';
         
+        $ConfigDir = new \SplFileInfo($this->Environment->getConfig());
+        $ConfigFlavourDir = new \SplFileInfo($this->Environment->getConfig().$this->environment_name);
         
-        //define config directory based on EVERON_ENVIRONMENT
-        $ConfigDir = new \SplFileInfo($this->Environment->getConfig().$this->environment_name);
         if ($ConfigDir->isDir() === false) {
             throw new \Exception(sprintf('Invalid config directory: "%s"', $ConfigDir->getPathname()));
         }
                 
         $this->Environment->setConfig($ConfigDir->getPathname().DIRECTORY_SEPARATOR);
+        $this->Environment->setConfigFlavour($ConfigFlavourDir->getPathname().DIRECTORY_SEPARATOR);
     }
 
     /**
@@ -148,13 +149,28 @@ class Bootstrap implements \Everon\Interfaces\Bootstrap
         
         $this->ClassLoader = $ClassLoader;
     }
-    
+
+    /**
+     * @return array|null
+     */
     protected function getEveronIni()
     {
-        if ($this->everon_ini === null) {
-            $this->everon_ini = @parse_ini_file($this->Environment->getConfig().'everon.ini', true);
+        if ($this->everon_config_data === null) {
+            $this->everon_config_data = $this->getIniData();
         }
-        return $this->everon_ini;
+        return $this->everon_config_data;
+    }
+
+    /**
+     * @return array
+     */
+    protected function getIniData()
+    {
+        $config_data = @parse_ini_file($this->Environment->getConfigFlavour().'everon.ini', true);
+        if ($config_data === false) {
+            $config_data = @parse_ini_file($this->Environment->getConfig().'everon.ini', true);    
+        }
+        return $config_data;
     }
 
     protected function registerClassLoader($prepend_autoloader)
@@ -236,7 +252,8 @@ class Bootstrap implements \Everon\Interfaces\Bootstrap
     {
         $timestamp = date('c', time());
         $id = substr($guid_value, 0, 6);
-        $message = "$timestamp ${id} \n$Exception \n\n";
+        $message = "$timestamp ${id} \n$Exception \n";
+        $message .= $Exception->getTraceAsString()."\n\n";
         error_log($message, 3, $log_filename);
         return $message;
     }

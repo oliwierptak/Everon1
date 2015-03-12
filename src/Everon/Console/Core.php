@@ -44,7 +44,7 @@ class Core extends \Everon\Core implements Interfaces\Core
          * @var \Everon\Interfaces\Controller $Controller
          */
         if ($Controller === null) {
-            echo 'Error: '. $Exception->getMessage();
+            echo 'Error: '. $Exception;
         }
         else if ($Controller instanceof Interfaces\Controller) {
             $Controller->showException($Exception);

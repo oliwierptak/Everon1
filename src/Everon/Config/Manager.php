@@ -111,19 +111,36 @@ class Manager implements Interfaces\Manager
 
         $this->default_config_data = parse_ini_string($this->getDefaults(), true);
 
-        $directory = $this->getConfigLoader()->getConfigDirectory();
-        $ini = $this->getConfigLoader()->readIni($directory.$this->default_config_filename);
+        $ini = $this->getIniData($this->default_config_filename);
+        
         if (is_array($ini)) {
             $this->default_config_data = $this->arrayMergeDefault($this->default_config_data, $ini);
         }
 
         return $this->default_config_data;
     }
+    
+    protected function getIniData($config_filename)
+    {
+        $directory = $this->getConfigLoader()->getConfigFlavourDirectory();
+        $config_data = $this->getConfigLoader()->readIni($directory.$config_filename);
+        
+        if ($config_data === false) {
+            $directory = $this->getConfigLoader()->getConfigDirectory();
+            $config_data = $this->getConfigLoader()->readIni($directory.$config_filename);
+        }
+        
+        return $config_data;
+    }
 
     protected function getDefaults()
     {
         return <<<EOF
 ; Everon configuration example
+
+; Everon application configuration example
+[module]
+active[] = FooBar
 
 [locale]
 database_timezone = UTC
@@ -145,7 +162,7 @@ default_extension = '.php'
 default_view = Index
 
 [error_handler]
-module = Rest
+module = SolvariNl
 controller = Error
 view = Error
 validation_error_template = formSubmitOnError
@@ -196,7 +213,7 @@ EOF;
                 new \SplFileInfo($this->getFileSystem()->getRealPath('//Domain/domain.ini'))
             );
         }
-        
+        //todo move it to rest
         if ($this->getFileSystem()->fileExists('//Rest/rest_resource.ini')) {
             //load rest_resources.ini
             $data['rest_resource'] = $this->getConfigLoader()->loadFromFile(
@@ -228,9 +245,9 @@ EOF;
     public function getPathsOfActiveModules()
     {
         $module_list = $this->getFileSystem()->listPathDir('//Module');
-        $active_modules = $this->getDefaultConfigData();
-        $active_modules = $active_modules['module']['active'];
-
+        $active_modules = $this->getIniData('module.ini');
+        $active_modules = $active_modules['list']['active']; //module.list.active
+        
         /**
          * @var \DirectoryIterator $Dir
          */
@@ -245,6 +262,7 @@ EOF;
                 $result[$module_name] = $Dir;
             }
         }
+
 
         return $result;
     }
@@ -316,11 +334,10 @@ EOF;
             $configs_data = $this->getConfigDataFromLoader($this->getConfigLoader());
             $config_items_data = $this->getAllConfigsDataAndCompiler($configs_data);
             
-            if ($this->getConfigCacheLoader()->cacheFileExists('config_manager') === false) {
+            if ($this->isCachingEnabled() && $this->getConfigCacheLoader()->cacheFileExists('config_manager') === false) {
                 $this->getConfigCacheLoader()->saveToCache('config_manager', $config_items_data);
             }
         }
-
         
         foreach ($config_items_data as $config_name => $config_data) {
             $this->loadAndRegisterOneConfig($config_name, $config_data['filename'], $config_data['data']);
@@ -431,7 +448,7 @@ EOF;
             $this->loadAndRegisterAllConfigs();
         }
 
-        $this->assertIsArrayKey($name, $this->configs, 'Invalid config name: %s', 'Config');
+        $this->assertIsArrayKey($name, $this->configs, 'Config not found: %s', 'ConfigManager');
         return $this->configs[$name];
     }
 

@@ -20,6 +20,8 @@ interface Environment
     function setEveronRoot($everon_root);
     function getConfig();
     function setConfig($config);
+    function getConfigFlavour();
+    function setConfigFlavour($config_flavour);
     function getDomain();
     function setDomain($domain);
     function getDomainConfig();

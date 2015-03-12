@@ -15,8 +15,8 @@ class Logger implements Interfaces\Logger
     
     use Helper\DateFormatter;
     
-    protected $log_files = [
-    ];
+    
+    protected $log_files = [];
     
     protected $log_directory = null;
     
@@ -25,6 +25,7 @@ class Logger implements Interfaces\Logger
     protected $enabled = false;
     
     protected $write_count = 0;
+    
 
     /**
      * @param $directory
@@ -102,31 +103,18 @@ class Logger implements Interfaces\Logger
             
             $message = empty($parameters) === false ? vsprintf($message, $parameters) : $message;
             $message = $LogDate->format($this->getLogDateFormat())." ${id} ".$message;
-            error_log($message."\n", 3, $Filename->getPathname());
-
+            
             if ($ExceptionToTrace instanceof \Exception) {
-                $this->logTrace($ExceptionToTrace, $LogDate, $id, $level);
+                $trace = $ExceptionToTrace->getTraceAsString();
+                if ($trace !== null) {
+                    $message .= "\n".$LogDate->format($this->getLogDateFormat())." ${id} \n".$trace."\n";
+                }
             }
+
+            error_log($message."\n", 3, $Filename->getPathname());
         }
         
         return $LogDate;
-    }
-
-    /**
-     * @param \Exception $Exception
-     * @param \DateTime $StarDate
-     * @param $id
-     * @param $log_level
-     */
-    protected function logTrace(\Exception $Exception, \DateTime $StarDate, $id, $log_level)
-    {
-        $trace = $Exception->getTraceAsString();
-        if ($trace !== null) {
-            $trace = $StarDate->format($this->getLogDateFormat())." ${id} \n".$trace;
-            $Filename = $this->getFilenameByLevel($log_level);
-            $this->logRotate($Filename);
-            error_log($trace."\n", 3, $Filename->getPathname());
-        }
     }
 
     /**
@@ -142,7 +130,7 @@ class Logger implements Interfaces\Logger
         $size = intval($size / 1024);
         
         //reset the log file if its size exceeded 512 KB
-        if ($size > 1) { //KB, todo: read it from config
+        if ($size > 512) { //KB, todo: read it from config
             $h = fopen($Filename->getPathname(), 'w');
             fwrite($h, '');
             fclose($h);

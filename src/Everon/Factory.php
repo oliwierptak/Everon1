@@ -388,12 +388,12 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
-    public function buildConfigLoader($config_directory, $namespace = 'Everon\Config')
+    public function buildConfigLoader($config_directory, $config_flavour_directory, $namespace = 'Everon\Config')
     {
         try {
             $class_name = $this->getFullClassName($namespace, 'Loader');
             $this->classExists($class_name);
-            $ConfigLoader = new $class_name($config_directory);
+            $ConfigLoader = new $class_name($config_directory, $config_flavour_directory);
             $this->injectDependencies($class_name, $ConfigLoader);
             return $ConfigLoader;
         }

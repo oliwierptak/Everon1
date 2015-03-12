@@ -229,7 +229,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
             return $this->RequestIdentifier;
         });
 
-        $ConfigLoader = $EVERON_FACTORY->buildConfigLoader($TestEnvironment->getConfig());
+        $ConfigLoader = $EVERON_FACTORY->buildConfigLoader($TestEnvironment->getConfig(), $TestEnvironment->getConfigFlavour());
         $ConfigLoader->setFactory($EVERON_FACTORY);
 
         $ConfigLoaderCache = $EVERON_FACTORY->buildConfigCacheLoader($TestEnvironment->getCacheConfig());

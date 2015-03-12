@@ -102,6 +102,10 @@ abstract class Relation implements Interfaces\Relation
         if ($this->getRelationMapper()->isVirtual()) { //virtual relations handle their data on their own
             return;
         }
+        
+        if ($this->getOwnerEntity()->isNew() || $this->getOwnerEntity()->isDeleted()) { //don't load relations for freshly created entities
+            return;
+        }
 
         $this->validate();
         $this->setupRelation();
