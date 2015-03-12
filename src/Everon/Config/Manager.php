@@ -122,11 +122,11 @@ class Manager implements Interfaces\Manager
     
     protected function getIniData($config_filename)
     {
-        $directory = $this->getConfigLoader()->getConfigDirectory();
+        $directory = $this->getConfigLoader()->getConfigFlavourDirectory();
         $config_data = $this->getConfigLoader()->readIni($directory.$config_filename);
         
         if ($config_data === false) {
-            $directory = $this->getConfigLoader()->getConfigFlavourDirectory();
+            $directory = $this->getConfigLoader()->getConfigDirectory();
             $config_data = $this->getConfigLoader()->readIni($directory.$config_filename);
         }
         

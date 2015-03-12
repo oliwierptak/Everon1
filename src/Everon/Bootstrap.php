@@ -166,9 +166,9 @@ class Bootstrap implements \Everon\Interfaces\Bootstrap
      */
     protected function getIniData()
     {
-        $config_data = @parse_ini_file($this->Environment->getConfig().'everon.ini', true);
+        $config_data = @parse_ini_file($this->Environment->getConfigFlavour().'everon.ini', true);
         if ($config_data === false) {
-            $config_data = @parse_ini_file($this->Environment->getConfigFlavour().'everon.ini', true);    
+            $config_data = @parse_ini_file($this->Environment->getConfig().'everon.ini', true);    
         }
         return $config_data;
     }

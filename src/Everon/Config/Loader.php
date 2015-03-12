@@ -91,7 +91,7 @@ class Loader implements Interfaces\Loader
          */
         $list = $this->loadFromDirectory($this->getConfigDirectory()) ?: [];
         $list_flavour = $this->loadFromDirectory($this->getConfigFlavourDirectory()) ?: [];
-
+        
         return array_merge($list, $list_flavour);
     }
 
