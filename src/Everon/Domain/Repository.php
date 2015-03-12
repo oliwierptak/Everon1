@@ -186,6 +186,7 @@ abstract class Repository implements Interfaces\Repository
      */
     public function updateFromArray(Interfaces\Entity $Entity, array $data)
     {
+        $data = array_merge($Entity->toArray(), $data);
         $data = $this->prepareDataForEntity($data);
         $Entity->updateValues($data);
     }
