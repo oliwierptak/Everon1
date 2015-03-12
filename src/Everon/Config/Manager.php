@@ -247,7 +247,7 @@ EOF;
         $module_list = $this->getFileSystem()->listPathDir('//Module');
         $active_modules = $this->getIniData('module.ini');
         $active_modules = $active_modules['list']['active']; //module.list.active
-
+        
         /**
          * @var \DirectoryIterator $Dir
          */
@@ -262,6 +262,7 @@ EOF;
                 $result[$module_name] = $Dir;
             }
         }
+
 
         return $result;
     }
