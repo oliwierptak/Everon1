@@ -16,6 +16,12 @@ interface Model extends \Everon\Domain\Interfaces\Dependency\DomainManager, \Eve
      * @return Entity|null
      */
     function getById($id);
+
+    /**
+     * @param Entity $Entity
+     * @param array $data
+     */
+    function updateEntityData(Entity $Entity, array $data);
     
     /**
      * @param Entity $Entity

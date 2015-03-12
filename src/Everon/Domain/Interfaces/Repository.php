@@ -122,6 +122,12 @@ interface Repository
     function buildFromArray(array $data, DataMapper\Interfaces\Criteria\Builder $RelationCriteria=null);
 
     /**
+     * @param Entity $Entity
+     * @param array $data
+     */
+    function updateFromArray(Entity $Entity, array $data);
+
+    /**
      * @param $point null
      */
     function beginTransaction($point=null);

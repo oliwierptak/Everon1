@@ -119,7 +119,7 @@ class Handler implements Interfaces\ResourceHandler
             $this->assertIsNull($Entity, sprintf('Domain Entity: "%s" with id: "%s" not found', $domain_name, $resource_id), 'Domain');
             $data = $this->arrayMergeDefault($Entity->toArray(), $data);
             $Model = $this->getDomainManager()->getModelByName($domain_name);
-            $Entity->updateValues($data);
+            $Model->updateEntityData($Entity, $data);
             $Model->{'save'.$domain_name}($Entity, $user_id);
             return $this->buildResourceFromEntity($Entity, $version, $resource_name);
         }
