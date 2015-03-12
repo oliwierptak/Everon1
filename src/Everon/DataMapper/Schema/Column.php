@@ -458,7 +458,7 @@ abstract class Column implements Interfaces\Schema\Column
                 break;
             
             case self::TYPE_BOOLEAN:
-                return (bool) $value === true;
+                return (bool) $value === true || strtolower($value) === 't';
                 break;
 
             case self::TYPE_TIMESTAMP:
