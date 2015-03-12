@@ -50,6 +50,22 @@ class SqlPart implements Interfaces\SqlPart
     /**
      * @inheritdoc
      */
+    public function setParameterValue($name, $value)
+    {
+        $this->parameters[$name] = $value;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getParameterValue($name)
+    {
+        return @$this->parameters[$name];
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function getParameters()
     {
         return $this->parameters;

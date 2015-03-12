@@ -22,6 +22,18 @@ interface SqlPart extends \Everon\Interfaces\Arrayable
     function setParameters($parameters);
 
     /**
+     * @param $name
+     * @param $value
+     */
+    function setParameterValue($name, $value);
+
+    /**
+     * @param $name
+     * @return mixed
+     */
+    function getParameterValue($name);
+    
+    /**
      * @return string
      */
     function getSql();
@@ -30,4 +42,5 @@ interface SqlPart extends \Everon\Interfaces\Arrayable
      * @param string $sql
      */
     function setSql($sql);
+
 }
