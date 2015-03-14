@@ -134,8 +134,6 @@ abstract class Core implements Interfaces\Core
      */
     protected function showException(\Exception $Exception, $Controller)
     {
-        $this->getLogger()->error($Exception);
-
         /**
          * @var \Everon\Mvc\Interfaces\Controller $Controller
          */
@@ -145,14 +143,18 @@ abstract class Core implements Interfaces\Core
                 $error_controller = $this->getConfigManager()->getConfigValue('everon.error_handler.controller', null);
                 $Module = $this->getModuleManager()->getModuleByName($error_module);
                 $Controller = $Module->getController($error_controller);
-            } 
-            catch (\Exception $e) {
-                $this->getLogger()->error('Error: '.$e.' while displaying exception: '.$Exception);
-            }
-        }
 
-        if ($Controller instanceof Interfaces\Controller) {
-            $Controller->showException($Exception);
+                if ($Controller instanceof Interfaces\Controller) {
+                    $Controller->showException($Exception);
+                }
+            }
+            catch (\Exception $e) {
+                //todo display the error here based on config
+                $this->getLogger()->error($e);
+            }
+            finally {
+                $this->getLogger()->error($Exception);
+            }
         }
     }
 

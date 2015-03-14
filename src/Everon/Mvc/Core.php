@@ -31,15 +31,24 @@ class Core extends \Everon\Http\Core implements Interfaces\Core
             parent::run($RequestIdentifier);
         }
         catch (Exception\RouteNotDefined $Exception) {
-            $NotFound = new Http\Exception((new Http\Message\NotFound('Page not found: '.$Exception->getMessage())));
+            $NotFound = new Http\Exception(
+                new Http\Message\NotFound('Page not found: '.$Exception->getMessage()),
+                $Exception
+            );
             $this->showException($NotFound, $this->Controller);
         }
         catch (Exception\InvalidRoute $Exception) {
-            $BadRequest = new Http\Exception((new Http\Message\BadRequest($Exception->getMessage())));
+            $BadRequest = new Http\Exception(
+                new Http\Message\BadRequest($Exception->getMessage()),
+                $Exception
+            );
             $this->showException($BadRequest, $this->Controller);
         }
         catch (\Exception $Exception) {
-            $Internal = new Http\Exception((new Http\Message\InternalServerError($Exception->getMessage())));
+            $Internal = new Http\Exception(
+                new Http\Message\InternalServerError($Exception->getMessage()),
+                $Exception
+            );
             $this->showException($Internal, $this->Controller);
         }
     }

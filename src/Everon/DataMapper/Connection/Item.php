@@ -93,10 +93,7 @@ class Item implements Interfaces\ConnectionItem
             }
         }
         catch (Exception\Asserts $e) {
-            throw new ConnectionItemException(sprintf(
-                    'Missing required parameter: "%s"', $e->getMessage()
-                )
-            );
+            throw new ConnectionItemException('Missing required parameter: "%s"', $e->getMessage(), $e);
         }
     }
     

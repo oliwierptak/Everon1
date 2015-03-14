@@ -364,7 +364,7 @@ abstract class Column implements Interfaces\Schema\Column
             return $value;
         }
         catch (\Exception $e) {
-            throw new Exception\Column($e->getMessage());
+            throw new Exception\Column($e);
         }
     }
 

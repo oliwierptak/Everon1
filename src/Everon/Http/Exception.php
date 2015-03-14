@@ -20,11 +20,17 @@ class Exception extends EveronException implements Interfaces\Exception
 
     /**
      * @param Interfaces\Message $HttpMessage
+     * @param \Exception $Previous
      */
-    public function __construct(Interfaces\Message $HttpMessage)
+    public function __construct(Interfaces\Message $HttpMessage, \Exception $Previous=null)
     {
         $this->HttpMessage = $HttpMessage;
-        parent::__construct($HttpMessage->getInfo(), $params=null, $Previous=null, $Callback=null);
+        if ($Previous !== null && $Previous->getMessage() === $HttpMessage->getInfo()) {
+            parent::__construct(null, $params=null, $Previous, $Callback=null);
+        }
+        else {
+            parent::__construct($HttpMessage->getInfo(), $params=null, $Previous, $Callback=null);
+        }
     }
 
     /**
