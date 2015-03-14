@@ -30,12 +30,6 @@ abstract class Exception extends \Exception
         if ($message instanceof \Exception) {
             $message = $message->getMessage();
         }
-        else if ($Previous instanceof \Exception) { //avoid displaying duplicated error messages
-            if (trim($message) !== '') {
-                $message .= '.';
-            }
-            $message .= $this->formatExceptionParams("\n%s", $Previous->getMessage());
-        }
 
         if ($Callback instanceof \Closure) {
             $Callback();
