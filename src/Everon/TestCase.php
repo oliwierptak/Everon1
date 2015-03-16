@@ -49,14 +49,13 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         ], @$GLOBALS['EVERON_CUSTOM_PATHS']);
         
         $this->RequestIdentifier = @$GLOBALS['EVERON_REQUEST_IDENTIFIER'];
-        $Environment = new Environment(@$GLOBALS['EVERON_ROOT'], @$GLOBALS['EVERON_SOURCE_ROOT'], $custom_test_paths);
+        $Environment = new Environment(@$GLOBALS['EVERON_ROOT'], @$GLOBALS['EVERON_SOURCE_ROOT'], EVERON_ENVIRONMENT, $custom_test_paths);
         $this->FrameworkBootstrap = new Bootstrap($Environment, 'development');
         
         $this->includeDoubles();
 
         unset($GLOBALS['EVERON_FACTORY']);
         unset($GLOBALS['EVERON_BOOTSTRAP']);
-        unset($GLOBALS['EVERON_ENVIRONMENT']);
         //unset($GLOBALS['EVERON_CUSTOM_PATHS']);
         //unset($GLOBALS['EVERON_REQUEST_IDENTIFIER']);
         //unset($GLOBALS['CUSTOM_EXCEPTION_HANDLER']);
@@ -232,7 +231,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         $ConfigLoader = $EVERON_FACTORY->buildConfigLoader($TestEnvironment->getConfig(), $TestEnvironment->getConfigFlavour());
         $ConfigLoader->setFactory($EVERON_FACTORY);
 
-        $ConfigLoaderCache = $EVERON_FACTORY->buildConfigCacheLoader($TestEnvironment->getCacheConfig());
+        $ConfigLoaderCache = $EVERON_FACTORY->buildConfigCacheLoader($TestEnvironment->getCache());
         $ConfigLoaderCache->setFactory($EVERON_FACTORY);
 
         $ConfigManager = $EVERON_FACTORY->buildConfigManager($ConfigLoader, $ConfigLoaderCache);

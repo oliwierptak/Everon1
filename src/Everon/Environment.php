@@ -14,11 +14,21 @@ use Everon\Interfaces;
 class Environment implements Interfaces\Environment
 {
 
+    /**
+     * @var array
+     */
     protected $resources = [];
+    
+    /**
+     * @var string
+     */
+    protected $environment;
 
 
-    function __construct($root, $everon_source_root, $custom_paths=[])
+    function __construct($root, $everon_source_root, $environment, $custom_paths = [])
     {
+        $this->environment = $environment;
+        
         $this->resources = [
             'root' => $root,
             'everon_source_root' => $everon_source_root,
@@ -52,7 +62,6 @@ class Environment implements Interfaces\Environment
         ];
 
         $this->resources += [
-            'cache_config' => $this->getCache(),
             'cache_view' => $this->getCache().'view'.DIRECTORY_SEPARATOR,
         ];
         
@@ -209,16 +218,6 @@ class Environment implements Interfaces\Environment
     function setCache($cache)
     {
         $this->resources['cache'] = $cache;
-    }
-
-    function getCacheConfig()
-    {
-        return $this->resources['cache_config'];
-    }
-    
-    function setCacheConfig($cache_config)
-    {
-        $this->resources['cache_config'] = $cache_config;
     }
 
     function getCacheView()

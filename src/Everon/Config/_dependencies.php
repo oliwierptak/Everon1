@@ -50,7 +50,7 @@ $EVERON_FACTORY->getDependencyContainer()->propose('ConfigManager', function() u
      */
     $Environment = $EVERON_FACTORY->getDependencyContainer()->resolve('Bootstrap')->getEnvironment();
     $Loader = $EVERON_FACTORY->buildConfigLoader($Environment->getConfig(), $Environment->getConfigFlavour());
-    $CacheLoader = $EVERON_FACTORY->buildConfigCacheLoader($Environment->getCacheConfig());
+    $CacheLoader = $EVERON_FACTORY->buildConfigCacheLoader($Environment->getCache());
     return $EVERON_FACTORY->buildConfigManager($Loader, $CacheLoader);
 });
 
