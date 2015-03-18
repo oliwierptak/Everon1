@@ -32,25 +32,6 @@ class Core extends \Everon\Core implements Interfaces\Core
         }
     }
 
-    /**
-     * @param \Exception $Exception
-     * @param \Everon\Interfaces\Controller|null $Controller
-     */
-    protected function showException(\Exception $Exception, $Controller)
-    {
-        $this->getLogger()->error($Exception);
-
-        /**
-         * @var \Everon\Interfaces\Controller $Controller
-         */
-        if ($Controller === null) {
-            echo 'Error: '. $Exception;
-        }
-        else if ($Controller instanceof Interfaces\Controller) {
-            $Controller->showException($Exception);
-        }
-    }
-
     public function shutdown()
     {
         $s = parent::shutdown();

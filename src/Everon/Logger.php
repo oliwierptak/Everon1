@@ -103,12 +103,17 @@ class Logger implements Interfaces\Logger
             
             $message = empty($parameters) === false ? vsprintf($message, $parameters) : $message;
             $message = $LogDate->format($this->getLogDateFormat())." ${id} ".$message;
-            
-            if ($ExceptionToTrace instanceof \Exception) {
+
+            $trace = null;
+            if ($ExceptionToTrace instanceof \Everon\Exception) {
+                $trace = $ExceptionToTrace->getLoggedTrace();
+            }
+            else if ($ExceptionToTrace instanceof \Exception) {
                 $trace = $ExceptionToTrace->getTraceAsString();
-                if ($trace !== null) {
-                    $message .= "\n".$LogDate->format($this->getLogDateFormat())." ${id} \n".$trace."\n";
-                }
+            }
+
+            if ($trace !== null) {
+                $message .= "\n".$LogDate->format($this->getLogDateFormat())." ${id} \n".$trace."\n";
             }
 
             error_log($message."\n", 3, $Filename->getPathname());
