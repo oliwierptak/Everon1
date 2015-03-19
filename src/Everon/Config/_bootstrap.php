@@ -15,10 +15,6 @@ require_once(implode(DIRECTORY_SEPARATOR, [$EVERON_SOURCE_ROOT, 'RequestIdentifi
 
 //include the environment type (dev, staging, production), eg, const EVERON_ENVIRONMENT = 'dev';
 @include_once($EVERON_ROOT.'env.php');
-if (defined('EVERON_ENVIRONMENT') === false) {
-    define('EVERON_ENVIRONMENT', 'development');
-}
-
 if (isset($EVERON_REQUEST_IDENTIFIER) === false) {
     $EVERON_REQUEST_IDENTIFIER = new RequestIdentifier();
 }

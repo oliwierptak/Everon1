@@ -50,7 +50,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase
         
         $this->RequestIdentifier = @$GLOBALS['EVERON_REQUEST_IDENTIFIER'];
         $Environment = new Environment(@$GLOBALS['EVERON_ROOT'], @$GLOBALS['EVERON_SOURCE_ROOT'], EVERON_ENVIRONMENT, $custom_test_paths);
-        $this->FrameworkBootstrap = new Bootstrap($Environment, 'development');
+        $this->FrameworkBootstrap = new Bootstrap($Environment, 'development-test');
         
         $this->includeDoubles();
 
