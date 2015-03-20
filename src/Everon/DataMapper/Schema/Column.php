@@ -364,7 +364,7 @@ abstract class Column implements Interfaces\Schema\Column
             return $value;
         }
         catch (\Exception $e) {
-            throw new Exception\Column($e->getMessage());
+            throw new Exception\Column($e);
         }
     }
 
@@ -458,7 +458,7 @@ abstract class Column implements Interfaces\Schema\Column
                 break;
             
             case self::TYPE_BOOLEAN:
-                return $value === true;
+                return (bool) $value === true || strtolower($value) === 't';
                 break;
 
             case self::TYPE_TIMESTAMP:
@@ -481,18 +481,5 @@ abstract class Column implements Interfaces\Schema\Column
                 return $value;
                 break;
         }
-    }
-
-    public function __sleep()
-    {
-        $vars = get_object_vars($this);
-        unset($vars['Factory']);
-        $data = array_keys($vars);
-        return $data;
-    }
-    
-    public function __wakeup()
-    {
-        $this->Factory = @$GLOBALS['EVERON_FACTORY']; //xxx meh
     }
 }

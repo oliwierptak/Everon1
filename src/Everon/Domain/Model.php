@@ -106,34 +106,43 @@ abstract class Model implements Interfaces\Model
     /**
      * @param Interfaces\Entity $Entity
      * @param null $user_id
-     * @return Interfaces\Entity
+     * @param bool $simple
+     * @return void
      */
-    protected function add(Domain\Interfaces\Entity $Entity, $user_id=null)
+    protected function add(Domain\Interfaces\Entity $Entity, $user_id = null, $simple = false)
     {
-        $this->beforeAdd($Entity, $user_id);
+        if ($simple === false) {
+            $this->beforeAdd($Entity, $user_id);
+        }
+        
         $this->getRepository()->persist($Entity, $user_id);
-        return $Entity;
     }
 
     /**
      * @param Interfaces\Entity $Entity
      * @param null $user_id
-     * @return Interfaces\Entity
+     * @param bool $simple
+     * @return void
      */
-    protected function save(Domain\Interfaces\Entity $Entity, $user_id=null)
+    protected function save(Domain\Interfaces\Entity $Entity, $user_id = null, $simple = false)
     {
-        $this->beforeSave($Entity, $user_id);
+        if ($simple === false) {
+            $this->beforeSave($Entity, $user_id);
+        }
+        
         $this->getRepository()->persist($Entity, $user_id);
-        return $Entity;
     }
 
     /**
      * @param Interfaces\Entity $Entity
      * @param null $user_id
+     * @param bool $simple
      */
-    protected function delete(Domain\Interfaces\Entity $Entity, $user_id=null)
+    protected function delete(Domain\Interfaces\Entity $Entity, $user_id = null, $simple = false)
     {
-        $this->beforeDelete($Entity, $user_id);
+        if ($user_id === false) {
+            $this->beforeDelete($Entity, $user_id);
+        }
         $this->getRepository()->remove($Entity, $user_id);
     }
 
@@ -143,6 +152,14 @@ abstract class Model implements Interfaces\Model
     public function getById($id)
     {
         return $this->getRepository()->getEntityById($id);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function updateEntityData(Domain\Interfaces\Entity $Entity, array $data)
+    {
+        $this->getRepository()->updateFromArray($Entity, $data);
     }
 
     /**

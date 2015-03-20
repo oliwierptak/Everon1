@@ -15,10 +15,6 @@ require_once(implode(DIRECTORY_SEPARATOR, [$EVERON_SOURCE_ROOT, 'RequestIdentifi
 
 //include the environment type (dev, staging, production), eg, const EVERON_ENVIRONMENT = 'dev';
 @include_once($EVERON_ROOT.'env.php');
-if (defined('EVERON_ENVIRONMENT') === false) {
-    define('EVERON_ENVIRONMENT', 'development');
-}
-
 if (isset($EVERON_REQUEST_IDENTIFIER) === false) {
     $EVERON_REQUEST_IDENTIFIER = new RequestIdentifier();
 }
@@ -35,7 +31,7 @@ require_once(implode(DIRECTORY_SEPARATOR, [$EVERON_SOURCE_ROOT, 'Environment.php
 
 @$EVERON_CUSTOM_PATHS = $EVERON_CUSTOM_PATHS ?: [];
 
-$EVERON_ENVIRONMENT = new Environment($EVERON_ROOT, $EVERON_SOURCE_ROOT, $EVERON_CUSTOM_PATHS);
+$EVERON_ENVIRONMENT = new Environment($EVERON_ROOT, $EVERON_SOURCE_ROOT, EVERON_ENVIRONMENT, $EVERON_CUSTOM_PATHS);
 $EVERON_BOOTSTRAP = new Bootstrap($EVERON_ENVIRONMENT, EVERON_ENVIRONMENT);
 $EVERON_FACTORY = $EVERON_BOOTSTRAP->run();
 

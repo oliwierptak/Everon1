@@ -42,8 +42,6 @@ interface Environment
     function setTmp($tmp);
     function getCache();
     function setCache($cache);
-    function getCacheConfig();
-    function setCacheConfig($cache_config);
     function getCacheView();
     function setViewCache($view_cache);
     function getLog();

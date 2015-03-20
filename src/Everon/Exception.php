@@ -16,6 +16,8 @@ abstract class Exception extends \Exception
     use Helper\ToString;
 
     protected $toString = null;
+    
+    protected $logged_trace = null;
 
 
     /**
@@ -26,19 +28,29 @@ abstract class Exception extends \Exception
      */
     public function __construct($message, $params=null, $Previous=null, $Callback=null)
     {
-        $message = $this->formatExceptionParams($message, $params);
         if ($message instanceof \Exception) {
             $message = $message->getMessage();
         }
-        else if ($Previous instanceof \Exception) { //avoid displaying duplicated error messages
-            $message .= $this->formatExceptionParams(".\n%s", $Previous->getMessage());
-        }
+        
+        $message = $this->formatExceptionParams($message, $params);
 
         if ($Callback instanceof \Closure) {
             $Callback();
         }
         
         parent::__construct($message, 0, $Previous);
+
+        if ($Previous instanceof \Exception) {
+            $this->logged_trace = $Previous->getTraceAsString();
+        }
+    }
+
+    /**
+     * @return string
+     */
+    public function getLoggedTrace()
+    {
+        return $this->logged_trace ?: $this->getTraceAsString();
     }
     
     /**

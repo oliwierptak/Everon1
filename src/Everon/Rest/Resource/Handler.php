@@ -102,7 +102,7 @@ class Handler implements Interfaces\ResourceHandler
             return $this->buildResourceFromEntity($Entity, $version, $resource_name);
         }
         catch (EveronException\Domain $e) {
-            throw new Exception\Resource($e->getMessage());
+            throw new Exception\Resource($e->getMessage(), null, $e);
         }
     }
     
@@ -119,12 +119,12 @@ class Handler implements Interfaces\ResourceHandler
             $this->assertIsNull($Entity, sprintf('Domain Entity: "%s" with id: "%s" not found', $domain_name, $resource_id), 'Domain');
             $data = $this->arrayMergeDefault($Entity->toArray(), $data);
             $Model = $this->getDomainManager()->getModelByName($domain_name);
-            $Entity->updateValues($data);
+            $Model->updateEntityData($Entity, $data);
             $Model->{'save'.$domain_name}($Entity, $user_id);
             return $this->buildResourceFromEntity($Entity, $version, $resource_name);
         }
         catch (EveronException\Domain $e) {
-            throw new Exception\Resource($e->getMessage());
+            throw new Exception\Resource($e->getMessage(), null, $e);
         }
     }
 
@@ -144,7 +144,7 @@ class Handler implements Interfaces\ResourceHandler
             return $this->buildResourceFromEntity($Entity, $version, $resource_name);
         }
         catch (EveronException\Domain $e) {
-            throw new Exception\Resource($e->getMessage());
+            throw new Exception\Resource($e->getMessage(), null, $e);
         }
     }
 
@@ -167,7 +167,7 @@ class Handler implements Interfaces\ResourceHandler
             return $Resource;
         }
         catch (EveronException\Domain $e) {
-            throw new Exception\Resource($e->getMessage());
+            throw new Exception\Resource($e->getMessage(), null, $e);
         }   
     }
 
@@ -190,7 +190,7 @@ class Handler implements Interfaces\ResourceHandler
             return $Resource;
         }
         catch (EveronException\Domain $e) {
-            throw new Exception\Resource($e->getMessage());
+            throw new Exception\Resource($e->getMessage(), null, $e);
         }
     }
 
@@ -213,7 +213,7 @@ class Handler implements Interfaces\ResourceHandler
             return $Resource;
         }
         catch (EveronException\Domain $e) {
-            throw new Exception\Resource($e->getMessage());
+            throw new Exception\Resource($e->getMessage(), null, $e);
         }
     }
 
@@ -238,7 +238,7 @@ class Handler implements Interfaces\ResourceHandler
             return $Resource;
         }
         catch (EveronException\Domain $e) {
-            throw new Exception\Resource($e->getMessage());
+            throw new Exception\Resource($e->getMessage(), null, $e);
         }
     }
 
@@ -373,7 +373,7 @@ class Handler implements Interfaces\ResourceHandler
             return $CollectionResource;
         }
         catch (EveronException\Domain $e) {
-            throw new Exception\Resource($e->getMessage());
+            throw new Exception\Resource($e->getMessage(), null, $e);
         }
     }
 
@@ -408,7 +408,7 @@ class Handler implements Interfaces\ResourceHandler
             return $Resource;
         }
         catch (EveronException\Domain $e) {
-            throw new Exception\Resource($e->getMessage());
+            throw new Exception\Resource($e->getMessage(), null, $e);
         }
     }
 

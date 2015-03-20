@@ -333,8 +333,8 @@ abstract class AbstractView implements Interfaces\View
         }
         
         $Config = $this->getConfigManager()->getConfigByName('minify');
-        $url_static = $this->getConfigManager()->getConfigValue('application.static.url_min');
-        $url_shared = $this->getConfigManager()->getConfigValue('application.media_storage.shared_url');
+        $url_static = $this->getConfigManager()->getConfigValue('static.config.project_url');
+        $url_shared = $this->getConfigManager()->getConfigValue('static.config.shared_url');
         
         foreach ($this->resources_js as $name => $items_to_minify) {
             $files = [];

@@ -49,27 +49,45 @@ class Server extends \Everon\Http\Core implements Rest\Interfaces\Server
             }
         }
         catch (Exception\Pdo $Exception) {
-            $BadRequestException = new Http\Exception((new Http\Message\BadRequest($Exception->getMessage())));
+            $BadRequestException = new Http\Exception(
+                new Http\Message\BadRequest($Exception->getMessage()), 
+                $Exception
+            );
             $this->showException($BadRequestException, $this->Controller);
         }
         catch (Exception\RouteNotDefined $Exception) {
-            $NotFoundException = new Http\Exception((new Http\Message\NotFound('Invalid resource name, request method or version')));
+            $NotFoundException = new Http\Exception(
+                new Http\Message\NotFound('Invalid resource name, request method or version'),
+                $Exception
+            );
             $this->showException($NotFoundException, $this->Controller);
         }
         catch (Exception\InvalidRoute $Exception) {
-            $BadRequestException = new Http\Exception((new Http\Message\BadRequest($Exception->getMessage())));
+            $BadRequestException = new Http\Exception(
+                new Http\Message\BadRequest($Exception->getMessage()),
+                $Exception
+            );
             $this->showException($BadRequestException, $this->Controller);
         }
         catch (Rest\Exception\Resource $Exception) {
-            $BadRequestException = new Http\Exception((new Http\Message\BadRequest($Exception->getMessage())));
+            $BadRequestException = new Http\Exception(
+                new Http\Message\BadRequest($Exception->getMessage()),
+                $Exception
+            );
             $this->showException($BadRequestException, $this->Controller);
         }
         catch (Exception\Acl $Exception) {
-            $Unauthorized = new Http\Exception((new Http\Message\Unauthorized($Exception->getMessage())));
+            $Unauthorized = new Http\Exception(
+                new Http\Message\Unauthorized($Exception->getMessage()),
+                $Exception
+            );
             $this->showException($Unauthorized, $this->Controller);
         }
         catch (\Exception $Exception) {
-            $InternalServerError = new Http\Exception((new Http\Message\InternalServerError($Exception->getMessage())));
+            $InternalServerError = new Http\Exception(
+                new Http\Message\InternalServerError($Exception->getMessage()),
+                $Exception
+            );
             $this->showException($InternalServerError, $this->Controller);
         }
     }

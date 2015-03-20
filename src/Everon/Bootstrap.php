@@ -30,34 +30,39 @@ class Bootstrap implements \Everon\Interfaces\Bootstrap
     protected $environment_name = null;
     
     protected $show_auto_loader_exceptions = null;
-    
+
 
     /**
-     * @param $Environment
+     * @param \Everon\Interfaces\Environment $Environment
      * @param $environment_name
      * @param string $os
      * @throws \Exception
      */
-    public function __construct($Environment, $environment_name, $os=PHP_OS)
+    public function __construct(\Everon\Interfaces\Environment $Environment, $environment_name, $os=PHP_OS)
     {
         $this->environment_name = trim($environment_name);
         if ($this->environment_name === '') {
             throw new \Exception('Undefined environment name');
         }
         
-        $this->Environment = $Environment;
+        $this->setEnvironment($Environment);
+        
         $os = substr($os, 0, 3);
         $this->os_name = $os === 'WIN' ? 'win' : 'unix';
         
-        $ConfigDir = new \SplFileInfo($this->Environment->getConfig());
-        $ConfigFlavourDir = new \SplFileInfo($this->Environment->getConfig().$this->environment_name);
+        $ConfigDir = new \SplFileInfo($this->getEnvironment()->getConfig());
+        $ConfigFlavourDir = new \SplFileInfo($this->getEnvironment()->getConfig().$this->environment_name);
+        $CacheDir = new \SplFileInfo($this->getEnvironment()->getCache().DIRECTORY_SEPARATOR.$this->environment_name.DIRECTORY_SEPARATOR);
+        $LogDir = new \SplFileInfo($this->getEnvironment()->getLog().DIRECTORY_SEPARATOR.$this->environment_name.DIRECTORY_SEPARATOR);
         
         if ($ConfigDir->isDir() === false) {
             throw new \Exception(sprintf('Invalid config directory: "%s"', $ConfigDir->getPathname()));
         }
                 
-        $this->Environment->setConfig($ConfigDir->getPathname().DIRECTORY_SEPARATOR);
-        $this->Environment->setConfigFlavour($ConfigFlavourDir->getPathname().DIRECTORY_SEPARATOR);
+        $this->getEnvironment()->setConfig($ConfigDir->getPathname().DIRECTORY_SEPARATOR);
+        $this->getEnvironment()->setConfigFlavour($ConfigFlavourDir->getPathname().DIRECTORY_SEPARATOR);
+        $this->getEnvironment()->setCache($CacheDir->getPathname().DIRECTORY_SEPARATOR);
+        $this->getEnvironment()->setLog($LogDir->getPathname().DIRECTORY_SEPARATOR);
     }
 
     /**

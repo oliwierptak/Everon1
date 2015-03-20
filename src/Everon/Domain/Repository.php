@@ -184,6 +184,16 @@ abstract class Repository implements Interfaces\Repository
     /**
      * @inheritdoc
      */
+    public function updateFromArray(Interfaces\Entity $Entity, array $data)
+    {
+        $data = array_merge($Entity->toArray(), $data);
+        $data = $this->prepareDataForEntity($data);
+        $Entity->updateValues($data);
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function persistFromArray(array $data, $user_id=null)
     {
         $Entity = $this->buildFromArray($data);

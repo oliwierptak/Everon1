@@ -248,6 +248,10 @@ EOF;
         $active_modules = $this->getIniData('module.ini');
         $active_modules = $active_modules['list']['active']; //module.list.active
         
+        if ($active_modules === null) {
+            return [];
+        }
+        
         /**
          * @var \DirectoryIterator $Dir
          */
