@@ -145,15 +145,15 @@ abstract class Core implements Interfaces\Core
                 $error_controller = $this->getConfigManager()->getConfigValue('everon.error_handler.controller', null);
                 $Module = $this->getModuleManager()->getModuleByName($error_module);
                 $Controller = $Module->getController($error_controller);
-
-                if ($Controller instanceof Interfaces\Controller) {
-                    $Controller->showException($Exception);
-                }
             }
             catch (\Exception $e) {
                 //todo display the error here based on config
                 $this->getLogger()->error($e);
             }
+        }
+
+        if ($Controller instanceof Interfaces\Controller) {
+            $Controller->showException($Exception);
         }
     }
 
