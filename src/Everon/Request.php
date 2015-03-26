@@ -315,6 +315,7 @@ abstract class Request implements Interfaces\Request
     protected function sanitizeInputToken($value, $allowed_tags)
     {
         if ($value !== null) {
+            $value = urldecode($value);
             if (is_bool($value)) { //because php is the shittiest thing in this universe
                 $value = (int) $value;
             }
