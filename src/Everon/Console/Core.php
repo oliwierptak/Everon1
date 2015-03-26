@@ -24,7 +24,7 @@ class Core extends \Everon\Core implements Interfaces\Core
             parent::run($RequestIdentifier);
         }
         catch (Exception\RouteNotDefined $e) {
-            $NotFound = new \Exception('Unknown command: '.$e->getMessage());
+            $NotFound = new \Exception('Unknown command: '.$e->getMessage(), 0, $e->getPrevious());
             $this->showException($NotFound, $this->Controller);
         }
         catch (\Exception $e) {

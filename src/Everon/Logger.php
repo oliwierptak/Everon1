@@ -86,7 +86,6 @@ class Logger implements Interfaces\Logger
         
         $LogDate = ($this->getFactory()->buildDateTime(null, $this->getLogDateTimeZone()));
         $Filename = $this->getFilenameByLevel($level);
-        $Dir = new \SplFileInfo($Filename->getPath());
 
         if ($Filename->isFile() && $Filename->isWritable() === false) {
             return $LogDate;
@@ -103,16 +102,11 @@ class Logger implements Interfaces\Logger
         $message = empty($parameters) === false ? vsprintf($message, $parameters) : $message;
         $message = $LogDate->format($this->getLogDateFormat())." ${id} ".$message;
 
-        $trace = null;
-        if ($ExceptionToTrace instanceof \Everon\Exception) {
-            $trace = $ExceptionToTrace->getLoggedTrace();
-        }
-        else if ($ExceptionToTrace instanceof \Exception) {
-            $trace = $ExceptionToTrace->getTraceAsString();
-        }
-
-        if ($trace !== null) {
-            $message .= "\n".$LogDate->format($this->getLogDateFormat())." ${id} \n".$trace."\n";
+        if ($ExceptionToTrace instanceof \Exception) {
+            $trace = $ExceptionToTrace->getTraceAsString().$this->getPreviousTraceDump($ExceptionToTrace->getPrevious());
+            if ($trace !== '') {
+                $message .= "\n".$trace."\n";
+            }
         }
 
         if (is_dir($Filename->getPath()) === false) {
@@ -122,6 +116,21 @@ class Logger implements Interfaces\Logger
         @error_log($message."\n", 3, $Filename->getPathname());
         
         return $LogDate;
+    }
+    
+    protected function getPreviousTraceDump($PreviousExeption, $reccursion_check=0)
+    {
+        $trace = '';
+        
+        if ($PreviousExeption instanceof \Exception) {
+            $trace = $PreviousExeption->getTraceAsString();
+        }
+
+        if ($PreviousExeption->getPrevious() instanceof \Exception && $reccursion_check < 25) {
+            $trace .= $this->getPreviousTraceDump($PreviousExeption->getPrevious(), $reccursion_check+1);
+        }
+
+        return $trace;
     }
 
     /**
