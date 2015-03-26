@@ -40,7 +40,7 @@ abstract class Controller extends \Everon\Controller implements Interfaces\Contr
         $this->lines[] = '';
         $this->lines[] = 'Usage:';
         foreach ($Config->getItems() as $Item) {
-            $info = $Item->toArray()['info'];
+            $info = @$Item->toArray()['info'];
             $this->lines[] = '  '.ltrim($Item->getUrl(), '/').' : '.$info;
         }
     }

@@ -87,37 +87,39 @@ class Logger implements Interfaces\Logger
         $LogDate = ($this->getFactory()->buildDateTime(null, $this->getLogDateTimeZone()));
         $Filename = $this->getFilenameByLevel($level);
         $Dir = new \SplFileInfo($Filename->getPath());
-        
-        if ($Dir->isWritable()) {
-            if ($Filename->isFile() && $Filename->isWritable() === false) {
-                return $LogDate;
-            }
-            
-            $this->logRotate($Filename);
-            
-            $this->write_count++;
-            $request_id = substr($this->log_request_identifier, 0, 6);
-            $trace_id =  substr(md5(uniqid()), 0, 6);
-            $write_count = $this->write_count;
-            $id = "$request_id/$trace_id ($write_count)";
-            
-            $message = empty($parameters) === false ? vsprintf($message, $parameters) : $message;
-            $message = $LogDate->format($this->getLogDateFormat())." ${id} ".$message;
 
-            $trace = null;
-            if ($ExceptionToTrace instanceof \Everon\Exception) {
-                $trace = $ExceptionToTrace->getLoggedTrace();
-            }
-            else if ($ExceptionToTrace instanceof \Exception) {
-                $trace = $ExceptionToTrace->getTraceAsString();
-            }
-
-            if ($trace !== null) {
-                $message .= "\n".$LogDate->format($this->getLogDateFormat())." ${id} \n".$trace."\n";
-            }
-
-            error_log($message."\n", 3, $Filename->getPathname());
+        if ($Filename->isFile() && $Filename->isWritable() === false) {
+            return $LogDate;
         }
+
+        $this->logRotate($Filename);
+        
+        $this->write_count++;
+        $request_id = substr($this->log_request_identifier, 0, 6);
+        $trace_id =  substr(md5(uniqid()), 0, 6);
+        $write_count = $this->write_count;
+        $id = "$request_id/$trace_id ($write_count)";
+
+        $message = empty($parameters) === false ? vsprintf($message, $parameters) : $message;
+        $message = $LogDate->format($this->getLogDateFormat())." ${id} ".$message;
+
+        $trace = null;
+        if ($ExceptionToTrace instanceof \Everon\Exception) {
+            $trace = $ExceptionToTrace->getLoggedTrace();
+        }
+        else if ($ExceptionToTrace instanceof \Exception) {
+            $trace = $ExceptionToTrace->getTraceAsString();
+        }
+
+        if ($trace !== null) {
+            $message .= "\n".$LogDate->format($this->getLogDateFormat())." ${id} \n".$trace."\n";
+        }
+
+        if (is_dir($Filename->getPath()) === false) {
+            @mkdir($Filename->getPath(), 0775, true);
+        }
+        
+        @error_log($message."\n", 3, $Filename->getPathname());
         
         return $LogDate;
     }
