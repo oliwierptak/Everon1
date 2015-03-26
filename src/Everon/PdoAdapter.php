@@ -61,7 +61,7 @@ class PdoAdapter implements Interfaces\PdoAdapter
     public function commitTransaction()
     {
         if ($this->getPdo()->inTransaction()) {
-            if ($this->transaction_count === 0) {
+            if ($this->transaction_count === 1) {
                 $this->getPdo()->commit();
             }
         }
