@@ -124,10 +124,9 @@ class Logger implements Interfaces\Logger
         
         if ($PreviousExeption instanceof \Exception) {
             $trace = $PreviousExeption->getTraceAsString();
-        }
-
-        if ($PreviousExeption->getPrevious() instanceof \Exception && $reccursion_check < 25) {
-            $trace .= $this->getPreviousTraceDump($PreviousExeption->getPrevious(), $reccursion_check+1);
+            if ($PreviousExeption->getPrevious() instanceof \Exception && $reccursion_check < 25) {
+                $trace .= $this->getPreviousTraceDump($PreviousExeption->getPrevious(), $reccursion_check+1);
+            }
         }
 
         return $trace;
