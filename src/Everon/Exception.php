@@ -17,9 +17,6 @@ abstract class Exception extends \Exception
 
     protected $toString = null;
     
-    protected $logged_trace = null;
-
-
     /**
      * @param string $message
      * @param null $params
@@ -39,20 +36,8 @@ abstract class Exception extends \Exception
         }
         
         parent::__construct($message, 0, $Previous);
-
-        if ($Previous instanceof \Exception) {
-            $this->logged_trace = $Previous->getTraceAsString();
-        }
     }
 
-    /**
-     * @return string
-     */
-    public function getLoggedTrace()
-    {
-        return $this->logged_trace ?: $this->getTraceAsString();
-    }
-    
     /**
      * @param \Exception $Exception
      * @return string
