@@ -252,6 +252,9 @@ class Navigator implements Interfaces\ResourceNavigator
                         $organized_filters[$collection_name][$key] = $filters[$key];
                         $organized_filters[$collection_name][$key][$v] = $column;
                     }
+                    else {
+                        $organized_filters[$resource_name][$key] = $filters[$key];
+                    }
                 }
             }
             
