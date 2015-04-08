@@ -166,7 +166,9 @@ abstract class Repository implements Interfaces\Repository
         }
 
         $data = array_merge($this->entity_defaults, $data);
-        $data[$this->getMapper()->getTable()->getPk()] = null; // Force new
+        if (isset($data[$this->getMapper()->getTable()->getPk()]) === false) {
+            $data[$this->getMapper()->getTable()->getPk()] = null; // Force new
+        }
 
         return $this->buildEntity($data, $RelationCriteria);
     }
