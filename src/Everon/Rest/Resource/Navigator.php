@@ -236,9 +236,9 @@ class Navigator implements Interfaces\ResourceNavigator
         
         $column = null;
         $CriteriaBuilder = $this->getFactory()->buildCriteriaBuilder();
+        $filters = $this->getFilters();
 
-        if (empty($this->getFilters()) === false) {
-            $filters = $this->getFilters();
+        if (empty($filters) === false) {
             $organized_filters = [];
             
             foreach ($filters as $key => $values) {
@@ -254,7 +254,7 @@ class Navigator implements Interfaces\ResourceNavigator
                     }
                 }
             }
-            
+
             if (isset($organized_filters[$resource_name]) !== false) {
                 $Filter = $this->getFactory()->buildRestFilter();
                 $CriteriaBuilder = $Filter->toCriteria($organized_filters[$resource_name]);

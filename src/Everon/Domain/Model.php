@@ -140,7 +140,7 @@ abstract class Model implements Interfaces\Model
      */
     protected function delete(Domain\Interfaces\Entity $Entity, $user_id = null, $simple = false)
     {
-        if ($user_id === false) {
+        if ($simple === false) {
             $this->beforeDelete($Entity, $user_id);
         }
         $this->getRepository()->remove($Entity, $user_id);
