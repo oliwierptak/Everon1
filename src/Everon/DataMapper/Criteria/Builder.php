@@ -213,7 +213,7 @@ class Builder implements Interfaces\Criteria\Builder
     /**
      * @inheritdoc
      */
-    public function andWhereRaw($sql, $value = null)
+    public function andWhereRaw($sql, array $value = null)
     {
         $Criterium = $this->getFactory()->buildCriteriaCriterium($sql, 'raw', $value);
         if ($this->current < 0) {
@@ -228,7 +228,7 @@ class Builder implements Interfaces\Criteria\Builder
     /**
      * @inheritdoc
      */
-    public function orWhereRaw($sql, $value = null)
+    public function orWhereRaw($sql, array $value = null)
     {
         $Criterium = $this->getFactory()->buildCriteriaCriterium($sql, 'raw', $value);
         if ($this->current < 0) {
