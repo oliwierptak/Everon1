@@ -54,17 +54,17 @@ interface Builder extends \Everon\Interfaces\Arrayable, \Everon\Interfaces\Strin
 
     /**
      * @param $sql
-     * @param null $value
+     * @param array|null $value
      * @return $this
      */
-    function andWhereRaw($sql, $value = null);
+    function andWhereRaw($sql, array $value = null);
 
     /**
      * @param $sql
-     * @param $value
+     * @param array $value
      * @return $this
      */
-    function orWhereRaw($sql, $value = null);
+    function orWhereRaw($sql, array $value = null);
 
     /**
      * @return Interfaces\Criteria\Container
