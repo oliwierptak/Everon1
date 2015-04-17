@@ -225,7 +225,22 @@ class Entity extends Helper\Popo implements Interfaces\Entity
      */
     public function toArray($deep=false)
     {
-        return parent::toArray($deep);
+        $data = parent::toArray($deep);
+
+        if ($deep) {
+            foreach ($this->getRelationCollection() as $Relation) {
+                /**
+                 * @var \Everon\Domain\Interfaces\Relation $Relation
+                 */
+                $One = $Relation->getOne();
+                if ($One !== null) {
+                    //d($One->getDomainName(), $Relation->getOwnerEntity()->getDomainName(), $this->getDomainName());
+                    $data[$Relation->getName()] = $One->toArray(false); //false because of circular references
+                }
+            }
+        }
+        
+        return $data;
     }
 
     /**
