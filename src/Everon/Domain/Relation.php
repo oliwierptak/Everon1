@@ -401,10 +401,15 @@ abstract class Relation implements Interfaces\Relation
      */
     public function getOne()
     {
-        if ($this->getData()->isEmpty()) {
+        //d($this->getName(), $this->getType(), $this->getRelationMapper()->isOwningSide());
+        if ($this->getType() !== self::ONE_TO_ONE && $this->getType() !== self::ONE_TO_MANY) {
             return null;
         }
         
+        if ($this->getData()->isEmpty()) {
+            return null;
+        }
+
         $data = $this->getData()->toArray();
         if (is_array($data)) {
             return current($data);

@@ -147,8 +147,20 @@ abstract class Controller implements Interfaces\Controller
     /**
      * @inheritdoc
      */
+    public function beforeExecute($action)
+    {
+        return true;
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function execute($action)
     {
+        if ($this->beforeExecute($action) === false) {
+            return false;
+        }
+        
         $this->action = $action;
         $event_name = $this->getModule()->getName().'.'.$this->getName().'.'.$action;
         

@@ -53,6 +53,12 @@ interface Controller extends
     function execute($action);
 
     /**
+     * @param $action
+     * @return bool
+     */
+    function beforeExecute($action);
+
+    /**
      * @param ItemRouter $CurrentRoute
      */
     function setCurrentRoute(ItemRouter $CurrentRoute);
