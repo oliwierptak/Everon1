@@ -286,9 +286,9 @@ EOF;
             $inheritance_list = [];
             $data_processed = [];
             foreach ($config_loader_item['data'] as $section_name => $section_items) {
-                if (strcasecmp($config_name, 'router') === 0) {
+                if (strcasecmp($config_name, 'router') === 0) { //xxx -.-
                     if (isset($section_items['url'])) {
-                        $section_items['url'] = '%application.server.url%'.$section_items['url']; //auto append application url
+                        $section_items['url'] = '%application.server.url%'.$section_items['url']; //xxx auto append application url
                     }
                 }
                 
@@ -307,8 +307,7 @@ EOF;
                     foreach ($inheritance_list as $for => $from) {
                         $this->assertIsArrayKey($for, $data_processed, 'Undefined config for section: "%s"');
                         $this->assertIsArrayKey($from, $data_processed, 'Undefined config from section: "%s"');
-                        //$data_processed[$for] = $this->arrayMergeDefault($data_processed[$from], $data_processed[$for]);
-                        $data_processed[$for] = array_merge($data_processed[$from], $data_processed[$for]);
+                        $data_processed[$for] = $this->arrayMergeDefault($data_processed[$from], $data_processed[$for]);
                     }
                 }
             }
