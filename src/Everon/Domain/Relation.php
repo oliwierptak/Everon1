@@ -401,7 +401,6 @@ abstract class Relation implements Interfaces\Relation
      */
     public function getOne()
     {
-        //d($this->getName(), $this->getType(), $this->getRelationMapper()->isOwningSide());
         if ($this->getType() !== self::ONE_TO_ONE && $this->getType() !== self::ONE_TO_MANY) {
             return null;
         }
@@ -432,6 +431,9 @@ abstract class Relation implements Interfaces\Relation
      */
     public function getMany($CriteriaBuilder = null)
     {
+        if ($this->getType() !== self::MANY_TO_ONE && $this->getType() !== self::MANY_TO_MANY) {
+            return [];
+        }
         return $this->getData($CriteriaBuilder)->toArray();
     }
 
