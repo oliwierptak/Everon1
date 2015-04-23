@@ -233,7 +233,7 @@ class Entity extends Helper\Popo implements Interfaces\Entity
                 /**
                  * @var \Everon\Domain\Interfaces\Relation $Relation
                  */
-                if ($Relation->getType() !== Relation::ONE_TO_ONE || $Relation->getType() !== Relation::ONE_TO_MANY) {
+                if ($Relation->getType() !== Relation::ONE_TO_ONE && $Relation->getType() !== Relation::ONE_TO_MANY) {
                     continue;
                 }
                 
