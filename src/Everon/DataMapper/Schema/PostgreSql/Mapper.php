@@ -46,7 +46,7 @@ abstract class Mapper extends DataMapper
         }
 
         $values_str = rtrim($values_str, ',');
-        return sprintf('UPDATE %s.%s t SET %s', $this->getTable()->getSchema(), $this->getTable()->getName(), $values_str);
+        return sprintf('UPDATE %s.%s SET %s', $this->getTable()->getSchema(), $this->getTable()->getName(), $values_str);
     }
 
     /**
@@ -54,7 +54,7 @@ abstract class Mapper extends DataMapper
      */
     public function getDeleteSql()
     {
-        return sprintf('DELETE FROM %s.%s t', $this->getTable()->getSchema(), $this->getTable()->getName());
+        return sprintf('DELETE FROM %s.%s', $this->getTable()->getSchema(), $this->getTable()->getName());
     }
 
     /**
@@ -62,7 +62,7 @@ abstract class Mapper extends DataMapper
      */
     public function getFetchAllSql()
     {
-        $sql = "SELECT * FROM %s.%s t";
+        $sql = "SELECT * FROM %s.%s";
         
         return sprintf($sql, $this->getTable()->getSchema(), $this->getTable()->getName());
     }
@@ -72,7 +72,7 @@ abstract class Mapper extends DataMapper
      */
     public function getJoinSql($select, $a, $b, $on_a, $on_b, $type='')
     {
-        $sql = "SELECT %s FROM %s t ${type} JOIN %s ON %s = %s";
+        $sql = "SELECT %s FROM %s ${type} JOIN %s ON %s = %s";
         
         return sprintf($sql, $select, $a, $b, $on_a, $on_b);
     }
@@ -87,6 +87,6 @@ abstract class Mapper extends DataMapper
         $sql .= $where_str.' pgc.oid = '.sprintf("'${table_name}'::regclass", $this->getTable()->getSchema(), $this->getTable()->getName());*/
 
         //do slow count
-        return sprintf("SELECT COUNT(t.%s) FROM %s.%s t", $this->getTable()->getPk(), $this->getTable()->getSchema(), $this->getTable()->getName());
+        return sprintf("SELECT COUNT(%s) FROM %s.%s", $this->getTable()->getPk(), $this->getTable()->getSchema(), $this->getTable()->getName());
     }
 }

@@ -139,7 +139,7 @@ abstract class Relation implements Interfaces\Relation
             return;
         }
 
-        $this->getCriteriaBuilder()->where('t.'.$target_column, '=', $this->getDataMapper()->getSchema()->getTableByName($table)->validateId($value));
+        $this->getCriteriaBuilder()->where($target_column, '=', $this->getDataMapper()->getSchema()->getTableByName($table)->validateId($value));
     }
 
     protected function resetRelationCriteriaParameters()

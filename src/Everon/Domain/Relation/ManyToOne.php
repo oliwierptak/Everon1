@@ -51,6 +51,6 @@ class ManyToOne extends Domain\Relation implements Domain\Interfaces\Relation
             return;
         }
 
-        $this->getCriteriaBuilder()->where('t.'.$this->getRelationMapper()->getInversedBy(), '=', $this->getDataMapper()->getSchema()->getTableByName($table)->validateId($value));
+        $this->getCriteriaBuilder()->where($this->getRelationMapper()->getInversedBy(), '=', $this->getDataMapper()->getSchema()->getTableByName($table)->validateId($value));
     }
 }
