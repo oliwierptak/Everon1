@@ -44,12 +44,23 @@ class Core extends \Everon\Http\Core implements Interfaces\Core
             );
             $this->showException($BadRequest, $this->Controller);
         }
+        catch (Exception\Acl $Exception) {
+            $Unauthorized = new Http\Exception(
+                new Http\Message\Unauthorized($Exception->getMessage()),
+                $Exception->getPrevious()
+            );
+            $this->showException($Unauthorized, $this->Controller);
+        }
         catch (\Exception $Exception) {
             $Internal = new Http\Exception(
                 new Http\Message\InternalServerError($Exception->getMessage()),
                 $Exception->getPrevious()
             );
             $this->showException($Internal, $this->Controller);
+        }
+        finally {
+            //$this->shutdown();
+            //$this->terminate();
         }
     }
 }

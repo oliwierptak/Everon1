@@ -39,7 +39,13 @@ class Response implements Interfaces\Response
      */
     public function setDataValue($name, $data)
     {
-        $this->data[$name] = $data;
+        if (is_array($this->data)) {
+            $this->data[$name] = $data;
+        }
+        else {
+            $this->data = [];
+            $this->data[$name] = $data;
+        }
     }
 
     /**

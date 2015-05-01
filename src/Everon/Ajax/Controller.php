@@ -77,6 +77,7 @@ abstract class Controller extends \Everon\Http\Controller
      */
     public function showException(\Exception $Exception)
     {
+        $this->setJsonData(null);
         $this->setJsonResult(false);
         $this->addValidationError('exception', $Exception->getMessage());
         $this->prepareResponse('', false);

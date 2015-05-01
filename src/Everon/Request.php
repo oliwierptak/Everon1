@@ -183,7 +183,8 @@ abstract class Request implements Interfaces\Request
      */
     protected function getUrlFromGlobals()
     {
-        return $this->getServerLocationFromGlobals().$this->ServerCollection->get('REQUEST_URI');
+        $url =  rtrim($this->ServerCollection->get('REQUEST_URI'), '/');
+        return $this->getServerLocationFromGlobals().$url;
     }
 
     /**

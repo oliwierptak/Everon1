@@ -70,22 +70,6 @@ abstract class Core implements Interfaces\Core
         if ($this->Module === null) {
             throw new Exception\Core('No module defined for this request');
         }
-    }
-
-    /**
-     * @return RequestIdentifier
-     */
-    public function getRequestIdentifier()
-    {
-        return $this->RequestIdentifier;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function run(RequestIdentifier $RequestIdentifier)
-    {
-        $this->runOnce($RequestIdentifier);
 
         if ($this->getRequest()->isAjax()) {
             try {
@@ -104,7 +88,23 @@ abstract class Core implements Interfaces\Core
         }
 
         $this->Controller->setCurrentRoute($this->Route);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function run(RequestIdentifier $RequestIdentifier)
+    {
+        $this->runOnce($RequestIdentifier);
         $this->Controller->execute($this->Route->getAction());
+    }
+
+    /**
+     * @return RequestIdentifier
+     */
+    public function getRequestIdentifier()
+    {
+        return $this->RequestIdentifier;
     }
 
     public function shutdown()

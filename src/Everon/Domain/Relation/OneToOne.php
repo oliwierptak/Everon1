@@ -79,6 +79,6 @@ class OneToOne extends Domain\Relation implements Domain\Interfaces\Relation
             return;
         }
 
-        $this->getCriteriaBuilder()->where('t.'.$target_column, '=', $value);
+        $this->getCriteriaBuilder()->where($target_column, '=', $value);
     }
 }

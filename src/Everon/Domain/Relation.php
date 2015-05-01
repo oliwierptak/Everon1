@@ -139,7 +139,7 @@ abstract class Relation implements Interfaces\Relation
             return;
         }
 
-        $this->getCriteriaBuilder()->where('t.'.$target_column, '=', $this->getDataMapper()->getSchema()->getTableByName($table)->validateId($value));
+        $this->getCriteriaBuilder()->where($target_column, '=', $this->getDataMapper()->getSchema()->getTableByName($table)->validateId($value));
     }
 
     protected function resetRelationCriteriaParameters()
@@ -401,6 +401,10 @@ abstract class Relation implements Interfaces\Relation
      */
     public function getOne()
     {
+        if ($this->getType() !== self::ONE_TO_ONE && $this->getType() !== self::ONE_TO_MANY) {
+            return null;
+        }
+        
         if ($this->getData()->isEmpty()) {
             return null;
         }
@@ -427,6 +431,9 @@ abstract class Relation implements Interfaces\Relation
      */
     public function getMany($CriteriaBuilder = null)
     {
+        if ($this->getType() !== self::MANY_TO_ONE && $this->getType() !== self::MANY_TO_MANY) {
+            return [];
+        }
         return $this->getData($CriteriaBuilder)->toArray();
     }
 

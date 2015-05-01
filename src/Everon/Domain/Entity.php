@@ -12,6 +12,7 @@ namespace Everon\Domain;
 use Everon\Domain\Exception;
 use Everon\Domain\Interfaces;
 use Everon\Helper;
+use Everon\Interfaces\Arrayable;
 use Everon\Interfaces\Collection;
 
 class Entity extends Helper\Popo implements Interfaces\Entity 
@@ -232,9 +233,12 @@ class Entity extends Helper\Popo implements Interfaces\Entity
                 /**
                  * @var \Everon\Domain\Interfaces\Relation $Relation
                  */
+                if ($Relation->getType() !== Relation::ONE_TO_ONE && $Relation->getType() !== Relation::ONE_TO_MANY) {
+                    continue;
+                }
+                
                 $One = $Relation->getOne();
-                if ($One !== null) {
-                    //d($One->getDomainName(), $Relation->getOwnerEntity()->getDomainName(), $this->getDomainName());
+                if ($One instanceof Arrayable) {
                     $data[$Relation->getName()] = $One->toArray(false); //false because of circular references
                 }
             }

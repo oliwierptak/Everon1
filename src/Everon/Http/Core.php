@@ -51,6 +51,7 @@ class Core extends \Everon\Core implements \Everon\Interfaces\Core
             $code = $Exception->getHttpMessage()->getCode();
         }
 
+        $this->getResponse()->setData(null);
         $this->getResponse()->setStatusCode($code);
         $this->getResponse()->setStatusMessage($message);
         
