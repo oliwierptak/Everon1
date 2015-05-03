@@ -107,6 +107,14 @@ class Item implements Interfaces\Item
         return $this->data[$name];
     }
 
+    /**
+     * @inheritdoc
+     */
+    public function setValueByName($name, $value)
+    {
+        return $this->data[$name] = $value;
+    }
+
     public static function __set_state(array $parameters)
     {
         /**

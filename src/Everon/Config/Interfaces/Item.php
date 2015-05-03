@@ -39,6 +39,12 @@ interface Item extends \Everon\Interfaces\Arrayable
     function getValueByName($name, $default=null);
 
     /**
+     * @param $name
+     * @param $value
+     */
+    function setValueByName($name, $value);
+
+    /**
      * @param array $data
      * @throws \Everon\Exception\ConfigItem
      */
