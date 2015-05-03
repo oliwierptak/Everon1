@@ -50,9 +50,10 @@ interface FileSystem extends Dependency\Factory
 
     /**
      * @param $path
+     * @param string $mask
      * @return array
      */    
-    function listPath($path);
+    function listPath($path, $mask = '*.*');
     
     /**
      * @param $path

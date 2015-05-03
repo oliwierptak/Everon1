@@ -232,8 +232,15 @@ EOF;
             if ($Dir->isDot()) {
                 continue;
             }
-            $Filename = new \SplFileInfo($this->getFileSystem()->getRealPath('//Module/'.$module_name.'/Config/module.ini'));
-            $data[$module_name.'@module'] = $this->getConfigLoader()->loadFromFile($Filename);
+            
+            $module_config_files = $this->getFileSystem()->listPath('//Module/' . $module_name . '/Config/', '*.ini');
+            foreach ($module_config_files as $Filename) {
+                /**
+                 * @var \SplFileInfo $Filename
+                 */
+                $config_name = $Filename->getBasename('.'.$Filename->getExtension());
+                $data[$module_name.'@'.$config_name] = $this->getConfigLoader()->loadFromFile($Filename);
+            }
         }
 
         return $data;

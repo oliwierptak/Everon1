@@ -178,16 +178,22 @@ class FileSystem implements Interfaces\FileSystem
 
     /**
      * @inheritdoc
+     * @param $path
+     * @param string $mask
+     * @throws Exception\FileSystem
+     * @return array
      */
-    public function listPath($path)
+    public function listPath($path, $mask = '*.*')
     {
         try {
             $result = [];
+            
             $path = $this->getRelativePath($path);
             if ((new \SplFileInfo($path))->isDir() === false) {
                 return [];
             }
-            $files = new \GlobIterator($path.DIRECTORY_SEPARATOR.'*.*');
+            
+            $files = new \GlobIterator($path.DIRECTORY_SEPARATOR.$mask);
 
             /**
              * @var \DirectoryIterator $File
