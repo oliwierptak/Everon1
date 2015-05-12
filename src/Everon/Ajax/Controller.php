@@ -31,7 +31,6 @@ abstract class Controller extends \Everon\Http\Controller
         }
 
         $this->getResponse()->setDataValue('result', $this->getJsonResult() ?: $result);
-        $this->getResponse()->setDataValue('success', $this->getJsonResult() ?: $result); //fuck extjs
         $this->getResponse()->setDataValue('data', $this->getJsonData());
         $this->getResponse()->setDataValue('errors', $this->getRouter()->getRequestValidator()->getErrors());
     }
