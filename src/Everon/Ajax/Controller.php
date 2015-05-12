@@ -29,8 +29,12 @@ abstract class Controller extends \Everon\Http\Controller
         if ($this->getResponse()->getStatusCode() === null) {
             $this->getResponse()->setStatusCode(($result ? 200 : 400));
         }
+        
+        if ($this->getJsonResult() === null) { //don't overwrite result if already set
+            $this->setJsonResult($result);
+        }
 
-        $this->getResponse()->setDataValue('result', $this->getJsonResult() ?: $result);
+        $this->getResponse()->setDataValue('result', $this->getJsonResult());
         $this->getResponse()->setDataValue('data', $this->getJsonData());
         $this->getResponse()->setDataValue('errors', $this->getRouter()->getRequestValidator()->getErrors());
     }
