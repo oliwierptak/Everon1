@@ -16,7 +16,7 @@ trait Regex
 
     protected function regexCompleteAndValidate($name, $pattern)
     {
-        $pattern = '@^'.$pattern.'$@is';
+        $pattern = '@^'.$pattern.'\/?$@is';
         $this->regexValidate($name, $pattern);
 
         return $pattern;
