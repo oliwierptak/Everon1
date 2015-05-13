@@ -1450,6 +1450,19 @@ abstract class Factory implements Interfaces\Factory
     /**
      * @inheritdoc
      */
+    public function buildAjaxRequest(array $server, array $get, array $post, array $files, $namespace='Everon\Ajax')
+    {
+        try {
+            return $this->buildRequest($server, $get, $post, $files, $namespace);
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('AjaxRequest initialization error', null, $e);
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function buildHttpRequest(array $server, array $get, array $post, array $files, $namespace='Everon\Http')
     {
         try {
@@ -1795,5 +1808,24 @@ abstract class Factory implements Interfaces\Factory
     public function buildIntlDateFormatter($locale, $datetype, $timetype, $timezone, $calendar, $pattern)
     {
         return new \IntlDateFormatter($locale, $datetype, $timetype, $timezone, $calendar, $pattern);
+    }
+
+    /**
+     * @param string $namespace
+     * @return mixed
+     * @throws Exception\Factory
+     */
+    public function buildFactoryContextForRequest($namespace = 'Everon\Factory\ContextBuilder')
+    {
+        try {
+            $class_name = $this->getFullClassName($namespace, 'Request');
+            $this->classExists($class_name);
+            $ContextBuilder = new $class_name();
+            $this->injectDependencies($class_name, $ContextBuilder);
+            return $ContextBuilder;
+        }
+        catch (\Exception $e) {
+            throw new Exception\Factory('RequestContextBuilder initialization error', null, $e);
+        }
     }
 }
