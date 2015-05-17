@@ -28,7 +28,7 @@ class Server extends \Everon\Http\Core implements Rest\Interfaces\Server
     public function run(RequestIdentifier $RequestIdentifier)
     {
         try {
-            $response_headers = $this->getConfigManager()->getConfigValue('rest.response_headers', []);
+            $response_headers = $this->getConfigManager()->getConfigValue('rest.access_control', []);
             foreach ($response_headers as $name => $values) {
                 $origin = $this->getRequest()->getHeader('HTTP_ORIGIN', null);
                 if (strcasecmp($values['Access-Control-Allow-Origin'], $origin) === 0) {
