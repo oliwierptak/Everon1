@@ -143,6 +143,11 @@ abstract class Core implements Interfaces\Core
             try {
                 $error_module = $this->getConfigManager()->getConfigValue('everon.error_handler.module', null);
                 $error_controller = $this->getConfigManager()->getConfigValue('everon.error_handler.controller', null);
+                
+                if ($this->getRequest()->isAjax()) {
+                    $error_controller = 'Ajax\\'.$error_controller;
+                }
+                
                 $Module = $this->getModuleManager()->getModuleByName($error_module);
                 $Controller = $Module->getController($error_controller);
             }

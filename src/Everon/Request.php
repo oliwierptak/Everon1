@@ -165,12 +165,14 @@ abstract class Request implements Interfaces\Request
      */
     protected function getDataFromGlobals()
     {
+        $path = strtok($this->ServerCollection->get('REQUEST_URI'),'?');
+        
         return [
             'location' => $this->getServerLocationFromGlobals(),
             'method' => $this->ServerCollection->get('REQUEST_METHOD'),
             'url' => $this->getUrlFromGlobals(),
             'query_string' => $this->ServerCollection->get('QUERY_STRING'),
-            'path' => $this->ServerCollection->get('REQUEST_URI'),
+            'path' => $path,
             'protocol' => $this->getProtocolFromGlobals(),
             'port' => $this->getPortFromGlobals(),
             'is_secure' => $this->getSecureFromGlobals(),

@@ -12,7 +12,7 @@ namespace Everon\Rest;
 use Everon\Helper;
 use Everon\Exception;
 
-class Request extends \Everon\Http\Request implements Interfaces\Request
+class Request extends \Everon\Ajax\Request implements Interfaces\Request
 {
     use Helper\Asserts\IsStringAndNotEmpty;
     use Helper\Exceptions;
@@ -95,27 +95,7 @@ class Request extends \Everon\Http\Request implements Interfaces\Request
     {
         return $this->version;
     }
-
-    /**
-     * @inheritdoc
-     */
-    public function getRawInput()
-    {
-        $result = null;
-        $input = parent::getRawInput();
-        
-        $input = trim($input);
-        if ($input !== '') {
-            $result = json_decode($input, true);
-        }
-        
-        if (is_array($result) === false) {
-            $result = [];
-        }
-        
-        return $result;
-    }
-
+    
     /**
      * @return string
      */
