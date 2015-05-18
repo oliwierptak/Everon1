@@ -274,6 +274,14 @@ abstract class Relation implements Interfaces\Relation
     }
 
     /**
+     * @return bool
+     */
+    public function isSingleType()
+    {
+        return $this->type === self::ONE_TO_MANY || $this->type === self::ONE_TO_ONE;
+    }
+
+    /**
      * @inheritdoc
      */
     public function setRelationMapper(Domain\Interfaces\RelationMapper $RelationMapper)
@@ -401,7 +409,7 @@ abstract class Relation implements Interfaces\Relation
      */
     public function getOne()
     {
-        if ($this->getType() !== self::ONE_TO_ONE && $this->getType() !== self::ONE_TO_MANY) {
+        if ($this->getType() !== self::ONE_TO_ONE && $this->getType() !== self::ONE_TO_MANY) { //todo refactor to isSingleType
             return null;
         }
         

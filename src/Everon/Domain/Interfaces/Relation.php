@@ -80,6 +80,11 @@ interface Relation extends \Everon\Interfaces\Arrayable, Dependency\DomainManage
     function setType($type);
 
     /**
+     * @return bool
+     */
+    function isSingleType();
+
+    /**
      * @param \Everon\Domain\Interfaces\RelationMapper $RelationMapper
      */
     function setRelationMapper(Domain\Interfaces\RelationMapper $RelationMapper);

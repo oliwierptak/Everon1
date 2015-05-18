@@ -731,6 +731,17 @@ interface Factory
      * @return Interfaces\Request
      * @throws Exception\Factory
      */
+    function buildAjaxRequest(array $server, array $get, array $post, array $files, $namespace='Everon\Ajax');
+
+    /**
+     * @param array $server
+     * @param array $get
+     * @param array $post
+     * @param array $files
+     * @param string $namespace
+     * @return Interfaces\Request
+     * @throws Exception\Factory
+     */
     function buildHttpRequest(array $server, array $get, array $post, array $files, $namespace='Everon\Http');
 
     /**
@@ -902,5 +913,12 @@ interface Factory
      * @throws Exception\Factory
      */
     function buildIntlDateFormatter($locale, $datetype, $timetype, $timezone, $calendar, $pattern);
+
+    /**
+     * @param string $namespace
+     * @return \Everon\Interfaces\FactoryContextBuilder
+     * @throws Exception\Factory
+     */
+     public function buildFactoryContextForRequest($namespace = 'Everon\Factory\ContextBuilder');
 
 }
