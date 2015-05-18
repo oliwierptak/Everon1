@@ -57,7 +57,8 @@ interface ResourceHandler extends \Everon\Interfaces\Dependency\Factory, \Everon
      * @param Entity $Entity
      * @param $version
      * @param $resource_name
-     * @return ResourceInterface
+     * @return Resource
+     * @throws \Everon\Rest\Exception\Resource
      */
     function buildResourceFromEntity(Entity $Entity, $version, $resource_name);
         
