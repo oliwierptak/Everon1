@@ -28,9 +28,19 @@ abstract class Resource extends Resource\Basic implements Interfaces\Resource
     protected $DomainEntity = null;
 
     /**
+     * Hold MANY type relations
+     * 
      * @var Collection
      */
     protected $RelationCollection = null;
+
+    /**
+     * Holds ONE type relations
+     * 
+     * @var Collection
+     */
+    protected $ResourceCollection = null;
+    
 
     /**
      * @param Interfaces\ResourceHref $Href
@@ -41,6 +51,7 @@ abstract class Resource extends Resource\Basic implements Interfaces\Resource
         parent::__construct($Href);
         $this->DomainEntity = $Entity;
         $this->RelationCollection = new Helper\Collection([]);
+        $this->ResourceCollection = new Helper\Collection([]);
     }
 
     /**
@@ -91,6 +102,38 @@ abstract class Resource extends Resource\Basic implements Interfaces\Resource
     /**
      * @inheritdoc
      */
+    public function setResourceCollection(Collection $ResourceCollection)
+    {
+        $this->ResourceCollection = $ResourceCollection;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getResourceCollection()
+    {
+        return $this->ResourceCollection;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setResourceByName($name, array $resource_data)
+    {
+        $this->ResourceCollection->set($name, $resource_data);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getResourceByName($name)
+    {
+        return $this->ResourceCollection->get($name);
+    }
+
+    /**
+     * @inheritdoc
+     */
     protected function getToArray() //todo: make better interface then toArray() in order to display it as rest data
     {
         $entity_data = $this->DomainEntity->toArray();
@@ -102,6 +145,8 @@ abstract class Resource extends Resource\Basic implements Interfaces\Resource
                 $value = $value->format(\DateTime::ISO8601);
             }
         });
+
+        $entity_data = array_merge($entity_data, $this->ResourceCollection->toArray(true));
 
         $data = parent::getToArray();
         $data = array_merge($data, $entity_data);

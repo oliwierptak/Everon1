@@ -421,11 +421,21 @@ class Handler implements Interfaces\ResourceHandler
          * @var \Everon\Domain\Interfaces\RestZone\Entity $Entity
          */
         $Entity = $Resource->getDomainEntity();
+        
         $RelationCollection = new Helper\Collection([]);
-        foreach ($Entity->getRelationCollection() as $domain_name => $Collection) {
+        foreach ($Entity->getRelationCollection() as $domain_name => $Relation) {
+            /**
+             * @var \Everon\Domain\Interfaces\Relation $Relation
+             */
             $name = $this->getResourceNameFromMapping($domain_name);
             $link = $Resource->getHref()->getLink($name);
-            $RelationCollection->set($name, ['href' => $link]);
+            
+            if ($Relation->isSingleType()) {
+                $Resource->setResourceByName($domain_name, ['href' => $link]);
+            }
+            else {
+                $RelationCollection->set($name, ['href' => $link]);
+            }
         }
         $Resource->setRelationCollection($RelationCollection);
     }

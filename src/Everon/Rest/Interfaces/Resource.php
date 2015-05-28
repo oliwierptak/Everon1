@@ -43,6 +43,30 @@ interface Resource extends ResourceBasic
     function getRelationCollectionByName($name);
 
     /**
+     * @param Collection $ResourceCollection
+     */
+    function setResourceCollection(Collection $ResourceCollection);
+
+    /**
+     * @return Collection
+     */
+    function getResourceCollection();
+
+    /**
+     * @param $name
+     * @param array $resource_data
+     * @return
+     */
+    function setResourceByName($name, array $resource_data);
+
+    /**
+     * @param $name
+     * @return Resource
+     */
+    function getResourceByName($name);
+    
+
+    /**
      * @return string
      */
     function getDomainName();
